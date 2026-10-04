@@ -1,6 +1,8 @@
+using System.Globalization;
 using System.IO;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Valdrio.Localization;
 
 namespace Valdrio.Desktop;
 
@@ -8,8 +10,11 @@ public partial class MainWindowViewModel : ObservableObject
 {
     private const string ExpectedKind = "valdrio-development-smoke-v1";
 
+    private readonly UiTextCatalog texts;
+    private readonly CultureInfo culture;
+
     [ObservableProperty]
-    private string status = "No development sample loaded.";
+    private string status;
 
     [ObservableProperty]
     private string sampleName = "—";
@@ -20,7 +25,24 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private string sourcePath = "—";
 
-    public bool TryLoadDevelopmentSample(string path, out string? error)
+    public MainWindowViewModel(UiTextCatalog texts, CultureInfo culture)
+    {
+        this.texts = texts;
+        this.culture = culture;
+        status = texts.Get("StatusNoSample", culture);
+    }
+
+    public string AppTitle => texts.Get("AppTitle", culture);
+    public string WindowTitle => texts.Get("WindowTitle", culture);
+    public string SpecificationVersion => texts.Get("SpecificationVersion", culture);
+    public string HeaderSubtitle => texts.Get("HeaderSubtitle", culture);
+    public string LabelStatus => texts.Get("LabelStatus", culture);
+    public string LabelSample => texts.Get("LabelSample", culture);
+    public string LabelPurpose => texts.Get("LabelPurpose", culture);
+    public string LabelSource => texts.Get("LabelSource", culture);
+    public string FooterDevelopmentOnly => texts.Get("FooterDevelopmentOnly", culture);
+
+    public bool TryLoadDevelopmentSample(string path, out string? diagnosticCode)
     {
         try
         {
@@ -31,16 +53,19 @@ public partial class MainWindowViewModel : ObservableObject
             var kind = root.GetProperty("kind").GetString();
             if (!string.Equals(kind, ExpectedKind, StringComparison.Ordinal))
             {
-                throw new InvalidDataException(
-                    $"Unexpected development fixture kind '{kind ?? "(null)"}'.");
+                Status = texts.Get("StatusSampleOpenFailed", culture);
+                diagnosticCode = "T01_SAMPLE_KIND_INVALID";
+                return false;
             }
 
-            SampleName = root.GetProperty("name").GetString() ?? "(unnamed)";
-            SamplePurpose = root.GetProperty("purpose").GetString() ?? "(no purpose)";
+            SampleName = root.GetProperty("name").GetString()
+                ?? throw new InvalidDataException();
+            SamplePurpose = root.GetProperty("purpose").GetString()
+                ?? throw new InvalidDataException();
             SourcePath = Path.GetFullPath(path);
-            Status = "Development sample opened.";
+            Status = texts.Get("StatusSampleOpened", culture);
 
-            error = null;
+            diagnosticCode = null;
             return true;
         }
         catch (Exception exception) when (
@@ -50,8 +75,8 @@ public partial class MainWindowViewModel : ObservableObject
             or InvalidDataException
             or KeyNotFoundException)
         {
-            Status = "Development sample could not be opened.";
-            error = exception.Message;
+            Status = texts.Get("StatusSampleOpenFailed", culture);
+            diagnosticCode = "T01_SAMPLE_OPEN_FAILED";
             return false;
         }
     }
