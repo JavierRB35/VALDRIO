@@ -21,18 +21,24 @@ public sealed record MoneyCurrencyProjectionResult(
 {
     public Money ProjectedTotal =>
         Lines.Aggregate(
-            new Money(0m, SourceLedger.Currency),
+            new Money(
+                0m,
+                SourceLedger.Currency,
+                SourceLedger.PrecisionPolicy),
             (total, line) => total + line.ProjectedMoney);
 }
 
 public sealed class MoneyCurrencyProjector
 {
+    private readonly PrecisionPolicy precisionPolicy;
     private readonly CurrencyProjector projector;
 
     public MoneyCurrencyProjector(
         PrecisionPolicy? precisionPolicy = null)
     {
-        projector = new CurrencyProjector(precisionPolicy);
+        this.precisionPolicy =
+            precisionPolicy ?? PrecisionPolicy.Pdec1Proposed;
+        projector = new CurrencyProjector(this.precisionPolicy);
     }
 
     public MoneyCurrencyProjectionResult Project(
@@ -40,6 +46,14 @@ public sealed class MoneyCurrencyProjector
         IReadOnlyList<MoneyCurrencyProjectionInputLine> ledgerLines,
         CurrencyMetadataSnapshot currencyMetadata)
     {
+        sourceLedger.EnsureValid("sourceLedger");
+
+        PrecisionPolicyCompatibility.EnsureSame(
+            sourceLedger.PrecisionPolicy,
+            precisionPolicy,
+            "sourceLedger",
+            "projector");
+
         EnsureCurrency(
             sourceLedger.Currency,
             currencyMetadata.AlphaCode,
@@ -48,11 +62,20 @@ public sealed class MoneyCurrencyProjector
 
         foreach (var line in ledgerLines)
         {
+            line.LedgerMoney.EnsureValid(
+                line.DestinationId.Value);
+
             EnsureCurrency(
                 line.LedgerMoney.Currency,
                 sourceLedger.Currency,
                 line.DestinationId.Value,
                 "sourceLedger");
+
+            PrecisionPolicyCompatibility.EnsureSame(
+                line.LedgerMoney.PrecisionPolicy,
+                precisionPolicy,
+                line.DestinationId.Value,
+                "projector");
         }
 
         var result = projector.Project(
@@ -71,23 +94,28 @@ public sealed class MoneyCurrencyProjector
                     line.DestinationId,
                     new Money(
                         line.LedgerAmount,
-                        sourceLedger.Currency),
+                        sourceLedger.Currency,
+                        precisionPolicy),
                     new Money(
                         line.ProjectedAmount,
-                        sourceLedger.Currency),
+                        sourceLedger.Currency,
+                        precisionPolicy),
                     new Money(
                         line.ProjectionAdjustment,
-                        sourceLedger.Currency)))
+                        sourceLedger.Currency,
+                        precisionPolicy)))
             .ToArray();
 
         return new MoneyCurrencyProjectionResult(
             sourceLedger,
             new Money(
                 result.Target,
-                sourceLedger.Currency),
+                sourceLedger.Currency,
+                precisionPolicy),
             new Money(
                 result.ProjectionDifference,
-                sourceLedger.Currency),
+                sourceLedger.Currency,
+                precisionPolicy),
             currencyMetadata,
             wrappedLines);
     }
@@ -98,6 +126,20 @@ public sealed class MoneyCurrencyProjector
         string leftName,
         string rightName)
     {
+        if (!left.IsValid || !right.IsValid)
+        {
+            throw new DomainRuleException(
+                new DomainDiagnostic(
+                    "MONEY_CURRENCY_INVALID",
+                    "Money.CurrencyInvalid",
+                    [
+                        new(
+                            "role",
+                            DiagnosticArgumentType.Text,
+                            !left.IsValid ? leftName : rightName)
+                    ]));
+        }
+
         if (left == right)
         {
             return;
