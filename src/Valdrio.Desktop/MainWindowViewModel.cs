@@ -16,6 +16,7 @@ public sealed class MainWindowViewModel : ObservableObject
     private readonly PresentationPreferencesService preferences;
     private readonly PresentationFormatter formatter;
     private readonly T02RoundingExample roundingExample;
+    private readonly TemporalContractExampleService temporalContractExampleService;
     private DecimalEditSession? editSession;
     private SampleState sampleState = SampleState.None;
     private EditState editState = EditState.NotStarted;
@@ -33,7 +34,8 @@ public sealed class MainWindowViewModel : ObservableObject
         PresentationPreferencesService preferences,
         PresentationFormatter formatter,
         T02RoundingExampleService roundingExampleService,
-        CurrencyMetadataExampleService currencyMetadataExampleService)
+        CurrencyMetadataExampleService currencyMetadataExampleService,
+        TemporalContractExampleService temporalContractExampleService)
     {
         this.texts = texts;
         this.preferences = preferences;
@@ -41,6 +43,8 @@ public sealed class MainWindowViewModel : ObservableObject
         roundingExample = roundingExampleService.BuildC07();
         RoundingRows = roundingExample.Rows;
         CurrencyMetadataRows = currencyMetadataExampleService.Build();
+        this.temporalContractExampleService =
+            temporalContractExampleService;
 
         UiLanguageOptions = languages.Published
             .Select(language => language.Tag)
@@ -151,6 +155,9 @@ public sealed class MainWindowViewModel : ObservableObject
     public string LabelMoneyPreview => Text("LabelMoneyPreview");
     public string LabelDatePreview => Text("LabelDatePreview");
     public string LabelInstantPreview => Text("LabelInstantPreview");
+    public string LabelCanonicalBusinessDate => Text("LabelCanonicalBusinessDate");
+    public string LabelCanonicalUtcInstant => Text("LabelCanonicalUtcInstant");
+    public string LabelResolvedLocalInstant => Text("LabelResolvedLocalInstant");
     public string EditTitle => Text("EditTitle");
     public string LabelCapturedCulture => Text("LabelCapturedCulture");
     public string LabelPendingValue => Text("LabelPendingValue");
@@ -229,6 +236,15 @@ public sealed class MainWindowViewModel : ObservableObject
                 CultureInfo.GetCultureInfo(current.FormatCultureTag));
         }
     }
+
+    public string CanonicalBusinessDate =>
+        TemporalExample.BusinessDateIso;
+
+    public string CanonicalUtcInstant =>
+        TemporalExample.UtcInstant;
+
+    public string ResolvedLocalInstant =>
+        TemporalExample.LocalInstant;
 
     public string CapturedEditCulture => editSession?.CapturedCulture.Name ?? "—";
 
@@ -312,6 +328,10 @@ public sealed class MainWindowViewModel : ObservableObject
         PresentationChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    private TemporalContractExample TemporalExample =>
+        temporalContractExampleService.Build(
+            preferences.Current.DisplayTimeZoneId);
+
     private CultureInfo UiCulture =>
         CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag);
 
@@ -381,6 +401,12 @@ public sealed class MainWindowViewModel : ObservableObject
             nameof(LabelMoneyPreview),
             nameof(LabelDatePreview),
             nameof(LabelInstantPreview),
+            nameof(LabelCanonicalBusinessDate),
+            nameof(LabelCanonicalUtcInstant),
+            nameof(LabelResolvedLocalInstant),
+            nameof(CanonicalBusinessDate),
+            nameof(CanonicalUtcInstant),
+            nameof(ResolvedLocalInstant),
             nameof(EditTitle),
             nameof(LabelCapturedCulture),
             nameof(LabelPendingValue),
