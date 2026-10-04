@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Valdrio.Application/Valdrio.Application.csproj" />
+    <ProjectReference Include="../Valdrio.Infrastructure/Valdrio.Infrastructure.csproj" />
+    <ProjectReference Include="../Valdrio.Localization/Valdrio.Localization.csproj" />
+    <ProjectReference Include="../Valdrio.Reporting/Valdrio.Reporting.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="../../samples/t01-smoke.valdrio-dev.json"
+             Link="samples/t01-smoke.valdrio-dev.json"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
