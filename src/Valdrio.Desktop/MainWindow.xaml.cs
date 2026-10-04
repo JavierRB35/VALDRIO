@@ -1,5 +1,6 @@
-using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Valdrio.Desktop;
 
@@ -11,6 +12,53 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContextChanged += OnDataContextChanged;
+    }
+
+    public bool RunKeyboardNavigationSmoke()
+    {
+        UpdateLayout();
+
+        Control[] sequence =
+        [
+            UiLanguageSelector,
+            FormatCultureSelector,
+            TimeZoneSelector,
+            PendingEditBox,
+            StartEditButton,
+            CommitEditButton
+        ];
+
+        if (sequence.Any(control =>
+            !control.IsVisible
+            || !control.IsEnabled
+            || !control.Focusable))
+        {
+            return false;
+        }
+
+        for (var index = 0; index < sequence.Length - 1; index++)
+        {
+            var current = sequence[index];
+            var expectedNext = sequence[index + 1];
+
+            if (!current.Focus() || !current.IsKeyboardFocusWithin)
+            {
+                return false;
+            }
+
+            if (!current.MoveFocus(
+                new TraversalRequest(FocusNavigationDirection.Next)))
+            {
+                return false;
+            }
+
+            if (!expectedNext.IsKeyboardFocusWithin)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
