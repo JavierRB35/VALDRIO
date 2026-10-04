@@ -2,73 +2,212 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="{Binding WindowTitle}"
-        Height="450"
-        Width="760"
-        MinHeight="380"
-        MinWidth="640"
+        Height="760"
+        Width="940"
+        MinHeight="620"
+        MinWidth="760"
         WindowStartupLocation="CenterScreen">
-    <Grid Margin="32">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="20" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="28">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="18" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="14" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="14" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="14" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0"
-                   Text="{Binding AppTitle}"
-                   FontSize="34"
-                   FontWeight="SemiBold" />
+            <TextBlock Grid.Row="0"
+                       Text="{Binding AppTitle}"
+                       FontSize="34"
+                       FontWeight="SemiBold" />
 
-        <TextBlock Grid.Row="1"
-                   Margin="0,6,0,0"
-                   Text="{Binding HeaderSubtitle}"
-                   FontSize="16" />
+            <TextBlock Grid.Row="1"
+                       Margin="0,5,0,0"
+                       Text="{Binding HeaderSubtitle}"
+                       TextWrapping="Wrap"
+                       FontSize="17" />
 
-        <TextBlock Grid.Row="2"
-                   Margin="0,4,0,0"
-                   Text="{Binding SpecificationVersion}" />
+            <TextBlock Grid.Row="2"
+                       Margin="0,3,0,0"
+                       Text="{Binding SpecificationVersion}" />
 
-        <Border Grid.Row="4"
-                BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
-                BorderThickness="1"
-                CornerRadius="6"
-                Padding="20">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="12" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="12" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="12" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+            <GroupBox Grid.Row="4"
+                      Header="{Binding PreferencesTitle}"
+                      Padding="16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="220" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding LabelStatus}" FontWeight="SemiBold" />
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Status}" TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="0" Grid.Column="0"
+                               Margin="0,4,16,0"
+                               Text="{Binding LabelUiLanguage}"
+                               TextWrapping="Wrap" />
+                    <ComboBox Grid.Row="0" Grid.Column="1"
+                              MinWidth="200"
+                              ItemsSource="{Binding UiLanguageOptions}"
+                              SelectedItem="{Binding SelectedUiLanguageTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              TabIndex="0"
+                              AutomationProperties.Name="{Binding LabelUiLanguage}" />
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding LabelSample}" FontWeight="SemiBold" />
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SampleName}" TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="2" Grid.Column="0"
+                               Margin="0,4,16,0"
+                               Text="{Binding LabelFormatCulture}"
+                               TextWrapping="Wrap" />
+                    <ComboBox Grid.Row="2" Grid.Column="1"
+                              MinWidth="200"
+                              ItemsSource="{Binding FormatCultureOptions}"
+                              SelectedItem="{Binding SelectedFormatCultureTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              TabIndex="1"
+                              AutomationProperties.Name="{Binding LabelFormatCulture}" />
 
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="{Binding LabelPurpose}" FontWeight="SemiBold" />
-                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SamplePurpose}" TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="4" Grid.Column="0"
+                               Margin="0,4,16,0"
+                               Text="{Binding LabelTimeZone}"
+                               TextWrapping="Wrap" />
+                    <ComboBox Grid.Row="4" Grid.Column="1"
+                              MinWidth="280"
+                              ItemsSource="{Binding TimeZoneOptions}"
+                              SelectedItem="{Binding SelectedTimeZoneId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              TabIndex="2"
+                              AutomationProperties.Name="{Binding LabelTimeZone}" />
+                </Grid>
+            </GroupBox>
 
-                <TextBlock Grid.Row="6" Grid.Column="0" Text="{Binding LabelSource}" FontWeight="SemiBold" />
-                <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding SourcePath}" TextWrapping="Wrap" />
-            </Grid>
-        </Border>
+            <GroupBox Grid.Row="6"
+                      Header="{Binding PreviewTitle}"
+                      Padding="16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="220" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="8" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="8" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="5"
-                   Margin="0,18,0,0"
-                   Text="{Binding FooterDevelopmentOnly}"
-                   TextWrapping="Wrap"
-                   FontStyle="Italic" />
-    </Grid>
+                    <TextBlock Grid.Row="0" Grid.Column="0"
+                               Margin="0,0,16,0"
+                               Text="{Binding LabelMoneyPreview}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="0" Grid.Column="1"
+                               Text="{Binding PreviewMoney}"
+                               FontFamily="Consolas"
+                               FlowDirection="LeftToRight" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0"
+                               Margin="0,0,16,0"
+                               Text="{Binding LabelDatePreview}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="2" Grid.Column="1"
+                               Text="{Binding PreviewDate}"
+                               FlowDirection="LeftToRight" />
+
+                    <TextBlock Grid.Row="4" Grid.Column="0"
+                               Margin="0,0,16,0"
+                               Text="{Binding LabelInstantPreview}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="4" Grid.Column="1"
+                               Text="{Binding PreviewInstant}"
+                               FlowDirection="LeftToRight" />
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Grid.Row="8"
+                      Header="{Binding EditTitle}"
+                      Padding="16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="220" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="8" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="8" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0"
+                               Margin="0,4,16,0"
+                               Text="{Binding LabelPendingValue}"
+                               TextWrapping="Wrap" />
+                    <TextBox Grid.Row="0" Grid.Column="1"
+                             Text="{Binding PendingEditText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             TabIndex="3"
+                             FlowDirection="LeftToRight"
+                             AutomationProperties.Name="{Binding LabelPendingValue}" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0"
+                               Margin="0,0,16,0"
+                               Text="{Binding LabelCapturedCulture}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="2" Grid.Column="1"
+                               Text="{Binding CapturedEditCulture}"
+                               FlowDirection="LeftToRight" />
+
+                    <TextBlock Grid.Row="4" Grid.Column="0"
+                               Margin="0,0,16,0"
+                               Text="{Binding LabelEditStatus}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="4" Grid.Column="1"
+                               Text="{Binding EditStatus}"
+                               TextWrapping="Wrap" />
+
+                    <WrapPanel Grid.Row="6" Grid.ColumnSpan="2">
+                        <Button Margin="0,0,10,0"
+                                Padding="14,7"
+                                Content="{Binding ActionStartEdit}"
+                                Command="{Binding StartEditCommand}"
+                                TabIndex="4" />
+                        <Button Padding="14,7"
+                                Content="{Binding ActionCommitEdit}"
+                                Command="{Binding CommitEditCommand}"
+                                TabIndex="5" />
+                    </WrapPanel>
+                </Grid>
+            </GroupBox>
+
+            <Border Grid.Row="10"
+                    BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="14">
+                <StackPanel>
+                    <TextBlock Text="{Binding FooterDevelopmentOnly}"
+                               TextWrapping="Wrap"
+                               FontStyle="Italic" />
+                    <TextBlock Margin="0,8,0,0"
+                               Text="{Binding Status}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Margin="0,4,0,0"
+                               Text="{Binding SampleName}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
 </Window>
