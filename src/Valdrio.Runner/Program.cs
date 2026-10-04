@@ -23,6 +23,27 @@ if (args.Contains("--verify-t02-reference", StringComparer.Ordinal))
     return 0;
 }
 
+if (args.Contains("--verify-t02a-currency", StringComparer.Ordinal))
+{
+    var path = Path.Combine(
+        AppContext.BaseDirectory,
+        "reference",
+        "currency-catalog-example.json");
+
+    var result = T02ACurrencyVerifier.Verify(path);
+
+    Console.WriteLine(
+        JsonSerializer.Serialize(
+            new
+            {
+                status = "passed",
+                task = "T02A-sub1",
+                checks = result
+            }));
+
+    return 0;
+}
+
 Console.WriteLine(
     "VALDRIO Runner ready. Economic snapshot execution is not implemented yet.");
 

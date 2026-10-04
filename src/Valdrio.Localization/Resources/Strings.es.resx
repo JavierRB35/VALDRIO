@@ -6,8 +6,8 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="AppTitle" xml:space="preserve"><value>VALDRIO</value></data>
   <data name="WindowTitle" xml:space="preserve"><value>VALDRIO - preferencias de presentación</value></data>
-  <data name="SpecificationVersion" xml:space="preserve"><value>Especificación v0.4 · T02</value></data>
-  <data name="HeaderSubtitle" xml:space="preserve"><value>Presentación internacional y base de precisión/redondeo</value></data>
+  <data name="SpecificationVersion" xml:space="preserve"><value>Especificación v0.4 · T02A · subentrega 1</value></data>
+  <data name="HeaderSubtitle" xml:space="preserve"><value>Presentación internacional, precisión y metadatos monetarios congelados</value></data>
   <data name="PreferencesTitle" xml:space="preserve"><value>Preferencias de presentación</value></data>
   <data name="LabelUiLanguage" xml:space="preserve"><value>Idioma de interfaz</value></data>
   <data name="LabelFormatCulture" xml:space="preserve"><value>Formato regional</value></data>
@@ -30,7 +30,7 @@
   <data name="LabelSample" xml:space="preserve"><value>Ejemplo</value></data>
   <data name="LabelPurpose" xml:space="preserve"><value>Finalidad</value></data>
   <data name="LabelSource" xml:space="preserve"><value>Origen</value></data>
-  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>T02 demuestra precisión y redondeo sin decidir política contable. Las preferencias de presentación siguen siendo independientes.</value></data>
+  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>La subentrega 1 de T02A congela metadatos monetarios y unidades menores. Aún no implementa tipos FX ni política temporal de conversión.</value></data>
   <data name="StatusNoSample" xml:space="preserve"><value>No se ha cargado ningún ejemplo de desarrollo.</value></data>
   <data name="StatusSampleOpened" xml:space="preserve"><value>Ejemplo de desarrollo abierto.</value></data>
   <data name="StatusSampleOpenFailed" xml:space="preserve"><value>No se pudo abrir el ejemplo de desarrollo.</value></data>
@@ -45,4 +45,11 @@
   <data name="LabelRoundingAdjustment" xml:space="preserve"><value>Ajuste de redondeo</value></data>
   <data name="LabelRoundingPosted" xml:space="preserve"><value>Importe adjudicado</value></data>
   <data name="RoundingExplanation" xml:space="preserve"><value>C07 divide un céntimo en tres participaciones matemáticas iguales. El quantum de un céntimo deja una unidad; el ID ordinal estable la adjudica a A. Las líneas adjudicadas suman exactamente {0}.</value></data>
+  <data name="CurrencyMetadataTitle" xml:space="preserve"><value>Metadatos monetarios congelados</value></data>
+  <data name="LabelCurrencyCode" xml:space="preserve"><value>Código ISO</value></data>
+  <data name="LabelNumericCode" xml:space="preserve"><value>Código numérico</value></data>
+  <data name="LabelMinorUnitDigits" xml:space="preserve"><value>Decimales de unidad menor</value></data>
+  <data name="LabelCurrencyQuantum" xml:space="preserve"><value>Quantum de informe</value></data>
+  <data name="LabelCurrencyProjection" xml:space="preserve"><value>Proyección A/B/C</value></data>
+  <data name="CurrencyMetadataExplanation" xml:space="preserve"><value>El catálogo de ejemplo es un fixture de cuatro monedas del paquete de desarrollo, no el catálogo completo del producto. JPY y KWD prueban que el quantum de informe se deriva de metadatos congelados y no de un 0,01 fijo.</value></data>
 </root>

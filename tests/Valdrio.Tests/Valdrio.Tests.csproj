@@ -13,11 +13,15 @@
     <ProjectReference Include="../../src/Valdrio.Domain/Valdrio.Domain.csproj" />
     <ProjectReference Include="../../src/Valdrio.Calculation/Valdrio.Calculation.csproj" />
     <ProjectReference Include="../../src/Valdrio.Application/Valdrio.Application.csproj" />
+    <ProjectReference Include="../../src/Valdrio.Infrastructure/Valdrio.Infrastructure.csproj" />
     <ProjectReference Include="../../src/Valdrio.Localization/Valdrio.Localization.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="../../reference/t02-rounding-cases.json"
              Link="reference/t02-rounding-cases.json"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../reference/currency-catalog-example.json"
+             Link="reference/currency-catalog-example.json"
              CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

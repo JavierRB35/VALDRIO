@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using Valdrio.Application;
+using Valdrio.Infrastructure;
 using Valdrio.Localization;
 
 namespace Valdrio.Desktop;
@@ -39,6 +40,13 @@ public partial class App : System.Windows.Application
 
         var formatter = new PresentationFormatter(new DisplayTimeZoneResolver());
         var roundingExampleService = new T02RoundingExampleService();
+        var currencyCatalog = new JsonCurrencyCatalog(
+            Path.Combine(
+                AppContext.BaseDirectory,
+                "reference",
+                "currency-catalog-example.json"));
+        var currencyMetadataExampleService =
+            new CurrencyMetadataExampleService(currencyCatalog);
 
         var requestedPath = e.Args.FirstOrDefault(argument =>
             !argument.StartsWith("--", StringComparison.Ordinal));
@@ -51,7 +59,8 @@ public partial class App : System.Windows.Application
             languages,
             preferences,
             formatter,
-            roundingExampleService);
+            roundingExampleService,
+            currencyMetadataExampleService);
 
         if (!viewModel.TryLoadDevelopmentSample(samplePath, out var diagnosticCode))
         {

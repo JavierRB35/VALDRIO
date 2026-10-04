@@ -8,17 +8,18 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 - **T01: CERRADA** — solución .NET 10, CI Windows y shell WPF.
 - **T01A: CERRADA** — interfaz internacional y preferencias independientes.
 - **T02: CERRADA** — decimal canónico, unidades/IDs, PDEC-1, BalancedRound y proyección conciliada.
-- CI T02: **32/32 tests**, corpus **5/5**, guard sin `double/float`, publish autocontenido y WPF smoke.
+- **T02A: EN CURSO** — subentrega 1 completada: Money, CurrencyDefinition, catálogo fixture y minor units congelados.
+- CI T02A.1: **39/39 tests**, Runner monetario, publish autocontenido y WPF smoke.
+- JPY se proyecta con quantum 1; KWD con 0,001. No existe un 0,01 fijo.
 - D04-D07 siguen siendo propuestas económicas.
-- Siguiente tarea: **T02A — Money, monedas, fechas canónicas y tipos congelados**.
+- Siguiente subentrega: **T02A.2 — fechas canónicas, IClock y zonas**.
 
 ## Evidencia
 
 - [Estado del proyecto](ESTADO_PROYECTO.md)
 - [Decisiones D01-D12](docs/decisiones/DECISIONES_PENDIENTES.md)
-- [T00](docs/tareas/T00.md)
-- [T01](docs/tareas/T01.md)
-- [T01A](docs/tareas/T01A.md)
+- [T02A](docs/tareas/T02A.md)
+- [Evidencia T02A subentrega 1](docs/evidencias/T02A_SUB1_2026-10-04.md)
 - [T02](docs/tareas/T02.md)
 - [Evidencia T02](docs/evidencias/T02_2026-10-04.md)
 - [Fuentes y huellas](docs/fuentes/FUENTES_DISPONIBLES.md)
@@ -27,10 +28,11 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 
 Todavía no se declara implementado:
 
-- FX/RateSet y catálogo monetario completo;
-- contratos temporales completos de T02A;
+- catálogo monetario completo de producto;
+- fechas canónicas/IClock/horas ambiguas de T02A.2;
+- FX/RateSet/RevalueStudy de T02A.3;
 - SQLite productivo;
 - importación contable;
 - motor económico de repartos posterior.
 
-La internacionalización y la precisión decimal ya forman parte de los fundamentos y deben conservarse en tareas posteriores.
+La internacionalización y la precisión decimal permanecen desacopladas del cálculo y de las preferencias de presentación.

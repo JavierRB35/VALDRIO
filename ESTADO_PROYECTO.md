@@ -18,26 +18,48 @@ El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` está disponible e íntegro.
 - **T01 — CERRADA**: solución .NET 10, CI Windows, Runner, publish autocontenido y shell WPF.
 - **T01A — CERRADA**: internacionalización de presentación desde fundamentos, preferencias independientes y evidencia visual.
 - **T02 — CERRADA**: unidades/IDs, decimal canónico, PDEC-1, BalancedRound, CurrencyProjection y corpus de redondeo.
+- **T02A — EN CURSO**: subentrega 1 de Money/metadatos monetarios completada; fechas y FX pendientes.
 
-## T02 — evidencia
+## T02A.1 — resultado comprobado
 
-Run final de código: `37226867814`  
-Commit: `da2432de10e17a3bc4902a785fd90cea3fea9cd1`
+Implementado:
 
+- `Money` con código ISO y rechazo de suma entre monedas;
+- `CurrencyDefinition` versionada;
+- puerto `ICurrencyCatalog`;
+- adaptador JSON para el fixture monetario del paquete;
+- `CurrencyMetadataSnapshot` congelado;
+- `StudyCurrencyContext` con moneda funcional por estudio;
+- `MoneyCurrencyProjector` con quantum derivado de minor units;
+- materialización WPF de JPY/KWD.
+
+Catálogo de prueba exacto del paquete:
+
+- EUR 978 / 2;
+- USD 840 / 2;
+- JPY 392 / 0;
+- KWD 414 / 3.
+
+El fixture **no** se presenta como catálogo completo de producto.
+
+Evidencia de código e integración:
+
+- run `37228651535`;
+- commit `0ca27458b029157b777c9cd6ba62ff4653a0bdb8`;
 - build: success;
-- **32/32 tests**;
-- guard sin `double/float` en Domain/Calculation: success;
-- Runner T02: **5/5 referencias** C07, C08, C21, C38, C39;
-- publish self-contained: success;
+- **39/39 tests**;
+- guard sin `double/float`: success;
+- Runner T02 de regresión: success;
+- Runner T02A: success;
+- publish autocontenido: success;
 - WPF smoke: success;
-- 4 capturas WPF generadas y revisadas.
+- cuatro capturas WPF generadas y revisadas.
 
-Materialización:
+Runner T02A:
 
-- ejemplo C07 consumido desde Application;
-- ViewModel sin fórmula económica/redondeo;
-- muestra ID, bruto, ajuste de redondeo y adjudicado;
-- presentación ES/EN y región/zona independientes conservadas.
+- JPY quantum 1 → 34/34/33;
+- KWD quantum 0,001 → 0,001/0/0;
+- I13 → `MONEY_CURRENCY_MISMATCH`.
 
 ## Decisiones vigentes
 
@@ -45,25 +67,24 @@ Materialización:
 - D03 pendiente de archivo representativo.
 - D04-D07 propuestas.
 - D08/D09/D12 diferidas.
-- PDEC-1 queda validada técnicamente en T02, sin promover ninguna política económica pendiente.
+- PDEC-1 validada técnicamente.
+- La implementación monetaria no convierte ninguna propuesta económica pendiente en regla aceptada.
 
 ## Límites actuales
 
 No se declara implementado todavía:
 
-- catálogo monetario completo;
-- FX/RateSet;
-- contratos temporales completos de T02A;
+- catálogo monetario completo de producto;
+- T02A.2: fechas canónicas, `IClock` y tratamiento de horas ambiguas/inexistentes;
+- T02A.3: RateSet, C33-C37, I14 y revalorización explícita;
 - SQLite productivo;
 - importación contable;
 - motor económico de repartos posterior.
 
 ## Continuidad
 
-Primera tarea pendiente cuyas dependencias están verificadas:
+Primera subentrega pendiente cuyas dependencias están verificadas:
 
-**T02A — Money, monedas, fechas canónicas y tipos congelados**.
+**T02A.2 — DateOnly ISO, UTC, IClock y TimeZoneResolver**.
 
-Dependencias T02 y T01A: satisfechas.
-
-T02A deberá empezar por su primera subentrega: Money/CurrencyDefinition versionada, catálogo monetario y snapshot de minor units, preservando la separación empresa → moneda predeterminada / estudio → moneda funcional.
+Debe cubrir I08 e I09 y no convertir fechas de negocio en instantes.

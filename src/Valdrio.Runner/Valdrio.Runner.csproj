@@ -14,5 +14,8 @@
     <Content Include="../../reference/t02-rounding-cases.json"
              Link="reference/t02-rounding-cases.json"
              CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../reference/currency-catalog-example.json"
+             Link="reference/currency-catalog-example.json"
+             CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

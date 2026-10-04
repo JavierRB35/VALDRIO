@@ -8,6 +8,7 @@ on:
       - "t01/**"
       - "t01a/**"
       - "t02/**"
+      - "t02a/**"
   pull_request:
 
 permissions:
@@ -60,6 +61,10 @@ jobs:
       - name: Runner T02 reference corpus
         shell: pwsh
         run: dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --verify-t02-reference
+
+      - name: Runner T02A currency metadata
+        shell: pwsh
+        run: dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --verify-t02a-currency
 
       - name: Publish self-contained Windows x64 development artifact
         shell: pwsh

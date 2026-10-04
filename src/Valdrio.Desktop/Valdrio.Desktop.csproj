@@ -18,5 +18,9 @@
              Link="samples/t01-smoke.valdrio-dev.json"
              CopyToOutputDirectory="PreserveNewest"
              CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../../reference/currency-catalog-example.json"
+             Link="reference/currency-catalog-example.json"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
