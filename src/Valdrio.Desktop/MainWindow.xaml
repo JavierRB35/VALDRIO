@@ -7,7 +7,8 @@
         MinHeight="620"
         MinWidth="760"
         WindowStartupLocation="CenterScreen">
-    <ScrollViewer VerticalScrollBarVisibility="Auto"
+    <ScrollViewer x:Name="RootScrollViewer"
+                  VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled">
         <Grid Margin="28">
             <Grid.RowDefinitions>
@@ -15,6 +16,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="18" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="14" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="14" />
                 <RowDefinition Height="Auto" />
@@ -59,7 +62,9 @@
                                Margin="0,4,16,0"
                                Text="{Binding LabelUiLanguage}"
                                TextWrapping="Wrap" />
-                    <ComboBox x:Name="UiLanguageSelector" Grid.Row="0" Grid.Column="1"
+                    <ComboBox x:Name="UiLanguageSelector"
+                              Grid.Row="0"
+                              Grid.Column="1"
                               MinWidth="200"
                               ItemsSource="{Binding UiLanguageOptions}"
                               SelectedItem="{Binding SelectedUiLanguageTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -70,7 +75,9 @@
                                Margin="0,4,16,0"
                                Text="{Binding LabelFormatCulture}"
                                TextWrapping="Wrap" />
-                    <ComboBox x:Name="FormatCultureSelector" Grid.Row="2" Grid.Column="1"
+                    <ComboBox x:Name="FormatCultureSelector"
+                              Grid.Row="2"
+                              Grid.Column="1"
                               MinWidth="200"
                               ItemsSource="{Binding FormatCultureOptions}"
                               SelectedItem="{Binding SelectedFormatCultureTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -81,7 +88,9 @@
                                Margin="0,4,16,0"
                                Text="{Binding LabelTimeZone}"
                                TextWrapping="Wrap" />
-                    <ComboBox x:Name="TimeZoneSelector" Grid.Row="4" Grid.Column="1"
+                    <ComboBox x:Name="TimeZoneSelector"
+                              Grid.Row="4"
+                              Grid.Column="1"
                               MinWidth="280"
                               ItemsSource="{Binding TimeZoneOptions}"
                               SelectedItem="{Binding SelectedTimeZoneId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -133,7 +142,101 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="8"
+            <GroupBox x:Name="T02RoundingGroup"
+                      Grid.Row="8"
+                      Header="{Binding RoundingTitle}"
+                      Padding="16">
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="130" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="130" />
+                            <ColumnDefinition Width="130" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding LabelRoundingReference}"
+                                   FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding RoundingReferenceCase}"
+                                   FlowDirection="LeftToRight" />
+                        <TextBlock Grid.Column="2"
+                                   Text="{Binding LabelRoundingSource}"
+                                   FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="3"
+                                   Text="{Binding RoundingSourceTotal}"
+                                   FlowDirection="LeftToRight"
+                                   FontFamily="Consolas" />
+                        <TextBlock Grid.Column="4"
+                                   Text="{Binding LabelRoundingQuantum}"
+                                   FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="5"
+                                   Text="{Binding RoundingQuantum}"
+                                   FlowDirection="LeftToRight"
+                                   FontFamily="Consolas" />
+                    </Grid>
+
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="70" />
+                            <ColumnDefinition Width="280" />
+                            <ColumnDefinition Width="280" />
+                            <ColumnDefinition Width="140" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding LabelRoundingId}"
+                                   FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding LabelRoundingRaw}"
+                                   FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="2"
+                                   Text="{Binding LabelRoundingAdjustment}"
+                                   FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="3"
+                                   Text="{Binding LabelRoundingPosted}"
+                                   FontWeight="SemiBold" />
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding RoundingRows}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="70" />
+                                        <ColumnDefinition Width="280" />
+                                        <ColumnDefinition Width="280" />
+                                        <ColumnDefinition Width="140" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding DestinationId}"
+                                               FlowDirection="LeftToRight" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding RawAmount}"
+                                               FontFamily="Consolas"
+                                               FlowDirection="LeftToRight" />
+                                    <TextBlock Grid.Column="2"
+                                               Text="{Binding RoundingAdjustment}"
+                                               FontFamily="Consolas"
+                                               FlowDirection="LeftToRight" />
+                                    <TextBlock Grid.Column="3"
+                                               Text="{Binding PostedAmount}"
+                                               FontFamily="Consolas"
+                                               FlowDirection="LeftToRight" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Margin="0,10,0,0"
+                               Text="{Binding RoundingExplanation}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Grid.Row="10"
                       Header="{Binding EditTitle}"
                       Padding="16">
                 <Grid>
@@ -155,7 +258,9 @@
                                Margin="0,4,16,0"
                                Text="{Binding LabelPendingValue}"
                                TextWrapping="Wrap" />
-                    <TextBox x:Name="PendingEditBox" Grid.Row="0" Grid.Column="1"
+                    <TextBox x:Name="PendingEditBox"
+                             Grid.Row="0"
+                             Grid.Column="1"
                              Text="{Binding PendingEditText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              TabIndex="3"
                              FlowDirection="LeftToRight"
@@ -178,12 +283,14 @@
                                TextWrapping="Wrap" />
 
                     <WrapPanel Grid.Row="6" Grid.ColumnSpan="2">
-                        <Button x:Name="StartEditButton" Margin="0,0,10,0"
+                        <Button x:Name="StartEditButton"
+                                Margin="0,0,10,0"
                                 Padding="14,7"
                                 Content="{Binding ActionStartEdit}"
                                 Command="{Binding StartEditCommand}"
                                 TabIndex="4" />
-                        <Button x:Name="CommitEditButton" Padding="14,7"
+                        <Button x:Name="CommitEditButton"
+                                Padding="14,7"
                                 Content="{Binding ActionCommitEdit}"
                                 Command="{Binding CommitEditCommand}"
                                 TabIndex="5" />
@@ -191,7 +298,7 @@
                 </Grid>
             </GroupBox>
 
-            <Border Grid.Row="10"
+            <Border Grid.Row="12"
                     BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
                     BorderThickness="1"
                     CornerRadius="6"
