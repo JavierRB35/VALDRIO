@@ -233,6 +233,76 @@
                     <TextBlock Margin="0,10,0,0"
                                Text="{Binding RoundingExplanation}"
                                TextWrapping="Wrap" />
+
+                    <GroupBox Margin="0,14,0,0"
+                              Header="{Binding CurrencyMetadataTitle}"
+                              Padding="12">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="160" />
+                                    <ColumnDefinition Width="140" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Text="{Binding LabelCurrencyCode}"
+                                           FontWeight="SemiBold" />
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding LabelNumericCode}"
+                                           FontWeight="SemiBold" />
+                                <TextBlock Grid.Column="2"
+                                           Text="{Binding LabelMinorUnitDigits}"
+                                           FontWeight="SemiBold" />
+                                <TextBlock Grid.Column="3"
+                                           Text="{Binding LabelCurrencyQuantum}"
+                                           FontWeight="SemiBold" />
+                                <TextBlock Grid.Column="4"
+                                           Text="{Binding LabelCurrencyProjection}"
+                                           FontWeight="SemiBold" />
+                            </Grid>
+
+                            <ItemsControl ItemsSource="{Binding CurrencyMetadataRows}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="90" />
+                                                <ColumnDefinition Width="120" />
+                                                <ColumnDefinition Width="160" />
+                                                <ColumnDefinition Width="140" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0"
+                                                       Text="{Binding AlphaCode}"
+                                                       FontFamily="Consolas"
+                                                       FlowDirection="LeftToRight" />
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding NumericCode}"
+                                                       FontFamily="Consolas"
+                                                       FlowDirection="LeftToRight" />
+                                            <TextBlock Grid.Column="2"
+                                                       Text="{Binding MinorUnitDigits}"
+                                                       FlowDirection="LeftToRight" />
+                                            <TextBlock Grid.Column="3"
+                                                       Text="{Binding Quantum}"
+                                                       FontFamily="Consolas"
+                                                       FlowDirection="LeftToRight" />
+                                            <TextBlock Grid.Column="4"
+                                                       Text="{Binding ProjectedDistribution}"
+                                                       FontFamily="Consolas"
+                                                       FlowDirection="LeftToRight" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <TextBlock Margin="0,8,0,0"
+                                       Text="{Binding CurrencyMetadataExplanation}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </GroupBox>
                 </StackPanel>
             </GroupBox>
 
