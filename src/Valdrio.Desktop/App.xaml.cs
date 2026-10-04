@@ -12,11 +12,30 @@ public partial class App : System.Windows.Application
     {
         base.OnStartup(e);
 
+        var captureDirectory = ReadOption(e.Args, "--capture-dir=");
         var languages = new LanguageCatalog();
         var texts = new UiTextCatalog(new TraceLocalizationFallbackSink());
+
+        var store = new JsonUserPresentationPreferencesStore(
+            Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "VALDRIO",
+                "presentation-preferences.json"));
+
+        var baseline = LoadUserPreferences(
+            store,
+            languages,
+            allowStoredPreferences: captureDirectory is null);
+
         var preferences = new PresentationPreferencesService(
             languages,
-            BuildInitialPreferences(e.Args));
+            BuildInitialPreferences(e.Args, baseline));
+
+        if (captureDirectory is null)
+        {
+            preferences.Changed += (_, args) => store.Save(args.Current);
+        }
+
         var formatter = new PresentationFormatter(new DisplayTimeZoneResolver());
 
         var requestedPath = e.Args.FirstOrDefault(argument =>
@@ -55,7 +74,6 @@ public partial class App : System.Windows.Application
         MainWindow = window;
         window.Show();
 
-        var captureDirectory = ReadOption(e.Args, "--capture-dir=");
         if (captureDirectory is not null)
         {
             Dispatcher.BeginInvoke(
@@ -68,17 +86,39 @@ public partial class App : System.Windows.Application
         }
     }
 
-    private static UserPresentationPreferences BuildInitialPreferences(string[] args)
+    private static UserPresentationPreferences LoadUserPreferences(
+        JsonUserPresentationPreferencesStore store,
+        LanguageCatalog languages,
+        bool allowStoredPreferences)
     {
-        var defaults = UserPresentationPreferences.Default;
-
-        return defaults with
+        if (!allowStoredPreferences
+            || !store.TryLoad(out var loaded)
+            || loaded is null)
         {
-            UiLanguageTag = ReadOption(args, "--ui=") ?? defaults.UiLanguageTag,
-            FormatCultureTag = ReadOption(args, "--format=") ?? defaults.FormatCultureTag,
-            DisplayTimeZoneId = ReadOption(args, "--zone=") ?? defaults.DisplayTimeZoneId
-        };
+            return UserPresentationPreferences.Default;
+        }
+
+        try
+        {
+            languages.GetRequired(loaded.UiLanguageTag);
+            _ = CultureInfo.GetCultureInfo(loaded.FormatCultureTag);
+            return loaded;
+        }
+        catch (ArgumentException)
+        {
+            return UserPresentationPreferences.Default;
+        }
     }
+
+    private static UserPresentationPreferences BuildInitialPreferences(
+        string[] args,
+        UserPresentationPreferences baseline) =>
+        baseline with
+        {
+            UiLanguageTag = ReadOption(args, "--ui=") ?? baseline.UiLanguageTag,
+            FormatCultureTag = ReadOption(args, "--format=") ?? baseline.FormatCultureTag,
+            DisplayTimeZoneId = ReadOption(args, "--zone=") ?? baseline.DisplayTimeZoneId
+        };
 
     private static string? ReadOption(IEnumerable<string> args, string prefix)
     {
