@@ -205,7 +205,6 @@ public sealed class MainWindowViewModel : ObservableObject
     {
         get
         {
-            var culture = UiCulture;
             return editState switch
             {
                 EditState.NotStarted => Text("EditNotStarted"),
