@@ -6,29 +6,31 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 
 - **T00: CERRADA** — alcance confirmado; D01/D02 aceptadas.
 - **T01: CERRADA** — solución .NET 10, CI Windows y shell WPF.
-- **T01A: CERRADA** — interfaz inglés/español, región y zona independientes, preferencias por usuario, edición con cultura capturada, pseudotraducción/RTL y evidencia visual.
-- CI T01A: **16/16 tests**, Runner, publish win-x64 autocontenido y smoke WPF.
-- Las propuestas D04-D07 siguen siendo propuestas.
-- La siguiente tarea por dependencias es **T02 — Unidades, decimal, política y redondeo**.
+- **T01A: CERRADA** — interfaz internacional y preferencias independientes.
+- **T02: CERRADA** — decimal canónico, unidades/IDs, PDEC-1, BalancedRound y proyección conciliada.
+- CI T02: **32/32 tests**, corpus **5/5**, guard sin `double/float`, publish autocontenido y WPF smoke.
+- D04-D07 siguen siendo propuestas económicas.
+- Siguiente tarea: **T02A — Money, monedas, fechas canónicas y tipos congelados**.
 
 ## Evidencia
 
 - [Estado del proyecto](ESTADO_PROYECTO.md)
-- [T00](docs/tareas/T00.md)
-- [Aceptación T00](docs/evidencias/T00_ACEPTACION_2026-10-04.md)
 - [Decisiones D01-D12](docs/decisiones/DECISIONES_PENDIENTES.md)
+- [T00](docs/tareas/T00.md)
 - [T01](docs/tareas/T01.md)
 - [T01A](docs/tareas/T01A.md)
-- [Evidencia T01A](docs/evidencias/T01A_2026-10-04.md)
+- [T02](docs/tareas/T02.md)
+- [Evidencia T02](docs/evidencias/T02_2026-10-04.md)
 - [Fuentes y huellas](docs/fuentes/FUENTES_DISPONIBLES.md)
 
-## Límite actual
+## Límites actuales
 
 Todavía no se declara implementado:
 
-- motor económico;
-- Money/FX;
+- FX/RateSet y catálogo monetario completo;
+- contratos temporales completos de T02A;
 - SQLite productivo;
-- importación contable.
+- importación contable;
+- motor económico de repartos posterior.
 
-La presentación internacional ya está en los fundamentos y las tareas posteriores deben conservarla.
+La internacionalización y la precisión decimal ya forman parte de los fundamentos y deben conservarse en tareas posteriores.
