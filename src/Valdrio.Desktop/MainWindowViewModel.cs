@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Valdrio.Application;
 using Valdrio.Localization;
 
 namespace Valdrio.Desktop;
@@ -14,6 +15,7 @@ public sealed class MainWindowViewModel : ObservableObject
     private readonly UiTextCatalog texts;
     private readonly PresentationPreferencesService preferences;
     private readonly PresentationFormatter formatter;
+    private readonly T02RoundingExample roundingExample;
     private DecimalEditSession? editSession;
     private SampleState sampleState = SampleState.None;
     private EditState editState = EditState.NotStarted;
@@ -29,11 +31,14 @@ public sealed class MainWindowViewModel : ObservableObject
         UiTextCatalog texts,
         LanguageCatalog languages,
         PresentationPreferencesService preferences,
-        PresentationFormatter formatter)
+        PresentationFormatter formatter,
+        T02RoundingExampleService roundingExampleService)
     {
         this.texts = texts;
         this.preferences = preferences;
         this.formatter = formatter;
+        roundingExample = roundingExampleService.BuildC07();
+        RoundingRows = roundingExample.Rows;
 
         UiLanguageOptions = languages.Published
             .Select(language => language.Tag)
@@ -57,6 +62,7 @@ public sealed class MainWindowViewModel : ObservableObject
     public IReadOnlyList<string> UiLanguageOptions { get; }
     public IReadOnlyList<string> FormatCultureOptions { get; }
     public IReadOnlyList<string> TimeZoneOptions { get; }
+    public IReadOnlyList<T02RoundingExampleRow> RoundingRows { get; }
 
     public IRelayCommand StartEditCommand { get; }
     public IRelayCommand CommitEditCommand { get; }
@@ -153,6 +159,20 @@ public sealed class MainWindowViewModel : ObservableObject
     public string LabelPurpose => Text("LabelPurpose");
     public string LabelSource => Text("LabelSource");
     public string FooterDevelopmentOnly => Text("FooterDevelopmentOnly");
+    public string RoundingTitle => Text("RoundingTitle");
+    public string LabelRoundingReference => Text("LabelRoundingReference");
+    public string LabelRoundingSource => Text("LabelRoundingSource");
+    public string LabelRoundingQuantum => Text("LabelRoundingQuantum");
+    public string LabelRoundingId => Text("LabelRoundingId");
+    public string LabelRoundingRaw => Text("LabelRoundingRaw");
+    public string LabelRoundingAdjustment => Text("LabelRoundingAdjustment");
+    public string LabelRoundingPosted => Text("LabelRoundingPosted");
+    public string RoundingReferenceCase => roundingExample.ReferenceCase;
+    public string RoundingSourceTotal => roundingExample.SourceTotal;
+    public string RoundingQuantum => roundingExample.Quantum;
+    public string RoundingPostedTotal => roundingExample.PostedTotal;
+    public string RoundingExplanation =>
+        FormatText("RoundingExplanation", roundingExample.PostedTotal);
 
     public string Status => Text(sampleState switch
     {
@@ -361,6 +381,15 @@ public sealed class MainWindowViewModel : ObservableObject
             nameof(LabelPurpose),
             nameof(LabelSource),
             nameof(FooterDevelopmentOnly),
+            nameof(RoundingTitle),
+            nameof(LabelRoundingReference),
+            nameof(LabelRoundingSource),
+            nameof(LabelRoundingQuantum),
+            nameof(LabelRoundingId),
+            nameof(LabelRoundingRaw),
+            nameof(LabelRoundingAdjustment),
+            nameof(LabelRoundingPosted),
+            nameof(RoundingExplanation),
             nameof(Status),
             nameof(PreviewMoney),
             nameof(PreviewDate),
