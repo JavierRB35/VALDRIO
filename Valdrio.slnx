@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Valdrio.Domain/Valdrio.Domain.csproj" />
+    <Project Path="src/Valdrio.Calculation/Valdrio.Calculation.csproj" />
+    <Project Path="src/Valdrio.Application/Valdrio.Application.csproj" />
+    <Project Path="src/Valdrio.Infrastructure/Valdrio.Infrastructure.csproj" />
+    <Project Path="src/Valdrio.Localization/Valdrio.Localization.csproj" />
+    <Project Path="src/Valdrio.Reporting/Valdrio.Reporting.csproj" />
+    <Project Path="src/Valdrio.Desktop/Valdrio.Desktop.csproj" />
+    <Project Path="src/Valdrio.Runner/Valdrio.Runner.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Valdrio.Tests/Valdrio.Tests.csproj" />
+  </Folder>
+</Solution>
