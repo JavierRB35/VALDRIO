@@ -6,8 +6,8 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="AppTitle" xml:space="preserve"><value>VALDRIO</value></data>
   <data name="WindowTitle" xml:space="preserve"><value>VALDRIO - presentation preferences</value></data>
-  <data name="SpecificationVersion" xml:space="preserve"><value>Specification v0.4 · T01A</value></data>
-  <data name="HeaderSubtitle" xml:space="preserve"><value>Bilingual interface and independent preferences</value></data>
+  <data name="SpecificationVersion" xml:space="preserve"><value>Specification v0.4 · T02</value></data>
+  <data name="HeaderSubtitle" xml:space="preserve"><value>International presentation and precision/rounding foundation</value></data>
   <data name="PreferencesTitle" xml:space="preserve"><value>Presentation preferences</value></data>
   <data name="LabelUiLanguage" xml:space="preserve"><value>Interface language</value></data>
   <data name="LabelFormatCulture" xml:space="preserve"><value>Regional format</value></data>
@@ -30,10 +30,19 @@
   <data name="LabelSample" xml:space="preserve"><value>Sample</value></data>
   <data name="LabelPurpose" xml:space="preserve"><value>Purpose</value></data>
   <data name="LabelSource" xml:space="preserve"><value>Source</value></data>
-  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>T01A changes presentation only. It does not change functional currency, ledger or economic policy.</value></data>
+  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>T02 demonstrates precision and rounding without deciding accounting policy. Presentation preferences remain independent.</value></data>
   <data name="StatusNoSample" xml:space="preserve"><value>No development sample loaded.</value></data>
   <data name="StatusSampleOpened" xml:space="preserve"><value>Development sample opened.</value></data>
   <data name="StatusSampleOpenFailed" xml:space="preserve"><value>Development sample could not be opened.</value></data>
   <data name="ErrorSampleOpenTitle" xml:space="preserve"><value>VALDRIO development shell</value></data>
   <data name="ErrorSampleOpenBody" xml:space="preserve"><value>The development sample could not be opened. Diagnostic: {0}</value></data>
+  <data name="RoundingTitle" xml:space="preserve"><value>T02 rounding example</value></data>
+  <data name="LabelRoundingReference" xml:space="preserve"><value>Reference case</value></data>
+  <data name="LabelRoundingSource" xml:space="preserve"><value>Source total</value></data>
+  <data name="LabelRoundingQuantum" xml:space="preserve"><value>Quantum</value></data>
+  <data name="LabelRoundingId" xml:space="preserve"><value>ID</value></data>
+  <data name="LabelRoundingRaw" xml:space="preserve"><value>Raw amount</value></data>
+  <data name="LabelRoundingAdjustment" xml:space="preserve"><value>Rounding adjustment</value></data>
+  <data name="LabelRoundingPosted" xml:space="preserve"><value>Posted amount</value></data>
+  <data name="RoundingExplanation" xml:space="preserve"><value>C07 splits one cent into three equal mathematical shares. The one-cent quantum leaves one unit; stable ordinal ID awards it to A. Posted lines sum exactly {0}.</value></data>
 </root>

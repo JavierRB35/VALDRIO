@@ -61,6 +61,13 @@ public partial class MainWindow : Window
         return true;
     }
 
+    public void ResetScrollForCapture()
+    {
+        Keyboard.ClearFocus();
+        RootScrollViewer.ScrollToTop();
+        UpdateLayout();
+    }
+
     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
         if (viewModel is not null)

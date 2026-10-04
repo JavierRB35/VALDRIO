@@ -1,0 +1,80 @@
+{
+  "schema_version": "1",
+  "document_version": "0.4",
+  "origin": "Subset exacto de casos_metodologicos.json del paquete VALDRIO v0.4 para T02",
+  "numeric_encoding": "decimal como cadena; sin números flotantes para importes",
+  "cases": [
+    {
+      "id": "C07",
+      "family": "rounding",
+      "title": "Céntimo en tres partes iguales",
+      "input": {
+        "amount": "0.01",
+        "weights": { "A": "1", "B": "1", "C": "1" },
+        "quantum": "0.01"
+      },
+      "expected": {
+        "posted": { "A": "0.01", "B": "0", "C": "0" },
+        "total": "0.01"
+      }
+    },
+    {
+      "id": "C08",
+      "family": "rounding",
+      "title": "Céntimo negativo con simetría de signo",
+      "input": {
+        "amount": "-0.01",
+        "weights": { "A": "1", "B": "1", "C": "1" },
+        "quantum": "0.01"
+      },
+      "expected": {
+        "posted": { "A": "-0.01", "B": "0", "C": "0" },
+        "total": "-0.01"
+      }
+    },
+    {
+      "id": "C21",
+      "family": "signed_rounding",
+      "title": "Residuo con una variación de capacidad negativa",
+      "input": {
+        "source": "1",
+        "raw": { "O1": "0.6033", "O2": "0.6033", "VAR": "-0.2066" },
+        "quantum": "0.01"
+      },
+      "expected": {
+        "posted": { "O1": "0.60", "O2": "0.60", "VAR": "-0.20" },
+        "total": "1"
+      }
+    },
+    {
+      "id": "C38",
+      "family": "rounding",
+      "title": "JPY 101 en tercios con quantum de una unidad",
+      "input": {
+        "amount": "101",
+        "weights": { "A": "1", "B": "1", "C": "1" },
+        "quantum": "1",
+        "currency": "JPY"
+      },
+      "expected": {
+        "posted": { "A": "34", "B": "34", "C": "33" },
+        "total": "101"
+      }
+    },
+    {
+      "id": "C39",
+      "family": "rounding",
+      "title": "KWD una unidad menor en tercios",
+      "input": {
+        "amount": "0.001",
+        "weights": { "A": "1", "B": "1", "C": "1" },
+        "quantum": "0.001",
+        "currency": "KWD"
+      },
+      "expected": {
+        "posted": { "A": "0.001", "B": "0", "C": "0" },
+        "total": "0.001"
+      }
+    }
+  ]
+}

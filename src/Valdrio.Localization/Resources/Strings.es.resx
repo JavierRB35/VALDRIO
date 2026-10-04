@@ -6,8 +6,8 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="AppTitle" xml:space="preserve"><value>VALDRIO</value></data>
   <data name="WindowTitle" xml:space="preserve"><value>VALDRIO - preferencias de presentación</value></data>
-  <data name="SpecificationVersion" xml:space="preserve"><value>Especificación v0.4 · T01A</value></data>
-  <data name="HeaderSubtitle" xml:space="preserve"><value>Interfaz bilingüe y preferencias independientes</value></data>
+  <data name="SpecificationVersion" xml:space="preserve"><value>Especificación v0.4 · T02</value></data>
+  <data name="HeaderSubtitle" xml:space="preserve"><value>Presentación internacional y base de precisión/redondeo</value></data>
   <data name="PreferencesTitle" xml:space="preserve"><value>Preferencias de presentación</value></data>
   <data name="LabelUiLanguage" xml:space="preserve"><value>Idioma de interfaz</value></data>
   <data name="LabelFormatCulture" xml:space="preserve"><value>Formato regional</value></data>
@@ -30,10 +30,19 @@
   <data name="LabelSample" xml:space="preserve"><value>Ejemplo</value></data>
   <data name="LabelPurpose" xml:space="preserve"><value>Finalidad</value></data>
   <data name="LabelSource" xml:space="preserve"><value>Origen</value></data>
-  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>T01A solo cambia la presentación. No modifica moneda funcional, ledger ni política económica.</value></data>
+  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>T02 demuestra precisión y redondeo sin decidir política contable. Las preferencias de presentación siguen siendo independientes.</value></data>
   <data name="StatusNoSample" xml:space="preserve"><value>No se ha cargado ningún ejemplo de desarrollo.</value></data>
   <data name="StatusSampleOpened" xml:space="preserve"><value>Ejemplo de desarrollo abierto.</value></data>
   <data name="StatusSampleOpenFailed" xml:space="preserve"><value>No se pudo abrir el ejemplo de desarrollo.</value></data>
   <data name="ErrorSampleOpenTitle" xml:space="preserve"><value>Entorno de desarrollo de VALDRIO</value></data>
   <data name="ErrorSampleOpenBody" xml:space="preserve"><value>No se pudo abrir el ejemplo de desarrollo. Diagnóstico: {0}</value></data>
+  <data name="RoundingTitle" xml:space="preserve"><value>Ejemplo de redondeo T02</value></data>
+  <data name="LabelRoundingReference" xml:space="preserve"><value>Caso de referencia</value></data>
+  <data name="LabelRoundingSource" xml:space="preserve"><value>Total de origen</value></data>
+  <data name="LabelRoundingQuantum" xml:space="preserve"><value>Quantum</value></data>
+  <data name="LabelRoundingId" xml:space="preserve"><value>ID</value></data>
+  <data name="LabelRoundingRaw" xml:space="preserve"><value>Importe bruto</value></data>
+  <data name="LabelRoundingAdjustment" xml:space="preserve"><value>Ajuste de redondeo</value></data>
+  <data name="LabelRoundingPosted" xml:space="preserve"><value>Importe adjudicado</value></data>
+  <data name="RoundingExplanation" xml:space="preserve"><value>C07 divide un céntimo en tres participaciones matemáticas iguales. El quantum de un céntimo deja una unidad; el ID ordinal estable la adjudica a A. Las líneas adjudicadas suman exactamente {0}.</value></data>
 </root>

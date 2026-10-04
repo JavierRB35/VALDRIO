@@ -15,4 +15,9 @@
     <ProjectReference Include="../../src/Valdrio.Application/Valdrio.Application.csproj" />
     <ProjectReference Include="../../src/Valdrio.Localization/Valdrio.Localization.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="../../reference/t02-rounding-cases.json"
+             Link="reference/t02-rounding-cases.json"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
