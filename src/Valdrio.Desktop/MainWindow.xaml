@@ -113,6 +113,12 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="8" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="8" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="8" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="8" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.Column="0"
@@ -138,6 +144,33 @@
                                TextWrapping="Wrap" />
                     <TextBlock Grid.Row="4" Grid.Column="1"
                                Text="{Binding PreviewInstant}"
+                               FlowDirection="LeftToRight" />
+
+                    <TextBlock Grid.Row="6" Grid.Column="0"
+                               Margin="0,0,16,0"
+                               Text="{Binding LabelCanonicalBusinessDate}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="6" Grid.Column="1"
+                               Text="{Binding CanonicalBusinessDate}"
+                               FontFamily="Consolas"
+                               FlowDirection="LeftToRight" />
+
+                    <TextBlock Grid.Row="8" Grid.Column="0"
+                               Margin="0,0,16,0"
+                               Text="{Binding LabelCanonicalUtcInstant}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="8" Grid.Column="1"
+                               Text="{Binding CanonicalUtcInstant}"
+                               FontFamily="Consolas"
+                               FlowDirection="LeftToRight" />
+
+                    <TextBlock Grid.Row="10" Grid.Column="0"
+                               Margin="0,0,16,0"
+                               Text="{Binding LabelResolvedLocalInstant}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="10" Grid.Column="1"
+                               Text="{Binding ResolvedLocalInstant}"
+                               FontFamily="Consolas"
                                FlowDirection="LeftToRight" />
                 </Grid>
             </GroupBox>
