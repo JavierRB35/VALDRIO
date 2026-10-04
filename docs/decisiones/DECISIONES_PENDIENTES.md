@@ -67,3 +67,19 @@ Antes de convertir D04-D07 en reglas definitivas, la tarea correspondiente debe 
 4. alternativas razonables y sus consecuencias.
 
 No se altera un resultado esperado para facilitar la implementación.
+
+## Política técnica de precisión — resultado de T02
+
+T02 ha materializado y probado la política técnica versionada `PDEC-1-proposed` descrita por CM04:
+
+- importes/posteados: escala máxima 8;
+- cantidades: escala máxima 12;
+- porcentajes: escala máxima 18;
+- magnitud inicial máxima: 1e12;
+- corrección numérica automática máxima: 1e-8;
+- `BalancedRound` con Floor, mayores restos y desempate ordinal estable;
+- `CurrencyProjection` separada del ledger y con `MidpointToEven`.
+
+Estado: **VALIDADA TÉCNICAMENTE EN T02** mediante tests/corpus, no promovida a decisión económica D04-D07.
+
+Cambiar estos parámetros en el futuro requiere una nueva versión de política, actualización de referencias/pruebas y evidencia de migración/compatibilidad; no se cambiarán silenciosamente para hacer pasar un caso.
