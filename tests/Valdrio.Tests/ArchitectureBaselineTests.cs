@@ -1,5 +1,6 @@
 using Valdrio.Calculation;
 using Valdrio.Domain;
+using Valdrio.Localization;
 
 namespace Valdrio.Tests;
 
@@ -17,12 +18,14 @@ public sealed class ArchitectureBaselineTests
         Assert.IsFalse(references.Any(name =>
             name.StartsWith("Valdrio.Calculation", StringComparison.Ordinal)
             || name.StartsWith("Valdrio.Infrastructure", StringComparison.Ordinal)
+            || name.StartsWith("Valdrio.Localization", StringComparison.Ordinal)
+            || name.StartsWith("Valdrio.Desktop", StringComparison.Ordinal)
             || name.StartsWith("PresentationFramework", StringComparison.Ordinal)
             || name.StartsWith("Microsoft.EntityFrameworkCore", StringComparison.Ordinal)));
     }
 
     [TestMethod]
-    public void Calculation_DoesNotReferenceUiInfrastructureOrEntityFramework()
+    public void Calculation_DoesNotReferenceUiInfrastructureLocalizationOrEntityFramework()
     {
         var references = typeof(CalculationAssemblyMarker).Assembly
             .GetReferencedAssemblies()
@@ -33,6 +36,22 @@ public sealed class ArchitectureBaselineTests
             name.StartsWith("Valdrio.Infrastructure", StringComparison.Ordinal)
             || name.StartsWith("Valdrio.Desktop", StringComparison.Ordinal)
             || name.StartsWith("Valdrio.Localization", StringComparison.Ordinal)
+            || name.StartsWith("PresentationFramework", StringComparison.Ordinal)
+            || name.StartsWith("Microsoft.EntityFrameworkCore", StringComparison.Ordinal)));
+    }
+
+    [TestMethod]
+    public void Localization_DoesNotReferenceCalculationWpfOrEntityFramework()
+    {
+        var references = typeof(UiTextCatalog).Assembly
+            .GetReferencedAssemblies()
+            .Select(reference => reference.Name ?? string.Empty)
+            .ToArray();
+
+        Assert.IsFalse(references.Any(name =>
+            name.StartsWith("Valdrio.Calculation", StringComparison.Ordinal)
+            || name.StartsWith("Valdrio.Infrastructure", StringComparison.Ordinal)
+            || name.StartsWith("Valdrio.Desktop", StringComparison.Ordinal)
             || name.StartsWith("PresentationFramework", StringComparison.Ordinal)
             || name.StartsWith("Microsoft.EntityFrameworkCore", StringComparison.Ordinal)));
     }
