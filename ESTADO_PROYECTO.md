@@ -10,84 +10,60 @@ El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` está disponible e íntegro.
 - SHA-256: `1d8f8c21e3386117426f0eede257508a0bae30ed8c48cec7d2fb0e8ac68d7ced`.
 - 59 entradas.
 - `sha256sum -c SHA256SUMS.txt`: OK.
-- referencias matemáticas: **39/39**.
+- referencias matemáticas globales: **39/39**.
 
 ## Estado de tareas
 
-### T00 — CERRADA
+- **T00 — CERRADA**: alcance confirmado; D01/D02 aceptadas.
+- **T01 — CERRADA**: solución .NET 10, CI Windows, Runner, publish autocontenido y shell WPF.
+- **T01A — CERRADA**: internacionalización de presentación desde fundamentos, preferencias independientes y evidencia visual.
+- **T02 — CERRADA**: unidades/IDs, decimal canónico, PDEC-1, BalancedRound, CurrencyProjection y corpus de redondeo.
 
-El propietario confirmó el alcance y la separación entre modelo, estudio, ejecución y presentación internacional.
+## T02 — evidencia
 
-Decisiones:
-- D01 **ACEPTADA**.
-- D02 **ACEPTADA**.
-- D03 pendiente de archivo representativo antes de importación definitiva.
-- D04-D07 permanecen propuestas hasta sus puertas económicas.
-- D08/D09/D12 se resolverán en hitos previstos y no bloquean trabajo independiente.
+Run final de código: `37226867814`  
+Commit: `da2432de10e17a3bc4902a785fd90cea3fea9cd1`
 
-Precisión monetaria aceptada:
-- empresa propone moneda predeterminada;
-- cada estudio fija moneda funcional;
-- originales pueden conservar otras monedas;
-- conversión explícita;
-- tipos congelados por ejecución.
+- build: success;
+- **32/32 tests**;
+- guard sin `double/float` en Domain/Calculation: success;
+- Runner T02: **5/5 referencias** C07, C08, C21, C38, C39;
+- publish self-contained: success;
+- WPF smoke: success;
+- 4 capturas WPF generadas y revisadas.
 
-### T01 — CERRADA
+Materialización:
 
-Solución .NET 10, CI Windows, Runner, publish autocontenido y shell WPF revalidados contra la ficha v0.4.
+- ejemplo C07 consumido desde Application;
+- ViewModel sin fórmula económica/redondeo;
+- muestra ID, bruto, ajuste de redondeo y adjudicado;
+- presentación ES/EN y región/zona independientes conservadas.
 
-### T01A — CERRADA
-
-Implementado:
-- inglés neutral + español;
-- cobertura/placeholders en CI;
-- idioma, región y zona independientes;
-- preferencias observables y persistidas en perfil local;
-- cambio de idioma sin reinicio;
-- `Language`/`FlowDirection` WPF;
-- previsualización USD/fecha/instante;
-- cultura capturada durante edición;
-- pseudotraducción >=40 %;
-- RTL de prueba;
-- navegación por teclado.
-
-Evidencia final:
-- run `37224023831`;
-- commit `fbfa77699fce3ee33bb672ee2b456117183cf530`;
-- build success;
-- **16/16 tests**;
-- Runner success;
-- publish self-contained success;
-- WPF smoke success;
-- 4 capturas WPF generadas y revisadas;
-- artefacto visual ID `11311466457`.
-
-El run visual permitió detectar un defecto de formato de instante en una iteración anterior; se corrigió antes del cierre y quedó cubierto por prueba.
-
-## Decisiones económicas vigentes
+## Decisiones vigentes
 
 - D01/D02 aceptadas.
-- D03 pendiente.
+- D03 pendiente de archivo representativo.
 - D04-D07 propuestas.
 - D08/D09/D12 diferidas.
-- No se han convertido propuestas económicas en reglas por conveniencia técnica.
+- PDEC-1 queda validada técnicamente en T02, sin promover ninguna política económica pendiente.
 
 ## Límites actuales
 
 No se declara implementado todavía:
 
-- motor económico;
-- primitives completas de T02;
-- Money/FX de T02A;
+- catálogo monetario completo;
+- FX/RateSet;
+- contratos temporales completos de T02A;
 - SQLite productivo;
-- importación contable.
+- importación contable;
+- motor económico de repartos posterior.
 
 ## Continuidad
 
 Primera tarea pendiente cuyas dependencias están verificadas:
 
-**T02 — Unidades, decimal, política y redondeo**.
+**T02A — Money, monedas, fechas canónicas y tipos congelados**.
 
-Dependencia T01A: satisfecha.
+Dependencias T02 y T01A: satisfechas.
 
-T02 deberá mantener internacionalización desde fundamentos y no introducir `double` para importes ni redondeos implícitos de moneda.
+T02A deberá empezar por su primera subentrega: Money/CurrencyDefinition versionada, catálogo monetario y snapshot de minor units, preservando la separación empresa → moneda predeterminada / estudio → moneda funcional.
