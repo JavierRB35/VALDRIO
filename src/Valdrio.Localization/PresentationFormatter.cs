@@ -69,6 +69,9 @@ public sealed class PresentationFormatter
     {
         var zone = timeZones.Resolve(timeZoneId);
         var local = TimeZoneInfo.ConvertTime(utcInstant, zone);
-        return local.ToString("g zzz", culture);
+        var localDateTime = local.ToString("g", culture);
+        var offset = local.ToString("zzz", CultureInfo.InvariantCulture);
+
+        return $"{localDateTime} {offset}";
     }
 }
