@@ -47,6 +47,9 @@ public partial class App : System.Windows.Application
                 "currency-catalog-example.json"));
         var currencyMetadataExampleService =
             new CurrencyMetadataExampleService(currencyCatalog);
+        var temporalContractExampleService =
+            new TemporalContractExampleService(
+                new TimeZoneResolver());
 
         var requestedPath = e.Args.FirstOrDefault(argument =>
             !argument.StartsWith("--", StringComparison.Ordinal));
@@ -60,7 +63,8 @@ public partial class App : System.Windows.Application
             preferences,
             formatter,
             roundingExampleService,
-            currencyMetadataExampleService);
+            currencyMetadataExampleService,
+            temporalContractExampleService);
 
         if (!viewModel.TryLoadDevelopmentSample(samplePath, out var diagnosticCode))
         {
