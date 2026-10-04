@@ -1,8 +1,8 @@
 # Fuentes disponibles y huellas
 
-Fecha de inventario: 2026-10-04
+Fecha de reconciliación: 2026-10-04
 
-Los siguientes archivos fueron los originales disponibles en el entorno de esta sesión. Las huellas SHA-256 permiten comprobar identidad de contenido.
+## Fuentes documentales individuales
 
 | Archivo | SHA-256 |
 |---|---|
@@ -13,27 +13,48 @@ Los siguientes archivos fueron los originales disponibles en el entorno de esta 
 | `VALDRIO_Marketing_y_Mensajes_ES_EN.pdf` | `48780f136775d653c407c0d3b2d37d2c32c88188b4b1fd3da582ab08057fc310` |
 | `VALDRIO_Naming_y_Comprobacion_Publica.pdf` | `b0014b661c0e081186e9268ece6fa97a80450b5a3406e5b2f9f5e913e2ce8aed` |
 
-## Comprobaciones realizadas
+## Paquete de desarrollo v0.4
 
-- Los cinco PDF se renderizaron y revisaron visualmente en todas sus páginas.
-- Se extrajo texto como ayuda de búsqueda; el render se trató como referencia para maquetación/tablas.
-- Se leyó el prompt maestro v0.4.
-- Se comprobó el repositorio GitHub y su commit inicial.
+Archivo: `VALDRIO_Paquete_Desarrollo_v0_4.zip`  
+SHA-256 del ZIP: `1d8f8c21e3386117426f0eede257508a0bae30ed8c48cec7d2fb0e8ac68d7ced`
 
-## Fuentes referenciadas pero no disponibles como archivos originales
+Contenido comprobado: 59 entradas, incluyendo:
 
-El prompt maestro menciona `VALDRIO_Paquete_Desarrollo_v0_4.zip` y, dentro de él, entre otros:
+- `LEEME.md`, `MANIFIESTO.json`, `SHA256SUMS.txt`;
+- prompt maestro y PDF internacional;
+- especificaciones 01-05;
+- 16 contratos metodológicos;
+- 38 fichas de tareas;
+- 39 casos numéricos;
+- 15 criterios internacionales;
+- catálogo monetario de ejemplo;
+- verificador de referencias;
+- plantillas de decisión, estado, evidencia y revisión.
 
-- `especificacion/01_Producto_y_Hoja_de_Ruta.md`
-- `especificacion/02_Contratos_Metodologicos.md`
-- `especificacion/03_Decisiones_y_Diccionario.md`
-- `especificacion/04_Datos_y_Contratos_de_Aplicacion.md`
-- `especificacion/05_Internacionalizacion_y_Extension.md`
-- 38 fichas de tareas
-- 39 referencias numéricas
-- 15 casos internacionales
-- catálogo monetario de ejemplo
-- `casos/verificar_referencias.py`
-- plantillas de continuidad/evidencia/decisión/revisión
+## Comprobaciones ejecutadas
 
-Esos archivos no estaban presentes entre los originales disponibles en esta sesión. Por ello no se declara ejecutado su verificador ni comprobada la ficha detallada T00.
+### Integridad
+
+```text
+sha256sum -c SHA256SUMS.txt
+```
+
+Resultado: todas las entradas enumeradas = **OK**.
+
+### Referencias numéricas
+
+```text
+python3 casos/verificar_referencias.py
+```
+
+Resultado:
+
+- `status = passed`
+- `verified_count = 39`
+- C01-C39 presentes.
+
+Alcance declarado por el propio verificador: referencias sintéticas con `Fraction`; **no** prueba del motor C#, SQLite ni WPF.
+
+## Corrección de registro
+
+Una versión anterior de este archivo afirmó erróneamente que el ZIP no estaba disponible. Esa afirmación queda revocada por esta reconciliación y por la evidencia `docs/evidencias/T00_PAQUETE_2026-10-04.md`.

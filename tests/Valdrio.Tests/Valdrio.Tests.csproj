@@ -13,5 +13,6 @@
     <ProjectReference Include="../../src/Valdrio.Domain/Valdrio.Domain.csproj" />
     <ProjectReference Include="../../src/Valdrio.Calculation/Valdrio.Calculation.csproj" />
     <ProjectReference Include="../../src/Valdrio.Application/Valdrio.Application.csproj" />
+    <ProjectReference Include="../../src/Valdrio.Localization/Valdrio.Localization.csproj" />
   </ItemGroup>
 </Project>
