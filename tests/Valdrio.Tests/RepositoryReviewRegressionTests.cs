@@ -1,4 +1,6 @@
 using System.Globalization;
+using System.Text.Json;
+using Valdrio.Calculation;
 using Valdrio.Domain;
 using Valdrio.Localization;
 
@@ -89,4 +91,147 @@ public sealed class RepositoryReviewRegressionTests
         Assert.IsFalse(edit.TryCommit("", out _));
         Assert.IsFalse(edit.TryCommit("   ", out _));
     }
+    [TestMethod]
+    public void R03_MoneyRejectsDefaultCurrency()
+    {
+        var exception = CaptureDomainRule(
+            () => _ = new Money(
+                10m,
+                default(CurrencyCode)));
+
+        Assert.AreEqual(
+            "MONEY_CURRENCY_INVALID",
+            exception.Diagnostic.Code);
+    }
+
+    [TestMethod]
+    public void R03_DefaultMoneyCannotParticipateInArithmetic()
+    {
+        var exception = CaptureDomainRule(
+            () => _ = default(Money) + default(Money));
+
+        Assert.AreEqual(
+            "MONEY_CURRENCY_INVALID",
+            exception.Diagnostic.Code);
+    }
+
+    [TestMethod]
+    public void R03_IncompleteMoneyJsonIsRejected()
+    {
+        try
+        {
+            _ = JsonSerializer.Deserialize<Money>(
+                "{\"Amount\":10}");
+            Assert.Fail("Incomplete Money JSON must be rejected.");
+        }
+        catch (Exception exception)
+            when (exception is JsonException
+                  or DomainRuleException
+                  or ArgumentException)
+        {
+        }
+    }
+
+    [TestMethod]
+    public void R04_MoneyArithmeticKeepsSelectedPrecisionPolicy()
+    {
+        var policy = PrecisionPolicy.Pdec1Proposed with
+        {
+            Version = "REVIEW-scale9",
+            AmountScale = 9
+        };
+
+        var eur = new CurrencyCode("EUR");
+        var amount = new Money(
+            0.123456789m,
+            eur,
+            policy);
+        var zero = new Money(
+            0m,
+            eur,
+            policy);
+
+        var sum = amount + zero;
+        var difference = sum - zero;
+
+        Assert.AreEqual(0.123456789m, sum.Amount);
+        Assert.AreEqual(0.123456789m, difference.Amount);
+    }
+
+    [TestMethod]
+    public void R04_IncompatiblePrecisionPoliciesAreRejected()
+    {
+        var scale9 = PrecisionPolicy.Pdec1Proposed with
+        {
+            Version = "REVIEW-scale9",
+            AmountScale = 9
+        };
+
+        var eur = new CurrencyCode("EUR");
+        var left = new Money(1m, eur, scale9);
+        var right = new Money(
+            1m,
+            eur,
+            PrecisionPolicy.Pdec1Proposed);
+
+        var exception = CaptureDomainRule(
+            () => _ = left + right);
+
+        Assert.AreEqual(
+            "PRECISION_POLICY_MISMATCH",
+            exception.Diagnostic.Code);
+    }
+
+    [TestMethod]
+    public void R04_MoneyProjectionKeepsSelectedPrecisionPolicy()
+    {
+        var policy = PrecisionPolicy.Pdec1Proposed with
+        {
+            Version = "REVIEW-scale9",
+            AmountScale = 9
+        };
+
+        var eur = new CurrencyCode("EUR");
+        var metadata = new CurrencyMetadataSnapshot(
+            eur,
+            "978",
+            9,
+            true,
+            "review",
+            "review",
+            new DateOnly(2026, 1, 1),
+            new DateOnly(2026, 1, 1));
+
+        var projector = new MoneyCurrencyProjector(policy);
+
+        var result = projector.Project(
+            new Money(0.123456789m, eur, policy),
+            [
+                new(
+                    new StableRoundingId("A"),
+                    new Money(0.123456789m, eur, policy))
+            ],
+            metadata);
+
+        Assert.AreEqual(
+            0.123456789m,
+            result.Target.Amount);
+    }
+
+    private static DomainRuleException CaptureDomainRule(
+        Action action)
+    {
+        try
+        {
+            action();
+        }
+        catch (DomainRuleException exception)
+        {
+            return exception;
+        }
+
+        Assert.Fail("Expected DomainRuleException.");
+        throw new InvalidOperationException();
+    }
+
 }
