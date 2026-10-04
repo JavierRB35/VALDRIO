@@ -44,6 +44,22 @@ if (args.Contains("--verify-t02a-currency", StringComparer.Ordinal))
     return 0;
 }
 
+if (args.Contains("--verify-t02a-time", StringComparer.Ordinal))
+{
+    var result = T02ATimeVerifier.Verify();
+
+    Console.WriteLine(
+        JsonSerializer.Serialize(
+            new
+            {
+                status = "passed",
+                task = "T02A-sub2",
+                checks = result
+            }));
+
+    return 0;
+}
+
 Console.WriteLine(
     "VALDRIO Runner ready. Economic snapshot execution is not implemented yet.");
 
