@@ -6,8 +6,8 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="AppTitle" xml:space="preserve"><value>VALDRIO</value></data>
   <data name="WindowTitle" xml:space="preserve"><value>VALDRIO - presentation preferences</value></data>
-  <data name="SpecificationVersion" xml:space="preserve"><value>Specification v0.4 · T02</value></data>
-  <data name="HeaderSubtitle" xml:space="preserve"><value>International presentation and precision/rounding foundation</value></data>
+  <data name="SpecificationVersion" xml:space="preserve"><value>Specification v0.4 · T02A · subdelivery 1</value></data>
+  <data name="HeaderSubtitle" xml:space="preserve"><value>International presentation, precision and frozen currency metadata</value></data>
   <data name="PreferencesTitle" xml:space="preserve"><value>Presentation preferences</value></data>
   <data name="LabelUiLanguage" xml:space="preserve"><value>Interface language</value></data>
   <data name="LabelFormatCulture" xml:space="preserve"><value>Regional format</value></data>
@@ -30,7 +30,7 @@
   <data name="LabelSample" xml:space="preserve"><value>Sample</value></data>
   <data name="LabelPurpose" xml:space="preserve"><value>Purpose</value></data>
   <data name="LabelSource" xml:space="preserve"><value>Source</value></data>
-  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>T02 demonstrates precision and rounding without deciding accounting policy. Presentation preferences remain independent.</value></data>
+  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>T02A subdelivery 1 freezes currency metadata and minor units. It does not implement FX rates or temporal conversion policy yet.</value></data>
   <data name="StatusNoSample" xml:space="preserve"><value>No development sample loaded.</value></data>
   <data name="StatusSampleOpened" xml:space="preserve"><value>Development sample opened.</value></data>
   <data name="StatusSampleOpenFailed" xml:space="preserve"><value>Development sample could not be opened.</value></data>
@@ -45,4 +45,11 @@
   <data name="LabelRoundingAdjustment" xml:space="preserve"><value>Rounding adjustment</value></data>
   <data name="LabelRoundingPosted" xml:space="preserve"><value>Posted amount</value></data>
   <data name="RoundingExplanation" xml:space="preserve"><value>C07 splits one cent into three equal mathematical shares. The one-cent quantum leaves one unit; stable ordinal ID awards it to A. Posted lines sum exactly {0}.</value></data>
+  <data name="CurrencyMetadataTitle" xml:space="preserve"><value>Frozen currency metadata</value></data>
+  <data name="LabelCurrencyCode" xml:space="preserve"><value>ISO code</value></data>
+  <data name="LabelNumericCode" xml:space="preserve"><value>Numeric code</value></data>
+  <data name="LabelMinorUnitDigits" xml:space="preserve"><value>Minor unit digits</value></data>
+  <data name="LabelCurrencyQuantum" xml:space="preserve"><value>Report quantum</value></data>
+  <data name="LabelCurrencyProjection" xml:space="preserve"><value>Projection A/B/C</value></data>
+  <data name="CurrencyMetadataExplanation" xml:space="preserve"><value>The example catalog is a four-currency fixture from the development package, not the complete product catalog. JPY and KWD prove that report quantum is derived from frozen metadata rather than a fixed 0.01.</value></data>
 </root>
