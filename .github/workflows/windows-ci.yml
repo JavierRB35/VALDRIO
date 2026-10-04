@@ -7,6 +7,7 @@ on:
       - "t00/**"
       - "t01/**"
       - "t01a/**"
+      - "t02/**"
   pull_request:
 
 permissions:
@@ -45,9 +46,20 @@ jobs:
         shell: pwsh
         run: dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=valdrio-tests.trx"
 
-      - name: Runner smoke
+      - name: Guard economic code against binary floating point
         shell: pwsh
-        run: dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build
+        run: |
+          $hits = Get-ChildItem src/Valdrio.Domain,src/Valdrio.Calculation -Recurse -Filter *.cs |
+            Select-String -Pattern '\b(double|float)\b'
+
+          if ($hits) {
+            $hits | ForEach-Object { Write-Host $_.Line }
+            throw "Domain/Calculation contains double or float."
+          }
+
+      - name: Runner T02 reference corpus
+        shell: pwsh
+        run: dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --verify-t02-reference
 
       - name: Publish self-contained Windows x64 development artifact
         shell: pwsh
