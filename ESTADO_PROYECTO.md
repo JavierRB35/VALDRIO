@@ -14,52 +14,51 @@ El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` está disponible e íntegro.
 
 ## Estado de tareas
 
-- **T00 — CERRADA**: alcance confirmado; D01/D02 aceptadas.
-- **T01 — CERRADA**: solución .NET 10, CI Windows, Runner, publish autocontenido y shell WPF.
-- **T01A — CERRADA**: internacionalización de presentación desde fundamentos, preferencias independientes y evidencia visual.
-- **T02 — CERRADA**: unidades/IDs, decimal canónico, PDEC-1, BalancedRound, CurrencyProjection y corpus de redondeo.
-- **T02A — EN CURSO**: subentrega 1 de Money/metadatos monetarios completada; fechas y FX pendientes.
+- **T00 — CERRADA**.
+- **T01 — CERRADA**.
+- **T01A — CERRADA**.
+- **T02 — CERRADA**.
+- **T02A — EN CURSO**: subentregas 1 y 2 completadas; RateSet/FX pendiente.
 
-## T02A.1 — resultado comprobado
+## T02A.1 — Money y metadatos monetarios
 
-Implementado:
+Completada y fusionada mediante PR #6.
 
-- `Money` con código ISO y rechazo de suma entre monedas;
-- `CurrencyDefinition` versionada;
-- puerto `ICurrencyCatalog`;
-- adaptador JSON para el fixture monetario del paquete;
-- `CurrencyMetadataSnapshot` congelado;
-- `StudyCurrencyContext` con moneda funcional por estudio;
-- `MoneyCurrencyProjector` con quantum derivado de minor units;
-- materialización WPF de JPY/KWD.
+Resultado:
+- Money con moneda explícita;
+- catálogo fixture versionado y snapshots;
+- JPY quantum 1, KWD quantum 0,001;
+- I13 rechaza suma entre monedas;
+- materialización WPF y CI verdes.
 
-Catálogo de prueba exacto del paquete:
+Evidencia: `docs/evidencias/T02A_SUB1_2026-10-04.md`.
 
-- EUR 978 / 2;
-- USD 840 / 2;
-- JPY 392 / 0;
-- KWD 414 / 3.
+## T02A.2 — fechas canónicas, IClock y zonas
 
-El fixture **no** se presenta como catálogo completo de producto.
+Implementado y verificado:
 
-Evidencia de código e integración:
+- `BusinessDate` canónico `yyyy-MM-dd`;
+- `UtcInstant` canónico UTC;
+- `IClock` en Application y `SystemClock` en Infrastructure;
+- `TimeZoneResolver`;
+- I08: cambiar zona no muta fecha de negocio ni identidad UTC;
+- I09: hora ambigua bloquea con `TIME_LOCAL_AMBIGUOUS`;
+- hora inexistente bloquea con `TIME_LOCAL_INVALID`;
+- selección explícita de offset para hora ambigua;
+- guard CI contra lecturas directas de tiempo ambiente en Domain/Calculation/Application;
+- materialización WPF de fecha canónica, UTC y vista local.
 
-- run `37228651535`;
-- commit `0ca27458b029157b777c9cd6ba62ff4653a0bdb8`;
+Evidencia de referencia:
+- run `37229521659`;
+- commit `16b03415bfd802d06e95fa45761f163b8ffb09ac`;
 - build: success;
-- **39/39 tests**;
-- guard sin `double/float`: success;
-- Runner T02 de regresión: success;
-- Runner T02A: success;
+- **47/47 tests**;
+- Runner temporal: success;
 - publish autocontenido: success;
 - WPF smoke: success;
 - cuatro capturas WPF generadas y revisadas.
 
-Runner T02A:
-
-- JPY quantum 1 → 34/34/33;
-- KWD quantum 0,001 → 0,001/0/0;
-- I13 → `MONEY_CURRENCY_MISMATCH`.
+Evidencia: `docs/evidencias/T02A_SUB2_2026-10-04.md`.
 
 ## Decisiones vigentes
 
@@ -67,16 +66,14 @@ Runner T02A:
 - D03 pendiente de archivo representativo.
 - D04-D07 propuestas.
 - D08/D09/D12 diferidas.
-- PDEC-1 validada técnicamente.
-- La implementación monetaria no convierte ninguna propuesta económica pendiente en regla aceptada.
+- No se ha convertido ninguna propuesta económica pendiente en regla por conveniencia técnica.
 
 ## Límites actuales
 
 No se declara implementado todavía:
 
 - catálogo monetario completo de producto;
-- T02A.2: fechas canónicas, `IClock` y tratamiento de horas ambiguas/inexistentes;
-- T02A.3: RateSet, C33-C37, I14 y revalorización explícita;
+- **T02A.3: RateSet, C33-C37, I14 y RevalueStudy**;
 - SQLite productivo;
 - importación contable;
 - motor económico de repartos posterior.
@@ -85,6 +82,6 @@ No se declara implementado todavía:
 
 Primera subentrega pendiente cuyas dependencias están verificadas:
 
-**T02A.2 — DateOnly ISO, UTC, IClock y TimeZoneResolver**.
+**T02A.3 — RateSet y conversión FX congelada**.
 
-Debe cubrir I08 e I09 y no convertir fechas de negocio en instantes.
+Debe preservar originales, usar quote destino por unidad origen, redondear la conversión a escala 8 con MidpointToEven y mantener ejecuciones históricas sin mutación.
