@@ -218,6 +218,102 @@ public sealed class RepositoryReviewRegressionTests
             result.Target.Amount);
     }
 
+    [TestMethod]
+    public void R05_AllProductionDiagnosticKeysExistInBothPublishedCatalogs()
+    {
+        var keys = new[]
+        {
+            "AllocationKey.NegativeWeight",
+            "AllocationKey.ZeroDriverTotal",
+            "Currency.MinorUnitUndefined",
+            "Currency.NotInCatalog",
+            "Money.CurrencyMismatch",
+            "Money.CurrencyInvalid",
+            "Numeric.ConservationFailure",
+            "Numeric.DuplicateDestination",
+            "Numeric.InvalidQuantum",
+            "Precision.MagnitudeExceeded",
+            "Precision.PercentageOutOfRange",
+            "Precision.ScaleExceeded",
+            "Precision.PolicyMissing",
+            "Precision.PolicyMismatch",
+            "Quantity.UnitMismatch",
+            "Time.LocalAmbiguous",
+            "Time.LocalInvalid",
+            "Time.LocalOffsetInvalid"
+        };
+
+        var catalog = new UiTextCatalog();
+
+        foreach (var key in keys)
+        {
+            Assert.IsFalse(
+                string.IsNullOrWhiteSpace(
+                    catalog.Get(
+                        key,
+                        CultureInfo.GetCultureInfo("en"))),
+                $"Missing English resource: {key}");
+
+            Assert.IsFalse(
+                string.IsNullOrWhiteSpace(
+                    catalog.Get(
+                        key,
+                        CultureInfo.GetCultureInfo("es"))),
+                $"Missing Spanish resource: {key}");
+        }
+    }
+
+    [TestMethod]
+    public void R06_NullNumberOptionsAreRejectedWithoutNullReference()
+    {
+        var invalid = UserPresentationPreferences.Default with
+        {
+            NumberDisplayOptions = null!
+        };
+
+        try
+        {
+            _ = new PresentationPreferencesService(
+                new LanguageCatalog(),
+                invalid);
+            Assert.Fail("Null number options must be rejected.");
+        }
+        catch (Exception exception)
+        {
+            Assert.IsFalse(
+                exception is NullReferenceException,
+                "Validation must not fail with NullReferenceException.");
+        }
+    }
+
+    [TestMethod]
+    public void R06_UnknownDatePresetIsRejected()
+    {
+        var invalid = UserPresentationPreferences.Default with
+        {
+            DateDisplayPreset = (DateDisplayPreset)999
+        };
+
+        Assert.ThrowsException<ArgumentException>(
+            () => _ = new PresentationPreferencesService(
+                new LanguageCatalog(),
+                invalid));
+    }
+
+    [TestMethod]
+    public void R06_UnknownTimeZoneIsRejected()
+    {
+        var invalid = UserPresentationPreferences.Default with
+        {
+            DisplayTimeZoneId = "Invalid/ReviewZone"
+        };
+
+        Assert.ThrowsException<ArgumentException>(
+            () => _ = new PresentationPreferencesService(
+                new LanguageCatalog(),
+                invalid));
+    }
+
     private static DomainRuleException CaptureDomainRule(
         Action action)
     {
