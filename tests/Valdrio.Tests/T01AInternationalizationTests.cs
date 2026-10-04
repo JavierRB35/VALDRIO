@@ -163,6 +163,43 @@ public sealed class T01AInternationalizationTests
     }
 
     [TestMethod]
+    public void UserPresentationPreferences_RoundTripOutsideEconomicData()
+    {
+        var directory = Path.Combine(
+            Path.GetTempPath(),
+            "valdrio-t01a-" + Guid.NewGuid().ToString("N"));
+        var path = Path.Combine(directory, "presentation.json");
+
+        try
+        {
+            var expected = UserPresentationPreferences.Default with
+            {
+                UiLanguageTag = "es",
+                FormatCultureTag = "en-US",
+                DisplayTimeZoneId = "UTC",
+                DateDisplayPreset = DateDisplayPreset.Iso,
+                NumberDisplayOptions = new NumberDisplayOptions(3, false)
+            };
+
+            var store = new JsonUserPresentationPreferencesStore(path);
+            store.Save(expected);
+
+            var loaded = store.TryLoad(out var actual);
+
+            Assert.IsTrue(loaded);
+            Assert.AreEqual(expected, actual);
+            Assert.IsTrue(path.Contains("presentation", StringComparison.Ordinal));
+        }
+        finally
+        {
+            if (Directory.Exists(directory))
+            {
+                Directory.Delete(directory, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
     public void PluralRules_AreRegisteredForPublishedLanguages()
     {
         var registry = new PluralRuleRegistry();
