@@ -161,7 +161,7 @@ public partial class App : System.Windows.Application
                 preset.Pseudo,
                 preset.ForceRtl);
 
-            window.UpdateLayout();
+            window.ResetScrollForCapture();
             VisualEvidenceCapture.Capture(
                 window,
                 Path.Combine(directory, preset.FileName));
