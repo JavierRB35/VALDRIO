@@ -1,103 +1,91 @@
-# Decisiones pendientes
+# Decisiones de producto y negocio
 
-Fecha: 2026-10-04
+Fecha de reconciliación: 2026-10-04  
+Fuente de autoridad: `especificacion/03_Decisiones_y_Diccionario.md` del paquete VALDRIO v0.4.
 
-Regla de estado: todo lo siguiente permanece **PROPUESTA / PENDIENTE** salvo aceptación explícita posterior del propietario. Los ejemplos sirven para decidir y para futuras pruebas; **no convierten la propuesta en política aprobada**.
+Regla: **Propuesta** puede utilizarse en demostración si queda identificada, pero debe aceptarse su ejemplo antes de convertirse en regla económica definitiva. Este registro no transforma propuestas en decisiones aceptadas.
 
-## Registro
+## Registro D01-D12
 
-| ID | Estado | Propuesta actual | Momento límite |
+| ID | Estado fuente | Propuesta / supuesto | Resolución necesaria |
 |---|---|---|---|
-| D01 Finalidad | PENDIENTE | Gestión de costes y pricing en R1; valoración contable de inventario separada en T32 | Antes de adelantar inventario |
-| D02 Colaboración | PENDIENTE | Un editor local por archivo; copias sin fusión automática | Antes de T03 si se requiere simultaneidad |
-| D03 Fuente contable | PENDIENTE | Perfil explícito para signos, saldo de periodo/acumulado e ingresos | Antes de T06 |
-| D04 Capacidad | PENDIENTE | Política analítica normalizada; fijo por capacidad normal y variable por consumo/actividad real | Antes de T15 |
-| D05 Auxiliares | PENDIENTE | Medir servicios/capacidad propios antes de aplicar OwnerOnceCapacity; si faltan datos, diagnosticar | Antes de T16 |
-| D06 Recetas y lotes | PENDIENTE | Distinguir por unidad, lote iniciado y orden; confirmar lote parcial, setup, mermas e indivisibles | Antes de T17-T18 |
-| D07 Perímetro de márgenes | PENDIENTE | Separar producción, comercial y estructura y mostrar perímetro de coste | Antes de T20 |
-| D08 Cifrado y recuperación | PENDIENTE | No prometer cifrado hasta elegir proveedor, credenciales y recuperación | Antes de T24 con archivos reales |
-| D09 Venta | PENDIENTE | Licencia perpetua por versión y actualización separada; proveedor/dispositivo/usuario por decidir | Antes de T24 comercial |
+| D01 Finalidad | PROPUESTA | R1 orientada a gestión, capacidad, pricing y rentabilidad. Inventario contable en T32. | Confirmar finalidad y si T32 se adelanta. |
+| D02 Colaboración | SUPUESTO | Un editor local por archivo; sin edición simultánea de red. | Confirmar antes del diseño definitivo de T03 si existe trabajo concurrente. |
+| D03 Fuente contable | PENDIENTE DE EJEMPLO | Perfil explícito, signos y saldo de periodo. `CumulativeExpenseDifference` solo con comparables. | Archivo de muestra y periodo explicado antes de T06 de producción. |
+| D04 Capacidad | PROPUESTA | `NormalizedManagement`: fijo propio sobre normal y variable observado sobre real. | Aceptar C15-C19 y cómo se fija normal antes de T15. |
+| D05 Auxiliares | PROPUESTA | `OwnerOnceCapacity` para auxiliares medidos; `ThroughFlow` deja capacidad auxiliar sin evaluar. | Aceptar C20 y listar servicios medidos antes de T16. |
+| D06 Recetas y lotes | PROPUESTA | Setup por lote iniciado completo; unidades continuas sin redondeo a pieza; merma explícita. | Dos órdenes reales antes de T17-T18 definitivos. |
+| D07 Perímetro de márgenes | PROPUESTA | Coste productivo y capas comercial/estructura separadas y visibles. | Aceptar perímetros y costes sin objeto antes de T20. |
+| D08 Protección y recuperación | PENDIENTE DE OPERACIÓN | No prometer cifrado por defecto. | Necesidad, uso entre equipos y recuperación antes de T24 comercial. |
+| D09 Venta/licencia | PENDIENTE COMERCIAL | Licencia perpetua para versiones adquiridas; actualizaciones con vigencia separada; uso offline. | Proveedor, condiciones y soporte antes de T24 comercial. |
+| D10 Autorreparto | PROPUESTA | Autorreparto prohibido por defecto; habilitable por versión con diagnóstico. | Revisar si existen servicios a sí mismo. No bloquea modelos sin diagonal. |
+| D11 Cobertura definitiva | PROPUESTA | Ejecución definitiva exige cobertura completa; borrador/provisional conserva pendientes visibles. | Confirmar utilidad de publicación provisional. |
+| D12 Módulos avanzados | PENDIENTE AVANZADO | Estándares, TDABC y simulación requieren datos/supuestos propios. | Definir antes de T28-T31; no afecta R0/R1. |
 
-## Ejemplos de entrada/salida para decisiones económicas
+## Ejemplos para revisión del propietario
 
-### D01 - Finalidad e inventario
+### D03 — interpretación de saldos, referencia C01
 
-**Entrada de ejemplo:** una orden con coste de gestión calculado de 420 y unidades que permanecen en existencias al cierre.
+**Entrada:** acumulado anterior 100; acumulado actual 160; modalidad `CumulativeExpenseDifference`.
 
-**Salida bajo la propuesta actual R1:** VALDRIO puede conservar/explicar el coste de gestión de la orden, pero **no publica por ello una valoración contable de existencias**. Adelantar esa valoración implica replanificar T32 y definir perímetro productivo, movimientos, producción en curso y marco aplicable.
+**Salida de referencia:** importe del periodo = **60**.
 
-Estado del ejemplo: **PROPUESTA DE ALCANCE**.
+Si 160 se declara como `PeriodAmount`, el importe del periodo es 160. El programa no debe convertirlo en 60 por intuición.
 
-### D03 - Modalidad de fuente contable
+Estado: **ejemplo de interpretación; D03 sigue pendiente de un archivo real y convención de signos**.
 
-**Entrada de ejemplo:** una cuenta presenta 1.000 de acumulado en enero y 1.600 de acumulado en febrero.
+### D04 — capacidad, referencias C15 y C18
 
-- Si el perfil declara **acumulados/diferencia**, el importe de febrero sería 600.
-- Si el origen declara **saldo del periodo**, un valor 1.600 significa 1.600 del periodo y no debe transformarse automáticamente en 600.
+C15:
 
-**Salida esperada:** la preparación de importación muestra la modalidad elegida; si no se puede determinar sin ambigüedad, bloquea la confirmación. La política de signos e ingresos sigue pendiente de validación con un archivo real.
+**Entrada:** fijo 1.000; variable 600; normal 100; real 60; objetos 40 y 20.
 
-Estado del ejemplo: **PROPUESTA PARA DECIDIR D03**.
+**Salida propuesta `NormalizedManagement`:**
+- tarifa fija = 10;
+- tarifa variable = 10;
+- O1 = 800;
+- O2 = 400;
+- variación de capacidad = 400;
+- actividad sin objeto = 0;
+- fuente = 1.600.
 
-### D04 - Capacidad
+C18 mantiene real 60 pero solo 40 asociados a objeto:
 
-Ejemplo ya definido en la especificación propuesta:
+**Salida:** objeto = 800; variación de capacidad = 400; **actividad sin objeto = 400**; fuente = 1.600.
 
-**Entrada:** fijo 1.000; variable 600; capacidad normal 100 h; actividad real 60 h; consumos por objetos 40 h y 20 h.
+Estado: **PROPUESTA ECONÓMICA**.
 
-**Salida bajo NormalizedManagement propuesta:**
-- tarifa fija: 10/h;
-- tarifa variable: 10/h;
-- objeto A (40 h): 800;
-- objeto B (20 h): 400;
-- fijo no absorbido: 400;
-- variable sin asignar: 0;
-- conciliación: 1.600 = 800 + 400 + 400.
+### D05 — auxiliar por propietario, referencia C20
 
-Estado del ejemplo: **PROPUESTA ECONÓMICA, NO ACEPTADA**.
+**Entrada:** A fijo 1.000, normal 100, real 50; A presta 10 a B y 40 a P. B fijo 600, normal 100, real 50; B presta 50 a P.
 
-### D05 - Capacidad de auxiliares
+**Salida propuesta:** P recibe 800; capacidad A = 500; capacidad B = 300; conciliación **1.600 = 800 + 500 + 300**.
 
-**Entrada de referencia:** auxiliares con servicios efectivamente medidos y capacidad propia identificable. La referencia C20 del prompt conserva un total de 1.600.
+El coste de A recibido por B no vuelve a evaluarse como capacidad propia de B.
 
-**Salida bajo OwnerOnceCapacity propuesta:** 1.600 = 800 aplicados + 500 de variación de A + 300 de variación de B, evaluando cada origen de capacidad una sola vez.
+Estado: **PROPUESTA ECONÓMICA**.
 
-**Salida alternativa cuando faltan cantidades de servicio/capacidad:** diagnóstico `capacidad auxiliar no evaluada`; no se inventa ociosidad.
+### D06 — lote iniciado, referencia C22
 
-Estado del ejemplo: **PROPUESTA ECONÓMICA, NO ACEPTADA**.
+**Entrada:** Q=120; lote=50; setup=2 h/lote; proceso=0,1 h/unidad; tarifas 30 y 20.
 
-### D06 - Recetas y lotes
+**Salida propuesta:** 3 lotes; setup 6 h = 180; proceso 12 h = 240; total **420**; unitario **3,5**.
 
-Ejemplo ya definido en el prompt:
+Estado: **PROPUESTA ECONÓMICA**.
 
-**Entrada:** lote 50 unidades; orden 120 unidades; setup 2 h por lote iniciado; proceso 0,1 h por unidad; tarifas 30/h y 20/h.
+### D07 — margen y contribución, referencia C23
 
-**Salida propuesta:**
-- lotes iniciados: 3;
-- setup: 6 h;
-- proceso: 12 h;
-- coste: 6×30 + 12×20 = 420;
-- coste unitario: 3,5.
+**Entrada:** venta 200; variable 120; fijo aplicado 30.
 
-Pendiente confirmar con órdenes reales cómo tratar lote parcial, mermas y piezas indivisibles.
+**Salida:** coste 150; margen 50 = 25 % sobre ventas; recargo = 1/3; contribución 80 = 40 % sobre ventas.
 
-Estado del ejemplo: **PROPUESTA ECONÓMICA, NO ACEPTADA**.
+Estado: **PROPUESTA ECONÓMICA** hasta aceptar el perímetro.
 
-### D07 - Perímetro de margen
+## Reglas internacionales no económicas que no requieren decisión de negocio
 
-Ejemplo ya definido en el prompt:
+- I01: idioma y formato regional son independientes.
+- I02: cultura `en-US` no convierte EUR en USD.
+- I04: `1,234` / `01/02/2026` sin perfil explícito bloquea importación con `IMP_AMBIGUOUS_FORMAT`.
+- I13: sumar 10 EUR + 10 USD sin FX debe producir `MONEY_CURRENCY_MISMATCH`, no 20.
 
-**Entrada:** venta 200; coste variable 120; fijo aplicado 30.
-
-**Salida:**
-- margen: 50 = 25 % sobre ventas;
-- recargo sobre coste: 50/150 = 1/3;
-- contribución: 80 = 40 % sobre ventas.
-
-La cifra solo es definitiva cuando se acepte qué capas de producción, comercial y estructura forman el perímetro y dónde quedan costes sin objeto.
-
-Estado del ejemplo: **PROPUESTA ECONÓMICA, NO ACEPTADA**.
-
-## Decisiones no económicas
-
-D02, D08 y D09 afectan arquitectura, operación o comercialización. Se mantienen pendientes, pero no se les atribuye una salida económica calculada mientras no exista un contrato específico que la defina.
+Estas reglas están especificadas; solo deben declararse implementadas cuando existan y se ejecuten sus pruebas correspondientes.
