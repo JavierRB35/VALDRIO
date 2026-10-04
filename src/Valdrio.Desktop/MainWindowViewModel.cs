@@ -32,13 +32,15 @@ public sealed class MainWindowViewModel : ObservableObject
         LanguageCatalog languages,
         PresentationPreferencesService preferences,
         PresentationFormatter formatter,
-        T02RoundingExampleService roundingExampleService)
+        T02RoundingExampleService roundingExampleService,
+        CurrencyMetadataExampleService currencyMetadataExampleService)
     {
         this.texts = texts;
         this.preferences = preferences;
         this.formatter = formatter;
         roundingExample = roundingExampleService.BuildC07();
         RoundingRows = roundingExample.Rows;
+        CurrencyMetadataRows = currencyMetadataExampleService.Build();
 
         UiLanguageOptions = languages.Published
             .Select(language => language.Tag)
@@ -63,6 +65,7 @@ public sealed class MainWindowViewModel : ObservableObject
     public IReadOnlyList<string> FormatCultureOptions { get; }
     public IReadOnlyList<string> TimeZoneOptions { get; }
     public IReadOnlyList<T02RoundingExampleRow> RoundingRows { get; }
+    public IReadOnlyList<CurrencyMetadataExampleRow> CurrencyMetadataRows { get; }
 
     public IRelayCommand StartEditCommand { get; }
     public IRelayCommand CommitEditCommand { get; }
@@ -173,6 +176,14 @@ public sealed class MainWindowViewModel : ObservableObject
     public string RoundingPostedTotal => roundingExample.PostedTotal;
     public string RoundingExplanation =>
         FormatText("RoundingExplanation", roundingExample.PostedTotal);
+    public string CurrencyMetadataTitle => Text("CurrencyMetadataTitle");
+    public string LabelCurrencyCode => Text("LabelCurrencyCode");
+    public string LabelNumericCode => Text("LabelNumericCode");
+    public string LabelMinorUnitDigits => Text("LabelMinorUnitDigits");
+    public string LabelCurrencyQuantum => Text("LabelCurrencyQuantum");
+    public string LabelCurrencyProjection => Text("LabelCurrencyProjection");
+    public string CurrencyMetadataExplanation =>
+        Text("CurrencyMetadataExplanation");
 
     public string Status => Text(sampleState switch
     {
@@ -390,6 +401,13 @@ public sealed class MainWindowViewModel : ObservableObject
             nameof(LabelRoundingAdjustment),
             nameof(LabelRoundingPosted),
             nameof(RoundingExplanation),
+            nameof(CurrencyMetadataTitle),
+            nameof(LabelCurrencyCode),
+            nameof(LabelNumericCode),
+            nameof(LabelMinorUnitDigits),
+            nameof(LabelCurrencyQuantum),
+            nameof(LabelCurrencyProjection),
+            nameof(CurrencyMetadataExplanation),
             nameof(Status),
             nameof(PreviewMoney),
             nameof(PreviewDate),
