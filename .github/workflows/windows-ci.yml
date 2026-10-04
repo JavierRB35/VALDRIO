@@ -66,6 +66,21 @@ jobs:
         shell: pwsh
         run: dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --verify-t02a-currency
 
+      - name: Guard core against ambient current time
+        shell: pwsh
+        run: |
+          $hits = Get-ChildItem src/Valdrio.Domain,src/Valdrio.Calculation,src/Valdrio.Application -Recurse -Filter *.cs |
+            Select-String -Pattern 'DateTime\.(Now|UtcNow)|DateTimeOffset\.(Now|UtcNow)'
+
+          if ($hits) {
+            $hits | ForEach-Object { Write-Host $_.Line }
+            throw "Domain/Calculation/Application reads ambient current time directly; use IClock."
+          }
+
+      - name: Runner T02A temporal contracts
+        shell: pwsh
+        run: dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --verify-t02a-time
+
       - name: Publish self-contained Windows x64 development artifact
         shell: pwsh
         run: dotnet publish src/Valdrio.Desktop/Valdrio.Desktop.csproj --configuration Release --runtime win-x64 --self-contained true --output artifacts/desktop
