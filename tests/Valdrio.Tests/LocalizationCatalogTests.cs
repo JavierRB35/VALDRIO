@@ -8,7 +8,7 @@ namespace Valdrio.Tests;
 public sealed partial class LocalizationCatalogTests
 {
     [TestMethod]
-    public void EnglishAndSpanishCatalogs_HaveSameKeysAndPlaceholderSignatures()
+    public void EnglishAndSpanishPublishedCatalogs_HaveExactlySameKeysAndPlaceholderSignatures()
     {
         var catalog = new UiTextCatalog();
         var english = catalog.ReadAll(CultureInfo.GetCultureInfo("en"));
@@ -26,34 +26,23 @@ public sealed partial class LocalizationCatalogTests
     }
 
     [TestMethod]
-    public void RequiredShellResources_AreAvailableInEnglishAndSpanish()
+    public void PublishedCatalogs_AreCompleteAndNonEmpty()
     {
         var catalog = new UiTextCatalog();
-        var requiredKeys = new[]
-        {
-            "AppTitle",
-            "WindowTitle",
-            "SpecificationVersion",
-            "HeaderSubtitle",
-            "LabelStatus",
-            "LabelSample",
-            "LabelPurpose",
-            "LabelSource",
-            "FooterDevelopmentOnly",
-            "StatusNoSample",
-            "StatusSampleOpened",
-            "StatusSampleOpenFailed",
-            "ErrorSampleOpenTitle",
-            "ErrorSampleOpenBody"
-        };
+        var languages = new LanguageCatalog();
 
-        foreach (var culture in UiTextCatalog.SupportedUiCultures)
+        foreach (var language in languages.Published)
         {
-            foreach (var key in requiredKeys)
+            var resources = catalog.ReadAll(
+                CultureInfo.GetCultureInfo(language.Tag));
+
+            Assert.IsTrue(resources.Count >= 30);
+
+            foreach (var pair in resources)
             {
                 Assert.IsFalse(
-                    string.IsNullOrWhiteSpace(catalog.Get(key, culture)),
-                    $"Resource '{key}' is empty for '{culture.Name}'.");
+                    string.IsNullOrWhiteSpace(pair.Value),
+                    $"Resource '{pair.Key}' is empty for '{language.Tag}'.");
             }
         }
     }
