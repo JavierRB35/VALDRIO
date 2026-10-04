@@ -1,7 +1,10 @@
+using System.Text.Json.Serialization;
+
 namespace Valdrio.Domain;
 
 public readonly record struct CurrencyCode
 {
+    [JsonConstructor]
     public CurrencyCode(string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
@@ -21,6 +24,12 @@ public readonly record struct CurrencyCode
 
     public string Value { get; }
 
+    public bool IsValid =>
+        Value is { Length: 3 } &&
+        Value.All(character => character is >= 'A' and <= 'Z');
+
     public override string ToString() =>
-        Value;
+        IsValid
+            ? Value
+            : "<invalid-currency>";
 }
