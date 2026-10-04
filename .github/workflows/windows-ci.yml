@@ -6,6 +6,7 @@ on:
       - main
       - "t00/**"
       - "t01/**"
+      - "t01a/**"
   pull_request:
 
 permissions:
@@ -42,7 +43,7 @@ jobs:
 
       - name: Test
         shell: pwsh
-        run: dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=t01-tests.trx"
+        run: dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=valdrio-tests.trx"
 
       - name: Runner smoke
         shell: pwsh
@@ -73,10 +74,44 @@ jobs:
             }
           }
 
+      - name: Generate T01A visual evidence
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path "artifacts/desktop/Valdrio.Desktop.exe").Path
+          $sample = (Resolve-Path "samples/t01-smoke.valdrio-dev.json").Path
+          $captureDir = Join-Path $PWD "artifacts/visual"
+          New-Item -ItemType Directory -Force -Path $captureDir | Out-Null
+
+          $process = Start-Process -FilePath $exe -ArgumentList @(
+            $sample,
+            "--capture-dir=$captureDir"
+          ) -PassThru -Wait
+
+          if ($process.ExitCode -ne 0) {
+            throw "Visual evidence process failed with code $($process.ExitCode)."
+          }
+
+          $files = Get-ChildItem -Path $captureDir -Filter *.png
+          if ($files.Count -ne 4) {
+            throw "Expected 4 visual evidence PNG files, found $($files.Count)."
+          }
+
+          $files | ForEach-Object {
+            Write-Host "Visual evidence: $($_.Name) $($_.Length) bytes"
+          }
+
       - name: Upload development artifact
         uses: actions/upload-artifact@v7
         with:
           name: valdrio-t01-win-x64
           path: artifacts/desktop
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload T01A visual evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: valdrio-t01a-visual-evidence
+          path: artifacts/visual/*.png
           if-no-files-found: error
           retention-days: 14

@@ -5,17 +5,35 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="AppTitle" xml:space="preserve"><value>VALDRIO</value></data>
-  <data name="WindowTitle" xml:space="preserve"><value>VALDRIO - entorno de desarrollo</value></data>
-  <data name="SpecificationVersion" xml:space="preserve"><value>Especificación v0.4 · desarrollo</value></data>
-  <data name="HeaderSubtitle" xml:space="preserve"><value>T01 · comprobación Windows/WPF de desarrollo</value></data>
+  <data name="WindowTitle" xml:space="preserve"><value>VALDRIO - preferencias de presentación</value></data>
+  <data name="SpecificationVersion" xml:space="preserve"><value>Especificación v0.4 · T01A</value></data>
+  <data name="HeaderSubtitle" xml:space="preserve"><value>Interfaz bilingüe y preferencias independientes</value></data>
+  <data name="PreferencesTitle" xml:space="preserve"><value>Preferencias de presentación</value></data>
+  <data name="LabelUiLanguage" xml:space="preserve"><value>Idioma de interfaz</value></data>
+  <data name="LabelFormatCulture" xml:space="preserve"><value>Formato regional</value></data>
+  <data name="LabelTimeZone" xml:space="preserve"><value>Zona horaria de visualización</value></data>
+  <data name="PreviewTitle" xml:space="preserve"><value>Vista previa de presentación independiente</value></data>
+  <data name="LabelMoneyPreview" xml:space="preserve"><value>Importe (USD)</value></data>
+  <data name="LabelDatePreview" xml:space="preserve"><value>Fecha de negocio</value></data>
+  <data name="LabelInstantPreview" xml:space="preserve"><value>Instante de auditoría</value></data>
+  <data name="EditTitle" xml:space="preserve"><value>Captura de cultura de edición</value></data>
+  <data name="LabelCapturedCulture" xml:space="preserve"><value>Cultura capturada</value></data>
+  <data name="LabelPendingValue" xml:space="preserve"><value>Texto decimal pendiente</value></data>
+  <data name="LabelEditStatus" xml:space="preserve"><value>Estado de edición</value></data>
+  <data name="ActionStartEdit" xml:space="preserve"><value>Iniciar edición</value></data>
+  <data name="ActionCommitEdit" xml:space="preserve"><value>Confirmar con cultura capturada</value></data>
+  <data name="EditNotStarted" xml:space="preserve"><value>No se ha iniciado ninguna sesión de edición.</value></data>
+  <data name="EditStarted" xml:space="preserve"><value>Edición iniciada con {0}.</value></data>
+  <data name="EditCommitted" xml:space="preserve"><value>Decimal canónico confirmado: {0}.</value></data>
+  <data name="EditInvalid" xml:space="preserve"><value>Valor no válido con la cultura capturada {0}.</value></data>
   <data name="LabelStatus" xml:space="preserve"><value>Estado</value></data>
   <data name="LabelSample" xml:space="preserve"><value>Ejemplo</value></data>
   <data name="LabelPurpose" xml:space="preserve"><value>Finalidad</value></data>
   <data name="LabelSource" xml:space="preserve"><value>Origen</value></data>
-  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>Fixture exclusivo de desarrollo. T01 no implementa cálculo económico ni un esquema de persistencia productivo.</value></data>
+  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>T01A solo cambia la presentación. No modifica moneda funcional, ledger ni política económica.</value></data>
   <data name="StatusNoSample" xml:space="preserve"><value>No se ha cargado ningún ejemplo de desarrollo.</value></data>
   <data name="StatusSampleOpened" xml:space="preserve"><value>Ejemplo de desarrollo abierto.</value></data>
   <data name="StatusSampleOpenFailed" xml:space="preserve"><value>No se pudo abrir el ejemplo de desarrollo.</value></data>
   <data name="ErrorSampleOpenTitle" xml:space="preserve"><value>Entorno de desarrollo de VALDRIO</value></data>
-  <data name="ErrorSampleOpenBody" xml:space="preserve"><value>No se pudo abrir el ejemplo de desarrollo de T01. Diagnóstico: {0}</value></data>
+  <data name="ErrorSampleOpenBody" xml:space="preserve"><value>No se pudo abrir el ejemplo de desarrollo. Diagnóstico: {0}</value></data>
 </root>
