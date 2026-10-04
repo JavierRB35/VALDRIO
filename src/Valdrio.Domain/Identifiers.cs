@@ -36,29 +36,45 @@ public readonly record struct UnitId(EntityId Value) : IComparable<UnitId>
         Value.ToString();
 }
 
-public sealed record UnitDefinition(
-    UnitId Id,
-    string Code,
-    string Dimension,
-    string Symbol,
-    int DecimalScale,
-    bool IsDiscrete)
+public sealed record UnitDefinition
 {
-    public UnitDefinition
+    public UnitDefinition(
+        UnitId id,
+        string code,
+        string dimension,
+        string symbol,
+        int decimalScale,
+        bool isDiscrete)
     {
-        if (string.IsNullOrWhiteSpace(Code))
+        if (string.IsNullOrWhiteSpace(code))
         {
-            throw new ArgumentException("UNIT_CODE_REQUIRED", nameof(Code));
+            throw new ArgumentException("UNIT_CODE_REQUIRED", nameof(code));
         }
 
-        if (string.IsNullOrWhiteSpace(Dimension))
+        if (string.IsNullOrWhiteSpace(dimension))
         {
-            throw new ArgumentException("UNIT_DIMENSION_REQUIRED", nameof(Dimension));
+            throw new ArgumentException(
+                "UNIT_DIMENSION_REQUIRED",
+                nameof(dimension));
         }
 
-        if (DecimalScale is < 0 or > 12)
+        if (decimalScale is < 0 or > 12)
         {
-            throw new ArgumentOutOfRangeException(nameof(DecimalScale));
+            throw new ArgumentOutOfRangeException(nameof(decimalScale));
         }
+
+        Id = id;
+        Code = code;
+        Dimension = dimension;
+        Symbol = symbol;
+        DecimalScale = decimalScale;
+        IsDiscrete = isDiscrete;
     }
+
+    public UnitId Id { get; }
+    public string Code { get; }
+    public string Dimension { get; }
+    public string Symbol { get; }
+    public int DecimalScale { get; }
+    public bool IsDiscrete { get; }
 }
