@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - "t00/**"
       - "t01/**"
   pull_request:
 
@@ -43,9 +44,13 @@ jobs:
         shell: pwsh
         run: dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=t01-tests.trx"
 
-      - name: Publish Windows x64 development artifact
+      - name: Runner smoke
         shell: pwsh
-        run: dotnet publish src/Valdrio.Desktop/Valdrio.Desktop.csproj --configuration Release --runtime win-x64 --self-contained false --output artifacts/desktop
+        run: dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build
+
+      - name: Publish self-contained Windows x64 development artifact
+        shell: pwsh
+        run: dotnet publish src/Valdrio.Desktop/Valdrio.Desktop.csproj --configuration Release --runtime win-x64 --self-contained true --output artifacts/desktop
 
       - name: WPF launch smoke
         shell: pwsh
