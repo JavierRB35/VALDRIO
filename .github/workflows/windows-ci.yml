@@ -1,0 +1,77 @@
+name: windows-ci
+
+on:
+  push:
+    branches:
+      - main
+      - "t01/**"
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-publish:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.401
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            Directory.Packages.props
+
+      - name: SDK info
+        shell: pwsh
+        run: dotnet --info
+
+      - name: Restore
+        shell: pwsh
+        run: dotnet restore Valdrio.slnx
+
+      - name: Build
+        shell: pwsh
+        run: dotnet build Valdrio.slnx --configuration Release --no-restore
+
+      - name: Test
+        shell: pwsh
+        run: dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=t01-tests.trx"
+
+      - name: Publish Windows x64 development artifact
+        shell: pwsh
+        run: dotnet publish src/Valdrio.Desktop/Valdrio.Desktop.csproj --configuration Release --runtime win-x64 --self-contained false --output artifacts/desktop
+
+      - name: WPF launch smoke
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path "artifacts/desktop/Valdrio.Desktop.exe").Path
+          $sample = (Resolve-Path "samples/t01-smoke.valdrio-dev.json").Path
+          $process = Start-Process -FilePath $exe -ArgumentList @($sample) -PassThru
+
+          try {
+            Start-Sleep -Seconds 6
+            if ($process.HasExited) {
+              throw "VALDRIO WPF exited during smoke test with code $($process.ExitCode)."
+            }
+
+            Write-Host "WPF launch smoke passed. Process remained alive for 6 seconds."
+          }
+          finally {
+            if (-not $process.HasExited) {
+              Stop-Process -Id $process.Id -Force
+            }
+          }
+
+      - name: Upload development artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: valdrio-t01-win-x64
+          path: artifacts/desktop
+          if-no-files-found: error
+          retention-days: 14
