@@ -1,5 +1,7 @@
+using System.Globalization;
 using System.IO;
 using System.Windows;
+using Valdrio.Localization;
 
 namespace Valdrio.Desktop;
 
@@ -9,19 +11,22 @@ public partial class App : System.Windows.Application
     {
         base.OnStartup(e);
 
+        var culture = CultureInfo.GetCultureInfo("en");
+        var texts = new UiTextCatalog();
+
         var requestedPath = e.Args.FirstOrDefault(argument =>
             !argument.StartsWith("--", StringComparison.Ordinal));
 
         var samplePath = requestedPath
             ?? Path.Combine(AppContext.BaseDirectory, "samples", "t01-smoke.valdrio-dev.json");
 
-        var viewModel = new MainWindowViewModel();
+        var viewModel = new MainWindowViewModel(texts, culture);
 
-        if (!viewModel.TryLoadDevelopmentSample(samplePath, out var error))
+        if (!viewModel.TryLoadDevelopmentSample(samplePath, out var diagnosticCode))
         {
             MessageBox.Show(
-                $"The T01 development sample could not be opened.\n\n{error}",
-                "VALDRIO development shell",
+                texts.Format("ErrorSampleOpenBody", culture, diagnosticCode ?? "T01_SAMPLE_OPEN_FAILED"),
+                texts.Get("ErrorSampleOpenTitle", culture),
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
 
