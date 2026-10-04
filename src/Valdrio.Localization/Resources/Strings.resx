@@ -55,4 +55,23 @@
   <data name="LabelCanonicalBusinessDate" xml:space="preserve"><value>Canonical business date</value></data>
   <data name="LabelCanonicalUtcInstant" xml:space="preserve"><value>Canonical UTC instant</value></data>
   <data name="LabelResolvedLocalInstant" xml:space="preserve"><value>Local view in selected zone</value></data>
+
+  <data name="AllocationKey.NegativeWeight" xml:space="preserve"><value>Allocation destination {0} has a negative driver weight {1}.</value></data>
+  <data name="AllocationKey.ZeroDriverTotal" xml:space="preserve"><value>The allocation key has no positive driver weight.</value></data>
+  <data name="Currency.MinorUnitUndefined" xml:space="preserve"><value>Currency {0} has no minor-unit definition in catalog {1}.</value></data>
+  <data name="Currency.NotInCatalog" xml:space="preserve"><value>Currency {0} is not present in catalog {1}.</value></data>
+  <data name="Money.CurrencyMismatch" xml:space="preserve"><value>Currencies do not match: {0} and {1}.</value></data>
+  <data name="Money.CurrencyInvalid" xml:space="preserve"><value>Money value {0} has no valid explicit currency.</value></data>
+  <data name="Numeric.ConservationFailure" xml:space="preserve"><value>Numeric conservation failed: expected {0}, actual {1}, difference {2}.</value></data>
+  <data name="Numeric.DuplicateDestination" xml:space="preserve"><value>Destination {0} appears more than once.</value></data>
+  <data name="Numeric.InvalidQuantum" xml:space="preserve"><value>Rounding quantum {0} is invalid.</value></data>
+  <data name="Precision.MagnitudeExceeded" xml:space="preserve"><value>Value {0} exceeds the allowed magnitude {1}.</value></data>
+  <data name="Precision.PercentageOutOfRange" xml:space="preserve"><value>Percentage {0} must be between 0 and 100.</value></data>
+  <data name="Precision.ScaleExceeded" xml:space="preserve"><value>Value {0} exceeds the maximum scale of {1} decimal places.</value></data>
+  <data name="Precision.PolicyMissing" xml:space="preserve"><value>Precision policy is missing for {0}.</value></data>
+  <data name="Precision.PolicyMismatch" xml:space="preserve"><value>Precision policies are incompatible: {0} and {1}.</value></data>
+  <data name="Quantity.UnitMismatch" xml:space="preserve"><value>Quantity units do not match: {0} and {1}.</value></data>
+  <data name="Time.LocalAmbiguous" xml:space="preserve"><value>Local time {0} in zone {1} is ambiguous. Valid offsets: {2}.</value></data>
+  <data name="Time.LocalInvalid" xml:space="preserve"><value>Local time {0} does not exist in zone {1}. Valid offsets: {2}.</value></data>
+  <data name="Time.LocalOffsetInvalid" xml:space="preserve"><value>The selected offset for local time {0} in zone {1} is invalid. Valid offsets: {2}.</value></data>
 </root>

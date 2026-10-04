@@ -19,30 +19,69 @@ public sealed class JsonUserPresentationPreferencesStore
         this.path = path;
     }
 
-    public bool TryLoad(out UserPresentationPreferences? preferences)
+    public bool TryLoad(
+        out UserPresentationPreferences? preferences) =>
+        TryLoad(
+            out preferences,
+            out _);
+
+    public bool TryLoad(
+        out UserPresentationPreferences? preferences,
+        out string? failureCode)
     {
         if (!File.Exists(path))
         {
             preferences = null;
+            failureCode = "PREFERENCES_NOT_FOUND";
             return false;
         }
 
         try
         {
-            var json = File.ReadAllText(path, Encoding.UTF8);
-            preferences = JsonSerializer.Deserialize<UserPresentationPreferences>(
-                json,
-                JsonOptions);
-            return preferences is not null;
+            var json = File.ReadAllText(
+                path,
+                Encoding.UTF8);
+
+            preferences =
+                JsonSerializer.Deserialize<UserPresentationPreferences>(
+                    json,
+                    JsonOptions);
+
+            if (preferences is null)
+            {
+                failureCode =
+                    "PREFERENCES_DOCUMENT_NULL";
+                return false;
+            }
+
+            failureCode = null;
+            return true;
         }
         catch (JsonException)
         {
             preferences = null;
+            failureCode =
+                "PREFERENCES_JSON_INVALID";
+            return false;
+        }
+        catch (IOException)
+        {
+            preferences = null;
+            failureCode =
+                "PREFERENCES_IO_FAILED";
+            return false;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            preferences = null;
+            failureCode =
+                "PREFERENCES_ACCESS_DENIED";
             return false;
         }
     }
 
-    public void Save(UserPresentationPreferences preferences)
+    public void Save(
+        UserPresentationPreferences preferences)
     {
         ArgumentNullException.ThrowIfNull(preferences);
 
@@ -53,13 +92,19 @@ public sealed class JsonUserPresentationPreferencesStore
         Directory.CreateDirectory(directory);
 
         var tempPath = path + ".tmp";
-        var json = JsonSerializer.Serialize(preferences, JsonOptions);
+        var json = JsonSerializer.Serialize(
+            preferences,
+            JsonOptions);
 
         File.WriteAllText(
             tempPath,
             json,
-            new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+            new UTF8Encoding(
+                encoderShouldEmitUTF8Identifier: false));
 
-        File.Move(tempPath, path, overwrite: true);
+        File.Move(
+            tempPath,
+            path,
+            overwrite: true);
     }
 }

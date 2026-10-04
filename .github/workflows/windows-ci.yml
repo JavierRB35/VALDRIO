@@ -9,6 +9,7 @@ on:
       - "t01a/**"
       - "t02/**"
       - "t02a/**"
+      - "review/**"
   pull_request:
 
 permissions:
@@ -46,6 +47,37 @@ jobs:
       - name: Test
         shell: pwsh
         run: dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=valdrio-tests.trx"
+
+      - name: Guard diagnostic resource coverage
+        shell: pwsh
+        run: |
+          $sourceFiles = Get-ChildItem src/Valdrio.Domain,src/Valdrio.Calculation,src/Valdrio.Application,src/Valdrio.Infrastructure -Recurse -Filter *.cs
+          $pattern = '"(?<key>(?:AllocationKey|Currency|Money|Numeric|Precision|Quantity|Time)\.[A-Za-z0-9]+)"'
+
+          $keys = @(
+            foreach ($file in $sourceFiles) {
+              foreach ($match in (Select-String -Path $file.FullName -Pattern $pattern -AllMatches).Matches) {
+                $match.Groups['key'].Value
+              }
+            }
+          ) | Sort-Object -Unique
+
+          [xml]$englishXml = Get-Content src/Valdrio.Localization/Resources/Strings.resx -Raw
+          [xml]$spanishXml = Get-Content src/Valdrio.Localization/Resources/Strings.es.resx -Raw
+
+          $englishKeys = @($englishXml.root.data | ForEach-Object { $_.name })
+          $spanishKeys = @($spanishXml.root.data | ForEach-Object { $_.name })
+
+          $missingEnglish = @($keys | Where-Object { $_ -notin $englishKeys })
+          $missingSpanish = @($keys | Where-Object { $_ -notin $spanishKeys })
+
+          if ($missingEnglish.Count -gt 0 -or $missingSpanish.Count -gt 0) {
+            Write-Host "Missing English diagnostic keys: $($missingEnglish -join ', ')"
+            Write-Host "Missing Spanish diagnostic keys: $($missingSpanish -join ', ')"
+            throw "Diagnostic resources do not cover production message keys."
+          }
+
+          Write-Host "Diagnostic resource coverage passed for $($keys.Count) production keys."
 
       - name: Guard economic code against binary floating point
         shell: pwsh
@@ -106,6 +138,42 @@ jobs:
             }
           }
 
+      - name: WPF invalid-preferences recovery smoke
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path "artifacts/desktop/Valdrio.Desktop.exe").Path
+          $sample = (Resolve-Path "samples/t01-smoke.valdrio-dev.json").Path
+          $invalidPreferences = Join-Path $env:RUNNER_TEMP "valdrio-invalid-preferences.json"
+
+          @'
+          {
+            "UiLanguageTag": "en",
+            "FormatCultureTag": "en-US",
+            "DisplayTimeZoneId": "Invalid/ReviewZone",
+            "DateDisplayPreset": 999,
+            "NumberDisplayOptions": null
+          }
+          '@ | Set-Content -Path $invalidPreferences -Encoding utf8NoBOM
+
+          $process = Start-Process -FilePath $exe -ArgumentList @(
+            $sample,
+            "--preferences-path=$invalidPreferences"
+          ) -PassThru
+
+          try {
+            Start-Sleep -Seconds 5
+            if ($process.HasExited) {
+              throw "VALDRIO exited while recovering invalid presentation preferences with code $($process.ExitCode)."
+            }
+
+            Write-Host "WPF invalid-preferences recovery passed. Process remained alive for 5 seconds."
+          }
+          finally {
+            if (-not $process.HasExited) {
+              Stop-Process -Id $process.Id -Force
+            }
+          }
+
       - name: Generate WPF visual evidence
         shell: pwsh
         run: |
@@ -147,3 +215,32 @@ jobs:
           path: artifacts/visual/*.png
           if-no-files-found: error
           retention-days: 14
+
+
+  temporal-zone-invariance:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        timezone:
+          - UTC
+          - Europe/Madrid
+    env:
+      TZ: ${{ matrix.timezone }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.401
+
+      - name: R01 parser under process timezone
+        shell: bash
+        run: |
+          echo "TZ=$TZ"
+          dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj \
+            --configuration Release \
+            --filter "FullyQualifiedName~RepositoryReviewRegressionTests.R01_"

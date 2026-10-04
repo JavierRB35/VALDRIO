@@ -7,25 +7,39 @@ public readonly record struct Quantity
         UnitId unitId,
         PrecisionPolicy? precisionPolicy = null)
     {
-        var policy = precisionPolicy ?? PrecisionPolicy.Pdec1Proposed;
+        var policy =
+            precisionPolicy ?? PrecisionPolicy.Pdec1Proposed;
+
         policy.ValidateQuantity(value, nameof(value));
 
         Value = value;
         UnitId = unitId;
+        PrecisionPolicy = policy;
     }
 
     public decimal Value { get; }
     public UnitId UnitId { get; }
+    public PrecisionPolicy PrecisionPolicy { get; }
 
     public static Quantity operator +(Quantity left, Quantity right)
     {
         EnsureSameUnit(left, right);
+
+        PrecisionPolicyCompatibility.EnsureSame(
+            left.PrecisionPolicy,
+            right.PrecisionPolicy,
+            "leftQuantity",
+            "rightQuantity");
+
         return new Quantity(
             checked(left.Value + right.Value),
-            left.UnitId);
+            left.UnitId,
+            left.PrecisionPolicy);
     }
 
-    private static void EnsureSameUnit(Quantity left, Quantity right)
+    private static void EnsureSameUnit(
+        Quantity left,
+        Quantity right)
     {
         if (left.UnitId != right.UnitId)
         {
