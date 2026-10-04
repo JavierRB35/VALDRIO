@@ -1,1 +1,1000 @@
-The requested file reference is not currently visible. Use files.search or files.list to rediscover the file, then retry with a returned ref_id or file_id.
+[
+  {
+    "id": "T00",
+    "title": "Acordar el producto y sus políticas",
+    "release": "R0",
+    "dependencies": [],
+    "contracts": [
+      "CM01",
+      "CM02",
+      "CM08",
+      "CM09",
+      "CM10",
+      "CM12",
+      "CM15",
+      "CM16"
+    ],
+    "cases": [
+      "C01",
+      "C15",
+      "C18",
+      "C20",
+      "C22",
+      "C23",
+      "I01",
+      "I02",
+      "I04",
+      "I13"
+    ],
+    "deliver": "Contrato de alcance y registro de decisiones utilizable en las sesiones siguientes.",
+    "steps": [
+      "Leer especificaciones 01–05 y explicar el recorrido de un estudio con ejemplos de coste e interpretación internacional.",
+      "Registrar finalidad, trabajo local, fuente de saldos, moneda funcional y propuestas de capacidad. Identificar las decisiones de negocio con ejemplos concretos.",
+      "Conservar VALDRIO como identidad definitiva y localización como requisito inicial. Distinguir políticas de demostración, aceptadas y posteriores. Crear el estado inicial del proyecto."
+    ],
+    "data": "Registro D01–D12, ADR técnicos A01–A17 y versión 0.4. Preferencias visuales separadas de reglas económicas y perfiles de origen.",
+    "ui": "Documento corto de aceptación de ejemplos y guion de uso. El propietario responde sobre costes, no sobre clases o SQL.",
+    "checks": [
+      "El alcance no impone compatibilidad con otra aplicación ni restauración SQL para iniciar T01.",
+      "Cada decisión pendiente tiene tarea afectada y ejemplo. Las decisiones técnicas ordinarias recaen en el LLM.",
+      "Cambiar idioma, región y zona horaria se distingue de cambiar moneda o política de coste."
+    ],
+    "done": "Propietario comprende el flujo propuesto; quedan identificadas las decisiones que afectan reglas y arquitectura.",
+    "avoid": "No programar reglas económicas definitivas sin ejemplos; no bloquear todo el proyecto por decisiones comerciales futuras."
+  },
+  {
+    "id": "T01",
+    "title": "Repositorio, solución y compilación Windows",
+    "release": "R0",
+    "dependencies": [
+      "T00"
+    ],
+    "contracts": [],
+    "cases": [],
+    "deliver": "Solución nueva que compila y una ventana WPF que abre, con CI Windows y artefacto reproducible.",
+    "steps": [
+      "Crear Valdrio.Domain, Calculation, Application, Infrastructure, Localization, Reporting, Desktop, Runner y Tests con las dependencias del documento 05.",
+      "Fijar SDK LTS, versiones de paquetes y restore. Implementar pipeline Windows de build/test y artefacto de demostración.",
+      "Crear ventana mínima identificada como VALDRIO con navegación y recursos de texto preparados para T01A; documentar entorno, comandos y evidencia."
+    ],
+    "data": "global.json, gestión central de paquetes si se utiliza, .sln, pipeline y README de desarrollo.",
+    "ui": "Inicio con nombre de producto, versión y acceso al archivo de ejemplo. Sin pantallas vacías que simulen funciones terminadas.",
+    "checks": [
+      "Build de todos los proyectos y arranque WPF en Windows; runner ejecutable desde CLI de desarrollo.",
+      "Domain/Calculation no referencian EF, WPF ni infraestructura. Registrar qué pudo ejecutarse en el entorno."
+    ],
+    "done": "Existe un artefacto instalable o portable de desarrollo que el propietario puede abrir sin Visual Studio.",
+    "avoid": "No añadir servidor web, contenedores, plugins genéricos ni IA en el cálculo. Las pantallas funcionales se construyen después de T01A."
+  },
+  {
+    "id": "T01A",
+    "title": "Interfaz bilingüe y preferencias independientes",
+    "release": "R0",
+    "dependencies": [
+      "T01"
+    ],
+    "contracts": [
+      "CM15"
+    ],
+    "cases": [
+      "I01",
+      "I02",
+      "I05",
+      "I10",
+      "I11",
+      "I15"
+    ],
+    "deliver": "La primera ventana funcional funciona en español e inglés y permite elegir región y zona sin alterar datos.",
+    "steps": [
+      "Crear Valdrio.Localization con catálogos .resx, inglés neutral, español completo, claves semánticas y mensajes con argumentos tipados. Definir IPluralRule y fallback registrado.",
+      "Implementar preferencias de idioma, cultura y zona por usuario, servicio observable y adaptador WPF que actualiza bindings, Language y FlowDirection.",
+      "Implementar formato/edición que captura la cultura al iniciar la entrada; validar cobertura y placeholders en CI, pseudotraducción +40 %, RTL de prueba y teclado."
+    ],
+    "data": "UserPresentationPreferences, LanguageCatalog y MessageDescriptor. Preferencias fuera de EconomicInputHash y de los datos de coste.",
+    "ui": "Selector de idioma y formato separados, previsualización de números/fecha, zona visible y cambio de idioma sin reiniciar la aplicación.",
+    "checks": [
+      "En inglés con formato español, USD 1234.50 sigue mostrado como 1.234,50 USD; cambiar idioma conserva moneda e importe.",
+      "Catálogo incompleto o placeholder incompatible falla CI; respaldo inglés evita fallo y registra clave ausente.",
+      "Textos largos/RTL no ocultan botones ni invierten cuentas/fórmulas. Cambio de región no reinterpreta una edición pendiente.",
+      "Domain y Calculation no referencian Localization, WPF, SQLite ni cultura de usuario."
+    ],
+    "done": "La estructura internacional se verifica antes de T02/T03 y antes de añadir formularios funcionales; español e inglés están publicados con evidencia visual.",
+    "avoid": "No posponer traducción ni almacenar etiquetas traducidas como códigos. RTL de prueba no equivale a ofrecer otro idioma aprobado."
+  },
+  {
+    "id": "T02",
+    "title": "Unidades, decimal, política y redondeo",
+    "release": "R0",
+    "dependencies": [
+      "T01A"
+    ],
+    "contracts": [
+      "CM03",
+      "CM04",
+      "CM15"
+    ],
+    "cases": [
+      "C07",
+      "C08",
+      "C21"
+    ],
+    "deliver": "Tipos de dominio y BalancedRound comprobados antes de repartir costes.",
+    "steps": [
+      "Implementar importe, cantidad, unidad, moneda, IDs y serialización canónica. Validar escalas y límites de PDEC-1.",
+      "Implementar BalancedRound con Floor, mayores restos, signo y desempate estable, separando ledger e informe de moneda.",
+      "Preparar carga del corpus y comparar referencias exactas con valores producidos. Registrar diferencias de cuantización esperadas."
+    ],
+    "data": "PrecisionPolicy, Quantity, Money y DTO de resultado bruto/adjudicado/ajuste. Decimales como texto en snapshot.",
+    "ui": "Una vista de ejemplo muestra antes y después de redondeo, IDs y explicación de residuo. No decide políticas contables.",
+    "checks": [
+      "Céntimo positivo y negativo en tres partes; variación negativa; valores de frontera y overflow.",
+      "Mismo resultado con cultura es-ES/en-US y orden de entrada permutado; simetría de signo para pesos no negativos.",
+      "CurrencyProjection trata orígenes con fracción de unidad menor: 0,015 EUR a dos destinos proyecta 0,01/0,01; 0,005 proyecta total 0 con diferencia visible; negativos simétricos. No cambia el ledger."
+    ],
+    "done": "Primitivas de precisión reutilizables con pruebas reales y sin conversión a double para importes.",
+    "avoid": "No redondear tarifas a dos decimales ni corregir cobertura de clave mediante el algoritmo de residuos."
+  },
+  {
+    "id": "T02A",
+    "title": "Money, monedas, fechas canónicas y tipos congelados",
+    "release": "R0",
+    "dependencies": [
+      "T02",
+      "T01A"
+    ],
+    "contracts": [
+      "CM04",
+      "CM15",
+      "CM16"
+    ],
+    "cases": [
+      "C33",
+      "C34",
+      "C35",
+      "C36",
+      "C37",
+      "C38",
+      "C39",
+      "I06",
+      "I07",
+      "I08",
+      "I09",
+      "I13",
+      "I14",
+      "I15"
+    ],
+    "deliver": "Primitivas internacionales y conversión previa al reparto sin monedas o precisión implícitas.",
+    "steps": [
+      "Implementar Money y CurrencyDefinition versionada, catálogo monetario y snapshot de minor units. Prohibir suma nominal entre monedas; proyección conciliada por quantum de la moneda.",
+      "Implementar DateOnly ISO para negocio, UTC para instantes, IClock y TimeZoneResolver; bloquear hora ambigua o inexistente sin elección explícita.",
+      "Implementar RateSet manual/importado, cotización destino/origen positiva, fecha y fuente; convertir a escala 8 con MidpointToEven y registrar el puente. Preparar metadatos y hashes sin red en Calculate. RevalueStudy es explícito y transaccional, con revisión y revalidación de particiones."
+    ],
+    "data": "Money, CurrencyMetadataSnapshot, FxRateSetVersion, FxRateApplication y ConversionRoundingAdjustment; catálogo de ejemplo separado de catálogo completo de producto.",
+    "ui": "Editor de tipos con orientación y fecha; vista original/funcional y perfil de representación. Código ISO visible; el cambio de formato no convierte moneda.",
+    "checks": [
+      "C33–C37, originales y conversiones exactas, identidad de moneda, negativo y tipo faltante; límites/overflow y tipo no positivo diagnosticados.",
+      "C38/C39, JPY 34/34/33 y KWD 0.001/0/0, sin quantum 0.01 fijo; escala interna 8 conservada.",
+      "Cambiar zona no desplaza PeriodStart; fixture de hora local ambigua requiere elección.",
+      "Actualizar RateSet crea otra versión/ejecución y no altera los 90 EUR previamente publicados."
+    ],
+    "done": "Contratos monetarios y temporales probados antes de persistir/importar, con resultados de corpus y formatos separados del cálculo.",
+    "avoid": "No descargar cotizaciones desde el motor, asumir cierre/promedio sin política ni sumar originales de distintas monedas."
+  },
+  {
+    "id": "T03",
+    "title": "Archivo de empresa y SQLite real",
+    "release": "R0",
+    "dependencies": [
+      "T02A"
+    ],
+    "contracts": [],
+    "cases": [],
+    "deliver": "Crear, abrir, cerrar y volver a abrir un archivo con identidad y precisión intactas.",
+    "steps": [
+      "Implementar esquema inicial, EF mappings TEXT para decimal, FK e índices y versión de archivo.",
+      "Implementar CompanyFileService, bloqueo de un editor y apertura de archivo más nuevo con diagnóstico seguro.",
+      "Probar transacciones, fallo de escritura y recuperación básica; entregar flujo crear/abrir con archivo de ejemplo."
+    ],
+    "data": "Company con moneda funcional sugerida, UnitDefinition, preferencias de usuario independientes, FileSchemaVersion y AuditEvent; migraciones versionadas.",
+    "ui": "Inicio, crear empresa con moneda predeterminada, abrir archivo y mostrar compatibilidad. La moneda de empresa solo sugiere la de nuevos estudios; ruta de datos separada del programa.",
+    "checks": [
+      "SQLite temporal sobre disco, no solo in-memory. Ida/vuelta de máximos decimales y cadenas de cuenta con ceros.",
+      "Abrir dos editores del mismo archivo; denegar segunda edición. Fallo no deja medio agregado."
+    ],
+    "done": "Archivo local estable con mensajes de apertura y una sola identidad de empresa.",
+    "avoid": "No ofrecer carpeta de red o sincronización viva como colaboración; no agregar con SQL REAL."
+  },
+  {
+    "id": "T04",
+    "title": "Modelos versionados y centros",
+    "release": "R0",
+    "dependencies": [
+      "T03"
+    ],
+    "contracts": [],
+    "cases": [],
+    "deliver": "Maestros y configuración inicial editable, publicable y duplicable.",
+    "steps": [
+      "Implementar centros físicos, nodos principal/auxiliar y un pool homogéneo por nodo con unidad de driver.",
+      "Implementar versión de modelo, estado de borrador, validaciones estructurales y publicación inmutable.",
+      "Crear duplicado editable de publicado conservando referencia de origen; desactivar maestros sin borrar históricos."
+    ],
+    "data": "PhysicalCenter, ModelVersion, CalculationNode y CostPoolDefinition con ámbito e IDs estables.",
+    "ui": "Editor de modelos y centros con función independiente de papel; errores de código duplicado y unidad visibles.",
+    "checks": [
+      "Publicar y luego intentar modificar; duplicar y demostrar que el original conserva todos sus valores.",
+      "Centro físico con nodos setup y proceso de distintas unidades; prohibir referencias de otro modelo."
+    ],
+    "done": "Se configura un modelo pequeño sin SQL y queda lista una versión para estudios.",
+    "avoid": "No mezclar principal/auxiliar con productivo/comercial ni introducir papel mixto sin ecuaciones."
+  },
+  {
+    "id": "T05",
+    "title": "Estudios, revisiones y snapshots",
+    "release": "R0",
+    "dependencies": [
+      "T04"
+    ],
+    "contracts": [
+      "CM15",
+      "CM16"
+    ],
+    "cases": [
+      "I05",
+      "I08",
+      "I14"
+    ],
+    "deliver": "Periodo y escenario con revisión coherente y snapshot determinista.",
+    "steps": [
+      "Implementar Study y la referencia a modelo publicado, moneda, periodo, finalidad y escenario.",
+      "Crear servicio de revisión para mutaciones y serializador canónico con EconomicInputHash y FullSnapshotHash; incluir moneda, tipos, metadatos y versiones aplicadas.",
+      "Mostrar historial de ejecuciones inicialmente vacío y reglas de actualidad. Añadir un snapshot de demostración al runner."
+    ],
+    "data": "Study, RunInput, SnapshotSchemaVersion y Revision; fechas de negocio separadas de fecha de ejecución.",
+    "ui": "Lista de estudios, crear periodo y selector de modelo. Estado informa qué falta para calcular.",
+    "checks": [
+      "Snapshot igual produce hash igual al reordenar entradas; fecha de ejecución no altera resultado económico.",
+      "Cambio de modelo o periodo aumenta revisión; periodo invertido o moneda incoherente bloquean."
+    ],
+    "done": "Cualquier cálculo posterior puede identificar exactamente qué entradas utilizó.",
+    "avoid": "No usar un flag manual IsCalculated como única prueba de actualidad; no leer maestros vigentes durante un cálculo histórico."
+  },
+  {
+    "id": "T06",
+    "title": "Importación verificable de sumas y saldos",
+    "release": "R0",
+    "dependencies": [
+      "T05"
+    ],
+    "contracts": [
+      "CM01",
+      "CM15",
+      "CM16"
+    ],
+    "cases": [
+      "C01",
+      "C02",
+      "C03"
+    ],
+    "deliver": "Importación XLSX/CSV con previsualización y confirmación atómica.",
+    "steps": [
+      "Implementar perfiles de columnas, cultura y signo; separar saldo de periodo, cierre y diferencia de acumulados.",
+      "Preparar filas originales, valores interpretados, duplicados, faltantes y totales sin modificar estudio.",
+      "Confirmar lote con revisión esperada, modo explícito y detección de repetición. Cancelación conserva el estado anterior."
+    ],
+    "data": "ImportBatch, ImportedRow, ResourceSourceLink y Resource. Guardar hash, fechas y perfil aplicado.",
+    "ui": "Asistente archivo → hoja/columnas → interpretación → errores/totales → confirmar. Ofrecer corrección localizada.",
+    "checks": [
+      "Fila inválida en medio del archivo no introduce cero ni confirma parte del lote.",
+      "Cuenta con ceros iniciales, duplicados, separadores ambiguos, cuentas ausentes y dos acumulados comparables.",
+      "Confirmación concurrente a otra revisión, repetición de lote y fallo al guardar dejan resultado claro."
+    ],
+    "done": "Un archivo válido genera recursos conciliados y un archivo inválido ofrece explicación sin pérdida.",
+    "avoid": "No filtrar necesariamente cuentas 6/7; no borrar todos los recursos al abrir la pantalla."
+  },
+  {
+    "id": "T06A",
+    "title": "Importación internacional y puente de moneda",
+    "release": "R0",
+    "dependencies": [
+      "T06",
+      "T02A"
+    ],
+    "contracts": [
+      "CM01",
+      "CM15",
+      "CM16"
+    ],
+    "cases": [
+      "C01",
+      "C33",
+      "C34",
+      "C35",
+      "C36",
+      "C37",
+      "I03",
+      "I04",
+      "I12",
+      "I14",
+      "I15"
+    ],
+    "deliver": "Archivos internacionales producen valores tipados inequívocos y una base funcional conciliada.",
+    "steps": [
+      "Completar perfiles con separadores, agrupación, patrón de fecha, signo, delimitador, encoding y columna/moneda fija; validar cada interpretación sin depender de la UI.",
+      "Incorporar moneda original, DateOnly y elección de RateSet en PrepareImport. Mostrar original, convertido, tipo, fecha y ajuste antes de confirmar; errores no se convierten a cero.",
+      "Guardar perfil y conversiones con el lote, confirmar atómicamente y generar salida canónica de runner que permite comparación independiente."
+    ],
+    "data": "SourceParseProfileVersion, ImportedRow con valores originales/tipados, FxRateApplication e ImportConversionBridge; decimal JSON invariante.",
+    "ui": "Asistente con perfil de origen distinto de preferencias visuales, muestras y total por moneda/base; no selector de país que cambie moneda silenciosamente.",
+    "checks": [
+      "Archivos es-ES/en-US/en-GB/de-DE equivalentes dan los mismos valores con perfiles correctos; se conservan procedencias diferentes.",
+      "1,234 y 01/02/2026 sin perfil producen IMP_AMBIGUOUS_FORMAT y cero filas confirmadas.",
+      "Cuenta 00123, negativos, NBSP solo declarado, fecha ISO y XLSX numérico/texto; tipo ausente bloquea antes de modificar el estudio.",
+      "Cambiar UI a inglés no altera el perfil español; mismo snapshot económico produce iguales hechos canónicos."
+    ],
+    "done": "Puente de importación internacional completo antes de T07; totales originales por moneda y base funcional conciliados y recuperables.",
+    "avoid": "No usar Replace global de coma por punto ni inferir separadores/cotización de la región del equipo."
+  },
+  {
+    "id": "T07",
+    "title": "Ajustes, clasificación y particiones",
+    "release": "R0",
+    "dependencies": [
+      "T06A"
+    ],
+    "contracts": [
+      "CM02",
+      "CM16"
+    ],
+    "cases": [
+      "C04",
+      "C05",
+      "C30"
+    ],
+    "deliver": "Cada recurso conserva origen y queda dividido sin duplicación de valor.",
+    "steps": [
+      "Implementar ajustes firmados con motivo y reversión; preservar Money original y convertir cada delta con su tipo antes de calcular efectivo funcional y auditoría.",
+      "Implementar ResourceParts con comportamiento contextual, ruta, capa y propietario de capacidad cuando proceda.",
+      "Crear imputación directa, pool, exclusión o pendiente; validar igualdad por recurso y guardar transaccionalmente."
+    ],
+    "data": "ResourceAdjustment, ResourcePart, DirectAssignment y Exclusion; Revision del estudio. Importes funcionales separados de originales y puente de conversión conservado.",
+    "ui": "Grid de recursos con original/ajustes/efectivo y editor de partes. Estado de cobertura por recurso.",
+    "checks": [
+      "900 dividido 300/500/100; extra 100 bloqueado; dos errores opuestos no se cancelan en validación.",
+      "Misma factura como material directo y pool completo detectada por origen y rutas. Motivo obligatorio en exclusión."
+    ],
+    "done": "Todos los recursos de demo tienen rutas explicables; pendientes no se ocultan ni se clasifican automáticamente.",
+    "avoid": "No deducir fijo de un booleano falso ni directo del papel del centro."
+  },
+  {
+    "id": "T08",
+    "title": "Claves y reglas de asignación",
+    "release": "R0",
+    "dependencies": [
+      "T04",
+      "T07"
+    ],
+    "contracts": [
+      "CM03"
+    ],
+    "cases": [
+      "C06",
+      "C07",
+      "C08"
+    ],
+    "deliver": "Claves reutilizables publicadas y reglas deterministas de aplicación.",
+    "steps": [
+      "Implementar porcentajes, unidades y partes iguales; importes absolutos como operación vinculada a una parte.",
+      "Validar cobertura, unidad, destinos únicos y ámbitos; diferenciar guardar borrador y publicar.",
+      "Implementar selección explícita y reglas por cuenta con precedencia. Diagnosticar coincidencias ambiguas."
+    ],
+    "data": "AllocationKeyVersion, líneas, PrimaryRule y SecondaryRule. Snapshot guarda versión concreta aplicada.",
+    "ui": "Editor de claves con total, criterio y estado; asignar a recurso o auxiliar y ver cobertura resultante.",
+    "checks": [
+      "80 % no se normaliza; 1/1/1 válido; total de driver cero falla; importe negativo se reparte con pesos positivos.",
+      "Reordenar destinos no cambia resultado; cambiar publicado exige nueva versión; dos reglas equivalentes sin prioridad fallan."
+    ],
+    "done": "Un modelo de demo dispone de claves primarias y secundarias sin ambigüedad.",
+    "avoid": "No convertir importe absoluto de un recurso en plantilla universal; no aceptar porcentajes negativos."
+  },
+  {
+    "id": "T09",
+    "title": "Reparto primario con trazabilidad",
+    "release": "R0",
+    "dependencies": [
+      "T08"
+    ],
+    "contracts": [
+      "CM04",
+      "CM05",
+      "CM16"
+    ],
+    "cases": [
+      "C07",
+      "C08",
+      "C09",
+      "C30"
+    ],
+    "deliver": "Primer reparto completo que concilia por fuente y por centro.",
+    "steps": [
+      "Cargar snapshot y resolver clave de cada parte; calcular bruto y adjudicar a escala interna por fuente.",
+      "Producir hechos con regla/origen y totales de pools, naturaleza y tratamiento de capacidad.",
+      "Exponer consulta por recurso y centro, conciliación exacta y exportación de demo en runner."
+    ],
+    "data": "PrimaryAllocationFact y Reconciliation. Totales derivados de hechos adjudicados.",
+    "ui": "Matriz o lista de primario, pendiente de cobertura y enlace a clave aplicada.",
+    "checks": [
+      "Conservación por recurso; negativos; pequeñas cantidades y fuente distribuida a varios destinos.",
+      "Igual resultado en runner y aplicación; no dependencia del orden de filas ni suma redondeada a entero."
+    ],
+    "done": "Cada céntimo y unidad de precisión interna tienen destino visible; resultado repetible.",
+    "avoid": "No calcular totales desde un SQL diferente ni guardar matrices densas de ceros por obligación."
+  },
+  {
+    "id": "T10",
+    "title": "Solver recíproco y prueba de viabilidad",
+    "release": "R0",
+    "dependencies": [
+      "T02",
+      "T08"
+    ],
+    "contracts": [
+      "CM06"
+    ],
+    "cases": [
+      "C09",
+      "C10",
+      "C11",
+      "C12",
+      "C13",
+      "C14",
+      "C32"
+    ],
+    "deliver": "Kernel numérico aprobado contra referencias, grafos y escalas antes de extender producto.",
+    "steps": [
+      "Implementar grafo abierto, cobertura, diagonal y componentes cerrados con IDs. Preparar M=I-Q transpuesta.",
+      "Implementar LU decimal con pivoteo y múltiples RHS; diagnósticos de residual, factores, pivotes y amplificación.",
+      "Comparar con corpus racional e invariantes; medir cargas propuestas y documentar decisión A05 y umbrales."
+    ],
+    "data": "Matriz canónica, grupos de rutas y ReciprocalDiagnostic con versión PNUM-1.",
+    "ui": "Informe de viabilidad del runner y mensajes con auxiliares concretos. UI básica de diagnóstico, sin productos.",
+    "checks": [
+      "Sistema A/B, diagonal permitida/prohibida, cerrado de coste cero, b de suma cero y b=0 abierto.",
+      "Matrix cercana a circuito cerrado produce bloqueo de sensibilidad; nunca fallback directo.",
+      "Permutaciones y matrices sintéticas; benchmark hasta 100 auxiliares con cancelación y memoria medida."
+    ],
+    "done": "Solver y diagnóstico pasan casos; limitaciones y presupuesto de rendimiento explícitos. Si falla la elección, ADR corregido antes de T11.",
+    "avoid": "No declarar precisión infinita; no probar validez por suma del vector ni solo por determinante."
+  },
+  {
+    "id": "T11",
+    "title": "Secundario y contribución efectiva",
+    "release": "R0",
+    "dependencies": [
+      "T09",
+      "T10"
+    ],
+    "contracts": [
+      "CM07"
+    ],
+    "cases": [
+      "C09",
+      "C13",
+      "C32"
+    ],
+    "deliver": "Coste final por principal con desglose hasta cada origen, incluso en ciclos.",
+    "steps": [
+      "Agrupar matrices idénticas y reutilizar factorización para vectores de partes o factores efectivos.",
+      "Transmitir comportamiento, capas y origen; adjudicar terminales por fuente y derivar totales.",
+      "Construir explicación por principal y por recurso, separando contribuciones efectivas de circulación interna."
+    ],
+    "data": "SecondaryAllocationFact, TerminalCostFact inicial y ExplanationLink; sin lectura externa durante cálculo.",
+    "ui": "Resultado secundario, totales y botón Explicar; pestaña diferenciada de flujos brutos auxiliares.",
+    "checks": [
+      "C09 comprueba matemático, ledger de 8 y proyección de moneda; suma detalle-total en cada vista.",
+      "Suma de contribuciones por fuente y principal, conservación firmada y orden canónico.",
+      "Aplicación por factores y por RHS producen resultados coherentes dentro de política numérica."
+    ],
+    "done": "P1/P2 de demo explican 6.500 de origen sin contar circulaciones como nuevos costes.",
+    "avoid": "No perder Fixed/Variable al recibir un auxiliar ni enumerar caminos infinitos."
+  },
+  {
+    "id": "T12",
+    "title": "Ejecuciones completas, revisión y consulta",
+    "release": "R0",
+    "dependencies": [
+      "T05",
+      "T11"
+    ],
+    "contracts": [],
+    "cases": [],
+    "deliver": "Cálculo completo y publicación atómica que sobreviven a reapertura.",
+    "steps": [
+      "Integrar PrepareRun, Calculate y PublishRun; snapshot completo con EconomicInputHash, FullSnapshotHash, tipos/monedas y versiones.",
+      "Calcular fuera de transacción de escritura, comprobar revisión al publicar y gestionar cancelación/fallo.",
+      "Guardar resultados, diagnóstico y explicación juntos; consulta histórica y actualidad basada en revisión."
+    ],
+    "data": "CalculationRun, RunSnapshot, hechos, diagnósticos y CurrentRunId.",
+    "ui": "Panel validar/calcular/cancelar, progreso por etapas, última ejecución y anteriores.",
+    "checks": [
+      "Editar entradas mientras calcula; resultado se conserva histórico pero no actual.",
+      "Interrumpir antes o durante publicación; ningún resultado parcial queda publicado.",
+      "Reabrir archivo y explicar el mismo importe sin volver a calcular ni leer configuración nueva."
+    ],
+    "done": "Historia de ejecuciones fiable y resultado actual correctamente identificado.",
+    "avoid": "No recalcular ni borrar por abrir pantalla; no guardar cada centro en transacciones independientes."
+  },
+  {
+    "id": "T13",
+    "title": "Aceptación del demostrador R0",
+    "release": "R0",
+    "dependencies": [
+      "T12"
+    ],
+    "contracts": [
+      "CM01",
+      "CM02",
+      "CM03",
+      "CM05",
+      "CM06",
+      "CM07",
+      "CM15",
+      "CM16"
+    ],
+    "cases": [
+      "C01",
+      "C04",
+      "C06",
+      "C09",
+      "C12",
+      "C13",
+      "C33",
+      "C36",
+      "C38",
+      "C39",
+      "I01",
+      "I02",
+      "I03",
+      "I04",
+      "I05",
+      "I06",
+      "I07",
+      "I08",
+      "I09",
+      "I10",
+      "I11",
+      "I13",
+      "I14",
+      "I15"
+    ],
+    "deliver": "Demostrador desde archivo vacío hasta coste explicado, con guion para un usuario sin programación.",
+    "steps": [
+      "Preparar archivo de ejemplo y recorrido crear/importar/ajustar/configurar/calcular/explicar.",
+      "Ejecutar recorrido en Windows, registrar evidencias y corregir fallos integrados.",
+      "Presentar al propietario resultados de fuentes y centros, pendientes metodológicos y alcance real de R0."
+    ],
+    "data": "Archivo demo, guion, build identificada y estado de tareas cerrado.",
+    "ui": "Navegación completa con mensajes de negocio, sin necesidad de SQL o comandos por parte del usuario.",
+    "checks": [
+      "Cancelar importación, introducir una clave errónea y corregirla; grafo cerrado diagnosticado.",
+      "Reabrir y consultar explicación histórica. Repetir cálculo idéntico conserva resultados.",
+      "Completar el recorrido en español e inglés con formatos es-ES/en-US/en-GB/de-DE; mismos importes adjudicados y fechas de negocio. Monedas JPY/KWD y originales USD convertidos con tipos sintéticos."
+    ],
+    "done": "Propietario puede recorrer y entender R0; defectos bloqueantes cerrados antes de desarrollar capacidad.",
+    "avoid": "No llamar profesional a R0 ni afirmar que tiene actividad, órdenes o políticas aún no implementadas."
+  },
+  {
+    "id": "T14",
+    "title": "Actividad y capacidades por pool",
+    "release": "R1",
+    "dependencies": [
+      "T13"
+    ],
+    "contracts": [
+      "CM08"
+    ],
+    "cases": [
+      "C15",
+      "C16",
+      "C18",
+      "C19",
+      "C31"
+    ],
+    "deliver": "Entradas físicas tipadas y comparables con evidencia, para calcular tarifas.",
+    "steps": [
+      "Implementar observaciones de normal/práctica/teórica y real separadas con calendario, unidad y fuente.",
+      "Validar denominadores requeridos por política y compatibilidad con periodo, nodo y pool.",
+      "Permitir importación de actividad o edición manual con previsualización y revisión. No estimar cantidades desconocidas."
+    ],
+    "data": "CapacityObservation, ActivityObservation y consumo por objeto preparado; null no equivale a cero.",
+    "ui": "Tabla actividad/capacidad con ayudas operativas y errores por pool, periodo y unidad.",
+    "checks": [
+      "Normal cero con fijo, real cero con variable, real cero con fijo normal válido.",
+      "Unidades incompatibles, distinto calendario y datos faltantes; cantidades de demo verificadas."
+    ],
+    "done": "Datos suficientes identificados para cada política y faltantes corregibles desde la pantalla.",
+    "avoid": "No convertir el presupuesto mensual en capacidad normal automática ni inferir cantidades por región visual."
+  },
+  {
+    "id": "T15",
+    "title": "Tarifas y absorción de principales",
+    "release": "R1",
+    "dependencies": [
+      "T14",
+      "T11"
+    ],
+    "contracts": [
+      "CM08",
+      "CM11"
+    ],
+    "cases": [
+      "C15",
+      "C16",
+      "C17",
+      "C18",
+      "C19",
+      "C21",
+      "C31"
+    ],
+    "deliver": "Tarifas por componente y destinos de capacidad/actividad sin objeto que concilian.",
+    "steps": [
+      "Implementar NormalizedManagement, componentes propios y consumidos, y estados de tarifa.",
+      "Aplicar a consumos de objetos reales y generar variación fija, actividad sin objeto y costes de periodo.",
+      "Conservar origen en todos los destinos y proyección de moneda firmada. Comparar con ActualManagement y VariableCostView cuando sus datos estén completos."
+    ],
+    "data": "RateResult, CapacityVarianceFact, ObjectConsumption y terminales. Norma de capacidad identificada por versión.",
+    "ui": "Tarifa fija/variable/recibida, base utilizada, coste aplicado y diferencia. Explicar parte no absorbida.",
+    "checks": [
+      "C15–C19 y C31; subtotal fijo/variable por objeto y fuente.",
+      "No confundir 400 de capacidad y 400 sin objeto; sobreactividad -200 conserva 2.200.",
+      "Porcentaje/decimal mostrado no se reutiliza en cálculo; consumo mayor que observado bloquea real."
+    ],
+    "done": "Ejemplos aprobados se reproducen y el usuario puede distinguir política, capacidad y datos faltantes.",
+    "avoid": "No dividir todo Cf+Cv por normal ni tratar fijo previamente evaluado como capacidad nueva."
+  },
+  {
+    "id": "T16",
+    "title": "Capacidad auxiliar por propietario",
+    "release": "R1",
+    "dependencies": [
+      "T15"
+    ],
+    "contracts": [
+      "CM09"
+    ],
+    "cases": [
+      "C20",
+      "C29"
+    ],
+    "deliver": "OwnerOnceCapacity con evaluación una vez y transmisión de servicio real.",
+    "steps": [
+      "Añadir propietario de cada capacidad y preparar componentes fijos propios de auxiliares.",
+      "Separar servicio aplicado y variación antes del solver, validar cantidades prestadas y rutas efectivas.",
+      "Propagar AssessmentId en auxiliares y principales; transmitir costes ya evaluados como consumo. Conservar ThroughFlow explícito para modelos sin capacidad auxiliar."
+    ],
+    "data": "Servicios físicos, CapacityOwnerPoolId, AssessmentId y terminales firmados previos a secundario.",
+    "ui": "Editor de servicios y resultado por propietario; indicador capacidad auxiliar no evaluada cuando proceda.",
+    "checks": [
+      "C20, 1.600=800+500+300; B no vuelve a multiplicar por 0,5 los 100 recibidos de A.",
+      "C29, sobreactividad auxiliar; cero real, servicios incompletos y circuito con rutas efectivas.",
+      "Diferentes claves por componente generan matrices separadas; claves iguales reutilizan factor."
+    ],
+    "done": "Capacidad propia y servicios transferidos explicados; D05 y ejemplo aceptados para uso definitivo.",
+    "avoid": "No activar esta política por una casilla sin cantidades ni medir la misma capacidad en varios niveles."
+  },
+  {
+    "id": "T17",
+    "title": "Materiales y recetas versionadas",
+    "release": "R1",
+    "dependencies": [
+      "T04",
+      "T15"
+    ],
+    "contracts": [
+      "CM10"
+    ],
+    "cases": [
+      "C22"
+    ],
+    "deliver": "Fichas con componentes por unidad, lote y orden, sin ambigüedad física.",
+    "steps": [
+      "Implementar productos, materiales/precios de referencia y recetas publicadas.",
+      "Definir bases de consumo, lote parcial, unidades, piezas indivisibles y merma conforme a D06.",
+      "Validar grafo acíclico de semielaborados y referencias de pools para tarifa."
+    ],
+    "data": "Product, RecipeVersion, RecipeLine y ReferenceMaterialPrice; referencias reales separadas.",
+    "ui": "Editor de receta que muestra unidad y base por línea; previsualización de cantidades para una orden.",
+    "checks": [
+      "120 unidades en lotes de 50 producen 3 setups; minutos a horas con factor explícito.",
+      "Ciclo A→B→A bloqueado; producto/pool desactivado no invalida receta histórica.",
+      "Merma como incremento y rendimiento generan ejemplos distintos, según campo elegido."
+    ],
+    "done": "Dos recetas de demo tienen cantidades verificables sin consultar fórmulas de la app antigua.",
+    "avoid": "No guardar tarifas actuales como verdad mutable dentro de receta ni redondear horas como piezas."
+  },
+  {
+    "id": "T18",
+    "title": "Estimaciones y órdenes con tarifas congeladas",
+    "release": "R1",
+    "dependencies": [
+      "T17",
+      "T12"
+    ],
+    "contracts": [
+      "CM10"
+    ],
+    "cases": [
+      "C22"
+    ],
+    "deliver": "Oferta/orden estimada explicable, ligada a ejecución y receta concretas.",
+    "steps": [
+      "Implementar estimación por unidad/lote/orden con tarifa completa de la ejecución seleccionada.",
+      "Registrar cantidades, bases y precios de referencia; congelar una estimación aceptada con identidad.",
+      "Permitir comparación explícita de estimaciones y preparar estado de consumo real para T19. El cierre real se completa con T19."
+    ],
+    "data": "Estimate, ProductionOrder y valoración con RunId/RecipeVersionId; FactKind=Estimate separado.",
+    "ui": "Crear orden, elegir receta y ejecución, calcular 420 del ejemplo, consultar desglose y coste unitario.",
+    "checks": [
+      "C22=180+240; 3,5 por unidad. Modificar modelo/receta vigente no altera estimación congelada.",
+      "Tarifa indefinida bloquea componente; tasa impresa redondeada no cambia cálculo.",
+      "Estimación no reduce recursos ni entra a conciliación real del estudio."
+    ],
+    "done": "Estimaciones y su historial útiles sin suplantar consumo real.",
+    "avoid": "No cerrar producción real con datos teóricos ni recalcular orden histórica automáticamente."
+  },
+  {
+    "id": "T19",
+    "title": "Consumo real y frontera de valoración",
+    "release": "R1",
+    "dependencies": [
+      "T18",
+      "T16"
+    ],
+    "contracts": [
+      "CM02",
+      "CM10",
+      "CM11"
+    ],
+    "cases": [
+      "C15",
+      "C18",
+      "C25"
+    ],
+    "deliver": "Órdenes reales y transferencias de coste sin duplicar origen.",
+    "steps": [
+      "Registrar consumos reales de pools y materiales con evidencia, cantidad y fuente.",
+      "Relacionar materiales a ResourcePart o fuente externa única y distinguir estimado/real.",
+      "Valorar y cerrar orden; definir frontera disjunta y asociaciones de producto/pedido/cliente sin nuevo coste."
+    ],
+    "data": "ConsumptionFact, SourcePartLink, TerminalCostFact y TransferFact cuando proceda.",
+    "ui": "Registrar consumo, diferencias con receta, cierre y conciliación por orden/recurso.",
+    "checks": [
+      "Material ya incorporado en recursos no se suma dos veces.",
+      "Producto/semielaborado/pedido conservan 420 en una frontera; actividad faltante no se llama subactividad.",
+      "Corrección posterior crea reversión o nueva revisión y conserva orden cerrada."
+    ],
+    "done": "El coste real del estudio queda explicado por objetos, capacidad, periodo y pendientes visibles.",
+    "avoid": "No exigir que toda estimación absorba todos los saldos; no sumar rollups como destinos disjuntos."
+  },
+  {
+    "id": "T20",
+    "title": "Ventas y márgenes con perímetro",
+    "release": "R1",
+    "dependencies": [
+      "T19"
+    ],
+    "contracts": [
+      "CM12",
+      "CM16"
+    ],
+    "cases": [
+      "C23"
+    ],
+    "deliver": "Rentabilidad por objeto con venta y definición de coste comparables.",
+    "steps": [
+      "Implementar SalesFact neto, moneda original y funcional, conversión previa, devoluciones identificadas y enlace a objeto/periodo.",
+      "Implementar vistas de coste por capas y margen/recargo/contribución con denominadores claros.",
+      "Mostrar costes de periodo y capacidad fuera de objetos; permitir informe de resultado de gestión sin esconderlos."
+    ],
+    "data": "SalesFact, MarginView y CostPerimeterVersion.",
+    "ui": "Informe con coste productivo, comercial, estructura y contribución seleccionable; tooltip de fórmula/perímetro.",
+    "checks": [
+      "C23, 50 margen, 25 %, recargo 1/3 y contribución 80/40 %.",
+      "Venta/coste cero producen Undefined; ingreso importado no se resta al coste y vuelve a contar en venta sin regla.",
+      "Devolución y ajuste de periodo no alteran histórico cerrado."
+    ],
+    "done": "Cada porcentaje tiene denominador y cada margen un coste definido; D07 registrado.",
+    "avoid": "No llamar contribución a margen cambiando solo denominador; no capitalizar costes comerciales por aparecer en coste completo."
+  },
+  {
+    "id": "T21",
+    "title": "Escenarios y comparación",
+    "release": "R1",
+    "dependencies": [
+      "T20"
+    ],
+    "contracts": [
+      "CM12"
+    ],
+    "cases": [
+      "C15",
+      "C17"
+    ],
+    "deliver": "Comparar variantes económicas sin modificar estudios originales.",
+    "steps": [
+      "Implementar clonación de entradas con procedencia y selección de modelo/política.",
+      "Ejecutar variantes y construir comparación por fuente, centro, tarifa, capacidad y objeto.",
+      "Validar moneda, periodo, unidades y perímetro; señalar diferencias de alcance."
+    ],
+    "data": "Study.ParentStudyId y ScenarioChangeLog; ejecuciones propias.",
+    "ui": "Duplicar escenario, editar actividad/clave y comparar; base y variante identificadas.",
+    "checks": [
+      "Cambiar qR60 a120 no modifica ejecución base; comparación distingue cambio de costes y de actividad.",
+      "Periodos/perímetros incompatibles avisan; comparar porcentaje con denominador cero no inventa delta."
+    ],
+    "done": "What-if con mismos orígenes y supuestos documentados, reproducible al reabrir.",
+    "avoid": "No recalcular ambos escenarios con un maestro vigente común que borre sus diferencias."
+  },
+  {
+    "id": "T22",
+    "title": "Informes, explicación y exportación",
+    "release": "R1",
+    "dependencies": [
+      "T21"
+    ],
+    "contracts": [
+      "CM04",
+      "CM07",
+      "CM11",
+      "CM12",
+      "CM15",
+      "CM16"
+    ],
+    "cases": [
+      "C09",
+      "C23",
+      "C25",
+      "I12"
+    ],
+    "deliver": "Informes defendibles con precisión, frontera y ejecución identificadas.",
+    "steps": [
+      "Implementar informes por recurso/centro/objeto, capacidad y conciliación; buscar origen y destino.",
+      "Exportar XLSX/CSV y un informe imprimible de ejecución con valores adjudicados y ajustes.",
+      "Preservar formato de códigos, unidades y precisión; neutralizar contenido interpretado como fórmula en exportaciones."
+    ],
+    "data": "DTO de informes desde una única ejecución; proyección de moneda y ledger de precisión separados.",
+    "ui": "Filtros, Explicar, precisión detallada y exportar. Ayuda con ejemplos y advertencias vinculadas.",
+    "checks": [
+      "C09, diferencia de redondeo agregada documentada y detalle-total conciliado.",
+      "Exportar/releer importes y cuenta 00123; CSV con fórmula potencial se exporta como texto seguro.",
+      "Todos los informes indican RunId, periodo, política y perímetro."
+    ],
+    "done": "Usuario puede explicar una cifra y compartir su soporte sin reconstruir cálculos a mano.",
+    "avoid": "No usar fórmulas Excel que recalculen otra política ni exportar un total distinto de la vista identificada."
+  },
+  {
+    "id": "T22A",
+    "title": "Informes internacionales y cierre de localización R1",
+    "release": "R1",
+    "dependencies": [
+      "T22",
+      "T01A",
+      "T02A",
+      "T06A"
+    ],
+    "contracts": [
+      "CM04",
+      "CM15",
+      "CM16"
+    ],
+    "cases": [
+      "C09",
+      "C33",
+      "C38",
+      "C39",
+      "I01",
+      "I02",
+      "I05",
+      "I06",
+      "I07",
+      "I08",
+      "I10",
+      "I11",
+      "I12",
+      "I14",
+      "I15"
+    ],
+    "deliver": "Informes, exportaciones, ayuda y distribución mantienen la identidad y los contratos internacionales del núcleo.",
+    "steps": [
+      "Completar catálogos y revisión visual de todas las pantallas R1, ayudas, diagnósticos, licencia e instalador. El pipeline de T24 reutiliza estos recursos y verifica el instalador final.",
+      "Implementar ExportContext y writers independientes sobre resultados publicados: idioma, formato, zona, moneda y PrecisionView explícitos.",
+      "Separar CanonicalExchange de HumanLocalized, validar round-trip exacto del canónico y preservar cuentas/precisión alta en XLSX. Auditar dependencias y pruebas internacionales integradas."
+    ],
+    "data": "ExportContext, ReportTemplateVersion, manifiesto de exportación y catálogos publicados; sin nuevas fórmulas de costes en Reporting.",
+    "ui": "Selector de idioma/formato de informe independiente de interfaz; cabecera con RunId, periodo, moneda y precisión, y código ISO visible.",
+    "checks": [
+      "Misma ejecución en español/inglés y cuatro perfiles regionales conserva ledger, fuente y adjudicación; PDF/XLSX muestran contexto correcto.",
+      "Catálogos completos, pseudotraducción/RTL, navegación y ausencia de texto español fijo en UI publicada.",
+      "JSON/CSV canónico exacto; Excel con más precisión que una celda numérica incluye valor canónico. Neutralización de fórmulas no cambia códigos económicos.",
+      "JPY/KWD y conversiones congeladas en informes; cambiar símbolo/región no ejecuta FX. I15 confirma ausencia de ciclos de proyectos."
+    ],
+    "done": "R1 pasa la puerta de internacionalización antes de empaquetar T24 y se conserva evidencia por idioma/formato.",
+    "avoid": "No anunciar idiomas sin traducción revisada ni convertir importe al cambiar región. La moneda de informe distinta exige una proyección económica explícita posterior."
+  },
+  {
+    "id": "T23",
+    "title": "Copias, evolución de archivo y recuperación",
+    "release": "R1",
+    "dependencies": [
+      "T12",
+      "T19"
+    ],
+    "contracts": [],
+    "cases": [],
+    "deliver": "Restauración comprobada y actualización de esquema reversible mediante copia.",
+    "steps": [
+      "Implementar backup consistente con API SQLite, manifiesto y verificación; política de retención visible.",
+      "Implementar migración de archivo con copia previa, versión y tratamiento de interrupción.",
+      "Probar restauración a ruta nueva y equipo/usuario distinto; conservar original y diagnosticar incompatibilidad."
+    ],
+    "data": "BackupRecord, SchemaVersion y archivos de prueba de versiones anteriores.",
+    "ui": "Crear/restaurar copia, fecha de última copia y resultado de verificación. Procedimiento guiado.",
+    "checks": [
+      "Backup durante operación permitida conserva base completa incluyendo WAL.",
+      "Fallo en migración permite recuperar; no borrar manualmente bloqueo EF sin comprobar que no hay migración activa.",
+      "Modelo, snapshots, órdenes y explicaciones intactos tras restaurar."
+    ],
+    "done": "Recuperación del archivo ensayada y descrita para usuario sin conocimientos técnicos.",
+    "avoid": "No copiar solo .db vivo ni guardar recuperación de clave exclusivamente en el equipo que puede perderse."
+  },
+  {
+    "id": "T24",
+    "title": "Instalación, protección y licencia offline",
+    "release": "R1",
+    "dependencies": [
+      "T22A",
+      "T23"
+    ],
+    "contracts": [],
+    "cases": [],
+    "deliver": "Entrega local que instala, preserva datos y calcula sin depender de Internet.",
+    "steps": [
+      "Subentrega A: elegir protección conforme a D08, integrar cifrado si procede y probar recuperación externa.",
+      "Subentrega B: empaquetar dependencias, firmar release y probar instalación/actualización/desinstalación con datos de usuario.",
+      "Subentrega C: integrar proveedor de licencia mediante adaptador, separar uso perpetuo y nuevas versiones; probar caída de red/proveedor.",
+      "Subentrega D: revisión de logs/diagnóstico y documentación de privacidad/soporte y derechos."
+    ],
+    "data": "LicenseEntitlement y UpdateManifest firmados, secretos fuera de código, proveedor y licencias de dependencias registrados.",
+    "ui": "Activación y derecho de actualización comprensibles; actualizar no interrumpe cálculo; diagnóstico con previsualización.",
+    "checks": [
+      "Instalar en Windows limpio; abrir sin SDK; reparar/actualizar no elimina estudios.",
+      "Sin conexión ni proveedor, una versión adquirida sigue permitiendo abrir y calcular según derecho firmado.",
+      "Si hay cifrado, restaurar en otro equipo sin secreto empotrado ni pérdida por DPAPI único."
+    ],
+    "done": "Artefacto revisado y condiciones de versión definidas. D08/D09 resueltos antes de uso comercial.",
+    "avoid": "No suponer .NET publish produce MSI; no implementar cobros desde cero ni hacer llamada obligatoria cada inicio."
+  },
+  {
+    "id": "T25",
+    "title": "Piloto y entrega profesional R1",
+    "release": "R1",
+    "dependencies": [
+      "T24"
+    ],
+    "contracts": [
+      "CM01",
+      "CM02",
+      "CM04",
+      "CM08",
+      "CM09",
+      "CM10",
+      "CM11",
+      "CM12",
+      "CM15",
+      "CM16"
+    ],
+    "cases": [
+      "C01",
+      "C09",
+      "C15",
+      "C18",
