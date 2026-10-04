@@ -5,7 +5,14 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Valdrio.Application/Valdrio.Application.csproj" />
+    <ProjectReference Include="../Valdrio.Calculation/Valdrio.Calculation.csproj" />
+    <ProjectReference Include="../Valdrio.Domain/Valdrio.Domain.csproj" />
     <ProjectReference Include="../Valdrio.Infrastructure/Valdrio.Infrastructure.csproj" />
     <ProjectReference Include="../Valdrio.Reporting/Valdrio.Reporting.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="../../reference/t02-rounding-cases.json"
+             Link="reference/t02-rounding-cases.json"
+             CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
