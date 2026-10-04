@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AppTitle" xml:space="preserve"><value>VALDRIO</value></data>
+  <data name="WindowTitle" xml:space="preserve"><value>VALDRIO - development shell</value></data>
+  <data name="SpecificationVersion" xml:space="preserve"><value>Specification v0.4 · development</value></data>
+  <data name="HeaderSubtitle" xml:space="preserve"><value>T01 · Windows/WPF development smoke</value></data>
+  <data name="LabelStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="LabelSample" xml:space="preserve"><value>Sample</value></data>
+  <data name="LabelPurpose" xml:space="preserve"><value>Purpose</value></data>
+  <data name="LabelSource" xml:space="preserve"><value>Source</value></data>
+  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>Development fixture only. No economic calculation or production persistence schema is implemented in T01.</value></data>
+  <data name="StatusNoSample" xml:space="preserve"><value>No development sample loaded.</value></data>
+  <data name="StatusSampleOpened" xml:space="preserve"><value>Development sample opened.</value></data>
+  <data name="StatusSampleOpenFailed" xml:space="preserve"><value>Development sample could not be opened.</value></data>
+  <data name="ErrorSampleOpenTitle" xml:space="preserve"><value>VALDRIO development shell</value></data>
+  <data name="ErrorSampleOpenBody" xml:space="preserve"><value>The T01 development sample could not be opened. Diagnostic: {0}</value></data>
+</root>
