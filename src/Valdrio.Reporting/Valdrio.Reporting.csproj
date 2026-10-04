@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Valdrio.Domain/Valdrio.Domain.csproj" />
+    <ProjectReference Include="../Valdrio.Application/Valdrio.Application.csproj" />
+    <ProjectReference Include="../Valdrio.Localization/Valdrio.Localization.csproj" />
+  </ItemGroup>
+</Project>
