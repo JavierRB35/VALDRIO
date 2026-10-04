@@ -294,7 +294,7 @@ public sealed class RepositoryReviewRegressionTests
             DateDisplayPreset = (DateDisplayPreset)999
         };
 
-        Assert.ThrowsException<ArgumentException>(
+        Assert.ThrowsExactly<PresentationPreferencesValidationException>(
             () => _ = new PresentationPreferencesService(
                 new LanguageCatalog(),
                 invalid));
@@ -308,7 +308,7 @@ public sealed class RepositoryReviewRegressionTests
             DisplayTimeZoneId = "Invalid/ReviewZone"
         };
 
-        Assert.ThrowsException<ArgumentException>(
+        Assert.ThrowsExactly<PresentationPreferencesValidationException>(
             () => _ = new PresentationPreferencesService(
                 new LanguageCatalog(),
                 invalid));
