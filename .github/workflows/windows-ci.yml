@@ -40,6 +40,59 @@ jobs:
         shell: pwsh
         run: dotnet restore Valdrio.slnx
 
+      - name: Verify canonical specification sources
+        shell: pwsh
+        run: |
+          Push-Location specification/v0.4
+          try {
+            $checked = 0
+            $errors = @()
+
+            foreach ($line in Get-Content SHA256SUMS.txt) {
+              if ([string]::IsNullOrWhiteSpace($line)) {
+                continue
+              }
+
+              $parts = $line -split '\s+', 2
+              $expected = $parts[0].ToLowerInvariant()
+              $relative = $parts[1].Trim()
+
+              if ($relative.EndsWith('.pdf', [StringComparison]::OrdinalIgnoreCase)) {
+                continue
+              }
+
+              if (-not (Test-Path -LiteralPath $relative -PathType Leaf)) {
+                $errors += "Missing canonical source: $relative"
+                continue
+              }
+
+              $actual = (Get-FileHash -LiteralPath $relative -Algorithm SHA256).Hash.ToLowerInvariant()
+              if ($actual -ne $expected) {
+                $errors += "SHA-256 mismatch: $relative expected=$expected actual=$actual"
+                continue
+              }
+
+              $checked++
+            }
+
+            if ($errors.Count -gt 0) {
+              $errors | ForEach-Object { Write-Host $_ }
+              throw "Canonical specification verification failed."
+            }
+
+            Write-Host "Canonical specification sources verified: $checked text/JSON/Python files."
+          }
+          finally {
+            Pop-Location
+          }
+
+      - name: Run canonical mathematical reference verifier
+        shell: pwsh
+        run: |
+          python --version
+          python specification/v0.4/casos/verificar_referencias.py specification/v0.4/casos/casos_metodologicos.json
+
+
       - name: Build
         shell: pwsh
         run: dotnet build Valdrio.slnx --configuration Release --no-restore
