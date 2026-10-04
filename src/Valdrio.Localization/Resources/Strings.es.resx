@@ -30,7 +30,7 @@
   <data name="LabelSample" xml:space="preserve"><value>Ejemplo</value></data>
   <data name="LabelPurpose" xml:space="preserve"><value>Finalidad</value></data>
   <data name="LabelSource" xml:space="preserve"><value>Origen</value></data>
-  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>La subentrega 1 de T02A congela metadatos monetarios y unidades menores. Aún no implementa tipos FX ni política temporal de conversión.</value></data>
+  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>T02A ya separa fechas de negocio de instantes UTC y resuelve la hora local explícitamente. Los tipos FX siguen sin estar implementados.</value></data>
   <data name="StatusNoSample" xml:space="preserve"><value>No se ha cargado ningún ejemplo de desarrollo.</value></data>
   <data name="StatusSampleOpened" xml:space="preserve"><value>Ejemplo de desarrollo abierto.</value></data>
   <data name="StatusSampleOpenFailed" xml:space="preserve"><value>No se pudo abrir el ejemplo de desarrollo.</value></data>
@@ -52,4 +52,7 @@
   <data name="LabelCurrencyQuantum" xml:space="preserve"><value>Quantum de informe</value></data>
   <data name="LabelCurrencyProjection" xml:space="preserve"><value>Proyección A/B/C</value></data>
   <data name="CurrencyMetadataExplanation" xml:space="preserve"><value>El catálogo de ejemplo es un fixture de cuatro monedas del paquete de desarrollo, no el catálogo completo del producto. JPY y KWD prueban que el quantum de informe se deriva de metadatos congelados y no de un 0,01 fijo.</value></data>
+  <data name="LabelCanonicalBusinessDate" xml:space="preserve"><value>Fecha de negocio canónica</value></data>
+  <data name="LabelCanonicalUtcInstant" xml:space="preserve"><value>Instante UTC canónico</value></data>
+  <data name="LabelResolvedLocalInstant" xml:space="preserve"><value>Vista local en la zona elegida</value></data>
 </root>
