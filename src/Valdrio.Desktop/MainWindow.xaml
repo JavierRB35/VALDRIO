@@ -59,7 +59,7 @@
                                Margin="0,4,16,0"
                                Text="{Binding LabelUiLanguage}"
                                TextWrapping="Wrap" />
-                    <ComboBox Grid.Row="0" Grid.Column="1"
+                    <ComboBox x:Name="UiLanguageSelector" Grid.Row="0" Grid.Column="1"
                               MinWidth="200"
                               ItemsSource="{Binding UiLanguageOptions}"
                               SelectedItem="{Binding SelectedUiLanguageTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -70,7 +70,7 @@
                                Margin="0,4,16,0"
                                Text="{Binding LabelFormatCulture}"
                                TextWrapping="Wrap" />
-                    <ComboBox Grid.Row="2" Grid.Column="1"
+                    <ComboBox x:Name="FormatCultureSelector" Grid.Row="2" Grid.Column="1"
                               MinWidth="200"
                               ItemsSource="{Binding FormatCultureOptions}"
                               SelectedItem="{Binding SelectedFormatCultureTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -81,7 +81,7 @@
                                Margin="0,4,16,0"
                                Text="{Binding LabelTimeZone}"
                                TextWrapping="Wrap" />
-                    <ComboBox Grid.Row="4" Grid.Column="1"
+                    <ComboBox x:Name="TimeZoneSelector" Grid.Row="4" Grid.Column="1"
                               MinWidth="280"
                               ItemsSource="{Binding TimeZoneOptions}"
                               SelectedItem="{Binding SelectedTimeZoneId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -155,7 +155,7 @@
                                Margin="0,4,16,0"
                                Text="{Binding LabelPendingValue}"
                                TextWrapping="Wrap" />
-                    <TextBox Grid.Row="0" Grid.Column="1"
+                    <TextBox x:Name="PendingEditBox" Grid.Row="0" Grid.Column="1"
                              Text="{Binding PendingEditText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              TabIndex="3"
                              FlowDirection="LeftToRight"
@@ -178,12 +178,12 @@
                                TextWrapping="Wrap" />
 
                     <WrapPanel Grid.Row="6" Grid.ColumnSpan="2">
-                        <Button Margin="0,0,10,0"
+                        <Button x:Name="StartEditButton" Margin="0,0,10,0"
                                 Padding="14,7"
                                 Content="{Binding ActionStartEdit}"
                                 Command="{Binding StartEditCommand}"
                                 TabIndex="4" />
-                        <Button Padding="14,7"
+                        <Button x:Name="CommitEditButton" Padding="14,7"
                                 Content="{Binding ActionCommitEdit}"
                                 Command="{Binding CommitEditCommand}"
                                 TabIndex="5" />
