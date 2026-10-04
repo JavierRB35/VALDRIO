@@ -51,6 +51,21 @@ public sealed class T01AInternationalizationTests
     }
 
     [TestMethod]
+    public void DisplayInstant_ContainsLocalizedDateTimeAndExplicitOffset()
+    {
+        var formatter = new PresentationFormatter(new DisplayTimeZoneResolver());
+        var value = formatter.FormatInstant(
+            new DateTimeOffset(2026, 10, 4, 0, 30, 0, TimeSpan.Zero),
+            "UTC",
+            CultureInfo.GetCultureInfo("en-US"));
+
+        Assert.IsTrue(value.Contains("2026", StringComparison.Ordinal));
+        Assert.IsTrue(value.Contains("12:30", StringComparison.Ordinal));
+        Assert.IsTrue(value.Contains("+00:00", StringComparison.Ordinal));
+        Assert.IsFalse(value.Contains("AD +00:00", StringComparison.Ordinal));
+    }
+
+    [TestMethod]
     public void I05_PresentationPreferences_AreExcludedFromSyntheticEconomicHash()
     {
         const string canonicalEconomicFixture =
