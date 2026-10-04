@@ -1,0 +1,30 @@
+{
+  "type": "currency_test_subset",
+  "source": "SIX List One XML",
+  "source_publication": "2026-09-17",
+  "checked_on": "2026-10-04",
+  "scope": "Solo fixtures; el producto cargará un catálogo monetario versionado completo",
+  "currencies": [
+    {
+      "code": "EUR",
+      "numeric": "978",
+      "minor_unit_digits": 2
+    },
+    {
+      "code": "USD",
+      "numeric": "840",
+      "minor_unit_digits": 2
+    },
+    {
+      "code": "JPY",
+      "numeric": "392",
+      "minor_unit_digits": 0
+    },
+    {
+      "code": "KWD",
+      "numeric": "414",
+      "minor_unit_digits": 3
+    }
+  ],
+  "source_url": "https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml"
+}
