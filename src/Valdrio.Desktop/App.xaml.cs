@@ -13,7 +13,7 @@ public partial class App : System.Windows.Application
         base.OnStartup(e);
 
         var languages = new LanguageCatalog();
-        var texts = new UiTextCatalog();
+        var texts = new UiTextCatalog(new TraceLocalizationFallbackSink());
         var preferences = new PresentationPreferencesService(
             languages,
             BuildInitialPreferences(e.Args));
@@ -95,6 +95,12 @@ public partial class App : System.Windows.Application
         MainWindowViewModel viewModel,
         string directory)
     {
+        if (!window.RunKeyboardNavigationSmoke())
+        {
+            throw new InvalidOperationException(
+                "T01A keyboard navigation smoke failed.");
+        }
+
         var presets = new[]
         {
             new VisualPreset("01-en-esES-ltr.png", "en", "es-ES", "Europe/Madrid", false, false),
