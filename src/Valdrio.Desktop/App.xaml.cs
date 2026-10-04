@@ -80,9 +80,15 @@ public partial class App : System.Windows.Application
         };
     }
 
-    private static string? ReadOption(IEnumerable<string> args, string prefix) =>
-        args.FirstOrDefault(argument =>
-            argument.StartsWith(prefix, StringComparison.Ordinal))?[prefix.Length..];
+    private static string? ReadOption(IEnumerable<string> args, string prefix)
+    {
+        var match = args.FirstOrDefault(argument =>
+            argument.StartsWith(prefix, StringComparison.Ordinal));
+
+        return match is null
+            ? null
+            : match[prefix.Length..];
+    }
 
     private static void CaptureVisualEvidence(
         MainWindow window,
