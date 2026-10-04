@@ -998,3 +998,6 @@
       }
     }
   ],
+  "default_functional_currency": "EUR",
+  "currency_scope": "C01–C37 usan EUR cuando corresponda; C38 JPY y C39 KWD. Cotizaciones sintéticas, no de mercado."
+}

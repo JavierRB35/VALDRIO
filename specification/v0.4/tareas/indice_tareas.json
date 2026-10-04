@@ -998,3 +998,290 @@
       "C09",
       "C15",
       "C18",
+      "C20",
+      "C22",
+      "C23",
+      "C25",
+      "I01",
+      "I02",
+      "I03",
+      "I04",
+      "I05",
+      "I06",
+      "I07",
+      "I08",
+      "I09",
+      "I10",
+      "I11",
+      "I12",
+      "I13",
+      "I14",
+      "I15"
+    ],
+    "deliver": "Primera edición profesional validada de extremo a extremo.",
+    "steps": [
+      "Preparar piloto anonimizado y casos aprobados; comparar entrada, reparto, capacidad, orden y margen.",
+      "Ejecutar guion completo Windows, archivo real, copias, licencia offline y actualización.",
+      "Cerrar errores bloqueantes, registrar límites de rendimiento y publicar release con notas y documentación de usuario."
+    ],
+    "data": "Build, archivo piloto, decisiones aceptadas, informe de aceptación y tag de release.",
+    "ui": "Guion de usuario con resultado esperado por paso y ayuda para resolver errores metodológicos.",
+    "checks": [
+      "Reproducir importes, fuentes y diagnósticos aceptados; cambiar entrada y recuperar resultado anterior.",
+      "Rendimiento medido en equipo de referencia y respuesta de cancelación; sin promesa no ensayada.",
+      "Revisión independiente de casos económicos, además de tests que el LLM escribió.",
+      "Idioma/región independientes en el recorrido completo; instalador, ayuda e informes en ambos idiomas, importación ambigua bloqueada, archivos canónicos y monedas de 0/2/3 decimales."
+    ],
+    "done": "R1 usable, recuperable y explicable; ninguna tarea crítica queda simulada o marcada hecha sin evidencia.",
+    "avoid": "No avanzar a módulos avanzados para evitar corregir fallos del núcleo ni vender una build de CI sin revisión."
+  },
+  {
+    "id": "T26",
+    "title": "ABC con actividades y pools",
+    "release": "R2",
+    "dependencies": [
+      "T25"
+    ],
+    "contracts": [
+      "CM13"
+    ],
+    "cases": [
+      "C24"
+    ],
+    "deliver": "Varios drivers con partición económica previa del centro.",
+    "steps": [
+      "Definir Activity y CostPoolPartition de centro a actividades/sostenimiento, con sumas conservadas.",
+      "Aplicar driver de cada pool y su política de capacidad a objetos.",
+      "Añadir explicación centro→actividad→objeto y comparación con reparto por centros."
+    ],
+    "data": "ActivityPool, PoolPartitionLine y DriverObservation; nuevas versiones de modelo y snapshot.",
+    "ui": "Editor de actividades y cantidades; informe de coste por actividad y objeto.",
+    "checks": [
+      "C24 produce 460/540 y total 1.000; dos drivers no producen 2.000.",
+      "Coste sostenedor no asignado tiene destino explícito; los datos R1 mantienen sus resultados.",
+      "Migración de archivo y snapshots antiguos probados."
+    ],
+    "done": "ABC real con drivers observados y conservación entre pools; cada actividad explica su aportación.",
+    "avoid": "No añadir múltiples drivers como columnas que reaplican el mismo coste entero."
+  },
+  {
+    "id": "T27",
+    "title": "Objetos y rentabilidad multidimensional",
+    "release": "R2",
+    "dependencies": [
+      "T26"
+    ],
+    "contracts": [
+      "CM11",
+      "CM12"
+    ],
+    "cases": [
+      "C25"
+    ],
+    "deliver": "Análisis por producto, cliente, pedido, canal y periodo sobre hechos comunes.",
+    "steps": [
+      "Definir dimensiones y asociaciones de cada hecho, claves únicas y valores no informados.",
+      "Construir consultas agrupadas y filtros, sin replicar importes por dimensión.",
+      "Añadir rentabilidad por cliente/pedido y jerarquías con frontera de transferencias."
+    ],
+    "data": "DimensionDefinition, DimensionMember, FactDimensionBinding y vistas de frontera.",
+    "ui": "Comparación de producto/cliente/canal con total común y desglose de costes directos/indirectos.",
+    "checks": [
+      "C25 muestra 420 por producto y cliente sin 840; varios miembros por dimensión necesitan regla, no duplicación.",
+      "Miembro ausente queda NoInformado y conserva coste; rollups de jerarquía no se suman a sus hijos."
+    ],
+    "done": "Cada vista concilia con el mismo total filtrado, y el usuario entiende el corte consultado.",
+    "avoid": "No guardar un coste independiente en cada cubo ni sumar vistas de diferentes dimensiones."
+  },
+  {
+    "id": "T28",
+    "title": "TDABC y ecuaciones de tiempo",
+    "release": "R3",
+    "dependencies": [
+      "T26",
+      "T27"
+    ],
+    "contracts": [
+      "CM13"
+    ],
+    "cases": [
+      "C26"
+    ],
+    "deliver": "Coste por minuto práctico y transacciones con tiempo explicable.",
+    "steps": [
+      "Definir ResourceGroup, capacidad práctica y coste suministrado con fuente y calendario.",
+      "Implementar árbol de expresiones de tiempo limitado y tipado, variables, rangos y versionado.",
+      "Aplicar a transacciones reales/simuladas distinguidas y mostrar capacidad restante."
+    ],
+    "data": "TimeEquationVersion, VariableDefinition, TransactionFact y PracticalCapacity.",
+    "ui": "Editor guiado de tiempo y previsualización de caso; no editor de código arbitrario.",
+    "checks": [
+      "C26: 2/min, 11 min, 22 y resto 1.178 para una transacción.",
+      "Tiempo negativo, división inválida o variable ausente bloquean; cambios de ecuación no alteran historial.",
+      "Cantidades de tiempo medido y supuesto aprobado identificadas; no 80 % universal."
+    ],
+    "done": "TDABC comprobado con datos de capacidad y tiempo del negocio, y arquitectura R1 conservada.",
+    "avoid": "No ejecutar C#/SQL del usuario ni tratar tiempos inventados por IA como datos reales."
+  },
+  {
+    "id": "T29",
+    "title": "Estándares y desviaciones aditivas",
+    "release": "R3",
+    "dependencies": [
+      "T25",
+      "T26"
+    ],
+    "contracts": [
+      "CM13"
+    ],
+    "cases": [
+      "C27"
+    ],
+    "deliver": "Referencias aprobadas y comparación precio/cantidad para producción real.",
+    "steps": [
+      "Definir StandardVersion con precios, recetas permitidas y presupuesto/calendario pertinentes.",
+      "Calcular cantidad estándar permitida por producción real y desviaciones precio/cantidad.",
+      "Versionar referencias y preparar presupuesto flexible; ampliar mix/eficiencia solo con contrato aditivo aprobado."
+    ],
+    "data": "StandardPrice, StandardConsumption, AllowedQuantity y VarianceFact con convención de signo.",
+    "ui": "Comparación real/permitido y causas; enlace a precio/cantidad que explican el efecto.",
+    "checks": [
+      "C27: 144-80=64=24+40. Producción real distinta de normal utiliza QS correcta.",
+      "Referencia inexistente no se sustituye por tarifa actual; descomposición no cuenta el mismo efecto dos veces."
+    ],
+    "done": "Un controller puede reconciliar todas las desviaciones con el total y consultar la referencia usada.",
+    "avoid": "No renombrar tarifa real normalizada como estándar sin precio/consumo/budget de referencia."
+  },
+  {
+    "id": "T30",
+    "title": "Métodos alternativos y simulación",
+    "release": "R4",
+    "dependencies": [
+      "T21",
+      "T25"
+    ],
+    "contracts": [
+      "CM06",
+      "CM12",
+      "CM13"
+    ],
+    "cases": [
+      "C09"
+    ],
+    "deliver": "Comparación explícita de recíproco, directo y escalonado, más escenarios de volumen/mix.",
+    "steps": [
+      "Especificar método directo, exclusión de destinos auxiliares y bases de normalización propias del método.",
+      "Especificar step-down con orden guardado, regla de destinatarios cerrados y efecto de cambiarlo.",
+      "Comparar bajo las mismas entradas y crear simulación con supuestos de costes y capacidad identificados."
+    ],
+    "data": "MethodPolicyVersion, StepDownOrder y SimulationAssumption. Cada ejecución identifica método.",
+    "ui": "Comparador por principal/objeto, diferencias y advertencia de simplificación. Orden escalonado visible.",
+    "checks": [
+      "Misma fuente conserva valor en cada método válido; resultado puede diferir por política.",
+      "Orden distinto en step-down queda registrado; un fallo recíproco nunca activa otro método automáticamente.",
+      "Cambio de mix requiere consumos/driver por objeto, no solo mover porcentajes arbitrarios."
+    ],
+    "done": "Diferencias metodológicas explicables y simulaciones claramente separadas de datos reales.",
+    "avoid": "No prometer precisión causal superior por usar método exacto ni introducir un motor de fórmulas universal."
+  },
+  {
+    "id": "T31",
+    "title": "Presupuesto, previsión e integraciones elegidas",
+    "release": "R4",
+    "dependencies": [
+      "T29",
+      "T30"
+    ],
+    "contracts": [
+      "CM01",
+      "CM12",
+      "CM13"
+    ],
+    "cases": [
+      "C01",
+      "C27"
+    ],
+    "deliver": "Un primer flujo de presupuesto/previsión y una integración concreta, especificados con su fuente.",
+    "steps": [
+      "Elegir con propietario un origen concreto y un periodo de previsión; documentar formato/API y autorización.",
+      "Definir presupuesto base, revisiones y drivers de forecast; comparar real, presupuesto y previsión sin mezclarlos.",
+      "Implementar adaptador acotado, staging, idempotencia y diagnóstico; nuevos conectores son tareas posteriores."
+    ],
+    "data": "BudgetVersion, ForecastScenario, SourceAdapterConfig y ExternalImportBatch. Credenciales protegidas.",
+    "ui": "Asistente de integración y comparación temporal con supuestos, calidad y procedencia.",
+    "checks": [
+      "Reimportar no duplica datos; fallo externo conserva última revisión válida.",
+      "Presupuesto de referencia permanece fijo y previsión no modifica consumo real.",
+      "Sin red, cálculos locales e históricos siguen funcionando."
+    ],
+    "done": "Integración y forecast delimitados, recuperables y útiles para pregunta elegida; alcance registrado.",
+    "avoid": "No intentar construir ERP universal ni inventar integraciones sin conocer el sistema de origen."
+  },
+  {
+    "id": "T32",
+    "title": "Valoración productiva e inventario",
+    "release": "Opcional",
+    "dependencies": [
+      "T25"
+    ],
+    "contracts": [
+      "CM14",
+      "CM11"
+    ],
+    "cases": [
+      "C28"
+    ],
+    "deliver": "Módulo de existencias solo si finalidad y marco contable están definidos.",
+    "steps": [
+      "Confirmar marco, perímetro de fabricación, ociosidad y política de fijo limitado con ejemplos revisados.",
+      "Implementar movimientos, inventarios, producción en curso y cantidades/consumos permitidos por componente.",
+      "Conciliar cantidades y valor por frontera, periodos y transferencias; separar resultados de gestión."
+    ],
+    "data": "InventoryMovement, WorkInProgress, ProductionValuationPolicy y coste inicial/final con trazas.",
+    "ui": "Movimientos y valoraciones de existencias; enlace a costes excluidos/periodo y cantidades.",
+    "checks": [
+      "C28: sobreactividad no aplica más fijo del incurrido en el caso de referencia.",
+      "Existencias iniciales+entradas-salidas=finales; semielaborado transferido no crea coste doble.",
+      "Producción en curso con grado por componente y comercial separado del perímetro productivo."
+    ],
+    "done": "Casos normativos y movimientos aceptados; revisión competente y límites de cumplimiento documentados.",
+    "avoid": "No presentar tarifas analíticas como valoración contable certificada ni adivinar inventario desde balances."
+  },
+  {
+    "id": "T33",
+    "title": "Fuentes contables adicionales",
+    "release": "Opcional",
+    "dependencies": [
+      "T25"
+    ],
+    "contracts": [
+      "CM01",
+      "CM02",
+      "CM15",
+      "CM16"
+    ],
+    "cases": [
+      "C01",
+      "C33",
+      "I03",
+      "I04",
+      "I12",
+      "I15"
+    ],
+    "deliver": "Un adaptador adicional de datos contables, independiente del motor y con conciliación por origen.",
+    "steps": [
+      "Elegir una fuente concreta con archivo/API autorizado, ejemplo representativo y semántica de saldos, moneda y periodo.",
+      "Implementar IImportAdapter, SourceParseProfile, staging y conversión con RateSet explícito; mapear a los mismos comandos canónicos del núcleo.",
+      "Entregar previsualización, idempotencia, confirmación atómica e informe de correspondencias, rechazos y conciliación."
+    ],
+    "data": "SourceAdapterConfig, SourceRecord y ImportReport. Credenciales protegidas y fuera de los entregables; procedencia preservada.",
+    "ui": "Asistente de origen y perfil con campos interpretados, monedas, tipos, errores y totales antes de confirmar.",
+    "checks": [
+      "Importación equivalente por dos adaptadores conserva valores tipados y resultados; cambiar idioma no cambia parsing.",
+      "Repetición no duplica registros; fallo deja el estudio previo intacto y filas rechazadas explicadas.",
+      "Motor y uso diario siguen locales y no dependen de la disponibilidad de la fuente externa."
+    ],
+    "done": "El nuevo origen genera recursos explicables con conciliación y añade una integración sin modificar Calculation.",
+    "avoid": "No construir un ERP universal ni presentar un origen no analizado como integración comprobada. T33 no condiciona el núcleo."
+  }
+]
