@@ -1,0 +1,6 @@
+{
+  "kind": "valdrio-development-smoke-v1",
+  "name": "T01 Windows smoke fixture",
+  "purpose": "Confirms that the WPF development shell can open a non-economic fixture and remain running. This is not the VALDRIO persistence schema.",
+  "economicData": false
+}
