@@ -1,88 +1,107 @@
 # ESTADO_PROYECTO
 
 Fecha de revisión: 2026-10-04  
-Repositorio: `JavierRB35/VALDRIO`  
-Rama: `main`
+Repositorio: `JavierRB35/VALDRIO`
 
-## Estado observado
+## Corrección de fuente
 
-- Estado inicial de esta sesión: un único commit (`3244d14ecbdb77a192209654ef9cf13eceb10110`) con solo `README.md`.
-- T00.1 creó la línea base documental, arquitectura inicial y registro de decisiones pendientes.
-- T01 se implementó y verificó mediante PR #1.
-- Merge de T01 en `main`: `04812f7972a77d276ce700cbcbca5e77deebf678`.
+El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` **sí está disponible**.
+
+- SHA-256: `1d8f8c21e3386117426f0eede257508a0bae30ed8c48cec7d2fb0e8ac68d7ced`.
+- 59 entradas.
+- `sha256sum -c SHA256SUMS.txt`: todas las entradas enumeradas **OK**.
+- `python3 casos/verificar_referencias.py`: **passed, 39/39**.
+- El verificador matemático no prueba la aplicación C#, SQLite ni WPF.
+
+La afirmación anterior de que el paquete faltaba queda revocada.
 
 ## Estado de tareas
 
-### T00 - Acuerdo de finalidad y políticas
+### T00 — Acordar el producto y sus políticas
 
-Estado: **EN CURSO**.  
-Subentrega T00.1: **COMPLETADA**.
+Estado: **PENDIENTE DE REVISIÓN DEL PROPIETARIO**.
 
-T00 no se declara cerrada porque el prompt maestro referencia `VALDRIO_Paquete_Desarrollo_v0_4.zip` con fichas T00-T33, contratos CM01-CM16, decisiones, casos JSON, verificador y plantillas que no están entre los seis archivos fuente disponibles en esta sesión.
+Completado documentalmente:
 
-Las decisiones D01-D09 siguen registradas como **PROPUESTA / PENDIENTE** salvo aceptación explícita posterior.
+- lectura y reconciliación de especificaciones 01-05;
+- revisión de CM01, CM02, CM08, CM09, CM10, CM12, CM15 y CM16;
+- recorrido de estudio descrito;
+- D01-D12 reconciliadas con la fuente;
+- ejemplos C01, C15, C18, C20, C22 y C23 preparados para revisión;
+- criterios I01, I02, I04 e I13 identificados sin declararlos pruebas de aplicación;
+- identidad VALDRIO e internacionalización desde fundamentos conservadas;
+- integridad del paquete y 39 referencias verificadas.
 
-### T01 - Repositorio, SDK y CI Windows
+Pendiente para cierre formal:
 
-Estado: **COMPLETADA**.
+- revisión del propietario de `docs/revision/T00_REVISION_USUARIO.md`.
 
-Resultado comprobado:
-- solución modular `Valdrio.slnx`;
-- SDK .NET 10 fijado en `10.0.401`;
-- paquetes centralizados;
-- shell WPF mínima;
-- fixture de desarrollo no económico;
-- pruebas de límites básicos de Domain/Calculation;
-- CI sobre `windows-latest`;
-- build Release correcto;
-- 2/2 pruebas correctas;
-- publicación win-x64 correcta;
-- smoke WPF correcto: proceso vivo durante 6 segundos tras abrir el fixture;
-- artefacto `valdrio-t01-win-x64` publicado por GitHub Actions.
+Las propuestas D04-D07 **no necesitan aceptarse ahora** para comprender/cerrar T00; conservan sus puertas de decisión posteriores. D03 requiere un ejemplo real antes de T06 productivo.
 
-Evidencia: `docs/evidencias/T01_CI_2026-10-04.md`.
+### T01 — Repositorio, solución y compilación Windows
 
-La verificación anterior prueba compilación, tests, publicación y arranque automatizado en Windows. **No equivale a revisión visual humana de la ventana.**
+Estado técnico: **IMPLEMENTADA Y REVALIDADA**.  
+Estado de secuencia: **CIERRE FORMAL PENDIENTE DE T00**.
 
-## Línea base de alcance
+La primera implementación se adelantó antes de reconciliar la ficha real. La comparación detectó y corrigió:
 
-- Nombre operativo del producto: **VALDRIO**.
-- La comprobación registral/dominios de la marca sigue pendiente; no se interpreta el nombre operativo como registro concedido ni dominio adquirido.
-- R0 es un demostrador verificable. R1 es la primera edición profesional prevista.
-- Primera plataforma: Windows x64, escritorio local.
-- Internacionalización es transversal desde los fundamentos: idioma, región, moneda funcional/original y zona horaria son ámbitos independientes.
-- Las reglas económicas propuestas no se consideran aceptadas hasta que se revisen sus ejemplos.
-- Precio, presupuesto de marketing y retorno publicitario permanecen pendientes; no se inventan.
+- textos WPF hardcodeados → recursos neutral inglés + español;
+- ausencia de validación de catálogos → pruebas de claves/placeholders;
+- Runner solo compilado → Runner ejecutado en CI;
+- publish framework-dependent → publish `win-x64` autocontenido.
 
-## Entorno comprobado
+Evidencia de revalidación:
 
-Host de trabajo local:
-- Linux x86_64.
-- Git `2.47.3`.
-- Python `3.13.5`.
-- Sin `dotnet` local.
-- Sin PowerShell local.
+- run `37217066778`;
+- build: success;
+- tests: **4/4 passed**;
+- Runner smoke: success;
+- publish self-contained: success;
+- WPF smoke: success;
+- artefacto `valdrio-t01-win-x64`, ID `11308518710`, 68.358.723 bytes.
 
-Alternativa ejecutada:
-- GitHub Actions `windows-latest` con .NET 10.
-- T01 compilada y ejecutada automáticamente en Windows mediante CI.
+No se declara revisión visual humana ni funcionalidad de T01A.
 
-## Evidencia y documentación
+## Decisiones
 
-- ADR técnico inicial: `docs/adr/ADR-0001-arquitectura-base.md`.
-- Decisiones pendientes: `docs/decisiones/DECISIONES_PENDIENTES.md`.
-- Fuentes y huellas: `docs/fuentes/FUENTES_DISPONIBLES.md`.
-- T00: `docs/tareas/T00.md`.
-- T01: `docs/tareas/T01.md`.
-- Evidencia T01: `docs/evidencias/T01_CI_2026-10-04.md`.
-- Dependencias fijadas: `docs/dependencias/DEPENDENCIAS.md`.
+Fuente reconciliada: `docs/decisiones/DECISIONES_PENDIENTES.md`.
+
+- D01, D04-D07, D10-D11: propuestas.
+- D02: supuesto.
+- D03: pendiente de ejemplo.
+- D08: pendiente de operación.
+- D09: pendiente comercial.
+- D12: pendiente avanzado.
+
+Ninguna propuesta económica ha sido promovida a regla definitiva.
+
+## Entorno y evidencia
+
+Host local de esta sesión:
+- Linux x86_64;
+- Git `2.47.3`;
+- Python `3.13.5`;
+- sin `dotnet` ni PowerShell locales.
+
+Verificación Windows:
+- GitHub Actions `windows-latest`;
+- .NET 10;
+- compilación, pruebas, Runner, publish y smoke WPF ejecutados remotamente.
+
+Documentos:
+- `docs/evidencias/T00_PAQUETE_2026-10-04.md`
+- `docs/revision/T00_REVISION_USUARIO.md`
+- `docs/tareas/T00.md`
+- `docs/tareas/T01.md`
+- `docs/evidencias/T01_REVALIDACION_PAQUETE_2026-10-04.md`
+- `docs/decisiones/DECISIONES_PENDIENTES.md`
+- `docs/fuentes/FUENTES_DISPONIBLES.md`
 
 ## Continuidad
 
-Primera tarea técnica siguiente cuyas dependencias técnicas están satisfechas: **T01A - primera ventana bilingüe, preferencias independientes, recursos y pruebas de layout/traducción**.
+Primera acción pendiente: **revisión del propietario de T00**.
 
-Límites antes de avanzar:
-1. T01A puede avanzar como fundamento técnico independiente.
-2. No se deben construir pantallas funcionales posteriores antes de T01A.
-3. T00 sigue pendiente de reconciliación con el paquete de desarrollo completo y de aceptación de las políticas económicas pertinentes.
-4. No se implementarán fórmulas de costes como definitivas mientras sus reglas correspondientes sigan sin aceptación.
+Después de esa revisión:
+1. cerrar formalmente T00;
+2. promover T01 de implementada/revalidada a cerrada en secuencia;
+3. comenzar T01A, sin adelantar T02/T03.
