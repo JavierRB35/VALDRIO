@@ -8,22 +8,14 @@ public static class PrecisionPolicyCompatibility
         string leftRole,
         string rightRole)
     {
-        if (left is null || right is null)
+        if (left is null)
         {
-            throw new DomainRuleException(
-                new DomainDiagnostic(
-                    "PRECISION_POLICY_MISSING",
-                    "Precision.PolicyMissing",
-                    [
-                        new(
-                            "leftRole",
-                            DiagnosticArgumentType.Text,
-                            leftRole),
-                        new(
-                            "rightRole",
-                            DiagnosticArgumentType.Text,
-                            rightRole)
-                    ]));
+            throw Missing(leftRole);
+        }
+
+        if (right is null)
+        {
+            throw Missing(rightRole);
         }
 
         if (left == right)
@@ -46,4 +38,17 @@ public static class PrecisionPolicyCompatibility
                         right.Version)
                 ]));
     }
+
+    private static DomainRuleException Missing(
+        string role) =>
+        new(
+            new DomainDiagnostic(
+                "PRECISION_POLICY_MISSING",
+                "Precision.PolicyMissing",
+                [
+                    new(
+                        "role",
+                        DiagnosticArgumentType.Text,
+                        role)
+                ]));
 }
