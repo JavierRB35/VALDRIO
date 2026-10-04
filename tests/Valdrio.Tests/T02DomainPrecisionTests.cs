@@ -73,7 +73,7 @@ public sealed class T02DomainPrecisionTests
             new DecimalEnvelope(1234.50000000m),
             options);
 
-        Assert.AreEqual("{"Amount":"1234.5"}", json);
+        Assert.AreEqual("{\"Amount\":\"1234.5\"}", json);
 
         var roundTrip = JsonSerializer.Deserialize<DecimalEnvelope>(
             json,
