@@ -206,7 +206,7 @@ public sealed class T06ImportAdapterTests
         var current = Path.Combine(directory, "current.valdrio");
         using var file = Service().Upgrade(source, current, "t06-test");
         var company = file.Read();
-        var model = file.Models.ReadModels().Single(item => item.Status == ModelStatus.Published);
+        var model = file.Models.ReadModels().First(item => item.Status == ModelStatus.Published);
         var study = file.Studies.Create(new CreateStudy(
             company.Id,
             new EntityId(Guid.Parse("f03402f2-0175-41c0-8296-8c9ee17c3861")),

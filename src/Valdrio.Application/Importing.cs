@@ -398,7 +398,7 @@ public static class SourceAmountParser
             body = body[1..];
         }
 
-        if (body.Length == 0 || body.Contains('e', StringComparison.OrdinalIgnoreCase) ||
+        if (body.Length == 0 || body.Contains('e') || body.Contains('E') ||
             body.Contains('+') || body.Contains('-') || body.Contains('(') || body.Contains(')'))
             return Failure("IMP_INVALID_AMOUNT", "Import.InvalidAmount", text);
 
