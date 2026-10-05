@@ -1,0 +1,76 @@
+{
+  "schema_version": "1",
+  "document_version": "0.4",
+  "origin": "Subset exacto C33-C37 del paquete VALDRIO v0.4",
+  "cases": [
+    {
+      "id": "C33",
+      "input": {
+        "original_amount": "100",
+        "original_currency": "USD",
+        "functional_currency": "EUR",
+        "quote": "0.9"
+      },
+      "expected": {
+        "original_amount": "100",
+        "original_currency": "USD",
+        "functional_amount": "90",
+        "functional_currency": "EUR",
+        "conversion_rounding": "0"
+      }
+    },
+    {
+      "id": "C34",
+      "input": {
+        "original_amount": "100",
+        "original_currency": "EUR",
+        "functional_currency": "EUR",
+        "quote": null
+      },
+      "expected": {
+        "original_amount": "100",
+        "functional_amount": "100",
+        "quote": "1"
+      }
+    },
+    {
+      "id": "C35",
+      "input": {
+        "original_amount": "1000",
+        "original_currency": "JPY",
+        "functional_currency": "EUR",
+        "quote": "0.006"
+      },
+      "expected": {
+        "original_amount": "1000",
+        "original_currency": "JPY",
+        "functional_amount": "6",
+        "functional_currency": "EUR"
+      }
+    },
+    {
+      "id": "C36",
+      "input": {
+        "original_amount": "100",
+        "original_currency": "USD",
+        "functional_currency": "EUR",
+        "quote": null
+      },
+      "expected_diagnostic": "FX_RATE_MISSING"
+    },
+    {
+      "id": "C37",
+      "input": {
+        "original_amount": "-100",
+        "original_currency": "USD",
+        "functional_currency": "EUR",
+        "quote": "0.9"
+      },
+      "expected": {
+        "original_amount": "-100",
+        "functional_amount": "-90",
+        "conversion_rounding": "0"
+      }
+    }
+  ]
+}
