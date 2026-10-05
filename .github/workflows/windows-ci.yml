@@ -101,11 +101,21 @@ jobs:
         shell: pwsh
         run: dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=valdrio-tests.trx"
 
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: valdrio-test-results
+          path: tests/Valdrio.Tests/TestResults/*.trx
+          if-no-files-found: warn
+          retention-days: 30
+
       - name: Guard diagnostic resource coverage
         shell: pwsh
         run: |
-          $sourceFiles = Get-ChildItem src/Valdrio.Domain,src/Valdrio.Calculation,src/Valdrio.Application,src/Valdrio.Infrastructure -Recurse -Filter *.cs
-          $pattern = '"(?<key>(?:AllocationKey|Currency|Fx|Money|Numeric|Precision|Quantity|Time)\.[A-Za-z0-9]+)"'
+          $sourceFiles = Get-ChildItem src/Valdrio.Domain,src/Valdrio.Calculation,src/Valdrio.Application,src/Valdrio.Infrastructure,src/Valdrio.Desktop -Recurse -Filter *.cs |
+            Where-Object { $_.FullName -notmatch '[\\\\/](obj|bin)[\\\\/]' }
+          $pattern = '"(?<key>[A-Z][A-Za-z0-9]*(?:\.[A-Z][A-Za-z0-9]*)+)"'
 
           $keys = @(
             foreach ($file in $sourceFiles) {
@@ -281,7 +291,8 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: valdrio-wpf-visual-evidence
-          path: artifacts/visual/*.png
+          path: artifacts/visual
+          # Includes the actual FX button interaction checks.
           if-no-files-found: error
           retention-days: 14
 

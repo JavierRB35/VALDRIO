@@ -228,6 +228,7 @@
                         <TextBox x:Name="FxQuoteBox"
                                  Grid.Row="4" Grid.Column="1"
                                  Text="{Binding FxQuoteText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 GotKeyboardFocus="OnFxQuoteGotKeyboardFocus"
                                  TabIndex="3"
                                  FlowDirection="LeftToRight"
                                  AutomationProperties.Name="{Binding LabelFxQuote}" />
