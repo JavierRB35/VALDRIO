@@ -301,6 +301,16 @@ jobs:
           $studyImages = Get-ChildItem -LiteralPath (Join-Path $captureDir "studies") -Filter *.png
           if ($studyImages.Count -ne 8) { throw "Expected 8 study context/history captures, found $($studyImages.Count)." }
 
+          foreach ($group in @("models", "studies")) {
+            $folder = Join-Path $captureDir $group
+            $manifest = Get-Content -LiteralPath (Join-Path $folder "manifest.json") -Raw | ConvertFrom-Json
+            foreach ($entry in $manifest.Files) {
+              $actual = (Get-FileHash -LiteralPath (Join-Path $folder $entry.Name) -Algorithm SHA256).Hash.ToLowerInvariant()
+              if ($actual -ne $entry.Sha256) { throw "Artifact hash mismatch: $group/$($entry.Name)." }
+            }
+            Write-Host "Artifact manifest verified: $group ($($manifest.Files.Count) files)."
+          }
+
           $files = Get-ChildItem -Path $captureDir -Filter *.png
           if ($files.Count -ne 4) {
             throw "Expected 4 visual evidence PNG files, found $($files.Count)."

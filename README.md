@@ -11,7 +11,8 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 - **T02A: CERRADA** — Money/metadatos, fechas canónicas, RateSet/FX y contrato de orquestación de RevalueStudy verificados; integración SQLite pendiente.
 - **T03: CERRADA** — archivo SQLite real, bloqueo OS, unidades/auditoría, copias/restauración y flujo WPF. **132/132 tests**, 24 checks WPF de archivos; cierre integrado con CI final aprobada.
 - **T04: CERRADA** — formato v2, centros/modelos con publicación y duplicación; 153 pruebas y flujo WPF aprobados. Cierre integrado con CI final aprobada.
-- **T05: PENDIENTE** — estudios, revisiones y snapshots, con directrices detalladas.
+- **T05: IMPLEMENTADA, CIERRE PENDIENTE** — v3, estudios/revisiones/snapshots, WPF y runner; última corrección regional compila y 183 pruebas locales pasan. Actions no ha arrancado la verificación final de Windows.
+- **T06: PENDIENTE** — importación contable con perfiles explícitos; directrices y puerta D03.
 - Correcciones A01–A06 completadas: **114/114 tests**, 39/39 referencias, 12 comprobaciones reales del botón FX, publish y WPF smoke.
 - JSON canónico versionado, huellas FX v2, cuantización exacta e inmutabilidad preparados para persistencia.
 - Fecha de negocio, instante UTC y zona de presentación están separados.
@@ -25,7 +26,9 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 - [Evidencia T03](docs/evidencias/T03_2026-10-05.md)
 - [Evidencia T04](docs/evidencias/T04_2026-10-05.md)
 - [ADR de modelos y formato v2](docs/adr/ADR-0003-modelos-y-esquema-v2.md)
-- [Directrices de la siguiente fase T05](docs/directrices/T05_SIGUIENTE_FASE.md)
+- [Evidencia T05](docs/evidencias/T05_2026-10-05.md)
+- [ADR de estudios y formato v3](docs/adr/ADR-0004-estudios-y-snapshots-v3.md)
+- [Directrices de la siguiente fase T06](docs/directrices/T06_SIGUIENTE_FASE.md)
 - [Contrato técnico del archivo](docs/adr/ADR-0002-archivo-empresa.md)
 
 - [Estado del proyecto](ESTADO_PROYECTO.md)
@@ -57,6 +60,20 @@ Para reproducir los ejemplos sintéticos de CI: `Valdrio.Desktop.exe --capture-d
 
 ## Probar modelos y centros
 
-Abrir/crear archivo v2. Para un archivo v1, usar **Actualizar v1 a un archivo nuevo**, seleccionando origen y destino sin sobrescribir. Añadir unidades `lot` (batch, discreta) y `h` (time), centros PRENSA/MANT y un modelo con descripción. Aplicar nodos SETUP/lote y PROCESO/hora en PRENSA y un auxiliar MANT/hora. Guardar el borrador, validar y publicar. Duplicar para editar la siguiente versión; consultar el publicado conserva nombres y unidades históricos.
+Abrir/crear archivo v3. Para un archivo v1/v2, usar **Actualizar archivo**, seleccionando origen y destino sin sobrescribir. Añadir unidades `lot` (batch, discreta) y `h` (time), centros PRENSA/MANT y un modelo con descripción. Aplicar nodos SETUP/lote y PROCESO/hora en PRENSA y un auxiliar MANT/hora. Guardar el borrador, validar y publicar. Duplicar para editar la siguiente versión; consultar el publicado conserva nombres y unidades históricos.
 
-El editor es estructural. Las políticas económicas siguen pendientes y aún no hay estudios ni cálculo completo. Véanse las directrices T05 para continuar.
+El editor es estructural. Los estudios se describen a continuación; las políticas económicas y el cálculo completo siguen pendientes.
+
+## T05 — Estudios e instantáneas (cierre pendiente de CI)
+
+Los archivos actuales son v3. Actualiza los v1/v2 mediante **Actualizar archivo**, con destino nuevo. El original se conserva. En Estudios, actualiza la lista de modelos, selecciona un publicado, introduce nombre/periodo mediante calendario/moneda/escenario y crea el estudio. Guardar contexto aumenta su revisión; **Capturar instantánea** conserva sus datos y dos huellas. Selecciona fotos anteriores para consultar lo aplicado. Las preferencias de idioma/región/zona no alteran esas fotos.
+
+La captura registra contexto y explica qué falta; todavía no calcula costes. El runner puede verificar un receipt exportado:
+
+```sh
+dotnet run --project src/Valdrio.Runner -c Release -- --study-snapshot ruta/snapshot.json
+```
+
+[Directrices T06](docs/directrices/T06_SIGUIENTE_FASE.md): importación con perfiles/preview/confirmación y puerta D03 antes de una fuente real.
+
+El cierre y la integración de T05 esperan CI del HEAD final: los últimos intentos de Actions terminaron sin pasos ni runner. [Evidencia y continuidad exacta](docs/evidencias/T05_2026-10-05.md). No utilizar los checks de un commit anterior como cierre de esta corrección.

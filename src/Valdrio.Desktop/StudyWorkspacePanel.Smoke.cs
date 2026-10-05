@@ -48,8 +48,12 @@ public partial class StudyWorkspacePanel
                 foreach (var nested in Descendants<T>(child)) yield return nested;
             }
         }
-        var path = Path.Combine(directory, "models", "example.valdrio");
-        files.Paths.Enqueue(path); await Click(companyPanel.OpenButton);
+        var modelSource = Path.Combine(directory, "models", "example.valdrio");
+        var modelSourceHash = Hash(modelSource);
+        var path = Path.Combine(output, "example.valdrio");
+        // Restore through the production UI to an isolated study file. The model
+        // stage's artifact and manifest must remain valid after all later smokes.
+        files.Paths.Enqueue(modelSource); files.Paths.Enqueue(path); await Click(companyPanel.RestoreButton);
         await Click(RefreshStudyButton);
         Check(vm.PublishedModels.Count == 1 && vm.Studies.Count == 0, "only published models offered");
         Check(company.Snapshot?.DefaultCurrency.ToString() == "USD", "company USD preserved");
@@ -151,6 +155,7 @@ public partial class StudyWorkspacePanel
         var before = Hash(source); Check(before == fixture.RootElement.GetProperty("Sha256").GetString(), "real T04 fixture hash verified");
         var upgraded = Path.Combine(output, "upgraded-v3.valdrio"); files.Paths.Enqueue(source); files.Paths.Enqueue(upgraded); await Click(companyPanel.UpgradeButton);
         Check(company.Snapshot?.SchemaVersion == 3 && Hash(source) == before && vm.PublishedModels.Count == 1, "v2 upgrade button preserves original publication and bytes");
+        Check(Hash(modelSource) == modelSourceHash, "study workflow preserves the model-stage artifact and manifest");
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = passed }, new JsonSerializerOptions { WriteIndented = true }));
         File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { Format = SqliteCompanyFileService.FormatId, SchemaVersion = 3,
             CompanyId = companyId.ToString(), StudyId = studyId.ToString(), latest.EconomicInputHash, latest.FullSnapshotHash,

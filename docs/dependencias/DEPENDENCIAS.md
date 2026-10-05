@@ -31,3 +31,5 @@ Estas versiones se fijan para la base técnica de T01. No implican que toda la f
 - EF Core/SQLite está referenciado para validar la base técnica, pero T01 no crea DbContext, migraciones ni esquema de datos.
 - El fixture `samples/t01-smoke.valdrio-dev.json` es exclusivamente de desarrollo. No es el formato de archivo VALDRIO ni congela un contrato de persistencia.
 - La localización completa y los recursos .resx pertenecen a T01A.
+
+T05 mantiene las versiones de paquetes: nuevo StudyDbContext/mapping v3 y migración propia, sin reescribir snapshots históricos ni añadir bibliotecas de importación. La elección de lector XLSX se realiza en T06 con documentación/versiones/licencia verificadas.
