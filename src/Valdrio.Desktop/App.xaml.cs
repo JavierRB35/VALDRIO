@@ -83,6 +83,8 @@ public partial class App : System.Windows.Application
         var temporalContractExampleService =
             new TemporalContractExampleService(
                 new TimeZoneResolver());
+        var fxConversionExampleService =
+            new FxConversionExampleService();
 
         var requestedPath =
             e.Args.FirstOrDefault(
@@ -106,7 +108,8 @@ public partial class App : System.Windows.Application
                 formatter,
                 roundingExampleService,
                 currencyMetadataExampleService,
-                temporalContractExampleService);
+                temporalContractExampleService,
+                fxConversionExampleService);
 
         if (!viewModel.TryLoadDevelopmentSample(
                 samplePath,
