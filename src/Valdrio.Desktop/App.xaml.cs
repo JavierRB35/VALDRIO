@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows;
@@ -75,9 +76,17 @@ public partial class App : System.Windows.Application
 
         if (captureDirectory is null)
         {
+            var persistence = new PresentationPreferencesPersistence(store);
             preferences.Changed +=
                 (_, args) =>
-                    store.Save(args.Current);
+                {
+                    if (persistence.TrySave(args.Current, out var failure)) return;
+                    var ui = CultureInfo.GetCultureInfo(args.Current.UiLanguageTag);
+                    Trace.TraceWarning(
+                        "{0}: {1}",
+                        failure!.Code,
+                        texts.Get(failure.MessageKey, ui));
+                };
         }
 
         var formatter =

@@ -11,8 +11,8 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 - **T02A: CERRADA** — Money/metadatos, fechas canónicas, RateSet/FX y contrato de orquestación de RevalueStudy verificados; integración SQLite pendiente.
 - **T03: CERRADA** — archivo SQLite real, bloqueo OS, unidades/auditoría, copias/restauración y flujo WPF. **132/132 tests**, 24 checks WPF de archivos; cierre integrado con CI final aprobada.
 - **T04: CERRADA** — formato v2, centros/modelos con publicación y duplicación; 153 pruebas y flujo WPF aprobados. Cierre integrado con CI final aprobada.
-- **T05: IMPLEMENTADA, CIERRE BLOQUEADO** — v3, estudios/revisiones/snapshots, WPF y runner; 183 pruebas locales y 71 por zona UTC/Madrid aprobadas. La cuenta ha agotado los minutos incluidos de Actions. Pendiente el recorrido final de Windows.
-- **T06: EN CURSO, RAMA APILADA** — `t06/import` parte de `dacf2dd1` (T05); contrato de perfil/origen y staging CSV/XLSX sintético implementados. D03 real, `PrepareImport`, persistencia v4, UI y runner siguen pendientes.
+- **T05: IMPLEMENTADA, CIERRE BLOQUEADO** — v3, estudios/revisiones/snapshots, WPF y runner. La base previa a la reauditoría conserva 183 pruebas locales y 71 por zona UTC/Madrid aprobadas; B01/B02/G02 tienen corrección implementada con cinco regresiones nuevas, todavía sin ejecución .NET en este entorno. La cuenta ha agotado los minutos incluidos de Actions y sigue pendiente el recorrido final de Windows.
+- **T06: EN CURSO, RAMA APILADA** — `t06/import` conserva su historia T06.1 y ya incorpora por merge el T05 corregido `64aac29f`; staging CSV/XLSX sintético implementado. D03 real, `PrepareImport`, persistencia v4, UI y runner siguen pendientes.
 - Correcciones A01–A06 completadas: **114/114 tests**, 39/39 referencias, 12 comprobaciones reales del botón FX, publish y WPF smoke.
 - JSON canónico versionado, huellas FX v2, cuantización exacta e inmutabilidad preparados para persistencia.
 - Fecha de negocio, instante UTC y zona de presentación están separados.
@@ -75,6 +75,8 @@ La captura registra contexto y explica qué falta; todavía no calcula costes. E
 dotnet run --project src/Valdrio.Runner -c Release -- --study-snapshot ruta/snapshot.json
 ```
 
+Las correcciones de reauditoría B01/B02/G02 están implementadas en T05 y presentes también en esta rama: recuperación tras commit confirmado, persistencia de preferencias aislada y aceptación Windows ligada a árbol limpio/manifest de build. Aún requieren ejecución .NET/Windows del HEAD final.
+
 [Directrices T06](docs/directrices/T06_SIGUIENTE_FASE.md): importación con perfiles/preview/confirmación y puerta D03 antes de una fuente real.
 
 El cierre y la integración de T05 esperan la verificación de Windows del HEAD final. Los últimos intentos de Actions terminaron sin pasos ni runner; el aviso de GitHub aportado el 5 de octubre confirma que la cuenta ha agotado sus minutos incluidos. [Auditoría de estado y pendientes](docs/evidencias/AUDITORIA_ESTADO_2026-10-05.md). No utilizar los checks de un commit anterior como cierre de esta corrección.
@@ -87,6 +89,6 @@ Desde un clon de la rama `t05/studies`, en Windows con Git, .NET SDK 10.0.401, P
 pwsh -File .github/scripts/Verify-Windows.ps1
 ```
 
-El script compila, ejecuta pruebas/guards/corpus/runners, publica el binario de desarrollo y recorre los botones WPF. Exige los 73 checks finales de estudios, 53 de modelos, 24 de archivo y 12 FX; comprueba las fechas visibles de cuatro regiones, ocho PNG y ambos manifests. Genera `artifacts/visual/verification.json` con el commit real. Un directorio de evidencia ocupado se conserva; para repetir, indicar `-EvidenceDirectory artifacts/visual-nueva`.
+El script exige un árbol Git limpio, compila, ejecuta pruebas/guards/corpus/runners, publica el binario de desarrollo y recorre los botones WPF. Exige los 73 checks finales de estudios, 53 de modelos, 24 de archivo y 12 FX; comprueba las fechas visibles de cuatro regiones, ocho PNG y ambos manifests. Genera `artifacts/acceptance-build.json` ligado al commit y a los hashes de Desktop/Runner/tests/TRX; `-UseExistingBuild` solo es válido si ese manifest coincide. `artifacts/visual/verification.json` registra además esos hashes y vuelve a comprobar HEAD/limpieza al finalizar. Un directorio de evidencia ocupado se conserva; para repetir, indicar `-EvidenceDirectory artifacts/visual-nueva`. Un directorio de evidencia ocupado se conserva; para repetir, indicar `-EvidenceDirectory artifacts/visual-nueva`.
 
 La ejecución Windows y la inspección de los PNG aún están pendientes. Para reanudar CI cuando Actions vuelva a estar disponible, ejecutar el workflow sobre el HEAD final de `t05/studies`, con `verify_timezones=true`. Si el workflow de esa rama aún no aparece en Run workflow porque no está en main, enviar un único commit sin instrucción de omisión para activar el evento del PR. No reintentar mientras persista el bloqueo ni integrar T05 sin su evidencia final.

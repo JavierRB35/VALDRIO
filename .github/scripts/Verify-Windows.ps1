@@ -11,12 +11,88 @@ if (-not $IsWindows) { throw "The WPF acceptance flow must run on Windows." }
 $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot "../..")).Path
 Push-Location $repositoryRoot
 try {
+    $buildManifestPath = "artifacts/acceptance-build.json"
+
+    function Assert-CleanRepository([string]$stage) {
+        $dirty = @(& git status --porcelain=v1 --untracked-files=all)
+        if ($LASTEXITCODE -ne 0) { throw "Could not inspect repository state at $stage." }
+        if ($dirty.Count -gt 0) {
+            $dirty | ForEach-Object { Write-Host "dirty: $_" }
+            throw "Acceptance by commit requires a clean repository at $stage."
+        }
+    }
+
+    function Get-RequiredSha256([string]$path) {
+        if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+            throw "Required acceptance file is missing: $path"
+        }
+        return (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
+    }
+
+    function Get-BuildPaths {
+        return [ordered]@{
+            DesktopExe = "artifacts/desktop/Valdrio.Desktop.exe"
+            RunnerDll = "src/Valdrio.Runner/bin/Release/net10.0/Valdrio.Runner.dll"
+            TestAssembly = "tests/Valdrio.Tests/bin/Release/net10.0/Valdrio.Tests.dll"
+            Trx = "tests/Valdrio.Tests/TestResults/valdrio-tests.trx"
+        }
+    }
+
+    function Write-AcceptanceBuildManifest([string]$commit) {
+        $paths = Get-BuildPaths
+        $manifest = [ordered]@{
+            Schema = "valdrio-windows-build-manifest-v1"
+            SourceCommit = $commit
+            CreatedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
+            DesktopExe = [ordered]@{ Path = $paths.DesktopExe; Sha256 = Get-RequiredSha256 $paths.DesktopExe }
+            RunnerDll = [ordered]@{ Path = $paths.RunnerDll; Sha256 = Get-RequiredSha256 $paths.RunnerDll }
+            TestAssembly = [ordered]@{ Path = $paths.TestAssembly; Sha256 = Get-RequiredSha256 $paths.TestAssembly }
+            Trx = [ordered]@{ Path = $paths.Trx; Sha256 = Get-RequiredSha256 $paths.Trx }
+        }
+        New-Item -ItemType Directory -Force -Path (Split-Path $buildManifestPath -Parent) | Out-Null
+        $manifest | ConvertTo-Json -Depth 4 |
+          Set-Content -LiteralPath $buildManifestPath -Encoding utf8NoBOM
+    }
+
+    function Assert-AcceptanceBuildManifest([string]$expectedCommit) {
+        if (-not (Test-Path -LiteralPath $buildManifestPath -PathType Leaf)) {
+            throw "Acceptance build manifest is missing. Rebuild without -UseExistingBuild."
+        }
+
+        $manifest = Get-Content -LiteralPath $buildManifestPath -Raw | ConvertFrom-Json
+        if ($manifest.Schema -ne "valdrio-windows-build-manifest-v1" -or
+            $manifest.SourceCommit -ne $expectedCommit) {
+            throw "Acceptance build manifest does not belong to source commit $expectedCommit."
+        }
+
+        $paths = Get-BuildPaths
+        foreach ($name in @("DesktopExe", "RunnerDll", "TestAssembly", "Trx")) {
+            $entry = $manifest.$name
+            $expectedPath = $paths.$name
+            if ($null -eq $entry -or $entry.Path -ne $expectedPath) {
+                throw "Acceptance build manifest path mismatch: $name."
+            }
+            $actualHash = Get-RequiredSha256 $expectedPath
+            if ($entry.Sha256 -ne $actualHash) {
+                throw "Acceptance build hash mismatch: $name."
+            }
+        }
+
+        return $manifest
+    }
+
+    Assert-CleanRepository "start"
+
     if (Test-Path -LiteralPath $EvidenceDirectory) {
         if (@(Get-ChildItem -LiteralPath $EvidenceDirectory -Force).Count -gt 0) {
             throw "Evidence directory is not empty. Choose a new -EvidenceDirectory; existing files are preserved."
         }
     }
     $sourceCommit = (& git rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($sourceCommit)) {
+        throw "Could not resolve source commit."
+    }
+
     if (-not $UseExistingBuild) {
         # Restore
         dotnet restore Valdrio.slnx
@@ -200,7 +276,11 @@ try {
           }
         }
 
+        Write-AcceptanceBuildManifest $sourceCommit
     }
+
+    $buildManifest = Assert-AcceptanceBuildManifest $sourceCommit
+
     # Same UI acceptance flow used by GitHub Actions.
     $exe = (Resolve-Path "artifacts/desktop/Valdrio.Desktop.exe").Path
     $sample = (Resolve-Path "samples/t01-smoke.valdrio-dev.json").Path
@@ -286,6 +366,15 @@ try {
     if ([int]$counters.total -lt 183 -or [int]$counters.failed -ne 0 -or [int]$counters.notExecuted -ne 0 -or [int]$counters.total -ne [int]$counters.passed) {
         throw "The acceptance receipt requires all discovered tests to pass without omissions."
     }
+
+    $endingCommit = (& git rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0 -or $endingCommit -ne $sourceCommit) {
+        throw "Repository HEAD changed during Windows acceptance."
+    }
+    Assert-CleanRepository "end"
+    $buildManifest = Assert-AcceptanceBuildManifest $sourceCommit
+    $buildManifestSha256 = Get-RequiredSha256 $buildManifestPath
+
     $receipt = [ordered]@{
         Status = "passed"
         SourceCommit = $sourceCommit
@@ -297,6 +386,12 @@ try {
         FxChecks = $fxChecks.PassedChecks.Count
         StudyImages = $studyImages.Count
         ModelAndStudyManifests = "verified"
+        RepositoryClean = $true
+        BuildManifestSha256 = $buildManifestSha256
+        DesktopExeSha256 = $buildManifest.DesktopExe.Sha256
+        RunnerDllSha256 = $buildManifest.RunnerDll.Sha256
+        TestAssemblySha256 = $buildManifest.TestAssembly.Sha256
+        TrxSha256 = $buildManifest.Trx.Sha256
     }
     $receipt | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $captureDir "verification.json") -Encoding utf8NoBOM
     Write-Host "Windows acceptance passed for source commit $sourceCommit."

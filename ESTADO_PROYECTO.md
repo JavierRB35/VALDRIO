@@ -22,7 +22,7 @@ El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` está disponible e íntegro.
 - **T02A — CERRADA**: Money/metadatos, tiempo canónico y RateSet/FX completados y verificados.
 - **T03 — CERRADA**: archivo de empresa SQLite, bloqueo, transacciones, copias/restauración y WPF.
 - **T04 — CERRADA**: centros físicos, modelos/nodos/pools, publicación inmutable y duplicación.
-- **T05 — IMPLEMENTADA, CIERRE BLOQUEADO**: estudios/revisiones/snapshots, formato v3, WPF y runner implementados; recorrido final Windows pendiente. La cuenta ha agotado los minutos incluidos de Actions.
+- **T05 — IMPLEMENTADA, CIERRE BLOQUEADO**: estudios/revisiones/snapshots, formato v3, WPF y runner implementados; B01/B02/G02 corregidos en código y con cinco regresiones nuevas preparadas. La nueva corrección aún necesita build/tests y recorrido final Windows. La cuenta ha agotado los minutos incluidos de Actions.
 - **T06 — PENDIENTE**: importación verificable; requiere muestra D03 antes de confirmar fuente real. [Directrices T06](docs/directrices/T06_SIGUIENTE_FASE.md).
 
 ## T02A.1 — Money y metadatos monetarios
@@ -173,12 +173,23 @@ T06 ha iniciado en una rama apilada sobre el HEAD final auditado de T05, sin mod
 
 ## T06 — EN CURSO, T06.0/T06.1 inicial
 
-Rama `t06/import`, apilada sobre `dacf2dd15ecf438f465ca3658cb06c6659c5fdd3` porque PR #14 continúa abierta/draft. La rama T05 no se modifica y T06 deberá reubicarse sobre `main` cuando T05 se integre.
+Rama `t06/import`: nació sobre `dacf2dd15ecf438f465ca3658cb06c6659c5fdd3` y conserva esa historia, pero ya incorpora mediante merge el T05 corregido `64aac29fa711ef69d9eb2cb21bd9d684b8374045`. PR #14 continúa abierta/draft; `main` no se modifica.
 
 Implementado en la primera subentrega: `SourceParseProfileVersion` inmutable/versionado, tipos de celdas/filas/procedencia, `IImportAdapter`, parser decimal explícito sin cultura ambiente y `CsvImportAdapter` con quoted fields, delimitadores citados, comillas escapadas, multiline, BOM y encoding declarado. Se preservan cuenta como texto, Unicode, lexical original y SHA-256 de bytes.
 
-D03 permanece pendiente. El único perfil actual está marcado `SyntheticFixture`; no se afirma soporte de una fuente productiva. No existen todavía XLSX, `PrepareImport` completo, confirmación, formato v4, recursos persistidos, WPF ni runner T06.
+D03 permanece pendiente. El único perfil actual está marcado `SyntheticFixture`; no se afirma soporte de una fuente productiva. XLSX ya forma parte del staging T06.1. No existen todavía `PrepareImport` completo, confirmación, formato v4, recursos persistidos, WPF ni runner T06.
 
-La suite T06 contiene diez métodos de prueba, incluida una integración SQLite que comprueba que extracción/inspección básica no cambia revisión/audit/snapshots del estudio. En este entorno no está disponible .NET y la descarga temporal del SDK fue bloqueada, por lo que esas pruebas **no se registran como ejecutadas**. Sí se comprobaron estáticamente cobertura EN/ES de las ocho claves nuevas, ausencia de cultura/tiempo ambiente y patrones prohibidos, delta limitado a T06 y conservación del blob histórico `t05-v3.json`. No se usó GitHub Actions.
+La suite T06 contiene quince métodos de prueba, incluida una integración SQLite que comprueba que extracción/inspección básica no cambia revisión/audit/snapshots del estudio. En este entorno no está disponible .NET y la descarga temporal del SDK fue bloqueada, por lo que esas pruebas **no se registran como ejecutadas**. Sí se comprobaron estáticamente cobertura EN/ES de las diecisiete claves T06, ausencia de cultura/tiempo ambiente y patrones prohibidos, delta limitado a T06 y conservación del blob histórico `t05-v3.json`. No se usó GitHub Actions.
 
 [Ficha T06](docs/tareas/T06.md) · [ADR-0005](docs/adr/ADR-0005-import-staging-profile-v1.md) · [Evidencia T06](docs/evidencias/T06_2026-10-05.md).
+
+
+## Correcciones de reauditoría B01/B02/G02 — IMPLEMENTADAS, VERIFICACIÓN PENDIENTE
+
+Sobre el HEAD T05 posterior a `dacf2dd15ecf438f465ca3658cb06c6659c5fdd3` se incorporó la recuperación tras escritura confirmada, el aislamiento de fallos de persistencia de preferencias y el endurecimiento del verificador Windows.
+
+- **B01:** el resultado confirmado de crear/guardar/cambiar estado/capturar se aplica antes de releer; un fallo posterior de lectura deja visible el dato confirmado y muestra `Study.CommittedRefreshPending`. Un refresco manual reconcilia `Current` cuando no hay edición pendiente y no sobrescribe una edición pendiente.
+- **B02:** IO/acceso denegado al guardar preferencias no corta los demás suscriptores; se registra un aviso traducible y el archivo temporal usa nombre único con limpieza.
+- **G02:** aceptación Windows exige repositorio limpio al inicio/fin, identidad de HEAD estable y manifest de build con SHA-256 de Desktop, Runner, assembly de tests y TRX. `-UseExistingBuild` rechaza binarios sin manifest coincidente.
+
+Se añadieron cinco pruebas de regresión portables. En el entorno que produjo esta corrección no existe SDK .NET, por lo que **no se declara todavía build ni suite ejecutada sobre este nuevo HEAD**. La evidencia 183/183 sigue perteneciendo al código anterior y no cierra estas correcciones.
