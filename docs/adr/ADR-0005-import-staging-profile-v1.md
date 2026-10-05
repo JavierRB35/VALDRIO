@@ -30,3 +30,10 @@ T05 conserva snapshots contextuales `valdrio-study-input-v1` y formato SQLite v3
 - `AggregateWithProvenance` no agrega dentro del adaptador: la agregación necesita semántica y reconciliación de T06.2.
 - Cambiar archivo o perfil generará otra preparación; esa huella se define en T06.2.
 - La persistencia v4 no queda autorizada por este ADR y T06A mantiene el puente FX internacional completo.
+
+
+## Selección XLSX
+
+T06.1 usa `DocumentFormat.OpenXml` 3.5.1. Es el SDK Open XML mantenido por .NET Foundation/Microsoft, licencia MIT y paquete con target compatible `net10.0`. Se abre el stream en modo read-only y se consume el valor cached existente de una fórmula; VALDRIO no invoca Excel, COM, macros ni motor de recálculo.
+
+El adaptador conserva el `CellFormula` y el `CellValue` cached por separado. Ausencia de cached value permanece `FormulaWithoutCachedValue`. Los sistemas de fecha 1900/1904 se registran en el documento de staging y el serial 60 del sistema 1900 no se convierte en fecha válida.
