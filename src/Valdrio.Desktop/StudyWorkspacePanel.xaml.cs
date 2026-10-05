@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
@@ -12,6 +14,18 @@ public partial class StudyWorkspacePanel : UserControl
 public sealed class CalendarDatePicker : DatePicker
 {
     private DatePickerTextBox? calendarText;
+    static CalendarDatePicker() => LanguageProperty.OverrideMetadata(typeof(CalendarDatePicker),
+        new FrameworkPropertyMetadata((d, _) => ((CalendarDatePicker)d).RefreshDateText()));
+
+    private void RefreshDateText()
+    {
+        // WPF's language callback changes the first weekday, but does not redraw
+        // an existing selected date. Format the typed value rather than old text.
+        if (SelectedDate is { } date)
+            SetCurrentValue(TextProperty, date.ToString(SelectedDateFormat == DatePickerFormat.Short ? "d" : "D",
+                CultureInfo.GetCultureInfo(Language.IetfLanguageTag)));
+    }
+
     public override void OnApplyTemplate()
     {
         if (calendarText is not null) calendarText.IsEnabledChanged -= KeepCalendarTextReadOnly;
@@ -23,6 +37,7 @@ public sealed class CalendarDatePicker : DatePicker
             calendarText.IsEnabledChanged += KeepCalendarTextReadOnly;
             calendarText.SetCurrentValue(TextBox.IsReadOnlyProperty, true);
         }
+        RefreshDateText();
     }
     private static void KeepCalendarTextReadOnly(object sender, System.Windows.DependencyPropertyChangedEventArgs e) =>
         ((DatePickerTextBox)sender).SetCurrentValue(TextBox.IsReadOnlyProperty, true);

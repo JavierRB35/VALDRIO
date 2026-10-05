@@ -70,6 +70,12 @@ public partial class StudyWorkspacePanel
         Check(vm.Snapshots.Count == 1 && vm.Current.Revision == 0 && vm.Current.CurrentRunId is null, "capture is a photo, not a revision or execution");
         Check(!StudyPreparationService.Evaluate(first.Input).ReadyForCalculation && StudyPreparationService.Evaluate(first.Input).Diagnostics.Count == 4, "pending policies and missing inputs explained");
         Text(StudyNameBox, "Octubre controller"); Check(!CaptureStudyButton.IsEnabled, "dirty input cannot be captured");
+        main.ApplyPresentationPreset("es", "en-US", "America/Los_Angeles", false, false);
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle); UpdateLayout();
+        Check(vm.IsDirty && vm.Name == "Octubre controller" && vm.PeriodStart?.Date == new DateTime(2026, 10, 1)
+            && StartPicker.Text == new DateTime(2026, 10, 1).ToString(StartPicker.SelectedDateFormat == DatePickerFormat.Short ? "d" : "D",
+                System.Globalization.CultureInfo.GetCultureInfo("en-US")), "region switch preserves pending edits and formats typed date");
+        main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", false, false);
         await Click(SaveStudyButton); await Click(CaptureStudyButton); var named = vm.SnapshotChoice!.Value;
         Check(vm.Current!.Revision == 1 && named.EconomicInputHash == first.EconomicInputHash && named.FullSnapshotHash != first.FullSnapshotHash, "administrative rename changes full photo only");
         Date(StartPicker, new(2026, 10, 2)); await Click(SaveStudyButton); await Click(CaptureStudyButton); var period = vm.SnapshotChoice!.Value;
@@ -85,6 +91,10 @@ public partial class StudyWorkspacePanel
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle); UpdateLayout();
             Check(Hash(path) == sha && vm.SnapshotChoice!.Value.CanonicalJson == canonical, "preferences preserve disk and snapshot: " + preset.Item2);
             Check(vm.PeriodStart?.Date == new DateTime(2026, 10, 2) && vm.PeriodEnd?.Date == new DateTime(2026, 10, 31), "calendar identity retained: " + preset.Item2);
+            var culture = System.Globalization.CultureInfo.GetCultureInfo(preset.Item2);
+            Check(StartPicker.Text == new DateTime(2026, 10, 2).ToString(StartPicker.SelectedDateFormat == DatePickerFormat.Short ? "d" : "D", culture)
+                && EndPicker.Text == new DateTime(2026, 10, 31).ToString(EndPicker.SelectedDateFormat == DatePickerFormat.Short ? "d" : "D", culture)
+                && !vm.IsDirty, "visible calendar text follows region without input mutation: " + preset.Item2);
             window.ScrollToElement(this);
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
             window.UpdateLayout();
