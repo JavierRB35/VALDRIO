@@ -23,6 +23,10 @@ public partial class MainWindow : Window
             UiLanguageSelector,
             FormatCultureSelector,
             TimeZoneSelector,
+            FxQuoteBox,
+            FxRateDateBox,
+            FxRateSourceBox,
+            ApplyFxRateButton,
             PendingEditBox,
             StartEditButton,
             CommitEditButton
