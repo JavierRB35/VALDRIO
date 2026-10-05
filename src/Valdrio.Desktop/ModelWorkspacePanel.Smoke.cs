@@ -42,7 +42,7 @@ public partial class ModelWorkspacePanel
         Check(vm.Units.Count==2,"unit selections loaded through port");
         Text(CenterCodeBox,"PRENSA-001");Text(CenterNameBox,"Prensa 日本");await Click(CreateCenterButton);
         Text(CenterCodeBox,"MANT-001");Text(CenterNameBox,"Mantenimiento");await Click(CreateCenterButton);Check(vm.Centers.Count==2,"physical masters saved");
-        Text(CenterCodeBox,"MANT-001");Text(CenterNameBox,"Duplicate");await Click(CreateCenterButton);Check(vm.Status.StartsWith("MODEL_DUPLICATE",StringComparison.Ordinal)&&vm.Centers.Count==2,"duplicate diagnostic shown without extra master");
+        Text(CenterCodeBox,"MANT-001");Text(CenterNameBox,"Duplicate");await Click(CreateCenterButton);Check(vm.Status.StartsWith("MODEL_DUPLICATE",StringComparison.Ordinal)&&vm.Centers.Count==2,"duplicate diagnostic shown without extra master");Text(CenterNameBox,"Mantenimiento");
         Text(DescriptionBox,"Industrial setup and process");await Click(NewDraftButton);Check(vm.Current?.Status==ModelStatus.Draft,"draft created");
         async Task AddNode(string code,string physical,string unit,NodeRole role,string functions)
         {

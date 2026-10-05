@@ -214,5 +214,5 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Completed" xml:space="preserve"><value>Operation completed.</value></data>
   <data name="Model.ValidStructure" xml:space="preserve"><value>Structure valid. Economic readiness is still pending.</value></data>
   <data name="Model.PendingTitle" xml:space="preserve"><value>Unsaved model changes</value></data>
-  <data name="Model.PendingBody" xml:space="preserve"><value>Save changes before leaving? Yes = Save; No = Discard; Cancel = stay.</value></data>
+  <data name="Model.PendingBody" xml:space="preserve"><value>Save center or model changes before leaving? Yes = Save; No = Discard; Cancel = stay.</value></data>
 </root>

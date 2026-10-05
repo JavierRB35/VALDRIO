@@ -51,9 +51,9 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
         ToggleUnitCommand=new AsyncRelayCommand(ToggleUnit,()=>Ready&&UnitMaster is not null);
         NewDraftCommand=new AsyncRelayCommand(NewDraft,()=>Ready);
         LoadCommand=new AsyncRelayCommand(LoadChosen,()=>Ready&&ModelChoice is not null);
-        SaveCommand=new AsyncRelayCommand(Save,()=>Ready&&IsEditable&&IsDirty);
-        ValidateCommand=new AsyncRelayCommand(Validate,()=>Ready&&Current is not null&&!IsDirty);
-        PublishCommand=new AsyncRelayCommand(Publish,()=>Ready&&IsEditable&&!IsDirty);
+        SaveCommand=new AsyncRelayCommand(Save,()=>Ready&&IsEditable&&(dirty||nodeFormEdited));
+        ValidateCommand=new AsyncRelayCommand(Validate,()=>Ready&&Current is not null&&!dirty&&!nodeFormEdited);
+        PublishCommand=new AsyncRelayCommand(Publish,()=>Ready&&IsEditable&&!dirty&&!nodeFormEdited);
         CloneCommand=new AsyncRelayCommand(Clone,()=>Ready&&Current?.Status==ModelStatus.Published);
         ApplyNodeCommand=new RelayCommand(ApplyNode,()=>Ready&&IsEditable);
         RemoveNodeCommand=new RelayCommand(RemoveNode,()=>Ready&&IsEditable&&SelectedNode is not null);
@@ -61,11 +61,13 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
         DiscardCommand=new RelayCommand(()=>{if(Current is not null)SetCurrent(Current);},()=>!busy&&(dirty||nodeFormEdited));
         CancelCommand=new RelayCommand(()=>cancellation?.Cancel(),()=>busy);
         preferences.Changed+=PreferencesChanged;
+        company.PropertyChanged+=CompanyStateChanged;
         company.WorkspaceBusy=()=>busy; company.BeforeChangeAsync=CanLeaveAsync;company.AfterChangeAsync=CompanyChanged;
         Reformat();
     }
     public bool IsBusy=>busy;
-    public bool IsDirty=>dirty||nodeFormEdited;
+    private bool MasterEdited=>master is not null && (centerCode!=master.Value.Code || centerName!=master.Value.Name);
+    public bool IsDirty=>dirty||nodeFormEdited||MasterEdited;
     public bool IsPublished=>Current?.Status==ModelStatus.Published;
     private bool Ready=>!busy&&company.IsIdle&&company.ActiveModels is not null;
     public bool IsEditable=>Current?.Status==ModelStatus.Draft;
@@ -77,17 +79,36 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
     public ObservableCollection<NodeOption> Nodes { get; }=[];
     public ObservableCollection<RoleOption> Roles { get; }=[];
     public ObservableCollection<LayerOption> Layers { get; }=[];
-    public CenterOption? Master { get=>master;set { if(SetProperty(ref master,value)){centerCode=value?.Value.Code??"";centerName=value?.Value.Name??"";Refresh();} } }
+    public CenterOption? Master
+    {
+        get=>master;
+        set
+        {
+            if(!loading&&MasterEdited&&master!=value)
+            {
+                var decision=dialogs.ResolvePending(Text("Model.PendingTitle"),Text("Model.PendingBody"));
+                if(decision==PendingEditChoice.Cancel){OnPropertyChanged(nameof(Master));return;}
+                if(decision==PendingEditChoice.Save){_ = SaveMasterThenSelect(value);return;}
+            }
+            if(SetProperty(ref master,value)&&!loading){centerCode=value?.Value.Code??"";centerName=value?.Value.Name??"";Refresh();}
+        }
+    }
+    private async Task SaveMasterThenSelect(CenterOption? selection)
+    {
+        await SaveCenter();
+        if(!MasterEdited)Master=Centers.SingleOrDefault(x=>x.Value.Id==selection?.Value.Id);
+        else OnPropertyChanged(nameof(Master));
+    }
     public CenterOption? Physical { get=>physical;set { if(SetProperty(ref physical,value)&&!loading&&IsEditable){nodeFormEdited=true;Refresh();} } }
     public UnitOption? UnitMaster { get=>unitMaster;set {SetProperty(ref unitMaster,value);RefreshCommands();} }
     public UnitOption? DriverUnit { get=>unit;set {if(SetProperty(ref unit,value)&&!loading&&IsEditable){nodeFormEdited=true;Refresh();}RefreshCommands();} }
     public ModelOption? ModelChoice { get=>choice;set {SetProperty(ref choice,value);RefreshCommands();} }
-    public NodeOption? SelectedNode { get=>node;set { if(SetProperty(ref node,value)&&value is not null){nodeCode=value.Node.Code;functionTags=string.Join(", ",value.Node.FunctionTags);poolDescription=value.Pool?.Description??"";
-        physical=Centers.SingleOrDefault(c=>c.Value.Id==value.Node.PhysicalCenterId);unit=Units.SingleOrDefault(u=>u.Value.Definition.Id==value.Pool?.DriverUnitId);role=Roles.Single(x=>x.Value==value.Node.Role);layer=Layers.Single(x=>x.Value==(value.Pool?.CostLayer??CostLayer.Unclassified));Refresh();} } }
+    public NodeOption? SelectedNode { get=>node;set { if(SetProperty(ref node,value)&&value is not null&&!loading){nodeCode=value.Node.Code;functionTags=string.Join(", ",value.Node.FunctionTags);poolDescription=value.Pool?.Description??"";
+        physical=Centers.SingleOrDefault(c=>c.Value.Id==value.Node.PhysicalCenterId);unit=Units.SingleOrDefault(u=>u.Value.Definition.Id==value.Pool?.DriverUnitId);role=Roles.Single(x=>x.Value==value.Node.Role);layer=Layers.Single(x=>x.Value==(value.Pool?.CostLayer??CostLayer.Unclassified));nodeFormEdited=false;Refresh();} } }
     public RoleOption? Role { get=>role;set {if(SetProperty(ref role,value)&&!loading&&IsEditable){nodeFormEdited=true;Refresh();}} }
     public LayerOption? Layer { get=>layer;set {if(SetProperty(ref layer,value)&&!loading&&IsEditable){nodeFormEdited=true;Refresh();}} }
-    public string CenterCode { get=>centerCode;set=>SetProperty(ref centerCode,value); }
-    public string CenterName { get=>centerName;set=>SetProperty(ref centerName,value); }
+    public string CenterCode { get=>centerCode;set {if(SetProperty(ref centerCode,value))Refresh();} }
+    public string CenterName { get=>centerName;set {if(SetProperty(ref centerName,value))Refresh();} }
     public string Description { get=>description;set {if(SetProperty(ref description,value)&&!loading&&IsEditable){dirty=true;Refresh();}} }
     public string NodeCode { get=>nodeCode;set {if(SetProperty(ref nodeCode,value)&&!loading&&IsEditable){nodeFormEdited=true;Refresh();}} }
     public string FunctionTags { get=>functionTags;set {if(SetProperty(ref functionTags,value)&&!loading&&IsEditable){nodeFormEdited=true;Refresh();}} }
@@ -133,6 +154,7 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
     private void Reformat()
     {
         loading=true;
+        var preservedCenterCode=centerCode;var preservedCenterName=centerName;
         var masterId=master?.Value.Id;var physicalId=physical?.Value.Id;var unitId=unit?.Value.Definition.Id;var unitMasterId=unitMaster?.Value.Definition.Id;var choiceId=choice?.Value.Structure.Id;var nodeId=node?.Node.Id;var roleValue=role?.Value??NodeRole.Principal;var layerValue=layer?.Value??CostLayer.Unclassified;
         Replace(Centers,centerValues.Select(c=>new CenterOption(c,c.Code+" · "+c.Name+" · "+Text(c.IsActive?"Model.Active":"Model.Inactive"))));
         Replace(Units,unitValues.Select(u=>new UnitOption(u,u.Definition.Code+" · "+u.Definition.Dimension+" · "+Text(u.IsActive?"Model.Active":"Model.Inactive"))));
@@ -141,8 +163,11 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
         Replace(Layers,Enum.GetValues<CostLayer>().Select(l=>new LayerOption(l,Text(l switch { CostLayer.Fixed=>"Model.LayerFixed", CostLayer.Variable=>"Model.LayerVariable", CostLayer.Mixed=>"Model.LayerMixed", _=>"Model.LayerUnclassified" }))));
         Replace(Nodes,draftNodes.Select(n=>{var p=draftPools.SingleOrDefault(p=>p.NodeId==n.Id);var unitName=unitValues.SingleOrDefault(u=>u.Definition.Id==p?.DriverUnitId)?.Definition.Code??"—";return new NodeOption(n,p,n.Code+" · "+Text(n.Role==NodeRole.Principal?"Model.Principal":"Model.Auxiliary")+" · "+string.Join(",",n.FunctionTags)+" · "+unitName);}));
         master=Centers.SingleOrDefault(c=>c.Value.Id==masterId);physical=Centers.SingleOrDefault(c=>c.Value.Id==physicalId);unit=Units.SingleOrDefault(u=>u.Value.Definition.Id==unitId);unitMaster=Units.SingleOrDefault(u=>u.Value.Definition.Id==unitMasterId);choice=Models.SingleOrDefault(m=>m.Value.Structure.Id==choiceId);node=Nodes.SingleOrDefault(n=>n.Node.Id==nodeId);role=Roles.Single(r=>r.Value==roleValue);layer=Layers.Single(l=>l.Value==layerValue);
+        centerCode=preservedCenterCode;centerName=preservedCenterName;
         loading=false;Refresh();
     }
+    private void CompanyStateChanged(object? sender,System.ComponentModel.PropertyChangedEventArgs e)
+    {RefreshCommands();OnPropertyChanged(nameof(CanEdit));}
     private void PreferencesChanged(object? sender,PresentationPreferencesChangedEventArgs e)=>Reformat();
     public void RefreshPresentation(bool usePseudo){pseudo=usePseudo;Reformat();}
     private async Task Run(Func<CancellationToken,Task> operation)
@@ -190,8 +215,12 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
         switch(dialogs.ResolvePending(Text("Model.PendingTitle"),Text("Model.PendingBody")))
         {
             case PendingEditChoice.Cancel:return false;
-            case PendingEditChoice.Discard:if(Current is not null)SetCurrent(Current);return true;
-            case PendingEditChoice.Save:await Save();return !IsDirty;
+            case PendingEditChoice.Discard:
+                if(master is not null){centerCode=master.Value.Code;centerName=master.Value.Name;}
+                if(Current is not null)SetCurrent(Current);Refresh();return true;
+            case PendingEditChoice.Save:
+                if(MasterEdited){await SaveCenter();if(MasterEdited)return false;}
+                if(dirty||nodeFormEdited)await Save();return !IsDirty;
             default:return false;
         }
     }
@@ -225,5 +254,5 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
         catch(DomainRuleException ex){diagnostic=ex.Diagnostic;Refresh();}catch(ArgumentException){diagnostic=new("MODEL_INPUT_INVALID","Model.InputInvalid",[]);Refresh();}
     }
     private void RemoveNode(){var id=SelectedNode!.Node.Id;draftNodes.RemoveAll(n=>n.Id==id);draftPools.RemoveAll(p=>p.NodeId==id);dirty=true;validation=[];ResetNode();Reformat();}
-    public void Dispose(){preferences.Changed-=PreferencesChanged;cancellation?.Cancel();}
+    public void Dispose(){company.PropertyChanged-=CompanyStateChanged;preferences.Changed-=PreferencesChanged;cancellation?.Cancel();}
 }
