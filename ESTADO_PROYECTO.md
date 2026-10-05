@@ -103,7 +103,7 @@ Evidencia: `docs/evidencias/T02A_SUB3_2026-10-05.md`.
 No se declara implementado todavía:
 
 - catálogo monetario completo de producto;
-- SQLite productivo;
+- importación/cálculo sobre SQLite (el archivo de empresa T03 ya está implementado);
 - importación contable;
 - motor económico de repartos posterior.
 
@@ -122,6 +122,12 @@ Evidencia: [cierre de auditoría](docs/evidencias/AUDITORIA_CIERRE_2026-10-05.md
 
 ## Continuidad
 
-T02A está cerrada. La siguiente tarea por dependencia es **T03 — archivo de empresa y SQLite real**; no se declara iniciada en este estado.
+T02A está cerrada. **T03 está implementada y en verificación de entrega**: 132 pruebas previstas, archivo real y flujo WPF. No declarar cierre hasta comprobar la CI Windows del commit publicado. El siguiente bloque tras ese cierre será T04, maestros/modelos.
 
 [Directrices ejecutables para el equipo de desarrollo](docs/directrices/T03_SIGUIENTE_FASE.md), con subentregas, matriz F01–F18 y prompt de inicio.
+
+## T03 — En verificación de entrega
+
+Archivo de empresa SQLite v1, política completa, unidades, auditoría, bloqueo de editor, transacciones y copias/restauración. Panel WPF conectado a los mismos puertos de Application. [Ficha T03](docs/tareas/T03.md) · [ADR-0002](docs/adr/ADR-0002-archivo-empresa.md).
+
+RevalueStudy sigue pendiente de integración persistente de estudio; T03 certifica el archivo y la transacción básica. D03 y D04–D07 no cambian.

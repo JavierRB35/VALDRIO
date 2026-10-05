@@ -10,6 +10,7 @@ on:
       - "t02/**"
       - "t02a/**"
       - "review/**"
+      - "t03/**"
   pull_request:
 
 permissions:
@@ -114,7 +115,8 @@ jobs:
         shell: pwsh
         run: |
           $sourceFiles = Get-ChildItem src/Valdrio.Domain,src/Valdrio.Calculation,src/Valdrio.Application,src/Valdrio.Infrastructure,src/Valdrio.Desktop -Recurse -Filter *.cs |
-            Where-Object { $_.FullName -notmatch '[\\\\/](obj|bin)[\\\\/]' }
+            Where-Object { $_.FullName -notmatch '[\\\\/](obj|bin)[\\\\/]' -and $_.Name -ne 'AssemblyInfo.cs' }
+          # AssemblyInfo only declares assembly attributes, including the test friend assembly.
           $pattern = '"(?<key>[A-Z][A-Za-z0-9]*(?:\.[A-Z][A-Za-z0-9]*)+)"'
 
           $keys = @(
@@ -276,6 +278,12 @@ jobs:
           }
           Write-Host "FX WPF button interaction checks passed: $($fxChecks.PassedChecks.Count)."
 
+          $companyChecks = Get-Content -LiteralPath (Join-Path $captureDir "company-file/interaction.json") -Raw | ConvertFrom-Json
+          if ($companyChecks.Status -ne "passed" -or $companyChecks.PassedChecks.Count -lt 20) {
+            throw "Company WPF interaction evidence is missing or incomplete."
+          }
+          Write-Host "Company WPF checks passed: $($companyChecks.PassedChecks.Count)."
+
           $files = Get-ChildItem -Path $captureDir -Filter *.png
           if ($files.Count -ne 4) {
             throw "Expected 4 visual evidence PNG files, found $($files.Count)."
@@ -329,4 +337,4 @@ jobs:
           echo "TZ=$TZ"
           dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj \
             --configuration Release \
-            --filter "FullyQualifiedName~RepositoryReviewRegressionTests.R01_"
+            --filter "FullyQualifiedName~RepositoryReviewRegressionTests.R01_|FullyQualifiedName~T03CompanyFileTests"

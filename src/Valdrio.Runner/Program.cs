@@ -1,5 +1,23 @@
 using System.Text.Json;
 using Valdrio.Runner;
+using Valdrio.Application;
+using Valdrio.Infrastructure;
+using Valdrio.Infrastructure.CompanyFiles;
+
+// Portable subprocess probe: real session/OS lock, no economic execution.
+if (args.Length == 2 && args[0] == "--company-lock-probe")
+{
+    try
+    {
+        var catalog = new JsonCurrencyCatalog(Path.Combine(AppContext.BaseDirectory, "reference", "currency-catalog-example.json"));
+        using var session = new SqliteCompanyFileService(catalog, new SystemClock()).Open(args[1]);
+        Console.WriteLine("READY " + session.Read().Id);
+        Console.Out.Flush();
+        Console.ReadLine();
+        return 0;
+    }
+    catch (CompanyFileException ex) { Console.WriteLine(ex.Diagnostic.Code); return 3; }
+}
 
 if (args.Contains("--verify-t02-reference", StringComparer.Ordinal))
 {

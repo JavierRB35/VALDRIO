@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+**/TestResults/
+artifacts/
+*.valdrio
+*.valdrio-backup
+*.valdrio.lock
+*.valdrio-backup.lock
+*.creating-*
+*_wpftmp.csproj
