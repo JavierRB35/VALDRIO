@@ -14,7 +14,7 @@ T04 entrega configuración estructural. No entrega tarifas, reciprocidad, repart
 
 Leer ESTADO_PROYECTO, evidencia T03, ADR-0002, decisiones, prompt maestro, ficha canónica T04, contratos de datos y documento internacional. No editar las fuentes v0.4 ni sus huellas. Comprobar commit y CI antes de trabajar; conservar toda la suite existente.
 
-Stack .NET 10/C#/WPF/MVVM, SQLite local y un editor por archivo. Domain/Calculation puros. Puertos de Application, transacciones en Infrastructure, UI sin DbContext ni SQL. Decimales TEXT canónico, UUID y UTC mediante IClock. Prefencias de idioma/región/zona fuera del archivo de empresa.
+Stack .NET 10/C#/WPF/MVVM, SQLite local y un editor por archivo. Domain/Calculation puros. Puertos de Application, transacciones en Infrastructure, UI sin DbContext ni SQL. Decimales TEXT canónico, UUID y UTC mediante IClock. Preferencias de idioma/región/zona fuera del archivo de empresa.
 
 D03 necesita un archivo contable antes de T06, pero no bloquea T04/T05. D04–D07 siguen propuestas. No elegir `NormalizedManagement`, `OwnerOnceCapacity`, lotes o márgenes como defaults económicos aprobados. Tampoco activar autorreparto/cobertura definitivos por conveniencia del editor. Cifrado/licencias quedan en sus puertas.
 

@@ -121,7 +121,7 @@ jobs:
 
           $keys = @(
             foreach ($file in $sourceFiles) {
-              foreach ($match in (Select-String -Path $file.FullName -Pattern $pattern -AllMatches).Matches) {
+              foreach ($match in (Select-String -Path $file.FullName -Pattern $pattern -AllMatches -CaseSensitive).Matches) {
                 $match.Groups['key'].Value
               }
             }
@@ -256,6 +256,7 @@ jobs:
           }
 
       - name: Generate WPF visual evidence
+        id: visual_evidence
         shell: pwsh
         run: |
           $exe = (Resolve-Path "artifacts/desktop/Valdrio.Desktop.exe").Path
@@ -304,7 +305,7 @@ jobs:
           retention-days: 14
 
       - name: Upload WPF visual evidence
-        if: always()
+        if: always() && steps.visual_evidence.outcome != 'skipped'
         uses: actions/upload-artifact@v7
         with:
           name: valdrio-wpf-visual-evidence
