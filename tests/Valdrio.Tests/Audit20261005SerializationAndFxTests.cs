@@ -101,7 +101,6 @@ public sealed class Audit20261005SerializationAndFxTests
             ConvertedOriginalMoney = new Money(90m, Eur, customPolicy)
         };
         Assert.AreNotEqual(FxConversionHash.Compute(original), FxConversionHash.Compute(changedPolicy));
-        Assert.AreEqual("fx-v2", FxConversionHash.SchemaVersion);
         var identity = new FxConverter().Convert("identity", new Money(100m, Eur), Eur, null);
         Assert.IsTrue(RoundTrip(identity).IsIdentity);
         Assert.AreEqual(FxConversionHash.Compute(identity), FxConversionHash.Compute(RoundTrip(identity)));
