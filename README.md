@@ -8,13 +8,17 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 - **T01: CERRADA** — solución .NET 10, CI Windows y shell WPF.
 - **T01A: CERRADA** — interfaz internacional y preferencias independientes.
 - **T02: CERRADA** — decimal canónico, PDEC-1, BalancedRound y proyección conciliada.
-- **T02A: CERRADA** — Money/metadatos, fechas canónicas, RateSet/FX y RevalueStudy verificados.
-- CI de cierre T02A: **82/82 tests**, 39/39 referencias, Runner C33–C37/I14, guard sin red, publish y WPF smoke.
+- **T02A: CERRADA** — Money/metadatos, fechas canónicas, RateSet/FX y contrato de orquestación de RevalueStudy verificados; integración SQLite pendiente.
+- Correcciones A01–A06 completadas: **114/114 tests**, 39/39 referencias, 12 comprobaciones reales del botón FX, publish y WPF smoke.
+- JSON canónico versionado, huellas FX v2, cuantización exacta e inmutabilidad preparados para persistencia.
 - Fecha de negocio, instante UTC y zona de presentación están separados.
 - D04-D07 siguen siendo propuestas económicas.
 - R07 de fuentes canónicas: **CERRADA** mediante PR #9.
 
 ## Evidencia
+
+- [Cierre de auditoría A01–A06](docs/evidencias/AUDITORIA_CIERRE_2026-10-05.md)
+- [Directrices de la siguiente fase T03](docs/directrices/T03_SIGUIENTE_FASE.md)
 
 - [Estado del proyecto](ESTADO_PROYECTO.md)
 - [Decisiones D01-D12](docs/decisiones/DECISIONES_PENDIENTES.md)

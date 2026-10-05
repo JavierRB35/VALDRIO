@@ -73,7 +73,7 @@ Completada y verificada:
 - I14: un RateSet nuevo genera conversión/hash nuevos sin mutar históricos;
 - `PrecisionPolicy` propagada por la conversión;
 - `IFxRateProvider` fuera del motor y guard CI contra acceso de red en Calculation;
-- `RevalueStudy` valida antes de commit atómico;
+- `RevalueStudy` valida antes de invocar el puerto de commit; las transacciones SQLite y revisión persistente siguen pendientes de integración;
 - diagnósticos FX localizados EN/ES;
 - editor WPF de cotización, fecha y fuente con vista original/funcional;
 - navegación por teclado y evidencia visual WPF verificadas.
@@ -107,6 +107,21 @@ No se declara implementado todavía:
 - importación contable;
 - motor económico de repartos posterior.
 
+## Correcciones de auditoría — A01–A06 CERRADAS
+
+Implementadas serialización canónica versionada, huellas FX v2 inequívocas, IDs válidos, edición FX regional tipada, cuantización exacta, diagnóstico bajo quantum y colecciones defensivas. RevalueStudy utiliza Revision long y valida sus entradas.
+
+Código comprobado: `881e666fe67ecbd0654a7c796bfe5446b97afa23`.
+CI: [run 37298097480](https://github.com/JavierRB35/VALDRIO/actions/runs/37298097480).
+**114/114 tests**, 0 fallos/omitidas; 0 warnings/errores; 12 comprobaciones del botón WPF FX.
+Se conserva la suite previa, las referencias canónicas y las decisiones vigentes.
+
+Evidencia: [cierre de auditoría](docs/evidencias/AUDITORIA_CIERRE_2026-10-05.md).
+
+**A07 sigue pendiente de integración persistente**, con obligaciones asignadas a T03/T05/T06A/T07. No se declaran probadas transacciones del estudio mediante mocks.
+
 ## Continuidad
 
 T02A está cerrada. La siguiente tarea por dependencia es **T03 — archivo de empresa y SQLite real**; no se declara iniciada en este estado.
+
+[Directrices ejecutables para el equipo de desarrollo](docs/directrices/T03_SIGUIENTE_FASE.md), con subentregas, matriz F01–F18 y prompt de inicio.
