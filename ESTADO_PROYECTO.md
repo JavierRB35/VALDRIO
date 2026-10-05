@@ -1,6 +1,6 @@
 # ESTADO_PROYECTO
 
-Fecha de revisión: 2026-10-04  
+Fecha de revisión: 2026-10-05  
 Repositorio: `JavierRB35/VALDRIO`
 
 ## Fuentes
@@ -11,6 +11,7 @@ El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` está disponible e íntegro.
 - 59 entradas.
 - `sha256sum -c SHA256SUMS.txt`: OK.
 - referencias matemáticas globales: **39/39**.
+- **R07 — CERRADA** mediante PR #9; fuentes canónicas v0.4 versionadas y verificadas. Evidencia: `docs/evidencias/R07_2026-10-05.md`.
 
 ## Estado de tareas
 
@@ -18,7 +19,7 @@ El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` está disponible e íntegro.
 - **T01 — CERRADA**.
 - **T01A — CERRADA**.
 - **T02 — CERRADA**.
-- **T02A — EN CURSO**: subentregas 1 y 2 completadas; RateSet/FX pendiente.
+- **T02A — CERRADA**: Money/metadatos, tiempo canónico y RateSet/FX completados y verificados.
 
 ## T02A.1 — Money y metadatos monetarios
 
@@ -60,6 +61,35 @@ Evidencia de referencia:
 
 Evidencia: `docs/evidencias/T02A_SUB2_2026-10-04.md`.
 
+## T02A.3 — RateSet y conversión FX congelada
+
+Completada y verificada:
+
+- `FxRate` y `FxRateSetVersion` explícitos y versionados;
+- quote destino por unidad origen, positivo, con fecha y fuente;
+- conversión por importe a escala 8 con MidpointToEven;
+- original, convertido, RateId/RateSet y `ConversionRoundingAdjustment` preservados;
+- C33–C37 verificados;
+- I14: un RateSet nuevo genera conversión/hash nuevos sin mutar históricos;
+- `PrecisionPolicy` propagada por la conversión;
+- `IFxRateProvider` fuera del motor y guard CI contra acceso de red en Calculation;
+- `RevalueStudy` valida antes de commit atómico;
+- diagnósticos FX localizados EN/ES;
+- editor WPF de cotización, fecha y fuente con vista original/funcional;
+- navegación por teclado y evidencia visual WPF verificadas.
+
+Evidencia de referencia:
+- run `37272274792`;
+- commit `ccf5b0bfe3b5f2eaa2af2063bff5fb88f69e4ea7`;
+- **82/82 tests**;
+- referencias matemáticas: **39/39**;
+- Runner T02A.3: success;
+- guard sin red en Calculation: success;
+- publish y smokes WPF: success;
+- 4 capturas visuales generadas.
+
+Evidencia: `docs/evidencias/T02A_SUB3_2026-10-05.md`.
+
 ## Decisiones vigentes
 
 - D01/D02 aceptadas.
@@ -73,15 +103,10 @@ Evidencia: `docs/evidencias/T02A_SUB2_2026-10-04.md`.
 No se declara implementado todavía:
 
 - catálogo monetario completo de producto;
-- **T02A.3: RateSet, C33-C37, I14 y RevalueStudy**;
 - SQLite productivo;
 - importación contable;
 - motor económico de repartos posterior.
 
 ## Continuidad
 
-Primera subentrega pendiente cuyas dependencias están verificadas:
-
-**T02A.3 — RateSet y conversión FX congelada**.
-
-Debe preservar originales, usar quote destino por unidad origen, redondear la conversión a escala 8 con MidpointToEven y mantener ejecuciones históricas sin mutación.
+T02A está cerrada. La siguiente tarea por dependencia es **T03 — archivo de empresa y SQLite real**; no se declara iniciada en este estado.
