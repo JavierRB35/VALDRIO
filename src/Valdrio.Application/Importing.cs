@@ -191,8 +191,9 @@ public sealed record SourceParseProfileVersion
             periodStart.Value > periodEnd.Value ||
             (fixedCurrency.HasValue == currencyColumn.HasValue) ||
             currencyColumn is < 1 ||
-            sourceKind == ImportSourceKind.Csv && csv is null ||
-            sourceKind == ImportSourceKind.Xlsx && (csv is not null || string.IsNullOrWhiteSpace(worksheetName)))
+            sourceKind == ImportSourceKind.Csv && (csv is null || worksheetName is not null) ||
+            sourceKind == ImportSourceKind.Xlsx && (csv is not null || string.IsNullOrWhiteSpace(worksheetName)) ||
+            fixedCurrency is { IsValid: false })
             throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile");
 
         ArgumentNullException.ThrowIfNull(columns);

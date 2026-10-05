@@ -18,8 +18,9 @@ public sealed class CsvImportAdapter : IImportAdapter
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
         ArgumentNullException.ThrowIfNull(profile);
 
-        if (profile.SourceKind != ImportSourceKind.Csv || profile.Csv is null)
+        if (profile.SourceKind != ImportSourceKind.Csv)
             throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile");
+        var dialect = profile.Csv ?? throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile");
 
         cancellationToken.ThrowIfCancellationRequested();
         using var buffer = new MemoryStream();
@@ -28,8 +29,8 @@ public sealed class CsvImportAdapter : IImportAdapter
 
         var bytes = buffer.ToArray();
         var hash = Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
-        var text = Decode(bytes, profile.Csv);
-        var records = Parse(text, profile.Csv, cancellationToken);
+        var text = Decode(bytes, dialect);
+        var records = Parse(text, dialect, cancellationToken);
 
         if (records.Count < profile.HeaderRow)
             throw ImportRules.Error("IMP_CSV_INVALID", "Import.InvalidCsv");

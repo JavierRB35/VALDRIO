@@ -81,6 +81,7 @@ public sealed class T06ImportAdapterTests
         Assert.IsTrue(first.GetCell(2).WasQuoted);
         Assert.AreEqual("\"Energía; línea 1\r\nlínea 2\"", first.GetCell(2).RawLexical);
         Assert.AreEqual("\"1.234,50\"", first.GetCell(3).RawLexical);
+        Assert.AreEqual("Servicio \"especial\"", document.Rows[1].GetCell(2).TextValue);
         Assert.AreEqual(2, first.RecordNumber);
         Assert.AreEqual(2, first.PhysicalStartLine);
         Assert.AreEqual(4, document.Rows[1].PhysicalStartLine);
@@ -200,7 +201,17 @@ public sealed class T06ImportAdapterTests
     }
 
     [TestMethod]
-    public void T06_09_SourceExtractionAndBasicInspectionDoNotMutateStudyOrAudit()
+    public void T06_09_CancelledReadDoesNotProduceAStagingDocument()
+    {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes("Cuenta;Descripción;Importe\r\n00123;A;1,00\r\n"));
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        Assert.ThrowsExactly<OperationCanceledException>(() =>
+            new CsvImportAdapter().ReadAsync(stream, "cancelled.csv", Profile(), cancellation.Token).GetAwaiter().GetResult());
+    }
+
+    [TestMethod]
+    public void T06_10_SourceExtractionAndBasicInspectionDoNotMutateStudyOrAudit()
     {
         var source = HistoricalV2Fixture();
         var current = Path.Combine(directory, "current.valdrio");
