@@ -33,5 +33,7 @@
     <None Update="Fixtures/t04-v2.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t03-v1.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t06-csv-es-v1.csv" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Fixtures/t06-xlsx-1900-v1.xlsx" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Fixtures/t06-xlsx-1904-v1.xlsx" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

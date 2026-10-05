@@ -282,4 +282,13 @@ Completa: {5}</value></data>
   <data name="Import.InvalidCsv" xml:space="preserve"><value>La estructura CSV no es válida para el perfil seleccionado.</value></data>
   <data name="Import.EncodingMismatch" xml:space="preserve"><value>El encoding o BOM del CSV no coincide con el perfil seleccionado.</value></data>
   <data name="Import.InvalidProfile" xml:space="preserve"><value>El perfil de importación está incompleto o es incoherente.</value></data>
+  <data name="Import.InvalidSource" xml:space="preserve"><value>El origen preparado está incompleto o es incoherente.</value></data>
+  <data name="Import.XlsxInvalid" xml:space="preserve"><value>La estructura del libro XLSX no es válida o no está soportada.</value></data>
+  <data name="Import.XlsxSheetNotFound" xml:space="preserve"><value>No se ha encontrado la hoja XLSX seleccionada.</value></data>
+  <data name="Import.XlsxUnsupportedType" xml:space="preserve"><value>Solo se aceptan libros XLSX sin macros.</value></data>
+  <data name="Import.XlsxFormulaNoCache" xml:space="preserve"><value>La fórmula XLSX no tiene un valor cached utilizable.</value></data>
+  <data name="Import.XlsxCellError" xml:space="preserve"><value>La celda XLSX contiene un valor de error.</value></data>
+  <data name="Import.XlsxDateSerial60" xml:space="preserve"><value>La fecha serial 60 de Excel en el sistema 1900 no es válida.</value></data>
+  <data name="Import.XlsxDateInvalid" xml:space="preserve"><value>La fecha serial XLSX no puede interpretarse como fecha de negocio.</value></data>
+  <data name="Import.XlsxNumericAccount" xml:space="preserve"><value>La celda de cuenta es numérica; el perfil seleccionado no autoriza usar su representación almacenada como identidad de cuenta.</value></data>
 </root>

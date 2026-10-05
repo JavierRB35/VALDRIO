@@ -11,6 +11,8 @@ public enum ImportZeroPolicy { Keep = 0, Exclude = 1 }
 public enum ImportAccountSelectionKind { All = 0, ExplicitList = 1 }
 public enum ImportProfileApprovalState { SyntheticFixture = 0, PendingBusinessApproval = 1, ApprovedBusiness = 2 }
 public enum CsvBomPolicy { Forbidden = 0, Optional = 1, Required = 2 }
+public enum XlsxDateSystem { Date1900 = 0, Date1904 = 1 }
+public enum XlsxNumericAccountPolicy { Reject = 0, PreserveStoredLexical = 1 }
 public enum ImportDiagnosticSeverity { Information = 0, Warning = 1, Blocking = 2 }
 
 [Flags]
@@ -181,12 +183,14 @@ public sealed record SourceParseProfileVersion
         ImportAccountSelection accountSelection,
         ImportProfileApproval approval,
         bool signConventionConfirmed,
-        string? cultureTag = null)
+        string? cultureTag = null,
+        XlsxNumericAccountPolicy xlsxNumericAccountPolicy = XlsxNumericAccountPolicy.Reject)
     {
         id.EnsureValid();
         if (schemaVersion != CurrentSchema || version < 1 || string.IsNullOrWhiteSpace(name) ||
             !Enum.IsDefined(sourceKind) || !Enum.IsDefined(amountMode) || !Enum.IsDefined(signConvention) ||
             !Enum.IsDefined(duplicatePolicy) || !Enum.IsDefined(zeroPolicy) ||
+            !Enum.IsDefined(xlsxNumericAccountPolicy) ||
             headerRow < 1 || firstDataRow <= headerRow || string.IsNullOrWhiteSpace(datePattern) ||
             periodStart.Value > periodEnd.Value ||
             (fixedCurrency.HasValue == currencyColumn.HasValue) ||
@@ -237,6 +241,7 @@ public sealed record SourceParseProfileVersion
         Approval = approval;
         SignConventionConfirmed = signConventionConfirmed;
         CultureTag = cultureTag;
+        XlsxNumericAccountPolicy = xlsxNumericAccountPolicy;
     }
 
     public string SchemaVersion { get; }
@@ -263,6 +268,7 @@ public sealed record SourceParseProfileVersion
     public ImportProfileApproval Approval { get; }
     public bool SignConventionConfirmed { get; }
     public string? CultureTag { get; }
+    public XlsxNumericAccountPolicy XlsxNumericAccountPolicy { get; }
 }
 
 public sealed record SourceCell(
@@ -270,7 +276,10 @@ public sealed record SourceCell(
     SourceValueKind Kind,
     string? RawLexical,
     string? TextValue,
-    bool WasQuoted)
+    bool WasQuoted,
+    string? Formula = null,
+    SourceValueKind? CachedValueKind = null,
+    BusinessDate? DateValue = null)
 {
     public static SourceCell Missing(int column) => new(column, SourceValueKind.Missing, null, null, false);
 }
@@ -303,19 +312,23 @@ public sealed class ImportSourceDocument
         string fileHash,
         string? sheetName,
         IReadOnlyList<string> headers,
-        IReadOnlyList<SourceRow> rows)
+        IReadOnlyList<SourceRow> rows,
+        XlsxDateSystem? xlsxDateSystem = null)
     {
         ArgumentNullException.ThrowIfNull(headers);
         ArgumentNullException.ThrowIfNull(rows);
         if (!Enum.IsDefined(sourceKind) || string.IsNullOrWhiteSpace(fileName) ||
-            fileHash.Length != 64 || fileHash.Any(character => !Uri.IsHexDigit(character)))
-            throw ImportRules.Error("IMP_SOURCE_INVALID", "Import.InvalidCsv");
+            fileHash.Length != 64 || fileHash.Any(character => !Uri.IsHexDigit(character)) ||
+            sourceKind == ImportSourceKind.Csv && xlsxDateSystem is not null ||
+            sourceKind == ImportSourceKind.Xlsx && xlsxDateSystem is null)
+            throw ImportRules.Error("IMP_SOURCE_INVALID", "Import.InvalidSource");
         SourceKind = sourceKind;
         FileName = fileName;
         FileHash = fileHash.ToLowerInvariant();
         SheetName = sheetName;
         Headers = FrozenList.Copy(headers);
         Rows = FrozenList.Copy(rows);
+        XlsxDateSystem = xlsxDateSystem;
     }
 
     public ImportSourceKind SourceKind { get; }
@@ -324,6 +337,7 @@ public sealed class ImportSourceDocument
     public string? SheetName { get; }
     public IReadOnlyList<string> Headers { get; }
     public IReadOnlyList<SourceRow> Rows { get; }
+    public XlsxDateSystem? XlsxDateSystem { get; }
 }
 
 public interface IImportAdapter
@@ -464,6 +478,57 @@ public static class SourceAmountParser
         ]));
 }
 
+public sealed record XlsxDateSerialParseResult(BusinessDate? Value, DomainDiagnostic? Diagnostic)
+{
+    public bool IsValid => Value.HasValue && Diagnostic is null;
+}
+
+public static class XlsxDateSerialParser
+{
+    public static XlsxDateSerialParseResult Parse(string? rawLexical, XlsxDateSystem dateSystem)
+    {
+        if (!Enum.IsDefined(dateSystem) || string.IsNullOrWhiteSpace(rawLexical) ||
+            !decimal.TryParse(
+                rawLexical,
+                System.Globalization.NumberStyles.AllowLeadingSign | System.Globalization.NumberStyles.AllowDecimalPoint,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out var serial) ||
+            decimal.Truncate(serial) != serial ||
+            serial < 0m ||
+            serial > int.MaxValue)
+            return Failure("IMP_XLSX_DATE_INVALID", "Import.XlsxDateInvalid", rawLexical);
+
+        var days = decimal.ToInt32(serial);
+        if (dateSystem == XlsxDateSystem.Date1900 && days == 60)
+            return Failure("IMP_XLSX_DATE_SERIAL_60", "Import.XlsxDateSerial60", rawLexical);
+
+        try
+        {
+            var value = dateSystem switch
+            {
+                XlsxDateSystem.Date1900 when days < 60 =>
+                    new BusinessDate(new DateOnly(1899, 12, 31).AddDays(days)),
+                XlsxDateSystem.Date1900 =>
+                    new BusinessDate(new DateOnly(1899, 12, 31).AddDays(days - 1)),
+                XlsxDateSystem.Date1904 =>
+                    new BusinessDate(new DateOnly(1904, 1, 1).AddDays(days)),
+                _ => throw new ArgumentOutOfRangeException(nameof(dateSystem))
+            };
+            return new(value, null);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            return Failure("IMP_XLSX_DATE_INVALID", "Import.XlsxDateInvalid", rawLexical);
+        }
+    }
+
+    private static XlsxDateSerialParseResult Failure(string code, string key, string? value) =>
+        new(null, new DomainDiagnostic(code, key,
+        [
+            new DiagnosticArgument("value", DiagnosticArgumentType.Text, value ?? "<missing>")
+        ]));
+}
+
 public static class ImportSourceInspector
 {
     public static IReadOnlyList<ImportDiagnostic> ValidateBasic(
@@ -480,16 +545,60 @@ public static class ImportSourceInspector
 
         foreach (var row in source.Rows)
         {
+            if (source.SourceKind == ImportSourceKind.Xlsx)
+            {
+                foreach (var column in MappedColumns(profile))
+                {
+                    var mapped = row.GetCell(column);
+                    if (mapped.Kind == SourceValueKind.FormulaWithoutCachedValue)
+                        diagnostics.Add(Diagnostic(
+                            "IMP_XLSX_FORMULA_NO_CACHE",
+                            "Import.XlsxFormulaNoCache",
+                            source,
+                            row,
+                            column,
+                            mapped.Formula ?? "<formula>"));
+                    else if (mapped.Kind == SourceValueKind.Error ||
+                             mapped.Kind == SourceValueKind.FormulaWithCachedValue &&
+                             mapped.CachedValueKind == SourceValueKind.Error)
+                        diagnostics.Add(Diagnostic(
+                            "IMP_XLSX_CELL_ERROR",
+                            "Import.XlsxCellError",
+                            source,
+                            row,
+                            column,
+                            mapped.RawLexical ?? "<error>"));
+                }
+            }
+
             var cell = row.GetCell(profile.Columns.Account);
-            if (cell.Kind is SourceValueKind.Missing or SourceValueKind.Empty || string.IsNullOrEmpty(cell.TextValue))
+            if (source.SourceKind == ImportSourceKind.Xlsx &&
+                cell.Kind == SourceValueKind.Number &&
+                profile.XlsxNumericAccountPolicy == XlsxNumericAccountPolicy.Reject)
             {
                 diagnostics.Add(Diagnostic(
-                    "IMP_ACCOUNT_REQUIRED",
-                    "Import.AccountRequired",
+                    "IMP_XLSX_NUMERIC_ACCOUNT",
+                    "Import.XlsxNumericAccount",
                     source,
                     row,
                     profile.Columns.Account,
-                    cell.TextValue ?? "<missing>"));
+                    cell.RawLexical ?? "<number>"));
+                continue;
+            }
+
+            if (cell.Kind is SourceValueKind.Missing or SourceValueKind.Empty ||
+                cell.Kind == SourceValueKind.FormulaWithoutCachedValue ||
+                cell.Kind == SourceValueKind.Error ||
+                string.IsNullOrEmpty(cell.TextValue))
+            {
+                if (cell.Kind is SourceValueKind.Missing or SourceValueKind.Empty)
+                    diagnostics.Add(Diagnostic(
+                        "IMP_ACCOUNT_REQUIRED",
+                        "Import.AccountRequired",
+                        source,
+                        row,
+                        profile.Columns.Account,
+                        cell.TextValue ?? "<missing>"));
                 continue;
             }
 
@@ -516,6 +625,20 @@ public static class ImportSourceInspector
 
         return FrozenList.Copy(diagnostics);
     }
+
+    private static IReadOnlyList<int> MappedColumns(SourceParseProfileVersion profile) =>
+        new[]
+        {
+            profile.Columns.Account,
+            profile.Columns.Description ?? 0,
+            profile.Columns.Amount ?? 0,
+            profile.Columns.Debit ?? 0,
+            profile.Columns.Credit ?? 0,
+            profile.CurrencyColumn ?? 0
+        }
+        .Where(column => column > 0)
+        .Distinct()
+        .ToArray();
 
     private static ImportDiagnostic Diagnostic(
         string code,

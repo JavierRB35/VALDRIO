@@ -68,6 +68,48 @@ public sealed class T06ImportAdapterTests
         return new CsvImportAdapter().ReadAsync(stream, "synthetic.csv", profile ?? Profile()).GetAwaiter().GetResult();
     }
 
+    private static SourceParseProfileVersion XlsxProfile(
+        XlsxNumericAccountPolicy numericAccountPolicy = XlsxNumericAccountPolicy.Reject,
+        string worksheet = "Saldos",
+        int amountColumn = 3) =>
+        new(
+            SourceParseProfileVersion.CurrentSchema,
+            new EntityId(Guid.Parse("924af8af-0a04-4b4a-9543-17299f850002")),
+            1,
+            "T06 synthetic XLSX fixture",
+            ImportSourceKind.Xlsx,
+            worksheet,
+            1,
+            2,
+            new ImportColumnMap(account: 1, description: 2, amount: amountColumn),
+            null,
+            new SourceNumberFormat(".", ",", [3], ImportNegativeSyntax.LeadingMinus),
+            "yyyy-MM-dd",
+            ImportAmountMode.PeriodAmount,
+            ImportSignConvention.SignedAmount,
+            BusinessDate.ParseIso("2026-02-01"),
+            BusinessDate.ParseIso("2026-02-28"),
+            new CurrencyCode("EUR"),
+            null,
+            ImportDuplicatePolicy.Reject,
+            ImportZeroPolicy.Keep,
+            ImportAccountSelection.All,
+            new ImportProfileApproval(ImportProfileApprovalState.SyntheticFixture, "T06-xlsx-fixture-only-D03-pending"),
+            true,
+            "en-US",
+            numericAccountPolicy);
+
+    private static ImportSourceDocument ReadXlsx(
+        string fixture,
+        SourceParseProfileVersion? profile = null)
+    {
+        using var stream = File.OpenRead(Path.Combine(AppContext.BaseDirectory, "Fixtures", fixture));
+        return new XlsxImportAdapter().ReadAsync(
+            stream,
+            fixture,
+            profile ?? XlsxProfile()).GetAwaiter().GetResult();
+    }
+
     [TestMethod]
     public void T06_01_CsvPreservesLeadingZerosUnicodeQuotesDelimiterAndMultiline()
     {
@@ -272,4 +314,116 @@ public sealed class T06ImportAdapterTests
         command.CommandText = sql;
         return Convert.ToString(command.ExecuteScalar(), CultureInfo.InvariantCulture) ?? "";
     }
+
+    [TestMethod]
+    public void T06_11_XlsxPreservesTypedCellsCachedFormulaEmptyAndMissing()
+    {
+        var document = ReadXlsx("t06-xlsx-1900-v1.xlsx");
+        Assert.AreEqual(XlsxDateSystem.Date1900, document.XlsxDateSystem);
+        Assert.AreEqual("Saldos", document.SheetName);
+        Assert.AreEqual(2, document.Rows.Count);
+
+        var row = document.Rows[0];
+        Assert.AreEqual(SourceValueKind.Text, row.GetCell(1).Kind);
+        Assert.AreEqual("00123", row.GetCell(1).TextValue);
+        Assert.AreEqual("8", row.GetCell(1).RawLexical);
+        Assert.AreEqual("Energía Δ", row.GetCell(2).TextValue);
+        Assert.AreEqual(SourceValueKind.Number, row.GetCell(3).Kind);
+        Assert.AreEqual("1234.50", row.GetCell(3).RawLexical);
+
+        var date = row.GetCell(4);
+        Assert.AreEqual(SourceValueKind.DateSerial, date.Kind);
+        Assert.AreEqual("45323", date.RawLexical);
+        Assert.AreEqual(BusinessDate.ParseIso("2024-02-01"), date.DateValue);
+
+        var cached = row.GetCell(5);
+        Assert.AreEqual(SourceValueKind.FormulaWithCachedValue, cached.Kind);
+        Assert.AreEqual("C2*2", cached.Formula);
+        Assert.AreEqual(SourceValueKind.Number, cached.CachedValueKind);
+        Assert.AreEqual("2469", cached.RawLexical);
+
+        var noCache = row.GetCell(6);
+        Assert.AreEqual(SourceValueKind.FormulaWithoutCachedValue, noCache.Kind);
+        Assert.AreEqual("C2*3", noCache.Formula);
+        Assert.IsNull(noCache.RawLexical);
+
+        Assert.AreEqual(SourceValueKind.Error, row.GetCell(7).Kind);
+        Assert.AreEqual("#DIV/0!", row.GetCell(7).RawLexical);
+        Assert.AreEqual(SourceValueKind.Empty, row.GetCell(8).Kind);
+        Assert.AreEqual(SourceValueKind.Missing, row.GetCell(9).Kind);
+    }
+
+    [TestMethod]
+    public void T06_12_XlsxSupports1900And1904DatesAndRejectsSerial60()
+    {
+        var workbook1900 = ReadXlsx("t06-xlsx-1900-v1.xlsx");
+        var serial60 = workbook1900.Rows[1].GetCell(4);
+        Assert.AreEqual(SourceValueKind.DateSerial, serial60.Kind);
+        Assert.IsNull(serial60.DateValue);
+
+        var invalid = XlsxDateSerialParser.Parse("60", XlsxDateSystem.Date1900);
+        Assert.AreEqual("IMP_XLSX_DATE_SERIAL_60", invalid.Diagnostic?.Code);
+
+        var workbook1904 = ReadXlsx("t06-xlsx-1904-v1.xlsx");
+        Assert.AreEqual(XlsxDateSystem.Date1904, workbook1904.XlsxDateSystem);
+        Assert.AreEqual(
+            BusinessDate.ParseIso("1904-01-02"),
+            workbook1904.Rows[0].GetCell(4).DateValue);
+    }
+
+    [TestMethod]
+    public void T06_13_XlsxNumericAccountRequiresExplicitPolicyAndNeverRestoresZeros()
+    {
+        var document = ReadXlsx("t06-xlsx-1900-v1.xlsx");
+        var diagnostics = ImportSourceInspector.ValidateBasic(document, XlsxProfile());
+
+        Assert.AreEqual(
+            1,
+            diagnostics.Count(item => item.Diagnostic.Code == "IMP_XLSX_NUMERIC_ACCOUNT"));
+        Assert.AreEqual("123", document.Rows[1].GetCell(1).RawLexical);
+        Assert.AreEqual("123", document.Rows[1].GetCell(1).TextValue);
+
+        var allowed = XlsxProfile(XlsxNumericAccountPolicy.PreserveStoredLexical);
+        Assert.AreEqual(
+            0,
+            ImportSourceInspector.ValidateBasic(document, allowed)
+                .Count(item => item.Diagnostic.Code == "IMP_XLSX_NUMERIC_ACCOUNT"));
+    }
+
+    [TestMethod]
+    public void T06_14_XlsxFormulaWithoutCacheAndCellErrorAreBlockingSourceDiagnostics()
+    {
+        var document = ReadXlsx("t06-xlsx-1900-v1.xlsx");
+
+        var formulaDiagnostics = ImportSourceInspector.ValidateBasic(
+            document,
+            XlsxProfile(XlsxNumericAccountPolicy.PreserveStoredLexical, amountColumn: 6));
+        Assert.AreEqual(
+            1,
+            formulaDiagnostics.Count(item => item.Diagnostic.Code == "IMP_XLSX_FORMULA_NO_CACHE"));
+
+        var errorDiagnostics = ImportSourceInspector.ValidateBasic(
+            document,
+            XlsxProfile(XlsxNumericAccountPolicy.PreserveStoredLexical, amountColumn: 7));
+        Assert.AreEqual(
+            1,
+            errorDiagnostics.Count(item => item.Diagnostic.Code == "IMP_XLSX_CELL_ERROR"));
+    }
+
+    [TestMethod]
+    public void T06_15_XlsxRequiresExactDeclaredSheet()
+    {
+        using var stream = File.OpenRead(Path.Combine(
+            AppContext.BaseDirectory,
+            "Fixtures",
+            "t06-xlsx-1900-v1.xlsx"));
+        var error = Assert.ThrowsExactly<DomainRuleException>(() =>
+            new XlsxImportAdapter().ReadAsync(
+                stream,
+                "t06-xlsx-1900-v1.xlsx",
+                XlsxProfile(worksheet: "Otra"),
+                CancellationToken.None).GetAwaiter().GetResult());
+        Assert.AreEqual("IMP_XLSX_SHEET_NOT_FOUND", error.Diagnostic.Code);
+    }
+
 }
