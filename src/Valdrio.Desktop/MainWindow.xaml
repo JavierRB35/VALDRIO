@@ -25,6 +25,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="14" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="14" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0"
@@ -175,8 +177,125 @@
                 </Grid>
             </GroupBox>
 
+            <GroupBox Grid.Row="8"
+                      Header="{Binding FxEditorTitle}"
+                      Padding="16">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="220" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                   Margin="0,4,16,0"
+                                   Text="{Binding LabelFxOriginal}" />
+                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                   Text="{Binding FxOriginal}"
+                                   FontFamily="Consolas"
+                                   FlowDirection="LeftToRight" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0"
+                                   Margin="0,4,16,0"
+                                   Text="{Binding LabelFxOrientation}" />
+                        <TextBlock Grid.Row="2" Grid.Column="1"
+                                   Text="{Binding FxOrientation}"
+                                   FontFamily="Consolas"
+                                   FlowDirection="LeftToRight" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0"
+                                   Margin="0,4,16,0"
+                                   Text="{Binding LabelFxQuote}" />
+                        <TextBox x:Name="FxQuoteBox"
+                                 Grid.Row="4" Grid.Column="1"
+                                 Text="{Binding FxQuoteText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 TabIndex="3"
+                                 FlowDirection="LeftToRight"
+                                 AutomationProperties.Name="{Binding LabelFxQuote}" />
+
+                        <TextBlock Grid.Row="6" Grid.Column="0"
+                                   Margin="0,4,16,0"
+                                   Text="{Binding LabelFxRateDate}" />
+                        <TextBox x:Name="FxRateDateBox"
+                                 Grid.Row="6" Grid.Column="1"
+                                 Text="{Binding FxRateDateText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 TabIndex="4"
+                                 FlowDirection="LeftToRight"
+                                 AutomationProperties.Name="{Binding LabelFxRateDate}" />
+
+                        <TextBlock Grid.Row="8" Grid.Column="0"
+                                   Margin="0,4,16,0"
+                                   Text="{Binding LabelFxRateSource}" />
+                        <TextBox x:Name="FxRateSourceBox"
+                                 Grid.Row="8" Grid.Column="1"
+                                 Text="{Binding FxRateSourceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 TabIndex="5"
+                                 AutomationProperties.Name="{Binding LabelFxRateSource}" />
+
+                        <TextBlock Grid.Row="10" Grid.Column="0"
+                                   Margin="0,4,16,0"
+                                   Text="{Binding LabelFxFunctional}" />
+                        <TextBlock Grid.Row="10" Grid.Column="1"
+                                   Text="{Binding FxFunctional}"
+                                   FontFamily="Consolas"
+                                   FlowDirection="LeftToRight" />
+
+                        <TextBlock Grid.Row="12" Grid.Column="0"
+                                   Margin="0,4,16,0"
+                                   Text="{Binding LabelFxRounding}" />
+                        <TextBlock Grid.Row="12" Grid.Column="1"
+                                   Text="{Binding FxRounding}"
+                                   FontFamily="Consolas"
+                                   FlowDirection="LeftToRight" />
+
+                        <TextBlock Grid.Row="14" Grid.Column="0"
+                                   Margin="0,4,16,0"
+                                   Text="{Binding LabelFxRateSet}" />
+                        <TextBlock Grid.Row="14" Grid.Column="1"
+                                   Text="{Binding FxRateSetVersion}"
+                                   FontFamily="Consolas"
+                                   FlowDirection="LeftToRight" />
+
+                        <Button x:Name="ApplyFxRateButton"
+                                Grid.Row="16"
+                                Grid.ColumnSpan="2"
+                                HorizontalAlignment="Left"
+                                Padding="14,7"
+                                Content="{Binding ActionApplyFxRate}"
+                                Command="{Binding ApplyFxRateCommand}"
+                                TabIndex="6" />
+                    </Grid>
+
+                    <TextBlock Margin="0,10,0,0"
+                               Text="{Binding FxStatus}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Margin="0,6,0,0"
+                               Text="{Binding FxEditorExplanation}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </GroupBox>
+
             <GroupBox x:Name="T02RoundingGroup"
-                      Grid.Row="8"
+                      Grid.Row="10"
                       Header="{Binding RoundingTitle}"
                       Padding="16">
                 <StackPanel>
@@ -339,7 +458,7 @@
                 </StackPanel>
             </GroupBox>
 
-            <GroupBox Grid.Row="10"
+            <GroupBox Grid.Row="12"
                       Header="{Binding EditTitle}"
                       Padding="16">
                 <Grid>
@@ -365,7 +484,7 @@
                              Grid.Row="0"
                              Grid.Column="1"
                              Text="{Binding PendingEditText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             TabIndex="3"
+                             TabIndex="7"
                              FlowDirection="LeftToRight"
                              AutomationProperties.Name="{Binding LabelPendingValue}" />
 
@@ -391,17 +510,17 @@
                                 Padding="14,7"
                                 Content="{Binding ActionStartEdit}"
                                 Command="{Binding StartEditCommand}"
-                                TabIndex="4" />
+                                TabIndex="8" />
                         <Button x:Name="CommitEditButton"
                                 Padding="14,7"
                                 Content="{Binding ActionCommitEdit}"
                                 Command="{Binding CommitEditCommand}"
-                                TabIndex="5" />
+                                TabIndex="9" />
                     </WrapPanel>
                 </Grid>
             </GroupBox>
 
-            <Border Grid.Row="12"
+            <Border Grid.Row="14"
                     BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
                     BorderThickness="1"
                     CornerRadius="6"

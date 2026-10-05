@@ -6,8 +6,8 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="AppTitle" xml:space="preserve"><value>VALDRIO</value></data>
   <data name="WindowTitle" xml:space="preserve"><value>VALDRIO - preferencias de presentación</value></data>
-  <data name="SpecificationVersion" xml:space="preserve"><value>Especificación v0.4 · T02A · subentrega 1</value></data>
-  <data name="HeaderSubtitle" xml:space="preserve"><value>Presentación internacional, precisión y metadatos monetarios congelados</value></data>
+  <data name="SpecificationVersion" xml:space="preserve"><value>Especificación v0.4 · T02A completada</value></data>
+  <data name="HeaderSubtitle" xml:space="preserve"><value>Presentación internacional, precisión, metadatos monetarios y FX explícito congelado</value></data>
   <data name="PreferencesTitle" xml:space="preserve"><value>Preferencias de presentación</value></data>
   <data name="LabelUiLanguage" xml:space="preserve"><value>Idioma de interfaz</value></data>
   <data name="LabelFormatCulture" xml:space="preserve"><value>Formato regional</value></data>
@@ -30,7 +30,7 @@
   <data name="LabelSample" xml:space="preserve"><value>Ejemplo</value></data>
   <data name="LabelPurpose" xml:space="preserve"><value>Finalidad</value></data>
   <data name="LabelSource" xml:space="preserve"><value>Origen</value></data>
-  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>T02A ya separa fechas de negocio de instantes UTC y resuelve la hora local explícitamente. Los tipos FX siguen sin estar implementados.</value></data>
+  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>T02A está completada: metadatos monetarios, tiempo canónico y FX explícito congelado permanecen separados de las preferencias de presentación.</value></data>
   <data name="StatusNoSample" xml:space="preserve"><value>No se ha cargado ningún ejemplo de desarrollo.</value></data>
   <data name="StatusSampleOpened" xml:space="preserve"><value>Ejemplo de desarrollo abierto.</value></data>
   <data name="StatusSampleOpenFailed" xml:space="preserve"><value>No se pudo abrir el ejemplo de desarrollo.</value></data>
@@ -56,6 +56,24 @@
   <data name="LabelCanonicalUtcInstant" xml:space="preserve"><value>Instante UTC canónico</value></data>
   <data name="LabelResolvedLocalInstant" xml:space="preserve"><value>Vista local en la zona elegida</value></data>
 
+  <data name="FxEditorTitle" xml:space="preserve"><value>Ejemplo de editor FX congelado</value></data>
+  <data name="LabelFxOriginal" xml:space="preserve"><value>Original</value></data>
+  <data name="LabelFxOrientation" xml:space="preserve"><value>Orientación de cotización</value></data>
+  <data name="LabelFxQuote" xml:space="preserve"><value>Cotización</value></data>
+  <data name="LabelFxRateDate" xml:space="preserve"><value>Fecha del tipo</value></data>
+  <data name="LabelFxRateSource" xml:space="preserve"><value>Fuente del tipo</value></data>
+  <data name="LabelFxFunctional" xml:space="preserve"><value>Importe funcional</value></data>
+  <data name="LabelFxRounding" xml:space="preserve"><value>Ajuste de conversión</value></data>
+  <data name="LabelFxRateSet" xml:space="preserve"><value>Versión de RateSet</value></data>
+  <data name="ActionApplyFxRate" xml:space="preserve"><value>Aplicar tipo explícito</value></data>
+  <data name="FxEditorReady" xml:space="preserve"><value>Tipo explícito aplicado. Los importes original y funcional permanecen separados.</value></data>
+  <data name="FxEditorInvalid" xml:space="preserve"><value>El tipo, la fecha o la fuente no son válidos. No se ha convertido nada.</value></data>
+  <data name="FxEditorExplanation" xml:space="preserve"><value>La cotización expresa moneda destino por unidad de moneda origen. El ejemplo conserva 100 USD, congela los metadatos del tipo y calcula el importe funcional en EUR a escala 8.</value></data>
+
+  <data name="Fx.RateOrientationInvalid" xml:space="preserve"><value>La orientación del tipo FX no es válida.</value></data>
+  <data name="Fx.RateInvalid" xml:space="preserve"><value>El tipo FX {0} tiene una cotización no válida {1}.</value></data>
+  <data name="Fx.RateMissing" xml:space="preserve"><value>Falta un tipo FX obligatorio.</value></data>
+  <data name="Fx.AmountOutOfRange" xml:space="preserve"><value>La conversión FX queda fuera de rango para el importe {0} y la cotización {1}.</value></data>
   <data name="AllocationKey.NegativeWeight" xml:space="preserve"><value>El destino de reparto {0} tiene un peso de criterio negativo {1}.</value></data>
   <data name="AllocationKey.ZeroDriverTotal" xml:space="preserve"><value>La clave de reparto no tiene ningún peso positivo.</value></data>
   <data name="Currency.MinorUnitUndefined" xml:space="preserve"><value>La moneda {0} no tiene unidad menor definida en el catálogo {1}.</value></data>

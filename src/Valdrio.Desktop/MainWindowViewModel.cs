@@ -17,6 +17,7 @@ public sealed class MainWindowViewModel : ObservableObject
     private readonly PresentationFormatter formatter;
     private readonly T02RoundingExample roundingExample;
     private readonly TemporalContractExampleService temporalContractExampleService;
+    private readonly FxConversionExampleService fxConversionExampleService;
     private DecimalEditSession? editSession;
     private SampleState sampleState = SampleState.None;
     private EditState editState = EditState.NotStarted;
@@ -27,6 +28,11 @@ public sealed class MainWindowViewModel : ObservableObject
     private string samplePurpose = "—";
     private string sourcePath = "—";
     private string pendingEditText = "1.234,50";
+    private string fxQuoteText = "0.9";
+    private string fxRateDateText = "2026-10-04";
+    private string fxRateSourceText = "manual-demo";
+    private string fxStatusKey = "FxEditorReady";
+    private FxConversionExample fxExample = null!;
 
     public MainWindowViewModel(
         UiTextCatalog texts,
@@ -35,7 +41,8 @@ public sealed class MainWindowViewModel : ObservableObject
         PresentationFormatter formatter,
         T02RoundingExampleService roundingExampleService,
         CurrencyMetadataExampleService currencyMetadataExampleService,
-        TemporalContractExampleService temporalContractExampleService)
+        TemporalContractExampleService temporalContractExampleService,
+        FxConversionExampleService fxConversionExampleService)
     {
         this.texts = texts;
         this.preferences = preferences;
@@ -45,6 +52,12 @@ public sealed class MainWindowViewModel : ObservableObject
         CurrencyMetadataRows = currencyMetadataExampleService.Build();
         this.temporalContractExampleService =
             temporalContractExampleService;
+        this.fxConversionExampleService =
+            fxConversionExampleService;
+        fxExample = fxConversionExampleService.Build(
+            fxQuoteText,
+            fxRateDateText,
+            fxRateSourceText);
 
         UiLanguageOptions = languages.Published
             .Select(language => language.Tag)
@@ -55,6 +68,7 @@ public sealed class MainWindowViewModel : ObservableObject
 
         StartEditCommand = new RelayCommand(StartEdit);
         CommitEditCommand = new RelayCommand(CommitEdit);
+        ApplyFxRateCommand = new RelayCommand(ApplyFxRate);
 
         preferences.Changed += (_, _) =>
         {
@@ -73,6 +87,7 @@ public sealed class MainWindowViewModel : ObservableObject
 
     public IRelayCommand StartEditCommand { get; }
     public IRelayCommand CommitEditCommand { get; }
+    public IRelayCommand ApplyFxRateCommand { get; }
 
     public UserPresentationPreferences CurrentPreferences => preferences.Current;
     public bool ForceRtlForTest => forceRtlForTest;
@@ -123,6 +138,24 @@ public sealed class MainWindowViewModel : ObservableObject
     {
         get => pendingEditText;
         set => SetProperty(ref pendingEditText, value);
+    }
+
+    public string FxQuoteText
+    {
+        get => fxQuoteText;
+        set => SetProperty(ref fxQuoteText, value);
+    }
+
+    public string FxRateDateText
+    {
+        get => fxRateDateText;
+        set => SetProperty(ref fxRateDateText, value);
+    }
+
+    public string FxRateSourceText
+    {
+        get => fxRateSourceText;
+        set => SetProperty(ref fxRateSourceText, value);
     }
 
     public string SampleName
@@ -191,6 +224,26 @@ public sealed class MainWindowViewModel : ObservableObject
     public string LabelCurrencyProjection => Text("LabelCurrencyProjection");
     public string CurrencyMetadataExplanation =>
         Text("CurrencyMetadataExplanation");
+    public string FxEditorTitle => Text("FxEditorTitle");
+    public string LabelFxOriginal => Text("LabelFxOriginal");
+    public string LabelFxOrientation => Text("LabelFxOrientation");
+    public string LabelFxQuote => Text("LabelFxQuote");
+    public string LabelFxRateDate => Text("LabelFxRateDate");
+    public string LabelFxRateSource => Text("LabelFxRateSource");
+    public string LabelFxFunctional => Text("LabelFxFunctional");
+    public string LabelFxRounding => Text("LabelFxRounding");
+    public string LabelFxRateSet => Text("LabelFxRateSet");
+    public string ActionApplyFxRate => Text("ActionApplyFxRate");
+    public string FxEditorExplanation => Text("FxEditorExplanation");
+    public string FxStatus => Text(fxStatusKey);
+    public string FxOriginal =>
+        $"{fxExample.OriginalAmount} {fxExample.OriginalCurrency}";
+    public string FxOrientation => fxExample.Orientation;
+    public string FxFunctional =>
+        $"{fxExample.FunctionalAmount} {fxExample.FunctionalCurrency}";
+    public string FxRounding =>
+        $"{fxExample.RoundingAdjustment} {fxExample.FunctionalCurrency}";
+    public string FxRateSetVersion => fxExample.RateSetVersionId;
 
     public string Status => Text(sampleState switch
     {
@@ -328,6 +381,29 @@ public sealed class MainWindowViewModel : ObservableObject
         PresentationChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    private void ApplyFxRate()
+    {
+        try
+        {
+            fxExample = fxConversionExampleService.Build(
+                FxQuoteText,
+                FxRateDateText,
+                FxRateSourceText);
+            fxStatusKey = "FxEditorReady";
+        }
+        catch (Exception)
+        {
+            fxStatusKey = "FxEditorInvalid";
+        }
+
+        OnPropertyChanged(nameof(FxOriginal));
+        OnPropertyChanged(nameof(FxOrientation));
+        OnPropertyChanged(nameof(FxFunctional));
+        OnPropertyChanged(nameof(FxRounding));
+        OnPropertyChanged(nameof(FxRateSetVersion));
+        OnPropertyChanged(nameof(FxStatus));
+    }
+
     private TemporalContractExample TemporalExample =>
         temporalContractExampleService.Build(
             preferences.Current.DisplayTimeZoneId);
@@ -434,6 +510,18 @@ public sealed class MainWindowViewModel : ObservableObject
             nameof(LabelCurrencyQuantum),
             nameof(LabelCurrencyProjection),
             nameof(CurrencyMetadataExplanation),
+            nameof(FxEditorTitle),
+            nameof(LabelFxOriginal),
+            nameof(LabelFxOrientation),
+            nameof(LabelFxQuote),
+            nameof(LabelFxRateDate),
+            nameof(LabelFxRateSource),
+            nameof(LabelFxFunctional),
+            nameof(LabelFxRounding),
+            nameof(LabelFxRateSet),
+            nameof(ActionApplyFxRate),
+            nameof(FxEditorExplanation),
+            nameof(FxStatus),
             nameof(Status),
             nameof(PreviewMoney),
             nameof(PreviewDate),

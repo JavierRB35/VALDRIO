@@ -6,8 +6,8 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="AppTitle" xml:space="preserve"><value>VALDRIO</value></data>
   <data name="WindowTitle" xml:space="preserve"><value>VALDRIO - presentation preferences</value></data>
-  <data name="SpecificationVersion" xml:space="preserve"><value>Specification v0.4 · T02A · subdelivery 1</value></data>
-  <data name="HeaderSubtitle" xml:space="preserve"><value>International presentation, precision and frozen currency metadata</value></data>
+  <data name="SpecificationVersion" xml:space="preserve"><value>Specification v0.4 · T02A complete</value></data>
+  <data name="HeaderSubtitle" xml:space="preserve"><value>International presentation, precision, frozen currency metadata and explicit FX</value></data>
   <data name="PreferencesTitle" xml:space="preserve"><value>Presentation preferences</value></data>
   <data name="LabelUiLanguage" xml:space="preserve"><value>Interface language</value></data>
   <data name="LabelFormatCulture" xml:space="preserve"><value>Regional format</value></data>
@@ -30,7 +30,7 @@
   <data name="LabelSample" xml:space="preserve"><value>Sample</value></data>
   <data name="LabelPurpose" xml:space="preserve"><value>Purpose</value></data>
   <data name="LabelSource" xml:space="preserve"><value>Source</value></data>
-  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>T02A now separates business dates from UTC instants and resolves local time explicitly. FX rates are still not implemented.</value></data>
+  <data name="FooterDevelopmentOnly" xml:space="preserve"><value>T02A is complete: currency metadata, canonical time and explicit frozen FX are separated from presentation preferences.</value></data>
   <data name="StatusNoSample" xml:space="preserve"><value>No development sample loaded.</value></data>
   <data name="StatusSampleOpened" xml:space="preserve"><value>Development sample opened.</value></data>
   <data name="StatusSampleOpenFailed" xml:space="preserve"><value>Development sample could not be opened.</value></data>
@@ -56,6 +56,24 @@
   <data name="LabelCanonicalUtcInstant" xml:space="preserve"><value>Canonical UTC instant</value></data>
   <data name="LabelResolvedLocalInstant" xml:space="preserve"><value>Local view in selected zone</value></data>
 
+  <data name="FxEditorTitle" xml:space="preserve"><value>Frozen FX editor example</value></data>
+  <data name="LabelFxOriginal" xml:space="preserve"><value>Original</value></data>
+  <data name="LabelFxOrientation" xml:space="preserve"><value>Quote orientation</value></data>
+  <data name="LabelFxQuote" xml:space="preserve"><value>Quote</value></data>
+  <data name="LabelFxRateDate" xml:space="preserve"><value>Rate date</value></data>
+  <data name="LabelFxRateSource" xml:space="preserve"><value>Rate source</value></data>
+  <data name="LabelFxFunctional" xml:space="preserve"><value>Functional amount</value></data>
+  <data name="LabelFxRounding" xml:space="preserve"><value>Conversion rounding</value></data>
+  <data name="LabelFxRateSet" xml:space="preserve"><value>RateSet version</value></data>
+  <data name="ActionApplyFxRate" xml:space="preserve"><value>Apply explicit rate</value></data>
+  <data name="FxEditorReady" xml:space="preserve"><value>Explicit rate applied. Original and functional amounts remain separate.</value></data>
+  <data name="FxEditorInvalid" xml:space="preserve"><value>The rate, date or source is invalid. Nothing was converted.</value></data>
+  <data name="FxEditorExplanation" xml:space="preserve"><value>The quote is destination currency per unit of source currency. The example preserves 100 USD, freezes the rate metadata and calculates the EUR functional amount at scale 8.</value></data>
+
+  <data name="Fx.RateOrientationInvalid" xml:space="preserve"><value>The FX rate orientation is invalid.</value></data>
+  <data name="Fx.RateInvalid" xml:space="preserve"><value>FX rate {0} has an invalid quote {1}.</value></data>
+  <data name="Fx.RateMissing" xml:space="preserve"><value>A required FX rate is missing.</value></data>
+  <data name="Fx.AmountOutOfRange" xml:space="preserve"><value>FX conversion is out of range for amount {0} and quote {1}.</value></data>
   <data name="AllocationKey.NegativeWeight" xml:space="preserve"><value>Allocation destination {0} has a negative driver weight {1}.</value></data>
   <data name="AllocationKey.ZeroDriverTotal" xml:space="preserve"><value>The allocation key has no positive driver weight.</value></data>
   <data name="Currency.MinorUnitUndefined" xml:space="preserve"><value>Currency {0} has no minor-unit definition in catalog {1}.</value></data>
