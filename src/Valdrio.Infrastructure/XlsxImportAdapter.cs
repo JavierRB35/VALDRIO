@@ -140,6 +140,14 @@ public sealed class XlsxImportAdapter : IImportAdapter
         {
             throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
         }
+        catch (FormatException)
+        {
+            throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
+        }
+        catch (IOException)
+        {
+            throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
+        }
     }
 
     private static SourceCell ReadCell(

@@ -334,7 +334,7 @@ public sealed class T06ImportAdapterTests
         var date = row.GetCell(4);
         Assert.AreEqual(SourceValueKind.DateSerial, date.Kind);
         Assert.AreEqual("45323", date.RawLexical);
-        Assert.AreEqual(BusinessDate.ParseIso("2024-02-01"), date.DateValue);
+        Assert.AreEqual(BusinessDate.ParseIso("2024-02-01"), date.DateValue.GetValueOrDefault());
 
         var cached = row.GetCell(5);
         Assert.AreEqual(SourceValueKind.FormulaWithCachedValue, cached.Kind);
@@ -368,7 +368,7 @@ public sealed class T06ImportAdapterTests
         Assert.AreEqual(XlsxDateSystem.Date1904, workbook1904.XlsxDateSystem);
         Assert.AreEqual(
             BusinessDate.ParseIso("1904-01-02"),
-            workbook1904.Rows[0].GetCell(4).DateValue);
+            workbook1904.Rows[0].GetCell(4).DateValue.GetValueOrDefault());
     }
 
     [TestMethod]

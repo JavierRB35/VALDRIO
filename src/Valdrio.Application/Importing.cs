@@ -290,7 +290,7 @@ public sealed class SourceRow
     {
         if (recordNumber < 1 || physicalStartLine < 1 || cells is null ||
             cells.Select(cell => cell.Column).Distinct().Count() != cells.Count)
-            throw ImportRules.Error("IMP_SOURCE_INVALID", "Import.InvalidCsv");
+            throw ImportRules.Error("IMP_SOURCE_INVALID", "Import.InvalidSource");
         RecordNumber = recordNumber;
         PhysicalStartLine = physicalStartLine;
         Cells = FrozenList.Copy(cells.OrderBy(cell => cell.Column));
@@ -573,7 +573,10 @@ public static class ImportSourceInspector
 
             var cell = row.GetCell(profile.Columns.Account);
             if (source.SourceKind == ImportSourceKind.Xlsx &&
-                cell.Kind == SourceValueKind.Number &&
+                (cell.Kind == SourceValueKind.Number ||
+                 cell.Kind == SourceValueKind.DateSerial ||
+                 cell.Kind == SourceValueKind.FormulaWithCachedValue &&
+                 cell.CachedValueKind is SourceValueKind.Number or SourceValueKind.DateSerial) &&
                 profile.XlsxNumericAccountPolicy == XlsxNumericAccountPolicy.Reject)
             {
                 diagnostics.Add(Diagnostic(
