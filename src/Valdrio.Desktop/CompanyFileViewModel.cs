@@ -33,21 +33,24 @@ public sealed class CompanyFileViewModel : ObservableObject, IDisposable
     {
         this.files = files; this.dialogs = dialogs; this.texts = texts; this.preferences = preferences; this.formatter = formatter;
         CurrencyOptions = catalog.GetAll().Where(x => x.IsMonetary).Select(x => x.AlphaCode.ToString()).ToArray();
-        CreateCommand = new AsyncRelayCommand(Create, () => !busy);
-        OpenCommand = new AsyncRelayCommand(Open, () => !busy);
-        CloseCommand = new RelayCommand(Close, () => !busy && active is not null);
-        AddUnitCommand = new AsyncRelayCommand(AddUnit, () => !busy && active is not null);
-        BackupCommand = new AsyncRelayCommand(Backup, () => !busy && active is not null);
-        RestoreCommand = new AsyncRelayCommand(Restore, () => !busy);
+        CreateCommand = new AsyncRelayCommand(Create, () => Available);
+        OpenCommand = new AsyncRelayCommand(Open, () => Available);
+        CloseCommand = new AsyncRelayCommand(Close, () => Available && active is not null);
+        AddUnitCommand = new AsyncRelayCommand(AddUnit, () => Available && active is not null);
+        BackupCommand = new AsyncRelayCommand(Backup, () => Available && active is not null);
+        RestoreCommand = new AsyncRelayCommand(Restore, () => Available);
+        UpgradeCommand = new AsyncRelayCommand(Upgrade, () => Available);
         CancelCommand = new RelayCommand(() => cancellation?.Cancel(), () => busy);
         preferences.Changed += PreferencesChanged;
     }
     public IAsyncRelayCommand CreateCommand { get; }
     public IAsyncRelayCommand OpenCommand { get; }
-    public IRelayCommand CloseCommand { get; }
+    public IAsyncRelayCommand CloseCommand { get; }
     public IAsyncRelayCommand AddUnitCommand { get; }
     public IAsyncRelayCommand BackupCommand { get; }
     public IAsyncRelayCommand RestoreCommand { get; }
+    public IAsyncRelayCommand UpgradeCommand { get; }
+    public string UpgradeLabel => Text("CompanyUpgrade");
     public IRelayCommand CancelCommand { get; }
     public IReadOnlyList<string> CurrencyOptions { get; }
     public IReadOnlyList<int> ScaleOptions { get; } = Enumerable.Range(0,13).ToArray();
@@ -59,6 +62,12 @@ public sealed class CompanyFileViewModel : ObservableObject, IDisposable
     public int UnitScale { get => unitScale; set => SetProperty(ref unitScale, value); }
     public bool UnitDiscrete { get => unitDiscrete; set => SetProperty(ref unitDiscrete, value); }
     public bool IsIdle => !busy;
+    public Func<bool>? WorkspaceBusy { get; set; }
+    public Func<Task<bool>>? BeforeChangeAsync { get; set; }
+    public Func<Task>? AfterChangeAsync { get; set; }
+    public IModelWorkspace? ActiveModels => active?.Models;
+    private bool Available => !busy && WorkspaceBusy?.Invoke() != true;
+    public void NotifyWorkspaceStateChanged() => Refresh();
     public CompanyFileSnapshot? Snapshot { get; private set; }
     public string? ActivePath => active?.Path;
     public string Title => Text("CompanyTitle");
@@ -95,7 +104,7 @@ public sealed class CompanyFileViewModel : ObservableObject, IDisposable
     {
         OnPropertyChanged(string.Empty);
         CreateCommand.NotifyCanExecuteChanged(); OpenCommand.NotifyCanExecuteChanged(); CloseCommand.NotifyCanExecuteChanged();
-        AddUnitCommand.NotifyCanExecuteChanged(); BackupCommand.NotifyCanExecuteChanged(); RestoreCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
+        AddUnitCommand.NotifyCanExecuteChanged(); BackupCommand.NotifyCanExecuteChanged(); RestoreCommand.NotifyCanExecuteChanged(); UpgradeCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
     }
     private async Task Run(Func<CancellationToken, Task> operation)
     {
@@ -114,23 +123,35 @@ public sealed class CompanyFileViewModel : ObservableObject, IDisposable
         CompanyFileSnapshot snapshot;
         try { snapshot = await Task.Run(() => candidate.Read()); } catch { candidate.Dispose(); throw; }
         var old = active; active = candidate; Snapshot = snapshot; old?.Dispose();
+        if (AfterChangeAsync is not null) await AfterChangeAsync();
     }
     private async Task Create()
     {
+        if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
         var path = dialogs.SelectNewFile(); if (path is null) return;
         var name = CompanyName; var selectedCurrency = Currency;
         await Run(async token => await ReplaceAsync(await Task.Run(() => files.Create(
             new(path, name, new CurrencyCode(selectedCurrency), PrecisionPolicy.Pdec1Proposed), token))));
     }
     private async Task Open() { var path = dialogs.SelectFile(); if (path is not null) await OpenPath(path); }
-    public Task OpenPath(string path) => Run(async token => await ReplaceAsync(await Task.Run(() => files.Open(path, cancellationToken: token))));
-    private void Close() { active?.Dispose(); active = null; Snapshot = null; diagnostic = null; statusKey = "CompanyNoFile"; Refresh(); }
+    public async Task OpenPath(string path)
+    {
+        if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
+        await Run(async token => await ReplaceAsync(await Task.Run(() => files.Open(path, cancellationToken: token))));
+    }
+    private async Task Close()
+    {
+        if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
+        active?.Dispose(); active = null; Snapshot = null; diagnostic = null; statusKey = "CompanyNoFile";
+        if (AfterChangeAsync is not null) await AfterChangeAsync(); Refresh();
+    }
     private async Task AddUnit()
     {
         await Run(async token =>
         {
             var unit = new UnitDefinition(new(new(Guid.NewGuid())), UnitCode, UnitDimension, UnitSymbol, UnitScale, UnitDiscrete);
             Snapshot = await Task.Run(() => active!.AddUnits([unit], Snapshot!.Revision, "local-user", token));
+            if (AfterChangeAsync is not null) await AfterChangeAsync();
         });
     }
     private async Task Backup()
@@ -140,9 +161,17 @@ public sealed class CompanyFileViewModel : ObservableObject, IDisposable
     }
     private async Task Restore()
     {
+        if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
         var source = dialogs.SelectBackupSource(); if (source is null) return;
         var target = dialogs.SelectRestoreDestination(); if (target is null) return;
         await Run(async token => await ReplaceAsync(await Task.Run(() => files.Restore(source, target, token))));
+    }
+    private async Task Upgrade()
+    {
+        if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
+        var source = dialogs.SelectFile(); if (source is null) return;
+        var target = dialogs.SelectNewFile(); if (target is null) return;
+        await Run(async token => await ReplaceAsync(await Task.Run(() => files.Upgrade(source, target, "local-user", token))));
     }
     public void Dispose() { preferences.Changed -= PreferencesChanged; cancellation?.Cancel(); active?.Dispose(); active = null; }
 }

@@ -21,6 +21,8 @@ El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` está disponible e íntegro.
 - **T02 — CERRADA**.
 - **T02A — CERRADA**: Money/metadatos, tiempo canónico y RateSet/FX completados y verificados.
 - **T03 — CERRADA**: archivo de empresa SQLite, bloqueo, transacciones, copias/restauración y WPF.
+- **T04 — CERRADA**: centros físicos, modelos/nodos/pools, publicación inmutable y duplicación.
+- **T05 — PENDIENTE**: estudios/revisiones/snapshots; [directrices ejecutables](docs/directrices/T05_SIGUIENTE_FASE.md).
 
 ## T02A.1 — Money y metadatos monetarios
 
@@ -123,7 +125,7 @@ Evidencia: [cierre de auditoría](docs/evidencias/AUDITORIA_CIERRE_2026-10-05.md
 
 ## Continuidad
 
-T02A está cerrada. **T03 — CERRADA**: archivo real, 132/132 pruebas Windows, 24 checks de archivos WPF y 12 FX. Evidencia base CI 37313004940 aprobada; el cierre se integra únicamente con checks aprobados del último commit de PR #12. El siguiente bloque tras ese cierre será T04, maestros/modelos.
+T02A está cerrada. **T03 — CERRADA**: archivo real, 132/132 pruebas Windows, 24 checks de archivos WPF y 12 FX. Evidencia base CI 37313004940 aprobada; el cierre se integra únicamente con checks aprobados del último commit de PR #12. T04 se completa en la sección siguiente; la continuidad vigente es T05.
 
 [Directrices ejecutables para el equipo de desarrollo](docs/directrices/T03_SIGUIENTE_FASE.md), con subentregas, matriz F01–F18 y prompt de inicio.
 
@@ -133,4 +135,12 @@ Archivo de empresa SQLite v1, política completa, unidades, auditoría, bloqueo 
 
 RevalueStudy sigue pendiente de integración persistente de estudio; T03 certifica el archivo y la transacción básica. D03 y D04–D07 no cambian.
 
-Evidencia: [T03](docs/evidencias/T03_2026-10-05.md). Próxima fase: [T04 — modelos versionados y centros](docs/directrices/T04_SIGUIENTE_FASE.md), todavía no implementada.
+Evidencia: [T03](docs/evidencias/T03_2026-10-05.md). T04 cerrada; cierre integrado únicamente con checks aprobados del último commit de PR #13.
+
+## T04 — CERRADA
+
+Esquema v2, upgrade seguro a copia, centros físicos, modelos con nodos/pools, publicación inmutable y clon editable. 153/153 tests en Windows y local; 21 verificaciones T04. CI de cierre 37329759565 aprobada: 53 checks WPF de modelos (29 habilitación + 24 funcionales), 24 de archivos y 12 FX. Artefactos/SQLite verificados independientemente. El cierre visual incluye lista de nodos y guard de secciones sin solapamiento; el último commit documental se integra solo con sus checks aprobados.
+
+[Ficha T04](docs/tareas/T04.md) · [ADR-0003](docs/adr/ADR-0003-modelos-y-esquema-v2.md) · [Evidencia T04](docs/evidencias/T04_2026-10-05.md).
+
+Siguiente fase: [T05 — estudios, revisiones y snapshots](docs/directrices/T05_SIGUIENTE_FASE.md). No implementada. D03 y propuestas económicas sin cambio; A07 sigue pendiente del agregado persistente Study.

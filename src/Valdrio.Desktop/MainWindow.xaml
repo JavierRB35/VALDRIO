@@ -8,6 +8,9 @@
         MinHeight="620"
         MinWidth="760"
         WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap" /></Style>
+    </Window.Resources>
     <ScrollViewer x:Name="RootScrollViewer"
                   VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled">
@@ -17,6 +20,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="18" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="14" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="14" />
                 <RowDefinition Height="Auto" />
@@ -49,7 +54,9 @@
 
             <local:CompanyFilePanel x:Name="CompanyPanel" Grid.Row="4" DataContext="{Binding Company}" />
 
-            <GroupBox Grid.Row="6"
+            <local:ModelWorkspacePanel x:Name="ModelPanel" Grid.Row="6" DataContext="{Binding Models}" />
+
+            <GroupBox Grid.Row="8"
                       Header="{Binding PreferencesTitle}"
                       Padding="16">
                 <Grid>
@@ -106,7 +113,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="8"
+            <GroupBox Grid.Row="10"
                       Header="{Binding PreviewTitle}"
                       Padding="16">
                 <Grid>
@@ -182,7 +189,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="10"
+            <GroupBox Grid.Row="12"
                       Header="{Binding FxEditorTitle}"
                       Padding="16">
                 <StackPanel>
@@ -301,7 +308,7 @@
             </GroupBox>
 
             <GroupBox x:Name="T02RoundingGroup"
-                      Grid.Row="10"
+                      Grid.Row="14"
                       Header="{Binding RoundingTitle}"
                       Padding="16">
                 <StackPanel>
@@ -464,7 +471,7 @@
                 </StackPanel>
             </GroupBox>
 
-            <GroupBox Grid.Row="14"
+            <GroupBox Grid.Row="16"
                       Header="{Binding EditTitle}"
                       Padding="16">
                 <Grid>
@@ -526,7 +533,7 @@
                 </Grid>
             </GroupBox>
 
-            <Border Grid.Row="16"
+            <Border Grid.Row="18"
                     BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
                     BorderThickness="1"
                     CornerRadius="6"

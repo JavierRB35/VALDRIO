@@ -28,4 +28,7 @@
              Link="reference/t02a-fx-cases.json"
              CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Fixtures/t03-v1.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

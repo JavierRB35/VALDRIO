@@ -140,4 +140,79 @@ Archivo: {8}</value></data>
   <data name="File.RevisionChanged" xml:space="preserve"><value>La revisión ha cambiado. Recarga la empresa antes de guardar.</value></data>
   <data name="File.DuplicateUnit" xml:space="preserve"><value>El ID o código de unidad ya existe. Usa un código único. No se ha confirmado ningún cambio.</value></data>
   <data name="File.InputInvalid" xml:space="preserve"><value>Revisa el nombre, la moneda y la unidad introducidos. No se ha confirmado ningún cambio.</value></data>
+  <data name="CompanyUpgrade" xml:space="preserve"><value>Actualizar v1 a un archivo nuevo</value></data>
+  <data name="File.UpgradeRequired" xml:space="preserve"><value>Este archivo v1 requiere actualización a un archivo nuevo. Seleccione Actualizar y conserve el original.</value></data>
+  <data name="File.UpgradeNotRequired" xml:space="preserve"><value>El archivo ya tiene la versión actual; no se ha actualizado.</value></data>
+  <data name="File.MigrationLocked" xml:space="preserve"><value>El origen contiene un bloqueo de migración activo o antiguo. Consérvelo y revise su procedencia antes de recuperarlo.</value></data>
+  <data name="Model.PolicyInvalid" xml:space="preserve"><value>Una referencia de política está incompleta o no es válida.</value></data>
+  <data name="Model.PolicyNotImplemented" xml:space="preserve"><value>Este editor estructural no permite aceptar políticas económicas.</value></data>
+  <data name="Model.CenterInvalid" xml:space="preserve"><value>Indique código y nombre del centro; la revisión debe ser válida.</value></data>
+  <data name="Model.NodeInvalid" xml:space="preserve"><value>El nodo requiere código, papel principal o auxiliar y funciones únicas no vacías.</value></data>
+  <data name="Model.PoolInvalid" xml:space="preserve"><value>El pool requiere unidad válida, clasificación y política de capacidad pendiente.</value></data>
+  <data name="Model.StructureInvalid" xml:space="preserve"><value>La identidad, descripción o referencia de política del modelo está incompleta.</value></data>
+  <data name="Model.ScopeInvalid" xml:space="preserve"><value>La referencia pertenece a otra empresa o versión de modelo.</value></data>
+  <data name="Model.Duplicate" xml:space="preserve"><value>Ya existe un código, identificador o pool para ese nodo en este ámbito.</value></data>
+  <data name="Model.PrincipalRequired" xml:space="preserve"><value>Añada al menos un nodo principal activo antes de publicar.</value></data>
+  <data name="Model.CenterUnavailable" xml:space="preserve"><value>El centro físico no existe, pertenece a otro ámbito o está inactivo.</value></data>
+  <data name="Model.PoolRequired" xml:space="preserve"><value>Cada nodo activo requiere exactamente un pool homogéneo.</value></data>
+  <data name="Model.DriverUnavailable" xml:space="preserve"><value>La unidad del driver no existe, pertenece a otro ámbito o está inactiva.</value></data>
+  <data name="Model.SnapshotInvalid" xml:space="preserve"><value>La estructura congelada no contiene las definiciones necesarias.</value></data>
+  <data name="Model.RevisionChanged" xml:space="preserve"><value>Los datos han cambiado desde su lectura. Recargue antes de guardar.</value></data>
+  <data name="Model.PublishedImmutable" xml:space="preserve"><value>Los modelos publicados son inmutables. Duplique para editar un borrador nuevo.</value></data>
+  <data name="Model.NotFound" xml:space="preserve"><value>No se encontró el modelo en esta empresa.</value></data>
+  <data name="Model.ActorRequired" xml:space="preserve"><value>Se necesita identificar al autor del cambio.</value></data>
+  <data name="Model.ParentNotPublished" xml:space="preserve"><value>Solo se puede duplicar un modelo publicado.</value></data>
+  <data name="Model.RequestConflict" xml:space="preserve"><value>El identificador de esta solicitud de duplicación ya se utilizó para otra operación.</value></data>
+  <data name="Model.InputInvalid" xml:space="preserve"><value>Complete código, centro, papel y unidad del driver. Revise la operación indicada.</value></data>
+  <data name="Model.NoFile" xml:space="preserve"><value>Abra un archivo de empresa para configurar centros y modelos.</value></data>
+  <data name="Model.NoneSelected" xml:space="preserve"><value>No hay un modelo cargado. Seleccione uno y pulse Cargar, o escriba una descripción y cree un borrador.</value></data>
+  <data name="Model.Details" xml:space="preserve"><value>{0} · {1} · versión {2} · revisión {3}
+Origen: {4} · publicado: {5}
+SHA-256 estructural: {6} · {7}</value></data>
+  <data name="Model.Draft" xml:space="preserve"><value>Borrador</value></data>
+  <data name="Model.Published" xml:space="preserve"><value>Estructura publicada</value></data>
+  <data name="Model.Unsaved" xml:space="preserve"><value>Cambios sin guardar</value></data>
+  <data name="Model.Saved" xml:space="preserve"><value>Guardado</value></data>
+  <data name="Model.Title" xml:space="preserve"><value>Centros y modelos versionados</value></data>
+  <data name="Model.Notes" xml:space="preserve"><value>Configure un centro físico, nodos y un pool homogéneo por nodo. Función y papel son independientes. Aplique el nodo al borrador y después Guarde. La publicación congela solo la estructura; las políticas económicas siguen pendientes y el cálculo no está disponible.</value></data>
+  <data name="Model.Centers" xml:space="preserve"><value>Maestros de centros físicos</value></data>
+  <data name="Model.CenterCode" xml:space="preserve"><value>Código del centro físico (texto)</value></data>
+  <data name="Model.CenterName" xml:space="preserve"><value>Nombre del centro físico</value></data>
+  <data name="Model.CreateCenter" xml:space="preserve"><value>Crear centro</value></data>
+  <data name="Model.SaveCenter" xml:space="preserve"><value>Guardar cambios del centro</value></data>
+  <data name="Model.ToggleCenter" xml:space="preserve"><value>Activar / desactivar centro</value></data>
+  <data name="Model.Models" xml:space="preserve"><value>Versiones de modelo</value></data>
+  <data name="Model.Description" xml:space="preserve"><value>Descripción del modelo / nombre del nuevo borrador</value></data>
+  <data name="Model.NewDraft" xml:space="preserve"><value>Crear modelo nuevo</value></data>
+  <data name="Model.Load" xml:space="preserve"><value>Cargar selección</value></data>
+  <data name="Model.Save" xml:space="preserve"><value>Guardar borrador</value></data>
+  <data name="Model.Validate" xml:space="preserve"><value>Validar estructura</value></data>
+  <data name="Model.Publish" xml:space="preserve"><value>Publicar estructura</value></data>
+  <data name="Model.Clone" xml:space="preserve"><value>Duplicar como borrador</value></data>
+  <data name="Model.Discard" xml:space="preserve"><value>Descartar cambios del borrador</value></data>
+  <data name="Model.Nodes" xml:space="preserve"><value>Nodos y pools</value></data>
+  <data name="Model.NodeCode" xml:space="preserve"><value>Código del nodo</value></data>
+  <data name="Model.Physical" xml:space="preserve"><value>Centro físico</value></data>
+  <data name="Model.Role" xml:space="preserve"><value>Papel en reparto</value></data>
+  <data name="Model.FunctionTags" xml:space="preserve"><value>Funciones (etiquetas independientes, separadas por comas)</value></data>
+  <data name="Model.DriverUnit" xml:space="preserve"><value>Unidades de driver</value></data>
+  <data name="Model.CostLayer" xml:space="preserve"><value>Clasificación del coste (sin política de cálculo)</value></data>
+  <data name="Model.PoolDescription" xml:space="preserve"><value>Descripción del pool</value></data>
+  <data name="Model.ApplyNode" xml:space="preserve"><value>Aplicar nodo al borrador</value></data>
+  <data name="Model.NewNode" xml:space="preserve"><value>Limpiar formulario / nuevo nodo</value></data>
+  <data name="Model.RemoveNode" xml:space="preserve"><value>Quitar nodo seleccionado</value></data>
+  <data name="Model.ToggleUnit" xml:space="preserve"><value>Activar / desactivar unidad</value></data>
+  <data name="Model.Active" xml:space="preserve"><value>Activo</value></data>
+  <data name="Model.Inactive" xml:space="preserve"><value>Inactivo</value></data>
+  <data name="Model.Principal" xml:space="preserve"><value>Principal</value></data>
+  <data name="Model.Auxiliary" xml:space="preserve"><value>Auxiliar</value></data>
+  <data name="Model.LayerUnclassified" xml:space="preserve"><value>Sin clasificar</value></data>
+  <data name="Model.LayerFixed" xml:space="preserve"><value>Fijo</value></data>
+  <data name="Model.LayerVariable" xml:space="preserve"><value>Variable</value></data>
+  <data name="Model.LayerMixed" xml:space="preserve"><value>Comportamiento mixto del coste</value></data>
+  <data name="Model.Working" xml:space="preserve"><value>Procesando…</value></data>
+  <data name="Model.Completed" xml:space="preserve"><value>Operación completada.</value></data>
+  <data name="Model.ValidStructure" xml:space="preserve"><value>Estructura válida. La preparación económica sigue pendiente.</value></data>
+  <data name="Model.PendingTitle" xml:space="preserve"><value>Cambios del modelo sin guardar</value></data>
+  <data name="Model.PendingBody" xml:space="preserve"><value>¿Guardar los cambios del centro o modelo antes de salir? Sí = Guardar; No = Descartar; Cancelar = permanecer.</value></data>
 </root>

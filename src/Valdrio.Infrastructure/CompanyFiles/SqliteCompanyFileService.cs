@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Valdrio.Application;
 using Valdrio.Domain;
 
@@ -10,13 +11,14 @@ namespace Valdrio.Infrastructure.CompanyFiles;
 public enum CompanyWriteCheckpoint { AfterFirstWrite, BeforeCommit }
 
 // Checkpoints allow real rollback/cancellation tests; they never substitute the database.
-public sealed class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock clock,
+public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock clock,
     Action<CompanyWriteCheckpoint>? checkpoint = null) : ICompanyFileService
 {
     private readonly Action<CompanyWriteCheckpoint>? onCheckpoint = checkpoint;
     private readonly IClock time = clock;
     public const string FormatId = "VALDRIO-COMPANY";
-    public const int SchemaVersion = 1;
+    public const int SchemaVersion = 2;
+    public const string UpgradeMigrationId = "202610050002_VersionedModels";
     public const string MigrationId = "202610050001_InitialCompanyFile";
     private sealed record CreatedAudit(EntityId Id, string Name, CurrencyCode DefaultCurrency, PrecisionPolicy PrecisionPolicy);
 
@@ -37,9 +39,10 @@ public sealed class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock cl
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 using (var connection = Connect(temporary, SqliteOpenMode.ReadWriteCreate))
-                using (var db = new CompanyDbContext(connection))
+                using (var db = new ModelDbContext(connection))
                 {
                     // Only our unpublished temporary file can receive migrations.
+                    using (var legacy = new CompanyDbContext(connection)) legacy.Database.Migrate();
                     db.Database.Migrate();
                     Execute(connection, "PRAGMA journal_mode=DELETE;");
                     using var transaction = db.Database.BeginTransaction();
@@ -53,9 +56,9 @@ public sealed class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock cl
                         MaximumInitialMagnitude = policy.MaximumInitialMagnitude, MaximumNumericCorrection = policy.MaximumNumericCorrection });
                     db.SaveChanges();
                     onCheckpoint?.Invoke(CompanyWriteCheckpoint.AfterFirstWrite);
-                    db.Audit.Add(new() { Id = new EntityId(Guid.NewGuid()).ToString(), CompanyId = id, Revision = 0,
+                    AddAudit(db, new() { Id = new EntityId(Guid.NewGuid()).ToString(), CompanyId = id, Revision = 0,
                         Operation = "CreateCompany", Actor = "local-user", AtUtc = created, BeforeJson = "null",
-                        AfterJson = CanonicalSnapshotJson.Serialize(new CreatedAudit(EntityId.Parse(id), command.Name, command.DefaultCurrency, command.PrecisionPolicy)) });
+                        AfterJson = CanonicalSnapshotJson.Serialize(new CreatedAudit(EntityId.Parse(id), command.Name, command.DefaultCurrency, command.PrecisionPolicy)) }, "Company", id, CanonicalSnapshotJson.SchemaVersion);
                     db.SaveChanges();
                     onCheckpoint?.Invoke(CompanyWriteCheckpoint.BeforeCommit);
                     cancellationToken.ThrowIfCancellationRequested();
@@ -119,7 +122,7 @@ public sealed class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock cl
         finally { RemoveTemporary(temporary); }
     }
 
-    private static CompanyFileSnapshot Validate(string path, CancellationToken token)
+    private static CompanyFileSnapshot Validate(string path, CancellationToken token, bool allowLegacy = false)
     {
         token.ThrowIfCancellationRequested();
         try
@@ -127,13 +130,15 @@ public sealed class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock cl
             using var connection = Connect(path, SqliteOpenMode.ReadOnly);
             if (Scalar(connection, "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='FileMetadata';") != "1")
                 throw Error("FILE_FOREIGN_FORMAT", "File.ForeignFormat");
+            var detected = DetectSchema(connection);
+            if (detected == 1 && !allowLegacy) throw Error("FILE_UPGRADE_REQUIRED", "File.UpgradeRequired");
             using var db = new CompanyDbContext(connection);
             // One read transaction makes metadata, values and audit a consistent snapshot.
             using var transaction = db.Database.BeginTransaction();
             var metadata = db.Metadata.AsNoTracking().Single();
             if (metadata.Format != FormatId || metadata.Slot != 1 || string.IsNullOrWhiteSpace(metadata.CatalogVersion))
                 throw Error("FILE_FOREIGN_FORMAT", "File.ForeignFormat");
-            if (metadata.SchemaVersion != SchemaVersion)
+            if (metadata.SchemaVersion != detected)
                 throw Error("FILE_SCHEMA_UNSUPPORTED", "File.SchemaUnsupported");
             if (Scalar(connection, "PRAGMA quick_check;") != "ok") throw new InvalidDataException("Integrity check failed");
             using (var check = connection.CreateCommand())
@@ -142,7 +147,7 @@ public sealed class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock cl
                 using var reader = check.ExecuteReader();
                 if (reader.Read()) throw new InvalidDataException("Foreign key check failed");
             }
-            if (!db.Database.GetAppliedMigrations().SequenceEqual([MigrationId])) throw new InvalidDataException("Migration history differs");
+            if (!db.Database.GetAppliedMigrations().SequenceEqual(detected == 1 ? [MigrationId] : new[] { MigrationId, UpgradeMigrationId })) throw new InvalidDataException("Migration history differs");
             var company = db.Companies.AsNoTracking().Single();
             var policyRow = db.Policies.AsNoTracking().Single();
             var id = EntityId.Parse(company.Id);
@@ -164,7 +169,10 @@ public sealed class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock cl
             }).OrderBy(unit => unit.Id).ToArray();
             if (units.Select(x => x.Code).Distinct(StringComparer.Ordinal).Count() != units.Length)
                 throw new InvalidDataException("Duplicate unit code");
-            var audit = db.Audit.AsNoTracking().OrderBy(x => x.Revision).ToArray();
+            using var current = detected == 2 ? new ModelDbContext(connection) : null;
+            if (current is not null) current.Database.UseTransaction(transaction.GetDbTransaction());
+            var audit = current is null ? db.Audit.AsNoTracking().OrderBy(x => x.Revision).ToArray()
+                : current.Audit.AsNoTracking().Where(x => EF.Property<string>(x, "AggregateType") == "Company").OrderBy(x => x.Revision).ToArray();
             if (audit.LongLength != company.Revision + 1) throw new InvalidDataException("Audit/revision mismatch");
             for (var i = 0; i < audit.Length; i++)
             {
@@ -194,6 +202,7 @@ public sealed class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock cl
                 }
             }
             if (company.Revision == 0 && units.Length != 0) throw new InvalidDataException("Units lack audit");
+            if (current is not null) ValidateWorkspace(current, new(id, company.Name, currency, created, company.Revision, policy, units, metadata.SchemaVersion));
             token.ThrowIfCancellationRequested();
             return new(id, company.Name, currency, created, company.Revision, policy, units, metadata.SchemaVersion);
         }
@@ -282,11 +291,12 @@ public sealed class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock cl
         }
     }
 
-    private sealed class Session(SqliteCompanyFileService owner, string path, CompanyFileOpenMode mode, FileStream? editLock)
-        : ICompanyFileSession
+    private sealed partial class Session(SqliteCompanyFileService owner, string path, CompanyFileOpenMode mode, FileStream? editLock)
+        : ICompanyFileSession, IModelWorkspace
     {
         private readonly object gate = new();
         private bool disposed;
+        public IModelWorkspace Models => this;
         public string Path { get; } = path;
         public CompanyFileOpenMode Mode { get; } = mode;
         public CompanyFileSnapshot Read(CancellationToken cancellationToken = default)
@@ -316,19 +326,20 @@ public sealed class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock cl
                         || added.Select(x => x.Id).Concat(before.Units.Select(x => x.Id)).Distinct().Count() != added.Length + before.Units.Count)
                         throw Error("FILE_DUPLICATE_UNIT", "File.DuplicateUnit");
                     using var connection = Connect(Path, SqliteOpenMode.ReadWrite);
-                    using var db = new CompanyDbContext(connection);
+                    using var db = new ModelDbContext(connection);
                     using var transaction = db.Database.BeginTransaction();
                     var company = db.Companies.Single();
                     if (company.Revision != expectedRevision) throw Error("FILE_REVISION_CHANGED", "File.RevisionChanged");
                     db.Units.AddRange(added.Select(unit => new UnitRow { Id = unit.Id.ToString(), CompanyId = company.Id,
                         Code = unit.Code, Dimension = unit.Dimension, Symbol = unit.Symbol, DecimalScale = unit.DecimalScale, IsDiscrete = unit.IsDiscrete }));
+                    db.UnitStates.AddRange(added.Select(unit => new UnitStateRow { CompanyId = company.Id, UnitId = unit.Id.ToString(), IsActive = true, Revision = 0 }));
                     db.SaveChanges();
                     owner.onCheckpoint?.Invoke(CompanyWriteCheckpoint.AfterFirstWrite);
                     company.Revision = checked(company.Revision + 1);
-                    db.Audit.Add(new() { Id = new EntityId(Guid.NewGuid()).ToString(), CompanyId = company.Id, Revision = company.Revision,
+                    AddAudit(db, new() { Id = new EntityId(Guid.NewGuid()).ToString(), CompanyId = company.Id, Revision = company.Revision,
                         Operation = "AddUnits", Actor = actor, AtUtc = owner.time.GetUtcNow().ToCanonicalString(),
                         BeforeJson = CanonicalSnapshotJson.Serialize(before.Units),
-                        AfterJson = CanonicalSnapshotJson.Serialize(before.Units.Concat(added).OrderBy(x => x.Id).ToArray()) });
+                        AfterJson = CanonicalSnapshotJson.Serialize(before.Units.Concat(added).OrderBy(x => x.Id).ToArray()) }, "Company", company.Id, CanonicalSnapshotJson.SchemaVersion);
                     db.SaveChanges();
                     owner.onCheckpoint?.Invoke(CompanyWriteCheckpoint.BeforeCommit);
                     cancellationToken.ThrowIfCancellationRequested();

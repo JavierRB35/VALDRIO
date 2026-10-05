@@ -11,6 +11,7 @@ on:
       - "t02a/**"
       - "review/**"
       - "t03/**"
+      - "t04/**"
   pull_request:
 
 permissions:
@@ -287,6 +288,10 @@ jobs:
           }
           Write-Host "Company WPF checks passed: $($companyChecks.PassedChecks.Count)."
 
+          $modelChecks = Get-Content -LiteralPath (Join-Path $captureDir "models/interaction.json") -Raw | ConvertFrom-Json
+          if ($modelChecks.Status -ne "passed" -or $modelChecks.PassedChecks.Count -lt 40) { throw "Model WPF interaction evidence is incomplete." }
+          Write-Host "Model WPF checks passed: $($modelChecks.PassedChecks.Count)."
+
           $files = Get-ChildItem -Path $captureDir -Filter *.png
           if ($files.Count -ne 4) {
             throw "Expected 4 visual evidence PNG files, found $($files.Count)."
@@ -341,4 +346,4 @@ jobs:
           echo "TZ=$TZ"
           dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj \
             --configuration Release \
-            --filter "FullyQualifiedName~RepositoryReviewRegressionTests.R01_|FullyQualifiedName~T03CompanyFileTests"
+            --filter "FullyQualifiedName~RepositoryReviewRegressionTests.R01_|FullyQualifiedName~T03CompanyFileTests|FullyQualifiedName~T04ModelTests"

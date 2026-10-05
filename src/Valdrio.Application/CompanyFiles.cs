@@ -30,6 +30,7 @@ public sealed class CompanyFileSnapshot
 
 public interface ICompanyFileSession : IDisposable
 {
+    IModelWorkspace Models { get; }
     string Path { get; }
     CompanyFileOpenMode Mode { get; }
     CompanyFileSnapshot Read(CancellationToken cancellationToken = default);
@@ -40,6 +41,7 @@ public interface ICompanyFileSession : IDisposable
 
 public interface ICompanyFileService
 {
+    ICompanyFileSession Upgrade(string source, string destination, string actor, CancellationToken cancellationToken = default);
     ICompanyFileSession Create(CreateCompanyFile command, CancellationToken cancellationToken = default);
     ICompanyFileSession Open(string path, CompanyFileOpenMode mode = CompanyFileOpenMode.Edit,
         CancellationToken cancellationToken = default);

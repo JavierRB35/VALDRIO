@@ -72,6 +72,24 @@ public partial class MainWindow : Window
         UpdateLayout();
     }
 
+    internal bool RunSectionLayoutSmoke()
+    {
+        UpdateLayout();
+        var root=(Grid)RootScrollViewer.Content;
+        var sections=root.Children.OfType<FrameworkElement>()
+            .Where(e=>e is GroupBox or UserControl or Border)
+            .Select(e=>e.TransformToAncestor(root).TransformBounds(new Rect(0,0,e.ActualWidth,e.ActualHeight)))
+            .OrderBy(r=>r.Top).ToArray();
+        return sections.Zip(sections.Skip(1),(first,next)=>first.Bottom<=next.Top+0.1).All(x=>x);
+    }
+
+    internal void ScrollToElement(FrameworkElement element)
+    {
+        Keyboard.ClearFocus(); UpdateLayout();
+        var offset=RootScrollViewer.VerticalOffset + element.TranslatePoint(new Point(0,0),RootScrollViewer).Y;
+        RootScrollViewer.ScrollToVerticalOffset(offset); UpdateLayout();
+    }
+
     private void OnFxQuoteGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) =>
         viewModel?.BeginFxEdit();
 
