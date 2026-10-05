@@ -1,0 +1,1003 @@
+{
+  "schema_version": "1",
+  "document_version": "0.4",
+  "origin": "Referencias sintéticas propias de VALDRIO; cotizaciones de ejemplo, sin datos de mercado",
+  "numeric_encoding": "decimal o fracción exacta como cadena; JSON no usa números flotantes para importes",
+  "policy_versions": [
+    "PDEC-1 propuesta",
+    "PNUM-1 propuesta",
+    "OwnerOnceCapacity propuesta"
+  ],
+  "cases": [
+    {
+      "id": "C01",
+      "family": "period_difference",
+      "title": "Acumulado convertido en importe de periodo",
+      "input": {
+        "previous": "100",
+        "current": "160",
+        "mode": "CumulativeExpenseDifference"
+      },
+      "expected": {
+        "period_amount": "60"
+      }
+    },
+    {
+      "id": "C02",
+      "family": "period_difference",
+      "title": "Importe que ya corresponde al periodo",
+      "input": {
+        "previous": "100",
+        "current": "160",
+        "mode": "PeriodAmount"
+      },
+      "expected": {
+        "period_amount": "160"
+      }
+    },
+    {
+      "id": "C03",
+      "family": "invalid_amount",
+      "title": "Texto inválido no se convierte en cero",
+      "input": {
+        "text": "no_disponible"
+      },
+      "expected_diagnostic": "IMP_INVALID_AMOUNT"
+    },
+    {
+      "id": "C04",
+      "family": "adjust_partition",
+      "title": "Ajuste y particiones completas",
+      "input": {
+        "original": "1000",
+        "adjustments": [
+          "-100"
+        ],
+        "parts": {
+          "direct": "300",
+          "pool": "500",
+          "excluded": "100"
+        }
+      },
+      "expected": {
+        "effective": "900",
+        "difference": "0"
+      }
+    },
+    {
+      "id": "C05",
+      "family": "adjust_partition",
+      "title": "Partición que duplica coste",
+      "input": {
+        "original": "1000",
+        "adjustments": [
+          "-100"
+        ],
+        "parts": {
+          "direct": "300",
+          "pool": "500",
+          "excluded": "100",
+          "extra": "100"
+        }
+      },
+      "expected": {
+        "effective": "900",
+        "difference": "-100"
+      },
+      "expected_diagnostic": "RES_PARTITION_MISMATCH"
+    },
+    {
+      "id": "C06",
+      "family": "percentage_coverage",
+      "title": "Porcentajes incompletos sin normalización silenciosa",
+      "input": {
+        "percentages": [
+          "40",
+          "40"
+        ]
+      },
+      "expected": {
+        "coverage": "80"
+      },
+      "expected_diagnostic": "KEY_INCOMPLETE"
+    },
+    {
+      "id": "C07",
+      "family": "rounding",
+      "title": "Céntimo en tres partes iguales",
+      "input": {
+        "amount": "0.01",
+        "weights": {
+          "A": "1",
+          "B": "1",
+          "C": "1"
+        },
+        "quantum": "0.01"
+      },
+      "expected": {
+        "posted": {
+          "A": "0.01",
+          "B": "0",
+          "C": "0"
+        },
+        "total": "0.01"
+      }
+    },
+    {
+      "id": "C08",
+      "family": "rounding",
+      "title": "Céntimo negativo con simetría de signo",
+      "input": {
+        "amount": "-0.01",
+        "weights": {
+          "A": "1",
+          "B": "1",
+          "C": "1"
+        },
+        "quantum": "0.01"
+      },
+      "expected": {
+        "posted": {
+          "A": "-0.01",
+          "B": "0",
+          "C": "0"
+        },
+        "total": "-0.01"
+      }
+    },
+    {
+      "id": "C09",
+      "family": "reciprocal",
+      "title": "Reciprocidad abierta con explicación y dos escalas",
+      "input": {
+        "aux_ids": [
+          "A",
+          "B"
+        ],
+        "principal_ids": [
+          "P1",
+          "P2"
+        ],
+        "Q": [
+          [
+            "0",
+            "0.1"
+          ],
+          [
+            "0.2",
+            "0"
+          ]
+        ],
+        "B": [
+          [
+            "0.6",
+            "0.3"
+          ],
+          [
+            "0.3",
+            "0.5"
+          ]
+        ],
+        "b_aux": [
+          "1000",
+          "500"
+        ],
+        "b_principal": [
+          "2000",
+          "3000"
+        ],
+        "allow_self": false
+      },
+      "expected": {
+        "gross": [
+          "55000/49",
+          "30000/49"
+        ],
+        "final": [
+          "20000/7",
+          "25500/7"
+        ],
+        "by_aux_origin": {
+          "A": [
+            "4500/7",
+            "2500/7"
+          ],
+          "B": [
+            "1500/7",
+            "2000/7"
+          ]
+        },
+        "total": "6500",
+        "posted_8": [
+          "2857.14285715",
+          "3642.85714285"
+        ],
+        "projected_currency": [
+          "2857.15",
+          "3642.85"
+        ]
+      }
+    },
+    {
+      "id": "C10",
+      "family": "reciprocal",
+      "title": "Autorreparto explícitamente permitido",
+      "input": {
+        "aux_ids": [
+          "A"
+        ],
+        "principal_ids": [
+          "P"
+        ],
+        "Q": [
+          [
+            "0.1"
+          ]
+        ],
+        "B": [
+          [
+            "0.9"
+          ]
+        ],
+        "b_aux": [
+          "100"
+        ],
+        "b_principal": [
+          "0"
+        ],
+        "allow_self": true
+      },
+      "expected": {
+        "gross": [
+          "1000/9"
+        ],
+        "final": [
+          "100"
+        ],
+        "total": "100"
+      }
+    },
+    {
+      "id": "C11",
+      "family": "reciprocal",
+      "title": "Diagonal prohibida por política",
+      "input": {
+        "aux_ids": [
+          "A"
+        ],
+        "principal_ids": [
+          "P"
+        ],
+        "Q": [
+          [
+            "0.1"
+          ]
+        ],
+        "B": [
+          [
+            "0.9"
+          ]
+        ],
+        "b_aux": [
+          "100"
+        ],
+        "b_principal": [
+          "0"
+        ],
+        "allow_self": false
+      },
+      "expected_diagnostic": "GRAPH_SELF_NOT_ALLOWED"
+    },
+    {
+      "id": "C12",
+      "family": "reciprocal",
+      "title": "Circuito cerrado sin salida, incluso con coste cero",
+      "input": {
+        "aux_ids": [
+          "A",
+          "B"
+        ],
+        "principal_ids": [
+          "P"
+        ],
+        "Q": [
+          [
+            "0",
+            "1"
+          ],
+          [
+            "1",
+            "0"
+          ]
+        ],
+        "B": [
+          [
+            "0"
+          ],
+          [
+            "0"
+          ]
+        ],
+        "b_aux": [
+          "0",
+          "0"
+        ],
+        "b_principal": [
+          "0"
+        ],
+        "allow_self": false
+      },
+      "expected_diagnostic": "GRAPH_CLOSED_COMPONENT"
+    },
+    {
+      "id": "C13",
+      "family": "reciprocal",
+      "title": "Importes positivos y negativos que suman cero",
+      "input": {
+        "aux_ids": [
+          "A",
+          "B"
+        ],
+        "principal_ids": [
+          "P1",
+          "P2"
+        ],
+        "Q": [
+          [
+            "0",
+            "0.1"
+          ],
+          [
+            "0.2",
+            "0"
+          ]
+        ],
+        "B": [
+          [
+            "0.6",
+            "0.3"
+          ],
+          [
+            "0.3",
+            "0.5"
+          ]
+        ],
+        "b_aux": [
+          "100",
+          "-100"
+        ],
+        "b_principal": [
+          "0",
+          "0"
+        ],
+        "allow_self": false
+      },
+      "expected": {
+        "gross": [
+          "4000/49",
+          "-4500/49"
+        ],
+        "final": [
+          "150/7",
+          "-150/7"
+        ],
+        "total": "0"
+      }
+    },
+    {
+      "id": "C14",
+      "family": "reciprocal",
+      "title": "Salida mínima y amplificación extrema",
+      "input": {
+        "aux_ids": [
+          "A",
+          "B"
+        ],
+        "principal_ids": [
+          "P"
+        ],
+        "Q": [
+          [
+            "0",
+            "0.99999999999999"
+          ],
+          [
+            "0.99999999999999",
+            "0"
+          ]
+        ],
+        "B": [
+          [
+            "0.00000000000001"
+          ],
+          [
+            "0.00000000000001"
+          ]
+        ],
+        "b_aux": [
+          "1",
+          "1"
+        ],
+        "b_principal": [
+          "0"
+        ],
+        "allow_self": false,
+        "max_amplification": "1000000000000"
+      },
+      "expected_diagnostic": "SOLVER_SENSITIVE"
+    },
+    {
+      "id": "C15",
+      "family": "capacity",
+      "title": "Fijo normal y variable real con dos objetos",
+      "input": {
+        "fixed": "1000",
+        "variable": "600",
+        "normal": "100",
+        "real": "60",
+        "objects": {
+          "O1": "40",
+          "O2": "20"
+        },
+        "policy": "NormalizedManagement"
+      },
+      "expected": {
+        "fixed_rate": "10",
+        "variable_rate": "10",
+        "objects": {
+          "O1": "800",
+          "O2": "400"
+        },
+        "capacity_variance": "400",
+        "activity_unassigned": "0",
+        "source_total": "1600"
+      }
+    },
+    {
+      "id": "C16",
+      "family": "capacity",
+      "title": "Actividad real cero con tarifa fija válida",
+      "input": {
+        "fixed": "1000",
+        "variable": "0",
+        "normal": "100",
+        "real": "0",
+        "objects": {},
+        "policy": "NormalizedManagement"
+      },
+      "expected": {
+        "fixed_rate": "10",
+        "variable_rate": null,
+        "objects": {},
+        "capacity_variance": "1000",
+        "activity_unassigned": "0",
+        "source_total": "1000"
+      }
+    },
+    {
+      "id": "C17",
+      "family": "capacity",
+      "title": "Sobreactividad analítica con variación firmada",
+      "input": {
+        "fixed": "1000",
+        "variable": "1200",
+        "normal": "100",
+        "real": "120",
+        "objects": {
+          "O": "120"
+        },
+        "policy": "NormalizedManagement"
+      },
+      "expected": {
+        "fixed_rate": "10",
+        "variable_rate": "10",
+        "objects": {
+          "O": "2400"
+        },
+        "capacity_variance": "-200",
+        "activity_unassigned": "0",
+        "source_total": "2200"
+      }
+    },
+    {
+      "id": "C18",
+      "family": "capacity",
+      "title": "Actividad observada sin objeto, distinta de ociosidad",
+      "input": {
+        "fixed": "1000",
+        "variable": "600",
+        "normal": "100",
+        "real": "60",
+        "objects": {
+          "O": "40"
+        },
+        "policy": "NormalizedManagement"
+      },
+      "expected": {
+        "fixed_rate": "10",
+        "variable_rate": "10",
+        "objects": {
+          "O": "800"
+        },
+        "capacity_variance": "400",
+        "activity_unassigned": "400",
+        "source_total": "1600"
+      }
+    },
+    {
+      "id": "C19",
+      "family": "capacity",
+      "title": "Variable positivo sin actividad",
+      "input": {
+        "fixed": "1000",
+        "variable": "100",
+        "normal": "100",
+        "real": "0",
+        "objects": {},
+        "policy": "NormalizedManagement"
+      },
+      "expected_diagnostic": "ACT_COST_WITH_ZERO_ACTIVITY"
+    },
+    {
+      "id": "C20",
+      "family": "aux_owner_capacity",
+      "title": "Capacidad auxiliar evaluada una vez por propietario",
+      "input": {
+        "A": {
+          "fixed": "1000",
+          "normal": "100",
+          "real": "50",
+          "service_to_B": "10",
+          "service_to_P": "40"
+        },
+        "B": {
+          "fixed": "600",
+          "normal": "100",
+          "real": "50",
+          "service_to_P": "50"
+        }
+      },
+      "expected": {
+        "A_applied": "500",
+        "A_capacity": "500",
+        "A_to_B": "100",
+        "A_to_P": "400",
+        "B_own_applied": "300",
+        "B_capacity": "300",
+        "B_to_P": "400",
+        "P": "800",
+        "source_total": "1600"
+      }
+    },
+    {
+      "id": "C21",
+      "family": "signed_rounding",
+      "title": "Residuo con una variación de capacidad negativa",
+      "input": {
+        "source": "1",
+        "raw": {
+          "O1": "0.6033",
+          "O2": "0.6033",
+          "VAR": "-0.2066"
+        },
+        "quantum": "0.01"
+      },
+      "expected": {
+        "posted": {
+          "O1": "0.60",
+          "O2": "0.60",
+          "VAR": "-0.20"
+        },
+        "total": "1"
+      }
+    },
+    {
+      "id": "C22",
+      "family": "batch_order",
+      "title": "Consumo por unidad y por lote iniciado",
+      "input": {
+        "quantity": "120",
+        "batch_size": "50",
+        "setup_per_batch": "2",
+        "process_per_unit": "0.1",
+        "setup_rate": "30",
+        "process_rate": "20"
+      },
+      "expected": {
+        "started_batches": "3",
+        "setup_quantity": "6",
+        "process_quantity": "12",
+        "setup_cost": "180",
+        "process_cost": "240",
+        "total": "420",
+        "unit_cost": "3.5"
+      }
+    },
+    {
+      "id": "C23",
+      "family": "margin",
+      "title": "Margen, recargo y contribución distintos",
+      "input": {
+        "sales": "200",
+        "variable_cost": "120",
+        "fixed_applied": "30"
+      },
+      "expected": {
+        "cost": "150",
+        "margin": "50",
+        "margin_on_sales": "1/4",
+        "markup": "1/3",
+        "contribution": "80",
+        "contribution_on_sales": "2/5"
+      }
+    },
+    {
+      "id": "C24",
+      "family": "abc",
+      "title": "Dos pools no duplican el coste del centro",
+      "input": {
+        "center_cost": "1000",
+        "pools": [
+          {
+            "cost": "600",
+            "weights": {
+              "P1": "60",
+              "P2": "40"
+            }
+          },
+          {
+            "cost": "400",
+            "weights": {
+              "P1": "1",
+              "P2": "3"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "objects": {
+          "P1": "460",
+          "P2": "540"
+        },
+        "total": "1000"
+      }
+    },
+    {
+      "id": "C25",
+      "family": "frontier",
+      "title": "Vistas producto y cliente sobre el mismo hecho",
+      "input": {
+        "facts": [
+          {
+            "id": "F1",
+            "amount": "420",
+            "product": "P1",
+            "customer": "C1"
+          }
+        ]
+      },
+      "expected": {
+        "source_total": "420",
+        "by_product": {
+          "P1": "420"
+        },
+        "by_customer": {
+          "C1": "420"
+        }
+      }
+    },
+    {
+      "id": "C26",
+      "family": "tdabc",
+      "title": "Capacidad práctica y ecuación de tiempo",
+      "input": {
+        "supplied_cost": "1200",
+        "practical_minutes": "600",
+        "base_minutes": "3",
+        "minutes_per_line": "2",
+        "line_count": "4"
+      },
+      "expected": {
+        "rate_per_minute": "2",
+        "transaction_minutes": "11",
+        "transaction_cost": "22",
+        "remaining_capacity_cost": "1178"
+      }
+    },
+    {
+      "id": "C27",
+      "family": "standard_variance",
+      "title": "Precio y cantidad suman la desviación total",
+      "input": {
+        "actual_price": "12",
+        "actual_quantity": "12",
+        "standard_price": "10",
+        "allowed_standard_quantity": "8"
+      },
+      "expected": {
+        "actual": "144",
+        "allowed": "80",
+        "total_variance": "64",
+        "price_variance": "24",
+        "quantity_variance": "40"
+      }
+    },
+    {
+      "id": "C28",
+      "family": "capacity",
+      "title": "Producción limitada frente a sobreactividad de gestión",
+      "input": {
+        "fixed": "1000",
+        "variable": "1200",
+        "normal": "100",
+        "real": "120",
+        "objects": {
+          "O": "120"
+        },
+        "policy": "ProductionLimitedReference"
+      },
+      "expected": {
+        "fixed_rate": "25/3",
+        "variable_rate": "10",
+        "objects": {
+          "O": "2200"
+        },
+        "capacity_variance": "0",
+        "activity_unassigned": "0",
+        "source_total": "2200"
+      }
+    },
+    {
+      "id": "C29",
+      "family": "aux_owner_capacity",
+      "title": "Sobreactividad auxiliar y terminal firmado",
+      "input": {
+        "A": {
+          "fixed": "1000",
+          "normal": "100",
+          "real": "120",
+          "service_to_B": "0",
+          "service_to_P": "120"
+        },
+        "B": {
+          "fixed": "0",
+          "normal": "100",
+          "real": "0",
+          "service_to_P": "0"
+        }
+      },
+      "expected": {
+        "A_applied": "1200",
+        "A_capacity": "-200",
+        "A_to_B": "0",
+        "A_to_P": "1200",
+        "B_own_applied": "0",
+        "B_capacity": "0",
+        "B_to_P": "0",
+        "P": "1200",
+        "source_total": "1000"
+      }
+    },
+    {
+      "id": "C30",
+      "family": "per_source_reconciliation",
+      "title": "Errores opuestos que el total global ocultaría",
+      "input": {
+        "sources": {
+          "R1": "100",
+          "R2": "100"
+        },
+        "outputs": {
+          "R1": "90",
+          "R2": "110"
+        }
+      },
+      "expected": {
+        "global_difference": "0",
+        "source_differences": {
+          "R1": "10",
+          "R2": "-10"
+        }
+      },
+      "expected_diagnostic": "RES_PARTITION_MISMATCH"
+    },
+    {
+      "id": "C31",
+      "family": "capacity",
+      "title": "Capacidad normal cero con fijo positivo",
+      "input": {
+        "fixed": "1000",
+        "variable": "0",
+        "normal": "0",
+        "real": "100",
+        "objects": {
+          "O": "100"
+        },
+        "policy": "NormalizedManagement"
+      },
+      "expected_diagnostic": "CAP_ZERO_DENOMINATOR"
+    },
+    {
+      "id": "C32",
+      "family": "reciprocal",
+      "title": "Vector cero en sistema abierto válido",
+      "input": {
+        "aux_ids": [
+          "A",
+          "B"
+        ],
+        "principal_ids": [
+          "P1",
+          "P2"
+        ],
+        "Q": [
+          [
+            "0",
+            "0.1"
+          ],
+          [
+            "0.2",
+            "0"
+          ]
+        ],
+        "B": [
+          [
+            "0.6",
+            "0.3"
+          ],
+          [
+            "0.3",
+            "0.5"
+          ]
+        ],
+        "b_aux": [
+          "0",
+          "0"
+        ],
+        "b_principal": [
+          "0",
+          "0"
+        ],
+        "allow_self": false
+      },
+      "expected": {
+        "gross": [
+          "0",
+          "0"
+        ],
+        "final": [
+          "0",
+          "0"
+        ],
+        "total": "0"
+      }
+    },
+    {
+      "id": "C33",
+      "family": "fx",
+      "title": "USD a EUR con cotización explícita",
+      "input": {
+        "original_amount": "100",
+        "original_currency": "USD",
+        "functional_currency": "EUR",
+        "quote": "0.9"
+      },
+      "expected": {
+        "original_amount": "100",
+        "original_currency": "USD",
+        "functional_amount": "90",
+        "functional_currency": "EUR",
+        "conversion_rounding": "0"
+      }
+    },
+    {
+      "id": "C34",
+      "family": "fx",
+      "title": "Moneda igual, conversión identidad",
+      "input": {
+        "original_amount": "100",
+        "original_currency": "EUR",
+        "functional_currency": "EUR",
+        "quote": null
+      },
+      "expected": {
+        "original_amount": "100",
+        "functional_amount": "100",
+        "quote": "1"
+      }
+    },
+    {
+      "id": "C35",
+      "family": "fx",
+      "title": "JPY a EUR sin asumir céntimos para origen",
+      "input": {
+        "original_amount": "1000",
+        "original_currency": "JPY",
+        "functional_currency": "EUR",
+        "quote": "0.006"
+      },
+      "expected": {
+        "original_amount": "1000",
+        "original_currency": "JPY",
+        "functional_amount": "6",
+        "functional_currency": "EUR"
+      }
+    },
+    {
+      "id": "C36",
+      "family": "fx",
+      "title": "Moneda distinta sin tipo bloquea",
+      "input": {
+        "original_amount": "100",
+        "original_currency": "USD",
+        "functional_currency": "EUR",
+        "quote": null
+      },
+      "expected_diagnostic": "FX_RATE_MISSING"
+    },
+    {
+      "id": "C37",
+      "family": "fx",
+      "title": "Reversión negativa conserva origen y signo",
+      "input": {
+        "original_amount": "-100",
+        "original_currency": "USD",
+        "functional_currency": "EUR",
+        "quote": "0.9"
+      },
+      "expected": {
+        "original_amount": "-100",
+        "functional_amount": "-90",
+        "conversion_rounding": "0"
+      }
+    },
+    {
+      "id": "C38",
+      "family": "rounding",
+      "title": "JPY 101 en tercios con quantum de una unidad",
+      "input": {
+        "amount": "101",
+        "weights": {
+          "A": "1",
+          "B": "1",
+          "C": "1"
+        },
+        "quantum": "1",
+        "currency": "JPY"
+      },
+      "expected": {
+        "posted": {
+          "A": "34",
+          "B": "34",
+          "C": "33"
+        },
+        "total": "101"
+      }
+    },
+    {
+      "id": "C39",
+      "family": "rounding",
+      "title": "KWD una unidad menor en tercios",
+      "input": {
+        "amount": "0.001",
+        "weights": {
+          "A": "1",
+          "B": "1",
+          "C": "1"
+        },
+        "quantum": "0.001",
+        "currency": "KWD"
+      },
+      "expected": {
+        "posted": {
+          "A": "0.001",
+          "B": "0",
+          "C": "0"
+        },
+        "total": "0.001"
+      }
+    }
+  ],
+  "default_functional_currency": "EUR",
+  "currency_scope": "C01–C37 usan EUR cuando corresponda; C38 JPY y C39 KWD. Cotizaciones sintéticas, no de mercado."
+}
