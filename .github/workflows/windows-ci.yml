@@ -298,6 +298,9 @@ jobs:
           dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $captureDir "studies/snapshot.json")
           if ($LASTEXITCODE -ne 0) { throw "Runner could not verify the actual WPF snapshot." }
 
+          $studyImages = Get-ChildItem -LiteralPath (Join-Path $captureDir "studies") -Filter *.png
+          if ($studyImages.Count -ne 8) { throw "Expected 8 study context/history captures, found $($studyImages.Count)." }
+
           $files = Get-ChildItem -Path $captureDir -Filter *.png
           if ($files.Count -ne 4) {
             throw "Expected 4 visual evidence PNG files, found $($files.Count)."

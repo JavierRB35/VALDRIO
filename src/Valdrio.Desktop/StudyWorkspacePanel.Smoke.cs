@@ -85,7 +85,20 @@ public partial class StudyWorkspacePanel
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle); UpdateLayout();
             Check(Hash(path) == sha && vm.SnapshotChoice!.Value.CanonicalJson == canonical, "preferences preserve disk and snapshot: " + preset.Item2);
             Check(vm.PeriodStart?.Date == new DateTime(2026, 10, 2) && vm.PeriodEnd?.Date == new DateTime(2026, 10, 31), "calendar identity retained: " + preset.Item2);
-            VisualEvidenceCapture.Capture(this, Path.Combine(output, preset.Item5));
+            window.ScrollToElement(this);
+            await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
+            window.UpdateLayout();
+            Check(TranslatePoint(new Point(0, 0), window.RootScrollViewer).Y >= -0.1
+                && TranslatePoint(new Point(0, 0), window.RootScrollViewer).Y < window.RootScrollViewer.ViewportHeight,
+                "study context is in visible viewport: " + preset.Item2);
+            VisualEvidenceCapture.Capture(window, Path.Combine(output, preset.Item5));
+            window.ScrollToElement(SnapshotHeader);
+            await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
+            window.UpdateLayout();
+            Check(SnapshotHeader.TranslatePoint(new Point(0, 0), window.RootScrollViewer).Y >= -0.1
+                && SnapshotHeader.TranslatePoint(new Point(0, 0), window.RootScrollViewer).Y < window.RootScrollViewer.ViewportHeight,
+                "snapshot history is in visible viewport: " + preset.Item2);
+            VisualEvidenceCapture.Capture(window, Path.Combine(output, Path.GetFileNameWithoutExtension(preset.Item5) + "-history.png"));
         }
         main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", false, false);
         Text(StudyNameBox, "unconfirmed name"); pending.Choices.Enqueue(PendingEditChoice.Cancel); await Click(companyPanel.CloseButton);
