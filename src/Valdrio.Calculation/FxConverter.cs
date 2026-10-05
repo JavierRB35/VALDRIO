@@ -14,6 +14,7 @@ public sealed class FxConverter
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(applicationId);
         original.EnsureValid("originalMoney");
+        if (!functionalCurrency.IsValid) throw new ArgumentException("FX_CURRENCY_INVALID");
 
         if (original.Currency == functionalCurrency)
         {
@@ -59,9 +60,11 @@ public sealed class FxConverter
         }
 
         decimal raw;
+        decimal converted;
         try
         {
             raw = checked(original.Amount * selectedRate.Quote);
+            converted = ExactDecimalProduct.Quantize(original.Amount, selectedRate.Quote, ConversionScale);
         }
         catch (OverflowException)
         {
@@ -75,10 +78,9 @@ public sealed class FxConverter
                     ]));
         }
 
-        var converted = decimal.Round(
-            raw,
-            ConversionScale,
-            MidpointRounding.ToEven);
+        // ConvertedRaw is a decimal approximation when the exact product needs
+        // more than 96 coefficient bits. The posted amount is quantized from the
+        // exact integer product; origin + quote retain its exact reconstruction.
 
         original.PrecisionPolicy.ValidateAmount(
             converted,

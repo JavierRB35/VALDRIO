@@ -92,4 +92,5 @@
   <data name="Time.LocalAmbiguous" xml:space="preserve"><value>La hora local {0} en la zona {1} es ambigua. Desplazamientos válidos: {2}.</value></data>
   <data name="Time.LocalInvalid" xml:space="preserve"><value>La hora local {0} no existe en la zona {1}. Desplazamientos válidos: {2}.</value></data>
   <data name="Time.LocalOffsetInvalid" xml:space="preserve"><value>El desplazamiento elegido para la hora local {0} en la zona {1} no es válido. Desplazamientos válidos: {2}.</value></data>
+  <data name="Fx.AmountBelowQuantum" xml:space="preserve"><value>El original {0} {1} queda por debajo del quantum del ledger en {2}; se conservan su origen y el ajuste de redondeo.</value></data>
 </root>

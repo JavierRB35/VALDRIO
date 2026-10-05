@@ -1,5 +1,8 @@
+using System.Text.Json.Serialization;
+
 namespace Valdrio.Domain;
 
+[JsonConverter(typeof(QuantityJsonConverter))]
 public readonly record struct Quantity
 {
     public Quantity(
@@ -7,6 +10,8 @@ public readonly record struct Quantity
         UnitId unitId,
         PrecisionPolicy? precisionPolicy = null)
     {
+        unitId.EnsureValid();
+
         var policy =
             precisionPolicy ?? PrecisionPolicy.Pdec1Proposed;
 
@@ -23,6 +28,8 @@ public readonly record struct Quantity
 
     public static Quantity operator +(Quantity left, Quantity right)
     {
+        left.EnsureValid();
+        right.EnsureValid();
         EnsureSameUnit(left, right);
 
         PrecisionPolicyCompatibility.EnsureSame(
@@ -35,6 +42,13 @@ public readonly record struct Quantity
             checked(left.Value + right.Value),
             left.UnitId,
             left.PrecisionPolicy);
+    }
+
+    public void EnsureValid()
+    {
+        UnitId.EnsureValid();
+        ArgumentNullException.ThrowIfNull(PrecisionPolicy);
+        PrecisionPolicy.ValidateQuantity(Value, nameof(Value));
     }
 
     private static void EnsureSameUnit(

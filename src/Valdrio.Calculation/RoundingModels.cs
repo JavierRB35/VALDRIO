@@ -1,7 +1,9 @@
+using System.Text.Json.Serialization;
 using Valdrio.Domain;
 
 namespace Valdrio.Calculation;
 
+[JsonConverter(typeof(StableRoundingIdJsonConverter))]
 public readonly record struct StableRoundingId : IComparable<StableRoundingId>
 {
     public StableRoundingId(string value)
@@ -19,6 +21,11 @@ public readonly record struct StableRoundingId : IComparable<StableRoundingId>
     }
 
     public string Value { get; }
+    public void EnsureValid()
+    {
+        if (string.IsNullOrWhiteSpace(Value) || Value != Value.Trim())
+            throw new ArgumentException("ROUNDING_ID_INVALID");
+    }
 
     public int CompareTo(StableRoundingId other) =>
         StringComparer.Ordinal.Compare(Value, other.Value);
@@ -38,11 +45,18 @@ public sealed record RoundedContribution(
     decimal RoundingAdjustment,
     decimal PostedAmount);
 
-public sealed record BalancedRoundResult(
-    decimal SourceTotal,
-    decimal Quantum,
-    IReadOnlyList<RoundedContribution> Lines)
+public sealed record BalancedRoundResult
 {
+    [JsonConstructor]
+    public BalancedRoundResult(decimal SourceTotal, decimal Quantum, IReadOnlyList<RoundedContribution> Lines)
+    {
+        this.SourceTotal = SourceTotal;
+        this.Quantum = Quantum;
+        this.Lines = FrozenList.Copy(Lines);
+    }
+    public decimal SourceTotal { get; }
+    public decimal Quantum { get; }
+    public IReadOnlyList<RoundedContribution> Lines { get; }
     public decimal PostedTotal =>
         Lines.Aggregate(
             0m,
@@ -63,13 +77,23 @@ public sealed record CurrencyProjectionLine(
     decimal ProjectedAmount,
     decimal ProjectionAdjustment);
 
-public sealed record CurrencyProjectionResult(
-    decimal SourceLedger,
-    decimal Target,
-    decimal ProjectionDifference,
-    decimal Quantum,
-    IReadOnlyList<CurrencyProjectionLine> Lines)
+public sealed record CurrencyProjectionResult
 {
+    [JsonConstructor]
+    public CurrencyProjectionResult(decimal SourceLedger, decimal Target, decimal ProjectionDifference,
+        decimal Quantum, IReadOnlyList<CurrencyProjectionLine> Lines)
+    {
+        this.SourceLedger = SourceLedger;
+        this.Target = Target;
+        this.ProjectionDifference = ProjectionDifference;
+        this.Quantum = Quantum;
+        this.Lines = FrozenList.Copy(Lines);
+    }
+    public decimal SourceLedger { get; }
+    public decimal Target { get; }
+    public decimal ProjectionDifference { get; }
+    public decimal Quantum { get; }
+    public IReadOnlyList<CurrencyProjectionLine> Lines { get; }
     public decimal ProjectedTotal =>
         Lines.Aggregate(
             0m,
