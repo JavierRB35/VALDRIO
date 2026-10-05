@@ -1,9 +1,11 @@
 using System.Globalization;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Valdrio.Application;
+using Valdrio.Domain;
 using Valdrio.Localization;
 
 namespace Valdrio.Desktop;
@@ -28,11 +30,13 @@ public sealed class MainWindowViewModel : ObservableObject
     private string samplePurpose = "—";
     private string sourcePath = "—";
     private string pendingEditText = "1.234,50";
-    private string fxQuoteText = "0.9";
+    private string fxQuoteText = "";
+    private DecimalEditSession? fxEditSession;
+    private DomainDiagnostic? fxDiagnostic;
     private string fxRateDateText = "2026-10-04";
     private string fxRateSourceText = "manual-demo";
     private string fxStatusKey = "FxEditorReady";
-    private FxConversionExample fxExample = null!;
+    private FxRateApplication fxExample = null!;
 
     public MainWindowViewModel(
         UiTextCatalog texts,
@@ -55,15 +59,14 @@ public sealed class MainWindowViewModel : ObservableObject
         this.fxConversionExampleService =
             fxConversionExampleService;
         fxExample = fxConversionExampleService.Build(
-            fxQuoteText,
-            fxRateDateText,
-            fxRateSourceText);
+            0.9m, BusinessDate.ParseIso(fxRateDateText), fxRateSourceText);
+        fxQuoteText = FormatQuote(fxExample.Quote);
 
         UiLanguageOptions = languages.Published
             .Select(language => language.Tag)
             .ToArray();
 
-        FormatCultureOptions = ["es-ES", "en-US", "en-GB"];
+        FormatCultureOptions = ["es-ES", "en-US", "en-GB", "de-DE"];
         TimeZoneOptions = ["Europe/Madrid", "UTC", "America/Los_Angeles"];
 
         StartEditCommand = new RelayCommand(StartEdit);
@@ -143,7 +146,10 @@ public sealed class MainWindowViewModel : ObservableObject
     public string FxQuoteText
     {
         get => fxQuoteText;
-        set => SetProperty(ref fxQuoteText, value);
+        set
+        {
+            if (SetProperty(ref fxQuoteText, value)) BeginFxEdit();
+        }
     }
 
     public string FxRateDateText
@@ -235,15 +241,18 @@ public sealed class MainWindowViewModel : ObservableObject
     public string LabelFxRateSet => Text("LabelFxRateSet");
     public string ActionApplyFxRate => Text("ActionApplyFxRate");
     public string FxEditorExplanation => Text("FxEditorExplanation");
-    public string FxStatus => Text(fxStatusKey);
-    public string FxOriginal =>
-        $"{fxExample.OriginalAmount} {fxExample.OriginalCurrency}";
-    public string FxOrientation => fxExample.Orientation;
-    public string FxFunctional =>
-        $"{fxExample.FunctionalAmount} {fxExample.FunctionalCurrency}";
+    public string FxStatus => fxDiagnostic is null
+        ? Text(fxStatusKey)
+        : fxDiagnostic.Code + " — " + new DomainDiagnosticFormatter(texts)
+            .Format(fxDiagnostic, UiCulture, FormatCulture).Message;
+    public string FxCapturedCulture => fxEditSession?.CapturedCulture.Name ?? FormatCulture.Name;
+    public string FxOriginal => FormatMoney(fxExample.OriginalMoney);
+    public string FxOrientation =>
+        $"{fxExample.ConvertedOriginalMoney.Currency.Value}/{fxExample.OriginalMoney.Currency.Value}";
+    public string FxFunctional => FormatMoney(fxExample.ConvertedOriginalMoney);
     public string FxRounding =>
-        $"{fxExample.RoundingAdjustment} {fxExample.FunctionalCurrency}";
-    public string FxRateSetVersion => fxExample.RateSetVersionId;
+        $"{fxExample.ConversionRoundingAdjustment.Amount.ToString("0.############################", FormatCulture)} {fxExample.ConvertedOriginalMoney.Currency.Value}";
+    public string FxRateSetVersion => fxExample.RateSetVersionId ?? "IDENTITY";
 
     public string Status => Text(sampleState switch
     {
@@ -381,19 +390,44 @@ public sealed class MainWindowViewModel : ObservableObject
         PresentationChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    public void BeginFxEdit()
+    {
+        fxEditSession ??= new DecimalEditSession(FormatCulture);
+        OnPropertyChanged(nameof(FxCapturedCulture));
+    }
+
     private void ApplyFxRate()
     {
+        BeginFxEdit();
         try
         {
-            fxExample = fxConversionExampleService.Build(
-                FxQuoteText,
-                FxRateDateText,
-                FxRateSourceText);
+            if (!fxEditSession!.TryCommit(FxQuoteText, out var quote))
+                throw new DomainRuleException(new DomainDiagnostic("FX_QUOTE_TEXT_INVALID", "Fx.QuoteTextInvalid",
+                    [new("culture", DiagnosticArgumentType.Text, fxEditSession.CapturedCulture.Name)]));
+
+            BusinessDate rateDate;
+            try { rateDate = BusinessDate.ParseIso(FxRateDateText); }
+            catch (Exception ex) when (ex is FormatException or ArgumentException)
+            {
+                throw new DomainRuleException(new DomainDiagnostic("FX_DATE_INVALID", "Fx.DateInvalid", []));
+            }
+            if (string.IsNullOrWhiteSpace(FxRateSourceText))
+                throw new DomainRuleException(new DomainDiagnostic("FX_SOURCE_REQUIRED", "Fx.SourceRequired", []));
+
+            var next = fxConversionExampleService.Build(quote, rateDate, FxRateSourceText);
+            fxExample = next;
+            fxDiagnostic = next.Diagnostics.FirstOrDefault();
             fxStatusKey = "FxEditorReady";
+            fxEditSession = null;
+            fxQuoteText = FormatQuote(next.Quote);
+            OnPropertyChanged(nameof(FxQuoteText));
         }
-        catch (Exception)
+        catch (DomainRuleException ex) { fxDiagnostic = ex.Diagnostic; }
+        catch (Exception ex)
         {
-            fxStatusKey = "FxEditorInvalid";
+            Trace.TraceError("FX editor unexpected failure: {0}", ex);
+            fxDiagnostic = null;
+            fxStatusKey = "FxEditorUnexpected";
         }
 
         OnPropertyChanged(nameof(FxOriginal));
@@ -402,7 +436,16 @@ public sealed class MainWindowViewModel : ObservableObject
         OnPropertyChanged(nameof(FxRounding));
         OnPropertyChanged(nameof(FxRateSetVersion));
         OnPropertyChanged(nameof(FxStatus));
+        OnPropertyChanged(nameof(FxCapturedCulture));
     }
+
+    private CultureInfo FormatCulture =>
+        CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
+    private string FormatQuote(decimal quote) =>
+        quote.ToString("0.############################", FormatCulture);
+    private string FormatMoney(Money money) =>
+        formatter.FormatCurrency(money.Amount, money.Currency.Value, FormatCulture,
+            preferences.Current.NumberDisplayOptions);
 
     private TemporalContractExample TemporalExample =>
         temporalContractExampleService.Build(
@@ -460,6 +503,12 @@ public sealed class MainWindowViewModel : ObservableObject
 
     private void RefreshPresentation()
     {
+        // Dirty edits retain their captured grammar; clean fields follow the selected region.
+        if (fxEditSession is null)
+        {
+            fxQuoteText = FormatQuote(fxExample.Quote);
+            OnPropertyChanged(nameof(FxQuoteText));
+        }
         var names = new[]
         {
             nameof(SelectedUiLanguageTag),
@@ -522,6 +571,10 @@ public sealed class MainWindowViewModel : ObservableObject
             nameof(ActionApplyFxRate),
             nameof(FxEditorExplanation),
             nameof(FxStatus),
+            nameof(FxCapturedCulture),
+            nameof(FxOriginal),
+            nameof(FxFunctional),
+            nameof(FxRounding),
             nameof(Status),
             nameof(PreviewMoney),
             nameof(PreviewDate),

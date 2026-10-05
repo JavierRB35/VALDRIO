@@ -60,7 +60,7 @@
   <data name="LabelFxOriginal" xml:space="preserve"><value>Original</value></data>
   <data name="LabelFxOrientation" xml:space="preserve"><value>Orientación de cotización</value></data>
   <data name="LabelFxQuote" xml:space="preserve"><value>Cotización</value></data>
-  <data name="LabelFxRateDate" xml:space="preserve"><value>Fecha del tipo</value></data>
+  <data name="LabelFxRateDate" xml:space="preserve"><value>Fecha del tipo (ISO yyyy-MM-dd)</value></data>
   <data name="LabelFxRateSource" xml:space="preserve"><value>Fuente del tipo</value></data>
   <data name="LabelFxFunctional" xml:space="preserve"><value>Importe funcional</value></data>
   <data name="LabelFxRounding" xml:space="preserve"><value>Ajuste de conversión</value></data>
@@ -92,4 +92,9 @@
   <data name="Time.LocalAmbiguous" xml:space="preserve"><value>La hora local {0} en la zona {1} es ambigua. Desplazamientos válidos: {2}.</value></data>
   <data name="Time.LocalInvalid" xml:space="preserve"><value>La hora local {0} no existe en la zona {1}. Desplazamientos válidos: {2}.</value></data>
   <data name="Time.LocalOffsetInvalid" xml:space="preserve"><value>El desplazamiento elegido para la hora local {0} en la zona {1} no es válido. Desplazamientos válidos: {2}.</value></data>
+  <data name="Fx.AmountBelowQuantum" xml:space="preserve"><value>El original {0} {1} queda por debajo del quantum del ledger en {2}; se conservan su origen y el ajuste de redondeo.</value></data>
+  <data name="Fx.QuoteTextInvalid" xml:space="preserve"><value>La cotización no es válida para el formato numérico capturado {0}.</value></data>
+  <data name="Fx.DateInvalid" xml:space="preserve"><value>La fecha del tipo debe usar ISO yyyy-MM-dd.</value></data>
+  <data name="Fx.SourceRequired" xml:space="preserve"><value>Indica la fuente del tipo de cambio explícito.</value></data>
+  <data name="FxEditorUnexpected" xml:space="preserve"><value>Un error inesperado ha impedido la conversión. Consulta el registro técnico.</value></data>
 </root>

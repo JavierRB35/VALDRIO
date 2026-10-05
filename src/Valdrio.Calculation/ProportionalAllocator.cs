@@ -32,6 +32,7 @@ public sealed class ProportionalAllocator
 
         foreach (var destination in destinations)
         {
+            destination.DestinationId.EnsureValid();
             if (!ids.Add(destination.DestinationId))
             {
                 throw RoundingDiagnostics.DuplicateDestination(
@@ -74,7 +75,7 @@ public sealed class ProportionalAllocator
                     []));
         }
 
-        return destinations
+        return FrozenList.Copy(destinations
             .Select(destination =>
                 new RoundingContribution(
                     destination.DestinationId,
@@ -82,6 +83,6 @@ public sealed class ProportionalAllocator
                         sourceTotal *
                         destination.Weight /
                         weightTotal)))
-            .ToArray();
+            .ToArray());
     }
 }

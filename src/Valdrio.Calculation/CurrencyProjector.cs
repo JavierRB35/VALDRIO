@@ -38,6 +38,7 @@ public sealed class CurrencyProjector
 
         foreach (var line in ledgerLines)
         {
+            line.DestinationId.EnsureValid();
             if (!ids.Add(line.DestinationId))
             {
                 throw RoundingDiagnostics.DuplicateDestination(

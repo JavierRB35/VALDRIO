@@ -99,6 +99,7 @@ internal static class LargestRemainderCore
 
         foreach (var id in ids)
         {
+            id.EnsureValid();
             if (!seen.Add(id))
             {
                 throw RoundingDiagnostics.DuplicateDestination(id);

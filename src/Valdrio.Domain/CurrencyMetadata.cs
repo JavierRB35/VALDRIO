@@ -22,6 +22,8 @@ public sealed record CurrencyDefinition
         DateOnly sourcePublicationDate,
         DateOnly checkedOn)
     {
+        if (!alphaCode.IsValid) throw new ArgumentException("CURRENCY_CODE_INVALID");
+        ArgumentNullException.ThrowIfNull(validity);
         ArgumentException.ThrowIfNullOrWhiteSpace(numericCode);
         ArgumentException.ThrowIfNullOrWhiteSpace(catalogVersion);
         ArgumentException.ThrowIfNullOrWhiteSpace(source);
@@ -102,6 +104,16 @@ public sealed record CurrencyMetadataSnapshot(
     DateOnly SourcePublicationDate,
     DateOnly CheckedOn)
 {
-    public decimal ReportQuantum =>
-        PrecisionPolicy.DecimalQuantum(MinorUnitDigits);
+    public void EnsureValid()
+    {
+        if (!AlphaCode.IsValid || NumericCode is not { Length: 3 } ||
+            NumericCode.Any(c => c is < '0' or > '9') || MinorUnitDigits is < 0 or > 28)
+            throw new ArgumentException("CURRENCY_METADATA_INVALID");
+        ArgumentException.ThrowIfNullOrWhiteSpace(CatalogVersion);
+        ArgumentException.ThrowIfNullOrWhiteSpace(Source);
+    }
+    public decimal ReportQuantum
+    {
+        get { EnsureValid(); return PrecisionPolicy.DecimalQuantum(MinorUnitDigits); }
+    }
 }

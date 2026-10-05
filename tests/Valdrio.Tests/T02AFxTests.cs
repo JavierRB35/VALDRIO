@@ -201,7 +201,7 @@ public sealed class T02AFxTests
 
         Assert.IsTrue(validator.Called);
         Assert.AreEqual(1, repository.CommitCount);
-        Assert.AreEqual(8, result.Revision);
+        Assert.AreEqual(8L, result.Revision);
         Assert.AreEqual("rs-95", result.RateSetVersionId);
         Assert.AreEqual(
             95m,

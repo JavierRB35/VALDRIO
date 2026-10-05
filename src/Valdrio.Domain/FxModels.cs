@@ -1,5 +1,8 @@
+using System.Text.Json.Serialization;
+
 namespace Valdrio.Domain;
 
+[JsonConverter(typeof(FxRateIdJsonConverter))]
 public readonly record struct FxRateId
 {
     public FxRateId(string value)
@@ -14,6 +17,12 @@ public readonly record struct FxRateId
     }
 
     public string Value { get; }
+    public bool IsValid => !string.IsNullOrWhiteSpace(Value) &&
+        string.Equals(Value, Value.Trim(), StringComparison.Ordinal);
+    public void EnsureValid()
+    {
+        if (!IsValid) throw new ArgumentException("FX_RATE_ID_INVALID");
+    }
 
     public override string ToString() => Value;
 }
@@ -29,6 +38,9 @@ public sealed record FxRate
         string source,
         string rateSetVersionId)
     {
+        id.EnsureValid();
+        if (!sourceCurrency.IsValid || !targetCurrency.IsValid)
+            throw new ArgumentException("FX_CURRENCY_INVALID");
         ArgumentException.ThrowIfNullOrWhiteSpace(source);
         ArgumentException.ThrowIfNullOrWhiteSpace(rateSetVersionId);
 
@@ -95,12 +107,19 @@ public sealed class FxRateSetVersion
         string source,
         IReadOnlyList<FxRate> rates)
     {
+        ArgumentNullException.ThrowIfNull(rates);
         ArgumentException.ThrowIfNullOrWhiteSpace(versionId);
         ArgumentException.ThrowIfNullOrWhiteSpace(source);
 
         if (rates.Count == 0)
         {
             throw new ArgumentException("A published RateSet requires at least one rate.", nameof(rates));
+        }
+
+        foreach (var rate in rates)
+        {
+            ArgumentNullException.ThrowIfNull(rate);
+            rate.Id.EnsureValid();
         }
 
         if (rates.Any(rate => !string.Equals(
@@ -124,16 +143,19 @@ public sealed class FxRateSetVersion
     public string Source { get; }
 
     public IReadOnlyList<FxRate> Rates =>
-        rates.Values.OrderBy(rate => rate.Id.Value, StringComparer.Ordinal).ToArray();
+        FrozenList.Copy(rates.Values.OrderBy(rate => rate.Id.Value, StringComparer.Ordinal));
 
-    public FxRate GetRequired(FxRateId id) =>
-        rates.TryGetValue(id, out var rate)
+    public FxRate GetRequired(FxRateId id)
+    {
+        id.EnsureValid();
+        return rates.TryGetValue(id, out var rate)
             ? rate
             : throw new DomainRuleException(
                 new DomainDiagnostic(
                     "FX_RATE_MISSING",
                     "Fx.RateMissing",
                     [new("rateId", DiagnosticArgumentType.Identifier, id.Value)]));
+    }
 }
 
 public sealed record ConversionRoundingAdjustment(
@@ -152,5 +174,47 @@ public sealed record FxRateApplication(
     BusinessDate? RateDate,
     string Source)
 {
+    public IReadOnlyList<DomainDiagnostic> Diagnostics =>
+        OriginalMoney.Amount != 0m && ConvertedOriginalMoney.Amount == 0m
+            ? Array.AsReadOnly(new[]
+              {
+                  new DomainDiagnostic("FX_AMOUNT_BELOW_QUANTUM", "Fx.AmountBelowQuantum",
+                      [
+                          new("originalAmount", DiagnosticArgumentType.Decimal, CanonicalDecimal.Format(OriginalMoney.Amount)),
+                          new("sourceCurrency", DiagnosticArgumentType.CurrencyCode, OriginalMoney.Currency.Value),
+                          new("targetCurrency", DiagnosticArgumentType.CurrencyCode, ConvertedOriginalMoney.Currency.Value)
+                      ])
+              })
+            : Array.Empty<DomainDiagnostic>();
+
     public bool IsIdentity => RateId is null;
+
+    public void EnsureValid()
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(ApplicationId);
+        OriginalMoney.EnsureValid("originalMoney");
+        ConvertedOriginalMoney.EnsureValid("convertedMoney");
+        PrecisionPolicyCompatibility.EnsureSame(OriginalMoney.PrecisionPolicy,
+            ConvertedOriginalMoney.PrecisionPolicy, "original", "converted");
+        ArgumentNullException.ThrowIfNull(ConversionRoundingAdjustment);
+        if (ConversionRoundingAdjustment.CurrencyCode != ConvertedOriginalMoney.Currency ||
+            checked(ConvertedRaw + ConversionRoundingAdjustment.Amount) != ConvertedOriginalMoney.Amount)
+            throw new ArgumentException("FX_BRIDGE_INVALID");
+        ArgumentException.ThrowIfNullOrWhiteSpace(Source);
+        if (IsIdentity)
+        {
+            if (RateSetVersionId is not null || RateDate.HasValue || Quote != 1m ||
+                OriginalMoney != ConvertedOriginalMoney || ConvertedRaw != OriginalMoney.Amount ||
+                ConversionRoundingAdjustment.Amount != 0m)
+                throw new ArgumentException("FX_IDENTITY_INVALID");
+        }
+        else
+        {
+            RateId!.Value.EnsureValid();
+            ArgumentException.ThrowIfNullOrWhiteSpace(RateSetVersionId);
+            if (!RateDate.HasValue || Quote <= 0m || CanonicalDecimal.Scale(Quote) > 18 ||
+                OriginalMoney.Currency == ConvertedOriginalMoney.Currency)
+                throw new ArgumentException("FX_APPLICATION_INVALID");
+        }
+    }
 }

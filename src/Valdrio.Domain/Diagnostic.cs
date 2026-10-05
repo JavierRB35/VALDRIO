@@ -15,10 +15,18 @@ public sealed record DiagnosticArgument(
     DiagnosticArgumentType Type,
     string CanonicalValue);
 
-public sealed record DomainDiagnostic(
-    string Code,
-    string MessageKey,
-    IReadOnlyList<DiagnosticArgument> Arguments);
+public sealed record DomainDiagnostic
+{
+    public DomainDiagnostic(string Code, string MessageKey, IReadOnlyList<DiagnosticArgument> Arguments)
+    {
+        this.Code = Code;
+        this.MessageKey = MessageKey;
+        this.Arguments = FrozenList.Copy(Arguments);
+    }
+    public string Code { get; }
+    public string MessageKey { get; }
+    public IReadOnlyList<DiagnosticArgument> Arguments { get; }
+}
 
 public sealed class DomainRuleException : Exception
 {

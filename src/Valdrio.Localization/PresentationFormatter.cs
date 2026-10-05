@@ -1,4 +1,5 @@
 using System.Globalization;
+using Valdrio.Domain;
 
 namespace Valdrio.Localization;
 
@@ -48,6 +49,19 @@ public sealed class PresentationFormatter
             : $"F{options.DecimalDigits}";
 
         return $"{amount.ToString(pattern, culture)} {currencyCode.ToUpperInvariant()}";
+    }
+
+    public string FormatCurrency(Money money, CurrencyMetadataSnapshot metadata,
+        CultureInfo culture, NumberDisplayOptions options)
+    {
+        money.EnsureValid("displayMoney");
+        metadata.EnsureValid();
+        if (money.Currency != metadata.AlphaCode)
+            throw new ArgumentException("DISPLAY_CURRENCY_MISMATCH");
+        // A normal monetary display retains at least the currency's minor units.
+        // Extra ledger precision is an explicit view; display never changes the ledger.
+        return FormatCurrency(money.Amount, money.Currency.Value, culture,
+            options with { DecimalDigits = Math.Max(options.DecimalDigits, metadata.MinorUnitDigits) });
     }
 
     public string FormatDate(

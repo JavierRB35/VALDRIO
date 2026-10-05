@@ -44,6 +44,7 @@ public sealed record PrecisionPolicy(
 
     public void ValidateMagnitude(decimal value, string fieldName)
     {
+        EnsureValid();
         if (value > MaximumInitialMagnitude || value < -MaximumInitialMagnitude)
         {
             throw Diagnostic(
@@ -58,6 +59,15 @@ public sealed record PrecisionPolicy(
                     DiagnosticArgumentType.Decimal,
                     CanonicalDecimal.Format(MaximumInitialMagnitude)));
         }
+    }
+
+    public void EnsureValid()
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(Version);
+        if (AmountScale is < 0 or > 28 || QuantityScale is < 0 or > 28 ||
+            PercentageScale is < 0 or > 28 || MaximumInitialMagnitude <= 0m ||
+            MaximumNumericCorrection < 0m)
+            throw new ArgumentException("PRECISION_POLICY_INVALID");
     }
 
     public static decimal DecimalQuantum(int scale)

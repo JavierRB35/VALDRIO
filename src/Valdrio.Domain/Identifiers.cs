@@ -1,5 +1,8 @@
+using System.Text.Json.Serialization;
+
 namespace Valdrio.Domain;
 
+[JsonConverter(typeof(EntityIdJsonConverter))]
 public readonly record struct EntityId : IComparable<EntityId>
 {
     public EntityId(Guid value)
@@ -13,6 +16,12 @@ public readonly record struct EntityId : IComparable<EntityId>
     }
 
     public Guid Value { get; }
+    public bool IsValid => Value != Guid.Empty;
+
+    public void EnsureValid()
+    {
+        if (!IsValid) throw new ArgumentException("ID_EMPTY");
+    }
 
     public static EntityId Parse(string text) =>
         new(Guid.ParseExact(text, "D"));
@@ -24,8 +33,19 @@ public readonly record struct EntityId : IComparable<EntityId>
         Value.ToString("D");
 }
 
-public readonly record struct UnitId(EntityId Value) : IComparable<UnitId>
+[JsonConverter(typeof(UnitIdJsonConverter))]
+public readonly record struct UnitId : IComparable<UnitId>
 {
+    public UnitId(EntityId value)
+    {
+        value.EnsureValid();
+        Value = value;
+    }
+
+    public EntityId Value { get; }
+    public bool IsValid => Value.IsValid;
+    public void EnsureValid() => Value.EnsureValid();
+
     public static UnitId Parse(string text) =>
         new(EntityId.Parse(text));
 
@@ -46,6 +66,8 @@ public sealed record UnitDefinition
         int decimalScale,
         bool isDiscrete)
     {
+        id.EnsureValid();
+
         if (string.IsNullOrWhiteSpace(code))
         {
             throw new ArgumentException("UNIT_CODE_REQUIRED", nameof(code));

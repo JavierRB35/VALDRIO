@@ -12,13 +12,22 @@ public sealed record MoneyCurrencyProjectionLine(
     Money ProjectedMoney,
     Money ProjectionAdjustment);
 
-public sealed record MoneyCurrencyProjectionResult(
-    Money SourceLedger,
-    Money Target,
-    Money ProjectionDifference,
-    CurrencyMetadataSnapshot CurrencyMetadata,
-    IReadOnlyList<MoneyCurrencyProjectionLine> Lines)
+public sealed record MoneyCurrencyProjectionResult
 {
+    public MoneyCurrencyProjectionResult(Money SourceLedger, Money Target, Money ProjectionDifference,
+        CurrencyMetadataSnapshot CurrencyMetadata, IReadOnlyList<MoneyCurrencyProjectionLine> Lines)
+    {
+        this.SourceLedger = SourceLedger;
+        this.Target = Target;
+        this.ProjectionDifference = ProjectionDifference;
+        this.CurrencyMetadata = CurrencyMetadata;
+        this.Lines = FrozenList.Copy(Lines);
+    }
+    public Money SourceLedger { get; }
+    public Money Target { get; }
+    public Money ProjectionDifference { get; }
+    public CurrencyMetadataSnapshot CurrencyMetadata { get; }
+    public IReadOnlyList<MoneyCurrencyProjectionLine> Lines { get; }
     public Money ProjectedTotal =>
         Lines.Aggregate(
             new Money(

@@ -10,7 +10,7 @@ public sealed record RevalueStudyItem(
 
 public sealed record RevalueStudyCommand(
     string StudyId,
-    int ExpectedRevision,
+    long ExpectedRevision,
     CurrencyCode FunctionalCurrency,
     FxRateSetVersion RateSet,
     IReadOnlyList<RevalueStudyItem> Items);
@@ -20,16 +20,27 @@ public sealed record RevaluedStudyItem(
     FxRateApplication RateApplication,
     string FxInputHash);
 
-public sealed record RevalueStudyCandidate(
-    string StudyId,
-    int ExpectedRevision,
-    int NewRevision,
-    string RateSetVersionId,
-    IReadOnlyList<RevaluedStudyItem> Items);
+public sealed record RevalueStudyCandidate
+{
+    public RevalueStudyCandidate(string StudyId, long ExpectedRevision, long NewRevision,
+        string RateSetVersionId, IReadOnlyList<RevaluedStudyItem> Items)
+    {
+        this.StudyId = StudyId;
+        this.ExpectedRevision = ExpectedRevision;
+        this.NewRevision = NewRevision;
+        this.RateSetVersionId = RateSetVersionId;
+        this.Items = FrozenList.Copy(Items);
+    }
+    public string StudyId { get; }
+    public long ExpectedRevision { get; }
+    public long NewRevision { get; }
+    public string RateSetVersionId { get; }
+    public IReadOnlyList<RevaluedStudyItem> Items { get; }
+}
 
 public sealed record RevalueStudyCommitResult(
     string StudyId,
-    int Revision,
+    long Revision,
     string RateSetVersionId);
 
 public interface IStudyRevaluationValidator
@@ -61,14 +72,31 @@ public sealed class RevalueStudyService
     public RevalueStudyCommitResult RevalueStudy(
         RevalueStudyCommand command)
     {
-        if (command.Items.Count == 0)
+        ArgumentNullException.ThrowIfNull(command);
+        ArgumentException.ThrowIfNullOrWhiteSpace(command.StudyId);
+        ArgumentNullException.ThrowIfNull(command.Items);
+        ArgumentNullException.ThrowIfNull(command.RateSet);
+        if (command.ExpectedRevision < 0) throw new ArgumentOutOfRangeException(nameof(command));
+        if (!command.FunctionalCurrency.IsValid) throw new ArgumentException("FX_CURRENCY_INVALID");
+        var newRevision = checked(command.ExpectedRevision + 1);
+        var inputItems = command.Items.ToArray();
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var item in inputItems)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            ArgumentException.ThrowIfNullOrWhiteSpace(item.ResourceId);
+            item.OriginalMoney.EnsureValid(item.ResourceId);
+            if (item.SelectedRateId.HasValue) item.SelectedRateId.Value.EnsureValid();
+            if (!ids.Add(item.ResourceId)) throw new ArgumentException("RESOURCE_ID_DUPLICATE");
+        }
+        if (inputItems.Length == 0)
         {
             throw new ArgumentException(
                 "RevalueStudy requires at least one item.",
                 nameof(command));
         }
 
-        var items = command.Items
+        var items = inputItems
             .Select(item =>
             {
                 FxRate? rate = null;
@@ -93,7 +121,7 @@ public sealed class RevalueStudyService
                 }
 
                 var application = converter.Convert(
-                    $"revalue:{command.StudyId}:{item.ResourceId}:{command.ExpectedRevision + 1}",
+                    $"revalue:{command.StudyId}:{item.ResourceId}:{newRevision}",
                     item.OriginalMoney,
                     command.FunctionalCurrency,
                     rate);
@@ -108,7 +136,7 @@ public sealed class RevalueStudyService
         var candidate = new RevalueStudyCandidate(
             command.StudyId,
             command.ExpectedRevision,
-            checked(command.ExpectedRevision + 1),
+            newRevision,
             command.RateSet.VersionId,
             items);
 

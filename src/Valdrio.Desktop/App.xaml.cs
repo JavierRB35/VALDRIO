@@ -202,6 +202,8 @@ public partial class App : System.Windows.Application
                 "T01A keyboard navigation smoke failed.");
         }
 
+        window.RunFxEditorInteractionChecks(directory);
+
         var presets = new[]
         {
             new VisualPreset(

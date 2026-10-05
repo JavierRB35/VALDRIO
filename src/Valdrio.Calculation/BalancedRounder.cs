@@ -175,6 +175,7 @@ public sealed class BalancedRounder
 
         foreach (var line in lines)
         {
+            line.DestinationId.EnsureValid();
             if (!ids.Add(line.DestinationId))
             {
                 throw RoundingDiagnostics.DuplicateDestination(

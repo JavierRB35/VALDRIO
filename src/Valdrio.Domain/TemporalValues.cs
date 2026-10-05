@@ -1,7 +1,9 @@
 using System.Globalization;
+using System.Text.Json.Serialization;
 
 namespace Valdrio.Domain;
 
+[JsonConverter(typeof(BusinessDateJsonConverter))]
 public readonly record struct BusinessDate
 {
     public BusinessDate(DateOnly value)
@@ -31,6 +33,7 @@ public readonly record struct BusinessDate
         ToCanonicalString();
 }
 
+[JsonConverter(typeof(UtcInstantJsonConverter))]
 public readonly record struct UtcInstant
 {
     private static readonly string[] ExplicitOffsetFormats =

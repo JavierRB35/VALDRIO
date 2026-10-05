@@ -60,7 +60,7 @@
   <data name="LabelFxOriginal" xml:space="preserve"><value>Original</value></data>
   <data name="LabelFxOrientation" xml:space="preserve"><value>Quote orientation</value></data>
   <data name="LabelFxQuote" xml:space="preserve"><value>Quote</value></data>
-  <data name="LabelFxRateDate" xml:space="preserve"><value>Rate date</value></data>
+  <data name="LabelFxRateDate" xml:space="preserve"><value>Rate date (ISO yyyy-MM-dd)</value></data>
   <data name="LabelFxRateSource" xml:space="preserve"><value>Rate source</value></data>
   <data name="LabelFxFunctional" xml:space="preserve"><value>Functional amount</value></data>
   <data name="LabelFxRounding" xml:space="preserve"><value>Conversion rounding</value></data>
@@ -92,4 +92,9 @@
   <data name="Time.LocalAmbiguous" xml:space="preserve"><value>Local time {0} in zone {1} is ambiguous. Valid offsets: {2}.</value></data>
   <data name="Time.LocalInvalid" xml:space="preserve"><value>Local time {0} does not exist in zone {1}. Valid offsets: {2}.</value></data>
   <data name="Time.LocalOffsetInvalid" xml:space="preserve"><value>The selected offset for local time {0} in zone {1} is invalid. Valid offsets: {2}.</value></data>
+  <data name="Fx.AmountBelowQuantum" xml:space="preserve"><value>Original {0} {1} converts below the ledger quantum in {2}; its origin and rounding adjustment are preserved.</value></data>
+  <data name="Fx.QuoteTextInvalid" xml:space="preserve"><value>The quote is not valid for the captured number format {0}.</value></data>
+  <data name="Fx.DateInvalid" xml:space="preserve"><value>The rate date must use ISO yyyy-MM-dd.</value></data>
+  <data name="Fx.SourceRequired" xml:space="preserve"><value>Enter the source of the explicit FX rate.</value></data>
+  <data name="FxEditorUnexpected" xml:space="preserve"><value>An unexpected error prevented conversion. See the technical log.</value></data>
 </root>

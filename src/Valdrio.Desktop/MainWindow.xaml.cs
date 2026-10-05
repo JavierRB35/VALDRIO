@@ -72,6 +72,9 @@ public partial class MainWindow : Window
         UpdateLayout();
     }
 
+    private void OnFxQuoteGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) =>
+        viewModel?.BeginFxEdit();
+
     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
         if (viewModel is not null)

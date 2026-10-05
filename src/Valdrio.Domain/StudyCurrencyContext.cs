@@ -6,6 +6,10 @@ public sealed record StudyCurrencyContext
         CurrencyCode functionalCurrencyCode,
         CurrencyMetadataSnapshot currencyMetadataSnapshot)
     {
+        ArgumentNullException.ThrowIfNull(currencyMetadataSnapshot);
+        currencyMetadataSnapshot.EnsureValid();
+        if (!functionalCurrencyCode.IsValid) throw new ArgumentException("CURRENCY_CODE_INVALID");
+
         if (functionalCurrencyCode !=
             currencyMetadataSnapshot.AlphaCode)
         {
