@@ -270,6 +270,12 @@ jobs:
             throw "Visual evidence process failed with code $($process.ExitCode)."
           }
 
+          $fxChecks = Get-Content -LiteralPath (Join-Path $captureDir "fx-editor-interaction.json") -Raw | ConvertFrom-Json
+          if ($fxChecks.Status -ne "passed" -or $fxChecks.PassedChecks.Count -ne 12) {
+            throw "FX WPF interaction evidence is missing or incomplete."
+          }
+          Write-Host "FX WPF button interaction checks passed: $($fxChecks.PassedChecks.Count)."
+
           $files = Get-ChildItem -Path $captureDir -Filter *.png
           if ($files.Count -ne 4) {
             throw "Expected 4 visual evidence PNG files, found $($files.Count)."

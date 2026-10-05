@@ -86,6 +86,7 @@ public sealed class RevalueStudyService
             ArgumentNullException.ThrowIfNull(item);
             ArgumentException.ThrowIfNullOrWhiteSpace(item.ResourceId);
             item.OriginalMoney.EnsureValid(item.ResourceId);
+            if (item.SelectedRateId.HasValue) item.SelectedRateId.Value.EnsureValid();
             if (!ids.Add(item.ResourceId)) throw new ArgumentException("RESOURCE_ID_DUPLICATE");
         }
         if (inputItems.Length == 0)

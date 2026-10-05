@@ -72,7 +72,15 @@ public static class CanonicalSnapshotJson
             case EntityId id: id.EnsureValid(); break;
             case UnitId id: id.EnsureValid(); break;
             case FxRateId id: id.EnsureValid(); break;
-            case FxRateApplication app: app.EnsureValid(); break;
+            case FxRateApplication app:
+                app.EnsureValid();
+                var rate = app.IsIdentity ? null : new FxRate(app.RateId!.Value,
+                    app.OriginalMoney.Currency, app.ConvertedOriginalMoney.Currency, app.Quote,
+                    app.RateDate!.Value, app.Source, app.RateSetVersionId!);
+                var expected = new Valdrio.Calculation.FxConverter().Convert(app.ApplicationId,
+                    app.OriginalMoney, app.ConvertedOriginalMoney.Currency, rate);
+                if (app != expected) throw new ArgumentException("FX_SNAPSHOT_CONVERSION_INVALID");
+                break;
             case CurrencyCode currency when !currency.IsValid:
                 throw new ArgumentException("CURRENCY_CODE_INVALID");
             case CurrencyMetadataSnapshot metadata: metadata.EnsureValid(); break;
