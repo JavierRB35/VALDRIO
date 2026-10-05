@@ -8,6 +8,9 @@
         MinHeight="620"
         MinWidth="760"
         WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap" /></Style>
+    </Window.Resources>
     <ScrollViewer x:Name="RootScrollViewer"
                   VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled">
@@ -305,7 +308,7 @@
             </GroupBox>
 
             <GroupBox x:Name="T02RoundingGroup"
-                      Grid.Row="10"
+                      Grid.Row="14"
                       Header="{Binding RoundingTitle}"
                       Padding="16">
                 <StackPanel>

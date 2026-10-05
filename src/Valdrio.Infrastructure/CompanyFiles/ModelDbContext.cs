@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Valdrio.Infrastructure.CompanyFiles.Migrations;
 
 namespace Valdrio.Infrastructure.CompanyFiles;
-
 // The v1 context and its historical snapshot remain unchanged.
 internal sealed class ModelDbContext(SqliteConnection connection) : DbContext
 {
@@ -19,9 +18,11 @@ internal sealed class ModelDbContext(SqliteConnection connection) : DbContext
     public DbSet<NodeRow> Nodes => Set<NodeRow>();
     public DbSet<PoolRow> Pools => Set<PoolRow>();
     public DbSet<PublicationRow> Publications => Set<PublicationRow>();
+
     protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite(connection);
     protected override void OnModelCreating(ModelBuilder model) => V2Model.Configure(model);
 }
+
 internal sealed class UnitStateRow
 {
     public string CompanyId { get; set; } = "";
@@ -29,6 +30,7 @@ internal sealed class UnitStateRow
     public bool IsActive { get; set; }
     public long Revision { get; set; }
 }
+
 internal sealed class PhysicalCenterRow
 {
     public string Id { get; set; } = "";
@@ -38,7 +40,13 @@ internal sealed class PhysicalCenterRow
     public bool IsActive { get; set; }
     public long Revision { get; set; }
 }
-internal sealed class ModelFamilyRow { public string Id { get; set; } = ""; public string CompanyId { get; set; } = ""; }
+
+internal sealed class ModelFamilyRow
+{
+    public string Id { get; set; } = "";
+    public string CompanyId { get; set; } = "";
+}
+
 internal sealed class ModelVersionRow
 {
     public string Id { get; set; } = "";
@@ -53,6 +61,7 @@ internal sealed class ModelVersionRow
     public string PrecisionPolicyVersion { get; set; } = "";
     public string MethodPolicyJson { get; set; } = "";
 }
+
 internal sealed class NodeRow
 {
     public string Id { get; set; } = "";
@@ -64,6 +73,7 @@ internal sealed class NodeRow
     public string FunctionTagsJson { get; set; } = "";
     public bool IsActive { get; set; }
 }
+
 internal sealed class PoolRow
 {
     public string Id { get; set; } = "";
@@ -75,6 +85,7 @@ internal sealed class PoolRow
     public string CostLayer { get; set; } = "";
     public string CapacityPolicyJson { get; set; } = "";
 }
+
 internal sealed class PublicationRow
 {
     public string ModelVersionId { get; set; } = "";

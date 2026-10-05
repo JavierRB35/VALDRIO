@@ -20,6 +20,15 @@ public partial class App : System.Windows.Application
 
         var captureDirectory =
             ReadOption(e.Args, "--capture-dir=");
+        if (captureDirectory is not null)
+        {
+            DispatcherUnhandledException += (_, args) =>
+            {
+                Directory.CreateDirectory(captureDirectory);
+                File.WriteAllText(Path.Combine(captureDirectory,"company-failure.txt"),args.Exception.ToString());
+                args.Handled=true; Shutdown(2);
+            };
+        }
         var languages = new LanguageCatalog();
         var texts =
             new UiTextCatalog(

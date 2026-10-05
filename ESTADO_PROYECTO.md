@@ -133,11 +133,11 @@ Archivo de empresa SQLite v1, política completa, unidades, auditoría, bloqueo 
 
 RevalueStudy sigue pendiente de integración persistente de estudio; T03 certifica el archivo y la transacción básica. D03 y D04–D07 no cambian.
 
-Evidencia: [T03](docs/evidencias/T03_2026-10-05.md). T04 implementada y en verificación final; no cerrada hasta CI/WPF aprobados.
+Evidencia: [T03](docs/evidencias/T03_2026-10-05.md). T04 cerrada; cierre integrado únicamente con checks aprobados del último commit de PR #13.
 
-## T04 — EN VERIFICACIÓN
+## T04 — CERRADA
 
-Esquema v2, upgrade seguro a copia, centros físicos, modelos con nodos/pools, publicación inmutable y clon editable. Suite inicial 153/153 en Windows y local; 21 verificaciones T04. Corregida coordinación de comandos detectada en WPF; verificar último commit de PR #13 antes de integrar.
+Esquema v2, upgrade seguro a copia, centros físicos, modelos con nodos/pools, publicación inmutable y clon editable. 153/153 tests en Windows y local; 21 verificaciones T04. CI funcional 37327895083 aprobada: 51 checks WPF de modelos (29 habilitación + 22 funcionales), 24 de archivos y 12 FX. Artefactos/SQLite verificados independientemente. El cierre visual añade lista de nodos y guard de secciones sin solapamiento y se integra solo con CI aprobada del último commit.
 
 [Ficha T04](docs/tareas/T04.md) · [ADR-0003](docs/adr/ADR-0003-modelos-y-esquema-v2.md) · [Evidencia T04](docs/evidencias/T04_2026-10-05.md).
 

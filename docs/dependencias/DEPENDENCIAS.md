@@ -9,7 +9,7 @@ Estas versiones se fijan para la base técnica de T01. No implican que toda la f
 | .NET SDK | 10.0.401 | Compilación | Microsoft; .NET 10 LTS |
 | .NET runtime/desktop | 10.0.12 asociado al canal vigente | WPF en Windows | Microsoft |
 | CommunityToolkit.Mvvm | 8.4.2 | ViewModel de shell | MIT |
-| Microsoft.EntityFrameworkCore.Sqlite | 10.0.12 | Archivo de empresa T03, mappings TEXT y migración v1 | MIT |
+| Microsoft.EntityFrameworkCore.Sqlite | 10.0.12 | Archivo de empresa T03/T04, mappings TEXT, contextos congelados v1/v2 y migraciones | MIT |
 | Microsoft.NET.Test.Sdk | 18.10.1 | Ejecución de pruebas | MIT |
 | MSTest.TestFramework | 4.4.1 | Pruebas | MIT |
 | MSTest.TestAdapter | 4.4.1 | Descubrimiento/ejecución de pruebas | MIT |

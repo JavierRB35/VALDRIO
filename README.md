@@ -16,7 +16,7 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 - D04-D07 siguen siendo propuestas económicas.
 - R07 de fuentes canónicas: **CERRADA** mediante PR #9.
 
-- **T04: EN VERIFICACIÓN** — formato v2, centros/modelos con publicación y duplicación; 153 pruebas pasan. Integración pendiente de recorrido WPF final aprobado.
+- **T04: CERRADA** — formato v2, centros/modelos con publicación y duplicación; 153 pruebas y flujo WPF aprobados. Cierre integrado con CI final aprobada.
 
 ## Evidencia
 

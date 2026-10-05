@@ -83,3 +83,7 @@ T02 ha materializado y probado la política técnica versionada `PDEC-1-proposed
 Estado: **VALIDADA TÉCNICAMENTE EN T02** mediante tests/corpus, no promovida a decisión económica D04-D07.
 
 Cambiar estos parámetros en el futuro requiere una nueva versión de política, actualización de referencias/pruebas y evidencia de migración/compatibilidad; no se cambiarán silenciosamente para hacer pasar un caso.
+
+## Decisiones técnicas de T04 — 2026-10-05
+
+[ADR-0003](../adr/ADR-0003-modelos-y-esquema-v2.md) fija familia/UUID y número de versión, evolución segura a copia v2, auditoría por agregado, publicación estructural congelada y reintentos de duplicación. No cambia D01–D12. Método y capacidad quedan explícitamente Pending; seleccionar una clasificación de coste no aprueba D04–D07. El siguiente bloque de estudios tiene su propia revisión y snapshots.

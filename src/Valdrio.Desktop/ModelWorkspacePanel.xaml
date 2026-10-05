@@ -38,6 +38,9 @@
    <TextBlock Text="{Binding HistoricalDefinitions}"/>
    <TextBlock Text="{Binding ValidationText}" Foreground="DarkRed" AutomationProperties.LiveSetting="Polite"/>
    <TextBlock Text="{Binding NodeLabel}" FontWeight="SemiBold"/>
+   <ItemsControl x:Name="NodeSummary" ItemsSource="{Binding Nodes}">
+    <ItemsControl.ItemTemplate><DataTemplate><TextBlock Text="{Binding Label}" TextWrapping="Wrap"/></DataTemplate></ItemsControl.ItemTemplate>
+   </ItemsControl>
    <ComboBox x:Name="NodeBox" ItemsSource="{Binding Nodes}" SelectedItem="{Binding SelectedNode}" TabIndex="40" AutomationProperties.Name="{Binding NodeLabel}"/>
    <Expander x:Name="NodeEditor" Header="{Binding NodeLabel}" IsExpanded="True" IsEnabled="{Binding CanEdit}">
     <StackPanel>

@@ -3,12 +3,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Valdrio.Infrastructure.CompanyFiles.Migrations;
-
 [DbContext(typeof(ModelDbContext))]
 [Migration("202610050002_VersionedModels")]
 internal sealed class VersionedModels : Migration
 {
-    public VersionedModels() { }
+    public VersionedModels()
+    {
+    }
+
     protected override void BuildTargetModel(ModelBuilder model) => V2Model.Configure(model);
     protected override void Up(MigrationBuilder m)
     {
@@ -51,18 +53,29 @@ internal sealed class VersionedModels : Migration
             CREATE TRIGGER PublicationDelete BEFORE DELETE ON ModelPublications BEGIN SELECT RAISE(ABORT,'Publication is immutable'); END;
             CREATE TRIGGER ModelIdentityUpdate BEFORE UPDATE ON ModelVersions WHEN NEW.Id<>OLD.Id OR NEW.CompanyId<>OLD.CompanyId OR NEW.FamilyId<>OLD.FamilyId OR NEW.VersionNumber<>OLD.VersionNumber OR NEW.ParentVersionId IS NOT OLD.ParentVersionId BEGIN SELECT RAISE(ABORT,'Model identity is immutable'); END;
             """);
-        foreach (var table in new[] { "CalculationNodes", "CostPools" })
+        foreach (var table in new[]
+        {
+            "CalculationNodes",
+            "CostPools"
+        }
+
+        )
         {
             m.Sql($"CREATE TRIGGER {table}PublishedInsert BEFORE INSERT ON {table} WHEN EXISTS(SELECT 1 FROM ModelVersions WHERE Id=NEW.ModelVersionId AND Status='Published') BEGIN SELECT RAISE(ABORT,'Published model is immutable'); END;");
             m.Sql($"CREATE TRIGGER {table}PublishedUpdate BEFORE UPDATE ON {table} WHEN EXISTS(SELECT 1 FROM ModelVersions WHERE Id IN(OLD.ModelVersionId,NEW.ModelVersionId) AND Status='Published') BEGIN SELECT RAISE(ABORT,'Published model is immutable'); END;");
             m.Sql($"CREATE TRIGGER {table}PublishedDelete BEFORE DELETE ON {table} WHEN EXISTS(SELECT 1 FROM ModelVersions WHERE Id=OLD.ModelVersionId AND Status='Published') BEGIN SELECT RAISE(ABORT,'Published model is immutable'); END;");
         }
     }
+
     protected override void Down(MigrationBuilder m) => throw new NotSupportedException("Downgrading a company file is not supported. Keep the original v1 file.");
 }
+
 [DbContext(typeof(ModelDbContext))]
 internal sealed class ModelDbContextSnapshot : ModelSnapshot
 {
-    public ModelDbContextSnapshot() { }
+    public ModelDbContextSnapshot()
+    {
+    }
+
     protected override void BuildModel(ModelBuilder model) => V2Model.Configure(model);
 }
