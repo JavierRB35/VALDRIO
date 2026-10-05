@@ -49,7 +49,7 @@ public sealed class FxConversionExampleService
         return new FxConversionExample(
             CanonicalDecimal.Format(application.OriginalMoney.Amount),
             application.OriginalMoney.Currency.Value,
-            $"{application.ConvertedOriginalMoney.Currency.Value} per {application.OriginalMoney.Currency.Value}",
+            $"{application.ConvertedOriginalMoney.Currency.Value}/{application.OriginalMoney.Currency.Value}",
             CanonicalDecimal.Format(application.Quote),
             application.RateDate?.ToCanonicalString() ?? "—",
             application.Source,
