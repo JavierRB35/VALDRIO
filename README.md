@@ -11,7 +11,7 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 - **T02A: CERRADA** — Money/metadatos, fechas canónicas, RateSet/FX y contrato de orquestación de RevalueStudy verificados; integración SQLite pendiente.
 - **T03: CERRADA** — archivo SQLite real, bloqueo OS, unidades/auditoría, copias/restauración y flujo WPF. **132/132 tests**, 24 checks WPF de archivos; cierre integrado con CI final aprobada.
 - **T04: CERRADA** — formato v2, centros/modelos con publicación y duplicación; 153 pruebas y flujo WPF aprobados. Cierre integrado con CI final aprobada.
-- **T05: IMPLEMENTADA, CIERRE PENDIENTE** — v3, estudios/revisiones/snapshots, WPF y runner; última corrección regional compila y 183 pruebas locales pasan. Actions no ha arrancado la verificación final de Windows.
+- **T05: IMPLEMENTADA, CIERRE BLOQUEADO** — v3, estudios/revisiones/snapshots, WPF y runner; 183 pruebas locales y 71 por zona UTC/Madrid aprobadas. La cuenta ha agotado los minutos incluidos de Actions. Pendiente el recorrido final de Windows.
 - **T06: PENDIENTE** — importación contable con perfiles explícitos; directrices y puerta D03.
 - Correcciones A01–A06 completadas: **114/114 tests**, 39/39 referencias, 12 comprobaciones reales del botón FX, publish y WPF smoke.
 - JSON canónico versionado, huellas FX v2, cuantización exacta e inmutabilidad preparados para persistencia.
@@ -76,4 +76,16 @@ dotnet run --project src/Valdrio.Runner -c Release -- --study-snapshot ruta/snap
 
 [Directrices T06](docs/directrices/T06_SIGUIENTE_FASE.md): importación con perfiles/preview/confirmación y puerta D03 antes de una fuente real.
 
-El cierre y la integración de T05 esperan CI del HEAD final: los últimos intentos de Actions terminaron sin pasos ni runner. [Evidencia y continuidad exacta](docs/evidencias/T05_2026-10-05.md). No utilizar los checks de un commit anterior como cierre de esta corrección.
+El cierre y la integración de T05 esperan la verificación de Windows del HEAD final. Los últimos intentos de Actions terminaron sin pasos ni runner; el aviso de GitHub aportado el 5 de octubre confirma que la cuenta ha agotado sus minutos incluidos. [Auditoría de estado y pendientes](docs/evidencias/AUDITORIA_ESTADO_2026-10-05.md). No utilizar los checks de un commit anterior como cierre de esta corrección.
+
+## Verificación Windows independiente
+
+Desde un clon de la rama `t05/studies`, en Windows con Git, .NET SDK 10.0.401, Python 3 y PowerShell 7.3 o posterior, ejecutar
+
+```powershell
+pwsh -File .github/scripts/Verify-Windows.ps1
+```
+
+El script compila, ejecuta pruebas/guards/corpus/runners, publica el binario de desarrollo y recorre los botones WPF. Exige los 73 checks finales de estudios, 53 de modelos, 24 de archivo y 12 FX; comprueba las fechas visibles de cuatro regiones, ocho PNG y ambos manifests. Genera `artifacts/visual/verification.json` con el commit real. Un directorio de evidencia ocupado se conserva; para repetir, indicar `-EvidenceDirectory artifacts/visual-nueva`.
+
+La ejecución Windows y la inspección de los PNG aún están pendientes. Para reanudar CI cuando Actions vuelva a estar disponible, ejecutar el workflow sobre el HEAD final de `t05/studies`, con `verify_timezones=true`. Si el workflow de esa rama aún no aparece en Run workflow porque no está en main, enviar un único commit sin instrucción de omisión para activar el evento del PR. No reintentar mientras persista el bloqueo ni integrar T05 sin su evidencia final.

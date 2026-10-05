@@ -4,23 +4,52 @@ on:
   push:
     branches:
       - main
-      - "t00/**"
-      - "t01/**"
-      - "t01a/**"
-      - "t02/**"
-      - "t02a/**"
-      - "review/**"
-      - "t03/**"
-      - "t04/**"
-      - "t05/**"
+    paths: &validation_paths
+      - 'src/**'
+      - 'tests/**'
+      - 'reference/**'
+      - 'samples/**'
+      - 'specification/**'
+      - '.github/workflows/windows-ci.yml'
+      - '.github/scripts/**'
+      - '*.slnx'
+      - 'Directory.*.props'
+      - 'Directory.*.targets'
+      - 'global.json'
+      - '**/NuGet.Config'
+      - '**/nuget.config'
+      - '**/packages.lock.json'
   pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths: *validation_paths
+  workflow_dispatch:
+    inputs:
+      publish_development:
+        description: 'Upload the Windows development binary'
+        type: boolean
+        default: false
+      verify_timezones:
+        description: 'Verify UTC and Europe/Madrid in separate processes'
+        type: boolean
+        default: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+  DOTNET_NOLOGO: '1'
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+
 jobs:
   build-test-publish:
     runs-on: windows-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -30,10 +59,13 @@ jobs:
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.401
+          check-latest: false
           cache: true
           cache-dependency-path: |
             **/*.csproj
             Directory.Packages.props
+            Directory.Build.props
+            global.json
 
       - name: SDK info
         shell: pwsh
@@ -101,17 +133,18 @@ jobs:
         run: dotnet build Valdrio.slnx --configuration Release --no-restore
 
       - name: Test
+        id: tests
         shell: pwsh
         run: dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=valdrio-tests.trx"
 
       - name: Upload test results
-        if: always()
+        if: failure() && steps.tests.outcome == 'failure'
         uses: actions/upload-artifact@v7
         with:
-          name: valdrio-test-results
+          name: valdrio-test-failure
           path: tests/Valdrio.Tests/TestResults/*.trx
           if-no-files-found: warn
-          retention-days: 30
+          retention-days: 1
 
       - name: Guard diagnostic resource coverage
         shell: pwsh
@@ -260,95 +293,35 @@ jobs:
       - name: Generate WPF visual evidence
         id: visual_evidence
         shell: pwsh
-        run: |
-          $exe = (Resolve-Path "artifacts/desktop/Valdrio.Desktop.exe").Path
-          $sample = (Resolve-Path "samples/t01-smoke.valdrio-dev.json").Path
-          $captureDir = Join-Path $PWD "artifacts/visual"
-          New-Item -ItemType Directory -Force -Path $captureDir | Out-Null
-
-          $process = Start-Process -FilePath $exe -ArgumentList @(
-            $sample,
-            "--capture-dir=$captureDir"
-          ) -PassThru -Wait
-
-          if ($process.ExitCode -ne 0) {
-            $failure = Join-Path $captureDir "company-failure.txt"
-            if (Test-Path -LiteralPath $failure) { Get-Content -LiteralPath $failure | Write-Host }
-            throw "Visual evidence process failed with code $($process.ExitCode)."
-          }
-
-          $fxChecks = Get-Content -LiteralPath (Join-Path $captureDir "fx-editor-interaction.json") -Raw | ConvertFrom-Json
-          if ($fxChecks.Status -ne "passed" -or $fxChecks.PassedChecks.Count -ne 12) {
-            throw "FX WPF interaction evidence is missing or incomplete."
-          }
-          Write-Host "FX WPF button interaction checks passed: $($fxChecks.PassedChecks.Count)."
-
-          $companyChecks = Get-Content -LiteralPath (Join-Path $captureDir "company-file/interaction.json") -Raw | ConvertFrom-Json
-          if ($companyChecks.Status -ne "passed" -or $companyChecks.PassedChecks.Count -lt 20) {
-            throw "Company WPF interaction evidence is missing or incomplete."
-          }
-          Write-Host "Company WPF checks passed: $($companyChecks.PassedChecks.Count)."
-
-          $modelChecks = Get-Content -LiteralPath (Join-Path $captureDir "models/interaction.json") -Raw | ConvertFrom-Json
-          if ($modelChecks.Status -ne "passed" -or $modelChecks.PassedChecks.Count -lt 40) { throw "Model WPF interaction evidence is incomplete." }
-          Write-Host "Model WPF checks passed: $($modelChecks.PassedChecks.Count)."
-          $studyChecks = Get-Content -LiteralPath (Join-Path $captureDir "studies/interaction.json") -Raw | ConvertFrom-Json
-          if ($studyChecks.Status -ne "passed" -or $studyChecks.PassedChecks.Count -lt 45) { throw "Study WPF interaction evidence is incomplete." }
-          Write-Host "Study WPF checks passed: $($studyChecks.PassedChecks.Count)."
-          dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $captureDir "studies/snapshot.json")
-          if ($LASTEXITCODE -ne 0) { throw "Runner could not verify the actual WPF snapshot." }
-
-          $studyImages = Get-ChildItem -LiteralPath (Join-Path $captureDir "studies") -Filter *.png
-          if ($studyImages.Count -ne 8) { throw "Expected 8 study context/history captures, found $($studyImages.Count)." }
-
-          foreach ($group in @("models", "studies")) {
-            $folder = Join-Path $captureDir $group
-            $manifest = Get-Content -LiteralPath (Join-Path $folder "manifest.json") -Raw | ConvertFrom-Json
-            foreach ($entry in $manifest.Files) {
-              $actual = (Get-FileHash -LiteralPath (Join-Path $folder $entry.Name) -Algorithm SHA256).Hash.ToLowerInvariant()
-              if ($actual -ne $entry.Sha256) { throw "Artifact hash mismatch: $group/$($entry.Name)." }
-            }
-            Write-Host "Artifact manifest verified: $group ($($manifest.Files.Count) files)."
-          }
-
-          $files = Get-ChildItem -Path $captureDir -Filter *.png
-          if ($files.Count -ne 4) {
-            throw "Expected 4 visual evidence PNG files, found $($files.Count)."
-          }
-
-          $files | ForEach-Object {
-            Write-Host "Visual evidence: $($_.Name) $($_.Length) bytes"
-          }
+        run: ./.github/scripts/Verify-Windows.ps1 -UseExistingBuild
 
       - name: Upload development artifact
+        if: github.event_name == 'workflow_dispatch' && inputs.publish_development
         uses: actions/upload-artifact@v7
         with:
           name: valdrio-t01-win-x64
           path: artifacts/desktop
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 1
 
       - name: Upload WPF visual evidence
         if: always() && steps.visual_evidence.outcome != 'skipped'
         uses: actions/upload-artifact@v7
         with:
           name: valdrio-wpf-visual-evidence
-          path: artifacts/visual
+          path: |
+            artifacts/visual
+            tests/Valdrio.Tests/TestResults/*.trx
           # Includes the actual FX button interaction checks.
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 1
 
 
   temporal-zone-invariance:
+    needs: build-test-publish
+    if: ${{ success() && (github.event_name != 'workflow_dispatch' || inputs.verify_timezones) }}
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        timezone:
-          - UTC
-          - Europe/Madrid
-    env:
-      TZ: ${{ matrix.timezone }}
+    timeout-minutes: 10
 
     steps:
       - name: Checkout
@@ -358,11 +331,26 @@ jobs:
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.401
+          check-latest: false
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            Directory.Packages.props
+            Directory.Build.props
+            global.json
 
-      - name: R01 parser under process timezone
+      - name: Restore and build the portable tests once
         shell: bash
         run: |
-          echo "TZ=$TZ"
-          dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj \
-            --configuration Release \
-            --filter "FullyQualifiedName~RepositoryReviewRegressionTests.R01_|FullyQualifiedName~T03CompanyFileTests|FullyQualifiedName~T04ModelTests|FullyQualifiedName~T05StudyTests"
+          dotnet restore tests/Valdrio.Tests/Valdrio.Tests.csproj
+          dotnet build tests/Valdrio.Tests/Valdrio.Tests.csproj --configuration Release --no-restore
+
+      - name: R01 and persisted files under both process timezones
+        shell: bash
+        run: |
+          set -euo pipefail
+          for timezone in UTC Europe/Madrid; do
+            TZ="$timezone" dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj \
+              --configuration Release --no-build --no-restore \
+              --filter "FullyQualifiedName~RepositoryReviewRegressionTests.R01_|FullyQualifiedName~T03CompanyFileTests|FullyQualifiedName~T04ModelTests|FullyQualifiedName~T05StudyTests"
+          done

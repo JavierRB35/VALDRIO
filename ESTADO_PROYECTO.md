@@ -22,7 +22,7 @@ El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` está disponible e íntegro.
 - **T02A — CERRADA**: Money/metadatos, tiempo canónico y RateSet/FX completados y verificados.
 - **T03 — CERRADA**: archivo de empresa SQLite, bloqueo, transacciones, copias/restauración y WPF.
 - **T04 — CERRADA**: centros físicos, modelos/nodos/pools, publicación inmutable y duplicación.
-- **T05 — EN VERIFICACIÓN**: estudios/revisiones/snapshots, formato v3, WPF y runner implementados; CI final pendiente.
+- **T05 — IMPLEMENTADA, CIERRE BLOQUEADO**: estudios/revisiones/snapshots, formato v3, WPF y runner implementados; recorrido final Windows pendiente. La cuenta ha agotado los minutos incluidos de Actions.
 - **T06 — PENDIENTE**: importación verificable; requiere muestra D03 antes de confirmar fuente real. [Directrices T06](docs/directrices/T06_SIGUIENTE_FASE.md).
 
 ## T02A.1 — Money y metadatos monetarios
@@ -157,3 +157,15 @@ La evidencia detalla cómo verificar el HEAD final y cerrar. Se conserva una fix
 [Ficha T05](docs/tareas/T05.md) · [ADR-0004](docs/adr/ADR-0004-estudios-y-snapshots-v3.md) · [Evidencia y bloqueo](docs/evidencias/T05_2026-10-05.md).
 
 Siguiente fase: [T06 — sumas y saldos verificables](docs/directrices/T06_SIGUIENTE_FASE.md). Directrices completas con subfases T06.0–T06.6 y F01–F24; ejecutar tras cerrar T05. D03 requiere muestra/ejemplos antes de confirmar una fuente real. D04–D07 siguen como propuestas.
+
+## Reauditoría y continuidad vigente — 2026-10-05
+
+Main permanece en `fe01e10231568332c1df59c0b8df43081a5dac01`, con T04 integrada. El código T05 auditado es `d2e499fcf315a1aee5b0ed8b8d4e90f5a1bee6b9`; sus 245 blobs coinciden con la copia verificada. Única PR abierta, #14, conservada en borrador; ninguna incidencia abierta.
+
+Reejecutadas 183/183 pruebas, 0 fallos/omitidas; 71/71 pruebas de archivos/estudios/R01 en cada proceso UTC y Europe/Madrid. Compilación completa incluida WPF con 0 avisos/errores; 57 fuentes canónicas, 39 referencias racionales, 169 claves ES/EN y los cuatro runners anteriores correctos. Esto no ejecuta WPF en Linux.
+
+El aviso de GitHub aportado por el propietario identifica el agotamiento de minutos de la cuenta, coherente con los fallos de los runs 37345202045/37345211857 antes de arrancar. No se han iniciado nuevos reintentos. La actualización conserva intactos los criterios de cierre y añade `.github/scripts/Verify-Windows.ps1`, compartido con CI, para reproducirlos en Windows.
+
+Pendientes de cierre T05.4/T05.5: ejecutar el verificador sobre el HEAD final, obtener 73 checks de estudios y sus ocho PNG, validar manifests de models/studies y receipt real, inspeccionar fechas regionales/RTL, actualizar evidencia y entonces integrar PR #14 comprobando el SHA. La verificación nueva de Windows aún no se presenta como ejecutada. [Auditoría y pendientes concretos](docs/evidencias/AUDITORIA_ESTADO_2026-10-05.md).
+
+T06 está planificada, no iniciada. A07/I14 conserva integración persistente FX/recursos/particiones/ejecución pendiente para T06A/T07/T12. No se aprueban D03–D12 ni se modifica la especificación por este bloqueo.
