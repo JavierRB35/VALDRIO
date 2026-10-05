@@ -3,8 +3,8 @@
  <UserControl.Resources>
   <Style TargetType="Button"><Setter Property="Margin" Value="0,4,8,4"/><Setter Property="Padding" Value="10,6"/></Style>
   <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,4,8,3"/></Style>
-  <Style TargetType="TextBox"><Setter Property="MinWidth" Value="140"/><Setter Property="Margin" Value="0,3,8,3"/></Style>
-  <Style TargetType="ComboBox"><Setter Property="MinWidth" Value="160"/><Setter Property="Margin" Value="0,3,8,3"/><Setter Property="DisplayMemberPath" Value="Label"/></Style>
+  <Style TargetType="TextBox"><Setter Property="IsEnabled" Value="{Binding InputsEnabled}"/><Setter Property="MinWidth" Value="140"/><Setter Property="Margin" Value="0,3,8,3"/></Style>
+  <Style TargetType="ComboBox"><Setter Property="IsEnabled" Value="{Binding InputsEnabled}"/><Setter Property="MinWidth" Value="160"/><Setter Property="Margin" Value="0,3,8,3"/><Setter Property="DisplayMemberPath" Value="Label"/></Style>
  </UserControl.Resources>
  <GroupBox Header="{Binding Title}" Padding="14">
   <StackPanel>

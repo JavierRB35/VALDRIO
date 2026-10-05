@@ -81,6 +81,7 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
     private bool Ready => !busy && company.IsIdle && company.ActiveModels is not null;
     public bool IsEditable => Current?.Status == ModelStatus.Draft;
     public bool CanEdit => Ready && IsEditable;
+    public bool InputsEnabled => Ready;
     public ModelVersionSnapshot? Current { get; private set; }
     public ObservableCollection<CenterOption> Centers { get; } = [];
     public ObservableCollection<UnitOption> Units { get; } = [];
@@ -455,6 +456,7 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
     {
         RefreshCommands();
         OnPropertyChanged(nameof(CanEdit));
+        OnPropertyChanged(nameof(InputsEnabled));
     }
 
     private void PreferencesChanged(object? sender, PresentationPreferencesChangedEventArgs e) => Reformat();
