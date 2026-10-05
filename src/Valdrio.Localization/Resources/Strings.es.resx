@@ -258,7 +258,7 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Study.NoneSelected" xml:space="preserve"><value>No hay un estudio seleccionado. Crea o carga uno.</value></data>
   <data name="Study.NoSnapshot" xml:space="preserve"><value>No hay una instantánea seleccionada.</value></data>
   <data name="Study.Working" xml:space="preserve"><value>Procesando…</value></data>
-  <data name="Study.Completed" xml:space="preserve"><value>Operación completada.</value></data>
+  <data name="Study.Completed" xml:space="preserve"><value>Operación completada.</value></data>\n  <data name="Study.CommittedRefreshPending" xml:space="preserve"><value>La escritura quedó confirmada, pero falló la actualización de la pantalla. Actualiza de nuevo para reconciliar las listas mostradas.</value></data>
   <data name="Study.RunHistoryEmpty" xml:space="preserve"><value>Ejecuciones: ninguna. El cálculo de costes se entrega en una fase posterior.</value></data>
   <data name="Study.Details" xml:space="preserve"><value>{0} · {1}–{2} · {3} · {4}
 Revisión {5} · {6} · modelo {7}

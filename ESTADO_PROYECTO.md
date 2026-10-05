@@ -22,7 +22,7 @@ El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` está disponible e íntegro.
 - **T02A — CERRADA**: Money/metadatos, tiempo canónico y RateSet/FX completados y verificados.
 - **T03 — CERRADA**: archivo de empresa SQLite, bloqueo, transacciones, copias/restauración y WPF.
 - **T04 — CERRADA**: centros físicos, modelos/nodos/pools, publicación inmutable y duplicación.
-- **T05 — IMPLEMENTADA, CIERRE BLOQUEADO**: estudios/revisiones/snapshots, formato v3, WPF y runner implementados; recorrido final Windows pendiente. La cuenta ha agotado los minutos incluidos de Actions.
+- **T05 — IMPLEMENTADA, CIERRE BLOQUEADO**: estudios/revisiones/snapshots, formato v3, WPF y runner implementados; B01/B02/G02 corregidos en código y con cinco regresiones nuevas preparadas. La nueva corrección aún necesita build/tests y recorrido final Windows. La cuenta ha agotado los minutos incluidos de Actions.
 - **T06 — PENDIENTE**: importación verificable; requiere muestra D03 antes de confirmar fuente real. [Directrices T06](docs/directrices/T06_SIGUIENTE_FASE.md).
 
 ## T02A.1 — Money y metadatos monetarios
@@ -169,3 +169,14 @@ El aviso de GitHub aportado por el propietario identifica el agotamiento de minu
 Pendientes de cierre T05.4/T05.5: ejecutar el verificador sobre el HEAD final, obtener 73 checks de estudios y sus ocho PNG, validar manifests de models/studies y receipt real, inspeccionar fechas regionales/RTL, actualizar evidencia y entonces integrar PR #14 comprobando el SHA. La verificación nueva de Windows aún no se presenta como ejecutada. [Auditoría y pendientes concretos](docs/evidencias/AUDITORIA_ESTADO_2026-10-05.md).
 
 T06 está planificada, no iniciada. A07/I14 conserva integración persistente FX/recursos/particiones/ejecución pendiente para T06A/T07/T12. No se aprueban D03–D12 ni se modifica la especificación por este bloqueo.
+
+
+## Correcciones de reauditoría B01/B02/G02 — IMPLEMENTADAS, VERIFICACIÓN PENDIENTE
+
+Sobre el HEAD T05 posterior a `dacf2dd15ecf438f465ca3658cb06c6659c5fdd3` se incorporó la recuperación tras escritura confirmada, el aislamiento de fallos de persistencia de preferencias y el endurecimiento del verificador Windows.
+
+- **B01:** el resultado confirmado de crear/guardar/cambiar estado/capturar se aplica antes de releer; un fallo posterior de lectura deja visible el dato confirmado y muestra `Study.CommittedRefreshPending`. Un refresco manual reconcilia `Current` cuando no hay edición pendiente y no sobrescribe una edición pendiente.
+- **B02:** IO/acceso denegado al guardar preferencias no corta los demás suscriptores; se registra un aviso traducible y el archivo temporal usa nombre único con limpieza.
+- **G02:** aceptación Windows exige repositorio limpio al inicio/fin, identidad de HEAD estable y manifest de build con SHA-256 de Desktop, Runner, assembly de tests y TRX. `-UseExistingBuild` rechaza binarios sin manifest coincidente.
+
+Se añadieron cinco pruebas de regresión portables. En el entorno que produjo esta corrección no existe SDK .NET, por lo que **no se declara todavía build ni suite ejecutada sobre este nuevo HEAD**. La evidencia 183/183 sigue perteneciendo al código anterior y no cierra estas correcciones.
