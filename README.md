@@ -12,7 +12,7 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 - **T03: CERRADA** — archivo SQLite real, bloqueo OS, unidades/auditoría, copias/restauración y flujo WPF. **132/132 tests**, 24 checks WPF de archivos; cierre integrado con CI final aprobada.
 - **T04: CERRADA** — formato v2, centros/modelos con publicación y duplicación; 153 pruebas y flujo WPF aprobados. Cierre integrado con CI final aprobada.
 - **T05: IMPLEMENTADA, CIERRE BLOQUEADO** — v3, estudios/revisiones/snapshots, WPF y runner; 183 pruebas locales y 71 por zona UTC/Madrid aprobadas. La cuenta ha agotado los minutos incluidos de Actions. Pendiente el recorrido final de Windows.
-- **T06: PENDIENTE** — importación contable con perfiles explícitos; directrices y puerta D03.
+- **T06: EN CURSO, RAMA APILADA** — `t06/import` parte de `dacf2dd1` (T05); contrato de perfil/origen y staging CSV sintético implementados. D03 real, XLSX, `PrepareImport`, persistencia v4, UI y runner siguen pendientes.
 - Correcciones A01–A06 completadas: **114/114 tests**, 39/39 referencias, 12 comprobaciones reales del botón FX, publish y WPF smoke.
 - JSON canónico versionado, huellas FX v2, cuantización exacta e inmutabilidad preparados para persistencia.
 - Fecha de negocio, instante UTC y zona de presentación están separados.
@@ -28,6 +28,7 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 - [ADR de modelos y formato v2](docs/adr/ADR-0003-modelos-y-esquema-v2.md)
 - [Evidencia T05](docs/evidencias/T05_2026-10-05.md)
 - [ADR de estudios y formato v3](docs/adr/ADR-0004-estudios-y-snapshots-v3.md)
+- [Ficha T06](docs/tareas/T06.md) · [Evidencia T06](docs/evidencias/T06_2026-10-05.md) · [ADR-0005](docs/adr/ADR-0005-import-staging-profile-v1.md)
 - [Directrices de la siguiente fase T06](docs/directrices/T06_SIGUIENTE_FASE.md)
 - [Contrato técnico del archivo](docs/adr/ADR-0002-archivo-empresa.md)
 

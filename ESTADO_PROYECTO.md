@@ -168,4 +168,17 @@ El aviso de GitHub aportado por el propietario identifica el agotamiento de minu
 
 Pendientes de cierre T05.4/T05.5: ejecutar el verificador sobre el HEAD final, obtener 73 checks de estudios y sus ocho PNG, validar manifests de models/studies y receipt real, inspeccionar fechas regionales/RTL, actualizar evidencia y entonces integrar PR #14 comprobando el SHA. La verificación nueva de Windows aún no se presenta como ejecutada. [Auditoría y pendientes concretos](docs/evidencias/AUDITORIA_ESTADO_2026-10-05.md).
 
-T06 está planificada, no iniciada. A07/I14 conserva integración persistente FX/recursos/particiones/ejecución pendiente para T06A/T07/T12. No se aprueban D03–D12 ni se modifica la especificación por este bloqueo.
+T06 ha iniciado en una rama apilada sobre el HEAD final auditado de T05, sin modificar `t05/studies` ni `main`. La primera subentrega añade staging de origen y CSV con perfil explícito únicamente para fixtures sintéticas; no confirma recursos ni resuelve D03. A07/I14 conserva integración persistente FX/recursos/particiones/ejecución pendiente para T06A/T07/T12. No se aprueban D03–D12 ni se modifica la especificación por este avance.
+
+
+## T06 — EN CURSO, T06.0/T06.1 inicial
+
+Rama `t06/import`, apilada sobre `dacf2dd15ecf438f465ca3658cb06c6659c5fdd3` porque PR #14 continúa abierta/draft. La rama T05 no se modifica y T06 deberá reubicarse sobre `main` cuando T05 se integre.
+
+Implementado en la primera subentrega: `SourceParseProfileVersion` inmutable/versionado, tipos de celdas/filas/procedencia, `IImportAdapter`, parser decimal explícito sin cultura ambiente y `CsvImportAdapter` con quoted fields, delimitadores citados, comillas escapadas, multiline, BOM y encoding declarado. Se preservan cuenta como texto, Unicode, lexical original y SHA-256 de bytes.
+
+D03 permanece pendiente. El único perfil actual está marcado `SyntheticFixture`; no se afirma soporte de una fuente productiva. No existen todavía XLSX, `PrepareImport` completo, confirmación, formato v4, recursos persistidos, WPF ni runner T06.
+
+La suite T06 contiene diez métodos de prueba, incluida una integración SQLite que comprueba que extracción/inspección básica no cambia revisión/audit/snapshots del estudio. En este entorno no está disponible .NET y la descarga temporal del SDK fue bloqueada, por lo que esas pruebas **no se registran como ejecutadas**. Sí se comprobaron estáticamente cobertura EN/ES de las ocho claves nuevas, ausencia de cultura/tiempo ambiente y patrones prohibidos, delta limitado a T06 y conservación del blob histórico `t05-v3.json`. No se usó GitHub Actions.
+
+[Ficha T06](docs/tareas/T06.md) · [ADR-0005](docs/adr/ADR-0005-import-staging-profile-v1.md) · [Evidencia T06](docs/evidencias/T06_2026-10-05.md).
