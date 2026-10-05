@@ -97,4 +97,47 @@
   <data name="Fx.DateInvalid" xml:space="preserve"><value>The rate date must use ISO yyyy-MM-dd.</value></data>
   <data name="Fx.SourceRequired" xml:space="preserve"><value>Enter the source of the explicit FX rate.</value></data>
   <data name="FxEditorUnexpected" xml:space="preserve"><value>An unexpected error prevented conversion. See the technical log.</value></data>
+  <data name="CompanyTitle" xml:space="preserve"><value>Company file</value></data>
+  <data name="CompanyNameLabel" xml:space="preserve"><value>Name for a new company</value></data>
+  <data name="CompanyCurrencyLabel" xml:space="preserve"><value>Suggested currency (catalog fixture)</value></data>
+  <data name="CompanyCreate" xml:space="preserve"><value>Create file…</value></data>
+  <data name="CompanyOpen" xml:space="preserve"><value>Open…</value></data>
+  <data name="CompanyClose" xml:space="preserve"><value>Close file</value></data>
+  <data name="CompanyBackup" xml:space="preserve"><value>Create backup…</value></data>
+  <data name="CompanyRestore" xml:space="preserve"><value>Restore to new file…</value></data>
+  <data name="CompanyCancel" xml:space="preserve"><value>Cancel operation</value></data>
+  <data name="CompanyUnitLabel" xml:space="preserve"><value>Unit code (text)</value></data>
+  <data name="CompanyDimensionLabel" xml:space="preserve"><value>Dimension code</value></data>
+  <data name="CompanySymbolLabel" xml:space="preserve"><value>Symbol</value></data>
+  <data name="CompanyScaleLabel" xml:space="preserve"><value>Decimal places (0–12)</value></data>
+  <data name="CompanyDiscreteLabel" xml:space="preserve"><value>Discrete unit</value></data>
+  <data name="CompanyAddUnit" xml:space="preserve"><value>Save new unit</value></data>
+  <data name="CompanyNotes" xml:space="preserve"><value>Local file, one editor. Currency suggests a future study; it does not set its currency. Backups and restore use new paths. The currency catalog currently contains EUR, USD, JPY and KWD. Encryption and economic calculation are pending.</value></data>
+  <data name="CompanyNoFile" xml:space="preserve"><value>No company file open.</value></data>
+  <data name="CompanyWorking" xml:space="preserve"><value>Operation in progress. Cancel takes effect before confirmation.</value></data>
+  <data name="CompanyCompleted" xml:space="preserve"><value>Operation completed.</value></data>
+  <data name="CompanyCancelled" xml:space="preserve"><value>Operation cancelled before confirmation. The previous file data remains intact.</value></data>
+  <data name="CompanyDetails" xml:space="preserve"><value>Company: {0}
+ID: {1}
+Suggested currency: {2} · Revision: {3} · Compatible schema: {4}
+Precision: {5} · Created: {6}
+Units: {7}
+File: {8}</value></data>
+  <data name="File.NameRequired" xml:space="preserve"><value>Enter a name for the new company. No file was created.</value></data>
+  <data name="File.CurrencyInvalid" xml:space="preserve"><value>Select a monetary currency from the catalog.</value></data>
+  <data name="File.NotFound" xml:space="preserve"><value>The file does not exist. Select an existing VALDRIO file.</value></data>
+  <data name="File.JournalUnsupported" xml:space="preserve"><value>This file uses an unsupported journal for editing. Restore a validated backup to a new file.</value></data>
+  <data name="File.ForeignFormat" xml:space="preserve"><value>This is not a recognized VALDRIO company file. The active company remains open.</value></data>
+  <data name="File.SchemaUnsupported" xml:space="preserve"><value>This file version is not supported. Use a compatible VALDRIO version; the file was not migrated.</value></data>
+  <data name="File.InvalidData" xml:space="preserve"><value>The file contains invalid or incomplete data. Open a validated backup; no repair was written.</value></data>
+  <data name="File.PathUnsupported" xml:space="preserve"><value>Use a local path without symbolic links. Network or live synchronization is not a collaboration mode.</value></data>
+  <data name="File.AlreadyExists" xml:space="preserve"><value>The destination exists. Select a new path; it was not overwritten.</value></data>
+  <data name="File.DirectoryRequired" xml:space="preserve"><value>Select a destination in an existing local folder.</value></data>
+  <data name="File.InUse" xml:space="preserve"><value>Another editor holds this file. Close that session or select another file. Do not delete the lock file.</value></data>
+  <data name="File.IoFailed" xml:space="preserve"><value>The storage operation failed. Check disk access and free space. Unconfirmed writes were rolled back; the active session is retained.</value></data>
+  <data name="File.ReadOnly" xml:space="preserve"><value>This session is read-only. Open an editing session to save changes.</value></data>
+  <data name="File.UnitInvalid" xml:space="preserve"><value>Provide a valid unit, a unique text code and an actor. No change was confirmed.</value></data>
+  <data name="File.RevisionChanged" xml:space="preserve"><value>The revision changed. Reload the current company before saving.</value></data>
+  <data name="File.DuplicateUnit" xml:space="preserve"><value>The unit ID or code already exists. Use a unique code. No change was confirmed.</value></data>
+  <data name="File.InputInvalid" xml:space="preserve"><value>Review the entered name, currency and unit. No change was confirmed.</value></data>
 </root>

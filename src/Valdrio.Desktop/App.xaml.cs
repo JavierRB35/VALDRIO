@@ -4,12 +4,15 @@ using System.Windows;
 using System.Windows.Threading;
 using Valdrio.Application;
 using Valdrio.Infrastructure;
+using Valdrio.Infrastructure.CompanyFiles;
 using Valdrio.Localization;
 
 namespace Valdrio.Desktop;
 
 public partial class App : System.Windows.Application
 {
+    private CompanyFileViewModel? company;
+    protected override void OnExit(ExitEventArgs e) { company?.Dispose(); base.OnExit(e); }
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -94,12 +97,17 @@ public partial class App : System.Windows.Application
                         StringComparison.Ordinal));
 
         var samplePath =
-            requestedPath
+            (requestedPath?.EndsWith(".valdrio", StringComparison.OrdinalIgnoreCase) == true ? null : requestedPath)
             ?? Path.Combine(
                 AppContext.BaseDirectory,
                 "samples",
                 "t01-smoke.valdrio-dev.json");
 
+        var companyDialogs = captureDirectory is null
+            ? (ICompanyFileDialogs)new CompanyFileDialogs()
+            : new QueuedCompanyFileDialogs();
+        company = new CompanyFileViewModel(new SqliteCompanyFileService(currencyCatalog, new SystemClock()),
+            companyDialogs, currencyCatalog, texts, preferences, formatter);
         var viewModel =
             new MainWindowViewModel(
                 texts,
@@ -109,7 +117,7 @@ public partial class App : System.Windows.Application
                 roundingExampleService,
                 currencyMetadataExampleService,
                 temporalContractExampleService,
-                fxConversionExampleService);
+                fxConversionExampleService) { Company = company };
 
         if (!viewModel.TryLoadDevelopmentSample(
                 samplePath,
@@ -142,19 +150,34 @@ public partial class App : System.Windows.Application
 
         MainWindow = window;
         window.Show();
+        window.Closing += (_, args) => { if (!company.IsIdle) { args.Cancel = true; company.CancelCommand.Execute(null); } };
+
+        if (requestedPath?.EndsWith(".valdrio", StringComparison.OrdinalIgnoreCase) == true)
+            Dispatcher.BeginInvoke(new Action(async () => await company.OpenPath(requestedPath)));
 
         if (captureDirectory is not null)
         {
             Dispatcher.BeginInvoke(
                 DispatcherPriority.ApplicationIdle,
                 new Action(
-                    () =>
+                    async () =>
                     {
+                        try
+                        {
+                        await window.CompanyPanel.RunCompanyInteractionChecks(captureDirectory,
+                            (QueuedCompanyFileDialogs)companyDialogs, viewModel);
                         CaptureVisualEvidence(
                             window,
                             viewModel,
                             captureDirectory);
                         Shutdown(0);
+                        }
+                        catch (Exception ex)
+                        {
+                            Directory.CreateDirectory(captureDirectory);
+                            File.WriteAllText(Path.Combine(captureDirectory, "company-failure.txt"), ex.ToString());
+                            Shutdown(2);
+                        }
                     }));
         }
     }

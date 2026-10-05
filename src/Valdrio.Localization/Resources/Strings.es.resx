@@ -97,4 +97,47 @@
   <data name="Fx.DateInvalid" xml:space="preserve"><value>La fecha del tipo debe usar ISO yyyy-MM-dd.</value></data>
   <data name="Fx.SourceRequired" xml:space="preserve"><value>Indica la fuente del tipo de cambio explícito.</value></data>
   <data name="FxEditorUnexpected" xml:space="preserve"><value>Un error inesperado ha impedido la conversión. Consulta el registro técnico.</value></data>
+  <data name="CompanyTitle" xml:space="preserve"><value>Archivo de empresa</value></data>
+  <data name="CompanyNameLabel" xml:space="preserve"><value>Nombre de la nueva empresa</value></data>
+  <data name="CompanyCurrencyLabel" xml:space="preserve"><value>Moneda sugerida (catálogo de ejemplo)</value></data>
+  <data name="CompanyCreate" xml:space="preserve"><value>Crear archivo…</value></data>
+  <data name="CompanyOpen" xml:space="preserve"><value>Abrir…</value></data>
+  <data name="CompanyClose" xml:space="preserve"><value>Cerrar archivo</value></data>
+  <data name="CompanyBackup" xml:space="preserve"><value>Crear copia…</value></data>
+  <data name="CompanyRestore" xml:space="preserve"><value>Restaurar en archivo nuevo…</value></data>
+  <data name="CompanyCancel" xml:space="preserve"><value>Cancelar operación</value></data>
+  <data name="CompanyUnitLabel" xml:space="preserve"><value>Código de unidad (texto)</value></data>
+  <data name="CompanyDimensionLabel" xml:space="preserve"><value>Código de dimensión</value></data>
+  <data name="CompanySymbolLabel" xml:space="preserve"><value>Símbolo</value></data>
+  <data name="CompanyScaleLabel" xml:space="preserve"><value>Decimales (0–12)</value></data>
+  <data name="CompanyDiscreteLabel" xml:space="preserve"><value>Unidad discreta</value></data>
+  <data name="CompanyAddUnit" xml:space="preserve"><value>Guardar nueva unidad</value></data>
+  <data name="CompanyNotes" xml:space="preserve"><value>Archivo local, un editor. La moneda sugiere la de un futuro estudio; no la fija. Copias y restauración usan rutas nuevas. El catálogo contiene por ahora EUR, USD, JPY y KWD. El cifrado y el cálculo económico están pendientes.</value></data>
+  <data name="CompanyNoFile" xml:space="preserve"><value>No hay archivo de empresa abierto.</value></data>
+  <data name="CompanyWorking" xml:space="preserve"><value>Operación en curso. Cancelar tiene efecto antes de la confirmación.</value></data>
+  <data name="CompanyCompleted" xml:space="preserve"><value>Operación completada.</value></data>
+  <data name="CompanyCancelled" xml:space="preserve"><value>Operación cancelada antes de confirmar. Los datos previos del archivo se conservan.</value></data>
+  <data name="CompanyDetails" xml:space="preserve"><value>Empresa: {0}
+ID: {1}
+Moneda sugerida: {2} · Revisión: {3} · Esquema compatible: {4}
+Precisión: {5} · Creación: {6}
+Unidades: {7}
+Archivo: {8}</value></data>
+  <data name="File.NameRequired" xml:space="preserve"><value>Introduce el nombre de la empresa. No se ha creado ningún archivo.</value></data>
+  <data name="File.CurrencyInvalid" xml:space="preserve"><value>Selecciona una moneda del catálogo.</value></data>
+  <data name="File.NotFound" xml:space="preserve"><value>El archivo no existe. Selecciona un archivo VALDRIO existente.</value></data>
+  <data name="File.JournalUnsupported" xml:space="preserve"><value>El diario de este archivo no admite edición. Restaura una copia validada en un archivo nuevo.</value></data>
+  <data name="File.ForeignFormat" xml:space="preserve"><value>No es un archivo de empresa VALDRIO reconocido. La empresa activa permanece abierta.</value></data>
+  <data name="File.SchemaUnsupported" xml:space="preserve"><value>Esta versión de archivo no está soportada. Usa una versión compatible de VALDRIO; no se ha migrado el archivo.</value></data>
+  <data name="File.InvalidData" xml:space="preserve"><value>El archivo contiene datos inválidos o incompletos. Abre una copia validada; no se ha escrito una reparación.</value></data>
+  <data name="File.PathUnsupported" xml:space="preserve"><value>Usa una ruta local sin enlaces simbólicos. La red o la sincronización activa no son un modo de colaboración.</value></data>
+  <data name="File.AlreadyExists" xml:space="preserve"><value>El destino ya existe. Selecciona una ruta nueva; no se ha sobrescrito.</value></data>
+  <data name="File.DirectoryRequired" xml:space="preserve"><value>Selecciona un destino en una carpeta local existente.</value></data>
+  <data name="File.InUse" xml:space="preserve"><value>Otro editor tiene este archivo abierto. Cierra esa sesión o selecciona otro archivo. No borres el archivo de bloqueo.</value></data>
+  <data name="File.IoFailed" xml:space="preserve"><value>La operación de almacenamiento falló. Comprueba permisos y espacio libre. Las escrituras sin confirmar se han revertido; se conserva la sesión activa.</value></data>
+  <data name="File.ReadOnly" xml:space="preserve"><value>Esta sesión es de lectura. Abre una sesión de edición para guardar cambios.</value></data>
+  <data name="File.UnitInvalid" xml:space="preserve"><value>Introduce una unidad válida, un código de texto único y un actor. No se ha confirmado ningún cambio.</value></data>
+  <data name="File.RevisionChanged" xml:space="preserve"><value>La revisión ha cambiado. Recarga la empresa antes de guardar.</value></data>
+  <data name="File.DuplicateUnit" xml:space="preserve"><value>El ID o código de unidad ya existe. Usa un código único. No se ha confirmado ningún cambio.</value></data>
+  <data name="File.InputInvalid" xml:space="preserve"><value>Revisa el nombre, la moneda y la unidad introducidos. No se ha confirmado ningún cambio.</value></data>
 </root>

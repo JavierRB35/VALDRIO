@@ -81,6 +81,7 @@ public sealed class MainWindowViewModel : ObservableObject
     }
 
     public event EventHandler? PresentationChanged;
+    public CompanyFileViewModel? Company { get; init; }
 
     public IReadOnlyList<string> UiLanguageOptions { get; }
     public IReadOnlyList<string> FormatCultureOptions { get; }
@@ -503,6 +504,7 @@ public sealed class MainWindowViewModel : ObservableObject
 
     private void RefreshPresentation()
     {
+        Company?.RefreshPresentation(pseudoLocalizationEnabled);
         // Dirty edits retain their captured grammar; clean fields follow the selected region.
         if (fxEditSession is null)
         {
