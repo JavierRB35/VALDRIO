@@ -20,6 +20,7 @@ El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` está disponible e íntegro.
 - **T01A — CERRADA**.
 - **T02 — CERRADA**.
 - **T02A — CERRADA**: Money/metadatos, tiempo canónico y RateSet/FX completados y verificados.
+- **T03 — CERRADA**: archivo de empresa SQLite, bloqueo, transacciones, copias/restauración y WPF.
 
 ## T02A.1 — Money y metadatos monetarios
 
@@ -122,12 +123,14 @@ Evidencia: [cierre de auditoría](docs/evidencias/AUDITORIA_CIERRE_2026-10-05.md
 
 ## Continuidad
 
-T02A está cerrada. **T03 está implementada y en verificación de entrega**: 132 pruebas previstas, archivo real y flujo WPF. No declarar cierre hasta comprobar la CI Windows del commit publicado. El siguiente bloque tras ese cierre será T04, maestros/modelos.
+T02A está cerrada. **T03 — CERRADA**: archivo real, 132/132 pruebas Windows, 24 checks de archivos WPF y 12 FX. Evidencia base CI 37313004940 aprobada; el cierre se integra únicamente con checks aprobados del último commit de PR #12. El siguiente bloque tras ese cierre será T04, maestros/modelos.
 
 [Directrices ejecutables para el equipo de desarrollo](docs/directrices/T03_SIGUIENTE_FASE.md), con subentregas, matriz F01–F18 y prompt de inicio.
 
-## T03 — En verificación de entrega
+## T03 — CERRADA
 
 Archivo de empresa SQLite v1, política completa, unidades, auditoría, bloqueo de editor, transacciones y copias/restauración. Panel WPF conectado a los mismos puertos de Application. [Ficha T03](docs/tareas/T03.md) · [ADR-0002](docs/adr/ADR-0002-archivo-empresa.md).
 
 RevalueStudy sigue pendiente de integración persistente de estudio; T03 certifica el archivo y la transacción básica. D03 y D04–D07 no cambian.
+
+Evidencia: [T03](docs/evidencias/T03_2026-10-05.md). Próxima fase: [T04 — modelos versionados y centros](docs/directrices/T04_SIGUIENTE_FASE.md), todavía no implementada.

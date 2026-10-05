@@ -70,7 +70,7 @@ public partial class CompanyFilePanel
         var catalog = new JsonCurrencyCatalog(Path.Combine(AppContext.BaseDirectory, "reference", "currency-catalog-example.json"));
         using (var independent = new SqliteCompanyFileService(catalog, new SystemClock()).Open(path, CompanyFileOpenMode.ReadOnly))
             Check(independent.Read().Id == id && independent.Read().Units.Single().Code == "00123", "independent read of UI-created SQLite");
-        VisualEvidenceCapture.Capture(this, Path.Combine(output, "company-panel.png"));
+        VisualEvidenceCapture.CaptureContent(this, Path.Combine(output, "company-panel.png"));
         await Click(CloseButton);
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = passed }, new JsonSerializerOptions { WriteIndented = true }));
     }
