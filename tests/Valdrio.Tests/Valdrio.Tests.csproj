@@ -32,5 +32,6 @@
     <None Update="Fixtures/t04-upgraded-v2.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t04-v2.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t03-v1.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Fixtures/t06-csv-es-v1.csv" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

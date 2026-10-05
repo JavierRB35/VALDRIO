@@ -274,4 +274,12 @@ Full: {5}</value></data>
   <data name="Study.PendingTitle" xml:space="preserve"><value>Unsaved study context</value></data>
   <data name="Study.PendingBody" xml:space="preserve"><value>Save the changes before continuing? Yes saves, No discards, Cancel keeps editing.</value></data>
   <data name="Study.DatesRequired" xml:space="preserve"><value>Select both period dates from the calendar.</value></data>
+  <data name="Import.AmbiguousFormat" xml:space="preserve"><value>The source format is ambiguous. Select an explicit import profile.</value></data>
+  <data name="Import.InvalidAmount" xml:space="preserve"><value>The source amount is invalid for the selected profile.</value></data>
+  <data name="Import.DuplicateAccount" xml:space="preserve"><value>The account is repeated and the current profile rejects duplicates.</value></data>
+  <data name="Import.SignUnconfirmed" xml:space="preserve"><value>The source sign syntax is not confirmed by the selected profile.</value></data>
+  <data name="Import.AccountRequired" xml:space="preserve"><value>The account field is missing or empty.</value></data>
+  <data name="Import.InvalidCsv" xml:space="preserve"><value>The CSV structure is invalid for the selected profile.</value></data>
+  <data name="Import.EncodingMismatch" xml:space="preserve"><value>The CSV encoding or BOM does not match the selected profile.</value></data>
+  <data name="Import.InvalidProfile" xml:space="preserve"><value>The import profile is incomplete or inconsistent.</value></data>
 </root>
