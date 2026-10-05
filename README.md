@@ -10,13 +10,14 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 - **T02: CERRADA** — decimal canónico, PDEC-1, BalancedRound y proyección conciliada.
 - **T02A: CERRADA** — Money/metadatos, fechas canónicas, RateSet/FX y contrato de orquestación de RevalueStudy verificados; integración SQLite pendiente.
 - **T03: CERRADA** — archivo SQLite real, bloqueo OS, unidades/auditoría, copias/restauración y flujo WPF. **132/132 tests**, 24 checks WPF de archivos; cierre integrado con CI final aprobada.
+- **T04: CERRADA** — formato v2, centros/modelos con publicación y duplicación; 153 pruebas y flujo WPF aprobados. Cierre integrado con CI final aprobada.
+- **T05: PENDIENTE** — estudios, revisiones y snapshots, con directrices detalladas.
 - Correcciones A01–A06 completadas: **114/114 tests**, 39/39 referencias, 12 comprobaciones reales del botón FX, publish y WPF smoke.
 - JSON canónico versionado, huellas FX v2, cuantización exacta e inmutabilidad preparados para persistencia.
 - Fecha de negocio, instante UTC y zona de presentación están separados.
 - D04-D07 siguen siendo propuestas económicas.
 - R07 de fuentes canónicas: **CERRADA** mediante PR #9.
 
-- **T04: CERRADA** — formato v2, centros/modelos con publicación y duplicación; 153 pruebas y flujo WPF aprobados. Cierre integrado con CI final aprobada.
 
 ## Evidencia
 

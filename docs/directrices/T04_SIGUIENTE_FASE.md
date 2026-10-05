@@ -1,6 +1,6 @@
 # VALDRIO — Directrices para T04: modelos versionados y centros
 
-Fecha: 2026-10-05. Destinatarios: equipo y LLM de desarrollo. Estado: hoja de ejecución; T04 todavía no está implementada.
+Fecha: 2026-10-05. Destinatarios: equipo y LLM de desarrollo. Estado: hoja original de ejecución, conservada como referencia. T04 ya está ejecutada; consultar [ficha y evidencia](../tareas/T04.md). La continuidad vigente es [T05](T05_SIGUIENTE_FASE.md).
 
 ## 1. Resultado del siguiente bloque
 
