@@ -16,11 +16,15 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 - D04-D07 siguen siendo propuestas económicas.
 - R07 de fuentes canónicas: **CERRADA** mediante PR #9.
 
+- **T04: EN VERIFICACIÓN** — formato v2, centros/modelos con publicación y duplicación; 153 pruebas pasan. Integración pendiente de recorrido WPF final aprobado.
+
 ## Evidencia
 
 - [Cierre de auditoría A01–A06](docs/evidencias/AUDITORIA_CIERRE_2026-10-05.md)
 - [Evidencia T03](docs/evidencias/T03_2026-10-05.md)
-- [Directrices de la siguiente fase T04](docs/directrices/T04_SIGUIENTE_FASE.md)
+- [Evidencia T04](docs/evidencias/T04_2026-10-05.md)
+- [ADR de modelos y formato v2](docs/adr/ADR-0003-modelos-y-esquema-v2.md)
+- [Directrices de la siguiente fase T05](docs/directrices/T05_SIGUIENTE_FASE.md)
 - [Contrato técnico del archivo](docs/adr/ADR-0002-archivo-empresa.md)
 
 - [Estado del proyecto](ESTADO_PROYECTO.md)
@@ -49,3 +53,9 @@ La internacionalización, precisión decimal, moneda y tiempo permanecen explíc
 En Windows, ejecutar Valdrio.Desktop y usar Crear archivo con nombre, moneda sugerida y una ruta nueva `.valdrio`. Guardar una unidad, crear copia, cerrar y volver a abrir. Restaurar pide un destino nuevo. El archivo activo se conserva si falla otra apertura. No utilizar una carpeta de red o con sincronización activa.
 
 Para reproducir los ejemplos sintéticos de CI: `Valdrio.Desktop.exe --capture-dir=<carpeta-de-evidencia>`; genera `company-file/interaction.json`, ejemplos SQLite y capturas. El artifact Windows es de desarrollo, todavía sin instalador/cifrado comercial ni motor económico completo.
+
+## Probar modelos y centros
+
+Abrir/crear archivo v2. Para un archivo v1, usar **Actualizar v1 a un archivo nuevo**, seleccionando origen y destino sin sobrescribir. Añadir unidades `lot` (batch, discreta) y `h` (time), centros PRENSA/MANT y un modelo con descripción. Aplicar nodos SETUP/lote y PROCESO/hora en PRENSA y un auxiliar MANT/hora. Guardar el borrador, validar y publicar. Duplicar para editar la siguiente versión; consultar el publicado conserva nombres y unidades históricos.
+
+El editor es estructural. Las políticas económicas siguen pendientes y aún no hay estudios ni cálculo completo. Véanse las directrices T05 para continuar.

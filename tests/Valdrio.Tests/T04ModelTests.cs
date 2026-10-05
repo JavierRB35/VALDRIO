@@ -19,6 +19,7 @@ public sealed class T04ModelTests
     private string FileOf(string name = "company.valdrio") => Path.Combine(directory, name);
     private sealed class Clock : IClock { public UtcInstant GetUtcNow() => UtcInstant.ParseIso("2026-10-05T14:00:00.0000000Z"); }
     private SqliteCompanyFileService Service(Action<CompanyWriteCheckpoint>? hook = null) => new(new JsonCurrencyCatalog(Path.Combine(AppContext.BaseDirectory,"reference","currency-catalog-example.json")),new Clock(),hook);
+    private ReferenceV1.SqliteCompanyFileService OriginalService() => new(new JsonCurrencyCatalog(Path.Combine(AppContext.BaseDirectory,"reference","currency-catalog-example.json")),new Clock());
     private ICompanyFileSession New() => Service().Create(new(FileOf(),"Fábrica 工場",new("USD"),PrecisionPolicy.Pdec1Proposed));
     private static EntityId Id() => new(Guid.NewGuid());
     private static UnitDefinition Hour() => new(new(Id()),"h","time","h",12,false);
@@ -62,6 +63,9 @@ public sealed class T04ModelTests
         using var upgraded=Service().Upgrade(source,FileOf("upgraded.valdrio"),"test");
         Assert.AreEqual(2,upgraded.Read().SchemaVersion);Assert.AreEqual(company,upgraded.Read().Id.ToString());Assert.AreEqual("00123",upgraded.Read().Units.Single().Code);
         Assert.AreEqual(PrecisionPolicy.Pdec1Proposed,upgraded.Read().PrecisionPolicy);Assert.AreEqual(sha,Hash(source));
+        var upgradedHash=Hash(upgraded.Path);
+        Assert.AreEqual("FILE_SCHEMA_UNSUPPORTED",Assert.ThrowsExactly<ReferenceV1.CompanyFileException>(()=>OriginalService().Open(upgraded.Path)).Diagnostic.Code);Assert.AreEqual(upgradedHash,Hash(upgraded.Path));
+        using(var originalReader=OriginalService().Open(source))Assert.AreEqual(company,originalReader.Read().Id.ToString());
         Assert.AreEqual(audit,Query(upgraded.Path,"SELECT group_concat(AfterJson) FROM AuditEvents WHERE AggregateType='Company' ORDER BY Revision"));
         Assert.AreEqual("1",Query(upgraded.Path,"SELECT count(*) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
         using var conn=new SqliteConnection("Data Source="+upgraded.Path+";Pooling=False");conn.Open();using var db=new ModelDbContext(conn);Assert.IsFalse(db.Database.HasPendingModelChanges());
@@ -72,7 +76,9 @@ public sealed class T04ModelTests
         Assert.ThrowsExactly<CompanyFileException>(()=>Service(p=>{if(p==CompanyWriteCheckpoint.AfterFirstWrite)throw new IOException("injected");}).Upgrade(source,FileOf("failed.valdrio"),"test"));
         using var cancel=new CancellationTokenSource();
         Assert.ThrowsExactly<OperationCanceledException>(()=>Service(p=>{if(p==CompanyWriteCheckpoint.BeforeCommit)cancel.Cancel();}).Upgrade(source,FileOf("cancel.valdrio"),"test",cancel.Token));
-        Assert.AreEqual(sha,Hash(source));Assert.IsFalse(File.Exists(FileOf("failed.valdrio")));Assert.IsFalse(File.Exists(FileOf("cancel.valdrio")));
+        Assert.AreEqual(sha,Hash(source));
+        using(var originalReader=OriginalService().Open(source))Assert.AreEqual(1,originalReader.Read().SchemaVersion);
+        Assert.IsFalse(File.Exists(FileOf("failed.valdrio")));Assert.IsFalse(File.Exists(FileOf("cancel.valdrio")));
         Assert.AreEqual(0,Directory.GetFiles(directory,"*.creating-*").Length);
         using var c=new SqliteConnection("Data Source="+source+";Mode=ReadOnly;Pooling=False");c.Open();using var legacy=new CompanyDbContext(c);
         Assert.AreEqual(1,legacy.Metadata.Single().SchemaVersion);Assert.IsFalse(legacy.Database.HasPendingModelChanges());Assert.AreEqual(2,legacy.Audit.Count());
@@ -110,6 +116,7 @@ public sealed class T04ModelTests
         Assert.ThrowsExactly<DomainRuleException>(()=>file.Models.CreateDraft(new(Id(),"Alien","test")));
         Assert.ThrowsExactly<SqliteException>(()=>Sql(file.Path,"UPDATE CostPools SET ModelVersionId='"+b.Structure.Id+"' WHERE Id='"+pool.Id+"'"));
         Assert.ThrowsExactly<SqliteException>(()=>Sql(file.Path,"UPDATE CalculationNodes SET CompanyId='"+Id()+"' WHERE Id='"+a.Structure.Nodes[0].Id+"'"));
+        Assert.ThrowsExactly<SqliteException>(()=>Sql(file.Path,"UPDATE ModelVersions SET Status='Published' WHERE Id='"+b.Structure.Id+"'"));
         Assert.AreEqual(3,file.Models.ReadModels().Single(x=>x.Structure.Id==a.Structure.Id).Structure.Pools.Count);
     }
     [TestMethod] public void M08_MissingPoolAndInactiveUnitBlockPublicationWithoutPartialRows()

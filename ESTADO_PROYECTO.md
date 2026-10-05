@@ -133,4 +133,12 @@ Archivo de empresa SQLite v1, política completa, unidades, auditoría, bloqueo 
 
 RevalueStudy sigue pendiente de integración persistente de estudio; T03 certifica el archivo y la transacción básica. D03 y D04–D07 no cambian.
 
-Evidencia: [T03](docs/evidencias/T03_2026-10-05.md). Próxima fase: [T04 — modelos versionados y centros](docs/directrices/T04_SIGUIENTE_FASE.md), todavía no implementada.
+Evidencia: [T03](docs/evidencias/T03_2026-10-05.md). T04 implementada y en verificación final; no cerrada hasta CI/WPF aprobados.
+
+## T04 — EN VERIFICACIÓN
+
+Esquema v2, upgrade seguro a copia, centros físicos, modelos con nodos/pools, publicación inmutable y clon editable. Suite inicial 153/153 en Windows y local; 21 verificaciones T04. Corregida coordinación de comandos detectada en WPF; verificar último commit de PR #13 antes de integrar.
+
+[Ficha T04](docs/tareas/T04.md) · [ADR-0003](docs/adr/ADR-0003-modelos-y-esquema-v2.md) · [Evidencia T04](docs/evidencias/T04_2026-10-05.md).
+
+Siguiente fase: [T05 — estudios, revisiones y snapshots](docs/directrices/T05_SIGUIENTE_FASE.md). No implementada. D03 y propuestas económicas sin cambio; A07 sigue pendiente del agregado persistente Study.

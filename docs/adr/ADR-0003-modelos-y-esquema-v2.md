@@ -10,7 +10,7 @@ El archivo mantiene `VALDRIO-COMPANY` y pasa de esquema 1 a 2. El registro del s
 
 Abrir v1 devuelve FILE_UPGRADE_REQUIRED. `Upgrade` adquiere propiedad del origen y reserva un destino nuevo. La API SQLite BackupDatabase copia a un temporal del destino; se migra exclusivamente esa copia, se actualiza metadata y registra procedencia, se valida y se promueve sin sobrescritura. El origen conserva los mismos bytes, ID, política, unidades y eventos. El handle de destino pasa a la sesión sin liberación intermedia. Cancelación/fallo limpia solo temporales propios; no publica un archivo parcial. Si hay un lock EF no vacío en la copia, se rechaza: no se borra automáticamente un lock ajeno. Las copias/restauraciones de T03 siguen usando la misma API consistente y un destino nuevo.
 
-El fixture `tests/Valdrio.Tests/Fixtures/t03-v1.json` contiene comprimido un archivo sintético realmente producido por WPF T03, commit `17c166e51bd41cb38477c32cc62bdd789d7815ba`, CI 37314810801. La prueba verifica SHA antes de usarlo. No se crea un v1 falso con el mapping v2. Se conserva lectura con el contexto histórico tras los fallos y se comprueba su modelo congelado.
+El fixture `tests/Valdrio.Tests/Fixtures/t03-v1.json` contiene comprimido un archivo sintético realmente producido por WPF T03, commit `17c166e51bd41cb38477c32cc62bdd789d7815ba`, CI 37314810801. La prueba verifica SHA antes de usarlo. No se crea un v1 falso con el mapping v2. El servicio T03 original se conserva como referencia de prueba (solo namespace adaptado): reabre el origen tras los fallos y rechaza v2 sin escribir. También se comprueba su modelo congelado.
 
 ## 2. Ámbitos e identidad de versiones
 

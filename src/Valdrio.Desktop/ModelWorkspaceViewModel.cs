@@ -190,7 +190,7 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
     public async Task CompanyChanged()
     {
         var id=Current?.Structure.CompanyId;
-        if(company.ActiveModels is null){Current=null;dirty=false;centerValues=[];unitValues=[];modelValues=[];draftNodes.Clear();draftPools.Clear();Reformat();return;}
+        if(company.ActiveModels is null){statusKey="Model.NoFile";Current=null;dirty=false;centerValues=[];unitValues=[];modelValues=[];draftNodes.Clear();draftPools.Clear();Reformat();return;}
         await Run(async token=>{await Reload(token);if(boundPath!=company.ActivePath){Current=null;dirty=false;draftNodes.Clear();draftPools.Clear();description="";ResetNode();}boundPath=company.ActivePath;Reformat();});
     }
     private void SetCurrent(ModelVersionSnapshot current)
@@ -224,10 +224,12 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
             default:return false;
         }
     }
-    private async Task CreateCenter()=>await Run(async t=>{var c=await Task.Run(()=>company.ActiveModels!.CreateCenter(new(company.Snapshot!.Id,CenterCode,CenterName,"local-user"),t));await Reload(t);Master=Centers.Single(x=>x.Value.Id==c.Id);});
+    private void SetMaster(EntityId id)
+    {master=Centers.Single(x=>x.Value.Id==id);centerCode=master.Value.Code;centerName=master.Value.Name;Refresh();}
+    private async Task CreateCenter()=>await Run(async t=>{var c=await Task.Run(()=>company.ActiveModels!.CreateCenter(new(company.Snapshot!.Id,CenterCode,CenterName,"local-user"),t));await Reload(t);SetMaster(c.Id);});
     private async Task SaveCenter()=>await ChangeCenter(Master!.Value.IsActive);
     private async Task ToggleCenter()=>await ChangeCenter(!Master!.Value.IsActive);
-    private async Task ChangeCenter(bool active)=>await Run(async t=>{var c=Master!.Value;var result=await Task.Run(()=>company.ActiveModels!.ChangeCenter(new(company.Snapshot!.Id,c.Id,c.Revision,CenterCode,CenterName,active,"local-user"),t));await Reload(t);Master=Centers.Single(x=>x.Value.Id==result.Id);});
+    private async Task ChangeCenter(bool active)=>await Run(async t=>{var c=Master!.Value;var result=await Task.Run(()=>company.ActiveModels!.ChangeCenter(new(company.Snapshot!.Id,c.Id,c.Revision,CenterCode,CenterName,active,"local-user"),t));await Reload(t);SetMaster(result.Id);});
     private async Task ToggleUnit()=>await Run(async t=>{var u=UnitMaster!.Value;await Task.Run(()=>company.ActiveModels!.ChangeUnitState(new(company.Snapshot!.Id,u.Definition.Id,u.Revision,!u.IsActive,"local-user"),t));await Reload(t);});
     private async Task NewDraft(){if(!await CanLeaveAsync())return;await Run(async t=>{var value=await Task.Run(()=>company.ActiveModels!.CreateDraft(new(company.Snapshot!.Id,Description,"local-user"),t));await Reload(t);SetCurrent(value);});}
     private async Task LoadChosen(){var selected=ModelChoice!.Value;if(!await CanLeaveAsync())return;SetCurrent(selected);}
