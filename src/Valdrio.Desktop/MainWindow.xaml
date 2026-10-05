@@ -225,27 +225,30 @@
                         <TextBlock Grid.Row="4" Grid.Column="0"
                                    Margin="0,4,16,0"
                                    Text="{Binding LabelFxQuote}" />
-                        <TextBox Grid.Row="4" Grid.Column="1"
+                        <TextBox x:Name="FxQuoteBox"
+                                 Grid.Row="4" Grid.Column="1"
                                  Text="{Binding FxQuoteText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 TabIndex="6"
+                                 TabIndex="3"
                                  FlowDirection="LeftToRight"
                                  AutomationProperties.Name="{Binding LabelFxQuote}" />
 
                         <TextBlock Grid.Row="6" Grid.Column="0"
                                    Margin="0,4,16,0"
                                    Text="{Binding LabelFxRateDate}" />
-                        <TextBox Grid.Row="6" Grid.Column="1"
+                        <TextBox x:Name="FxRateDateBox"
+                                 Grid.Row="6" Grid.Column="1"
                                  Text="{Binding FxRateDateText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 TabIndex="7"
+                                 TabIndex="4"
                                  FlowDirection="LeftToRight"
                                  AutomationProperties.Name="{Binding LabelFxRateDate}" />
 
                         <TextBlock Grid.Row="8" Grid.Column="0"
                                    Margin="0,4,16,0"
                                    Text="{Binding LabelFxRateSource}" />
-                        <TextBox Grid.Row="8" Grid.Column="1"
+                        <TextBox x:Name="FxRateSourceBox"
+                                 Grid.Row="8" Grid.Column="1"
                                  Text="{Binding FxRateSourceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 TabIndex="8"
+                                 TabIndex="5"
                                  AutomationProperties.Name="{Binding LabelFxRateSource}" />
 
                         <TextBlock Grid.Row="10" Grid.Column="0"
@@ -272,13 +275,14 @@
                                    FontFamily="Consolas"
                                    FlowDirection="LeftToRight" />
 
-                        <Button Grid.Row="16"
+                        <Button x:Name="ApplyFxRateButton"
+                                Grid.Row="16"
                                 Grid.ColumnSpan="2"
                                 HorizontalAlignment="Left"
                                 Padding="14,7"
                                 Content="{Binding ActionApplyFxRate}"
                                 Command="{Binding ApplyFxRateCommand}"
-                                TabIndex="9" />
+                                TabIndex="6" />
                     </Grid>
 
                     <TextBlock Margin="0,10,0,0"
@@ -480,7 +484,7 @@
                              Grid.Row="0"
                              Grid.Column="1"
                              Text="{Binding PendingEditText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             TabIndex="3"
+                             TabIndex="7"
                              FlowDirection="LeftToRight"
                              AutomationProperties.Name="{Binding LabelPendingValue}" />
 
@@ -506,12 +510,12 @@
                                 Padding="14,7"
                                 Content="{Binding ActionStartEdit}"
                                 Command="{Binding StartEditCommand}"
-                                TabIndex="4" />
+                                TabIndex="8" />
                         <Button x:Name="CommitEditButton"
                                 Padding="14,7"
                                 Content="{Binding ActionCommitEdit}"
                                 Command="{Binding CommitEditCommand}"
-                                TabIndex="5" />
+                                TabIndex="9" />
                     </WrapPanel>
                 </Grid>
             </GroupBox>
