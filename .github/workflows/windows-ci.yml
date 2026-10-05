@@ -105,7 +105,7 @@ jobs:
         shell: pwsh
         run: |
           $sourceFiles = Get-ChildItem src/Valdrio.Domain,src/Valdrio.Calculation,src/Valdrio.Application,src/Valdrio.Infrastructure -Recurse -Filter *.cs
-          $pattern = '"(?<key>(?:AllocationKey|Currency|Money|Numeric|Precision|Quantity|Time)\.[A-Za-z0-9]+)"'
+          $pattern = '"(?<key>(?:AllocationKey|Currency|Fx|Money|Numeric|Precision|Quantity|Time)\.[A-Za-z0-9]+)"'
 
           $keys = @(
             foreach ($file in $sourceFiles) {
@@ -165,6 +165,21 @@ jobs:
       - name: Runner T02A temporal contracts
         shell: pwsh
         run: dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --verify-t02a-time
+
+      - name: Runner T02A frozen FX
+        shell: pwsh
+        run: dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --verify-t02a-fx
+
+      - name: Guard Calculation against network APIs
+        shell: pwsh
+        run: |
+          $hits = Get-ChildItem src/Valdrio.Calculation -Recurse -Filter *.cs |
+            Select-String -Pattern 'HttpClient|System\.Net\.|WebRequest|Socket'
+
+          if ($hits) {
+            $hits | ForEach-Object { Write-Host $_.Line }
+            throw "Calculation references network APIs."
+          }
 
       - name: Publish self-contained Windows x64 development artifact
         shell: pwsh
