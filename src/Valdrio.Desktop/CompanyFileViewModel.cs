@@ -109,21 +109,21 @@ public sealed class CompanyFileViewModel : ObservableObject, IDisposable
         catch (Exception ex) { Trace.TraceError("Company command failed: {0}", ex); diagnostic = new("FILE_IO_FAILED", "File.IoFailed", []); }
         finally { busy = false; cancellation = null; Refresh(); }
     }
-    private void Replace(ICompanyFileSession candidate)
+    private async Task ReplaceAsync(ICompanyFileSession candidate)
     {
         CompanyFileSnapshot snapshot;
-        try { snapshot = candidate.Read(); } catch { candidate.Dispose(); throw; }
+        try { snapshot = await Task.Run(() => candidate.Read()); } catch { candidate.Dispose(); throw; }
         var old = active; active = candidate; Snapshot = snapshot; old?.Dispose();
     }
     private async Task Create()
     {
         var path = dialogs.SelectNewFile(); if (path is null) return;
         var name = CompanyName; var selectedCurrency = Currency;
-        await Run(async token => Replace(await Task.Run(() => files.Create(
+        await Run(async token => await ReplaceAsync(await Task.Run(() => files.Create(
             new(path, name, new CurrencyCode(selectedCurrency), PrecisionPolicy.Pdec1Proposed), token))));
     }
     private async Task Open() { var path = dialogs.SelectFile(); if (path is not null) await OpenPath(path); }
-    public Task OpenPath(string path) => Run(async token => Replace(await Task.Run(() => files.Open(path, cancellationToken: token))));
+    public Task OpenPath(string path) => Run(async token => await ReplaceAsync(await Task.Run(() => files.Open(path, cancellationToken: token))));
     private void Close() { active?.Dispose(); active = null; Snapshot = null; diagnostic = null; statusKey = "CompanyNoFile"; Refresh(); }
     private async Task AddUnit()
     {
@@ -142,7 +142,7 @@ public sealed class CompanyFileViewModel : ObservableObject, IDisposable
     {
         var source = dialogs.SelectBackupSource(); if (source is null) return;
         var target = dialogs.SelectRestoreDestination(); if (target is null) return;
-        await Run(async token => Replace(await Task.Run(() => files.Restore(source, target, token))));
+        await Run(async token => await ReplaceAsync(await Task.Run(() => files.Restore(source, target, token))));
     }
     public void Dispose() { preferences.Changed -= PreferencesChanged; cancellation?.Cancel(); active?.Dispose(); active = null; }
 }
