@@ -30,7 +30,7 @@ public sealed class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock cl
                 throw Error("FILE_CURRENCY_INVALID", "File.CurrencyInvalid");
             var target = Normalize(command.Path);
             EnsureNew(target);
-            using var reservation = Acquire(target);
+            using var reservation = Acquire(target, cancellationToken);
             EnsureNew(target);
             var temporary = Temporary(target);
             try
@@ -79,7 +79,7 @@ public sealed class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock cl
             // Never acquire a write connection or migrate an incompatible file.
             Validate(target, cancellationToken);
             if (mode == CompanyFileOpenMode.ReadOnly) return new Session(this, target, mode, null);
-            using var reservation = Acquire(target);
+            using var reservation = Acquire(target, cancellationToken);
             Validate(target, cancellationToken);
             using (var connection = Connect(target, SqliteOpenMode.ReadOnly))
                 if (!string.Equals(Scalar(connection, "PRAGMA journal_mode;"), "delete", StringComparison.OrdinalIgnoreCase))
@@ -91,7 +91,7 @@ public sealed class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock cl
         {
             var target = Normalize(destination);
             EnsureNew(target);
-            using var reservation = Acquire(target);
+            using var reservation = Acquire(target, cancellationToken);
             EnsureNew(target);
             using var original = Open(source, CompanyFileOpenMode.ReadOnly, cancellationToken);
             CopyDatabase(original.Path, target, cancellationToken);
@@ -249,10 +249,21 @@ public sealed class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock cl
         foreach (var suffix in new[] { "", "-wal", "-shm", "-journal" })
             if (File.Exists(temporary + suffix)) File.Delete(temporary + suffix);
     }
-    private static Reservation Acquire(string target)
+    private static Reservation Acquire(string target, CancellationToken token = default)
     {
-        try { return new(new FileStream(target + ".lock", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None)); }
-        catch (IOException ex) { throw Error("FILE_IN_USE", "File.InUse", ex); }
+        var watch = Stopwatch.StartNew();
+        while (true)
+        {
+            token.ThrowIfCancellationRequested();
+            try { return new(new FileStream(target + ".lock", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None)); }
+            catch (IOException ex) when (!OperatingSystem.IsWindows() || (ex.HResult & 0xffff) is 32 or 33)
+            {
+                // Kernel/filter drivers can release handles slightly after process exit is signalled.
+                // A bounded retry never removes the sidecar or admits two live owners.
+                if (watch.ElapsedMilliseconds >= 2000) throw Error("FILE_IN_USE", "File.InUse", ex);
+                if (token.WaitHandle.WaitOne(50)) token.ThrowIfCancellationRequested();
+            }
+        }
     }
     private sealed class Reservation(FileStream stream) : IDisposable
     {
@@ -332,7 +343,7 @@ public sealed class SqliteCompanyFileService(ICurrencyCatalog catalog, IClock cl
             lock (gate)
             {
                 ObjectDisposedException.ThrowIf(disposed, this);
-                Guard(() => { var target = Normalize(destination); using var reservation = Acquire(target);
+                Guard(() => { var target = Normalize(destination); using var reservation = Acquire(target, cancellationToken);
                     owner.CopyDatabase(Path, target, cancellationToken); return true; });
             }
         }

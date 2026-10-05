@@ -52,7 +52,7 @@ public sealed class T03CompanyFileTests
         Assert.AreEqual("2", Scalar(PathOf(), "SELECT count(*) FROM AuditEvents"));
         Assert.AreEqual("delete", Scalar(PathOf(), "PRAGMA journal_mode"));
         Assert.AreEqual(SqliteCompanyFileService.MigrationId, Scalar(PathOf(), "SELECT MigrationId FROM __EFMigrationsHistory"));
-        using var connection = new SqliteConnection("Data Source=" + PathOf()); connection.Open();
+        using var connection = new SqliteConnection("Data Source=" + PathOf() + ";Pooling=False"); connection.Open();
         using var db = new CompanyDbContext(connection);
         Assert.IsFalse(db.Database.HasPendingModelChanges(), "Frozen EF snapshot must match schema v1");
         Console.WriteLine("Native SQLite " + Scalar(PathOf(), "SELECT sqlite_version()"));
@@ -117,13 +117,16 @@ public sealed class T03CompanyFileTests
         using var child = Probe();
         try
         {
+            Console.WriteLine("Probe PID " + child.Id);
             var ready = await child.StandardOutput.ReadLineAsync().WaitAsync(TimeSpan.FromSeconds(20));
             Assert.AreEqual("READY " + id, ready);
             var blocked = Assert.ThrowsExactly<CompanyFileException>(() => Service().Open(PathOf()));
             Assert.AreEqual("FILE_IN_USE", blocked.Diagnostic.Code);
             child.Kill(true); await child.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(10));
+            Console.WriteLine("Killed probe, HasExited=" + child.HasExited);
             using var afterKill = Service().Open(PathOf()); Assert.AreEqual(id, afterKill.Read().Id.ToString());
         }
+        catch (Exception ex) { Console.WriteLine(ex.ToString()); throw; }
         finally { if (!child.HasExited) { child.Kill(true); await child.WaitForExitAsync(); } }
     }
     [TestMethod] public async Task F08_NormalCloseReleasesLockForAnotherProcess()

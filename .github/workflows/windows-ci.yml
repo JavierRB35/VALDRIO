@@ -269,6 +269,8 @@ jobs:
           ) -PassThru -Wait
 
           if ($process.ExitCode -ne 0) {
+            $failure = Join-Path $captureDir "company-failure.txt"
+            if (Test-Path -LiteralPath $failure) { Get-Content -LiteralPath $failure | Write-Host }
             throw "Visual evidence process failed with code $($process.ExitCode)."
           }
 
@@ -302,6 +304,7 @@ jobs:
           retention-days: 14
 
       - name: Upload WPF visual evidence
+        if: always()
         uses: actions/upload-artifact@v7
         with:
           name: valdrio-wpf-visual-evidence
