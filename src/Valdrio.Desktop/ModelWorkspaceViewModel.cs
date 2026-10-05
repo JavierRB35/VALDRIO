@@ -78,7 +78,7 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
     private bool MasterEdited => master is not null && (centerCode != master.Value.Code || centerName != master.Value.Name);
     public bool IsDirty => dirty || nodeFormEdited || MasterEdited;
     public bool IsPublished => Current?.Status == ModelStatus.Published;
-    private bool Ready => !busy && company.IsIdle && company.ActiveModels is not null;
+    private bool Ready => !busy && company.WorkspaceIdle && company.ActiveModels is not null;
     public bool IsEditable => Current?.Status == ModelStatus.Draft;
     public bool CanEdit => Ready && IsEditable;
     public bool InputsEnabled => Ready;

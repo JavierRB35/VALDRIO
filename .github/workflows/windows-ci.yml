@@ -12,6 +12,7 @@ on:
       - "review/**"
       - "t03/**"
       - "t04/**"
+      - "t05/**"
   pull_request:
 
 permissions:
@@ -291,6 +292,11 @@ jobs:
           $modelChecks = Get-Content -LiteralPath (Join-Path $captureDir "models/interaction.json") -Raw | ConvertFrom-Json
           if ($modelChecks.Status -ne "passed" -or $modelChecks.PassedChecks.Count -lt 40) { throw "Model WPF interaction evidence is incomplete." }
           Write-Host "Model WPF checks passed: $($modelChecks.PassedChecks.Count)."
+          $studyChecks = Get-Content -LiteralPath (Join-Path $captureDir "studies/interaction.json") -Raw | ConvertFrom-Json
+          if ($studyChecks.Status -ne "passed" -or $studyChecks.PassedChecks.Count -lt 45) { throw "Study WPF interaction evidence is incomplete." }
+          Write-Host "Study WPF checks passed: $($studyChecks.PassedChecks.Count)."
+          dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $captureDir "studies/snapshot.json")
+          if ($LASTEXITCODE -ne 0) { throw "Runner could not verify the actual WPF snapshot." }
 
           $files = Get-ChildItem -Path $captureDir -Filter *.png
           if ($files.Count -ne 4) {
@@ -346,4 +352,4 @@ jobs:
           echo "TZ=$TZ"
           dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj \
             --configuration Release \
-            --filter "FullyQualifiedName~RepositoryReviewRegressionTests.R01_|FullyQualifiedName~T03CompanyFileTests|FullyQualifiedName~T04ModelTests"
+            --filter "FullyQualifiedName~RepositoryReviewRegressionTests.R01_|FullyQualifiedName~T03CompanyFileTests|FullyQualifiedName~T04ModelTests|FullyQualifiedName~T05StudyTests"

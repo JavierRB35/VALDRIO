@@ -66,6 +66,8 @@ public sealed class CompanyFileViewModel : ObservableObject, IDisposable
     public Func<Task<bool>>? BeforeChangeAsync { get; set; }
     public Func<Task>? AfterChangeAsync { get; set; }
     public IModelWorkspace? ActiveModels => active?.Models;
+    public IStudyWorkspace? ActiveStudies => active?.Studies;
+    public bool WorkspaceIdle => !busy && WorkspaceBusy?.Invoke() != true;
     private bool Available => !busy && WorkspaceBusy?.Invoke() != true;
     public void NotifyWorkspaceStateChanged() => Refresh();
     public CompanyFileSnapshot? Snapshot { get; private set; }

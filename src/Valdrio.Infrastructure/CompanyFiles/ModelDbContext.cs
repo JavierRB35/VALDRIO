@@ -4,7 +4,7 @@ using Valdrio.Infrastructure.CompanyFiles.Migrations;
 
 namespace Valdrio.Infrastructure.CompanyFiles;
 // The v1 context and its historical snapshot remain unchanged.
-internal sealed class ModelDbContext(SqliteConnection connection) : DbContext
+internal class ModelDbContext(SqliteConnection connection) : DbContext
 {
     public DbSet<FileMetadataRow> Metadata => Set<FileMetadataRow>();
     public DbSet<CompanyRow> Companies => Set<CompanyRow>();

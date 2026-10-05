@@ -91,7 +91,7 @@ public sealed class T04ModelTests
         var audit = Query(source, "SELECT group_concat(AfterJson) FROM AuditEvents ORDER BY Revision");
         Assert.AreEqual("FILE_UPGRADE_REQUIRED", Assert.ThrowsExactly<CompanyFileException>(() => Service().Open(source)).Diagnostic.Code);
         using var upgraded = Service().Upgrade(source, FileOf("upgraded.valdrio"), "test");
-        Assert.AreEqual(2, upgraded.Read().SchemaVersion);
+        Assert.AreEqual(SqliteCompanyFileService.SchemaVersion, upgraded.Read().SchemaVersion);
         Assert.AreEqual(company, upgraded.Read().Id.ToString());
         Assert.AreEqual("00123", upgraded.Read().Units.Single().Code);
         Assert.AreEqual(PrecisionPolicy.Pdec1Proposed, upgraded.Read().PrecisionPolicy);
@@ -102,7 +102,7 @@ public sealed class T04ModelTests
         using (var originalReader = OriginalService().Open(source))
             Assert.AreEqual(company, originalReader.Read().Id.ToString());
         Assert.AreEqual(audit, Query(upgraded.Path, "SELECT group_concat(AfterJson) FROM AuditEvents WHERE AggregateType='Company' ORDER BY Revision"));
-        Assert.AreEqual("1", Query(upgraded.Path, "SELECT count(*) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
+        Assert.AreEqual("2", Query(upgraded.Path, "SELECT count(*) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
         using var conn = new SqliteConnection("Data Source=" + upgraded.Path + ";Pooling=False");
         conn.Open();
         using var db = new ModelDbContext(conn);

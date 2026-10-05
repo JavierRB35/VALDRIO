@@ -215,4 +215,63 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.ValidStructure" xml:space="preserve"><value>Structure valid. Economic readiness is still pending.</value></data>
   <data name="Model.PendingTitle" xml:space="preserve"><value>Unsaved model changes</value></data>
   <data name="Model.PendingBody" xml:space="preserve"><value>Save center or model changes before leaving? Yes = Save; No = Discard; Cancel = stay.</value></data>
+  <data name="Study.NameRequired" xml:space="preserve"><value>Enter a study name.</value></data>
+  <data name="Study.PeriodInvalid" xml:space="preserve"><value>The period start must not be after its end.</value></data>
+  <data name="Study.PurposeUnsupported" xml:space="preserve"><value>This edition supports management costing. Inventory valuation needs its own policy.</value></data>
+  <data name="Study.CurrencyInvalid" xml:space="preserve"><value>Select a monetary currency valid for the entire period.</value></data>
+  <data name="Study.ContextInvalid" xml:space="preserve"><value>The study context or state is invalid.</value></data>
+  <data name="Study.ModuleNotAvailable" xml:space="preserve"><value>Resources, applied FX, scenario cloning and calculations are delivered in later phases.</value></data>
+  <data name="Study.RevisionChanged" xml:space="preserve"><value>The study has changed. Reload it before saving or capturing.</value></data>
+  <data name="Study.SnapshotSchemaUnsupported" xml:space="preserve"><value>The study snapshot format is unsupported.</value></data>
+  <data name="Study.SnapshotInvalid" xml:space="preserve"><value>The snapshot is incomplete or inconsistent.</value></data>
+  <data name="Study.NotFound" xml:space="preserve"><value>The study does not belong to the active company file.</value></data>
+  <data name="Study.ModelNotPublished" xml:space="preserve"><value>Select a published model from this company.</value></data>
+  <data name="Study.RequestReused" xml:space="preserve"><value>This request identifier was already used with different data.</value></data>
+  <data name="Study.ClosedDiagnostic" xml:space="preserve"><value>The study is closed. Reopen it to change its context.</value></data>
+  <data name="Study.PolicyPending" xml:space="preserve"><value>Allocation and capacity policies require approval and implementation.</value></data>
+  <data name="Study.ResourcesPending" xml:space="preserve"><value>Accounting resources have not been imported.</value></data>
+  <data name="Study.ActivityPending" xml:space="preserve"><value>Activity and capacity observations have not been supplied.</value></data>
+  <data name="Study.ConsumptionPending" xml:space="preserve"><value>Cost object consumptions have not been supplied.</value></data>
+  <data name="Study.Title" xml:space="preserve"><value>Studies and input snapshots</value></data>
+  <data name="Study.Notes" xml:space="preserve"><value>Management costing. Choose dates from the calendar; their display follows the selected region. Currency is explicit. A snapshot records context; it does not calculate costs.</value></data>
+  <data name="Study.Name" xml:space="preserve"><value>Study name</value></data>
+  <data name="Study.PeriodStart" xml:space="preserve"><value>Period start (inclusive)</value></data>
+  <data name="Study.PeriodEnd" xml:space="preserve"><value>Period end (inclusive)</value></data>
+  <data name="Study.Currency" xml:space="preserve"><value>Functional currency</value></data>
+  <data name="Study.Model" xml:space="preserve"><value>Published model</value></data>
+  <data name="Study.Scenario" xml:space="preserve"><value>Scenario</value></data>
+  <data name="Study.New" xml:space="preserve"><value>New study</value></data>
+  <data name="Study.Create" xml:space="preserve"><value>Create study</value></data>
+  <data name="Study.Save" xml:space="preserve"><value>Save context</value></data>
+  <data name="Study.Load" xml:space="preserve"><value>Load study</value></data>
+  <data name="Study.Refresh" xml:space="preserve"><value>Refresh studies/models</value></data>
+  <data name="Study.Capture" xml:space="preserve"><value>Capture input snapshot</value></data>
+  <data name="Study.Close" xml:space="preserve"><value>Close study</value></data>
+  <data name="Study.Reopen" xml:space="preserve"><value>Reopen study</value></data>
+  <data name="Study.Snapshots" xml:space="preserve"><value>Captured snapshots</value></data>
+  <data name="Study.Open" xml:space="preserve"><value>Open</value></data>
+  <data name="Study.Closed" xml:space="preserve"><value>Closed</value></data>
+  <data name="Study.Actual" xml:space="preserve"><value>Actual</value></data>
+  <data name="Study.Budget" xml:space="preserve"><value>Budget</value></data>
+  <data name="Study.WhatIf" xml:space="preserve"><value>What-if</value></data>
+  <data name="Study.NoFile" xml:space="preserve"><value>Open a company file to work with studies.</value></data>
+  <data name="Study.NoneSelected" xml:space="preserve"><value>No study selected. Create or load one.</value></data>
+  <data name="Study.NoSnapshot" xml:space="preserve"><value>No input snapshot selected.</value></data>
+  <data name="Study.Working" xml:space="preserve"><value>Working…</value></data>
+  <data name="Study.Completed" xml:space="preserve"><value>Operation completed.</value></data>
+  <data name="Study.RunHistoryEmpty" xml:space="preserve"><value>Executions: none. Cost calculation is delivered in a later phase.</value></data>
+  <data name="Study.Details" xml:space="preserve"><value>{0} · {1}–{2} · {3} · {4}
+Revision {5} · {6} · model {7}
+{8}</value></data>
+  <data name="Study.SnapshotDetails" xml:space="preserve"><value>Snapshot {0} · input revision {1} · {2}
+Captured {3}
+Economic: {4}
+Full: {5}</value></data>
+  <data name="Study.CurrentRevision" xml:space="preserve"><value>Current input revision</value></data>
+  <data name="Study.HistoricalRevision" xml:space="preserve"><value>Historical input revision</value></data>
+  <data name="Study.ContextCaptured" xml:space="preserve"><value>Context captured; preparation remains pending.</value></data>
+  <data name="Study.PrepareFirst" xml:space="preserve"><value>Save the study and capture its inputs to see preparation diagnostics.</value></data>
+  <data name="Study.PendingTitle" xml:space="preserve"><value>Unsaved study context</value></data>
+  <data name="Study.PendingBody" xml:space="preserve"><value>Save the changes before continuing? Yes saves, No discards, Cancel keeps editing.</value></data>
+  <data name="Study.DatesRequired" xml:space="preserve"><value>Select both period dates from the calendar.</value></data>
 </root>

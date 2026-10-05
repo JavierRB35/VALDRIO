@@ -5,6 +5,26 @@ using Valdrio.Infrastructure;
 using Valdrio.Infrastructure.CompanyFiles;
 
 // Portable subprocess probe: real session/OS lock, no economic execution.
+if (args.Length == 2 && args[0] == "--study-snapshot")
+{
+    try
+    {
+        var receipt = CanonicalSnapshotJson.Deserialize<StudySnapshotReceipt>(File.ReadAllText(args[1]));
+        receipt.EnsureValid();
+        var preparation = StudyPreparationService.Evaluate(receipt.Input);
+        Console.WriteLine(JsonSerializer.Serialize(new { status = "verified", task = "T05-context-only", receipt.Id,
+            receipt.StudyId, receipt.InputRevision, receipt.PayloadSchema, receipt.EconomicInputHash, receipt.FullSnapshotHash,
+            periodStart = receipt.Input.StudyContext.PeriodStart.ToString(), periodEnd = receipt.Input.StudyContext.PeriodEnd.ToString(),
+            currency = receipt.Input.StudyContext.Currency.FunctionalCurrencyCode.ToString(), preparation.ReadyForCalculation,
+            diagnostics = preparation.Diagnostics.Select(d => d.Code) }));
+        return 0;
+    }
+    catch (Exception ex) when (ex is IOException or JsonException or ArgumentException or Valdrio.Domain.DomainRuleException)
+    {
+        Console.Error.WriteLine("STUDY_SNAPSHOT_INVALID: " + ex.GetType().Name); return 3;
+    }
+}
+
 if (args.Length == 2 && args[0] == "--company-lock-probe")
 {
     try

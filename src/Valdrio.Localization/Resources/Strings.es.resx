@@ -215,4 +215,63 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.ValidStructure" xml:space="preserve"><value>Estructura válida. La preparación económica sigue pendiente.</value></data>
   <data name="Model.PendingTitle" xml:space="preserve"><value>Cambios del modelo sin guardar</value></data>
   <data name="Model.PendingBody" xml:space="preserve"><value>¿Guardar los cambios del centro o modelo antes de salir? Sí = Guardar; No = Descartar; Cancelar = permanecer.</value></data>
+  <data name="Study.NameRequired" xml:space="preserve"><value>Introduce un nombre para el estudio.</value></data>
+  <data name="Study.PeriodInvalid" xml:space="preserve"><value>El inicio del periodo no puede ser posterior al final.</value></data>
+  <data name="Study.PurposeUnsupported" xml:space="preserve"><value>Esta edición admite costes de gestión. La valoración de existencias requiere su propia política.</value></data>
+  <data name="Study.CurrencyInvalid" xml:space="preserve"><value>Selecciona una moneda válida para todo el periodo.</value></data>
+  <data name="Study.ContextInvalid" xml:space="preserve"><value>El contexto o el estado del estudio no es válido.</value></data>
+  <data name="Study.ModuleNotAvailable" xml:space="preserve"><value>Los recursos, el cambio aplicado, la duplicación de escenarios y el cálculo se entregan en fases posteriores.</value></data>
+  <data name="Study.RevisionChanged" xml:space="preserve"><value>El estudio ha cambiado. Vuelve a cargarlo antes de guardar o capturar.</value></data>
+  <data name="Study.SnapshotSchemaUnsupported" xml:space="preserve"><value>El formato de la instantánea no es compatible.</value></data>
+  <data name="Study.SnapshotInvalid" xml:space="preserve"><value>La instantánea está incompleta o es incoherente.</value></data>
+  <data name="Study.NotFound" xml:space="preserve"><value>El estudio no pertenece al archivo de empresa activo.</value></data>
+  <data name="Study.ModelNotPublished" xml:space="preserve"><value>Selecciona un modelo publicado de esta empresa.</value></data>
+  <data name="Study.RequestReused" xml:space="preserve"><value>Este identificador de solicitud ya se usó con otros datos.</value></data>
+  <data name="Study.ClosedDiagnostic" xml:space="preserve"><value>El estudio está cerrado. Ábrelo para cambiar su contexto.</value></data>
+  <data name="Study.PolicyPending" xml:space="preserve"><value>Las políticas de reparto y capacidad requieren aprobación e implementación.</value></data>
+  <data name="Study.ResourcesPending" xml:space="preserve"><value>Los recursos contables aún no se han importado.</value></data>
+  <data name="Study.ActivityPending" xml:space="preserve"><value>Aún faltan las observaciones de actividad y capacidad.</value></data>
+  <data name="Study.ConsumptionPending" xml:space="preserve"><value>Aún faltan los consumos de los objetos de coste.</value></data>
+  <data name="Study.Title" xml:space="preserve"><value>Estudios e instantáneas de datos</value></data>
+  <data name="Study.Notes" xml:space="preserve"><value>Costes de gestión. Selecciona las fechas en el calendario; su formato sigue la región elegida. La moneda es explícita. Una instantánea registra el contexto; no calcula costes.</value></data>
+  <data name="Study.Name" xml:space="preserve"><value>Nombre del estudio</value></data>
+  <data name="Study.PeriodStart" xml:space="preserve"><value>Inicio del periodo (incluido)</value></data>
+  <data name="Study.PeriodEnd" xml:space="preserve"><value>Final del periodo (incluido)</value></data>
+  <data name="Study.Currency" xml:space="preserve"><value>Moneda funcional</value></data>
+  <data name="Study.Model" xml:space="preserve"><value>Modelo publicado</value></data>
+  <data name="Study.Scenario" xml:space="preserve"><value>Escenario</value></data>
+  <data name="Study.New" xml:space="preserve"><value>Nuevo estudio</value></data>
+  <data name="Study.Create" xml:space="preserve"><value>Crear estudio</value></data>
+  <data name="Study.Save" xml:space="preserve"><value>Guardar contexto</value></data>
+  <data name="Study.Load" xml:space="preserve"><value>Cargar estudio</value></data>
+  <data name="Study.Refresh" xml:space="preserve"><value>Actualizar estudios/modelos</value></data>
+  <data name="Study.Capture" xml:space="preserve"><value>Capturar instantánea</value></data>
+  <data name="Study.Close" xml:space="preserve"><value>Cerrar estudio</value></data>
+  <data name="Study.Reopen" xml:space="preserve"><value>Abrir estudio</value></data>
+  <data name="Study.Snapshots" xml:space="preserve"><value>Instantáneas guardadas</value></data>
+  <data name="Study.Open" xml:space="preserve"><value>Abierto</value></data>
+  <data name="Study.Closed" xml:space="preserve"><value>Cerrado</value></data>
+  <data name="Study.Actual" xml:space="preserve"><value>Real</value></data>
+  <data name="Study.Budget" xml:space="preserve"><value>Presupuesto</value></data>
+  <data name="Study.WhatIf" xml:space="preserve"><value>Simulación</value></data>
+  <data name="Study.NoFile" xml:space="preserve"><value>Abre un archivo de empresa para trabajar con estudios.</value></data>
+  <data name="Study.NoneSelected" xml:space="preserve"><value>No hay un estudio seleccionado. Crea o carga uno.</value></data>
+  <data name="Study.NoSnapshot" xml:space="preserve"><value>No hay una instantánea seleccionada.</value></data>
+  <data name="Study.Working" xml:space="preserve"><value>Procesando…</value></data>
+  <data name="Study.Completed" xml:space="preserve"><value>Operación completada.</value></data>
+  <data name="Study.RunHistoryEmpty" xml:space="preserve"><value>Ejecuciones: ninguna. El cálculo de costes se entrega en una fase posterior.</value></data>
+  <data name="Study.Details" xml:space="preserve"><value>{0} · {1}–{2} · {3} · {4}
+Revisión {5} · {6} · modelo {7}
+{8}</value></data>
+  <data name="Study.SnapshotDetails" xml:space="preserve"><value>Instantánea {0} · revisión de entrada {1} · {2}
+Capturada {3}
+Económica: {4}
+Completa: {5}</value></data>
+  <data name="Study.CurrentRevision" xml:space="preserve"><value>Revisión de entrada vigente</value></data>
+  <data name="Study.HistoricalRevision" xml:space="preserve"><value>Revisión de entrada histórica</value></data>
+  <data name="Study.ContextCaptured" xml:space="preserve"><value>Contexto capturado; la preparación sigue pendiente.</value></data>
+  <data name="Study.PrepareFirst" xml:space="preserve"><value>Guarda el estudio y captura sus datos para ver los diagnósticos de preparación.</value></data>
+  <data name="Study.PendingTitle" xml:space="preserve"><value>Contexto del estudio sin guardar</value></data>
+  <data name="Study.PendingBody" xml:space="preserve"><value>¿Guardar los cambios antes de continuar? Sí guarda, No descarta y Cancelar permite seguir editando.</value></data>
+  <data name="Study.DatesRequired" xml:space="preserve"><value>Selecciona las dos fechas del periodo en el calendario.</value></data>
 </root>

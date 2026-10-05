@@ -35,6 +35,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="14" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="14" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0"
@@ -56,7 +58,9 @@
 
             <local:ModelWorkspacePanel x:Name="ModelPanel" Grid.Row="6" DataContext="{Binding Models}" />
 
-            <GroupBox Grid.Row="8"
+            <local:StudyWorkspacePanel x:Name="StudyPanel" Grid.Row="8" DataContext="{Binding Studies}" />
+
+            <GroupBox Grid.Row="10"
                       Header="{Binding PreferencesTitle}"
                       Padding="16">
                 <Grid>
@@ -113,7 +117,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="10"
+            <GroupBox Grid.Row="12"
                       Header="{Binding PreviewTitle}"
                       Padding="16">
                 <Grid>
@@ -189,7 +193,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="12"
+            <GroupBox Grid.Row="14"
                       Header="{Binding FxEditorTitle}"
                       Padding="16">
                 <StackPanel>
@@ -308,7 +312,7 @@
             </GroupBox>
 
             <GroupBox x:Name="T02RoundingGroup"
-                      Grid.Row="14"
+                      Grid.Row="16"
                       Header="{Binding RoundingTitle}"
                       Padding="16">
                 <StackPanel>
@@ -471,7 +475,7 @@
                 </StackPanel>
             </GroupBox>
 
-            <GroupBox Grid.Row="16"
+            <GroupBox Grid.Row="18"
                       Header="{Binding EditTitle}"
                       Padding="16">
                 <Grid>
@@ -533,7 +537,7 @@
                 </Grid>
             </GroupBox>
 
-            <Border Grid.Row="18"
+            <Border Grid.Row="20"
                     BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
                     BorderThickness="1"
                     CornerRadius="6"
