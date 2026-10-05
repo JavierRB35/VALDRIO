@@ -30,6 +30,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="14" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="14" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0"
@@ -49,7 +51,9 @@
 
             <local:CompanyFilePanel x:Name="CompanyPanel" Grid.Row="4" DataContext="{Binding Company}" />
 
-            <GroupBox Grid.Row="6"
+            <local:ModelWorkspacePanel x:Name="ModelPanel" Grid.Row="6" DataContext="{Binding Models}" />
+
+            <GroupBox Grid.Row="8"
                       Header="{Binding PreferencesTitle}"
                       Padding="16">
                 <Grid>
@@ -106,7 +110,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="8"
+            <GroupBox Grid.Row="10"
                       Header="{Binding PreviewTitle}"
                       Padding="16">
                 <Grid>
@@ -182,7 +186,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="10"
+            <GroupBox Grid.Row="12"
                       Header="{Binding FxEditorTitle}"
                       Padding="16">
                 <StackPanel>
@@ -464,7 +468,7 @@
                 </StackPanel>
             </GroupBox>
 
-            <GroupBox Grid.Row="14"
+            <GroupBox Grid.Row="16"
                       Header="{Binding EditTitle}"
                       Padding="16">
                 <Grid>
@@ -526,7 +530,7 @@
                 </Grid>
             </GroupBox>
 
-            <Border Grid.Row="16"
+            <Border Grid.Row="18"
                     BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
                     BorderThickness="1"
                     CornerRadius="6"

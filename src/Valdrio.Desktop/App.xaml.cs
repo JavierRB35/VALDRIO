@@ -12,7 +12,8 @@ namespace Valdrio.Desktop;
 public partial class App : System.Windows.Application
 {
     private CompanyFileViewModel? company;
-    protected override void OnExit(ExitEventArgs e) { company?.Dispose(); base.OnExit(e); }
+    private ModelWorkspaceViewModel? models;
+    protected override void OnExit(ExitEventArgs e) { models?.Dispose(); company?.Dispose(); base.OnExit(e); }
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -108,6 +109,8 @@ public partial class App : System.Windows.Application
             : new QueuedCompanyFileDialogs();
         company = new CompanyFileViewModel(new SqliteCompanyFileService(currencyCatalog, new SystemClock()),
             companyDialogs, currencyCatalog, texts, preferences, formatter);
+        var modelDialogs = captureDirectory is null ? (IModelEditorDialogs)new ModelEditorDialogs() : new QueuedModelEditorDialogs();
+        models = new ModelWorkspaceViewModel(company, texts, preferences, modelDialogs, formatter);
         var viewModel =
             new MainWindowViewModel(
                 texts,
@@ -117,7 +120,7 @@ public partial class App : System.Windows.Application
                 roundingExampleService,
                 currencyMetadataExampleService,
                 temporalContractExampleService,
-                fxConversionExampleService) { Company = company };
+                fxConversionExampleService) { Company = company, Models = models };
 
         if (!viewModel.TryLoadDevelopmentSample(
                 samplePath,
@@ -150,7 +153,12 @@ public partial class App : System.Windows.Application
 
         MainWindow = window;
         window.Show();
-        window.Closing += (_, args) => { if (!company.IsIdle) { args.Cancel = true; company.CancelCommand.Execute(null); } };
+        bool allowClose = false;
+        window.Closing += async (_, args) =>
+        {
+            if (!company.IsIdle || models.IsBusy) { args.Cancel = true; company.CancelCommand.Execute(null); models.CancelCommand.Execute(null); return; }
+            if (!allowClose && models.IsDirty) { args.Cancel = true; if (await models.CanLeaveAsync()) { allowClose = true; window.Close(); } }
+        };
 
         if (requestedPath?.EndsWith(".valdrio", StringComparison.OrdinalIgnoreCase) == true)
             Dispatcher.BeginInvoke(new Action(async () => await company.OpenPath(requestedPath)));
@@ -166,6 +174,8 @@ public partial class App : System.Windows.Application
                         {
                         await window.CompanyPanel.RunCompanyInteractionChecks(captureDirectory,
                             (QueuedCompanyFileDialogs)companyDialogs, viewModel);
+                        await window.ModelPanel.RunModelInteractionChecks(captureDirectory,
+                            (QueuedCompanyFileDialogs)companyDialogs, (QueuedModelEditorDialogs)modelDialogs, viewModel);
                         CaptureVisualEvidence(
                             window,
                             viewModel,

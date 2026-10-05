@@ -72,6 +72,13 @@ public partial class MainWindow : Window
         UpdateLayout();
     }
 
+    internal void ScrollToElement(FrameworkElement element)
+    {
+        Keyboard.ClearFocus(); UpdateLayout();
+        var offset=RootScrollViewer.VerticalOffset + element.TranslatePoint(new Point(0,0),RootScrollViewer).Y;
+        RootScrollViewer.ScrollToVerticalOffset(offset); UpdateLayout();
+    }
+
     private void OnFxQuoteGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) =>
         viewModel?.BeginFxEdit();
 

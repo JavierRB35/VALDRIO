@@ -140,4 +140,79 @@ File: {8}</value></data>
   <data name="File.RevisionChanged" xml:space="preserve"><value>The revision changed. Reload the current company before saving.</value></data>
   <data name="File.DuplicateUnit" xml:space="preserve"><value>The unit ID or code already exists. Use a unique code. No change was confirmed.</value></data>
   <data name="File.InputInvalid" xml:space="preserve"><value>Review the entered name, currency and unit. No change was confirmed.</value></data>
+  <data name="CompanyUpgrade" xml:space="preserve"><value>Upgrade v1 to a new file</value></data>
+  <data name="File.UpgradeRequired" xml:space="preserve"><value>This v1 file needs an explicit upgrade to a new file. Select Upgrade; keep the original.</value></data>
+  <data name="File.UpgradeNotRequired" xml:space="preserve"><value>The file is already current; no upgrade was performed.</value></data>
+  <data name="File.MigrationLocked" xml:space="preserve"><value>The source contains an active or stale migration lock. Keep it and inspect its origin before recovery.</value></data>
+  <data name="Model.PolicyInvalid" xml:space="preserve"><value>A policy reference is incomplete or invalid.</value></data>
+  <data name="Model.PolicyNotImplemented" xml:space="preserve"><value>Economic policies cannot be accepted in this structural editor.</value></data>
+  <data name="Model.CenterInvalid" xml:space="preserve"><value>Center code and name are required; revision must be valid.</value></data>
+  <data name="Model.NodeInvalid" xml:space="preserve"><value>The node needs a code, Principal or Auxiliary role, and unique nonempty function tags.</value></data>
+  <data name="Model.PoolInvalid" xml:space="preserve"><value>The pool needs a valid unit, classification and pending capacity policy.</value></data>
+  <data name="Model.StructureInvalid" xml:space="preserve"><value>The model identity, description or policy reference is incomplete.</value></data>
+  <data name="Model.ScopeInvalid" xml:space="preserve"><value>The reference belongs to another company or model version.</value></data>
+  <data name="Model.Duplicate" xml:space="preserve"><value>A code, identifier or pool for this node already exists in this scope.</value></data>
+  <data name="Model.PrincipalRequired" xml:space="preserve"><value>Add at least one active principal node before publication.</value></data>
+  <data name="Model.CenterUnavailable" xml:space="preserve"><value>The physical center is missing, belongs elsewhere or is inactive.</value></data>
+  <data name="Model.PoolRequired" xml:space="preserve"><value>Each active node needs exactly one homogeneous pool.</value></data>
+  <data name="Model.DriverUnavailable" xml:space="preserve"><value>The driver unit is missing, belongs elsewhere or is inactive.</value></data>
+  <data name="Model.SnapshotInvalid" xml:space="preserve"><value>The frozen structure does not contain its required definitions.</value></data>
+  <data name="Model.RevisionChanged" xml:space="preserve"><value>The data changed since it was read. Reload before saving.</value></data>
+  <data name="Model.PublishedImmutable" xml:space="preserve"><value>Published models are immutable. Duplicate to edit a new draft.</value></data>
+  <data name="Model.NotFound" xml:space="preserve"><value>The model was not found in this company.</value></data>
+  <data name="Model.ActorRequired" xml:space="preserve"><value>A change actor is required.</value></data>
+  <data name="Model.ParentNotPublished" xml:space="preserve"><value>Only a published model can be duplicated.</value></data>
+  <data name="Model.RequestConflict" xml:space="preserve"><value>This duplicate request identifier was already used for a different operation.</value></data>
+  <data name="Model.InputInvalid" xml:space="preserve"><value>Complete the code, center, role and driver unit. Check the highlighted operation.</value></data>
+  <data name="Model.NoFile" xml:space="preserve"><value>Open a company file to configure centers and models.</value></data>
+  <data name="Model.NoneSelected" xml:space="preserve"><value>No model loaded. Select one and press Load, or enter a description and create a draft.</value></data>
+  <data name="Model.Details" xml:space="preserve"><value>{0} · {1} · version {2} · revision {3}
+Parent: {4} · published: {5}
+Structural SHA-256: {6} · {7}</value></data>
+  <data name="Model.Draft" xml:space="preserve"><value>Draft</value></data>
+  <data name="Model.Published" xml:space="preserve"><value>Published structure</value></data>
+  <data name="Model.Unsaved" xml:space="preserve"><value>Unsaved changes</value></data>
+  <data name="Model.Saved" xml:space="preserve"><value>Saved</value></data>
+  <data name="Model.Title" xml:space="preserve"><value>Centers and versioned models</value></data>
+  <data name="Model.Notes" xml:space="preserve"><value>Configure a physical center, nodes and one homogeneous pool per node. Function and role are independent. Apply a node to the draft, then Save. Publication freezes structure only; economic policies remain pending and calculation is unavailable.</value></data>
+  <data name="Model.Centers" xml:space="preserve"><value>Physical center masters</value></data>
+  <data name="Model.CenterCode" xml:space="preserve"><value>Physical center code (text)</value></data>
+  <data name="Model.CenterName" xml:space="preserve"><value>Physical center name</value></data>
+  <data name="Model.CreateCenter" xml:space="preserve"><value>Create center</value></data>
+  <data name="Model.SaveCenter" xml:space="preserve"><value>Save center changes</value></data>
+  <data name="Model.ToggleCenter" xml:space="preserve"><value>Activate / deactivate center</value></data>
+  <data name="Model.Models" xml:space="preserve"><value>Model versions</value></data>
+  <data name="Model.Description" xml:space="preserve"><value>Model description / new draft name</value></data>
+  <data name="Model.NewDraft" xml:space="preserve"><value>Create new model</value></data>
+  <data name="Model.Load" xml:space="preserve"><value>Load selection</value></data>
+  <data name="Model.Save" xml:space="preserve"><value>Save draft</value></data>
+  <data name="Model.Validate" xml:space="preserve"><value>Validate structure</value></data>
+  <data name="Model.Publish" xml:space="preserve"><value>Publish structure</value></data>
+  <data name="Model.Clone" xml:space="preserve"><value>Duplicate as draft</value></data>
+  <data name="Model.Discard" xml:space="preserve"><value>Discard draft changes</value></data>
+  <data name="Model.Nodes" xml:space="preserve"><value>Nodes and pools</value></data>
+  <data name="Model.NodeCode" xml:space="preserve"><value>Node code</value></data>
+  <data name="Model.Physical" xml:space="preserve"><value>Physical center</value></data>
+  <data name="Model.Role" xml:space="preserve"><value>Allocation role</value></data>
+  <data name="Model.FunctionTags" xml:space="preserve"><value>Functions (independent tags, separated by commas)</value></data>
+  <data name="Model.DriverUnit" xml:space="preserve"><value>Driver units</value></data>
+  <data name="Model.CostLayer" xml:space="preserve"><value>Cost classification (no calculation policy)</value></data>
+  <data name="Model.PoolDescription" xml:space="preserve"><value>Pool description</value></data>
+  <data name="Model.ApplyNode" xml:space="preserve"><value>Apply node to draft</value></data>
+  <data name="Model.NewNode" xml:space="preserve"><value>Clear form / new node</value></data>
+  <data name="Model.RemoveNode" xml:space="preserve"><value>Remove selected node</value></data>
+  <data name="Model.ToggleUnit" xml:space="preserve"><value>Activate / deactivate unit</value></data>
+  <data name="Model.Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Model.Inactive" xml:space="preserve"><value>Inactive</value></data>
+  <data name="Model.Principal" xml:space="preserve"><value>Principal</value></data>
+  <data name="Model.Auxiliary" xml:space="preserve"><value>Auxiliary</value></data>
+  <data name="Model.LayerUnclassified" xml:space="preserve"><value>Unclassified</value></data>
+  <data name="Model.LayerFixed" xml:space="preserve"><value>Fixed</value></data>
+  <data name="Model.LayerVariable" xml:space="preserve"><value>Variable</value></data>
+  <data name="Model.LayerMixed" xml:space="preserve"><value>Mixed cost behavior</value></data>
+  <data name="Model.Working" xml:space="preserve"><value>Working…</value></data>
+  <data name="Model.Completed" xml:space="preserve"><value>Operation completed.</value></data>
+  <data name="Model.ValidStructure" xml:space="preserve"><value>Structure valid. Economic readiness is still pending.</value></data>
+  <data name="Model.PendingTitle" xml:space="preserve"><value>Unsaved model changes</value></data>
+  <data name="Model.PendingBody" xml:space="preserve"><value>Save changes before leaving? Yes = Save; No = Discard; Cancel = stay.</value></data>
 </root>
