@@ -274,4 +274,5 @@ Completa: {5}</value></data>
   <data name="Study.PendingTitle" xml:space="preserve"><value>Contexto del estudio sin guardar</value></data>
   <data name="Study.PendingBody" xml:space="preserve"><value>¿Guardar los cambios antes de continuar? Sí guarda, No descarta y Cancelar permite seguir editando.</value></data>
   <data name="Study.DatesRequired" xml:space="preserve"><value>Selecciona las dos fechas del periodo en el calendario.</value></data>
+  <data name="Preferences.SaveFailed" xml:space="preserve"><value>El cambio de presentación se ha aplicado, pero no se pudo guardar el archivo de preferencias. El próximo inicio puede usar la preferencia anterior.</value></data>
 </root>

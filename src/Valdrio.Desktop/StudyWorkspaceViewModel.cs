@@ -24,7 +24,7 @@ public sealed class StudyWorkspaceViewModel : ObservableObject, IDisposable
     private readonly Func<bool>? earlierBusy;
     private readonly Func<Task<bool>>? earlierBefore;
     private readonly Func<Task>? earlierAfter;
-    private bool busy, loading, dirty, pseudo;
+    private bool busy, loading, dirty, pseudo, committedRefreshPending;
     private string name = "", currency = "EUR", statusKey = "Study.NoFile";
     private DateTime? start, end;
     private ModelOption? modelChoice;
@@ -153,9 +153,13 @@ public sealed class StudyWorkspaceViewModel : ObservableObject, IDisposable
     public void RefreshPresentation(bool value) { pseudo = value; Reformat(); }
     private async Task Run(Func<CancellationToken, Task> action)
     {
-        busy = true; diagnostic = null; statusKey = "Study.Working"; Refresh();
+        busy = true; diagnostic = null; committedRefreshPending = false; statusKey = "Study.Working"; Refresh();
         using var source = new CancellationTokenSource(); cancellation = source;
-        try { await action(source.Token); statusKey = "Study.Completed"; }
+        try
+        {
+            await action(source.Token);
+            if (!committedRefreshPending) statusKey = "Study.Completed";
+        }
         catch (DomainRuleException e) { diagnostic = e.Diagnostic; }
         catch (CompanyFileException e) { diagnostic = e.Diagnostic; }
         catch (OperationCanceledException) { statusKey = "CompanyCancelled"; }
@@ -165,10 +169,47 @@ public sealed class StudyWorkspaceViewModel : ObservableObject, IDisposable
     }
     private async Task Reload(CancellationToken token)
     {
-        var port = company.ActiveStudies!; var models = company.ActiveModels!; var current = Current;
+        var port = company.ActiveStudies!; var models = company.ActiveModels!; var current = Current; var preservePendingEdit = dirty;
         var values = await Task.Run(() => (models.ReadModels(token), port.ReadStudies(token),
             current is null ? (IReadOnlyList<StudySnapshotReceipt>)[] : port.ReadSnapshots(current.CompanyId, current.Id, token)), token);
         modelValues = values.Item1; studyValues = values.Item2; snapshotValues = values.Item3; Reformat();
+        if (!preservePendingEdit && current is not null)
+        {
+            var persisted = studyValues.SingleOrDefault(study => study.Id == current.Id);
+            if (persisted is not null) SetCurrent(persisted);
+        }
+    }
+
+    private static IReadOnlyList<StudyDefinition> UpsertStudy(
+        IReadOnlyList<StudyDefinition> values,
+        StudyDefinition confirmed) =>
+        values.Where(value => value.Id != confirmed.Id).Append(confirmed).ToArray();
+
+    private void ApplyConfirmedStudy(StudyDefinition confirmed)
+    {
+        studyValues = UpsertStudy(studyValues, confirmed);
+        Reformat();
+        SetCurrent(confirmed);
+    }
+
+    private void ApplyConfirmedSnapshot(StudySnapshotReceipt confirmed)
+    {
+        snapshotValues = snapshotValues.Where(value => value.Id != confirmed.Id).Append(confirmed).ToArray();
+        Reformat();
+        SnapshotChoice = Snapshots.Single(value => value.Value.Id == confirmed.Id);
+    }
+
+    private async Task ApplyConfirmedThenReload<T>(T confirmed, Action<T> applyConfirmed)
+    {
+        var outcome = await ConfirmedCommitRefresh.ApplyThenRefreshAsync(
+            confirmed,
+            applyConfirmed,
+            () => Reload(CancellationToken.None));
+        if (outcome.RefreshSucceeded) return;
+
+        committedRefreshPending = true;
+        statusKey = "Study.CommittedRefreshPending";
+        Trace.TraceWarning("Study write committed but refresh failed: {0}", outcome.RefreshFailure);
     }
     public async Task CompanyChanged()
     {
@@ -223,8 +264,8 @@ public sealed class StudyWorkspaceViewModel : ObservableObject, IDisposable
         var port = company.ActiveStudies!;
         var command = new CreateStudy(company.Snapshot!.Id, createId, Name, Date(PeriodStart), Date(PeriodEnd), StudyPurpose.Management,
             Scenario!.Value, ModelId(), new(Currency), "local-user");
-        var result = await Task.Run(() => port.Create(command, token), token); Current = result;
-        await Reload(CancellationToken.None); SetCurrent(result);
+        var result = await Task.Run(() => port.Create(command, token), token);
+        await ApplyConfirmedThenReload(result, ApplyConfirmedStudy);
     });
     private async Task Save() => await Run(async token =>
     {
@@ -232,20 +273,21 @@ public sealed class StudyWorkspaceViewModel : ObservableObject, IDisposable
         var command = new UpdateStudyContext(current.CompanyId, current.Id, current.Revision, Name, Date(PeriodStart), Date(PeriodEnd),
             current.Purpose, Scenario!.Value, ModelId(), new(Currency), "local-user");
         var result = await Task.Run(() => port.UpdateContext(command, token), token);
-        await Reload(CancellationToken.None); SetCurrent(result);
+        await ApplyConfirmedThenReload(result, ApplyConfirmedStudy);
     });
     private async Task Capture() => await Run(async token =>
     {
         var port = company.ActiveStudies!; var current = Current!;
         var request = new CaptureStudySnapshot(current.CompanyId, current.Id, current.Revision, new(Guid.NewGuid()), "local-user");
         var result = await Task.Run(() => port.Capture(request, token), token);
-        await Reload(CancellationToken.None); SnapshotChoice = Snapshots.Single(s => s.Value.Id == result.Id);
+        await ApplyConfirmedThenReload(result, ApplyConfirmedSnapshot);
     });
     private async Task ToggleState() => await Run(async token =>
     {
         var port = company.ActiveStudies!; var current = Current!;
         var request = new ChangeStudyState(current.CompanyId, current.Id, current.Revision, current.State == StudyState.Open ? StudyState.Closed : StudyState.Open, "local-user");
-        var result = await Task.Run(() => port.ChangeState(request, token), token); await Reload(CancellationToken.None); SetCurrent(result);
+        var result = await Task.Run(() => port.ChangeState(request, token), token);
+        await ApplyConfirmedThenReload(result, ApplyConfirmedStudy);
     });
     public void Dispose()
     {

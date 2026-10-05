@@ -274,4 +274,5 @@ Full: {5}</value></data>
   <data name="Study.PendingTitle" xml:space="preserve"><value>Unsaved study context</value></data>
   <data name="Study.PendingBody" xml:space="preserve"><value>Save the changes before continuing? Yes saves, No discards, Cancel keeps editing.</value></data>
   <data name="Study.DatesRequired" xml:space="preserve"><value>Select both period dates from the calendar.</value></data>
+  <data name="Preferences.SaveFailed" xml:space="preserve"><value>The presentation change was applied, but the preference file could not be saved. The next start may use the previous preference.</value></data>
 </root>

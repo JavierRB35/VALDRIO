@@ -28,12 +28,12 @@ public sealed class TracePresentationPreferencesRecoverySink
 
 public sealed class PresentationPreferencesLoader
 {
-    private readonly JsonUserPresentationPreferencesStore store;
+    private readonly IUserPresentationPreferencesStore store;
     private readonly PresentationPreferencesValidator validator;
     private readonly IPresentationPreferencesRecoverySink recoverySink;
 
     public PresentationPreferencesLoader(
-        JsonUserPresentationPreferencesStore store,
+        IUserPresentationPreferencesStore store,
         PresentationPreferencesValidator validator,
         IPresentationPreferencesRecoverySink? recoverySink = null)
     {
