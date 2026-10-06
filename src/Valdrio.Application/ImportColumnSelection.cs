@@ -38,7 +38,7 @@ public interface IImportSourceSessionFactory
 
 public sealed record ImportSourceColumn(int Index, string Header);
 public sealed record ImportMappedRow(int RecordNumber, int PhysicalLine, string? Account,
-    string? AmountLexical, decimal? Amount);
+    string? AmountLexical, decimal? Amount, decimal? Debit = null, decimal? Credit = null);
 
 public sealed class ImportColumnSelectionResult
 {
@@ -81,12 +81,14 @@ public static class ImportColumnSelection
         ArgumentNullException.ThrowIfNull(settings);
         ArgumentNullException.ThrowIfNull(columns);
         ArgumentNullException.ThrowIfNull(numberFormat);
+        var signed = columns.Amount.HasValue && columns.Debit is null && columns.Credit is null;
+        var debitCredit = columns.Amount is null && columns.Debit.HasValue && columns.Credit.HasValue;
         if (source.SourceKind != settings.SourceKind || source.SheetName != settings.WorksheetName ||
-            columns.Amount is null || columns.Debit is not null || columns.Credit is not null ||
-            !Enum.IsDefined(numericAccountPolicy))
+            !signed && !debitCredit || !Enum.IsDefined(numericAccountPolicy))
             throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile");
         var available = GetColumns(source).Select(c => c.Index).ToHashSet();
-        if (!available.Contains(columns.Account) || !available.Contains(columns.Amount.Value) ||
+        var valueColumns = signed ? new[] { columns.Amount!.Value } : new[] { columns.Debit!.Value, columns.Credit!.Value };
+        if (!available.Contains(columns.Account) || valueColumns.Any(column => !available.Contains(column)) ||
             columns.Description is { } description && !available.Contains(description))
             throw ImportRules.Error("IMP_COLUMN_SELECTION", "Import.ColumnsRequired");
 
@@ -97,18 +99,38 @@ public static class ImportColumnSelection
         {
             cancellationToken.ThrowIfCancellationRequested();
             var account = row.GetCell(columns.Account);
-            var amount = row.GetCell(columns.Amount.Value);
-            var kind = amount.Kind == SourceValueKind.FormulaWithCachedValue ? amount.CachedValueKind : amount.Kind;
-            var parsed = kind is SourceValueKind.Text or SourceValueKind.Number
-                ? SourceAmountParser.Parse(amount.TextValue, kind == SourceValueKind.Number ? StoredNumber : numberFormat)
-                : new SourceAmountParseResult(null, new DomainDiagnostic("IMP_INVALID_AMOUNT", "Import.InvalidAmount",
-                    [new DiagnosticArgument("value", DiagnosticArgumentType.Text, amount.RawLexical ?? "<missing>")]));
-            if (parsed.Diagnostic is { } diagnostic)
-                diagnostics.Add(new ImportDiagnostic(diagnostic, ImportDiagnosticSeverity.Blocking,
-                    new ImportFieldLocation(source.FileName, source.SheetName, row.RecordNumber,
-                        row.PhysicalStartLine, columns.Amount)));
+            decimal? Parse(int column)
+            {
+                var cell = row.GetCell(column);
+                var kind = cell.Kind == SourceValueKind.FormulaWithCachedValue ? cell.CachedValueKind : cell.Kind;
+                var parsed = kind is SourceValueKind.Text or SourceValueKind.Number
+                    ? SourceAmountParser.Parse(cell.TextValue, kind == SourceValueKind.Number ? StoredNumber : numberFormat)
+                    : new SourceAmountParseResult(null, new DomainDiagnostic("IMP_INVALID_AMOUNT", "Import.InvalidAmount",
+                        [new DiagnosticArgument("value", DiagnosticArgumentType.Text, cell.RawLexical ?? "<missing>")]));
+                if (parsed.Diagnostic is { } diagnostic)
+                    diagnostics.Add(new ImportDiagnostic(diagnostic, ImportDiagnosticSeverity.Blocking,
+                        new ImportFieldLocation(source.FileName, source.SheetName, row.RecordNumber,
+                            row.PhysicalStartLine, column)));
+                return parsed.Value;
+            }
+            decimal? amount, debit = null, credit = null;
+            if (signed) amount = Parse(columns.Amount!.Value);
+            else
+            {
+                debit = Parse(columns.Debit!.Value); credit = Parse(columns.Credit!.Value); amount = null;
+                if (debit is { } d && credit is { } c)
+                {
+                    try { amount = checked(d - c); }
+                    catch (OverflowException)
+                    {
+                        diagnostics.Add(new(new("IMP_AMOUNT_OVERFLOW", "Import.AmountOverflow", []),
+                            ImportDiagnosticSeverity.Blocking, new(source.FileName, source.SheetName,
+                                row.RecordNumber, row.PhysicalStartLine, null)));
+                    }
+                }
+            }
             rows.Add(new ImportMappedRow(row.RecordNumber, row.PhysicalStartLine, account.TextValue,
-                amount.RawLexical, parsed.Value));
+                signed ? row.GetCell(columns.Amount!.Value).RawLexical : null, amount, debit, credit));
         }
         if (rows.Count == 0)
             diagnostics.Add(new ImportDiagnostic(new DomainDiagnostic("IMP_NO_DATA", "Import.NoData", []),

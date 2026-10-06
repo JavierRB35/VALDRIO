@@ -302,7 +302,7 @@ Full: {5}</value></data>
   <data name="Preferences.RetrySave" xml:space="preserve"><value>Retry saving preferences</value></data>
   <data name="ImportMapping.OpenMapping" xml:space="preserve"><value>Select import columns…</value></data>
   <data name="ImportMapping.Title" xml:space="preserve"><value>Import column selection</value></data>
-  <data name="ImportMapping.Intro" xml:space="preserve"><value>Choose the file layout, then select the account code and amount columns by position and header.</value></data>
+  <data name="ImportMapping.Intro" xml:space="preserve"><value>Choose the file layout, then select the account code and a signed amount column or separate debit and credit columns by position and header.</value></data>
   <data name="ImportMapping.Open" xml:space="preserve"><value>Choose CSV or Excel</value></data>
   <data name="ImportMapping.Worksheet" xml:space="preserve"><value>Excel worksheet</value></data>
   <data name="ImportMapping.HeaderRow" xml:space="preserve"><value>Header row (0 = none)</value></data>
@@ -343,10 +343,10 @@ Full: {5}</value></data>
   <data name="ImportMapping.Space" xml:space="preserve"><value>Space</value></data>
   <data name="ImportMapping.Tab" xml:space="preserve"><value>Tab</value></data>
   <data name="ImportMapping.NoHeader" xml:space="preserve"><value>No header</value></data>
-  <data name="Import.ColumnsRequired" xml:space="preserve"><value>Select account and amount columns that exist in the source.</value></data>
-  <data name="Import.ColumnsDistinct" xml:space="preserve"><value>Account code and amount must use different columns.</value></data>
+  <data name="Import.ColumnsRequired" xml:space="preserve"><value>Select the account code and all required amount columns from the source.</value></data>
+  <data name="Import.ColumnsDistinct" xml:space="preserve"><value>Account code and each amount field must use different columns.</value></data>
   <data name="Import.NoData" xml:space="preserve"><value>The selected layout contains no data rows.</value></data>
-  <data name="Import.ModeUnavailable" xml:space="preserve"><value>This delivery supports signed period amounts with duplicate accounts rejected. Closing balances, cumulative differences, debit/credit columns and aggregation need their separate interpretation.</value></data>
+  <data name="Import.ModeUnavailable" xml:space="preserve"><value>This delivery supports period amounts, signed or debit minus credit, with duplicate accounts rejected. Closing balances, cumulative differences and aggregation need their separate interpretation.</value></data>
   <data name="Import.ApprovalRequired" xml:space="preserve"><value>Validate a representative example and explicitly approve the period, currency and signed amounts before confirmation.</value></data>
   <data name="Import.PeriodMismatch" xml:space="preserve"><value>The source period must match the study period.</value></data>
   <data name="Import.FxRequired" xml:space="preserve"><value>Confirmation currently requires a fixed source currency equal to the study functional currency. A foreign currency needs the FX bridge.</value></data>
@@ -374,4 +374,14 @@ Full: {5}</value></data>
   <data name="ImportMapping.CommittedRefreshPending" xml:space="preserve"><value>The import is saved. The view could not be refreshed; close this window and refresh the study.</value></data>
   <data name="ImportMapping.NoImports" xml:space="preserve"><value>No confirmed import batches in this study.</value></data>
   <data name="ImportMapping.ImportHistory" xml:space="preserve"><value>Batch {0} · {1} · {2} resources · {3} {4} · revision {5}</value></data>
+  <data name="ImportMapping.AmountLayout" xml:space="preserve"><value>Amount interpretation</value></data>
+  <data name="ImportMapping.SignedLayout" xml:space="preserve"><value>Signed amount in one column</value></data>
+  <data name="ImportMapping.DebitCreditLayout" xml:space="preserve"><value>Debit minus credit in two columns</value></data>
+  <data name="ImportMapping.DebitColumn" xml:space="preserve"><value>Debit column</value></data>
+  <data name="ImportMapping.CreditColumn" xml:space="preserve"><value>Credit column</value></data>
+  <data name="ImportMapping.OriginalDebit" xml:space="preserve"><value>Original debit</value></data>
+  <data name="ImportMapping.OriginalCredit" xml:space="preserve"><value>Original credit</value></data>
+  <data name="ImportMapping.DebitCreditHelp" xml:space="preserve"><value>Period amount = debit minus credit. Both columns require explicit numbers, including zero. Empty or missing fields are errors; source negatives retain their declared meaning.</value></data>
+  <data name="ImportMapping.ApproveDebitCredit" xml:space="preserve"><value>I have checked the example and confirm debit minus credit as the signed amount for the displayed period, in the stated source currency. Both originals, negatives and zeros retain their meaning.</value></data>
+  <data name="Import.AmountOverflow" xml:space="preserve"><value>Debit minus credit exceeds the supported decimal range. Correct the source amounts.</value></data>
 </root>

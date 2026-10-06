@@ -32,14 +32,25 @@
      SelectedItem="{Binding Encoding}" AutomationProperties.Name="{Binding [Encoding]}"/></StackPanel>
    </WrapPanel>
    <Button x:Name="ReadSourceButton" Content="{Binding [Read]}" Command="{Binding ReadCommand}" HorizontalAlignment="Left"/>
+   <StackPanel IsEnabled="{Binding HasColumns}"><TextBlock Text="{Binding [AmountLayout]}"/>
+    <ComboBox x:Name="AmountLayoutBox" ItemsSource="{Binding AmountLayouts}" DisplayMemberPath="Label" SelectedValuePath="Value"
+     SelectedValue="{Binding AmountLayout}" AutomationProperties.Name="{Binding [AmountLayout]}" HorizontalAlignment="Left" MinWidth="280"/>
+   </StackPanel>
    <WrapPanel IsEnabled="{Binding HasColumns}">
     <StackPanel Width="360"><TextBlock Text="{Binding [AccountColumn]}"/>
      <ComboBox x:Name="AccountColumnBox" ItemsSource="{Binding Columns}" DisplayMemberPath="Label"
       SelectedValuePath="Index" SelectedValue="{Binding AccountColumn}" AutomationProperties.Name="{Binding [AccountColumn]}"/></StackPanel>
-    <StackPanel Width="360"><TextBlock Text="{Binding [AmountColumn]}"/>
+    <StackPanel Width="360" Visibility="{Binding IsSignedAmount,Converter={StaticResource Visible}}"><TextBlock Text="{Binding [AmountColumn]}"/>
      <ComboBox x:Name="AmountColumnBox" ItemsSource="{Binding Columns}" DisplayMemberPath="Label"
       SelectedValuePath="Index" SelectedValue="{Binding AmountColumn}" AutomationProperties.Name="{Binding [AmountColumn]}"/></StackPanel>
+    <StackPanel Width="290" Visibility="{Binding IsDebitCredit,Converter={StaticResource Visible}}"><TextBlock Text="{Binding [DebitColumn]}"/>
+     <ComboBox x:Name="DebitColumnBox" ItemsSource="{Binding Columns}" DisplayMemberPath="Label"
+      SelectedValuePath="Index" SelectedValue="{Binding DebitColumn}" AutomationProperties.Name="{Binding [DebitColumn]}"/></StackPanel>
+    <StackPanel Width="290" Visibility="{Binding IsDebitCredit,Converter={StaticResource Visible}}"><TextBlock Text="{Binding [CreditColumn]}"/>
+     <ComboBox x:Name="CreditColumnBox" ItemsSource="{Binding Columns}" DisplayMemberPath="Label"
+      SelectedValuePath="Index" SelectedValue="{Binding CreditColumn}" AutomationProperties.Name="{Binding [CreditColumn]}"/></StackPanel>
    </WrapPanel>
+   <TextBlock Text="{Binding [DebitCreditHelp]}" Visibility="{Binding IsDebitCredit,Converter={StaticResource Visible}}"/>
    <WrapPanel IsEnabled="{Binding HasColumns}">
     <StackPanel><TextBlock Text="{Binding [Decimal]}"/><ComboBox ItemsSource="{Binding DecimalSeparators}"
      SelectedItem="{Binding DecimalSeparator}" AutomationProperties.Name="{Binding [Decimal]}"/></StackPanel>
@@ -71,6 +82,8 @@
     <DataGridTextColumn Binding="{Binding Row}" Width="65"/>
     <DataGridTextColumn Binding="{Binding Account}" Width="155"/>
     <DataGridTextColumn Binding="{Binding OriginalAmount}" Width="155"/>
+    <DataGridTextColumn Binding="{Binding OriginalDebit}" Width="155" Visibility="Collapsed"/>
+    <DataGridTextColumn Binding="{Binding OriginalCredit}" Width="155" Visibility="Collapsed"/>
     <DataGridTextColumn Binding="{Binding ParsedAmount}" Width="155"/>
     <DataGridTextColumn Binding="{Binding Issues}" Width="*"/>
    </DataGrid.Columns>
@@ -86,7 +99,7 @@
    <TextBox x:Name="ApprovalReferenceBox" Text="{Binding ApprovalReference,UpdateSourceTrigger=PropertyChanged}" MaxLength="1000"
     AutomationProperties.Name="{Binding [ApprovalReference]}"/>
    <CheckBox x:Name="ApproveInterpretationBox" IsChecked="{Binding InterpretationApproved}" Margin="0,8,0,8">
-    <TextBlock Text="{Binding [ApproveInterpretation]}" TextWrapping="Wrap"/>
+    <TextBlock Text="{Binding InterpretationPrompt}" TextWrapping="Wrap"/>
    </CheckBox>
    <TextBlock x:Name="ConfirmationSummaryText" Text="{Binding ConfirmationSummary}" FontWeight="SemiBold"/>
    <TextBlock Text="{Binding PreparationIssues}" Foreground="DarkRed"/>

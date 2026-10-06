@@ -22,7 +22,8 @@ public sealed class ImportColumnOption(int index, string header, string label) :
     public string Header => header;
     public string Label { get => label; set => SetProperty(ref label, value); }
 }
-public sealed record ImportPreviewRow(int Row, string Account, string OriginalAmount, string ParsedAmount, string Issues);
+public sealed record ImportPreviewRow(int Row, string Account, string OriginalAmount, string ParsedAmount, string Issues,
+    string OriginalDebit = "", string OriginalCredit = "");
 
 public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDisposable
 {
@@ -39,12 +40,14 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     private bool busy, pseudo;
     private string statusKey = "ChooseFile", headerRow = "1", firstDataRow = "2", delimiter = ";", encoding = "utf-8";
     private string decimalSeparator = ",", groupSeparator = "", negativeSyntax = "minus";
+    private string amountLayout = "amount";
     private string? worksheet;
-    private int? accountColumn, amountColumn;
+    private int? accountColumn, amountColumn, debitColumn, creditColumn;
     private bool allowNumericAccounts;
     private IReadOnlyList<ImportColumnOption> columnOptions = [];
     private readonly ImportMappingOption[] delimiters = [new(";", ";"), new(",", ","), new("tab", "")];
     private readonly ImportMappingOption[] groups = [new("", ""), new(".", "."), new(",", ","), new(" ", "")];
+    private readonly ImportMappingOption[] amountLayouts = [new("amount", ""), new("debit-credit", "")];
 
     public ImportColumnMappingViewModel(IImportSourceSessionFactory factory, IImportSourceDialogs dialogs,
         UiTextCatalog texts, PresentationPreferencesService preferences)
@@ -52,7 +55,8 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         this.factory = factory; this.dialogs = dialogs; this.texts = texts; this.preferences = preferences;
         OpenCommand = new AsyncRelayCommand(Open, () => !busy);
         ReadCommand = new AsyncRelayCommand(Read, () => !busy && session is not null && (!IsXlsx || !string.IsNullOrEmpty(worksheet)));
-        ValidateCommand = new AsyncRelayCommand(Validate, () => !busy && document is not null && AccountColumn.HasValue && AmountColumn.HasValue);
+        ValidateCommand = new AsyncRelayCommand(Validate, () => !busy && document is not null && AccountColumn.HasValue &&
+            (IsSignedAmount && AmountColumn.HasValue || IsDebitCredit && DebitColumn.HasValue && CreditColumn.HasValue));
         PrepareCommand = new AsyncRelayCommand(Prepare, () => !busy && IsReady && targetStudy?.State == StudyState.Open && importPort is not null);
         ConfirmCommand = new AsyncRelayCommand(Confirm, () => !busy && writable && preparedImport?.CanConfirm == true && confirmedImport is null);
         CancelCommand = new RelayCommand(() => cancellation?.Cancel(), () => busy);
@@ -69,6 +73,19 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     public bool HasFile => session is not null;
     public bool IsXlsx => session?.SourceKind == ImportSourceKind.Xlsx;
     public bool IsCsv => session?.SourceKind == ImportSourceKind.Csv;
+    public bool IsSignedAmount => amountLayout == "amount";
+    public bool IsDebitCredit => amountLayout == "debit-credit";
+    public IReadOnlyList<ImportMappingOption> AmountLayouts => amountLayouts;
+    public string AmountLayout
+    {
+        get => amountLayout;
+        set
+        {
+            if (!SetProperty(ref amountLayout, value)) return;
+            amountColumn = debitColumn = creditColumn = null; InvalidateMapping();
+        }
+    }
+    public string InterpretationPrompt => this[IsDebitCredit ? "ApproveDebitCredit" : "ApproveInterpretation"];
     public bool HasColumns => document is not null;
     public bool IsReady => validation?.IsValid == true;
     public ImportColumnSelectionResult? ValidatedSelection => IsReady ? validation : null;
@@ -83,6 +100,8 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     public string Encoding { get => encoding; set { if (SetProperty(ref encoding, value)) InvalidateSource(); } }
     public int? AccountColumn { get => accountColumn; set { if (SetProperty(ref accountColumn, value)) InvalidateMapping(); } }
     public int? AmountColumn { get => amountColumn; set { if (SetProperty(ref amountColumn, value)) InvalidateMapping(); } }
+    public int? DebitColumn { get => debitColumn; set { if (SetProperty(ref debitColumn, value)) InvalidateMapping(); } }
+    public int? CreditColumn { get => creditColumn; set { if (SetProperty(ref creditColumn, value)) InvalidateMapping(); } }
     public string DecimalSeparator { get => decimalSeparator; set { if (SetProperty(ref decimalSeparator, value)) InvalidateMapping(); } }
     public string GroupSeparator { get => groupSeparator; set { if (SetProperty(ref groupSeparator, value)) InvalidateMapping(); } }
     public string NegativeSyntax { get => negativeSyntax; set { if (SetProperty(ref negativeSyntax, value)) InvalidateMapping(); } }
@@ -103,7 +122,9 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
             Display(accountColumn is { } a ? row.GetCell(a).TextValue : null),
             Display(amountColumn is { } b ? row.GetCell(b).TextValue : null),
             parsed?.Amount?.ToString(CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)) ?? "",
-            string.Join("\n", issues));
+            string.Join("\n", issues),
+            Display(debitColumn is { } d ? row.GetCell(d).TextValue : null),
+            Display(creditColumn is { } c ? row.GetCell(c).TextValue : null));
     }).ToArray();
     public string Status => diagnostic is null ? this[statusKey] : FormatDiagnostic(diagnostic);
     public string Summary => validation is null ? "" : string.Format(Ui, this["Summary"],
@@ -125,13 +146,14 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     private void Reformat()
     {
         delimiters[2].Label = this["Tab"]; groups[0].Label = this["None"]; groups[3].Label = this["Space"];
+        amountLayouts[0].Label = this["SignedLayout"]; amountLayouts[1].Label = this["DebitCreditLayout"];
         foreach (var c in columnOptions) c.Label = ColumnLabel(c.Index, c.Header); Refresh();
     }
     private void InvalidateMapping()
     { cancellation?.Cancel(); validation = null; InvalidatePreparation(true); diagnostic = null; statusKey = "SelectColumns"; Refresh(); }
     private void InvalidateSource()
     {
-        cancellation?.Cancel(); document = null; readSettings = null; accountColumn = null; amountColumn = null;
+        cancellation?.Cancel(); document = null; readSettings = null; accountColumn = amountColumn = debitColumn = creditColumn = null;
         columnOptions = []; validation = null; InvalidatePreparation(true); diagnostic = null; statusKey = "ReadSource"; Refresh();
     }
     private void Refresh()
@@ -175,7 +197,8 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     }
     private async Task Read()
     {
-        document = null; validation = null; readSettings = null; accountColumn = null; amountColumn = null; columnOptions = []; InvalidatePreparation(true);
+        document = null; validation = null; readSettings = null; accountColumn = amountColumn = debitColumn = creditColumn = null;
+        columnOptions = []; InvalidatePreparation(true);
         await Run(async token =>
         {
             var settings = Settings(); var source = await session!.ReadAsync(settings, token);
@@ -190,13 +213,18 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         validation = null; InvalidatePreparation(true);
         await Run(async token =>
         {
-            if (accountColumn == amountColumn) throw ImportRules.Error("IMP_COLUMN_SELECTION", "Import.ColumnsDistinct");
+            var assigned = IsSignedAmount ? new[] { accountColumn, amountColumn } :
+                IsDebitCredit ? new[] { accountColumn, debitColumn, creditColumn } :
+                throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile");
+            if (assigned.Any(c => c is null)) throw ImportRules.Error("IMP_COLUMN_SELECTION", "Import.ColumnsRequired");
+            if (assigned.Distinct().Count() != assigned.Length) throw ImportRules.Error("IMP_COLUMN_SELECTION", "Import.ColumnsDistinct");
             var negative = negativeSyntax switch
             { "minus" => ImportNegativeSyntax.LeadingMinus, "parentheses" => ImportNegativeSyntax.Parentheses,
                 "trailing" => ImportNegativeSyntax.TrailingMinus, _ => throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile") };
             var number = new SourceNumberFormat(decimalSeparator, groupSeparator.Length == 0 ? null : groupSeparator,
                 groupSeparator.Length == 0 ? [] : [3], negative);
-            var columns = new ImportColumnMap(accountColumn!.Value, amount: amountColumn!.Value);
+            var columns = IsSignedAmount ? new ImportColumnMap(accountColumn!.Value, amount: amountColumn!.Value) :
+                new ImportColumnMap(accountColumn!.Value, debit: debitColumn!.Value, credit: creditColumn!.Value);
             var policy = allowNumericAccounts ? XlsxNumericAccountPolicy.PreserveStoredLexical : XlsxNumericAccountPolicy.Reject;
             var source = document!; var settings = readSettings!;
             var result = await Task.Run(() => ImportColumnSelection.Validate(source, settings, columns, number, policy, token), token);

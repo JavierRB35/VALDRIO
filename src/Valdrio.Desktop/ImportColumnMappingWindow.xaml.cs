@@ -28,8 +28,10 @@ public partial class ImportColumnMappingWindow : Window
     private void RefreshHeaders()
     {
         if (viewModel is null) return;
-        var keys = new[] { "Row", "AccountColumn", "Original", "Parsed", "Issues" };
+        var keys = new[] { "Row", "AccountColumn", "Original", "OriginalDebit", "OriginalCredit", "Parsed", "Issues" };
         for (var i = 0; i < keys.Length; i++) PreviewGrid.Columns[i].Header = viewModel[keys[i]];
+        PreviewGrid.Columns[2].Visibility = viewModel.IsSignedAmount ? Visibility.Visible : Visibility.Collapsed;
+        PreviewGrid.Columns[3].Visibility = PreviewGrid.Columns[4].Visibility = viewModel.IsDebitCredit ? Visibility.Visible : Visibility.Collapsed;
     }
 }
 

@@ -430,6 +430,27 @@ try {
     dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $confirmationFolder "snapshot.json")
     if ($LASTEXITCODE -ne 0) { throw "Runner could not verify the actual WPF import snapshot." }
     Write-Host "Import confirmation WPF checks passed: $($confirmationChecks.PassedChecks.Count)."
+    $debitFolder = Join-Path $captureDir "import-debit-credit"
+    $debitChecks = Get-Content -LiteralPath (Join-Path $debitFolder "interaction.json") -Raw | ConvertFrom-Json
+    if ($debitChecks.Status -ne "passed" -or $debitChecks.PassedChecks.Count -ne 22) {
+      throw "Debit/credit import WPF interaction evidence is incomplete."
+    }
+    $debitImages = @(Get-ChildItem -LiteralPath $debitFolder -Filter *.png)
+    if ($debitImages.Count -ne 3) { throw "Expected CSV prepared/confirmed and Excel debit/credit screenshots." }
+    $debitManifest = Get-Content -LiteralPath (Join-Path $debitFolder "manifest.json") -Raw | ConvertFrom-Json
+    $debitNames = @("import.valdrio", "import.valdrio-backup", "restored.valdrio", "snapshot.json", "debit-credit.csv", "debit-credit.xlsx")
+    if ($debitManifest.SchemaVersion -ne 4 -or $debitManifest.BatchIds.Count -ne 2 -or $debitManifest.Files.Count -ne $debitNames.Count -or
+        @(Compare-Object ($debitNames | Sort-Object) (@($debitManifest.Files.Name) | Sort-Object)).Count -ne 0) {
+      throw "Debit/credit import manifest is incomplete."
+    }
+    foreach ($entry in $debitManifest.Files) {
+      if ((Get-FileHash -LiteralPath (Join-Path $debitFolder $entry.Name) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $entry.Sha256) {
+        throw "Debit/credit import artifact hash mismatch."
+      }
+    }
+    dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $debitFolder "snapshot.json")
+    if ($LASTEXITCODE -ne 0) { throw "Runner could not verify the actual WPF debit/credit snapshot." }
+    Write-Host "Debit/credit import WPF checks passed: $($debitChecks.PassedChecks.Count)."
     $studyChecks = Get-Content -LiteralPath (Join-Path $captureDir "studies/interaction.json") -Raw | ConvertFrom-Json
     if ($studyChecks.Status -ne "passed" -or $studyChecks.PassedChecks.Count -ne 73) { throw "Expected all 73 final study WPF checks." }
     foreach ($region in @("es-ES", "en-US", "de-DE", "en-GB")) {
@@ -501,7 +522,7 @@ try {
     }
     [xml]$trx = Get-Content -LiteralPath "tests/Valdrio.Tests/TestResults/valdrio-tests.trx" -Raw
     $counters = $trx.TestRun.ResultSummary.Counters
-    if ([int]$counters.total -lt 348 -or [int]$counters.failed -ne 0 -or [int]$counters.notExecuted -ne 0 -or [int]$counters.total -ne [int]$counters.passed) {
+    if ([int]$counters.total -lt 389 -or [int]$counters.failed -ne 0 -or [int]$counters.notExecuted -ne 0 -or [int]$counters.total -ne [int]$counters.passed) {
         throw "The acceptance receipt requires all discovered tests to pass without omissions."
     }
 
@@ -528,6 +549,9 @@ try {
         ImportConfirmationChecks = $confirmationChecks.PassedChecks.Count
         ImportConfirmationImages = $confirmationImages.Count
         ImportConfirmationManifest = "verified"
+        DebitCreditChecks = $debitChecks.PassedChecks.Count
+        DebitCreditImages = $debitImages.Count
+        DebitCreditManifest = "verified"
         StudyImages = $studyImages.Count
         ModelAndStudyManifests = "verified"
         RepositoryClean = $true

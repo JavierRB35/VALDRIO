@@ -202,6 +202,8 @@ public partial class App : System.Windows.Application
                         await importWindow.RunImportMappingChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs, viewModel);
                         await importWindow.RunImportConfirmationChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs,
                             (QueuedCompanyFileDialogs)companyDialogs, viewModel);
+                        await importWindow.RunDebitCreditChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs,
+                            (QueuedCompanyFileDialogs)companyDialogs, viewModel);
                         importWindow.Close();
                         CaptureVisualEvidence(
                             window,
