@@ -33,7 +33,8 @@ public enum SourceValueKind
     DateSerial = 4,
     FormulaWithCachedValue = 5,
     FormulaWithoutCachedValue = 6,
-    Error = 7
+    Error = 7,
+    Boolean = 8
 }
 
 public static class ImportRules
@@ -76,7 +77,9 @@ public sealed record SourceNumberFormat
         ArgumentNullException.ThrowIfNull(groupSizes);
         if (string.IsNullOrEmpty(decimalSeparator) || decimalSeparator.Length != 1 ||
             groupSeparator is { Length: not 1 } ||
-            string.Equals(decimalSeparator, groupSeparator, StringComparison.Ordinal))
+            string.Equals(decimalSeparator, groupSeparator, StringComparison.Ordinal) ||
+            IsReservedSeparator(decimalSeparator) ||
+            groupSeparator is not null && IsReservedSeparator(groupSeparator))
             throw ImportRules.Error("IMP_AMBIGUOUS_FORMAT", "Import.AmbiguousFormat");
 
         var knownFlags = ImportNegativeSyntax.LeadingMinus | ImportNegativeSyntax.Parentheses | ImportNegativeSyntax.TrailingMinus;
@@ -92,6 +95,13 @@ public sealed record SourceNumberFormat
         AllowLeadingPlus = allowLeadingPlus;
     }
 
+    private static bool IsReservedSeparator(string value)
+    {
+        var character = value[0];
+        return (character is >= '0' and <= '9' or '+' or '-' or '(' or ')' or 'e' or 'E') ||
+               char.IsControl(character);
+    }
+
     public string DecimalSeparator { get; }
     public string? GroupSeparator { get; }
     public IReadOnlyList<int> GroupSizes { get; }
@@ -103,8 +113,9 @@ public sealed record ImportColumnMap
 {
     public ImportColumnMap(int account, int? description = null, int? amount = null, int? debit = null, int? credit = null)
     {
-        var values = new[] { account, description ?? 0, amount ?? 0, debit ?? 0, credit ?? 0 }.Where(value => value != 0).ToArray();
-        if (account < 1 || values.Any(value => value < 1) || values.Distinct().Count() != values.Length)
+        var values = new int?[] { account, description, amount, debit, credit };
+        var assigned = values.Where(value => value.HasValue).Select(value => value!.Value).ToArray();
+        if (values.Any(value => value is < 1) || assigned.Distinct().Count() != assigned.Length)
             throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile");
         Account = account;
         Description = description;
@@ -572,6 +583,21 @@ public static class ImportSourceInspector
             }
 
             var cell = row.GetCell(profile.Columns.Account);
+            if (source.SourceKind == ImportSourceKind.Xlsx &&
+                (cell.Kind == SourceValueKind.Boolean ||
+                 cell.Kind == SourceValueKind.FormulaWithCachedValue &&
+                 cell.CachedValueKind == SourceValueKind.Boolean))
+            {
+                diagnostics.Add(Diagnostic(
+                    "IMP_XLSX_BOOLEAN_ACCOUNT",
+                    "Import.XlsxBooleanAccount",
+                    source,
+                    row,
+                    profile.Columns.Account,
+                    cell.RawLexical ?? "<boolean>"));
+                continue;
+            }
+
             if (source.SourceKind == ImportSourceKind.Xlsx &&
                 (cell.Kind == SourceValueKind.Number ||
                  cell.Kind == SourceValueKind.DateSerial ||
