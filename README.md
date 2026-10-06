@@ -11,8 +11,8 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 - **T02A: CERRADA** — Money/metadatos, fechas canónicas, RateSet/FX y contrato de orquestación de RevalueStudy verificados; integración SQLite pendiente.
 - **T03: CERRADA** — archivo SQLite real, bloqueo OS, unidades/auditoría, copias/restauración y flujo WPF. **132/132 tests**, 24 checks WPF de archivos; cierre integrado con CI final aprobada.
 - **T04: CERRADA** — formato v2, centros/modelos con publicación y duplicación; 153 pruebas y flujo WPF aprobados. Cierre integrado con CI final aprobada.
-- **T05: IMPLEMENTADA, CIERRE BLOQUEADO** — v3, estudios/revisiones/snapshots, WPF y runner. La base previa a la reauditoría conserva 183 pruebas locales y 71 por zona UTC/Madrid aprobadas; B01/B02/G02 tienen corrección implementada con cinco regresiones nuevas, todavía sin ejecución .NET en este entorno. La cuenta ha agotado los minutos incluidos de Actions y sigue pendiente el recorrido final de Windows.
-- **T06: EN CURSO, RAMA APILADA** — `t06/import` conserva su historia T06.1 y ya incorpora por merge el T05 corregido `64aac29f`; staging CSV/XLSX sintético implementado. D03 real, `PrepareImport`, persistencia v4, UI y runner siguen pendientes.
+- **T05: IMPLEMENTADA, CIERRE BLOQUEADO** — `64aac29f` fue verificado externamente con build completo 0/0 y 188/188 tests. Después se endurecieron G02 y las regresiones reales B01 en `2a6b5e70`/`fffda702`; esos commits posteriores aún requieren ejecución .NET/Windows. PR #14 sigue draft y Actions no se ha usado.
+- **T06: EN CURSO, RAMA APILADA** — `473a4d15` aplica exactamente los tres ajustes de compilación identificados por la verificación independiente; la copia diagnóstica equivalente pasó 203/203, pero este SHA publicado aún requiere ejecución propia. La rama incorpora T05 endurecido hasta `75aec6d1`; D03 real y T06.2 siguen pendientes.
 - Correcciones A01–A06 completadas: **114/114 tests**, 39/39 referencias, 12 comprobaciones reales del botón FX, publish y WPF smoke.
 - JSON canónico versionado, huellas FX v2, cuantización exacta e inmutabilidad preparados para persistencia.
 - Fecha de negocio, instante UTC y zona de presentación están separados.
@@ -75,7 +75,7 @@ La captura registra contexto y explica qué falta; todavía no calcula costes. E
 dotnet run --project src/Valdrio.Runner -c Release -- --study-snapshot ruta/snapshot.json
 ```
 
-Las correcciones de reauditoría B01/B02/G02 están implementadas en T05 y presentes también en esta rama: recuperación tras commit confirmado, persistencia de preferencias aislada y aceptación Windows ligada a árbol limpio/manifest de build. Aún requieren ejecución .NET/Windows del HEAD final.
+Las correcciones B01/B02/G02 están incorporadas en T05. `64aac29f` fue verificado con 188/188; después G02 se amplió con manifest v2 y hashes recursivos y B01 añadió diez recorridos reales permanentes. Esos commits posteriores aún requieren ejecución .NET/Windows del HEAD final.
 
 [Directrices T06](docs/directrices/T06_SIGUIENTE_FASE.md): importación con perfiles/preview/confirmación y puerta D03 antes de una fuente real.
 

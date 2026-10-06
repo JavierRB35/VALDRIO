@@ -22,7 +22,7 @@ El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` está disponible e íntegro.
 - **T02A — CERRADA**: Money/metadatos, tiempo canónico y RateSet/FX completados y verificados.
 - **T03 — CERRADA**: archivo de empresa SQLite, bloqueo, transacciones, copias/restauración y WPF.
 - **T04 — CERRADA**: centros físicos, modelos/nodos/pools, publicación inmutable y duplicación.
-- **T05 — IMPLEMENTADA, CIERRE BLOQUEADO**: estudios/revisiones/snapshots, formato v3, WPF y runner implementados; B01/B02/G02 corregidos en código y con cinco regresiones nuevas preparadas. La nueva corrección aún necesita build/tests y recorrido final Windows. La cuenta ha agotado los minutos incluidos de Actions.
+- **T05 — IMPLEMENTADA, CIERRE BLOQUEADO**: `64aac29f` verificado externamente con solución completa 0 avisos/errores y 188/188 tests. G02 y regresiones reales B01 se endurecieron después en `2a6b5e70`/`fffda702`; falta ejecutar esos HEAD posteriores y la aceptación Windows visual.
 - **T06 — PENDIENTE**: importación verificable; requiere muestra D03 antes de confirmar fuente real. [Directrices T06](docs/directrices/T06_SIGUIENTE_FASE.md).
 
 ## T02A.1 — Money y metadatos monetarios
@@ -173,7 +173,7 @@ T06 ha iniciado en una rama apilada sobre el HEAD final auditado de T05, sin mod
 
 ## T06 — EN CURSO, T06.0/T06.1 inicial
 
-Rama `t06/import`: nació sobre `dacf2dd15ecf438f465ca3658cb06c6659c5fdd3` y conserva esa historia, pero ya incorpora mediante merge el T05 corregido `64aac29fa711ef69d9eb2cb21bd9d684b8374045`. PR #14 continúa abierta/draft; `main` no se modifica.
+Rama `t06/import`: conserva su historia desde `dacf2dd1`, aplica en `473a4d153c09da94dc462185a08769e6430189c6` los tres ajustes de compilación de la verificación independiente y se sincroniza con T05 endurecido hasta `75aec6d134c6ea996b5de695dde91069bc500476`. PR #14 continúa abierta/draft; `main` no se modifica.
 
 Implementado en la primera subentrega: `SourceParseProfileVersion` inmutable/versionado, tipos de celdas/filas/procedencia, `IImportAdapter`, parser decimal explícito sin cultura ambiente y `CsvImportAdapter` con quoted fields, delimitadores citados, comillas escapadas, multiline, BOM y encoding declarado. Se preservan cuenta como texto, Unicode, lexical original y SHA-256 de bytes.
 
@@ -192,4 +192,11 @@ Sobre el HEAD T05 posterior a `dacf2dd15ecf438f465ca3658cb06c6659c5fdd3` se inco
 - **B02:** IO/acceso denegado al guardar preferencias no corta los demás suscriptores; se registra un aviso traducible y el archivo temporal usa nombre único con limpieza.
 - **G02:** aceptación Windows exige repositorio limpio al inicio/fin, identidad de HEAD estable y manifest de build con SHA-256 de Desktop, Runner, assembly de tests y TRX. `-UseExistingBuild` rechaza binarios sin manifest coincidente.
 
-Se añadieron cinco pruebas de regresión portables. En el entorno que produjo esta corrección no existe SDK .NET, por lo que **no se declara todavía build ni suite ejecutada sobre este nuevo HEAD**. La evidencia 183/183 sigue perteneciendo al código anterior y no cierra estas correcciones.
+`64aac29f` fue verificado externamente con 188/188 y recorridos reales B01. Después, G02 pasó a manifest v2 con cobertura recursiva de salidas y B01 añadió diez comprobaciones mantenidas con ViewModel + SQLite reales. Los commits posteriores `2a6b5e70`/`fffda702`/`75aec6d1` aún requieren ejecución .NET/Windows.
+
+
+## Reparación de compilación T06 tras verificación independiente
+
+La verificación independiente detectó tres ubicaciones que impedían compilar el HEAD T06 `b8b09ad2799c1471f62dafdd85e401d63e27886e`: declaración múltiple con `var` en el parser, posible `Worksheet` nulo y patrones `CellValues` no constantes. En una copia diagnóstica, cambiando únicamente esos puntos, la solución compiló sin avisos/errores y pasó 203/203.
+
+El commit publicado `473a4d153c09da94dc462185a08769e6430189c6` aplica exactamente esos tres ajustes, sin cambiar reglas económicas, fixtures ni expected. El entorno de publicación sigue sin SDK .NET; por honestidad, los 203/203 se atribuyen a la copia diagnóstica equivalente y no todavía a este SHA remoto.
