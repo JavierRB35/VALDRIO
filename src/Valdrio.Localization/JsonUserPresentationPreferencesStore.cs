@@ -3,7 +3,14 @@ using System.Text.Json;
 
 namespace Valdrio.Localization;
 
-public sealed class JsonUserPresentationPreferencesStore
+public interface IUserPresentationPreferencesStore
+{
+    bool TryLoad(out UserPresentationPreferences? preferences);
+    bool TryLoad(out UserPresentationPreferences? preferences, out string? failureCode);
+    void Save(UserPresentationPreferences preferences);
+}
+
+public sealed class JsonUserPresentationPreferencesStore : IUserPresentationPreferencesStore
 {
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.General)
@@ -91,20 +98,30 @@ public sealed class JsonUserPresentationPreferencesStore
 
         Directory.CreateDirectory(directory);
 
-        var tempPath = path + ".tmp";
-        var json = JsonSerializer.Serialize(
-            preferences,
-            JsonOptions);
+        var tempPath = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
+        try
+        {
+            var json = JsonSerializer.Serialize(
+                preferences,
+                JsonOptions);
 
-        File.WriteAllText(
-            tempPath,
-            json,
-            new UTF8Encoding(
-                encoderShouldEmitUTF8Identifier: false));
+            File.WriteAllText(
+                tempPath,
+                json,
+                new UTF8Encoding(
+                    encoderShouldEmitUTF8Identifier: false));
 
-        File.Move(
-            tempPath,
-            path,
-            overwrite: true);
+            File.Move(
+                tempPath,
+                path,
+                overwrite: true);
+        }
+        finally
+        {
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
+        }
     }
 }

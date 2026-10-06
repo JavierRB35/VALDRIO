@@ -1,6 +1,6 @@
 # VALDRIO — Directrices ejecutables para T05: estudios, revisiones y snapshots
 
-Fecha: 2026-10-05. Destinatarios: equipo y LLM ejecutor. T05 no está implementada. Este documento guía el trabajo posterior a T04; no convierte propuestas económicas en reglas aceptadas.
+Fecha: 2026-10-05. Documento de planificación de T05 posterior a T04, conservado como referencia. La implementación y evidencia vigentes están en [ficha T05](../tareas/T05.md) y [evidencia T05](../evidencias/T05_2026-10-05.md). La siguiente fase se guía por [T06](T06_SIGUIENTE_FASE.md). No convierte propuestas económicas en reglas aceptadas.
 
 ## 1. Resultado visible
 

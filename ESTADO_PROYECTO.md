@@ -22,7 +22,8 @@ El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` está disponible e íntegro.
 - **T02A — CERRADA**: Money/metadatos, tiempo canónico y RateSet/FX completados y verificados.
 - **T03 — CERRADA**: archivo de empresa SQLite, bloqueo, transacciones, copias/restauración y WPF.
 - **T04 — CERRADA**: centros físicos, modelos/nodos/pools, publicación inmutable y duplicación.
-- **T05 — PENDIENTE**: estudios/revisiones/snapshots; [directrices ejecutables](docs/directrices/T05_SIGUIENTE_FASE.md).
+- **T05 — IMPLEMENTADA, CIERRE BLOQUEADO**: `64aac29f` verificado externamente con solución completa 0 avisos/errores y 188/188 tests. G02 y regresiones reales B01 se endurecieron después en `2a6b5e70`/`fffda702`; falta ejecutar esos HEAD posteriores y la aceptación Windows visual.
+- **T06 — PENDIENTE**: importación verificable; requiere muestra D03 antes de confirmar fuente real. [Directrices T06](docs/directrices/T06_SIGUIENTE_FASE.md).
 
 ## T02A.1 — Money y metadatos monetarios
 
@@ -125,7 +126,7 @@ Evidencia: [cierre de auditoría](docs/evidencias/AUDITORIA_CIERRE_2026-10-05.md
 
 ## Continuidad
 
-T02A está cerrada. **T03 — CERRADA**: archivo real, 132/132 pruebas Windows, 24 checks de archivos WPF y 12 FX. Evidencia base CI 37313004940 aprobada; el cierre se integra únicamente con checks aprobados del último commit de PR #12. T04 se completa en la sección siguiente; la continuidad vigente es T05.
+T02A está cerrada. **T03 — CERRADA**: archivo real, 132/132 pruebas Windows, 24 checks de archivos WPF y 12 FX. Evidencia base CI 37313004940 aprobada; el cierre se integra únicamente con checks aprobados del último commit de PR #12. T04 se completa en la sección siguiente; T05 está implementada con cierre pendiente de CI; T06 dispone de directrices.
 
 [Directrices ejecutables para el equipo de desarrollo](docs/directrices/T03_SIGUIENTE_FASE.md), con subentregas, matriz F01–F18 y prompt de inicio.
 
@@ -143,4 +144,50 @@ Esquema v2, upgrade seguro a copia, centros físicos, modelos con nodos/pools, p
 
 [Ficha T04](docs/tareas/T04.md) · [ADR-0003](docs/adr/ADR-0003-modelos-y-esquema-v2.md) · [Evidencia T04](docs/evidencias/T04_2026-10-05.md).
 
-Siguiente fase: [T05 — estudios, revisiones y snapshots](docs/directrices/T05_SIGUIENTE_FASE.md). No implementada. D03 y propuestas económicas sin cambio; A07 sigue pendiente del agregado persistente Study.
+Plan original posterior: [T05 — estudios, revisiones y snapshots](docs/directrices/T05_SIGUIENTE_FASE.md), implementada en la sección siguiente. D03 y propuestas económicas sin cambio; A07 mantiene integración FX/particiones/publicación pendiente.
+
+## T05 — IMPLEMENTADA, CIERRE PENDIENTE DE CI
+
+[PR #14](https://github.com/JavierRB35/VALDRIO/pull/14), rama t05/studies. Formato v3, upgrade a nueva copia desde v1/v2, Study separado con revisión/auditoría propia, moneda/periodo/modelo/escenario explícitos, snapshots contextuales inmutables, hashes económico/completo, WPF y runner. Catálogos y políticas pendientes no se aprueban automáticamente.
+
+Código 56c38f9: CI 37342742981 aprobada, 183/183 pruebas, 67 checks WPF de estudios, ocho capturas visibles y archivos SQLite/manifest revisados; conserva 53 modelos, 24 archivo y 12 FX. La inspección visual identificó el texto regional del DatePicker sin refresco. La corrección 56a068a compila con 0 avisos/errores y la suite local final pasa 183/183. Su nuevo recorrido WPF está pendiente: Actions terminó antes de arrancar trabajos, incluso al reintentar, sin pasos ni runner. Causa no confirmada; no se declara T05 cerrada ni se integra con checks de otro commit.
+
+La evidencia detalla cómo verificar el HEAD final y cerrar. Se conserva una fixture genuina v3 de desarrollo para la siguiente migración. T05 no incorpora aún recursos, actividad, ejecuciones ni motor de reparto; A07/I14 esperan T06A/T07/T12 por su alcance.
+
+[Ficha T05](docs/tareas/T05.md) · [ADR-0004](docs/adr/ADR-0004-estudios-y-snapshots-v3.md) · [Evidencia y bloqueo](docs/evidencias/T05_2026-10-05.md).
+
+Siguiente fase: [T06 — sumas y saldos verificables](docs/directrices/T06_SIGUIENTE_FASE.md). Directrices completas con subfases T06.0–T06.6 y F01–F24; ejecutar tras cerrar T05. D03 requiere muestra/ejemplos antes de confirmar una fuente real. D04–D07 siguen como propuestas.
+
+## Reauditoría y continuidad vigente — 2026-10-05
+
+Main permanece en `fe01e10231568332c1df59c0b8df43081a5dac01`, con T04 integrada. El código T05 auditado es `d2e499fcf315a1aee5b0ed8b8d4e90f5a1bee6b9`; sus 245 blobs coinciden con la copia verificada. Única PR abierta, #14, conservada en borrador; ninguna incidencia abierta.
+
+Reejecutadas 183/183 pruebas, 0 fallos/omitidas; 71/71 pruebas de archivos/estudios/R01 en cada proceso UTC y Europe/Madrid. Compilación completa incluida WPF con 0 avisos/errores; 57 fuentes canónicas, 39 referencias racionales, 169 claves ES/EN y los cuatro runners anteriores correctos. Esto no ejecuta WPF en Linux.
+
+El aviso de GitHub aportado por el propietario identifica el agotamiento de minutos de la cuenta, coherente con los fallos de los runs 37345202045/37345211857 antes de arrancar. No se han iniciado nuevos reintentos. La actualización conserva intactos los criterios de cierre y añade `.github/scripts/Verify-Windows.ps1`, compartido con CI, para reproducirlos en Windows.
+
+Pendientes de cierre T05.4/T05.5: ejecutar el verificador sobre el HEAD final, obtener 73 checks de estudios y sus ocho PNG, validar manifests de models/studies y receipt real, inspeccionar fechas regionales/RTL, actualizar evidencia y entonces integrar PR #14 comprobando el SHA. La verificación nueva de Windows aún no se presenta como ejecutada. [Auditoría y pendientes concretos](docs/evidencias/AUDITORIA_ESTADO_2026-10-05.md).
+
+T06 está planificada, no iniciada. A07/I14 conserva integración persistente FX/recursos/particiones/ejecución pendiente para T06A/T07/T12. No se aprueban D03–D12 ni se modifica la especificación por este bloqueo.
+
+
+## Correcciones de reauditoría B01/B02/G02 — IMPLEMENTADAS, VERIFICACIÓN PENDIENTE
+
+Sobre el HEAD T05 posterior a `dacf2dd15ecf438f465ca3658cb06c6659c5fdd3` se incorporó la recuperación tras escritura confirmada, el aislamiento de fallos de persistencia de preferencias y el endurecimiento del verificador Windows.
+
+- **B01:** el resultado confirmado de crear/guardar/cambiar estado/capturar se aplica antes de releer; un fallo posterior de lectura deja visible el dato confirmado y muestra `Study.CommittedRefreshPending`. Un refresco manual reconcilia `Current` cuando no hay edición pendiente y no sobrescribe una edición pendiente.
+- **B02:** IO/acceso denegado al guardar preferencias no corta los demás suscriptores; se registra un aviso traducible y el archivo temporal usa nombre único con limpieza.
+- **G02:** aceptación Windows exige repositorio limpio al inicio/fin, identidad de HEAD estable y manifest de build con SHA-256 de Desktop, Runner, assembly de tests y TRX. `-UseExistingBuild` rechaza binarios sin manifest coincidente.
+
+Se añadieron cinco pruebas de regresión portables. En el entorno que produjo esta corrección no existe SDK .NET, por lo que **no se declara todavía build ni suite ejecutada sobre este nuevo HEAD**. La evidencia 183/183 sigue perteneciendo al código anterior y no cierra estas correcciones.
+
+
+## Verificación externa posterior de T05/T06 — 2026-10-05
+
+La revisión independiente `VALDRIO_Verificacion_T05_T06_2026-10-05.md` confirmó sobre T05 `64aac29fa711ef69d9eb2cb21bd9d684b8374045`: solución completa incluida WPF con 0 avisos/errores, suite 188/188, 76/76 en UTC y 76/76 en Europe/Madrid, además de recorridos reales B01 con ViewModel + SQLite. También identificó tres errores de compilación concretos en T06 y tres huecos G02.
+
+Tras esa verificación:
+- `2a6b5e708fc9df7636afbf572240eea45a71d206`: G02 v2; CI puede preparar el manifest antes de `UseExistingBuild`, se hashéan recursivamente las salidas Desktop/Runner/tests y el TRX, y el manifest se conserva en la evidencia.
+- `fffda702f9e1d21aa3c2aff2ce732302234c41e4`: regresión Windows mantenida con StudyWorkspaceViewModel real, SQLite real y fallo de lectura post-commit inyectado; 10 comprobaciones de crear/guardar/transicionar/capturar/refrescar/proteger edición.
+
+Estos dos commits posteriores aún no tienen ejecución .NET/Windows registrada. No se reutilizan los 188/188 de `64aac29f` para declararlos verificados.

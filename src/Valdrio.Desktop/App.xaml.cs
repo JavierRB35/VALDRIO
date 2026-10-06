@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows;
@@ -12,8 +13,9 @@ namespace Valdrio.Desktop;
 public partial class App : System.Windows.Application
 {
     private CompanyFileViewModel? company;
+    private StudyWorkspaceViewModel? studies;
     private ModelWorkspaceViewModel? models;
-    protected override void OnExit(ExitEventArgs e) { models?.Dispose(); company?.Dispose(); base.OnExit(e); }
+    protected override void OnExit(ExitEventArgs e) { studies?.Dispose(); models?.Dispose(); company?.Dispose(); base.OnExit(e); }
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -74,9 +76,17 @@ public partial class App : System.Windows.Application
 
         if (captureDirectory is null)
         {
+            var persistence = new PresentationPreferencesPersistence(store);
             preferences.Changed +=
                 (_, args) =>
-                    store.Save(args.Current);
+                {
+                    if (persistence.TrySave(args.Current, out var failure)) return;
+                    var ui = CultureInfo.GetCultureInfo(args.Current.UiLanguageTag);
+                    Trace.TraceWarning(
+                        "{0}: {1}",
+                        failure!.Code,
+                        texts.Get(failure.MessageKey, ui));
+                };
         }
 
         var formatter =
@@ -120,6 +130,7 @@ public partial class App : System.Windows.Application
             companyDialogs, currencyCatalog, texts, preferences, formatter);
         var modelDialogs = captureDirectory is null ? (IModelEditorDialogs)new ModelEditorDialogs() : new QueuedModelEditorDialogs();
         models = new ModelWorkspaceViewModel(company, texts, preferences, modelDialogs, formatter);
+        studies = new StudyWorkspaceViewModel(company, currencyCatalog, texts, preferences, formatter, modelDialogs);
         var viewModel =
             new MainWindowViewModel(
                 texts,
@@ -129,7 +140,7 @@ public partial class App : System.Windows.Application
                 roundingExampleService,
                 currencyMetadataExampleService,
                 temporalContractExampleService,
-                fxConversionExampleService) { Company = company, Models = models };
+                fxConversionExampleService) { Company = company, Models = models, Studies = studies };
 
         if (!viewModel.TryLoadDevelopmentSample(
                 samplePath,
@@ -165,8 +176,14 @@ public partial class App : System.Windows.Application
         bool allowClose = false;
         window.Closing += async (_, args) =>
         {
-            if (!company.IsIdle || models.IsBusy) { args.Cancel = true; company.CancelCommand.Execute(null); models.CancelCommand.Execute(null); return; }
-            if (!allowClose && models.IsDirty) { args.Cancel = true; if (await models.CanLeaveAsync()) { allowClose = true; window.Close(); } }
+            if (!company.IsIdle || models.IsBusy || studies.IsBusy)
+            {
+                args.Cancel = true; company.CancelCommand.Execute(null); models.CancelCommand.Execute(null); studies.CancelCommand.Execute(null); return;
+            }
+            if (!allowClose && (models.IsDirty || studies.IsDirty))
+            {
+                args.Cancel = true; if (await company.BeforeChangeAsync!()) { allowClose = true; window.Close(); }
+            }
         };
 
         if (requestedPath?.EndsWith(".valdrio", StringComparison.OrdinalIgnoreCase) == true)
@@ -184,6 +201,8 @@ public partial class App : System.Windows.Application
                         await window.CompanyPanel.RunCompanyInteractionChecks(captureDirectory,
                             (QueuedCompanyFileDialogs)companyDialogs, viewModel);
                         await window.ModelPanel.RunModelInteractionChecks(captureDirectory,
+                            (QueuedCompanyFileDialogs)companyDialogs, (QueuedModelEditorDialogs)modelDialogs, viewModel);
+                        await window.StudyPanel.RunStudyInteractionChecks(captureDirectory,
                             (QueuedCompanyFileDialogs)companyDialogs, (QueuedModelEditorDialogs)modelDialogs, viewModel);
                         CaptureVisualEvidence(
                             window,

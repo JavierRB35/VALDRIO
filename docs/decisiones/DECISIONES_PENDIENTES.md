@@ -87,3 +87,7 @@ Cambiar estos parámetros en el futuro requiere una nueva versión de política,
 ## Decisiones técnicas de T04 — 2026-10-05
 
 [ADR-0003](../adr/ADR-0003-modelos-y-esquema-v2.md) fija familia/UUID y número de versión, evolución segura a copia v2, auditoría por agregado, publicación estructural congelada y reintentos de duplicación. No cambia D01–D12. Método y capacidad quedan explícitamente Pending; seleccionar una clasificación de coste no aprueba D04–D07. El siguiente bloque de estudios tiene su propia revisión y snapshots.
+
+## T05 — Decisiones técnicas de contexto
+
+[ADR-0004](../adr/ADR-0004-estudios-y-snapshots-v3.md) define v3, revisiones propias, dos perímetros de hash y captura contextual. No cambia D01–D12. D03 sigue necesitando muestra y resultado esperado antes de confirmar fuentes reales en T06; las restantes propuestas mantienen sus puertas.

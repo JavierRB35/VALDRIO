@@ -66,7 +66,7 @@ public partial class ModelWorkspacePanel
         Select(companyPanel.CurrencyBox, "USD");
         files.Paths.Enqueue(path);
         await Click(companyPanel.CreateButton);
-        Check(company.Snapshot?.SchemaVersion == 2, "v2 created from company button");
+        Check(company.Snapshot?.SchemaVersion == SqliteCompanyFileService.SchemaVersion, "current schema created from company button");
         var companyId = company.Snapshot!.Id;
         Text(companyPanel.UnitCodeBox, "h");
         Text(companyPanel.DimensionBox, "time");
@@ -172,7 +172,7 @@ public partial class ModelWorkspacePanel
         files.Paths.Enqueue(backup);
         files.Paths.Enqueue(restored);
         await Click(companyPanel.RestoreButton);
-        Check(vm.Models.Count == 2, "v2 backup restore retains published and clone");
+        Check(vm.Models.Count == 2, "current backup restore retains published and clone");
         var catalog = new JsonCurrencyCatalog(Path.Combine(AppContext.BaseDirectory, "reference", "currency-catalog-example.json"));
         using (var independent = new SqliteCompanyFileService(catalog, new SystemClock()).Open(path, CompanyFileOpenMode.ReadOnly))
         {
@@ -191,13 +191,13 @@ public partial class ModelWorkspacePanel
         }
 
         var before = Hash(source);
-        var upgraded = Path.Combine(output, "upgraded-v2.valdrio");
+        var upgraded = Path.Combine(output, "upgraded-current.valdrio");
         files.Paths.Enqueue(source);
         files.Paths.Enqueue(upgraded);
         await Click(companyPanel.UpgradeButton);
-        Check(company.Snapshot?.SchemaVersion == 2 && Hash(source) == before, "Upgrade button preserves original v1 bytes");
+        Check(company.Snapshot?.SchemaVersion == SqliteCompanyFileService.SchemaVersion && Hash(source) == before, "Upgrade button preserves original v1 bytes");
         await Click(companyPanel.CloseButton);
-        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { Format = SqliteCompanyFileService.FormatId, SchemaVersion = 2, CompanyId = companyId.ToString(), PublishedModelId = original.Structure.Id.ToString(), original.StructuralHash, Source = "synthetic WPF interaction", Files = new[] { path, backup, restored, source, upgraded }.Select(p => new { Name = Path.GetFileName(p), Sha256 = Hash(p) }) }, new JsonSerializerOptions { WriteIndented = true }));
+        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { Format = SqliteCompanyFileService.FormatId, SchemaVersion = SqliteCompanyFileService.SchemaVersion, CompanyId = companyId.ToString(), PublishedModelId = original.Structure.Id.ToString(), original.StructuralHash, Source = "synthetic WPF interaction", Files = new[] { path, backup, restored, source, upgraded }.Select(p => new { Name = Path.GetFileName(p), Sha256 = Hash(p) }) }, new JsonSerializerOptions { WriteIndented = true }));
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = passed }, new JsonSerializerOptions { WriteIndented = true }));
     }
 

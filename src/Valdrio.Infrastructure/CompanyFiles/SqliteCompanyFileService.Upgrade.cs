@@ -18,7 +18,7 @@ public sealed partial class SqliteCompanyFileService
         var schema = reader.GetInt32(2);
         if (reader.Read())
             throw Error("FILE_FOREIGN_FORMAT", "File.ForeignFormat");
-        if (schema is not (1 or 2))
+        if (schema is not (1 or 2 or 3))
             throw Error("FILE_SCHEMA_UNSUPPORTED", "File.SchemaUnsupported");
         return schema;
     }
@@ -33,7 +33,7 @@ public sealed partial class SqliteCompanyFileService
         // Own both paths until promotion. No migration of the source, including EF lock recovery.
         using var sourceLock = Acquire(original, cancellationToken);
         var before = Validate(original, cancellationToken, allowLegacy: true);
-        if (before.SchemaVersion != 1)
+        if (before.SchemaVersion == SchemaVersion)
             throw Error("FILE_UPGRADE_NOT_REQUIRED", "File.UpgradeNotRequired");
         using var reservation = Acquire(target, cancellationToken);
         EnsureNew(target);
@@ -49,13 +49,25 @@ public sealed partial class SqliteCompanyFileService
                 // Reject a foreign/stale EF lock rather than erase it in a copy.
                 if (Scalar(output, "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='__EFMigrationsLock';") == "1" && Scalar(output, "SELECT COUNT(*) FROM __EFMigrationsLock;") != "0")
                     throw Error("FILE_MIGRATION_LOCKED", "File.MigrationLocked");
-                using var db = new ModelDbContext(output);
+                if (before.SchemaVersion == 1)
+                {
+                    using var model = new ModelDbContext(output); model.Database.Migrate();
+                }
+                using var db = new StudyDbContext(output);
                 db.Database.Migrate();
                 onCheckpoint?.Invoke(CompanyWriteCheckpoint.AfterFirstWrite);
                 cancellationToken.ThrowIfCancellationRequested();
                 using var tx = db.Database.BeginTransaction();
                 db.Metadata.Single().SchemaVersion = SchemaVersion;
-                AddAudit(db, new() { Id = NewId(), CompanyId = before.Id.ToString(), Revision = 0, Operation = "UpgradeFormat", Actor = actor, AtUtc = time.GetUtcNow().ToCanonicalString(), BeforeJson = CanonicalSnapshotJson.Serialize(new FormatUpgrade(1, 1, MigrationId)), AfterJson = CanonicalSnapshotJson.Serialize(new FormatUpgrade(1, 2, UpgradeMigrationId)) }, "CompanyFile", before.Id.ToString(), CanonicalSnapshotJson.SchemaVersion);
+                var prior = db.Audit.Where(a => EF.Property<string>(a, "AggregateType") == "CompanyFile").Count();
+                for (var from = before.SchemaVersion; from < SchemaVersion; from++)
+                {
+                    var oldMigration = from == 1 ? MigrationId : UpgradeMigrationId;
+                    var newMigration = from == 1 ? UpgradeMigrationId : StudyMigrationId;
+                    AddAudit(db, new() { Id = NewId(), CompanyId = before.Id.ToString(), Revision = prior++, Operation = "UpgradeFormat", Actor = actor,
+                        AtUtc = time.GetUtcNow().ToCanonicalString(), BeforeJson = Json(new FormatUpgrade(from, from, oldMigration)),
+                        AfterJson = Json(new FormatUpgrade(from, from + 1, newMigration)) }, "CompanyFile", before.Id.ToString(), CanonicalSnapshotJson.SchemaVersion);
+                }
                 db.SaveChanges();
                 onCheckpoint?.Invoke(CompanyWriteCheckpoint.BeforeCommit);
                 cancellationToken.ThrowIfCancellationRequested();
