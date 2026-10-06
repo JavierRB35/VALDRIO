@@ -416,6 +416,27 @@ try {
       if ($check -notin $studyChecks.PassedChecks) { throw "Missing final study verification: $check." }
     }
     Write-Host "Study WPF checks passed: $($studyChecks.PassedChecks.Count)."
+
+    $recoveryChecks = Get-Content -LiteralPath (Join-Path $captureDir "studies/recovery.json") -Raw | ConvertFrom-Json
+    $expectedRecoveryChecks = @(
+      "confirmed create survives refresh failure",
+      "confirmed save survives refresh failure",
+      "next save uses confirmed revision",
+      "confirmed close survives refresh failure",
+      "confirmed reopen survives refresh failure",
+      "confirmed snapshot survives refresh failure",
+      "manual refresh retains confirmed snapshot selection",
+      "clean refresh adopts newer persisted revision",
+      "dirty refresh preserves editor while list advances",
+      "discard then refresh reconciles current revision"
+    )
+    if ($recoveryChecks.Status -ne "passed" -or
+        $recoveryChecks.PassedChecks.Count -ne $expectedRecoveryChecks.Count -or
+        @(Compare-Object ($expectedRecoveryChecks | Sort-Object) (@($recoveryChecks.PassedChecks) | Sort-Object)).Count -ne 0) {
+      throw "Study post-commit recovery regression evidence is missing or incomplete."
+    }
+    Write-Host "Study post-commit recovery checks passed: $($recoveryChecks.PassedChecks.Count)."
+
     dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $captureDir "studies/snapshot.json")
     if ($LASTEXITCODE -ne 0) { throw "Runner could not verify the actual WPF snapshot." }
 
@@ -470,6 +491,7 @@ try {
         VerifiedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
         Tests = [int]$counters.passed
         StudyChecks = $studyChecks.PassedChecks.Count
+        StudyRecoveryChecks = $recoveryChecks.PassedChecks.Count
         ModelChecks = $modelChecks.PassedChecks.Count
         CompanyChecks = $companyChecks.PassedChecks.Count
         FxChecks = $fxChecks.PassedChecks.Count

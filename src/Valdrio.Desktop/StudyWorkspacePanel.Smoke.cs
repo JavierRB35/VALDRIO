@@ -156,9 +156,328 @@ public partial class StudyWorkspacePanel
         var upgraded = Path.Combine(output, "upgraded-v3.valdrio"); files.Paths.Enqueue(source); files.Paths.Enqueue(upgraded); await Click(companyPanel.UpgradeButton);
         Check(company.Snapshot?.SchemaVersion == 3 && Hash(source) == before && vm.PublishedModels.Count == 1, "v2 upgrade button preserves original publication and bytes");
         Check(Hash(modelSource) == modelSourceHash, "study workflow preserves the model-stage artifact and manifest");
+        await RunPostCommitRecoveryRegression(output, modelSource);
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = passed }, new JsonSerializerOptions { WriteIndented = true }));
         File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { Format = SqliteCompanyFileService.FormatId, SchemaVersion = 3,
             CompanyId = companyId.ToString(), StudyId = studyId.ToString(), latest.EconomicInputHash, latest.FullSnapshotHash,
             Scope = "Context-only T05; no calculation", Files = new[] { path, backup, restored, source, upgraded, snapshotPath }.Select(p => new { Name = Path.GetFileName(p), Sha256 = Hash(p) }) }, new JsonSerializerOptions { WriteIndented = true }));
     }
+
+    private static async Task RunPostCommitRecoveryRegression(string output, string modelSource)
+    {
+        var recoveryDirectory = Path.Combine(output, "recovery");
+        Directory.CreateDirectory(recoveryDirectory);
+        var recoveryPath = Path.Combine(recoveryDirectory, "post-commit.valdrio");
+        var catalog = new JsonCurrencyCatalog(Path.Combine(AppContext.BaseDirectory, "reference", "currency-catalog-example.json"));
+        var baseService = new SqliteCompanyFileService(catalog, new SystemClock());
+        using (baseService.Restore(modelSource, recoveryPath))
+        {
+        }
+
+        var faultState = new PostCommitReadFailureState();
+        var service = new PostCommitReadFailureCompanyFileService(baseService, faultState);
+        var preferences = new Valdrio.Localization.PresentationPreferencesService(
+            new Valdrio.Localization.LanguageCatalog(),
+            Valdrio.Localization.UserPresentationPreferences.Default);
+        var texts = new Valdrio.Localization.UiTextCatalog();
+        var formatter = new Valdrio.Localization.PresentationFormatter(
+            new Valdrio.Localization.DisplayTimeZoneResolver());
+        using var company = new CompanyFileViewModel(
+            service,
+            new QueuedCompanyFileDialogs(),
+            catalog,
+            texts,
+            preferences,
+            formatter);
+        using var studies = new StudyWorkspaceViewModel(
+            company,
+            catalog,
+            texts,
+            preferences,
+            formatter,
+            new QueuedModelEditorDialogs());
+
+        var passed = new List<string>();
+        void CheckRecovery(bool value, string label)
+        {
+            if (!value) throw new InvalidOperationException("Study recovery regression: " + label);
+            passed.Add(label);
+        }
+
+        await company.OpenPath(recoveryPath);
+        studies.Name = "Recovery study";
+        studies.PeriodStart = new DateTime(2026, 10, 1);
+        studies.PeriodEnd = new DateTime(2026, 10, 31);
+        studies.ModelChoice = studies.PublishedModels.Single();
+        studies.Currency = "EUR";
+        studies.Scenario = studies.Scenarios.Single(item => item.Value == StudyScenario.Actual);
+
+        await studies.CreateCommand.ExecuteAsync(null);
+        var current = studies.Current ?? throw new InvalidOperationException("Recovery study was not created.");
+        var studyId = current.Id;
+        CheckRecovery(
+            current.Revision == 0 &&
+            service.ActiveInnerStudies!.ReadStudies().Single(item => item.Id == studyId).Revision == 0 &&
+            !studies.IsDirty,
+            "confirmed create survives refresh failure");
+
+        studies.Name = "Recovery saved once";
+        await studies.SaveCommand.ExecuteAsync(null);
+        current = studies.Current!;
+        CheckRecovery(
+            current.Revision == 1 &&
+            service.ActiveInnerStudies.ReadStudies().Single(item => item.Id == studyId).Revision == 1,
+            "confirmed save survives refresh failure");
+
+        studies.Name = "Recovery saved twice";
+        await studies.SaveCommand.ExecuteAsync(null);
+        current = studies.Current!;
+        CheckRecovery(
+            current.Revision == 2 &&
+            service.ActiveInnerStudies.ReadStudies().Single(item => item.Id == studyId).Revision == 2,
+            "next save uses confirmed revision");
+
+        await studies.ToggleStateCommand.ExecuteAsync(null);
+        current = studies.Current!;
+        CheckRecovery(
+            current.Revision == 3 &&
+            current.State == StudyState.Closed &&
+            service.ActiveInnerStudies.ReadStudies().Single(item => item.Id == studyId).State == StudyState.Closed,
+            "confirmed close survives refresh failure");
+
+        await studies.ToggleStateCommand.ExecuteAsync(null);
+        current = studies.Current!;
+        CheckRecovery(
+            current.Revision == 4 &&
+            current.State == StudyState.Open &&
+            service.ActiveInnerStudies.ReadStudies().Single(item => item.Id == studyId).State == StudyState.Open,
+            "confirmed reopen survives refresh failure");
+
+        await studies.CaptureCommand.ExecuteAsync(null);
+        var capturedId = studies.SnapshotChoice?.Value.Id ??
+            throw new InvalidOperationException("Confirmed snapshot was not selected.");
+        CheckRecovery(
+            service.ActiveInnerStudies.ReadSnapshots(current.CompanyId, studyId).Any(item => item.Id == capturedId),
+            "confirmed snapshot survives refresh failure");
+
+        await studies.RefreshCommand.ExecuteAsync(null);
+        CheckRecovery(
+            studies.SnapshotChoice?.Value.Id == capturedId,
+            "manual refresh retains confirmed snapshot selection");
+
+        var persisted = service.ActiveInnerStudies.ReadStudies().Single(item => item.Id == studyId);
+        var externallyUpdated = service.ActiveInnerStudies.UpdateContext(
+            RecoveryUpdate(persisted, "External revision"));
+        await studies.RefreshCommand.ExecuteAsync(null);
+        CheckRecovery(
+            studies.Current?.Revision == externallyUpdated.Revision &&
+            studies.Current.Name == "External revision" &&
+            !studies.IsDirty,
+            "clean refresh adopts newer persisted revision");
+
+        studies.Name = "Pending editor text";
+        var editorRevision = studies.Current!.Revision;
+        var newer = service.ActiveInnerStudies.UpdateContext(
+            RecoveryUpdate(externallyUpdated, "Newer persisted revision"));
+        await studies.RefreshCommand.ExecuteAsync(null);
+        CheckRecovery(
+            studies.IsDirty &&
+            studies.Name == "Pending editor text" &&
+            studies.Current.Revision == editorRevision &&
+            studies.Studies.Single(item => item.Value.Id == studyId).Value.Revision == newer.Revision,
+            "dirty refresh preserves editor while list advances");
+
+        studies.DiscardCommand.Execute(null);
+        await studies.RefreshCommand.ExecuteAsync(null);
+        CheckRecovery(
+            !studies.IsDirty &&
+            studies.Current?.Revision == newer.Revision &&
+            studies.Current.Name == "Newer persisted revision",
+            "discard then refresh reconciles current revision");
+
+        File.WriteAllText(
+            Path.Combine(output, "recovery.json"),
+            JsonSerializer.Serialize(
+                new { Status = "passed", PassedChecks = passed },
+                new JsonSerializerOptions { WriteIndented = true }));
+    }
+
+    private static UpdateStudyContext RecoveryUpdate(StudyDefinition study, string name) =>
+        new(
+            study.CompanyId,
+            study.Id,
+            study.Revision,
+            name,
+            study.PeriodStart,
+            study.PeriodEnd,
+            study.Purpose,
+            study.ScenarioKind,
+            study.SelectedModelVersionId,
+            study.Currency.FunctionalCurrencyCode,
+            "recovery-regression");
+
+    private sealed class PostCommitReadFailureState
+    {
+        private int failNextModelRead;
+
+        public void Arm() => Interlocked.Exchange(ref failNextModelRead, 1);
+
+        public bool Consume() => Interlocked.Exchange(ref failNextModelRead, 0) == 1;
+    }
+
+    private sealed class PostCommitReadFailureCompanyFileService(
+        ICompanyFileService inner,
+        PostCommitReadFailureState state)
+        : ICompanyFileService
+    {
+        public IStudyWorkspace? ActiveInnerStudies { get; private set; }
+
+        private ICompanyFileSession Wrap(ICompanyFileSession session)
+        {
+            ActiveInnerStudies = session.Studies;
+            return new PostCommitReadFailureSession(session, state);
+        }
+
+        public ICompanyFileSession Upgrade(
+            string source,
+            string destination,
+            string actor,
+            CancellationToken cancellationToken = default) =>
+            Wrap(inner.Upgrade(source, destination, actor, cancellationToken));
+
+        public ICompanyFileSession Create(
+            CreateCompanyFile command,
+            CancellationToken cancellationToken = default) =>
+            Wrap(inner.Create(command, cancellationToken));
+
+        public ICompanyFileSession Open(
+            string path,
+            CompanyFileOpenMode mode = CompanyFileOpenMode.Edit,
+            CancellationToken cancellationToken = default) =>
+            Wrap(inner.Open(path, mode, cancellationToken));
+
+        public ICompanyFileSession Restore(
+            string source,
+            string destination,
+            CancellationToken cancellationToken = default) =>
+            Wrap(inner.Restore(source, destination, cancellationToken));
+    }
+
+    private sealed class PostCommitReadFailureSession(
+        ICompanyFileSession inner,
+        PostCommitReadFailureState state)
+        : ICompanyFileSession
+    {
+        public IStudyWorkspace Studies { get; } =
+            new PostCommitReadFailureStudyWorkspace(inner.Studies, state);
+        public IModelWorkspace Models { get; } =
+            new PostCommitReadFailureModelWorkspace(inner.Models, state);
+        public string Path => inner.Path;
+        public CompanyFileOpenMode Mode => inner.Mode;
+
+        public CompanyFileSnapshot Read(CancellationToken cancellationToken = default) =>
+            inner.Read(cancellationToken);
+
+        public CompanyFileSnapshot AddUnits(
+            IEnumerable<UnitDefinition> units,
+            long expectedRevision,
+            string actor,
+            CancellationToken cancellationToken = default) =>
+            inner.AddUnits(units, expectedRevision, actor, cancellationToken);
+
+        public void Backup(string destination, CancellationToken cancellationToken = default) =>
+            inner.Backup(destination, cancellationToken);
+
+        public void Dispose() => inner.Dispose();
+    }
+
+    private sealed class PostCommitReadFailureModelWorkspace(
+        IModelWorkspace inner,
+        PostCommitReadFailureState state)
+        : IModelWorkspace
+    {
+        public IReadOnlyList<PhysicalCenter> ReadCenters(CancellationToken token = default) =>
+            inner.ReadCenters(token);
+
+        public IReadOnlyList<DriverUnitState> ReadDriverUnits(CancellationToken token = default) =>
+            inner.ReadDriverUnits(token);
+
+        public IReadOnlyList<ModelVersionSnapshot> ReadModels(CancellationToken token = default)
+        {
+            if (state.Consume())
+                throw new IOException("Injected post-commit model read failure.");
+            return inner.ReadModels(token);
+        }
+
+        public PhysicalCenter CreateCenter(CreatePhysicalCenter command, CancellationToken token = default) =>
+            inner.CreateCenter(command, token);
+
+        public PhysicalCenter ChangeCenter(ChangePhysicalCenter command, CancellationToken token = default) =>
+            inner.ChangeCenter(command, token);
+
+        public DriverUnitState ChangeUnitState(ChangeDriverUnitState command, CancellationToken token = default) =>
+            inner.ChangeUnitState(command, token);
+
+        public ModelVersionSnapshot CreateDraft(CreateModelDraft command, CancellationToken token = default) =>
+            inner.CreateDraft(command, token);
+
+        public ModelVersionSnapshot SaveDraft(SaveModelDraft command, CancellationToken token = default) =>
+            inner.SaveDraft(command, token);
+
+        public IReadOnlyList<DomainDiagnostic> ValidateModel(
+            EntityId companyId,
+            EntityId modelId,
+            CancellationToken token = default) =>
+            inner.ValidateModel(companyId, modelId, token);
+
+        public ModelVersionSnapshot Publish(PublishModel command, CancellationToken token = default) =>
+            inner.Publish(command, token);
+
+        public ModelVersionSnapshot Clone(CloneModel command, CancellationToken token = default) =>
+            inner.Clone(command, token);
+    }
+
+    private sealed class PostCommitReadFailureStudyWorkspace(
+        IStudyWorkspace inner,
+        PostCommitReadFailureState state)
+        : IStudyWorkspace
+    {
+        public IReadOnlyList<StudyDefinition> ReadStudies(CancellationToken token = default) =>
+            inner.ReadStudies(token);
+
+        public StudyDefinition Create(CreateStudy command, CancellationToken token = default)
+        {
+            var result = inner.Create(command, token);
+            state.Arm();
+            return result;
+        }
+
+        public StudyDefinition UpdateContext(UpdateStudyContext command, CancellationToken token = default)
+        {
+            var result = inner.UpdateContext(command, token);
+            state.Arm();
+            return result;
+        }
+
+        public StudyDefinition ChangeState(ChangeStudyState command, CancellationToken token = default)
+        {
+            var result = inner.ChangeState(command, token);
+            state.Arm();
+            return result;
+        }
+
+        public StudySnapshotReceipt Capture(CaptureStudySnapshot command, CancellationToken token = default)
+        {
+            var result = inner.Capture(command, token);
+            state.Arm();
+            return result;
+        }
+
+        public IReadOnlyList<StudySnapshotReceipt> ReadSnapshots(
+            EntityId companyId,
+            EntityId studyId,
+            CancellationToken token = default) =>
+            inner.ReadSnapshots(companyId, studyId, token);
+    }
+
 }
