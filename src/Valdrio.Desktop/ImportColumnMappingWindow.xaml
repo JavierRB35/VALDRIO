@@ -59,6 +59,14 @@
   <TextBlock Text="{Binding [PreviewHelp]}"/>
   <DataGrid x:Name="PreviewGrid" ItemsSource="{Binding Preview}" AutoGenerateColumns="False" IsReadOnly="True"
    CanUserAddRows="False" Height="210" FlowDirection="LeftToRight" EnableRowVirtualization="True">
+   <DataGrid.ColumnHeaderStyle>
+    <Style TargetType="DataGridColumnHeader">
+     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+     <Setter Property="ContentTemplate"><Setter.Value>
+      <DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="4,3"/></DataTemplate>
+     </Setter.Value></Setter>
+    </Style>
+   </DataGrid.ColumnHeaderStyle>
    <DataGrid.Columns>
     <DataGridTextColumn Binding="{Binding Row}" Width="65"/>
     <DataGridTextColumn Binding="{Binding Account}" Width="155"/>
