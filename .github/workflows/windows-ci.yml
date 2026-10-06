@@ -41,6 +41,8 @@ concurrency:
 permissions:
   contents: read
 
+# Cost guard: targeted validation only; keep job timeouts bounded.
+
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: '1'
   DOTNET_NOLOGO: '1'
