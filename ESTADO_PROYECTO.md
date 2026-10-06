@@ -11,7 +11,8 @@ Fecha de revisión 2026-10-06. Repositorio `JavierRB35/VALDRIO`.
 | T06.1 | Cerrada e integrada por PR #17 en main@2da40fa76108a6edef0492de2ce67dfbad9fa72a; aceptación Windows y UTC/Madrid aprobadas |
 | Selección manual de columnas | Integrada por PR #18 en main@e6ba1a9ce7233646577f95a74cc41fc7a4902960; CSV/XLSX, vista previa y validación; la revisión de cuenta obligatoria se acepta con CI de su HEAD |
 | Confirmación de importes de periodo | Implementada desde main@776532e4a5d7b51c0ff3e1ade33b8a4826d9104c; formato v4, preparación, confirmación atómica, recursos/enlaces e inputs v2; aceptación del HEAD registrada en la PR asociada |
-| Resto de T06.2–T06.6 y T06A | Pendientes las modalidades cierre/diferencia de acumulados, Debe/Haber, agrupación, sustitución de lotes y puente FX; no se declara T06 completa |
+| Columnas Debe/Haber | Implementadas sobre main@933f854a9223cd70494c4c3d3a89712c72f60153; selección explícita, Debe menos Haber, originales separados, aprobación y guardado de periodo; aceptación del HEAD registrada en la PR asociada |
+| Resto de T06.2–T06.6 y T06A | Pendientes las modalidades cierre/diferencia de acumulados, agrupación, sustitución de lotes y puente FX; no se declara T06 completa |
 
 La rama de cierre parte de `audit/t06-import-hardening-20261006@8e193c9d5e909f7c9be34532f2dfdbe331e45f16` y conserva su historia. El bloque corrige compilación, recuperación de modelos/maestros, formatos y tipos de fecha XLSX, errores controlados de libros corruptos, precisión de seriales y semántica de auditoría del estudio. También añade límites técnicos de lectura, lectura conjunta del workspace y aviso visible/reintento de preferencias.
 
@@ -29,6 +30,7 @@ La especificación canónica v0.4 y las fixtures históricas se conservan. Las 3
 - [T06](docs/tareas/T06.md), [directrices](docs/directrices/T06_SIGUIENTE_FASE.md) y [ADR-0005](docs/adr/ADR-0005-import-staging-profile-v1.md).
 - Fuentes canónicas [R07](docs/evidencias/R07_2026-10-05.md).
 - [Confirmación de importación](docs/evidencias/IMPORTACION_CONFIRMADA_2026-10-06.md) y [ADR-0006](docs/adr/ADR-0006-importacion-periodo-v4.md).
+- [Columnas Debe/Haber](docs/evidencias/IMPORTACION_DEBE_HABER_2026-10-06.md) y [ADR-0007](docs/adr/ADR-0007-importacion-debe-haber.md).
 
 ## Registro histórico hasta el 5 de octubre
 

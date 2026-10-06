@@ -302,7 +302,7 @@ Completa: {5}</value></data>
   <data name="Preferences.RetrySave" xml:space="preserve"><value>Reintentar guardar preferencias</value></data>
   <data name="ImportMapping.OpenMapping" xml:space="preserve"><value>Seleccionar columnas de importación…</value></data>
   <data name="ImportMapping.Title" xml:space="preserve"><value>Selección de columnas de importación</value></data>
-  <data name="ImportMapping.Intro" xml:space="preserve"><value>Elige la estructura del archivo y después las columnas de código de cuenta e importe por posición y encabezado.</value></data>
+  <data name="ImportMapping.Intro" xml:space="preserve"><value>Elige la estructura del archivo y después las columnas de código de cuenta y de importe firmado, o de Debe y Haber, por posición y encabezado.</value></data>
   <data name="ImportMapping.Open" xml:space="preserve"><value>Elegir CSV o Excel</value></data>
   <data name="ImportMapping.Worksheet" xml:space="preserve"><value>Hoja de Excel</value></data>
   <data name="ImportMapping.HeaderRow" xml:space="preserve"><value>Fila de encabezados (0 = sin encabezados)</value></data>
@@ -343,10 +343,10 @@ Completa: {5}</value></data>
   <data name="ImportMapping.Space" xml:space="preserve"><value>Espacio</value></data>
   <data name="ImportMapping.Tab" xml:space="preserve"><value>Tabulación</value></data>
   <data name="ImportMapping.NoHeader" xml:space="preserve"><value>Sin encabezado</value></data>
-  <data name="Import.ColumnsRequired" xml:space="preserve"><value>Selecciona columnas de cuenta e importe que existan en el origen.</value></data>
-  <data name="Import.ColumnsDistinct" xml:space="preserve"><value>El código de cuenta y el importe deben utilizar columnas distintas.</value></data>
+  <data name="Import.ColumnsRequired" xml:space="preserve"><value>Selecciona la columna de cuenta y todas las columnas de importe necesarias del origen.</value></data>
+  <data name="Import.ColumnsDistinct" xml:space="preserve"><value>El código de cuenta y cada campo de importe deben utilizar columnas distintas.</value></data>
   <data name="Import.NoData" xml:space="preserve"><value>La estructura seleccionada no contiene filas de datos.</value></data>
-  <data name="Import.ModeUnavailable" xml:space="preserve"><value>Esta entrega admite importes firmados de periodo y rechaza cuentas duplicadas. Los cierres, diferencias de acumulados, columnas Debe/Haber y agrupación necesitan su interpretación específica.</value></data>
+  <data name="Import.ModeUnavailable" xml:space="preserve"><value>Esta entrega admite importes de periodo, firmados o Debe menos Haber, y rechaza cuentas duplicadas. Los cierres, diferencias de acumulados y agrupación necesitan su interpretación específica.</value></data>
   <data name="Import.ApprovalRequired" xml:space="preserve"><value>Valida un ejemplo representativo y aprueba explícitamente el periodo, la moneda y los importes firmados antes de confirmar.</value></data>
   <data name="Import.PeriodMismatch" xml:space="preserve"><value>El periodo del archivo debe coincidir con el del estudio.</value></data>
   <data name="Import.FxRequired" xml:space="preserve"><value>La confirmación requiere una moneda fija de origen igual a la funcional del estudio. Otra moneda necesita el puente de conversión.</value></data>
@@ -374,4 +374,14 @@ Completa: {5}</value></data>
   <data name="ImportMapping.CommittedRefreshPending" xml:space="preserve"><value>La importación está guardada. No se ha podido refrescar la vista. Cierra esta ventana y actualiza el estudio.</value></data>
   <data name="ImportMapping.NoImports" xml:space="preserve"><value>Este estudio todavía no tiene lotes de importación confirmados.</value></data>
   <data name="ImportMapping.ImportHistory" xml:space="preserve"><value>Lote {0} · {1} · {2} recursos · {3} {4} · revisión {5}</value></data>
+  <data name="ImportMapping.AmountLayout" xml:space="preserve"><value>Interpretación del importe</value></data>
+  <data name="ImportMapping.SignedLayout" xml:space="preserve"><value>Importe firmado en una columna</value></data>
+  <data name="ImportMapping.DebitCreditLayout" xml:space="preserve"><value>Debe menos Haber en dos columnas</value></data>
+  <data name="ImportMapping.DebitColumn" xml:space="preserve"><value>Columna del Debe</value></data>
+  <data name="ImportMapping.CreditColumn" xml:space="preserve"><value>Columna del Haber</value></data>
+  <data name="ImportMapping.OriginalDebit" xml:space="preserve"><value>Debe original</value></data>
+  <data name="ImportMapping.OriginalCredit" xml:space="preserve"><value>Haber original</value></data>
+  <data name="ImportMapping.DebitCreditHelp" xml:space="preserve"><value>Importe de periodo = Debe menos Haber. Ambas columnas necesitan números explícitos, incluido el cero. Los campos vacíos o ausentes son errores; los negativos conservan su significado declarado.</value></data>
+  <data name="ImportMapping.ApproveDebitCredit" xml:space="preserve"><value>He comprobado el ejemplo y confirmo Debe menos Haber como importe firmado del periodo indicado, en la moneda de origen declarada. Ambos originales, negativos y ceros conservan su significado.</value></data>
+  <data name="Import.AmountOverflow" xml:space="preserve"><value>Debe menos Haber supera el rango decimal admitido. Corrige los importes del origen.</value></data>
 </root>

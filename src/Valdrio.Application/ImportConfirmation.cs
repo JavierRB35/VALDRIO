@@ -44,7 +44,7 @@ public sealed class PreparedImport
         var diagnostics = new List<ImportDiagnostic>();
         void Block(string code, string key) => diagnostics.Add(new(new(code, key, []), ImportDiagnosticSeverity.Blocking,
             new(source.FileName, source.SheetName, null, null, null)));
-        if (profile.AmountMode != ImportAmountMode.PeriodAmount || profile.SignConvention != ImportSignConvention.SignedAmount ||
+        if (profile.AmountMode != ImportAmountMode.PeriodAmount ||
             profile.DuplicatePolicy != ImportDuplicatePolicy.Reject)
             Block("IMP_MODE_UNAVAILABLE", "Import.ModeUnavailable");
         if (profile.Approval.State != ImportProfileApprovalState.ApprovedBusiness || !profile.SignConventionConfirmed)
@@ -55,7 +55,7 @@ public sealed class PreparedImport
             Block("IMP_FX_REQUIRED", "Import.FxRequired");
         if (studyContext.State != StudyState.Open) Block("STUDY_CLOSED", "Study.ClosedDiagnostic");
         var rows = new List<PreparedAmountRow>();
-        if (profile.SignConvention == ImportSignConvention.SignedAmount)
+        if (profile.SignConvention is ImportSignConvention.SignedAmount or ImportSignConvention.DebitMinusCredit)
         {
             var selection = ImportColumnSelection.Validate(source,
                 new(profile.SourceKind, profile.WorksheetName, profile.HeaderRow, profile.FirstDataRow, profile.Csv),
@@ -67,13 +67,17 @@ public sealed class PreparedImport
             {
                 token.ThrowIfCancellationRequested();
                 var validAmount = row.Amount.HasValue;
-                if (row.Amount is { } amount)
+                void Validate(decimal value, int? column, string field)
                 {
-                    try { precisionPolicy.ValidateAmount(amount, "amount"); }
+                    try { precisionPolicy.ValidateAmount(value, field); }
                     catch (DomainRuleException error)
                     { validAmount = false; diagnostics.Add(new(error.Diagnostic, ImportDiagnosticSeverity.Blocking,
-                        new(source.FileName, source.SheetName, row.RecordNumber, row.PhysicalLine, profile.Columns.Amount))); }
+                        new(source.FileName, source.SheetName, row.RecordNumber, row.PhysicalLine, column))); }
                 }
+                // Validate each operand too: cancellation must not hide excessive source precision/magnitude.
+                if (row.Debit is { } debit) Validate(debit, profile.Columns.Debit, "amount");
+                if (row.Credit is { } credit) Validate(credit, profile.Columns.Credit, "amount");
+                if (row.Amount is { } amount) Validate(amount, profile.Columns.Amount, "amount");
                 var invalid = !validAmount || blockedRows.Contains(row.RecordNumber);
                 var selected = !invalid && row.Amount.HasValue &&
                     (profile.AccountSelection.Kind == ImportAccountSelectionKind.All ||
