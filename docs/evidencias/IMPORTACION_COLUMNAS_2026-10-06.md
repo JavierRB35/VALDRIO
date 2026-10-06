@@ -16,11 +16,11 @@ ImportSourceReadSettings separa estructura física y contrato económico. Los ad
 
 ## Verificación
 
-SDK 10.0.401; Release completo, incluido WPF con EnableWindowsTargeting; Nullable y TreatWarningsAsErrors conservados. **0 avisos y 0 errores**. Suite local **309/309**, **0 fallos y 0 omitidas**, con las 285 anteriores y 24 nuevas.
+SDK 10.0.401; Release completo, incluido WPF con EnableWindowsTargeting; Nullable y TreatWarningsAsErrors conservados. **0 avisos y 0 errores**. Suite local **310/310**, **0 fallos y 0 omitidas**, con las 285 anteriores y 25 nuevas.
 
-TRX local columns-final-local.trx, SHA-256 cb646b9467544d17d402762703daaf43bff9000d3542d6b5179ec00c0070b4de.
+TRX local columns-final-310.trx, SHA-256 973fa644fbae873f956c9b129949d666538123382b69f69ff29f8252d0bc2605.
 
-Las regresiones ejecutan CSV/XLSX reales, una segunda hoja, posiciones reordenadas/no contiguas, cabeceras repetidas/cortas/ausentes, Missing frente a cero, tipos Excel, cuentas numéricas, cambios externos del archivo, cambios de configuración y presentación, errores después de la fila 50, reemplazo fallido y cancelación.
+Las regresiones ejecutan CSV/XLSX reales, una segunda hoja, posiciones reordenadas/no contiguas, cabeceras repetidas/cortas/ausentes, importes CSV entre comillas con representación original conservada, Missing frente a cero, tipos Excel, cuentas numéricas, cambios externos del archivo, cambios de configuración y presentación, errores después de la fila 50, reemplazo fallido y cancelación.
 
 La aceptación Windows añade 13 comprobaciones nativas del selector y dos capturas CSV/Excel. El script exige sus resultados junto a los checks previos; verification.json incorpora ImportColumnChecks e ImportColumnImages. Los runs finales, el árbol, el recibo y sus hashes se registran en la PR asociada a feature/import-column-mapping-20261006 y en la aceptación posterior de main, sin modificar código después de validarlo.
 

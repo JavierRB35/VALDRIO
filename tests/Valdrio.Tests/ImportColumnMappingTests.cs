@@ -36,6 +36,17 @@ public sealed class ImportColumnMappingTests
     }
 
     [TestMethod]
+    public async Task QuotedCsvAmountRetainsOriginalLexicalWhileParsingDecodedText()
+    {
+        using var session = await new ImportSourceSessionFactory().OpenAsync(WriteCsv("value;ignored;code\n\"1.234,50\";unused;00123"));
+        var result = Validate(await session.ReadAsync(Csv()), Csv());
+        Assert.IsTrue(result.IsValid);
+        Assert.AreEqual(1234.50m, result.Rows.Single().Amount);
+        Assert.AreEqual("\"1.234,50\"", result.Rows.Single().AmountLexical);
+        Assert.AreEqual("00123", result.Rows.Single().Account);
+    }
+
+    [TestMethod]
     public async Task Xlsx_ExplicitSecondSheetAndReorderedColumnsUseStoredNumberGrammar()
     {
         using var session = await new ImportSourceSessionFactory().OpenAsync(WriteWorkbook());

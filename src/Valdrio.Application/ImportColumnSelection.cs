@@ -108,7 +108,7 @@ public static class ImportColumnSelection
                     new ImportFieldLocation(source.FileName, source.SheetName, row.RecordNumber,
                         row.PhysicalStartLine, columns.Amount)));
             rows.Add(new ImportMappedRow(row.RecordNumber, row.PhysicalStartLine, account.TextValue,
-                amount.TextValue, parsed.Value));
+                amount.RawLexical, parsed.Value));
         }
         if (rows.Count == 0)
             diagnostics.Add(new ImportDiagnostic(new DomainDiagnostic("IMP_NO_DATA", "Import.NoData", []),

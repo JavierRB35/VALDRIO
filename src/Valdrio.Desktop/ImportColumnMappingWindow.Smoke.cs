@@ -54,6 +54,7 @@ public partial class ImportColumnMappingWindow
             "language and region preserve validated mapping");
         Check(AccountColumnBox.SelectedValue is 3 && AmountColumnBox.SelectedValue is 1, "visible selections survive reformat");
         Check(PreviewGrid.Columns[1].Header?.ToString() == vm["AccountColumn"], "localized preview headers");
+        PreviewGrid.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "csv-es-enUS.png"));
         vm.Delimiter = ",";
         Check(!vm.HasColumns && !vm.IsReady && vm.AccountColumn is null, "dialect change invalidates source and mapping");
@@ -85,6 +86,7 @@ public partial class ImportColumnMappingWindow
         FlowDirection = FlowDirection.RightToLeft;
         await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle); UpdateLayout();
         Check(vm.IsReady && vm.AccountColumn == 3 && vm.AmountColumn == 1, "pseudo and RTL preserve mapping");
+        PreviewGrid.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "xlsx-pseudo.png"));
         Check(Hash(csv) == sourceHash && Hash(companyPath) == companyHash, "source and company bytes unchanged");
         files.Paths.Enqueue(Path.Combine(output, "missing.csv")); await Click(OpenSourceButton);
