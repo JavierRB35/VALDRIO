@@ -40,6 +40,10 @@ public sealed class T06AuditClosureTests
     [DataRow("mm", "45323", SourceValueKind.DateSerial)]
     [DataRow("0.00\";yyyy-mm-dd\";yyyy-mm-dd", "1234.50", SourceValueKind.Number)]
     [DataRow("0.00\\;\\d;yyyy-mm-dd", "1234.50", SourceValueKind.Number)]
+    [DataRow("0.00\"units_\";yyyy-mm-dd", "1234.50", SourceValueKind.Number)]
+    [DataRow("0.00\"units*\";yyyy-mm-dd", "1234.50", SourceValueKind.Number)]
+    [DataRow("0.00\"folder\\\";yyyy-mm-dd", "1234.50", SourceValueKind.Number)]
+    [DataRow("[>0]0.00\"units_\";yyyy-mm-dd", "1234.50", SourceValueKind.Number)]
     public async Task E03_OnlyTheEffectiveFormatSectionDeterminesCellKind(
         string format, string raw, SourceValueKind expected)
     {

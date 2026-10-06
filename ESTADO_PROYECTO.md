@@ -8,12 +8,12 @@ Fecha de revisión 2026-10-06. Repositorio `JavierRB35/VALDRIO`.
 |---|---|
 | T00–T04 y T02A | Cerradas e integradas |
 | T05 | Cerrada e integrada en `main@99c9dec289cb749094f6036c6b3f17bb3841e855`; la antigua PR #14 está fusionada |
-| T06.1 | Lectura CSV/XLSX y staging implementados; correcciones E01–E07 y N01–N05 en validación final de Windows |
+| T06.1 | Cierre técnico de lectura CSV/XLSX y staging con E01–E07 y N01–N05; integración por PR #17 condicionada a CI aprobada del HEAD final |
 | T06.2–T06.6 | Pendientes; no existen todavía PrepareImport completo, ConfirmImport, recursos persistidos ni UI/runner T06 |
 
 La rama de cierre parte de `audit/t06-import-hardening-20261006@8e193c9d5e909f7c9be34532f2dfdbe331e45f16` y conserva su historia. El bloque corrige compilación, recuperación de modelos/maestros, formatos y tipos de fecha XLSX, errores controlados de libros corruptos, precisión de seriales y semántica de auditoría del estudio. También añade límites técnicos de lectura, lectura conjunta del workspace y aviso visible/reintento de preferencias.
 
-La evidencia vigente está en [AUDITORIA_CIERRE_2026-10-06.md](docs/evidencias/AUDITORIA_CIERRE_2026-10-06.md). El cierre de T06.1 requiere CI Windows aprobada y artifacts atribuibles al último HEAD antes de integrar. Las suites de los commits anteriores no sustituyen esa puerta.
+La evidencia vigente está en [AUDITORIA_CIERRE_2026-10-06.md](docs/evidencias/AUDITORIA_CIERRE_2026-10-06.md). La integración del cierre de T06.1 requiere CI Windows aprobada y artifacts atribuibles al último HEAD. La PR #17 conserva los runs definitivos y el recibo de main acredita el commit integrado. Las suites de los commits anteriores no sustituyen esa puerta.
 
 ## Decisiones y alcance
 

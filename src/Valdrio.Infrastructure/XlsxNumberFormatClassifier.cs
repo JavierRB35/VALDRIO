@@ -89,13 +89,13 @@ internal static class XlsxNumberFormatClassifier
         for (var i = 0; i < code.Length; i++)
         {
             var c = code[i];
+            if (c == '"') { quoted = !quoted; continue; }
+            if (quoted) continue;
             if (c is '\\' or '_' or '*')
             {
                 if (++i == code.Length) throw Invalid();
                 continue;
             }
-            if (c == '"') { quoted = !quoted; continue; }
-            if (quoted) continue;
             if (c == '[')
             {
                 var closing = code.IndexOf(']', i + 1);
@@ -116,9 +116,9 @@ internal static class XlsxNumberFormatClassifier
         for (var i = 0; i < code.Length; i++)
         {
             var c = code[i];
-            if (c is '\\' or '_' or '*') { i++; continue; }
             if (c == '"') { quoted = !quoted; continue; }
             if (quoted) continue;
+            if (c is '\\' or '_' or '*') { i++; continue; }
             if (c == '[')
             {
                 var end = code.IndexOf(']', i + 1);
