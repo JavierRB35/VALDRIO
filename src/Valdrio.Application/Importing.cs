@@ -203,7 +203,7 @@ public sealed record SourceParseProfileVersion
             !Enum.IsDefined(sourceKind) || !Enum.IsDefined(amountMode) || !Enum.IsDefined(signConvention) ||
             !Enum.IsDefined(duplicatePolicy) || !Enum.IsDefined(zeroPolicy) ||
             !Enum.IsDefined(xlsxNumericAccountPolicy) ||
-            headerRow < 1 || firstDataRow <= headerRow || string.IsNullOrWhiteSpace(datePattern) ||
+            headerRow < 0 || firstDataRow < 1 || firstDataRow <= headerRow || firstDataRow > 1_048_576 || string.IsNullOrWhiteSpace(datePattern) ||
             periodStart.Value > periodEnd.Value ||
             (fixedCurrency.HasValue == currencyColumn.HasValue) ||
             currencyColumn is < 1 ||

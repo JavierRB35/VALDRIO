@@ -28,7 +28,20 @@ public sealed record ActivitySnapshotInput(EntityId PoolId, Quantity Quantity);
 public sealed record ConsumptionSnapshotInput(EntityId Id, EntityId PoolId, Quantity Quantity);
 public sealed record StudySnapshotProvenance(EntityId SnapshotId, EntityId RequestId, UtcInstant CapturedAtUtc, string Actor);
 
-public sealed class StudySnapshotInput
+public interface IStudySnapshotInput
+{
+    string SnapshotSchemaVersion { get; }
+    string InputPreparationVersion { get; }
+    StudyDefinition StudyContext { get; }
+    PrecisionPolicy PrecisionPolicy { get; }
+    PublishedModelStructure Model { get; }
+    StudySnapshotProvenance Provenance { get; }
+    IReadOnlyList<ResourceSnapshotInput> Resources { get; }
+    IReadOnlyList<FxRateApplication> AppliedFx { get; }
+    IReadOnlyList<ActivitySnapshotInput> Activity { get; }
+    IReadOnlyList<ConsumptionSnapshotInput> Consumptions { get; }
+}
+public sealed class StudySnapshotInput : IStudySnapshotInput
 {
     public const string Schema = "valdrio-study-input-v1";
     public const string PreparationVersion = "context-only-t05-v1";
@@ -73,11 +86,11 @@ public sealed class StudySnapshotInput
 public sealed record StudySnapshotReceipt(EntityId Id, EntityId CompanyId, EntityId StudyId, long InputRevision,
     UtcInstant CapturedAtUtc, string PayloadSchema, string EconomicInputHash, string FullSnapshotHash, string CanonicalJson)
 {
-    [JsonIgnore] public StudySnapshotInput Input => StudySnapshotJson.Deserialize(CanonicalJson);
+    [JsonIgnore] public IStudySnapshotInput Input => StudySnapshotJson.Read(CanonicalJson);
     public void EnsureValid()
     {
         var input = Input;
-        if (PayloadSchema != StudySnapshotInput.Schema || Id != input.Provenance.SnapshotId || CompanyId != input.StudyContext.CompanyId ||
+        if (PayloadSchema != input.SnapshotSchemaVersion || Id != input.Provenance.SnapshotId || CompanyId != input.StudyContext.CompanyId ||
             StudyId != input.StudyContext.Id || InputRevision != input.StudyContext.Revision || CapturedAtUtc != input.Provenance.CapturedAtUtc ||
             CanonicalJson != StudySnapshotJson.Serialize(input) || EconomicInputHash != StudySnapshotJson.EconomicHash(input) ||
             FullSnapshotHash != PublishedModelStructure.Hash(CanonicalJson))
@@ -90,7 +103,7 @@ public sealed record StudySnapshotReceipt(EntityId Id, EntityId CompanyId, Entit
 public sealed record StudyPreparation(bool ReadyForCalculation, IReadOnlyList<DomainDiagnostic> Diagnostics);
 public static class StudyPreparationService
 {
-    public static StudyPreparation Evaluate(StudySnapshotInput input)
+    public static StudyPreparation Evaluate(IStudySnapshotInput input)
     {
         var id = input.StudyContext.Id;
         var diagnostics = new List<DomainDiagnostic>();
@@ -99,6 +112,7 @@ public static class StudyPreparationService
             input.Model.Structure.Pools.Any(p => p.CapacityPolicy.Resolution == PolicyResolution.Pending))
             Add("STUDY_POLICY_PENDING", "Study.PolicyPending");
         if (input.Resources.Count == 0) Add("STUDY_RESOURCES_PENDING", "Study.ResourcesPending");
+        else Add("STUDY_PARTITIONS_PENDING", "Study.PartitionsPending");
         if (input.Activity.Count == 0) Add("STUDY_ACTIVITY_PENDING", "Study.ActivityPending");
         if (input.Consumptions.Count == 0) Add("STUDY_CONSUMPTION_PENDING", "Study.ConsumptionPending");
         if (input.StudyContext.State == StudyState.Closed) Add("STUDY_CLOSED", "Study.ClosedDiagnostic");

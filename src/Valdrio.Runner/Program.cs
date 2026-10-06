@@ -12,11 +12,17 @@ if (args.Length == 2 && args[0] == "--study-snapshot")
         var receipt = CanonicalSnapshotJson.Deserialize<StudySnapshotReceipt>(File.ReadAllText(args[1]));
         receipt.EnsureValid();
         var preparation = StudyPreparationService.Evaluate(receipt.Input);
-        Console.WriteLine(JsonSerializer.Serialize(new { status = "verified", task = "T05-context-only", receipt.Id,
+        var input = receipt.Input;
+        using var output = JsonDocument.Parse(CanonicalSnapshotJson.Serialize(new { status = "verified", outputSchema = "valdrio-study-verification-v2",
+            task = input is ImportedStudySnapshotInput ? "T06-period-import" : "T05-context-only", receipt.Id,
             receipt.StudyId, receipt.InputRevision, receipt.PayloadSchema, receipt.EconomicInputHash, receipt.FullSnapshotHash,
             periodStart = receipt.Input.StudyContext.PeriodStart.ToString(), periodEnd = receipt.Input.StudyContext.PeriodEnd.ToString(),
             currency = receipt.Input.StudyContext.Currency.FunctionalCurrencyCode.ToString(), preparation.ReadyForCalculation,
+            resourceCount = input.Resources.Count,
+            imports = input is ImportedStudySnapshotInput imported ? imported.Imports.Select(b =>
+                new { b.Id, b.Prepared.Reconciliation }).ToArray() : [],
             diagnostics = preparation.Diagnostics.Select(d => d.Code) }));
+        Console.WriteLine(output.RootElement.GetProperty("Value").GetRawText());
         return 0;
     }
     catch (Exception ex) when (ex is IOException or JsonException or ArgumentException or Valdrio.Domain.DomainRuleException)

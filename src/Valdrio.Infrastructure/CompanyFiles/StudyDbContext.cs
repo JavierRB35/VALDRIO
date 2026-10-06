@@ -5,7 +5,7 @@ using Valdrio.Infrastructure.CompanyFiles.Migrations;
 namespace Valdrio.Infrastructure.CompanyFiles;
 
 // v1/v2 mappings and snapshots stay frozen; only this context owns the v3 migration.
-internal sealed class StudyDbContext(SqliteConnection connection) : ModelDbContext(connection)
+internal class StudyDbContext(SqliteConnection connection) : ModelDbContext(connection)
 {
     public DbSet<StudyRow> Studies => Set<StudyRow>();
     public DbSet<StudySnapshotRow> StudySnapshots => Set<StudySnapshotRow>();

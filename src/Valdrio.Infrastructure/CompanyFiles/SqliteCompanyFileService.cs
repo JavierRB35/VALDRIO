@@ -17,7 +17,8 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
     private readonly Action<CompanyWriteCheckpoint>? onCheckpoint = checkpoint;
     private readonly IClock time = clock;
     public const string FormatId = "VALDRIO-COMPANY";
-    public const int SchemaVersion = 3;
+    public const int SchemaVersion = 4;
+    public const string ImportMigrationId = "202610060004_ImportedResources";
     public const string StudyMigrationId = "202610050003_StudiesAndSnapshots";
     public const string UpgradeMigrationId = "202610050002_VersionedModels";
     public const string MigrationId = "202610050001_InitialCompanyFile";
@@ -40,11 +41,12 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 using (var connection = Connect(temporary, SqliteOpenMode.ReadWriteCreate))
-                using (var db = new StudyDbContext(connection))
+                using (var db = new ImportDbContext(connection))
                 {
                     // Only our unpublished temporary file can receive migrations.
                     using (var legacy = new CompanyDbContext(connection)) legacy.Database.Migrate();
                     using (var v2 = new ModelDbContext(connection)) v2.Database.Migrate();
+                    using (var v3 = new StudyDbContext(connection)) v3.Database.Migrate();
                     db.Database.Migrate();
                     Execute(connection, "PRAGMA journal_mode=DELETE;");
                     using var transaction = db.Database.BeginTransaction();
@@ -149,7 +151,7 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
                 using var reader = check.ExecuteReader();
                 if (reader.Read()) throw new InvalidDataException("Foreign key check failed");
             }
-            if (!db.Database.GetAppliedMigrations().SequenceEqual(detected switch { 1 => [MigrationId], 2 => [MigrationId, UpgradeMigrationId], _ => new[] { MigrationId, UpgradeMigrationId, StudyMigrationId } })) throw new InvalidDataException("Migration history differs");
+            if (!db.Database.GetAppliedMigrations().SequenceEqual(detected switch { 1 => [MigrationId], 2 => [MigrationId, UpgradeMigrationId], 3 => [MigrationId, UpgradeMigrationId, StudyMigrationId], _ => new[] { MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId } })) throw new InvalidDataException("Migration history differs");
             var company = db.Companies.AsNoTracking().Single();
             var policyRow = db.Policies.AsNoTracking().Single();
             var id = EntityId.Parse(company.Id);
@@ -171,7 +173,7 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
             }).OrderBy(unit => unit.Id).ToArray();
             if (units.Select(x => x.Code).Distinct(StringComparer.Ordinal).Count() != units.Length)
                 throw new InvalidDataException("Duplicate unit code");
-            using ModelDbContext? current = detected switch { 2 => new ModelDbContext(connection), 3 => new StudyDbContext(connection), _ => null };
+            using ModelDbContext? current = detected switch { 2 => new ModelDbContext(connection), 3 => new StudyDbContext(connection), 4 => new ImportDbContext(connection), _ => null };
             if (current is not null) current.Database.UseTransaction(transaction.GetDbTransaction());
             var audit = current is null ? db.Audit.AsNoTracking().OrderBy(x => x.Revision).ToArray()
                 : current.Audit.AsNoTracking().Where(x => EF.Property<string>(x, "AggregateType") == "Company").OrderBy(x => x.Revision).ToArray();
@@ -209,6 +211,7 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
                 var file = new CompanyFileSnapshot(id, company.Name, currency, created, company.Revision, policy, units, metadata.SchemaVersion);
                 ValidateWorkspace(current, file);
                 if (current is StudyDbContext studies) ValidateStudies(studies, file);
+                if (current is ImportDbContext imports) ValidateImports(imports, file);
             }
             token.ThrowIfCancellationRequested();
             return new(id, company.Name, currency, created, company.Revision, policy, units, metadata.SchemaVersion);
@@ -299,12 +302,13 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
     }
 
     private sealed partial class Session(SqliteCompanyFileService owner, string path, CompanyFileOpenMode mode, FileStream? editLock)
-        : ICompanyFileSession, IModelWorkspace, IStudyWorkspace
+        : ICompanyFileSession, IModelWorkspace, IStudyWorkspace, IImportWorkspace
     {
         private readonly object gate = new();
         private bool disposed;
         public IModelWorkspace Models => this;
         public IStudyWorkspace Studies => this;
+        public IImportWorkspace Imports => this;
         public string Path { get; } = path;
         public CompanyFileOpenMode Mode { get; } = mode;
         public CompanyFileSnapshot Read(CancellationToken cancellationToken = default)
@@ -334,7 +338,7 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
                         || added.Select(x => x.Id).Concat(before.Units.Select(x => x.Id)).Distinct().Count() != added.Length + before.Units.Count)
                         throw Error("FILE_DUPLICATE_UNIT", "File.DuplicateUnit");
                     using var connection = Connect(Path, SqliteOpenMode.ReadWrite);
-                    using var db = new StudyDbContext(connection);
+                    using var db = new ImportDbContext(connection);
                     using var transaction = db.Database.BeginTransaction();
                     var company = db.Companies.Single();
                     if (company.Revision != expectedRevision) throw Error("FILE_REVISION_CHANGED", "File.RevisionChanged");

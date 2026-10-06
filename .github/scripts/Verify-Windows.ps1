@@ -409,6 +409,27 @@ try {
     $importImages = @(Get-ChildItem -LiteralPath (Join-Path $captureDir "import-columns") -Filter *.png)
     if ($importImages.Count -ne 2) { throw "Expected CSV and Excel import column selection images." }
     Write-Host "Import column selection WPF checks passed: $($importChecks.PassedChecks.Count)."
+    $confirmationFolder = Join-Path $captureDir "import-confirmation"
+    $confirmationChecks = Get-Content -LiteralPath (Join-Path $confirmationFolder "interaction.json") -Raw | ConvertFrom-Json
+    if ($confirmationChecks.Status -ne "passed" -or $confirmationChecks.PassedChecks.Count -ne 18) {
+      throw "Import confirmation WPF interaction evidence is incomplete."
+    }
+    $confirmationImages = @(Get-ChildItem -LiteralPath $confirmationFolder -Filter *.png)
+    if ($confirmationImages.Count -ne 2) { throw "Expected prepared and confirmed import screenshots." }
+    $confirmationManifest = Get-Content -LiteralPath (Join-Path $confirmationFolder "manifest.json") -Raw | ConvertFrom-Json
+    $confirmationNames = @("import.valdrio", "import.valdrio-backup", "restored.valdrio", "snapshot.json", "period-amounts.csv")
+    if ($confirmationManifest.SchemaVersion -ne 4 -or $confirmationManifest.Files.Count -ne $confirmationNames.Count -or
+        @(Compare-Object ($confirmationNames | Sort-Object) (@($confirmationManifest.Files.Name) | Sort-Object)).Count -ne 0) {
+      throw "Import confirmation manifest is incomplete."
+    }
+    foreach ($entry in $confirmationManifest.Files) {
+      if ((Get-FileHash -LiteralPath (Join-Path $confirmationFolder $entry.Name) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $entry.Sha256) {
+        throw "Import confirmation artifact hash mismatch."
+      }
+    }
+    dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $confirmationFolder "snapshot.json")
+    if ($LASTEXITCODE -ne 0) { throw "Runner could not verify the actual WPF import snapshot." }
+    Write-Host "Import confirmation WPF checks passed: $($confirmationChecks.PassedChecks.Count)."
     $studyChecks = Get-Content -LiteralPath (Join-Path $captureDir "studies/interaction.json") -Raw | ConvertFrom-Json
     if ($studyChecks.Status -ne "passed" -or $studyChecks.PassedChecks.Count -ne 73) { throw "Expected all 73 final study WPF checks." }
     foreach ($region in @("es-ES", "en-US", "de-DE", "en-GB")) {
@@ -456,7 +477,7 @@ try {
       $expectedFiles = if ($group -eq "models") {
         @("example.valdrio", "example.valdrio-backup", "restored.valdrio", "original-v1.valdrio", "upgraded-current.valdrio")
       } else {
-        @("example.valdrio", "study.valdrio-backup", "restored.valdrio", "original-v2.valdrio", "upgraded-v3.valdrio", "snapshot.json")
+        @("example.valdrio", "study.valdrio-backup", "restored.valdrio", "original-v2.valdrio", "upgraded-v4.valdrio", "snapshot.json")
       }
       $actualNames = @($manifest.Files | ForEach-Object { $_.Name })
       if ($actualNames.Count -ne $expectedFiles.Count -or
@@ -480,7 +501,7 @@ try {
     }
     [xml]$trx = Get-Content -LiteralPath "tests/Valdrio.Tests/TestResults/valdrio-tests.trx" -Raw
     $counters = $trx.TestRun.ResultSummary.Counters
-    if ([int]$counters.total -lt 183 -or [int]$counters.failed -ne 0 -or [int]$counters.notExecuted -ne 0 -or [int]$counters.total -ne [int]$counters.passed) {
+    if ([int]$counters.total -lt 348 -or [int]$counters.failed -ne 0 -or [int]$counters.notExecuted -ne 0 -or [int]$counters.total -ne [int]$counters.passed) {
         throw "The acceptance receipt requires all discovered tests to pass without omissions."
     }
 
@@ -504,6 +525,9 @@ try {
         FxChecks = $fxChecks.PassedChecks.Count
         ImportColumnChecks = $importChecks.PassedChecks.Count
         ImportColumnImages = $importImages.Count
+        ImportConfirmationChecks = $confirmationChecks.PassedChecks.Count
+        ImportConfirmationImages = $confirmationImages.Count
+        ImportConfirmationManifest = "verified"
         StudyImages = $studyImages.Count
         ModelAndStudyManifests = "verified"
         RepositoryClean = $true

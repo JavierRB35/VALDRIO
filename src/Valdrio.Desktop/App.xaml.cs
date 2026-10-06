@@ -200,6 +200,8 @@ public partial class App : System.Windows.Application
                         var importWindow = new ImportColumnMappingWindow { Owner = window, DataContext = importColumns };
                         importWindow.Show();
                         await importWindow.RunImportMappingChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs, viewModel);
+                        await importWindow.RunImportConfirmationChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs,
+                            (QueuedCompanyFileDialogs)companyDialogs, viewModel);
                         importWindow.Close();
                         CaptureVisualEvidence(
                             window,

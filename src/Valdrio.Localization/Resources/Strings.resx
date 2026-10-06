@@ -346,4 +346,32 @@ Full: {5}</value></data>
   <data name="Import.ColumnsRequired" xml:space="preserve"><value>Select account and amount columns that exist in the source.</value></data>
   <data name="Import.ColumnsDistinct" xml:space="preserve"><value>Account code and amount must use different columns.</value></data>
   <data name="Import.NoData" xml:space="preserve"><value>The selected layout contains no data rows.</value></data>
+  <data name="Import.ModeUnavailable" xml:space="preserve"><value>This delivery supports signed period amounts with duplicate accounts rejected. Closing balances, cumulative differences, debit/credit columns and aggregation need their separate interpretation.</value></data>
+  <data name="Import.ApprovalRequired" xml:space="preserve"><value>Validate a representative example and explicitly approve the period, currency and signed amounts before confirmation.</value></data>
+  <data name="Import.PeriodMismatch" xml:space="preserve"><value>The source period must match the study period.</value></data>
+  <data name="Import.FxRequired" xml:space="preserve"><value>Confirmation currently requires a fixed source currency equal to the study functional currency. A foreign currency needs the FX bridge.</value></data>
+  <data name="Import.TotalOverflow" xml:space="preserve"><value>The imported total exceeds the decimal range. No amounts can be confirmed.</value></data>
+  <data name="Import.NoSelectedRows" xml:space="preserve"><value>No valid rows are selected for import.</value></data>
+  <data name="Import.PreparedInvalid" xml:space="preserve"><value>The prepared import is blocked, incomplete or no longer matches the study. Prepare it again.</value></data>
+  <data name="Import.RequestReused" xml:space="preserve"><value>This confirmation request was already used for a different import.</value></data>
+  <data name="Import.DuplicateBatch" xml:space="preserve"><value>This source, mapping and period were already imported. A new confirmation would duplicate amounts and has been blocked.</value></data>
+  <data name="Import.ContextLocked" xml:space="preserve"><value>This study has imported resources. Changing its period, model or functional currency requires a new study or the applicable transformation.</value></data>
+  <data name="Import.SourceChanged" xml:space="preserve"><value>The selected file changed after the preview. Open it again and prepare a new import.</value></data>
+  <data name="Study.PartitionsPending" xml:space="preserve"><value>Imported resources are available. Assign their partitions before calculating costs.</value></data>
+  <data name="Study.ImportedCaptured" xml:space="preserve"><value>The snapshot includes confirmed import resources and their source evidence. Calculation still requires the remaining inputs.</value></data>
+  <data name="ImportMapping.Scope" xml:space="preserve"><value>Confirmation adds a complete batch of signed period amounts in the study functional currency. Closing balances, cumulative differences and FX conversion are pending.</value></data>
+  <data name="ImportMapping.NoStudy" xml:space="preserve"><value>Open a saved study to prepare and confirm this import.</value></data>
+  <data name="ImportMapping.Target" xml:space="preserve"><value>Destination study {0} · period {1} to {2} · functional currency {3} · revision {4}</value></data>
+  <data name="ImportMapping.SourceCurrency" xml:space="preserve"><value>Source currency, ISO code such as EUR</value></data>
+  <data name="ImportMapping.ApprovalReference" xml:space="preserve"><value>Representative example you have checked, with its account and expected amount</value></data>
+  <data name="ImportMapping.ApproveInterpretation" xml:space="preserve"><value>I have verified that these are signed amounts for the displayed period, in the stated source currency. Negative amounts and zeros retain their original meaning.</value></data>
+  <data name="ImportMapping.PrepareImport" xml:space="preserve"><value>Prepare import and totals</value></data>
+  <data name="ImportMapping.ConfirmImport" xml:space="preserve"><value>Confirm import into study</value></data>
+  <data name="ImportMapping.PreparedReady" xml:space="preserve"><value>The batch is prepared. Review the totals before confirming.</value></data>
+  <data name="ImportMapping.Totals" xml:space="preserve"><value>Read {0} · selected {1} · ignored {2} · invalid {3}. Positive {4} · negative {5} · net {6} {7}.</value></data>
+  <data name="ImportMapping.Confirmed" xml:space="preserve"><value>Import confirmed and saved.</value></data>
+  <data name="ImportMapping.ConfirmedSummary" xml:space="preserve"><value>Saved batch {0} · resources {1} · study revision {2}.</value></data>
+  <data name="ImportMapping.CommittedRefreshPending" xml:space="preserve"><value>The import is saved. The view could not be refreshed; close this window and refresh the study.</value></data>
+  <data name="ImportMapping.NoImports" xml:space="preserve"><value>No confirmed import batches in this study.</value></data>
+  <data name="ImportMapping.ImportHistory" xml:space="preserve"><value>Batch {0} · {1} · {2} resources · {3} {4} · revision {5}</value></data>
 </root>

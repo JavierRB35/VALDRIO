@@ -10,7 +10,8 @@ Fecha de revisión 2026-10-06. Repositorio `JavierRB35/VALDRIO`.
 | T05 | Cerrada e integrada en `main@99c9dec289cb749094f6036c6b3f17bb3841e855`; la antigua PR #14 está fusionada |
 | T06.1 | Cerrada e integrada por PR #17 en main@2da40fa76108a6edef0492de2ce67dfbad9fa72a; aceptación Windows y UTC/Madrid aprobadas |
 | Selección manual de columnas | Integrada por PR #18 en main@e6ba1a9ce7233646577f95a74cc41fc7a4902960; CSV/XLSX, vista previa y validación; la revisión de cuenta obligatoria se acepta con CI de su HEAD |
-| T06.2–T06.6 | Pendientes; no existen todavía PrepareImport completo, ConfirmImport, recursos persistidos ni UI/runner T06 |
+| Confirmación de importes de periodo | Implementada desde main@776532e4a5d7b51c0ff3e1ade33b8a4826d9104c; formato v4, preparación, confirmación atómica, recursos/enlaces e inputs v2; aceptación del HEAD registrada en la PR asociada |
+| Resto de T06.2–T06.6 y T06A | Pendientes las modalidades cierre/diferencia de acumulados, Debe/Haber, agrupación, sustitución de lotes y puente FX; no se declara T06 completa |
 
 La rama de cierre parte de `audit/t06-import-hardening-20261006@8e193c9d5e909f7c9be34532f2dfdbe331e45f16` y conserva su historia. El bloque corrige compilación, recuperación de modelos/maestros, formatos y tipos de fecha XLSX, errores controlados de libros corruptos, precisión de seriales y semántica de auditoría del estudio. También añade límites técnicos de lectura, lectura conjunta del workspace y aviso visible/reintento de preferencias.
 
@@ -18,7 +19,7 @@ La evidencia del cierre T06.1 está en [AUDITORIA_CIERRE_2026-10-06.md](docs/evi
 
 ## Decisiones y alcance
 
-D01/D02 aceptadas. D03 sigue pendiente de un archivo real representativo aprobado; las fuentes de importación son sintéticas. D04–D07 siguen como propuestas y D08/D09/D12 diferidas. A07/I14 conserva la integración persistente de FX, recursos, particiones y ejecución pendiente en T06A/T07/T12.
+D01/D02 aceptadas. D03 sigue pendiente de un archivo real representativo aprobado; la aceptación técnica usa fuentes sintéticas. La UI exige una referencia de ejemplo comprobado y aprobación explícita del significado de importe de periodo, signos y moneda para cada lote. D04–D07 siguen como propuestas y D08/D09/D12 diferidas. A07/I14 conserva FX, particiones y ejecución pendientes en T06A/T07/T12; los recursos de importación en moneda funcional ya se persisten.
 
 La especificación canónica v0.4 y las fixtures históricas se conservan. Las 39 referencias matemáticas son referencias sintéticas; no certifican un motor de reparto implementado. El catálogo monetario completo de producto, el motor económico posterior y el soporte de fuentes contables productivas siguen pendientes.
 
@@ -27,6 +28,7 @@ La especificación canónica v0.4 y las fixtures históricas se conservan. Las 3
 - [T05](docs/tareas/T05.md) y [evidencia T05](docs/evidencias/T05_2026-10-05.md).
 - [T06](docs/tareas/T06.md), [directrices](docs/directrices/T06_SIGUIENTE_FASE.md) y [ADR-0005](docs/adr/ADR-0005-import-staging-profile-v1.md).
 - Fuentes canónicas [R07](docs/evidencias/R07_2026-10-05.md).
+- [Confirmación de importación](docs/evidencias/IMPORTACION_CONFIRMADA_2026-10-06.md) y [ADR-0006](docs/adr/ADR-0006-importacion-periodo-v4.md).
 
 ## Registro histórico hasta el 5 de octubre
 

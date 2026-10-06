@@ -6,6 +6,31 @@ namespace Valdrio.Application;
 // The format has its own envelope; nested values reuse the strict canonical value codec.
 public static class StudySnapshotJson
 {
+    public static IStudySnapshotInput Read(string json)
+    {
+        using var doc = JsonDocument.Parse(json);
+        if (!doc.RootElement.TryGetProperty("SchemaVersion", out var schema) || schema.ValueKind != JsonValueKind.String)
+            throw new JsonException("Missing study snapshot schema.");
+        return schema.GetString() switch
+        {
+            StudySnapshotInput.Schema => Deserialize(json),
+            ImportedStudySnapshotInput.Schema => ImportedStudySnapshotJson.Deserialize(json),
+            _ => throw new JsonException("Unsupported study snapshot schema.")
+        };
+    }
+    public static string Serialize(IStudySnapshotInput input) => input switch
+    {
+        StudySnapshotInput v1 => Serialize(v1),
+        ImportedStudySnapshotInput v2 => ImportedStudySnapshotJson.Serialize(v2),
+        _ => throw new JsonException("Unsupported study snapshot input.")
+    };
+    public static string EconomicJson(IStudySnapshotInput input) => input switch
+    {
+        StudySnapshotInput v1 => EconomicJson(v1),
+        ImportedStudySnapshotInput v2 => ImportedStudySnapshotJson.EconomicJson(v2),
+        _ => throw new JsonException("Unsupported study snapshot input.")
+    };
+    public static string EconomicHash(IStudySnapshotInput input) => PublishedModelStructure.Hash(EconomicJson(input));
     public static string Serialize(StudySnapshotInput input)
     {
         using var doc = JsonDocument.Parse(CanonicalSnapshotJson.Serialize(input));
