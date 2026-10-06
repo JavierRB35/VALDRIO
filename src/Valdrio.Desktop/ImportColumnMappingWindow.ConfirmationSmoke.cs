@@ -68,7 +68,9 @@ public partial class ImportColumnMappingWindow
             "foreign currency blocked without FX bridge");
         SetText(SourceCurrencyBox, "EUR"); Approve(); await Click(PrepareImportButton);
         Check(vm.Preparation is { CanConfirm: true } prepared && prepared.Reconciliation.NetAmount == 1250.5m &&
-            prepared.Reconciliation.ZeroRows == 1 && ConfirmImportButton.IsEnabled, "approved period source reconciles before confirmation");
+            prepared.Reconciliation.ZeroRows == 1 && ConfirmImportButton.IsEnabled && ConfirmationSummaryText.Text == vm.ConfirmationSummary &&
+            ConfirmationSummaryText.TranslatePoint(new Point(), this).Y < ConfirmImportButton.TranslatePoint(new Point(), this).Y,
+            "approved period source reconciles before confirmation");
         var fingerprint = vm.Preparation!.Fingerprint;
         main.ApplyPresentationPreset("es", "en-US", "UTC", false, false);
         Check(vm.Preparation.Fingerprint == fingerprint && vm.InterpretationApproved && AccountColumnBox.SelectedValue is 3,
