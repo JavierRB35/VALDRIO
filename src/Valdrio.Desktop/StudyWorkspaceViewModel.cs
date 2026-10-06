@@ -37,6 +37,8 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     private IReadOnlyList<ModelVersionSnapshot> modelValues = [];
     private IReadOnlyList<StudyDefinition> studyValues = [];
     private IReadOnlyList<StudySnapshotReceipt> snapshotValues = [];
+    private IReadOnlyList<ImportedBatch> importValues = [];
+    private ImportColumnMappingViewModel? importColumns;
 
     public StudyWorkspaceViewModel(CompanyFileViewModel company, ICurrencyCatalog catalog, UiTextCatalog texts,
         PresentationPreferencesService preferences, PresentationFormatter formatter, IModelEditorDialogs dialogs)
@@ -53,13 +55,28 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         DiscardCommand = new RelayCommand(() => SetCurrent(Current), () => Ready && IsDirty);
         CancelCommand = new RelayCommand(() => cancellation?.Cancel(), () => busy);
         earlierBusy = company.WorkspaceBusy; earlierBefore = company.BeforeChangeAsync; earlierAfter = company.AfterChangeAsync;
-        company.WorkspaceBusy = () => busy || earlierBusy?.Invoke() == true;
+        company.WorkspaceBusy = () => busy || ImportColumns?.IsBusy == true || earlierBusy?.Invoke() == true;
         company.BeforeChangeAsync = async () => await CanLeaveAsync() && (earlierBefore is null || await earlierBefore());
         company.AfterChangeAsync = async () => { if (earlierAfter is not null) await earlierAfter(); await CompanyChanged(); };
         preferences.Changed += PreferencesChanged; company.PropertyChanged += CompanyStateChanged; Reformat();
     }
     public bool IsBusy => busy;
-    public ImportColumnMappingViewModel? ImportColumns { get; init; }
+    public ImportColumnMappingViewModel? ImportColumns
+    {
+        get => importColumns;
+        init { importColumns = value; if (value is not null) value.PropertyChanged += ImportStateChanged; }
+    }
+    private void ImportStateChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e) => Refresh();
+    public async Task<bool> AttachImportTarget()
+    {
+        if (!await CanLeaveAsync() || ImportColumns is null) return false;
+        ImportColumns.BindTarget(company.ActiveImports, Current, company.CanWrite, async batch =>
+        {
+            await ApplyConfirmedThenReload(batch.ConfirmedStudy, ApplyConfirmedStudy);
+            if (committedRefreshPending) throw new InvalidOperationException("Committed import refresh pending.");
+        });
+        return true;
+    }
     public string ImportColumnsLabel => Text("ImportMapping.OpenMapping");
     public bool IsDirty => dirty;
     public bool Ready => !busy && company.WorkspaceIdle && company.ActiveStudies is not null;
@@ -113,6 +130,9 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public string CancelLabel => Text("CompanyCancel");
     public string SnapshotLabel => Text("Study.Snapshots");
     public string RunHistory => Text("Study.RunHistoryEmpty");
+    public string ImportedAmounts => importValues.Count == 0 ? Text("ImportMapping.NoImports") : string.Join(Environment.NewLine,
+        importValues.Select(b => string.Format(Format, Text("ImportMapping.ImportHistory"), b.Id, b.Prepared.Source.FileName,
+            b.Resources.Count, b.Prepared.Reconciliation.NetAmount, b.Prepared.Reconciliation.Currency, b.ConfirmedStudy.Revision)));
     public string Status => diagnostic is null ? Text(statusKey) : DiagnosticText(diagnostic);
     public string Details => Current is null ? Text("Study.NoneSelected") : string.Format(Format, Text("Study.Details"), Current.Name,
         formatter.FormatDate(Current.PeriodStart.Value, Format, DateDisplayPreset.Short), formatter.FormatDate(Current.PeriodEnd.Value, Format, DateDisplayPreset.Short),
@@ -122,7 +142,8 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         selected.Value.Id, selected.Value.InputRevision, Current is not null && selected.Value.IsCurrentFor(Current) ? Text("Study.CurrentRevision") : Text("Study.HistoricalRevision"),
         formatter.FormatInstant(selected.Value.CapturedAtUtc.Value, preferences.Current.DisplayTimeZoneId, Format), selected.Value.EconomicInputHash, selected.Value.FullSnapshotHash);
     public string Preparation => SnapshotChoice is not { } selected ? Text("Study.PrepareFirst") :
-        Text("Study.ContextCaptured") + Environment.NewLine + string.Join(Environment.NewLine, StudyPreparationService.Evaluate(selected.Value.Input).Diagnostics.Select(DiagnosticText));
+        Text(selected.Value.Input is ImportedStudySnapshotInput ? "Study.ImportedCaptured" : "Study.ContextCaptured") + Environment.NewLine +
+        string.Join(Environment.NewLine, StudyPreparationService.Evaluate(selected.Value.Input).Diagnostics.Select(DiagnosticText));
     public string HistoricalDefinitions => SnapshotChoice is not { } selected ? "" : string.Join(Environment.NewLine,
         selected.Value.Input.Model.PhysicalCenters.Select(c => c.Code + " · " + c.Name).Concat(selected.Value.Input.Model.DriverUnits.Select(u => u.Code + " · " + u.Dimension + " · " + u.Symbol)));
 
@@ -171,8 +192,9 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     {
         var port = company.ActiveStudies!; var models = company.ActiveModels!; var current = Current; var preservePendingEdit = dirty;
         var values = await Task.Run(() => (models.ReadModels(token), port.ReadStudies(token),
-            current is null ? (IReadOnlyList<StudySnapshotReceipt>)[] : port.ReadSnapshots(current.CompanyId, current.Id, token)), token);
-        modelValues = values.Item1; studyValues = values.Item2; snapshotValues = values.Item3; Reformat();
+            current is null ? (IReadOnlyList<StudySnapshotReceipt>)[] : port.ReadSnapshots(current.CompanyId, current.Id, token),
+            current is null ? (IReadOnlyList<ImportedBatch>)[] : company.ActiveImports!.ReadImports(current.CompanyId, current.Id, token)), token);
+        modelValues = values.Item1; studyValues = values.Item2; snapshotValues = values.Item3; importValues = values.Item4; Reformat();
         if (!preservePendingEdit && current is not null)
         {
             var persisted = studyValues.SingleOrDefault(study => study.Id == current.Id);
@@ -216,10 +238,11 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         if (boundPath != company.ActivePath)
         {
             Current = null; dirty = false; name = ""; start = null; end = null; modelChoice = null; studyChoice = null; snapshotChoice = null;
-            snapshotValues = []; createId = new(Guid.NewGuid()); currency = company.Snapshot?.DefaultCurrency.ToString() ?? "EUR";
+            snapshotValues = []; importValues = []; createId = new(Guid.NewGuid()); currency = company.Snapshot?.DefaultCurrency.ToString() ?? "EUR";
+            ImportColumns?.BindTarget(null, null, false, null);
         }
         boundPath = company.ActivePath;
-        if (company.ActiveStudies is null) { modelValues = []; studyValues = []; snapshotValues = []; statusKey = "Study.NoFile"; Reformat(); return; }
+        if (company.ActiveStudies is null) { modelValues = []; studyValues = []; snapshotValues = []; importValues = []; statusKey = "Study.NoFile"; Reformat(); return; }
         await Run(Reload);
     }
     private void SetCurrent(StudyDefinition? value)
@@ -245,7 +268,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     private async Task New()
     {
         if (!await CanLeaveAsync()) return;
-        snapshotValues = []; snapshotChoice = null; createId = new(Guid.NewGuid()); SetCurrent(null); Reformat();
+        snapshotValues = []; importValues = []; snapshotChoice = null; createId = new(Guid.NewGuid()); SetCurrent(null); Reformat();
     }
     private async Task Load()
     {
@@ -292,6 +315,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public void Dispose()
     {
         preferences.Changed -= PreferencesChanged; company.PropertyChanged -= CompanyStateChanged;
+        if (ImportColumns is not null) ImportColumns.PropertyChanged -= ImportStateChanged;
         cancellation?.Cancel(); company.WorkspaceBusy = earlierBusy; company.BeforeChangeAsync = earlierBefore; company.AfterChangeAsync = earlierAfter;
     }
 }

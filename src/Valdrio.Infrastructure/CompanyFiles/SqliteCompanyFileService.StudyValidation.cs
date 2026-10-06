@@ -10,6 +10,7 @@ public sealed partial class SqliteCompanyFileService
     {
         var studies = db.Studies.AsNoTracking().ToArray().Select(Study).ToArray();
         var snapshots = db.StudySnapshots.AsNoTracking().ToArray().Select(Receipt).ToArray();
+        var imports = db is ImportDbContext current ? current.ImportBatches.AsNoTracking().ToArray().Select(Batch).ToArray() : [];
         var audit = db.Audit.AsNoTracking().Where(a => EF.Property<string>(a, "AggregateType") == "Study" || EF.Property<string>(a, "AggregateType") == "StudySnapshot")
             .Select(a => new { Row = a, Type = EF.Property<string>(a, "AggregateType"), Id = EF.Property<string>(a, "AggregateId") }).ToArray();
         foreach (var study in studies)
@@ -24,11 +25,24 @@ public sealed partial class SqliteCompanyFileService
                 var row = rows[i].Row; var after = CanonicalSnapshotJson.Deserialize<StudyDefinition>(row.AfterJson);
                 Invalid(after.Id != study.Id || after.CompanyId != file.Id || after.Revision != i || row.Revision != i || row.BeforeJson != previous ||
                     after.CreatedAtUtc != study.CreatedAtUtc || (prior is not null && prior.State == StudyState.Closed && row.Operation != "ChangeStudyState"), "Study audit chain invalid");
-                Invalid(i == 0 ? row.Operation != "CreateStudy" : row.Operation is not ("UpdateStudyContext" or "ChangeStudyState"), "Study operation invalid");
+                Invalid(i == 0 ? row.Operation != "CreateStudy" : row.Operation is not ("UpdateStudyContext" or "ChangeStudyState" or "ConfirmImport"), "Study operation invalid");
                 Invalid(i == 0 && after.State != StudyState.Open, "Study must be created open");
                 if (prior is not null && row.Operation == "UpdateStudyContext")
+                {
                     Invalid(prior.State != StudyState.Open || after.State != prior.State,
                         "Context update changes study state");
+                    if (imports.Any(b => b.ConfirmedStudy.Id == study.Id && b.ConfirmedStudy.Revision <= prior.Revision))
+                        Invalid(after.Currency != prior.Currency || after.PeriodStart != prior.PeriodStart ||
+                            after.PeriodEnd != prior.PeriodEnd || after.SelectedModelVersionId != prior.SelectedModelVersionId,
+                            "Context update changes imported economic context");
+                }
+                if (prior is not null && row.Operation == "ConfirmImport")
+                {
+                    var matching = imports.Where(b => b.ConfirmedStudy.Id == study.Id && b.ConfirmedStudy.Revision == after.Revision).ToArray();
+                    Invalid(matching.Length != 1 || !ImportConfirmationRules.IsImportRevision(prior, after), "Import revision has no matching batch");
+                    Invalid(Json(matching[0].Prepared.StudyContext) != Json(prior) || Json(matching[0].ConfirmedStudy) != Json(after) ||
+                        matching[0].Actor != row.Actor, "Import revision differs from batch");
+                }
                 _ = RequiredPublication(db, file.Id, after.SelectedModelVersionId);
                 if (prior is not null && row.Operation == "ChangeStudyState")
                     Invalid(Json(Changed(prior, prior.Name, prior.PeriodStart, prior.PeriodEnd, prior.Purpose, prior.ScenarioKind,
@@ -46,6 +60,11 @@ public sealed partial class SqliteCompanyFileService
             Invalid(atRevision is null || Json(input.StudyContext) != atRevision.Row.AfterJson, "Snapshot not captured from study revision");
             Invalid(Json(input.Model) != Json(RequiredPublication(db, file.Id, input.StudyContext.SelectedModelVersionId)) || input.PrecisionPolicy != file.PrecisionPolicy,
                 "Snapshot applied definition differs");
+            var atCapture = imports.Where(b => b.ConfirmedStudy.Id == snapshot.StudyId && b.ConfirmedStudy.Revision <= snapshot.InputRevision)
+                .OrderBy(b => b.ConfirmedStudy.Revision).ToArray();
+            if (input is ImportedStudySnapshotInput imported)
+                Invalid(Json(imported.Imports) != Json(atCapture), "Snapshot import ledger differs");
+            else Invalid(atCapture.Length != 0, "Context-only snapshot omits confirmed imports");
             var rows = audit.Where(a => a.Type == "StudySnapshot" && a.Id == snapshot.Id.ToString()).ToArray();
             Invalid(rows.Length != 1, "Snapshot audit count invalid");
             var row = rows[0].Row;

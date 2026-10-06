@@ -331,6 +331,7 @@ public sealed class WorkspaceAuditClosureTests
 
     public sealed class FaultSession : ICompanyFileSession
     {
+        public IImportWorkspace Imports => Inner.Imports;
         public ICompanyFileSession Inner { get; }
         public string? FailAfterMethod { get; set; }
         public bool FailRead { get; set; }

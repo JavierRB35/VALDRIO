@@ -76,7 +76,25 @@
    </DataGrid.Columns>
   </DataGrid>
   <TextBlock Text="{Binding GlobalIssues}" Foreground="DarkRed"/>
-  <TextBlock Text="{Binding [StagingOnly]}" FontStyle="Italic"/>
+  <TextBlock Text="{Binding [Scope]}" FontStyle="Italic"/>
+  <StackPanel IsEnabled="{Binding IsIdle}" Margin="0,12,0,0">
+   <TextBlock Text="{Binding Target}" FontWeight="SemiBold"/>
+   <TextBlock Text="{Binding [SourceCurrency]}"/>
+   <TextBox x:Name="SourceCurrencyBox" Text="{Binding SourceCurrency,UpdateSourceTrigger=PropertyChanged}" Width="100"
+    HorizontalAlignment="Left" MaxLength="3" AutomationProperties.Name="{Binding [SourceCurrency]}"/>
+   <TextBlock Text="{Binding [ApprovalReference]}"/>
+   <TextBox x:Name="ApprovalReferenceBox" Text="{Binding ApprovalReference,UpdateSourceTrigger=PropertyChanged}" MaxLength="1000"
+    AutomationProperties.Name="{Binding [ApprovalReference]}"/>
+   <CheckBox x:Name="ApproveInterpretationBox" IsChecked="{Binding InterpretationApproved}" Margin="0,8,0,8">
+    <TextBlock Text="{Binding [ApproveInterpretation]}" TextWrapping="Wrap"/>
+   </CheckBox>
+   <WrapPanel>
+    <Button x:Name="PrepareImportButton" Content="{Binding [PrepareImport]}" Command="{Binding PrepareCommand}"/>
+    <Button x:Name="ConfirmImportButton" Content="{Binding [ConfirmImport]}" Command="{Binding ConfirmCommand}"/>
+   </WrapPanel>
+  </StackPanel>
+  <TextBlock Text="{Binding ConfirmationSummary}" FontWeight="SemiBold"/>
+  <TextBlock Text="{Binding PreparationIssues}" Foreground="DarkRed"/>
   <WrapPanel><Button Content="{Binding [Cancel]}" Command="{Binding CancelCommand}"/>
    <Button x:Name="CloseMappingButton" Content="{Binding [Close]}" Click="CloseMapping" IsEnabled="{Binding IsIdle}"/></WrapPanel>
  </StackPanel>

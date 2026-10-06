@@ -88,6 +88,10 @@ public sealed partial class SqliteCompanyFileService
             var row = RequiredStudy(db, file.Id, command.Id); var before = Study(row);
             StudyRules.CheckRevision(command.ExpectedRevision, before.Revision, before.Id);
             if (before.State != StudyState.Open) throw StudyRules.Error("STUDY_CLOSED", "Study.ClosedDiagnostic", before.Id);
+            if (((ImportDbContext)db).ImportBatches.Any(b => b.CompanyId == file.Id.ToString() && b.StudyId == before.Id.ToString()) &&
+                (command.FunctionalCurrency != before.Currency.FunctionalCurrencyCode || command.PeriodStart != before.PeriodStart ||
+                 command.PeriodEnd != before.PeriodEnd || command.SelectedModelVersionId != before.SelectedModelVersionId))
+                throw ImportRules.Error("IMP_CONTEXT_LOCKED", "Import.ContextLocked");
             _ = RequiredPublication(db, file.Id, command.SelectedModelVersionId);
             var currency = before.Currency.FunctionalCurrencyCode == command.FunctionalCurrency ? before.Currency
                 : owner.FreezeStudyCurrency(command.FunctionalCurrency, command.PeriodStart, command.PeriodEnd);
@@ -129,10 +133,14 @@ public sealed partial class SqliteCompanyFileService
             StudyRules.CheckRevision(command.ExpectedRevision, study.Revision, study.Id);
             var model = RequiredPublication(db, file.Id, study.SelectedModelVersionId);
             var instant = owner.time.GetUtcNow();
-            var input = new StudySnapshotInput(StudySnapshotInput.Schema, StudySnapshotInput.PreparationVersion, study, file.PrecisionPolicy,
-                model, new(command.RequestId, command.RequestId, instant, command.Actor), [], [], [], []);
+            var imports = Batches((ImportDbContext)db, file.Id, study.Id);
+            IStudySnapshotInput input = imports.Count == 0
+                ? new StudySnapshotInput(StudySnapshotInput.Schema, StudySnapshotInput.PreparationVersion, study, file.PrecisionPolicy,
+                    model, new(command.RequestId, command.RequestId, instant, command.Actor), [], [], [], [])
+                : new ImportedStudySnapshotInput(study, file.PrecisionPolicy, model,
+                    new(command.RequestId, command.RequestId, instant, command.Actor), imports);
             var json = StudySnapshotJson.Serialize(input);
-            var result = new StudySnapshotReceipt(command.RequestId, file.Id, study.Id, study.Revision, instant, StudySnapshotInput.Schema,
+            var result = new StudySnapshotReceipt(command.RequestId, file.Id, study.Id, study.Revision, instant, input.SnapshotSchemaVersion,
                 StudySnapshotJson.EconomicHash(input), PublishedModelStructure.Hash(json), json);
             result.EnsureValid();
             db.StudySnapshots.Add(new() { Id = result.Id.ToString(), CompanyId = file.Id.ToString(), StudyId = study.Id.ToString(),

@@ -346,4 +346,32 @@ Completa: {5}</value></data>
   <data name="Import.ColumnsRequired" xml:space="preserve"><value>Selecciona columnas de cuenta e importe que existan en el origen.</value></data>
   <data name="Import.ColumnsDistinct" xml:space="preserve"><value>El código de cuenta y el importe deben utilizar columnas distintas.</value></data>
   <data name="Import.NoData" xml:space="preserve"><value>La estructura seleccionada no contiene filas de datos.</value></data>
+  <data name="Import.ModeUnavailable" xml:space="preserve"><value>Esta entrega admite importes firmados de periodo y rechaza cuentas duplicadas. Los cierres, diferencias de acumulados, columnas Debe/Haber y agrupación necesitan su interpretación específica.</value></data>
+  <data name="Import.ApprovalRequired" xml:space="preserve"><value>Valida un ejemplo representativo y aprueba explícitamente el periodo, la moneda y los importes firmados antes de confirmar.</value></data>
+  <data name="Import.PeriodMismatch" xml:space="preserve"><value>El periodo del archivo debe coincidir con el del estudio.</value></data>
+  <data name="Import.FxRequired" xml:space="preserve"><value>La confirmación requiere una moneda fija de origen igual a la funcional del estudio. Otra moneda necesita el puente de conversión.</value></data>
+  <data name="Import.TotalOverflow" xml:space="preserve"><value>El total importado supera el rango decimal. No se puede confirmar ningún importe.</value></data>
+  <data name="Import.NoSelectedRows" xml:space="preserve"><value>No hay filas válidas seleccionadas para importar.</value></data>
+  <data name="Import.PreparedInvalid" xml:space="preserve"><value>La importación preparada está bloqueada, incompleta o ya no coincide con el estudio. Prepárala de nuevo.</value></data>
+  <data name="Import.RequestReused" xml:space="preserve"><value>Esta solicitud de confirmación ya se utilizó para otra importación.</value></data>
+  <data name="Import.DuplicateBatch" xml:space="preserve"><value>Este origen, mapeo y periodo ya se importaron. Se ha bloqueado la confirmación para evitar duplicar importes.</value></data>
+  <data name="Import.ContextLocked" xml:space="preserve"><value>Este estudio tiene recursos importados. Cambiar el periodo, modelo o moneda funcional requiere otro estudio o la transformación correspondiente.</value></data>
+  <data name="Import.SourceChanged" xml:space="preserve"><value>El archivo seleccionado cambió después de la vista previa. Ábrelo de nuevo y prepara otra importación.</value></data>
+  <data name="Study.PartitionsPending" xml:space="preserve"><value>Los recursos importados están disponibles. Asigna sus particiones antes de calcular costes.</value></data>
+  <data name="Study.ImportedCaptured" xml:space="preserve"><value>La captura incluye recursos importados confirmados y su procedencia. El cálculo necesita las entradas restantes.</value></data>
+  <data name="ImportMapping.Scope" xml:space="preserve"><value>La confirmación añade un lote completo de importes firmados de periodo en la moneda funcional del estudio. Los cierres, diferencias de acumulados y conversión de divisas están pendientes.</value></data>
+  <data name="ImportMapping.NoStudy" xml:space="preserve"><value>Abre un estudio guardado para preparar y confirmar esta importación.</value></data>
+  <data name="ImportMapping.Target" xml:space="preserve"><value>Estudio de destino {0} · periodo {1} a {2} · moneda funcional {3} · revisión {4}</value></data>
+  <data name="ImportMapping.SourceCurrency" xml:space="preserve"><value>Moneda de origen, código ISO como EUR</value></data>
+  <data name="ImportMapping.ApprovalReference" xml:space="preserve"><value>Ejemplo representativo que has comprobado, con su cuenta e importe esperado</value></data>
+  <data name="ImportMapping.ApproveInterpretation" xml:space="preserve"><value>He comprobado que son importes firmados del periodo indicado, en la moneda de origen declarada. Los negativos y ceros conservan su significado original.</value></data>
+  <data name="ImportMapping.PrepareImport" xml:space="preserve"><value>Preparar importación y totales</value></data>
+  <data name="ImportMapping.ConfirmImport" xml:space="preserve"><value>Confirmar importación en el estudio</value></data>
+  <data name="ImportMapping.PreparedReady" xml:space="preserve"><value>El lote está preparado. Revisa los totales antes de confirmar.</value></data>
+  <data name="ImportMapping.Totals" xml:space="preserve"><value>Leídas {0} · seleccionadas {1} · ignoradas {2} · inválidas {3}. Positivos {4} · negativos {5} · neto {6} {7}.</value></data>
+  <data name="ImportMapping.Confirmed" xml:space="preserve"><value>Importación confirmada y guardada.</value></data>
+  <data name="ImportMapping.ConfirmedSummary" xml:space="preserve"><value>Lote guardado {0} · recursos {1} · revisión del estudio {2}.</value></data>
+  <data name="ImportMapping.CommittedRefreshPending" xml:space="preserve"><value>La importación está guardada. No se ha podido refrescar la vista. Cierra esta ventana y actualiza el estudio.</value></data>
+  <data name="ImportMapping.NoImports" xml:space="preserve"><value>Este estudio todavía no tiene lotes de importación confirmados.</value></data>
+  <data name="ImportMapping.ImportHistory" xml:space="preserve"><value>Lote {0} · {1} · {2} recursos · {3} {4} · revisión {5}</value></data>
 </root>

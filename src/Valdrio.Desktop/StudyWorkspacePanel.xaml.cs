@@ -8,9 +8,9 @@ namespace Valdrio.Desktop;
 public partial class StudyWorkspacePanel : UserControl
 {
     public StudyWorkspacePanel() => InitializeComponent();
-    private void OpenImportColumns(object sender, RoutedEventArgs e)
+    private async void OpenImportColumns(object sender, RoutedEventArgs e)
     {
-        if (DataContext is StudyWorkspaceViewModel { ImportColumns: { } vm })
+        if (DataContext is StudyWorkspaceViewModel { ImportColumns: { } vm } studies && await studies.AttachImportTarget())
             new ImportColumnMappingWindow { Owner = Window.GetWindow(this), DataContext = vm }.ShowDialog();
     }
 }

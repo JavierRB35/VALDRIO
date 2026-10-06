@@ -30,7 +30,8 @@
     <Button Content="{Binding CancelLabel}" Command="{Binding CancelCommand}" TabIndex="75"/></WrapPanel>
    <TextBlock Text="{Binding Details}"/>
    <Button x:Name="ImportColumnsButton" Content="{Binding ImportColumnsLabel}" Click="OpenImportColumns"
-    IsEnabled="{Binding ImportColumns.IsIdle}" HorizontalAlignment="Left" TabIndex="77"/>
+   IsEnabled="{Binding ImportColumns.IsIdle}" HorizontalAlignment="Left" TabIndex="77"/>
+   <TextBlock x:Name="ImportHistoryText" Text="{Binding ImportedAmounts}"/>
    <TextBlock Text="{Binding RunHistory}" FontWeight="SemiBold"/>
    <TextBlock x:Name="SnapshotHeader" Text="{Binding SnapshotLabel}" FontWeight="SemiBold"/>
    <ComboBox x:Name="SnapshotBox" ItemsSource="{Binding Snapshots}" SelectedItem="{Binding SnapshotChoice}" IsEnabled="{Binding Ready}" TabIndex="76" AutomationProperties.Name="{Binding SnapshotLabel}"/>

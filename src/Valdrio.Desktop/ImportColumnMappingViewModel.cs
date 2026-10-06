@@ -24,7 +24,7 @@ public sealed class ImportColumnOption(int index, string header, string label) :
 }
 public sealed record ImportPreviewRow(int Row, string Account, string OriginalAmount, string ParsedAmount, string Issues);
 
-public sealed class ImportColumnMappingViewModel : ObservableObject, IDisposable
+public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDisposable
 {
     private readonly IImportSourceSessionFactory factory;
     private readonly IImportSourceDialogs dialogs;
@@ -53,6 +53,8 @@ public sealed class ImportColumnMappingViewModel : ObservableObject, IDisposable
         OpenCommand = new AsyncRelayCommand(Open, () => !busy);
         ReadCommand = new AsyncRelayCommand(Read, () => !busy && session is not null && (!IsXlsx || !string.IsNullOrEmpty(worksheet)));
         ValidateCommand = new AsyncRelayCommand(Validate, () => !busy && document is not null && AccountColumn.HasValue && AmountColumn.HasValue);
+        PrepareCommand = new AsyncRelayCommand(Prepare, () => !busy && IsReady && targetStudy?.State == StudyState.Open && importPort is not null);
+        ConfirmCommand = new AsyncRelayCommand(Confirm, () => !busy && writable && preparedImport?.CanConfirm == true && confirmedImport is null);
         CancelCommand = new RelayCommand(() => cancellation?.Cancel(), () => busy);
         preferences.Changed += PreferencesChanged;
         Reformat();
@@ -126,26 +128,29 @@ public sealed class ImportColumnMappingViewModel : ObservableObject, IDisposable
         foreach (var c in columnOptions) c.Label = ColumnLabel(c.Index, c.Header); Refresh();
     }
     private void InvalidateMapping()
-    { cancellation?.Cancel(); validation = null; diagnostic = null; statusKey = "SelectColumns"; Refresh(); }
+    { cancellation?.Cancel(); validation = null; InvalidatePreparation(true); diagnostic = null; statusKey = "SelectColumns"; Refresh(); }
     private void InvalidateSource()
     {
         cancellation?.Cancel(); document = null; readSettings = null; accountColumn = null; amountColumn = null;
-        columnOptions = []; validation = null; diagnostic = null; statusKey = "ReadSource"; Refresh();
+        columnOptions = []; validation = null; InvalidatePreparation(true); diagnostic = null; statusKey = "ReadSource"; Refresh();
     }
     private void Refresh()
     {
         OnPropertyChanged(""); OpenCommand.NotifyCanExecuteChanged(); ReadCommand.NotifyCanExecuteChanged();
         ValidateCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
+        PrepareCommand.NotifyCanExecuteChanged(); ConfirmCommand.NotifyCanExecuteChanged();
     }
-    private async Task Run(Func<CancellationToken, Task> action)
+    private async Task Run(Func<CancellationToken, Task> action, bool keepSelection = false)
     {
         busy = true; diagnostic = null; statusKey = "Working";
         using var token = new CancellationTokenSource(); cancellation = token; Refresh();
         try { await action(token.Token); }
-        catch (OperationCanceledException) { validation = null; statusKey = "Cancelled"; }
-        catch (DomainRuleException ex) { validation = null; diagnostic = ex.Diagnostic; }
+        catch (OperationCanceledException) { if (!keepSelection) validation = null; statusKey = "Cancelled"; }
+        catch (DomainRuleException ex) { if (!keepSelection) validation = null; diagnostic = ex.Diagnostic; }
+        catch (CompanyFileException ex) { if (!keepSelection) validation = null; diagnostic = ex.Diagnostic; }
+        catch (ArgumentException) { if (!keepSelection) validation = null; diagnostic = ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile").Diagnostic; }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-        { validation = null; statusKey = "FileError"; }
+        { if (!keepSelection) validation = null; statusKey = "FileError"; }
         finally { cancellation = null; busy = false; Refresh(); }
     }
     private async Task Open()
@@ -155,7 +160,7 @@ public sealed class ImportColumnMappingViewModel : ObservableObject, IDisposable
         session?.Dispose(); session = null; worksheet = null; InvalidateSource();
         await Run(async token =>
         {
-            session = await factory.OpenAsync(path, token); token.ThrowIfCancellationRequested();
+            session = await factory.OpenAsync(path, token); token.ThrowIfCancellationRequested(); sourcePath = path;
             statusKey = IsXlsx ? "SelectWorksheet" : "ReadSource";
         });
     }
@@ -170,7 +175,7 @@ public sealed class ImportColumnMappingViewModel : ObservableObject, IDisposable
     }
     private async Task Read()
     {
-        document = null; validation = null; readSettings = null; accountColumn = null; amountColumn = null; columnOptions = [];
+        document = null; validation = null; readSettings = null; accountColumn = null; amountColumn = null; columnOptions = []; InvalidatePreparation(true);
         await Run(async token =>
         {
             var settings = Settings(); var source = await session!.ReadAsync(settings, token);
@@ -182,7 +187,7 @@ public sealed class ImportColumnMappingViewModel : ObservableObject, IDisposable
     }
     private async Task Validate()
     {
-        validation = null;
+        validation = null; InvalidatePreparation(true);
         await Run(async token =>
         {
             if (accountColumn == amountColumn) throw ImportRules.Error("IMP_COLUMN_SELECTION", "Import.ColumnsDistinct");

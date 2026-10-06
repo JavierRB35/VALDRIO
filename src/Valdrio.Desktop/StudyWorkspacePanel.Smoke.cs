@@ -153,12 +153,12 @@ public partial class StudyWorkspacePanel
         using (var gzip = new GZipStream(new MemoryStream(Convert.FromBase64String(fixture.RootElement.GetProperty("GzipBase64").GetString()!)), CompressionMode.Decompress))
         using (var target = File.Create(source)) gzip.CopyTo(target);
         var before = Hash(source); Check(before == fixture.RootElement.GetProperty("Sha256").GetString(), "real T04 fixture hash verified");
-        var upgraded = Path.Combine(output, "upgraded-v3.valdrio"); files.Paths.Enqueue(source); files.Paths.Enqueue(upgraded); await Click(companyPanel.UpgradeButton);
-        Check(company.Snapshot?.SchemaVersion == 3 && Hash(source) == before && vm.PublishedModels.Count == 1, "v2 upgrade button preserves original publication and bytes");
+        var upgraded = Path.Combine(output, "upgraded-v4.valdrio"); files.Paths.Enqueue(source); files.Paths.Enqueue(upgraded); await Click(companyPanel.UpgradeButton);
+        Check(company.Snapshot?.SchemaVersion == 4 && Hash(source) == before && vm.PublishedModels.Count == 1, "v2 upgrade button preserves original publication and bytes");
         Check(Hash(modelSource) == modelSourceHash, "study workflow preserves the model-stage artifact and manifest");
         await RunPostCommitRecoveryRegression(output, modelSource);
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = passed }, new JsonSerializerOptions { WriteIndented = true }));
-        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { Format = SqliteCompanyFileService.FormatId, SchemaVersion = 3,
+        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { Format = SqliteCompanyFileService.FormatId, SchemaVersion = 4,
             CompanyId = companyId.ToString(), StudyId = studyId.ToString(), latest.EconomicInputHash, latest.FullSnapshotHash,
             Scope = "Context-only T05; no calculation", Files = new[] { path, backup, restored, source, upgraded, snapshotPath }.Select(p => new { Name = Path.GetFileName(p), Sha256 = Hash(p) }) }, new JsonSerializerOptions { WriteIndented = true }));
     }
@@ -370,6 +370,7 @@ public partial class StudyWorkspacePanel
         PostCommitReadFailureState state)
         : ICompanyFileSession
     {
+        public IImportWorkspace Imports => inner.Imports;
         public IStudyWorkspace Studies { get; } =
             new PostCommitReadFailureStudyWorkspace(inner.Studies, state);
         public IModelWorkspace Models { get; } =

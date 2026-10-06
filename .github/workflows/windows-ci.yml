@@ -360,5 +360,5 @@ jobs:
           for timezone in UTC Europe/Madrid; do
             TZ="$timezone" dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj \
               --configuration Release --no-build --no-restore \
-              --filter "FullyQualifiedName~RepositoryReviewRegressionTests.R01_|FullyQualifiedName~T03CompanyFileTests|FullyQualifiedName~T04ModelTests|FullyQualifiedName~T05StudyTests"
+              --filter "FullyQualifiedName~RepositoryReviewRegressionTests.R01_|FullyQualifiedName~T03CompanyFileTests|FullyQualifiedName~T04ModelTests|FullyQualifiedName~T05StudyTests|FullyQualifiedName~T06ImportConfirmationTests"
           done
