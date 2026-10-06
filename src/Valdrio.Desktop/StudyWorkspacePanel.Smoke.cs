@@ -215,9 +215,11 @@ public partial class StudyWorkspacePanel
         await studies.CreateCommand.ExecuteAsync(null);
         var current = studies.Current ?? throw new InvalidOperationException("Recovery study was not created.");
         var studyId = current.Id;
+        var innerStudies = service.ActiveInnerStudies ??
+            throw new InvalidOperationException("Recovery inner study workspace was not available.");
         CheckRecovery(
             current.Revision == 0 &&
-            service.ActiveInnerStudies!.ReadStudies().Single(item => item.Id == studyId).Revision == 0 &&
+            innerStudies.ReadStudies().Single(item => item.Id == studyId).Revision == 0 &&
             !studies.IsDirty,
             "confirmed create survives refresh failure");
 
@@ -226,7 +228,7 @@ public partial class StudyWorkspacePanel
         current = studies.Current!;
         CheckRecovery(
             current.Revision == 1 &&
-            service.ActiveInnerStudies.ReadStudies().Single(item => item.Id == studyId).Revision == 1,
+            innerStudies.ReadStudies().Single(item => item.Id == studyId).Revision == 1,
             "confirmed save survives refresh failure");
 
         studies.Name = "Recovery saved twice";
@@ -234,7 +236,7 @@ public partial class StudyWorkspacePanel
         current = studies.Current!;
         CheckRecovery(
             current.Revision == 2 &&
-            service.ActiveInnerStudies.ReadStudies().Single(item => item.Id == studyId).Revision == 2,
+            innerStudies.ReadStudies().Single(item => item.Id == studyId).Revision == 2,
             "next save uses confirmed revision");
 
         await studies.ToggleStateCommand.ExecuteAsync(null);
@@ -242,7 +244,7 @@ public partial class StudyWorkspacePanel
         CheckRecovery(
             current.Revision == 3 &&
             current.State == StudyState.Closed &&
-            service.ActiveInnerStudies.ReadStudies().Single(item => item.Id == studyId).State == StudyState.Closed,
+            innerStudies.ReadStudies().Single(item => item.Id == studyId).State == StudyState.Closed,
             "confirmed close survives refresh failure");
 
         await studies.ToggleStateCommand.ExecuteAsync(null);
@@ -250,14 +252,14 @@ public partial class StudyWorkspacePanel
         CheckRecovery(
             current.Revision == 4 &&
             current.State == StudyState.Open &&
-            service.ActiveInnerStudies.ReadStudies().Single(item => item.Id == studyId).State == StudyState.Open,
+            innerStudies.ReadStudies().Single(item => item.Id == studyId).State == StudyState.Open,
             "confirmed reopen survives refresh failure");
 
         await studies.CaptureCommand.ExecuteAsync(null);
         var capturedId = studies.SnapshotChoice?.Value.Id ??
             throw new InvalidOperationException("Confirmed snapshot was not selected.");
         CheckRecovery(
-            service.ActiveInnerStudies.ReadSnapshots(current.CompanyId, studyId).Any(item => item.Id == capturedId),
+            innerStudies.ReadSnapshots(current.CompanyId, studyId).Any(item => item.Id == capturedId),
             "confirmed snapshot survives refresh failure");
 
         await studies.RefreshCommand.ExecuteAsync(null);
@@ -265,8 +267,8 @@ public partial class StudyWorkspacePanel
             studies.SnapshotChoice?.Value.Id == capturedId,
             "manual refresh retains confirmed snapshot selection");
 
-        var persisted = service.ActiveInnerStudies.ReadStudies().Single(item => item.Id == studyId);
-        var externallyUpdated = service.ActiveInnerStudies.UpdateContext(
+        var persisted = innerStudies.ReadStudies().Single(item => item.Id == studyId);
+        var externallyUpdated = innerStudies.UpdateContext(
             RecoveryUpdate(persisted, "External revision"));
         await studies.RefreshCommand.ExecuteAsync(null);
         CheckRecovery(
@@ -277,7 +279,7 @@ public partial class StudyWorkspacePanel
 
         studies.Name = "Pending editor text";
         var editorRevision = studies.Current!.Revision;
-        var newer = service.ActiveInnerStudies.UpdateContext(
+        var newer = innerStudies.UpdateContext(
             RecoveryUpdate(externallyUpdated, "Newer persisted revision"));
         await studies.RefreshCommand.ExecuteAsync(null);
         CheckRecovery(
