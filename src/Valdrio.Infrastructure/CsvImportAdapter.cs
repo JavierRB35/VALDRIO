@@ -10,16 +10,20 @@ public sealed class CsvImportAdapter : IImportAdapter
     public CsvImportAdapter(ImportReadLimits? limits = null) => this.limits = limits ?? ImportReadLimits.Default;
     public ImportSourceKind SourceKind => ImportSourceKind.Csv;
 
-    public async Task<ImportSourceDocument> ReadAsync(
-        Stream source,
-        string fileName,
-        SourceParseProfileVersion profile,
-        CancellationToken cancellationToken = default)
+    public Task<ImportSourceDocument> ReadAsync(Stream source, string fileName,
+        SourceParseProfileVersion profile, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+        return ReadAsync(source, fileName, new ImportSourceReadSettings(profile.SourceKind,
+            profile.WorksheetName, profile.HeaderRow, profile.FirstDataRow, profile.Csv), cancellationToken);
+    }
+
+    public async Task<ImportSourceDocument> ReadAsync(Stream source, string fileName,
+        ImportSourceReadSettings profile, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
         ArgumentNullException.ThrowIfNull(profile);
-
         if (profile.SourceKind != ImportSourceKind.Csv)
             throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile");
         var dialect = profile.Csv ?? throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile");
@@ -37,7 +41,7 @@ public sealed class CsvImportAdapter : IImportAdapter
         if (records.Count < profile.HeaderRow)
             throw ImportRules.Error("IMP_CSV_INVALID", "Import.InvalidCsv");
 
-        var header = records[profile.HeaderRow - 1].Cells
+        var header = profile.HeaderRow == 0 ? [] : records[profile.HeaderRow - 1].Cells
             .Select(cell => cell.TextValue ?? "")
             .ToArray();
 

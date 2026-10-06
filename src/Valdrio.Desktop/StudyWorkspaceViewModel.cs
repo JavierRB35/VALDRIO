@@ -59,6 +59,8 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         preferences.Changed += PreferencesChanged; company.PropertyChanged += CompanyStateChanged; Reformat();
     }
     public bool IsBusy => busy;
+    public ImportColumnMappingViewModel? ImportColumns { get; init; }
+    public string ImportColumnsLabel => Text("ImportMapping.OpenMapping");
     public bool IsDirty => dirty;
     public bool Ready => !busy && company.WorkspaceIdle && company.ActiveStudies is not null;
     public bool CanEdit => Ready && Current?.State != StudyState.Closed;

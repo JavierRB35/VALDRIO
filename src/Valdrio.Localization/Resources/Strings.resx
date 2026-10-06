@@ -300,4 +300,50 @@ Full: {5}</value></data>
   <data name="Import.XlsxFormatUnsupported" xml:space="preserve"><value>The XLSX number format cannot be interpreted unambiguously. Use an explicit supported format.</value></data>
   <data name="Import.SourceLimit" xml:space="preserve"><value>The source exceeds the configured technical reading limit.</value></data>
   <data name="Preferences.RetrySave" xml:space="preserve"><value>Retry saving preferences</value></data>
+  <data name="ImportMapping.OpenMapping" xml:space="preserve"><value>Select import columns…</value></data>
+  <data name="ImportMapping.Title" xml:space="preserve"><value>Import column selection</value></data>
+  <data name="ImportMapping.Intro" xml:space="preserve"><value>Choose the file layout, then select the account code and amount columns by position and header.</value></data>
+  <data name="ImportMapping.Open" xml:space="preserve"><value>Choose CSV or Excel</value></data>
+  <data name="ImportMapping.Worksheet" xml:space="preserve"><value>Excel worksheet</value></data>
+  <data name="ImportMapping.HeaderRow" xml:space="preserve"><value>Header row (0 = none)</value></data>
+  <data name="ImportMapping.FirstDataRow" xml:space="preserve"><value>First data row</value></data>
+  <data name="ImportMapping.Delimiter" xml:space="preserve"><value>CSV delimiter</value></data>
+  <data name="ImportMapping.Encoding" xml:space="preserve"><value>CSV encoding</value></data>
+  <data name="ImportMapping.Read" xml:space="preserve"><value>Read columns</value></data>
+  <data name="ImportMapping.AccountColumn" xml:space="preserve"><value>Account code column</value></data>
+  <data name="ImportMapping.AmountColumn" xml:space="preserve"><value>Amount column</value></data>
+  <data name="ImportMapping.Decimal" xml:space="preserve"><value>Text decimal separator</value></data>
+  <data name="ImportMapping.Grouping" xml:space="preserve"><value>Text thousands separator</value></data>
+  <data name="ImportMapping.Negative" xml:space="preserve"><value>Allowed negative notation</value></data>
+  <data name="ImportMapping.NumberHelp" xml:space="preserve"><value>These separators apply to CSV and Excel text cells. Native Excel numbers use their exact stored value. The computer region does not determine how the source is read.</value></data>
+  <data name="ImportMapping.NumericAccounts" xml:space="preserve"><value>Allow numeric Excel account codes using their stored representation</value></data>
+  <data name="ImportMapping.NumericWarning" xml:space="preserve"><value>Use only if the source codes are intentionally numeric. Leading zeros already lost in Excel cannot be recovered. Dates and booleans are never account codes.</value></data>
+  <data name="ImportMapping.Validate" xml:space="preserve"><value>Validate selected columns</value></data>
+  <data name="ImportMapping.PreviewHelp" xml:space="preserve"><value>Preview of the first 50 data rows. Validation checks every data row, including those not displayed. Empty amounts remain errors, never zero.</value></data>
+  <data name="ImportMapping.Row" xml:space="preserve"><value>Row</value></data>
+  <data name="ImportMapping.Original" xml:space="preserve"><value>Original amount</value></data>
+  <data name="ImportMapping.Parsed" xml:space="preserve"><value>Parsed amount</value></data>
+  <data name="ImportMapping.Issues" xml:space="preserve"><value>Errors</value></data>
+  <data name="ImportMapping.StagingOnly" xml:space="preserve"><value>This step prepares and validates the column selection. It does not yet save amounts to the study.</value></data>
+  <data name="ImportMapping.Cancel" xml:space="preserve"><value>Cancel reading</value></data>
+  <data name="ImportMapping.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="ImportMapping.ChooseFile" xml:space="preserve"><value>Choose a CSV or XLSX file to begin.</value></data>
+  <data name="ImportMapping.ReadSource" xml:space="preserve"><value>Check the layout and read the columns.</value></data>
+  <data name="ImportMapping.SelectColumns" xml:space="preserve"><value>Select the account and amount columns, then validate.</value></data>
+  <data name="ImportMapping.SelectWorksheet" xml:space="preserve"><value>Select the Excel worksheet explicitly, then read its columns.</value></data>
+  <data name="ImportMapping.Working" xml:space="preserve"><value>Reading and validating…</value></data>
+  <data name="ImportMapping.Cancelled" xml:space="preserve"><value>Operation cancelled. No study data was changed.</value></data>
+  <data name="ImportMapping.FileError" xml:space="preserve"><value>The source file could not be read. Check its availability and permissions.</value></data>
+  <data name="ImportMapping.Ready" xml:space="preserve"><value>The selected columns are valid. The mapping is retained for the next import step.</value></data>
+  <data name="ImportMapping.HasErrors" xml:space="preserve"><value>The selected columns contain blocking errors. Correct the source or selection.</value></data>
+  <data name="ImportMapping.Summary" xml:space="preserve"><value>{0} data rows · {1} errors · {2}</value></data>
+  <data name="ImportMapping.Valid" xml:space="preserve"><value>Valid</value></data>
+  <data name="ImportMapping.Blocked" xml:space="preserve"><value>Blocked</value></data>
+  <data name="ImportMapping.None" xml:space="preserve"><value>None</value></data>
+  <data name="ImportMapping.Space" xml:space="preserve"><value>Space</value></data>
+  <data name="ImportMapping.Tab" xml:space="preserve"><value>Tab</value></data>
+  <data name="ImportMapping.NoHeader" xml:space="preserve"><value>No header</value></data>
+  <data name="Import.ColumnsRequired" xml:space="preserve"><value>Select account and amount columns that exist in the source.</value></data>
+  <data name="Import.ColumnsDistinct" xml:space="preserve"><value>Account code and amount must use different columns.</value></data>
+  <data name="Import.NoData" xml:space="preserve"><value>The selected layout contains no data rows.</value></data>
 </root>

@@ -529,6 +529,7 @@ public sealed class MainWindowViewModel : ObservableObject
         Company?.RefreshPresentation(pseudoLocalizationEnabled);
         Models?.RefreshPresentation(pseudoLocalizationEnabled);
         Studies?.RefreshPresentation(pseudoLocalizationEnabled);
+        Studies?.ImportColumns?.RefreshPresentation(pseudoLocalizationEnabled);
         // Dirty edits retain their captured grammar; clean fields follow the selected region.
         if (fxEditSession is null)
         {

@@ -8,6 +8,11 @@ namespace Valdrio.Desktop;
 public partial class StudyWorkspacePanel : UserControl
 {
     public StudyWorkspacePanel() => InitializeComponent();
+    private void OpenImportColumns(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is StudyWorkspaceViewModel { ImportColumns: { } vm })
+            new ImportColumnMappingWindow { Owner = Window.GetWindow(this), DataContext = vm }.ShowDialog();
+    }
 }
 
 // Calendar selection is typed. A region switch cannot reinterpret pending date text.

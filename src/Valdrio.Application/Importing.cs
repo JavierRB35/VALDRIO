@@ -561,9 +561,22 @@ public static class ImportSourceInspector
         if (source.SourceKind != profile.SourceKind)
             throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile");
 
+        return ValidateBasic(source, profile.Columns, profile.XlsxNumericAccountPolicy,
+            profile.DuplicatePolicy, profile.CurrencyColumn, cancellationToken);
+    }
+
+    public static IReadOnlyList<ImportDiagnostic> ValidateBasic(ImportSourceDocument source,
+        ImportColumnMap columns, XlsxNumericAccountPolicy numericAccountPolicy,
+        ImportDuplicatePolicy duplicatePolicy, int? currencyColumn = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(columns);
+        if (!Enum.IsDefined(numericAccountPolicy) || !Enum.IsDefined(duplicatePolicy) || currencyColumn is < 1)
+            throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile");
         var diagnostics = new List<ImportDiagnostic>();
         var accounts = new Dictionary<string, SourceRow>(StringComparer.Ordinal);
-        var mappedColumns = MappedColumns(profile).ToArray();
+        var mappedColumns = MappedColumns(columns, currencyColumn).ToArray();
 
         cancellationToken.ThrowIfCancellationRequested();
         foreach (var row in source.Rows)
@@ -607,7 +620,7 @@ public static class ImportSourceInspector
                 }
             }
 
-            var cell = row.GetCell(profile.Columns.Account);
+            var cell = row.GetCell(columns.Account);
             var effectiveKind = cell.Kind == SourceValueKind.FormulaWithCachedValue
                 ? cell.CachedValueKind : cell.Kind;
             if (source.SourceKind == ImportSourceKind.Xlsx &&
@@ -615,7 +628,7 @@ public static class ImportSourceInspector
             {
                 diagnostics.Add(Diagnostic(
                     "IMP_XLSX_DATE_ACCOUNT", "Import.XlsxDateAccount", source, row,
-                    profile.Columns.Account, cell.RawLexical ?? "<date>"));
+                    columns.Account, cell.RawLexical ?? "<date>"));
                 continue;
             }
             if (source.SourceKind == ImportSourceKind.Xlsx &&
@@ -628,7 +641,7 @@ public static class ImportSourceInspector
                     "Import.XlsxBooleanAccount",
                     source,
                     row,
-                    profile.Columns.Account,
+                    columns.Account,
                     cell.RawLexical ?? "<boolean>"));
                 continue;
             }
@@ -637,14 +650,14 @@ public static class ImportSourceInspector
                 (cell.Kind == SourceValueKind.Number ||
                  cell.Kind == SourceValueKind.FormulaWithCachedValue &&
                  cell.CachedValueKind == SourceValueKind.Number) &&
-                profile.XlsxNumericAccountPolicy == XlsxNumericAccountPolicy.Reject)
+                numericAccountPolicy == XlsxNumericAccountPolicy.Reject)
             {
                 diagnostics.Add(Diagnostic(
                     "IMP_XLSX_NUMERIC_ACCOUNT",
                     "Import.XlsxNumericAccount",
                     source,
                     row,
-                    profile.Columns.Account,
+                    columns.Account,
                     cell.RawLexical ?? "<number>"));
                 continue;
             }
@@ -660,13 +673,13 @@ public static class ImportSourceInspector
                         "Import.AccountRequired",
                         source,
                         row,
-                        profile.Columns.Account,
+                        columns.Account,
                         cell.TextValue ?? "<missing>"));
                 continue;
             }
 
             var account = cell.TextValue;
-            if (profile.DuplicatePolicy == ImportDuplicatePolicy.Reject && accounts.TryGetValue(account, out var first))
+            if (duplicatePolicy == ImportDuplicatePolicy.Reject && accounts.TryGetValue(account, out var first))
             {
                 diagnostics.Add(new ImportDiagnostic(
                     new DomainDiagnostic(
@@ -678,7 +691,7 @@ public static class ImportSourceInspector
                                 first.RecordNumber.ToString(System.Globalization.CultureInfo.InvariantCulture))
                         ]),
                     ImportDiagnosticSeverity.Blocking,
-                    new ImportFieldLocation(source.FileName, source.SheetName, row.RecordNumber, row.PhysicalStartLine, profile.Columns.Account)));
+                    new ImportFieldLocation(source.FileName, source.SheetName, row.RecordNumber, row.PhysicalStartLine, columns.Account)));
             }
             else
             {
@@ -689,15 +702,15 @@ public static class ImportSourceInspector
         return FrozenList.Copy(diagnostics);
     }
 
-    private static IReadOnlyList<int> MappedColumns(SourceParseProfileVersion profile) =>
+    private static IReadOnlyList<int> MappedColumns(ImportColumnMap columns, int? currencyColumn) =>
         new[]
         {
-            profile.Columns.Account,
-            profile.Columns.Description ?? 0,
-            profile.Columns.Amount ?? 0,
-            profile.Columns.Debit ?? 0,
-            profile.Columns.Credit ?? 0,
-            profile.CurrencyColumn ?? 0
+            columns.Account,
+            columns.Description ?? 0,
+            columns.Amount ?? 0,
+            columns.Debit ?? 0,
+            columns.Credit ?? 0,
+            currencyColumn ?? 0
         }
         .Where(column => column > 0)
         .Distinct()

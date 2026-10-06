@@ -20,16 +20,20 @@ public sealed class XlsxImportAdapter : IImportAdapter
 
     public ImportSourceKind SourceKind => ImportSourceKind.Xlsx;
 
-    public async Task<ImportSourceDocument> ReadAsync(
-        Stream source,
-        string fileName,
-        SourceParseProfileVersion profile,
-        CancellationToken cancellationToken = default)
+    public Task<ImportSourceDocument> ReadAsync(Stream source, string fileName,
+        SourceParseProfileVersion profile, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+        return ReadAsync(source, fileName, new ImportSourceReadSettings(profile.SourceKind,
+            profile.WorksheetName, profile.HeaderRow, profile.FirstDataRow, profile.Csv), cancellationToken);
+    }
+
+    public async Task<ImportSourceDocument> ReadAsync(Stream source, string fileName,
+        ImportSourceReadSettings profile, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
         ArgumentNullException.ThrowIfNull(profile);
-
         if (profile.SourceKind != ImportSourceKind.Xlsx ||
             string.IsNullOrWhiteSpace(profile.WorksheetName) ||
             !fileName.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
@@ -129,17 +133,17 @@ public sealed class XlsxImportAdapter : IImportAdapter
             }
 
             var headerRow = rows.FirstOrDefault(row => row.RecordNumber == profile.HeaderRow);
-            if (headerRow is null)
+            if (headerRow is null && profile.HeaderRow != 0)
                 throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
 
-            var maximumHeaderColumn = headerRow.Cells.Count == 0
+            var maximumHeaderColumn = headerRow is null || headerRow.Cells.Count == 0
                 ? 0
                 : headerRow.Cells.Max(cell => cell.Column);
-            if (maximumHeaderColumn == 0)
+            if (maximumHeaderColumn == 0 && profile.HeaderRow != 0)
                 throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
 
             var headers = Enumerable.Range(1, maximumHeaderColumn)
-                .Select(column => HeaderText(headerRow.GetCell(column)))
+                .Select(column => HeaderText(headerRow!.GetCell(column)))
                 .ToArray();
             var dataRows = rows
                 .Where(row => row.RecordNumber >= profile.FirstDataRow)
