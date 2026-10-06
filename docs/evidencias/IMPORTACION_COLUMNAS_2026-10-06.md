@@ -10,19 +10,21 @@ Base integrada y validada main@2da40fa76108a6edef0492de2ce67dfbad9fa72a. Requisi
 4. Declarar separadores decimal/miles y notación negativa para los valores textuales; validar las columnas.
 5. Consultar la vista previa y los errores localizados. La selección válida queda retenida en memoria para el siguiente paso. Cerrar y volver a abrir la ventana conserva ese mapeo.
 
-No se asignan automáticamente columnas. Cuenta e importe deben ser distintos. Se muestran hasta 50 filas, pero se validan todas. Un importe vacío/missing es un error, no cero. El código textual 00123 conserva sus ceros. Excel numérico como cuenta requiere aceptación explícita; fechas/booleanos siguen bloqueados. La región del equipo no define cómo se interpreta el origen.
+No se asignan automáticamente columnas. Cuenta e importe deben ser distintos. Se muestran hasta 50 filas, pero se validan todas. Un importe vacío/missing es un error, no cero. El código textual 00123 conserva sus ceros. Excel numérico como cuenta requiere aceptación explícita; fechas/booleanos siguen bloqueados. Una cuenta formada solo por espacios, incluidos espacios Unicode, produce IMP_ACCOUNT_REQUIRED. Los espacios que forman parte de un código no se eliminan. La región del equipo no define cómo se interpreta el origen.
 
 ImportSourceReadSettings separa estructura física y contrato económico. Los adaptadores y el inspector existentes conservan sus entradas de perfil versionado y delegan en el mismo lector/validador. La sesión trabaja con una copia limitada e inmutable del archivo; cambiar ajustes invalida resultados previos y cancelar no publica un mapeo parcial.
 
 ## Verificación
 
-SDK 10.0.401; Release completo, incluido WPF con EnableWindowsTargeting; Nullable y TreatWarningsAsErrors conservados. **0 avisos y 0 errores**. Suite local **310/310**, **0 fallos y 0 omitidas**, con las 285 anteriores y 25 nuevas.
+SDK 10.0.401; Release completo, incluido WPF con EnableWindowsTargeting; Nullable y TreatWarningsAsErrors conservados. **0 avisos y 0 errores**. Suite local **313/313**, **0 fallos y 0 omitidas**, con las 285 anteriores y 28 nuevas.
 
-TRX local columns-final-310.trx, SHA-256 973fa644fbae873f956c9b129949d666538123382b69f69ff29f8252d0bc2605.
+TRX local columns-final-313.trx, SHA-256 18902cae1f50488a62c382a298329e82e0141d13ef591a7f5689faa56810e79f.
 
 Las regresiones ejecutan CSV/XLSX reales, una segunda hoja, posiciones reordenadas/no contiguas, cabeceras repetidas/cortas/ausentes, importes CSV entre comillas con representación original conservada, Missing frente a cero, tipos Excel, cuentas numéricas, cambios externos del archivo, cambios de configuración y presentación, errores después de la fila 50, reemplazo fallido y cancelación.
 
-La aceptación Windows añade 13 comprobaciones nativas del selector y dos capturas CSV/Excel. El script exige sus resultados junto a los checks previos; verification.json incorpora ImportColumnChecks e ImportColumnImages. Los runs finales, el árbol, el recibo y sus hashes se registran en la PR asociada a feature/import-column-mapping-20261006 y en la aceptación posterior de main, sin modificar código después de validarlo.
+La selección está integrada por PR #18 en main@e6ba1a9ce7233646577f95a74cc41fc7a4902960. La revisión posterior de cuenta obligatoria añade tres regresiones, manteniendo el comportamiento ordinal de espacios significativos.
+
+La aceptación Windows añade 13 comprobaciones nativas del selector y dos capturas CSV/Excel. El script exige sus resultados junto a los checks previos; verification.json incorpora ImportColumnChecks e ImportColumnImages. Los runs finales, el árbol, el recibo y sus hashes se registran en PR #18 y en la PR de la corrección fix/import-account-required-20261006, además de la aceptación posterior de main, sin modificar código después de validarlo.
 
 ## Alcance
 

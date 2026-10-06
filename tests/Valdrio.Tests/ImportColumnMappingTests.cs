@@ -36,6 +36,28 @@ public sealed class ImportColumnMappingTests
     }
 
     [TestMethod]
+    [DataRow(" ")]
+    [DataRow("\u00A0")]
+    public async Task WhitespaceOnlyAccountIsRequiredWithoutConvertingItToAnIdentity(string account)
+    {
+        using var session = await new ImportSourceSessionFactory().OpenAsync(WriteCsv("value;ignored;code\n1,50;x;" + account));
+        var result = Validate(await session.ReadAsync(Csv()), Csv());
+        Assert.IsFalse(result.IsValid);
+        var issue = result.Diagnostics.Single(d => d.Diagnostic.Code == "IMP_ACCOUNT_REQUIRED");
+        Assert.AreEqual(2, issue.Location.RecordNumber);
+        Assert.AreEqual(3, issue.Location.Column);
+    }
+
+    [TestMethod]
+    public async Task SignificantSpacesInAccountCodesRemainUntouched()
+    {
+        using var session = await new ImportSourceSessionFactory().OpenAsync(WriteCsv("value;ignored;code\n1,50;x; 00123 "));
+        var result = Validate(await session.ReadAsync(Csv()), Csv());
+        Assert.IsTrue(result.IsValid);
+        Assert.AreEqual(" 00123 ", result.Rows.Single().Account);
+    }
+
+    [TestMethod]
     public async Task QuotedCsvAmountRetainsOriginalLexicalWhileParsingDecodedText()
     {
         using var session = await new ImportSourceSessionFactory().OpenAsync(WriteCsv("value;ignored;code\n\"1.234,50\";unused;00123"));
