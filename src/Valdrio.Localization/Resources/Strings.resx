@@ -291,6 +291,7 @@ Full: {5}</value></data>
   <data name="Import.XlsxDateSerial60" xml:space="preserve"><value>Excel serial date 60 in the 1900 system is invalid.</value></data>
   <data name="Import.XlsxDateInvalid" xml:space="preserve"><value>The XLSX date serial cannot be interpreted as a business date.</value></data>
   <data name="Import.XlsxNumericAccount" xml:space="preserve"><value>The account cell is numeric; the selected profile does not authorize using its stored lexical value as the account identity.</value></data>
+  <data name="Import.XlsxBooleanAccount" xml:space="preserve"><value>The account cell is boolean; boolean values are not valid account identities.</value></data>
   <data name="Preferences.SaveFailed" xml:space="preserve"><value>The presentation change was applied, but the preference file could not be saved. The next start may use the previous preference.</value></data>
   <data name="Study.CommittedRefreshPending" xml:space="preserve"><value>The write was committed, but refreshing the screen failed. Refresh again to reconcile the displayed lists.</value></data>
 </root>
