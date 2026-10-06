@@ -2,6 +2,7 @@
 [CmdletBinding()]
 param(
     [switch]$UseExistingBuild,
+    [switch]$PrepareBuildManifestOnly,
     [string]$EvidenceDirectory = "artifacts/visual"
 )
 
@@ -38,19 +39,62 @@ try {
         }
     }
 
+    function Get-BuildOutputSets {
+        return [ordered]@{
+            DesktopPublish = "artifacts/desktop"
+            RunnerOutput = "src/Valdrio.Runner/bin/Release/net10.0"
+            TestOutput = "tests/Valdrio.Tests/bin/Release/net10.0"
+        }
+    }
+
+    function Get-OutputFileManifest([string]$root) {
+        if (-not (Test-Path -LiteralPath $root -PathType Container)) {
+            throw "Required acceptance output directory is missing: $root"
+        }
+
+        $files = @(
+            Get-ChildItem -LiteralPath $root -File -Recurse |
+              Sort-Object FullName |
+              ForEach-Object {
+                  $relative = [IO.Path]::GetRelativePath($repositoryRoot, $_.FullName).Replace('\', '/')
+                  [ordered]@{
+                      Path = $relative
+                      Sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+                  }
+              }
+        )
+
+        if ($files.Count -eq 0) {
+            throw "Required acceptance output directory is empty: $root"
+        }
+
+        return $files
+    }
+
     function Write-AcceptanceBuildManifest([string]$commit) {
         $paths = Get-BuildPaths
+        $outputSets = @(
+            foreach ($name in (Get-BuildOutputSets).Keys) {
+                $root = (Get-BuildOutputSets)[$name]
+                [ordered]@{
+                    Name = $name
+                    Root = $root
+                    Files = @(Get-OutputFileManifest $root)
+                }
+            }
+        )
         $manifest = [ordered]@{
-            Schema = "valdrio-windows-build-manifest-v1"
+            Schema = "valdrio-windows-build-manifest-v2"
             SourceCommit = $commit
             CreatedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
             DesktopExe = [ordered]@{ Path = $paths.DesktopExe; Sha256 = Get-RequiredSha256 $paths.DesktopExe }
             RunnerDll = [ordered]@{ Path = $paths.RunnerDll; Sha256 = Get-RequiredSha256 $paths.RunnerDll }
             TestAssembly = [ordered]@{ Path = $paths.TestAssembly; Sha256 = Get-RequiredSha256 $paths.TestAssembly }
             Trx = [ordered]@{ Path = $paths.Trx; Sha256 = Get-RequiredSha256 $paths.Trx }
+            OutputSets = $outputSets
         }
         New-Item -ItemType Directory -Force -Path (Split-Path $buildManifestPath -Parent) | Out-Null
-        $manifest | ConvertTo-Json -Depth 4 |
+        $manifest | ConvertTo-Json -Depth 8 |
           Set-Content -LiteralPath $buildManifestPath -Encoding utf8NoBOM
     }
 
@@ -60,7 +104,7 @@ try {
         }
 
         $manifest = Get-Content -LiteralPath $buildManifestPath -Raw | ConvertFrom-Json
-        if ($manifest.Schema -ne "valdrio-windows-build-manifest-v1" -or
+        if ($manifest.Schema -ne "valdrio-windows-build-manifest-v2" -or
             $manifest.SourceCommit -ne $expectedCommit) {
             throw "Acceptance build manifest does not belong to source commit $expectedCommit."
         }
@@ -78,19 +122,64 @@ try {
             }
         }
 
+        $expectedSets = Get-BuildOutputSets
+        $manifestSets = @($manifest.OutputSets)
+        if ($manifestSets.Count -ne $expectedSets.Count) {
+            throw "Acceptance build manifest output-set count mismatch."
+        }
+
+        foreach ($name in $expectedSets.Keys) {
+            $matches = @($manifestSets | Where-Object { $_.Name -eq $name })
+            if ($matches.Count -ne 1 -or $matches[0].Root -ne $expectedSets[$name]) {
+                throw "Acceptance build manifest output-set mismatch: $name."
+            }
+
+            $expectedFiles = @(Get-OutputFileManifest $expectedSets[$name])
+            $manifestFiles = @($matches[0].Files)
+            if ($manifestFiles.Count -ne $expectedFiles.Count) {
+                throw "Acceptance build file count mismatch: $name."
+            }
+
+            $manifestByPath = @{}
+            foreach ($entry in $manifestFiles) {
+                if ($manifestByPath.ContainsKey($entry.Path)) {
+                    throw "Acceptance build manifest contains duplicate path: $($entry.Path)"
+                }
+                $manifestByPath[$entry.Path] = $entry.Sha256
+            }
+
+            foreach ($entry in $expectedFiles) {
+                if (-not $manifestByPath.ContainsKey($entry.Path) -or
+                    $manifestByPath[$entry.Path] -ne $entry.Sha256) {
+                    throw "Acceptance build output hash mismatch: $($entry.Path)"
+                }
+            }
+        }
+
         return $manifest
     }
 
     Assert-CleanRepository "start"
 
+    $sourceCommit = (& git rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($sourceCommit)) {
+        throw "Could not resolve source commit."
+    }
+
+    if ($PrepareBuildManifestOnly) {
+        if ($UseExistingBuild) {
+            throw "-PrepareBuildManifestOnly cannot be combined with -UseExistingBuild."
+        }
+        Write-AcceptanceBuildManifest $sourceCommit
+        $null = Assert-AcceptanceBuildManifest $sourceCommit
+        Write-Host "Acceptance build manifest prepared for source commit $sourceCommit."
+        return
+    }
+
     if (Test-Path -LiteralPath $EvidenceDirectory) {
         if (@(Get-ChildItem -LiteralPath $EvidenceDirectory -Force).Count -gt 0) {
             throw "Evidence directory is not empty. Choose a new -EvidenceDirectory; existing files are preserved."
         }
-    }
-    $sourceCommit = (& git rev-parse HEAD).Trim()
-    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($sourceCommit)) {
-        throw "Could not resolve source commit."
     }
 
     if (-not $UseExistingBuild) {

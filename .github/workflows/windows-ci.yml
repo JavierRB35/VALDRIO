@@ -290,6 +290,10 @@ jobs:
             }
           }
 
+      - name: Bind acceptance manifest to build outputs
+        shell: pwsh
+        run: ./.github/scripts/Verify-Windows.ps1 -PrepareBuildManifestOnly
+
       - name: Generate WPF visual evidence
         id: visual_evidence
         shell: pwsh
@@ -311,6 +315,7 @@ jobs:
           name: valdrio-wpf-visual-evidence
           path: |
             artifacts/visual
+            artifacts/acceptance-build.json
             tests/Valdrio.Tests/TestResults/*.trx
           # Includes the actual FX button interaction checks.
           if-no-files-found: error
