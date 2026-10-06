@@ -1,29 +1,35 @@
 # ESTADO_PROYECTO
 
-Fecha de revisión: 2026-10-05  
-Repositorio: `JavierRB35/VALDRIO`
+Fecha de revisión 2026-10-06. Repositorio `JavierRB35/VALDRIO`.
 
-## Fuentes
+## Estado vigente
 
-El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` está disponible e íntegro.
+| Entrega | Estado |
+|---|---|
+| T00–T04 y T02A | Cerradas e integradas |
+| T05 | Cerrada e integrada en `main@99c9dec289cb749094f6036c6b3f17bb3841e855`; la antigua PR #14 está fusionada |
+| T06.1 | Cierre técnico de lectura CSV/XLSX y staging con E01–E07 y N01–N05; integración por PR #17 condicionada a CI aprobada del HEAD final |
+| T06.2–T06.6 | Pendientes; no existen todavía PrepareImport completo, ConfirmImport, recursos persistidos ni UI/runner T06 |
 
-- SHA-256: `1d8f8c21e3386117426f0eede257508a0bae30ed8c48cec7d2fb0e8ac68d7ced`.
-- 59 entradas.
-- `sha256sum -c SHA256SUMS.txt`: OK.
-- referencias matemáticas globales: **39/39**.
-- **R07 — CERRADA** mediante PR #9; fuentes canónicas v0.4 versionadas y verificadas. Evidencia: `docs/evidencias/R07_2026-10-05.md`.
+La rama de cierre parte de `audit/t06-import-hardening-20261006@8e193c9d5e909f7c9be34532f2dfdbe331e45f16` y conserva su historia. El bloque corrige compilación, recuperación de modelos/maestros, formatos y tipos de fecha XLSX, errores controlados de libros corruptos, precisión de seriales y semántica de auditoría del estudio. También añade límites técnicos de lectura, lectura conjunta del workspace y aviso visible/reintento de preferencias.
 
-## Estado de tareas
+La evidencia vigente está en [AUDITORIA_CIERRE_2026-10-06.md](docs/evidencias/AUDITORIA_CIERRE_2026-10-06.md). La integración del cierre de T06.1 requiere CI Windows aprobada y artifacts atribuibles al último HEAD. La PR #17 conserva los runs definitivos y el recibo de main acredita el commit integrado. Las suites de los commits anteriores no sustituyen esa puerta.
 
-- **T00 — CERRADA**.
-- **T01 — CERRADA**.
-- **T01A — CERRADA**.
-- **T02 — CERRADA**.
-- **T02A — CERRADA**: Money/metadatos, tiempo canónico y RateSet/FX completados y verificados.
-- **T03 — CERRADA**: archivo de empresa SQLite, bloqueo, transacciones, copias/restauración y WPF.
-- **T04 — CERRADA**: centros físicos, modelos/nodos/pools, publicación inmutable y duplicación.
-- **T05 — IMPLEMENTADA, CIERRE BLOQUEADO**: `64aac29f` verificado externamente con solución completa 0 avisos/errores y 188/188 tests. G02 y regresiones reales B01 se endurecieron después en `2a6b5e70`/`fffda702`; falta ejecutar esos HEAD posteriores y la aceptación Windows visual.
-- **T06 — PENDIENTE**: importación verificable; requiere muestra D03 antes de confirmar fuente real. [Directrices T06](docs/directrices/T06_SIGUIENTE_FASE.md).
+## Decisiones y alcance
+
+D01/D02 aceptadas. D03 sigue pendiente de un archivo real representativo aprobado; las fuentes de importación son sintéticas. D04–D07 siguen como propuestas y D08/D09/D12 diferidas. A07/I14 conserva la integración persistente de FX, recursos, particiones y ejecución pendiente en T06A/T07/T12.
+
+La especificación canónica v0.4 y las fixtures históricas se conservan. Las 39 referencias matemáticas son referencias sintéticas; no certifican un motor de reparto implementado. El catálogo monetario completo de producto, el motor económico posterior y el soporte de fuentes contables productivas siguen pendientes.
+
+## Entregas y referencias
+
+- [T05](docs/tareas/T05.md) y [evidencia T05](docs/evidencias/T05_2026-10-05.md).
+- [T06](docs/tareas/T06.md), [directrices](docs/directrices/T06_SIGUIENTE_FASE.md) y [ADR-0005](docs/adr/ADR-0005-import-staging-profile-v1.md).
+- Fuentes canónicas [R07](docs/evidencias/R07_2026-10-05.md).
+
+## Registro histórico hasta el 5 de octubre
+
+Las secciones siguientes conservan las comprobaciones y bloqueos en la fecha de cada entrega. Sus referencias a PR abiertas, falta de SDK o bloqueo de T05 están superadas por el estado vigente y no describen la situación actual.
 
 ## T02A.1 — Money y metadatos monetarios
 
@@ -168,7 +174,20 @@ El aviso de GitHub aportado por el propietario identifica el agotamiento de minu
 
 Pendientes de cierre T05.4/T05.5: ejecutar el verificador sobre el HEAD final, obtener 73 checks de estudios y sus ocho PNG, validar manifests de models/studies y receipt real, inspeccionar fechas regionales/RTL, actualizar evidencia y entonces integrar PR #14 comprobando el SHA. La verificación nueva de Windows aún no se presenta como ejecutada. [Auditoría y pendientes concretos](docs/evidencias/AUDITORIA_ESTADO_2026-10-05.md).
 
-T06 está planificada, no iniciada. A07/I14 conserva integración persistente FX/recursos/particiones/ejecución pendiente para T06A/T07/T12. No se aprueban D03–D12 ni se modifica la especificación por este bloqueo.
+T06 ha iniciado en una rama apilada sobre el HEAD final auditado de T05, sin modificar `t05/studies` ni `main`. La primera subentrega añade staging de origen CSV/XLSX con perfil explícito únicamente para fixtures sintéticas; no confirma recursos ni resuelve D03. A07/I14 conserva integración persistente FX/recursos/particiones/ejecución pendiente para T06A/T07/T12. No se aprueban D03–D12 ni se modifica la especificación por este avance.
+
+
+## T06 — EN CURSO, T06.0/T06.1 inicial
+
+Rama `t06/import`: conserva su historia desde `dacf2dd1`, aplica en `473a4d153c09da94dc462185a08769e6430189c6` los tres ajustes de compilación de la verificación independiente y se sincroniza con T05 endurecido hasta `75aec6d134c6ea996b5de695dde91069bc500476`. PR #14 continúa abierta/draft; `main` no se modifica.
+
+Implementado en la primera subentrega: `SourceParseProfileVersion` inmutable/versionado, tipos de celdas/filas/procedencia, `IImportAdapter`, parser decimal explícito sin cultura ambiente y `CsvImportAdapter` con quoted fields, delimitadores citados, comillas escapadas, multiline, BOM y encoding declarado. Se preservan cuenta como texto, Unicode, lexical original y SHA-256 de bytes.
+
+D03 permanece pendiente. El único perfil actual está marcado `SyntheticFixture`; no se afirma soporte de una fuente productiva. XLSX ya forma parte del staging T06.1. No existen todavía `PrepareImport` completo, confirmación, formato v4, recursos persistidos, WPF ni runner T06.
+
+La suite T06 contiene quince métodos de prueba, incluida una integración SQLite que comprueba que extracción/inspección básica no cambia revisión/audit/snapshots del estudio. En este entorno no está disponible .NET y la descarga temporal del SDK fue bloqueada, por lo que esas pruebas **no se registran como ejecutadas**. Sí se comprobaron estáticamente cobertura EN/ES de las diecisiete claves T06, ausencia de cultura/tiempo ambiente y patrones prohibidos, delta limitado a T06 y conservación del blob histórico `t05-v3.json`. No se usó GitHub Actions.
+
+[Ficha T06](docs/tareas/T06.md) · [ADR-0005](docs/adr/ADR-0005-import-staging-profile-v1.md) · [Evidencia T06](docs/evidencias/T06_2026-10-05.md).
 
 
 ## Correcciones de reauditoría B01/B02/G02 — IMPLEMENTADAS, VERIFICACIÓN PENDIENTE
@@ -179,15 +198,11 @@ Sobre el HEAD T05 posterior a `dacf2dd15ecf438f465ca3658cb06c6659c5fdd3` se inco
 - **B02:** IO/acceso denegado al guardar preferencias no corta los demás suscriptores; se registra un aviso traducible y el archivo temporal usa nombre único con limpieza.
 - **G02:** aceptación Windows exige repositorio limpio al inicio/fin, identidad de HEAD estable y manifest de build con SHA-256 de Desktop, Runner, assembly de tests y TRX. `-UseExistingBuild` rechaza binarios sin manifest coincidente.
 
-Se añadieron cinco pruebas de regresión portables. En el entorno que produjo esta corrección no existe SDK .NET, por lo que **no se declara todavía build ni suite ejecutada sobre este nuevo HEAD**. La evidencia 183/183 sigue perteneciendo al código anterior y no cierra estas correcciones.
+`64aac29f` fue verificado externamente con 188/188 y recorridos reales B01. Después, G02 pasó a manifest v2 con cobertura recursiva de salidas y B01 añadió diez comprobaciones mantenidas con ViewModel + SQLite reales. Los commits posteriores `2a6b5e70`/`fffda702`/`75aec6d1` aún requieren ejecución .NET/Windows.
 
 
-## Verificación externa posterior de T05/T06 — 2026-10-05
+## Reparación de compilación T06 tras verificación independiente
 
-La revisión independiente `VALDRIO_Verificacion_T05_T06_2026-10-05.md` confirmó sobre T05 `64aac29fa711ef69d9eb2cb21bd9d684b8374045`: solución completa incluida WPF con 0 avisos/errores, suite 188/188, 76/76 en UTC y 76/76 en Europe/Madrid, además de recorridos reales B01 con ViewModel + SQLite. También identificó tres errores de compilación concretos en T06 y tres huecos G02.
+La verificación independiente detectó tres ubicaciones que impedían compilar el HEAD T06 `b8b09ad2799c1471f62dafdd85e401d63e27886e`: declaración múltiple con `var` en el parser, posible `Worksheet` nulo y patrones `CellValues` no constantes. En una copia diagnóstica, cambiando únicamente esos puntos, la solución compiló sin avisos/errores y pasó 203/203.
 
-Tras esa verificación:
-- `2a6b5e708fc9df7636afbf572240eea45a71d206`: G02 v2; CI puede preparar el manifest antes de `UseExistingBuild`, se hashéan recursivamente las salidas Desktop/Runner/tests y el TRX, y el manifest se conserva en la evidencia.
-- `fffda702f9e1d21aa3c2aff2ce732302234c41e4`: regresión Windows mantenida con StudyWorkspaceViewModel real, SQLite real y fallo de lectura post-commit inyectado; 10 comprobaciones de crear/guardar/transicionar/capturar/refrescar/proteger edición.
-
-Estos dos commits posteriores aún no tienen ejecución .NET/Windows registrada. No se reutilizan los 188/188 de `64aac29f` para declararlos verificados.
+El commit publicado `473a4d153c09da94dc462185a08769e6430189c6` aplica exactamente esos tres ajustes, sin cambiar reglas económicas, fixtures ni expected. El entorno de publicación sigue sin SDK .NET; por honestidad, los 203/203 se atribuyen a la copia diagnóstica equivalente y no todavía a este SHA remoto.

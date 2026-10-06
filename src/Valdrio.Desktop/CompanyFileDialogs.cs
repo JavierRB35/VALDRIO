@@ -2,15 +2,6 @@ using Microsoft.Win32;
 
 namespace Valdrio.Desktop;
 
-public interface ICompanyFileDialogs
-{
-    string? SelectNewFile();
-    string? SelectFile();
-    string? SelectBackupDestination();
-    string? SelectBackupSource();
-    string? SelectRestoreDestination();
-}
-
 public sealed class CompanyFileDialogs : ICompanyFileDialogs
 {
     private static string? Save(string extension)

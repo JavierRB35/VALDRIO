@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.Windows.Markup;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Valdrio.Application;
@@ -14,7 +13,7 @@ public sealed record StudyOption(StudyDefinition Value, string Label);
 public sealed record ScenarioOption(StudyScenario Value, string Label);
 public sealed record SnapshotOption(StudySnapshotReceipt Value, string Label);
 
-public sealed class StudyWorkspaceViewModel : ObservableObject, IDisposable
+public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposable
 {
     private readonly CompanyFileViewModel company;
     private readonly UiTextCatalog texts;
@@ -89,7 +88,6 @@ public sealed class StudyWorkspaceViewModel : ObservableObject, IDisposable
     public SnapshotOption? SnapshotChoice { get => snapshotChoice; set { SetProperty(ref snapshotChoice, value); OnPropertyChanged(nameof(SnapshotDetails)); OnPropertyChanged(nameof(Preparation)); OnPropertyChanged(nameof(HistoricalDefinitions)); } }
     private CultureInfo Ui => CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag);
     private CultureInfo Format => CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
-    public XmlLanguage DateLanguage => XmlLanguage.GetLanguage(preferences.Current.FormatCultureTag);
     private string Text(string key) { var value = texts.Get(key, Ui); return pseudo ? PseudoLocalization.Expand(value) : value; }
     private string DiagnosticText(DomainDiagnostic value) => value.Code + ": " + new DomainDiagnosticFormatter(texts).Format(value, Ui, Format).Message;
     private string StateText(StudyState state) => Text(state == StudyState.Open ? "Study.Open" : "Study.Closed");

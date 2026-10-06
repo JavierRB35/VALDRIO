@@ -1,8 +1,6 @@
 using System.Windows;
 namespace Valdrio.Desktop;
 
-public enum PendingEditChoice { Save, Discard, Cancel }
-public interface IModelEditorDialogs { PendingEditChoice ResolvePending(string title, string body); }
 public sealed class ModelEditorDialogs : IModelEditorDialogs
 {
     public PendingEditChoice ResolvePending(string title, string body) => MessageBox.Show(body,title,MessageBoxButton.YesNoCancel,MessageBoxImage.Question) switch

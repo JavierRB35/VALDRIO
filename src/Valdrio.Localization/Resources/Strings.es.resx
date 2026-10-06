@@ -258,7 +258,7 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Study.NoneSelected" xml:space="preserve"><value>No hay un estudio seleccionado. Crea o carga uno.</value></data>
   <data name="Study.NoSnapshot" xml:space="preserve"><value>No hay una instantánea seleccionada.</value></data>
   <data name="Study.Working" xml:space="preserve"><value>Procesando…</value></data>
-  <data name="Study.Completed" xml:space="preserve"><value>Operación completada.</value></data>\n  <data name="Study.CommittedRefreshPending" xml:space="preserve"><value>La escritura quedó confirmada, pero falló la actualización de la pantalla. Actualiza de nuevo para reconciliar las listas mostradas.</value></data>
+  <data name="Study.Completed" xml:space="preserve"><value>Operación completada.</value></data>
   <data name="Study.RunHistoryEmpty" xml:space="preserve"><value>Ejecuciones: ninguna. El cálculo de costes se entrega en una fase posterior.</value></data>
   <data name="Study.Details" xml:space="preserve"><value>{0} · {1}–{2} · {3} · {4}
 Revisión {5} · {6} · modelo {7}
@@ -274,5 +274,30 @@ Completa: {5}</value></data>
   <data name="Study.PendingTitle" xml:space="preserve"><value>Contexto del estudio sin guardar</value></data>
   <data name="Study.PendingBody" xml:space="preserve"><value>¿Guardar los cambios antes de continuar? Sí guarda, No descarta y Cancelar permite seguir editando.</value></data>
   <data name="Study.DatesRequired" xml:space="preserve"><value>Selecciona las dos fechas del periodo en el calendario.</value></data>
+  <data name="Import.AmbiguousFormat" xml:space="preserve"><value>El formato de origen es ambiguo. Selecciona un perfil de importación explícito.</value></data>
+  <data name="Import.InvalidAmount" xml:space="preserve"><value>El importe de origen no es válido para el perfil seleccionado.</value></data>
+  <data name="Import.DuplicateAccount" xml:space="preserve"><value>La cuenta está repetida y el perfil actual rechaza duplicados.</value></data>
+  <data name="Import.SignUnconfirmed" xml:space="preserve"><value>La sintaxis de signo del origen no está confirmada por el perfil seleccionado.</value></data>
+  <data name="Import.AccountRequired" xml:space="preserve"><value>El campo de cuenta está ausente o vacío.</value></data>
+  <data name="Import.InvalidCsv" xml:space="preserve"><value>La estructura CSV no es válida para el perfil seleccionado.</value></data>
+  <data name="Import.EncodingMismatch" xml:space="preserve"><value>El encoding o BOM del CSV no coincide con el perfil seleccionado.</value></data>
+  <data name="Import.InvalidProfile" xml:space="preserve"><value>El perfil de importación está incompleto o es incoherente.</value></data>
+  <data name="Import.InvalidSource" xml:space="preserve"><value>El origen preparado está incompleto o es incoherente.</value></data>
+  <data name="Import.XlsxInvalid" xml:space="preserve"><value>La estructura del libro XLSX no es válida o no está soportada.</value></data>
+  <data name="Import.XlsxSheetNotFound" xml:space="preserve"><value>No se ha encontrado la hoja XLSX seleccionada.</value></data>
+  <data name="Import.XlsxUnsupportedType" xml:space="preserve"><value>Solo se aceptan libros XLSX sin macros.</value></data>
+  <data name="Import.XlsxFormulaNoCache" xml:space="preserve"><value>La fórmula XLSX no tiene un valor cached utilizable.</value></data>
+  <data name="Import.XlsxCellError" xml:space="preserve"><value>La celda XLSX contiene un valor de error.</value></data>
+  <data name="Import.XlsxDateSerial60" xml:space="preserve"><value>La fecha serial 60 de Excel en el sistema 1900 no es válida.</value></data>
+  <data name="Import.XlsxDateInvalid" xml:space="preserve"><value>La fecha serial XLSX no puede interpretarse como fecha de negocio.</value></data>
+  <data name="Import.XlsxNumericAccount" xml:space="preserve"><value>La celda de cuenta es numérica; el perfil seleccionado no autoriza usar su representación almacenada como identidad de cuenta.</value></data>
+  <data name="Import.XlsxBooleanAccount" xml:space="preserve"><value>La celda de cuenta es booleana; los valores booleanos no son identidades de cuenta válidas.</value></data>
   <data name="Preferences.SaveFailed" xml:space="preserve"><value>El cambio de presentación se ha aplicado, pero no se pudo guardar el archivo de preferencias. El próximo inicio puede usar la preferencia anterior.</value></data>
+  <data name="Study.CommittedRefreshPending" xml:space="preserve"><value>La escritura quedó confirmada, pero falló la actualización de la pantalla. Actualiza de nuevo para reconciliar las listas mostradas.</value></data>
+  <data name="Model.CommittedRefreshPending" xml:space="preserve"><value>La escritura quedó confirmada, pero no se pudo actualizar la pantalla. Actualiza para reconciliar las listas. Se conservarán las ediciones pendientes.</value></data>
+  <data name="Model.Refresh" xml:space="preserve"><value>Actualizar</value></data>
+  <data name="Import.XlsxDateAccount" xml:space="preserve"><value>Una celda de fecha no puede usarse como identidad de cuenta.</value></data>
+  <data name="Import.XlsxFormatUnsupported" xml:space="preserve"><value>El formato numérico XLSX no puede interpretarse sin ambigüedad. Usa un formato explícito soportado.</value></data>
+  <data name="Import.SourceLimit" xml:space="preserve"><value>El origen supera el límite técnico de lectura configurado.</value></data>
+  <data name="Preferences.RetrySave" xml:space="preserve"><value>Reintentar guardar preferencias</value></data>
 </root>

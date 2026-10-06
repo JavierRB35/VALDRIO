@@ -258,7 +258,7 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Study.NoneSelected" xml:space="preserve"><value>No study selected. Create or load one.</value></data>
   <data name="Study.NoSnapshot" xml:space="preserve"><value>No input snapshot selected.</value></data>
   <data name="Study.Working" xml:space="preserve"><value>Working…</value></data>
-  <data name="Study.Completed" xml:space="preserve"><value>Operation completed.</value></data>\n  <data name="Study.CommittedRefreshPending" xml:space="preserve"><value>The write was committed, but refreshing the screen failed. Refresh again to reconcile the displayed lists.</value></data>
+  <data name="Study.Completed" xml:space="preserve"><value>Operation completed.</value></data>
   <data name="Study.RunHistoryEmpty" xml:space="preserve"><value>Executions: none. Cost calculation is delivered in a later phase.</value></data>
   <data name="Study.Details" xml:space="preserve"><value>{0} · {1}–{2} · {3} · {4}
 Revision {5} · {6} · model {7}
@@ -274,5 +274,30 @@ Full: {5}</value></data>
   <data name="Study.PendingTitle" xml:space="preserve"><value>Unsaved study context</value></data>
   <data name="Study.PendingBody" xml:space="preserve"><value>Save the changes before continuing? Yes saves, No discards, Cancel keeps editing.</value></data>
   <data name="Study.DatesRequired" xml:space="preserve"><value>Select both period dates from the calendar.</value></data>
+  <data name="Import.AmbiguousFormat" xml:space="preserve"><value>The source format is ambiguous. Select an explicit import profile.</value></data>
+  <data name="Import.InvalidAmount" xml:space="preserve"><value>The source amount is invalid for the selected profile.</value></data>
+  <data name="Import.DuplicateAccount" xml:space="preserve"><value>The account is repeated and the current profile rejects duplicates.</value></data>
+  <data name="Import.SignUnconfirmed" xml:space="preserve"><value>The source sign syntax is not confirmed by the selected profile.</value></data>
+  <data name="Import.AccountRequired" xml:space="preserve"><value>The account field is missing or empty.</value></data>
+  <data name="Import.InvalidCsv" xml:space="preserve"><value>The CSV structure is invalid for the selected profile.</value></data>
+  <data name="Import.EncodingMismatch" xml:space="preserve"><value>The CSV encoding or BOM does not match the selected profile.</value></data>
+  <data name="Import.InvalidProfile" xml:space="preserve"><value>The import profile is incomplete or inconsistent.</value></data>
+  <data name="Import.InvalidSource" xml:space="preserve"><value>The staged source is incomplete or inconsistent.</value></data>
+  <data name="Import.XlsxInvalid" xml:space="preserve"><value>The XLSX workbook structure is invalid or unsupported.</value></data>
+  <data name="Import.XlsxSheetNotFound" xml:space="preserve"><value>The selected XLSX worksheet was not found.</value></data>
+  <data name="Import.XlsxUnsupportedType" xml:space="preserve"><value>Only macro-free XLSX workbooks are accepted.</value></data>
+  <data name="Import.XlsxFormulaNoCache" xml:space="preserve"><value>The XLSX formula has no usable cached value.</value></data>
+  <data name="Import.XlsxCellError" xml:space="preserve"><value>The XLSX cell contains an error value.</value></data>
+  <data name="Import.XlsxDateSerial60" xml:space="preserve"><value>Excel serial date 60 in the 1900 system is invalid.</value></data>
+  <data name="Import.XlsxDateInvalid" xml:space="preserve"><value>The XLSX date serial cannot be interpreted as a business date.</value></data>
+  <data name="Import.XlsxNumericAccount" xml:space="preserve"><value>The account cell is numeric; the selected profile does not authorize using its stored lexical value as the account identity.</value></data>
+  <data name="Import.XlsxBooleanAccount" xml:space="preserve"><value>The account cell is boolean; boolean values are not valid account identities.</value></data>
   <data name="Preferences.SaveFailed" xml:space="preserve"><value>The presentation change was applied, but the preference file could not be saved. The next start may use the previous preference.</value></data>
+  <data name="Study.CommittedRefreshPending" xml:space="preserve"><value>The write was committed, but refreshing the screen failed. Refresh again to reconcile the displayed lists.</value></data>
+  <data name="Model.CommittedRefreshPending" xml:space="preserve"><value>The write was committed, but the screen could not be refreshed. Refresh to reconcile the lists. Pending edits will be preserved.</value></data>
+  <data name="Model.Refresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="Import.XlsxDateAccount" xml:space="preserve"><value>A date cell cannot be used as an account identity.</value></data>
+  <data name="Import.XlsxFormatUnsupported" xml:space="preserve"><value>The XLSX number format cannot be interpreted unambiguously. Use an explicit supported format.</value></data>
+  <data name="Import.SourceLimit" xml:space="preserve"><value>The source exceeds the configured technical reading limit.</value></data>
+  <data name="Preferences.RetrySave" xml:space="preserve"><value>Retry saving preferences</value></data>
 </root>

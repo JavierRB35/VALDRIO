@@ -8,6 +8,14 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="MSTest.TestAdapter" />
     <PackageReference Include="MSTest.TestFramework" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../src/Valdrio.Desktop/CompanyFileViewModel.cs" Link="Desktop/CompanyFileViewModel.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/ModelWorkspaceViewModel.cs" Link="Desktop/ModelWorkspaceViewModel.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/StudyWorkspaceViewModel.cs" Link="Desktop/StudyWorkspaceViewModel.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/MainWindowViewModel.cs" Link="Desktop/MainWindowViewModel.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/WorkspaceDialogContracts.cs" Link="Desktop/WorkspaceDialogContracts.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/Valdrio.Runner/Valdrio.Runner.csproj" ReferenceOutputAssembly="false" />
@@ -32,5 +40,8 @@
     <None Update="Fixtures/t04-upgraded-v2.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t04-v2.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t03-v1.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Fixtures/t06-csv-es-v1.csv" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Fixtures/t06-xlsx-1900-v1.xlsx" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Fixtures/t06-xlsx-1904-v1.xlsx" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

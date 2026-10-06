@@ -33,7 +33,8 @@
     <Button x:Name="PublishModelButton" Content="{Binding PublishLabel}" Command="{Binding PublishCommand}" TabIndex="36"/>
     <Button x:Name="CloneModelButton" Content="{Binding CloneLabel}" Command="{Binding CloneCommand}" TabIndex="37"/>
     <Button x:Name="DiscardModelButton" Content="{Binding DiscardLabel}" Command="{Binding DiscardCommand}" TabIndex="38"/>
-    <Button Content="{Binding CancelLabel}" Command="{Binding CancelCommand}" TabIndex="39"/></WrapPanel>
+    <Button x:Name="RefreshModelButton" Content="{Binding RefreshLabel}" Command="{Binding RefreshCommand}" TabIndex="39"/>
+    <Button Content="{Binding CancelLabel}" Command="{Binding CancelCommand}" TabIndex="54"/></WrapPanel>
    <TextBlock Text="{Binding Details}"/>
    <TextBlock Text="{Binding HistoricalDefinitions}"/>
    <TextBlock Text="{Binding ValidationText}" Foreground="DarkRed" AutomationProperties.LiveSetting="Polite"/>

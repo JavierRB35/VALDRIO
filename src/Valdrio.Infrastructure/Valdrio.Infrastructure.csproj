@@ -7,6 +7,7 @@
     <ProjectReference Include="../Valdrio.Application/Valdrio.Application.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="DocumentFormat.OpenXml" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
   </ItemGroup>
 </Project>

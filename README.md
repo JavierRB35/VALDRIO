@@ -12,7 +12,7 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 - **T03: CERRADA** — archivo SQLite real, bloqueo OS, unidades/auditoría, copias/restauración y flujo WPF. **132/132 tests**, 24 checks WPF de archivos; cierre integrado con CI final aprobada.
 - **T04: CERRADA** — formato v2, centros/modelos con publicación y duplicación; 153 pruebas y flujo WPF aprobados. Cierre integrado con CI final aprobada.
 - **T05: IMPLEMENTADA, CIERRE BLOQUEADO** — `64aac29f` fue verificado externamente con build completo 0/0 y 188/188 tests. Después se endurecieron G02 y las regresiones reales B01 en `2a6b5e70`/`fffda702`; esos commits posteriores aún requieren ejecución .NET/Windows. PR #14 sigue draft y Actions no se ha usado.
-- **T06: PENDIENTE** — importación contable con perfiles explícitos; directrices y puerta D03.
+- **T06: EN CURSO, RAMA APILADA** — `473a4d15` aplica exactamente los tres ajustes de compilación identificados por la verificación independiente; la copia diagnóstica equivalente pasó 203/203, pero este SHA publicado aún requiere ejecución propia. La rama incorpora T05 endurecido hasta `75aec6d1`; D03 real y T06.2 siguen pendientes.
 - Correcciones A01–A06 completadas: **114/114 tests**, 39/39 referencias, 12 comprobaciones reales del botón FX, publish y WPF smoke.
 - JSON canónico versionado, huellas FX v2, cuantización exacta e inmutabilidad preparados para persistencia.
 - Fecha de negocio, instante UTC y zona de presentación están separados.
@@ -28,6 +28,7 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 - [ADR de modelos y formato v2](docs/adr/ADR-0003-modelos-y-esquema-v2.md)
 - [Evidencia T05](docs/evidencias/T05_2026-10-05.md)
 - [ADR de estudios y formato v3](docs/adr/ADR-0004-estudios-y-snapshots-v3.md)
+- [Ficha T06](docs/tareas/T06.md) · [Evidencia T06](docs/evidencias/T06_2026-10-05.md) · [ADR-0005](docs/adr/ADR-0005-import-staging-profile-v1.md)
 - [Directrices de la siguiente fase T06](docs/directrices/T06_SIGUIENTE_FASE.md)
 - [Contrato técnico del archivo](docs/adr/ADR-0002-archivo-empresa.md)
 
@@ -74,6 +75,8 @@ La captura registra contexto y explica qué falta; todavía no calcula costes. E
 dotnet run --project src/Valdrio.Runner -c Release -- --study-snapshot ruta/snapshot.json
 ```
 
+Las correcciones B01/B02/G02 están incorporadas en T05. `64aac29f` fue verificado con 188/188; después G02 se amplió con manifest v2 y hashes recursivos y B01 añadió diez recorridos reales permanentes. Esos commits posteriores aún requieren ejecución .NET/Windows del HEAD final.
+
 [Directrices T06](docs/directrices/T06_SIGUIENTE_FASE.md): importación con perfiles/preview/confirmación y puerta D03 antes de una fuente real.
 
 El cierre y la integración de T05 esperan la verificación de Windows del HEAD final. Los últimos intentos de Actions terminaron sin pasos ni runner; el aviso de GitHub aportado el 5 de octubre confirma que la cuenta ha agotado sus minutos incluidos. [Auditoría de estado y pendientes](docs/evidencias/AUDITORIA_ESTADO_2026-10-05.md). No utilizar los checks de un commit anterior como cierre de esta corrección.
@@ -86,6 +89,6 @@ Desde un clon de la rama `t05/studies`, en Windows con Git, .NET SDK 10.0.401, P
 pwsh -File .github/scripts/Verify-Windows.ps1
 ```
 
-El script exige un árbol Git limpio, compila, ejecuta pruebas/guards/corpus/runners, publica el binario de desarrollo y recorre los botones WPF. Exige los 73 checks finales de estudios, 53 de modelos, 24 de archivo y 12 FX; comprueba las fechas visibles de cuatro regiones, ocho PNG y ambos manifests. Genera `artifacts/acceptance-build.json` ligado al commit y a los hashes de Desktop/Runner/tests/TRX; `-UseExistingBuild` solo es válido si ese manifest coincide. `artifacts/visual/verification.json` registra además esos hashes y vuelve a comprobar HEAD/limpieza al finalizar. Un directorio de evidencia ocupado se conserva; para repetir, indicar `-EvidenceDirectory artifacts/visual-nueva`.
+El script exige un árbol Git limpio, compila, ejecuta pruebas/guards/corpus/runners, publica el binario de desarrollo y recorre los botones WPF. Exige los 73 checks finales de estudios, 53 de modelos, 24 de archivo y 12 FX; comprueba las fechas visibles de cuatro regiones, ocho PNG y ambos manifests. Genera `artifacts/acceptance-build.json` ligado al commit y a los hashes de Desktop/Runner/tests/TRX; `-UseExistingBuild` solo es válido si ese manifest coincide. `artifacts/visual/verification.json` registra además esos hashes y vuelve a comprobar HEAD/limpieza al finalizar. Un directorio de evidencia ocupado se conserva; para repetir, indicar `-EvidenceDirectory artifacts/visual-nueva`. Un directorio de evidencia ocupado se conserva; para repetir, indicar `-EvidenceDirectory artifacts/visual-nueva`.
 
 La ejecución Windows y la inspección de los PNG aún están pendientes. Para reanudar CI cuando Actions vuelva a estar disponible, ejecutar el workflow sobre el HEAD final de `t05/studies`, con `verify_timezones=true`. Si el workflow de esa rama aún no aparece en Run workflow porque no está en main, enviar un único commit sin instrucción de omisión para activar el evento del PR. No reintentar mientras persista el bloqueo ni integrar T05 sin su evidencia final.
