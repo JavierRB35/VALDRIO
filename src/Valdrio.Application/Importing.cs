@@ -440,7 +440,7 @@ public static class SourceAmountParser
             if (groups.Any(group => group.Length == 0 || !AsciiDigits(group)))
                 return Failure("IMP_INVALID_AMOUNT", "Import.InvalidAmount", text);
 
-            for (var index = groups.Length - 1, position = 0; index > 0; index--, position++)
+            for (int index = groups.Length - 1, position = 0; index > 0; index--, position++)
             {
                 var expected = format.GroupSizes[Math.Min(position, format.GroupSizes.Count - 1)];
                 if (groups[index].Length != expected)

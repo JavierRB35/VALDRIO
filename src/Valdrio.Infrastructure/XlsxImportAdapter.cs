@@ -67,7 +67,9 @@ public sealed class XlsxImportAdapter : IImportAdapter
                 workbookPart.GetPartById(relationshipId) is not WorksheetPart worksheetPart)
                 throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
 
-            var sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>() ??
+            var worksheet = worksheetPart.Worksheet ??
+                throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
+            var sheetData = worksheet.GetFirstChild<SheetData>() ??
                 throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
             var dateSystem = workbook.GetFirstChild<WorkbookProperties>()?.Date1904?.Value == true
                 ? XlsxDateSystem.Date1904
@@ -223,7 +225,7 @@ public sealed class XlsxImportAdapter : IImportAdapter
         if (type == CellValues.Error)
             return new SourceCell(column, SourceValueKind.Error, raw, raw, false);
 
-        if (type is CellValues.String or CellValues.Boolean or CellValues.Date)
+        if (type == CellValues.String || type == CellValues.Boolean || type == CellValues.Date)
             return new SourceCell(column, SourceValueKind.Text, raw, raw, false);
 
         if (raw is null)
