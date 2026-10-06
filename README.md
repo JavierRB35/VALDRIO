@@ -11,7 +11,7 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 - **T02A: CERRADA** — Money/metadatos, fechas canónicas, RateSet/FX y contrato de orquestación de RevalueStudy verificados; integración SQLite pendiente.
 - **T03: CERRADA** — archivo SQLite real, bloqueo OS, unidades/auditoría, copias/restauración y flujo WPF. **132/132 tests**, 24 checks WPF de archivos; cierre integrado con CI final aprobada.
 - **T04: CERRADA** — formato v2, centros/modelos con publicación y duplicación; 153 pruebas y flujo WPF aprobados. Cierre integrado con CI final aprobada.
-- **T05: IMPLEMENTADA, CIERRE BLOQUEADO** — v3, estudios/revisiones/snapshots, WPF y runner. La base previa a la reauditoría conserva 183 pruebas locales y 71 por zona UTC/Madrid aprobadas; B01/B02/G02 tienen corrección implementada con cinco regresiones nuevas, todavía sin ejecución .NET en este entorno. La cuenta ha agotado los minutos incluidos de Actions y sigue pendiente el recorrido final de Windows.
+- **T05: IMPLEMENTADA, CIERRE BLOQUEADO** — `64aac29f` fue verificado externamente con build completo 0/0 y 188/188 tests. Después se endurecieron G02 y las regresiones reales B01 en `2a6b5e70`/`fffda702`; esos commits posteriores aún requieren ejecución .NET/Windows. PR #14 sigue draft y Actions no se ha usado.
 - **T06: PENDIENTE** — importación contable con perfiles explícitos; directrices y puerta D03.
 - Correcciones A01–A06 completadas: **114/114 tests**, 39/39 referencias, 12 comprobaciones reales del botón FX, publish y WPF smoke.
 - JSON canónico versionado, huellas FX v2, cuantización exacta e inmutabilidad preparados para persistencia.

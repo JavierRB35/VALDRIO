@@ -22,7 +22,7 @@ El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` está disponible e íntegro.
 - **T02A — CERRADA**: Money/metadatos, tiempo canónico y RateSet/FX completados y verificados.
 - **T03 — CERRADA**: archivo de empresa SQLite, bloqueo, transacciones, copias/restauración y WPF.
 - **T04 — CERRADA**: centros físicos, modelos/nodos/pools, publicación inmutable y duplicación.
-- **T05 — IMPLEMENTADA, CIERRE BLOQUEADO**: estudios/revisiones/snapshots, formato v3, WPF y runner implementados; B01/B02/G02 corregidos en código y con cinco regresiones nuevas preparadas. La nueva corrección aún necesita build/tests y recorrido final Windows. La cuenta ha agotado los minutos incluidos de Actions.
+- **T05 — IMPLEMENTADA, CIERRE BLOQUEADO**: `64aac29f` verificado externamente con solución completa 0 avisos/errores y 188/188 tests. G02 y regresiones reales B01 se endurecieron después en `2a6b5e70`/`fffda702`; falta ejecutar esos HEAD posteriores y la aceptación Windows visual.
 - **T06 — PENDIENTE**: importación verificable; requiere muestra D03 antes de confirmar fuente real. [Directrices T06](docs/directrices/T06_SIGUIENTE_FASE.md).
 
 ## T02A.1 — Money y metadatos monetarios
@@ -180,3 +180,14 @@ Sobre el HEAD T05 posterior a `dacf2dd15ecf438f465ca3658cb06c6659c5fdd3` se inco
 - **G02:** aceptación Windows exige repositorio limpio al inicio/fin, identidad de HEAD estable y manifest de build con SHA-256 de Desktop, Runner, assembly de tests y TRX. `-UseExistingBuild` rechaza binarios sin manifest coincidente.
 
 Se añadieron cinco pruebas de regresión portables. En el entorno que produjo esta corrección no existe SDK .NET, por lo que **no se declara todavía build ni suite ejecutada sobre este nuevo HEAD**. La evidencia 183/183 sigue perteneciendo al código anterior y no cierra estas correcciones.
+
+
+## Verificación externa posterior de T05/T06 — 2026-10-05
+
+La revisión independiente `VALDRIO_Verificacion_T05_T06_2026-10-05.md` confirmó sobre T05 `64aac29fa711ef69d9eb2cb21bd9d684b8374045`: solución completa incluida WPF con 0 avisos/errores, suite 188/188, 76/76 en UTC y 76/76 en Europe/Madrid, además de recorridos reales B01 con ViewModel + SQLite. También identificó tres errores de compilación concretos en T06 y tres huecos G02.
+
+Tras esa verificación:
+- `2a6b5e708fc9df7636afbf572240eea45a71d206`: G02 v2; CI puede preparar el manifest antes de `UseExistingBuild`, se hashéan recursivamente las salidas Desktop/Runner/tests y el TRX, y el manifest se conserva en la evidencia.
+- `fffda702f9e1d21aa3c2aff2ce732302234c41e4`: regresión Windows mantenida con StudyWorkspaceViewModel real, SQLite real y fallo de lectura post-commit inyectado; 10 comprobaciones de crear/guardar/transicionar/capturar/refrescar/proteger edición.
+
+Estos dos commits posteriores aún no tienen ejecución .NET/Windows registrada. No se reutilizan los 188/188 de `64aac29f` para declararlos verificados.
