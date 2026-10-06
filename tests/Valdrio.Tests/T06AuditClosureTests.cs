@@ -38,6 +38,11 @@ public sealed class T06AuditClosureTests
     [DataRow("h:mm:ss A/P", "0.5", SourceValueKind.Number)]
     [DataRow("[h]:mm", "0.5", SourceValueKind.Number)]
     [DataRow("mm", "45323", SourceValueKind.DateSerial)]
+    [DataRow("h:mmm", "45323", SourceValueKind.DateSerial)]
+    [DataRow("h:mmmm", "45323", SourceValueKind.DateSerial)]
+    [DataRow("mmm:ss", "45323", SourceValueKind.DateSerial)]
+    [DataRow("General", "1234.50", SourceValueKind.Number)]
+    [DataRow("0.00E+00", "1234.50", SourceValueKind.Number)]
     [DataRow("0.00\";yyyy-mm-dd\";yyyy-mm-dd", "1234.50", SourceValueKind.Number)]
     [DataRow("0.00\\;\\d;yyyy-mm-dd", "1234.50", SourceValueKind.Number)]
     [DataRow("0.00\"units_\";yyyy-mm-dd", "1234.50", SourceValueKind.Number)]
@@ -162,6 +167,14 @@ public sealed class T06AuditClosureTests
     }
 
     [TestMethod]
+    [DataRow(long.MaxValue)]
+    [DataRow(2147483648L)]
+    public void M01_FileLimitCannotExceedTheReadersMemoryStreamAddressingRange(long maximum)
+    {
+        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => new ImportReadLimits(maxFileBytes: maximum));
+    }
+
+    [TestMethod]
     [DataRow("file")]
     [DataRow("rows")]
     [DataRow("columns")]
@@ -224,6 +237,18 @@ public sealed class T06AuditClosureTests
         using var xlsx = new MemoryStream(Workbook("0.00", "1234.50"));
         await Assert.ThrowsExactlyAsync<OperationCanceledException>(() => new XlsxImportAdapter()
             .ReadAsync(xlsx, "cancel.xlsx", Profile(ImportSourceKind.Xlsx), cancel.Token));
+    }
+
+    [TestMethod]
+    [DataRow("ggge")]
+    [DataRow("[$-411]ee")]
+    [DataRow("ว/ด/ปปปป")]
+    public async Task E03_UnsupportedCalendarTokensAreExplicitlyBlocked(string format)
+    {
+        var bytes = Workbook(format, "45323");
+        AssertSchemaValid(bytes);
+        var error = await Assert.ThrowsExactlyAsync<DomainRuleException>(() => Read(bytes));
+        Assert.AreEqual("IMP_XLSX_FORMAT_UNSUPPORTED", error.Diagnostic.Code);
     }
 
     [TestMethod]

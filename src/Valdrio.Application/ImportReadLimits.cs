@@ -13,7 +13,7 @@ public sealed record ImportReadLimits
         int maxRows = 100_000, int maxColumns = 16_384, int maxCellCharacters = 262_144,
         int maxSharedStrings = 250_000, int maxPackageEntries = 8192)
     {
-        if (maxFileBytes < 1 || maxExpandedBytes < 1 || maxPartBytes < 1 ||
+        if (maxFileBytes is < 1 or > int.MaxValue || maxExpandedBytes < 1 || maxPartBytes < 1 ||
             maxRows < 1 || maxColumns is < 1 or > 16_384 || maxCellCharacters < 1 ||
             maxSharedStrings < 1 || maxPackageEntries < 1)
             throw new ArgumentOutOfRangeException(nameof(maxFileBytes));

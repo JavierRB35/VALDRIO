@@ -12,7 +12,7 @@ Este bloque corrige los defectos identificados en la auditoría más reciente y 
 |---|---|---|
 | E01 | Guardas explícitas de Worksheet/Stylesheet en la fixture de prueba; se mantienen Nullable y TreatWarningsAsErrors | Build de solución completa, sin avisos ni errores |
 | E02 | Create/Save/Publish/Clone de modelos, Create/Change de centros y ChangeUnitState aplican resultado confirmado antes de releer; aviso y botón de refresco; revisión confirmada visible | Ocho operaciones reales contra SQLite con fallo de lectura posterior; recuperación sin repetir la escritura; edición pendiente/revisión original conservadas; conciliación de selección limpia |
-| E03 | Selección de sección efectiva y condiciones numéricas exactas antes de clasificar fecha; AM/PM y A/P son tokens horarios | Diecinueve libros válidos según Open XML, positivos/negativos/cero, condiciones/fallback, precisión, escapes y controles; formato regional ambiguo bloqueado |
+| E03 | Selección de sección efectiva y condiciones numéricas exactas antes de clasificar fecha; AM/PM y A/P son tokens horarios; mmm/mmmm/mmmmm conservan el significado de mes; tokens de calendario no soportados se bloquean | Veinticuatro libros válidos según Open XML, positivos/negativos/cero, condiciones/fallback, precisión, escapes, meses y controles General/exponente; formato regional ambiguo y tres calendarios no soportados bloqueados |
 | E04 | Fecha ISO preservada como DateIso; fecha serial/ISO y caché de fórmula no son identidad de cuenta | Ocho combinaciones de tipo/caché/política numérica y conservación lexical |
 | E05 | TryGetPartById y coordenadas limitadas al rango XLSX; duplicados y estilos inexistentes rechazados explícitamente | Relación ausente, coordenada desbordada/fuera de hoja, celda/fila duplicada y estilo inexistente devuelven IMP_XLSX_INVALID |
 | E06 | Serial de fecha exige fracción lexical exactamente cero antes de convertir días | Fracciones bajo la precisión de Decimal, underflow, cero exacto, sistemas 1900/1904 y diagnóstico de fecha inválida mapeada |
@@ -22,7 +22,7 @@ Las regresiones previas N01–N05 se mantienen. Ninguna expectativa existente se
 
 ## Mejoras incorporadas
 
-- Límites configurables de entrada, expansión ZIP, partes XML, filas, columnas, texto, shared strings y entradas del paquete; rechazo controlado y cancelación en recorridos. Los valores y formatos soportados constan en [T06](../tareas/T06.md).
+- Límites configurables de entrada, expansión ZIP, partes XML, filas, columnas, texto, shared strings y entradas del paquete; rechazo controlado y cancelación en recorridos. El límite de entrada no puede superar int.MaxValue, capacidad de direccionamiento del MemoryStream utilizado; dos regresiones cubren configuraciones desbordadas. Los valores y formatos soportados constan en [T06](../tareas/T06.md).
 - ReadWorkspace obtiene centros/unidades/modelos de SQLite en una sola transacción y una sola validación completa; las validaciones de integridad se mantienen. GetCell usa un índice por columna y la inspección calcula columnas mapeadas una sola vez.
 - La UI muestra el fallo de guardar preferencias en el idioma seleccionado y permite reintentar, conservando el cambio aplicado en memoria y los demás suscriptores.
 - Las fichas de estado separan la cronología histórica del estado vigente. T05 está integrada; la entrega técnica T06.1 tiene una puerta de aceptación explícita.
@@ -30,9 +30,9 @@ Las regresiones previas N01–N05 se mantienen. Ninguna expectativa existente se
 
 ## Verificación local del árbol funcional
 
-SDK .NET **10.0.401**. Solución completa en Release con EnableWindowsTargeting, Nullable y avisos como errores. **0 avisos, 0 errores**. Suite completa **275/275**, **0 fallos y 0 omitidas**, incluidos ViewModels de producción contra SQLite real y los libros de regresión validados según Office2010/Open XML.
+SDK .NET **10.0.401**. Solución completa en Release con EnableWindowsTargeting, Nullable y avisos como errores. **0 avisos, 0 errores**. Suite completa **285/285**, **0 fallos y 0 omitidas**, incluidos ViewModels de producción contra SQLite real y los libros de regresión validados según Office2010/Open XML. Se conservan las 208 pruebas previas y se añaden 77 casos.
 
-TRX `closure-literals-final.trx`, SHA-256 `8bb9d1997311f573d7826000d4fb5e438e761314ba2234be97b1bb304a253d5f`. La prueba de WPF aquí es de compilación; la interacción nativa se valida en Windows. Las 39 referencias matemáticas Python/Fraction pasan y las fuentes canónicas e históricas permanecen sin cambios.
+TRX `closure-final-285.trx`, SHA-256 `2897a957f43dd5480965af9276e029f02043b628939ee89a567015f7a9c56d06`. La prueba de WPF aquí es de compilación; la interacción nativa se valida en Windows. Las 39 referencias matemáticas Python/Fraction pasan y las fuentes canónicas e históricas permanecen sin cambios.
 
 ## Aceptación Windows e integración
 
@@ -44,7 +44,9 @@ Resultados de esa primera aceptación — 271/271 pruebas Windows; 73 checks WPF
 - TRX Windows SHA-256 `ae909d4390fd39c567cb39dcbdb1c99035c5fa2003f0c27b467b40c268ec7b0c`.
 - ZIP del artifact SHA-256 `af7777f83bc733af2435fba07a5190c71ebbeccccb9fbf3634bcf2be115acacb`.
 
-La revisión posterior añade cuatro casos de literales entre comillas que terminan en `_`, `*` o una barra inversa; esos caracteres dentro de un literal no activan escape/relleno. La suite local final pasa 275/275. Por ello la aceptación de 271 pruebas se conserva como evidencia intermedia y **no sustituye los checks del HEAD final**.
+La segunda aceptación, [run 37442263939](https://github.com/JavierRB35/VALDRIO/actions/runs/37442263939), también está aprobada sobre `9f6c433921ecf78f8c2bf7ac89ebfccedeb140b9`. Incluye cuatro casos de literales entre comillas que terminan en `_`, `*` o una barra inversa; esos caracteres dentro de un literal no activan escape/relleno.
+
+La revisión final añade los meses largos junto a tokens horarios, controles General/exponente, bloqueo explícito de calendarios no soportados y protección del límite de entrada. La suite local final pasa 285/285. Las dos aceptaciones anteriores se conservan como evidencia intermedia y **no sustituyen los checks del HEAD final**.
 
 El recibo definitivo es `verification.json` del artifact `valdrio-wpf-visual-evidence` del run aprobado asociado al último HEAD de [PR #17](https://github.com/JavierRB35/VALDRIO/pull/17), y después del run de `main`. Los runs y hashes definitivos se registran también en la descripción de la PR sin cambiar el código después de verificarlo. El workflow incluye las fichas de estado/evidencia en sus paths para validar también el commit de cierre. Se integra mediante merge real con SHA esperado, sin rebase ni force-push.
 

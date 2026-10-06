@@ -148,6 +148,11 @@ internal static class XlsxNumberFormatClassifier
 
     private static bool ContainsDateTokens(string value)
     {
+        if (value.Trim().Equals("general", StringComparison.Ordinal)) return false;
+        var withoutExponent = Regex.Replace(value, @"e[+-][0#?]+", "",
+            RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
+        if (withoutExponent.Any(c => char.IsLetter(c) && c is not ('y' or 'm' or 'd' or 'h' or 's')))
+            throw Unsupported();
         if (value.Contains('y') || value.Contains('d')) return true;
         for (var i = 0; i < value.Length; i++)
         {
@@ -156,7 +161,8 @@ internal static class XlsxNumberFormatClassifier
             while (i + 1 < value.Length && value[i + 1] == 'm') i++;
             var previous = FindToken(value, start - 1, -1);
             var next = FindToken(value, i + 1, 1);
-            if (previous != 'h' && next != 's') return true;
+            // Only m/mm can denote minutes. mmm/mmmm/mmmmm always denote months.
+            if (i - start + 1 >= 3 || previous != 'h' && next != 's') return true;
         }
         return false;
     }
