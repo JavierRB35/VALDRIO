@@ -291,6 +291,7 @@ Completa: {5}</value></data>
   <data name="Import.XlsxDateSerial60" xml:space="preserve"><value>La fecha serial 60 de Excel en el sistema 1900 no es válida.</value></data>
   <data name="Import.XlsxDateInvalid" xml:space="preserve"><value>La fecha serial XLSX no puede interpretarse como fecha de negocio.</value></data>
   <data name="Import.XlsxNumericAccount" xml:space="preserve"><value>La celda de cuenta es numérica; el perfil seleccionado no autoriza usar su representación almacenada como identidad de cuenta.</value></data>
+  <data name="Import.XlsxBooleanAccount" xml:space="preserve"><value>La celda de cuenta es booleana; los valores booleanos no son identidades de cuenta válidas.</value></data>
   <data name="Preferences.SaveFailed" xml:space="preserve"><value>El cambio de presentación se ha aplicado, pero no se pudo guardar el archivo de preferencias. El próximo inicio puede usar la preferencia anterior.</value></data>
   <data name="Study.CommittedRefreshPending" xml:space="preserve"><value>La escritura quedó confirmada, pero falló la actualización de la pantalla. Actualiza de nuevo para reconciliar las listas mostradas.</value></data>
 </root>
