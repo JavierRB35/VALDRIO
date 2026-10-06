@@ -17,7 +17,7 @@ T05 conserva snapshots contextuales `valdrio-study-input-v1` y formato SQLite v3
 4. CSV se tokeniza mediante máquina de estados; no mediante separación ingenua de líneas o `Split(',')`. El encoding, BOM, delimitador y quote proceden del perfil.
 5. El número textual se interpreta mediante `SourceAmountParser` y `System.Decimal`. Separadores, agrupación y sintaxis negativa son tokens explícitos. No se usa `CurrentCulture`, `double` ni reemplazo global de coma/punto.
 6. Cuenta y descripción permanecen texto Unicode y la identidad de cuenta usa comparación ordinal. No se reconstruyen ceros perdidos.
-7. `SourceValueKind` distingue Missing, Empty, Text, Number, DateSerial, fórmulas con/sin cached value y Error para que CSV y el futuro XLSX compartan staging sin fingir equivalencia entre estados.
+7. `SourceValueKind` distingue Missing, Empty, Text, Boolean, Number, DateSerial, fórmulas con/sin cached value y Error para que CSV y XLSX compartan staging sin fingir equivalencia entre estados.
 8. D03 no se resuelve técnicamente. Un perfil de fixture se marca `SyntheticFixture`; un perfil real no podrá presentarse como aprobado hasta registrar la interpretación y ejemplo del propietario.
 9. `PrepareImport` será una capa posterior sobre este staging. Su implementación deberá leer contexto/revisión del estudio y producir preparación inmutable, pero seguirá sin crear recursos ni audit económico.
 10. Formato SQLite v4, `ConfirmImport` y snapshots T06 se diseñan después de estabilizar `PreparedImport`; no se modifica v3 ni `valdrio-study-input-v1`.
@@ -26,7 +26,7 @@ T05 conserva snapshots contextuales `valdrio-study-input-v1` y formato SQLite v3
 
 - La misma fuente puede leerse igual con UI/cultura distintas.
 - El archivo conserva huella de bytes y cada celda conserva lexical extraído; no se afirma reconstrucción byte a byte desde las celdas.
-- XLSX podrá diferenciar número, texto, fecha serial, fórmula cached/sin cached y error usando el mismo contrato de origen.
+- XLSX diferencia número, texto, booleano, fecha serial, fórmula cached/sin cached y error usando el mismo contrato de origen.
 - `AggregateWithProvenance` no agrega dentro del adaptador: la agregación necesita semántica y reconciliación de T06.2.
 - Cambiar archivo o perfil generará otra preparación; esa huella se define en T06.2.
 - La persistencia v4 no queda autorizada por este ADR y T06A mantiene el puente FX internacional completo.
