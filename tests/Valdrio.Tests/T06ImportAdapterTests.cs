@@ -549,6 +549,7 @@ public sealed class T06ImportAdapterTests
             using var writer = new StreamWriter(
                 replacement.Open(),
                 new UTF8Encoding(false),
+                1024,
                 leaveOpen: false);
             writer.Write("<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><sheetData><row r=\"1\">");
         }
