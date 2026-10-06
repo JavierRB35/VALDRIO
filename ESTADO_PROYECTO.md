@@ -9,7 +9,7 @@ Fecha de revisión 2026-10-06. Repositorio `JavierRB35/VALDRIO`.
 | T00–T04 y T02A | Cerradas e integradas |
 | T05 | Cerrada e integrada en `main@99c9dec289cb749094f6036c6b3f17bb3841e855`; la antigua PR #14 está fusionada |
 | T06.1 | Cerrada e integrada por PR #17 en main@2da40fa76108a6edef0492de2ce67dfbad9fa72a; aceptación Windows y UTC/Madrid aprobadas |
-| Selección manual de columnas | Implementada para CSV/XLSX con vista previa y validación; integración con aceptación Windows del HEAD de su PR y de main |
+| Selección manual de columnas | Integrada por PR #18 en main@e6ba1a9ce7233646577f95a74cc41fc7a4902960; CSV/XLSX, vista previa y validación; la revisión de cuenta obligatoria se acepta con CI de su HEAD |
 | T06.2–T06.6 | Pendientes; no existen todavía PrepareImport completo, ConfirmImport, recursos persistidos ni UI/runner T06 |
 
 La rama de cierre parte de `audit/t06-import-hardening-20261006@8e193c9d5e909f7c9be34532f2dfdbe331e45f16` y conserva su historia. El bloque corrige compilación, recuperación de modelos/maestros, formatos y tipos de fecha XLSX, errores controlados de libros corruptos, precisión de seriales y semántica de auditoría del estudio. También añade límites técnicos de lectura, lectura conjunta del workspace y aviso visible/reintento de preferencias.

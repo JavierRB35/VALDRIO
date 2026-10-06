@@ -665,9 +665,10 @@ public static class ImportSourceInspector
             if (cell.Kind is SourceValueKind.Missing or SourceValueKind.Empty ||
                 cell.Kind == SourceValueKind.FormulaWithoutCachedValue ||
                 cell.Kind == SourceValueKind.Error ||
-                string.IsNullOrEmpty(cell.TextValue))
+                string.IsNullOrWhiteSpace(cell.TextValue))
             {
-                if (cell.Kind is SourceValueKind.Missing or SourceValueKind.Empty)
+                if (cell.Kind is SourceValueKind.Missing or SourceValueKind.Empty ||
+                    cell.TextValue is { } text && string.IsNullOrWhiteSpace(text))
                     diagnostics.Add(Diagnostic(
                         "IMP_ACCOUNT_REQUIRED",
                         "Import.AccountRequired",
