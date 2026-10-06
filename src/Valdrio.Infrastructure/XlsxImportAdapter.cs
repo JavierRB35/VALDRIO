@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Security.Cryptography;
+using System.Xml;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -12,7 +13,7 @@ public sealed class XlsxImportAdapter : IImportAdapter
 {
     private static readonly HashSet<uint> BuiltInDateFormats =
     [
-        14, 15, 16, 17, 22, 27, 30, 36, 50, 57
+        14, 15, 16, 17, 22, 27, 28, 30, 36, 50, 57
     ];
 
     public ImportSourceKind SourceKind => ImportSourceKind.Xlsx;
@@ -142,6 +143,10 @@ public sealed class XlsxImportAdapter : IImportAdapter
         {
             throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
         }
+        catch (XmlException)
+        {
+            throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
+        }
         catch (FormatException)
         {
             throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
@@ -225,7 +230,10 @@ public sealed class XlsxImportAdapter : IImportAdapter
         if (type == CellValues.Error)
             return new SourceCell(column, SourceValueKind.Error, raw, raw, false);
 
-        if (type == CellValues.String || type == CellValues.Boolean || type == CellValues.Date)
+        if (type == CellValues.Boolean)
+            return new SourceCell(column, SourceValueKind.Boolean, raw, raw, false);
+
+        if (type == CellValues.String || type == CellValues.Date)
             return new SourceCell(column, SourceValueKind.Text, raw, raw, false);
 
         if (raw is null)
@@ -326,9 +334,9 @@ public sealed class XlsxImportAdapter : IImportAdapter
 
         private static bool LooksLikeDateFormat(string formatCode)
         {
-            var normalized = new System.Text.StringBuilder();
+            var effective = new System.Text.StringBuilder();
             var quoted = false;
-            var bracketed = false;
+
             for (var index = 0; index < formatCode.Length; index++)
             {
                 var character = formatCode[index];
@@ -338,30 +346,78 @@ public sealed class XlsxImportAdapter : IImportAdapter
                     continue;
                 }
 
-                if (!quoted && character == '[')
+                if (quoted)
+                    continue;
+
+                if (character == '[')
                 {
-                    bracketed = true;
+                    var closing = formatCode.IndexOf(']', index + 1);
+                    if (closing < 0)
+                        throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
+
+                    var bracket = formatCode[(index + 1)..closing];
+                    if (bracket.Length != 0 &&
+                        bracket.All(value => char.ToLowerInvariant(value) is 'h' or 'm' or 's'))
+                    {
+                        // Elapsed-time brackets are time context, never a month token.
+                        effective.Append('h');
+                    }
+
+                    index = closing;
                     continue;
                 }
 
-                if (!quoted && character == ']' && bracketed)
+                if (character is '\\' or '_' or '*')
                 {
-                    bracketed = false;
-                    continue;
-                }
-
-                if (!quoted && !bracketed && character == '\\')
-                {
+                    if (index + 1 >= formatCode.Length)
+                        throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
                     index++;
                     continue;
                 }
 
-                if (!quoted && !bracketed)
-                    normalized.Append(char.ToLowerInvariant(character));
+                effective.Append(char.ToLowerInvariant(character));
             }
 
-            var value = normalized.ToString();
-            return value.Contains('y') || value.Contains('d');
+            if (quoted)
+                throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
+
+            var value = effective.ToString();
+            return value.Contains('y') ||
+                   value.Contains('d') ||
+                   ContainsMonthToken(value);
+        }
+
+        private static bool ContainsMonthToken(string value)
+        {
+            for (var index = 0; index < value.Length; index++)
+            {
+                if (value[index] != 'm')
+                    continue;
+
+                var start = index;
+                while (index + 1 < value.Length && value[index + 1] == 'm')
+                    index++;
+
+                var previous = FindDateTimeToken(value, start - 1, -1);
+                var next = FindDateTimeToken(value, index + 1, 1);
+                if (previous != 'h' && next != 's')
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static char? FindDateTimeToken(string value, int index, int step)
+        {
+            while (index >= 0 && index < value.Length)
+            {
+                var character = value[index];
+                if (character is 'y' or 'm' or 'd' or 'h' or 's')
+                    return character;
+                index += step;
+            }
+
+            return null;
         }
     }
 }
