@@ -2,6 +2,8 @@ using System.Globalization;
 using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Data.Sqlite;
 using Valdrio.Application;
 using Valdrio.Domain;
@@ -424,6 +426,322 @@ public sealed class T06ImportAdapterTests
                 XlsxProfile(worksheet: "Otra"),
                 CancellationToken.None).GetAwaiter().GetResult());
         Assert.AreEqual("IMP_XLSX_SHEET_NOT_FOUND", error.Diagnostic.Code);
+    }
+
+
+    private static ImportSourceDocument ReadXlsxBytes(
+        byte[] bytes,
+        SourceParseProfileVersion? profile = null)
+    {
+        using var stream = new MemoryStream(bytes);
+        return new XlsxImportAdapter().ReadAsync(
+            stream,
+            "synthetic.xlsx",
+            profile ?? XlsxProfile()).GetAwaiter().GetResult();
+    }
+
+    private static byte[] MutateXlsxCell(
+        string cellReference,
+        string rawValue,
+        CellValues? dataType = null,
+        string? formula = null,
+        string? customFormat = null,
+        uint? builtInFormatId = null)
+    {
+        var source = File.ReadAllBytes(Path.Combine(
+            AppContext.BaseDirectory,
+            "Fixtures",
+            "t06-xlsx-1900-v1.xlsx"));
+
+        using var stream = new MemoryStream();
+        stream.Write(source);
+        stream.Position = 0;
+
+        using (var document = SpreadsheetDocument.Open(stream, true))
+        {
+            var workbookPart = document.WorkbookPart ??
+                throw new InvalidOperationException("Workbook part missing from T06 fixture.");
+            var worksheetPart = workbookPart.WorksheetParts.Single();
+            var cell = worksheetPart.Worksheet
+                .Descendants<Cell>()
+                .Single(item => string.Equals(
+                    item.CellReference?.Value,
+                    cellReference,
+                    StringComparison.Ordinal));
+
+            cell.CellValue = new CellValue(rawValue);
+            if (dataType.HasValue)
+                cell.DataType = dataType.Value;
+            cell.CellFormula = formula is null ? null : new CellFormula(formula);
+
+            if (customFormat is not null || builtInFormatId.HasValue)
+            {
+                if (customFormat is not null && builtInFormatId.HasValue)
+                    throw new InvalidOperationException("Only one XLSX format source may be specified.");
+
+                var stylesPart = workbookPart.WorkbookStylesPart ??
+                    throw new InvalidOperationException("Styles part missing from T06 fixture.");
+                var stylesheet = stylesPart.Stylesheet;
+                var formatId = builtInFormatId.GetValueOrDefault();
+
+                if (customFormat is not null)
+                {
+                    var numberingFormats = stylesheet.NumberingFormats;
+                    if (numberingFormats is null)
+                    {
+                        numberingFormats = new NumberingFormats();
+                        stylesheet.InsertAt(numberingFormats, 0);
+                    }
+
+                    formatId = numberingFormats.Elements<NumberingFormat>()
+                        .Select(item => item.NumberFormatId?.Value ?? 163U)
+                        .DefaultIfEmpty(163U)
+                        .Max() + 1U;
+                    if (formatId < 164U)
+                        formatId = 164U;
+
+                    numberingFormats.Append(new NumberingFormat
+                    {
+                        NumberFormatId = formatId,
+                        FormatCode = customFormat
+                    });
+                    numberingFormats.Count = (uint)numberingFormats.ChildElements.Count;
+                }
+
+                var cellFormats = stylesheet.CellFormats ??
+                    throw new InvalidOperationException("Cell formats missing from T06 fixture.");
+                cellFormats.Append(new CellFormat
+                {
+                    NumberFormatId = formatId,
+                    ApplyNumberFormat = true
+                });
+                cellFormats.Count = (uint)cellFormats.ChildElements.Count;
+                cell.StyleIndex = (uint)(cellFormats.ChildElements.Count - 1);
+                stylesheet.Save();
+            }
+
+            worksheetPart.Worksheet.Save();
+        }
+
+        return stream.ToArray();
+    }
+
+    private static byte[] CorruptWorksheetXml()
+    {
+        var source = File.ReadAllBytes(Path.Combine(
+            AppContext.BaseDirectory,
+            "Fixtures",
+            "t06-xlsx-1900-v1.xlsx"));
+
+        using var stream = new MemoryStream();
+        stream.Write(source);
+        stream.Position = 0;
+
+        using (var archive = new ZipArchive(stream, ZipArchiveMode.Update, true))
+        {
+            var worksheetName = archive.Entries
+                .Select(entry => entry.FullName)
+                .First(name => name.StartsWith("xl/worksheets/", StringComparison.Ordinal) &&
+                               name.EndsWith(".xml", StringComparison.OrdinalIgnoreCase));
+            archive.GetEntry(worksheetName)!.Delete();
+
+            var replacement = archive.CreateEntry(worksheetName, CompressionLevel.Optimal);
+            using var writer = new StreamWriter(
+                replacement.Open(),
+                new UTF8Encoding(false),
+                leaveOpen: false);
+            writer.Write("<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><sheetData><row r=\"1\">");
+        }
+
+        return stream.ToArray();
+    }
+
+    [TestMethod]
+    public void T06_16_XlsxFormatTokensKeepNumbersNumericAndRecognizeMonthDates()
+    {
+        foreach (var format in new[] { "0.00_d", "0.00*d" })
+        {
+            var document = ReadXlsxBytes(MutateXlsxCell(
+                "C2",
+                "1234.50",
+                CellValues.Number,
+                customFormat: format));
+            var value = document.Rows[0].GetCell(3);
+            Assert.AreEqual(SourceValueKind.Number, value.Kind, format);
+            Assert.IsNull(value.DateValue, format);
+        }
+
+        var monthOnly = ReadXlsxBytes(MutateXlsxCell(
+            "C2",
+            "45323",
+            CellValues.Number,
+            customFormat: "mm"));
+        Assert.AreEqual(SourceValueKind.DateSerial, monthOnly.Rows[0].GetCell(3).Kind);
+        Assert.AreEqual(
+            BusinessDate.ParseIso("2024-02-01"),
+            monthOnly.Rows[0].GetCell(3).DateValue.GetValueOrDefault());
+
+        var builtIn28 = ReadXlsxBytes(MutateXlsxCell(
+            "C2",
+            "45323",
+            CellValues.Number,
+            builtInFormatId: 28U));
+        Assert.AreEqual(SourceValueKind.DateSerial, builtIn28.Rows[0].GetCell(3).Kind);
+        Assert.AreEqual(
+            BusinessDate.ParseIso("2024-02-01"),
+            builtIn28.Rows[0].GetCell(3).DateValue.GetValueOrDefault());
+
+        var controls = ReadXlsx("t06-xlsx-1900-v1.xlsx");
+        Assert.AreEqual(SourceValueKind.Number, controls.Rows[0].GetCell(3).Kind);
+        Assert.AreEqual(SourceValueKind.DateSerial, controls.Rows[0].GetCell(4).Kind);
+    }
+
+    [TestMethod]
+    public void T06_17_XlsxBooleanAccountPreservesTypeAndIsBlocked()
+    {
+        var booleanDocument = ReadXlsxBytes(MutateXlsxCell(
+            "A2",
+            "1",
+            CellValues.Boolean));
+        var booleanCell = booleanDocument.Rows[0].GetCell(1);
+        Assert.AreEqual(SourceValueKind.Boolean, booleanCell.Kind);
+        Assert.AreEqual("1", booleanCell.RawLexical);
+        Assert.AreEqual("1", booleanCell.TextValue);
+
+        var booleanDiagnostics = ImportSourceInspector.ValidateBasic(
+            booleanDocument,
+            XlsxProfile());
+        var booleanDiagnostic = booleanDiagnostics.Single(item =>
+            item.Diagnostic.Code == "IMP_XLSX_BOOLEAN_ACCOUNT");
+        Assert.AreEqual(2, booleanDiagnostic.Location.RecordNumber);
+        Assert.AreEqual(1, booleanDiagnostic.Location.Column);
+
+        var formulaDocument = ReadXlsxBytes(MutateXlsxCell(
+            "A2",
+            "1",
+            CellValues.Boolean,
+            formula: "1=1"));
+        var formulaCell = formulaDocument.Rows[0].GetCell(1);
+        Assert.AreEqual(SourceValueKind.FormulaWithCachedValue, formulaCell.Kind);
+        Assert.AreEqual(SourceValueKind.Boolean, formulaCell.CachedValueKind);
+        Assert.AreEqual(
+            1,
+            ImportSourceInspector.ValidateBasic(formulaDocument, XlsxProfile())
+                .Count(item => item.Diagnostic.Code == "IMP_XLSX_BOOLEAN_ACCOUNT"));
+
+        var textDocument = ReadXlsxBytes(MutateXlsxCell(
+            "A2",
+            "1",
+            CellValues.String));
+        Assert.AreEqual(SourceValueKind.Text, textDocument.Rows[0].GetCell(1).Kind);
+        Assert.AreEqual(
+            0,
+            ImportSourceInspector.ValidateBasic(textDocument, XlsxProfile())
+                .Count(item => item.Diagnostic.Code == "IMP_XLSX_BOOLEAN_ACCOUNT"));
+
+        var leadingZeroControl = ReadXlsx("t06-xlsx-1900-v1.xlsx");
+        Assert.AreEqual("00123", leadingZeroControl.Rows[0].GetCell(1).TextValue);
+    }
+
+    [TestMethod]
+    public void T06_18_ProfileRejectsNonPositiveColumnsAndReservedNumberSeparators()
+    {
+        foreach (var create in new Func<ImportColumnMap>[]
+        {
+            () => new ImportColumnMap(1, description: 0, amount: 3),
+            () => new ImportColumnMap(1, description: -1, amount: 3),
+            () => new ImportColumnMap(1, amount: 0),
+            () => new ImportColumnMap(1, amount: -1),
+            () => new ImportColumnMap(1, debit: 0, credit: 3),
+            () => new ImportColumnMap(1, debit: 2, credit: 0),
+            () => new ImportColumnMap(1, debit: -2, credit: 3),
+            () => new ImportColumnMap(1, debit: 2, credit: -3)
+        })
+        {
+            var error = Assert.ThrowsExactly<DomainRuleException>(() => create());
+            Assert.AreEqual("IMP_PROFILE_INVALID", error.Diagnostic.Code);
+        }
+
+        var digitSeparator = Assert.ThrowsExactly<DomainRuleException>(() =>
+            new SourceNumberFormat(
+                "5",
+                ".",
+                [3],
+                ImportNegativeSyntax.LeadingMinus));
+        Assert.AreEqual("IMP_AMBIGUOUS_FORMAT", digitSeparator.Diagnostic.Code);
+
+        foreach (var reserved in new[] { "5", "-", "+", "e", "E", "\t" })
+        {
+            var error = Assert.ThrowsExactly<DomainRuleException>(() =>
+                new SourceNumberFormat(
+                    ",",
+                    reserved,
+                    [3],
+                    ImportNegativeSyntax.LeadingMinus));
+            Assert.AreEqual("IMP_AMBIGUOUS_FORMAT", error.Diagnostic.Code, reserved);
+        }
+
+        var spaced = new SourceNumberFormat(
+            ",",
+            " ",
+            [3],
+            ImportNegativeSyntax.LeadingMinus);
+        Assert.AreEqual(
+            1234.50m,
+            SourceAmountParser.Parse("1 234,50", spaced).Value.GetValueOrDefault());
+    }
+
+    [TestMethod]
+    public void T06_19_CsvRejectsUtf32BomUnderUtf16Profile()
+    {
+        const string csv = "Cuenta;Descripción;Importe\r\n00123;Café;123,45\r\n";
+
+        var utf32 = new UTF32Encoding(false, true, true);
+        var utf32Bytes = utf32.GetPreamble()
+            .Concat(utf32.GetBytes(csv))
+            .ToArray();
+        var mismatch = Assert.ThrowsExactly<DomainRuleException>(() =>
+            Read(utf32Bytes, Profile("utf-16", CsvBomPolicy.Required)));
+        Assert.AreEqual("IMP_ENCODING_MISMATCH", mismatch.Diagnostic.Code);
+
+        var utf16 = new UnicodeEncoding(false, true, true);
+        var utf16Bytes = utf16.GetPreamble()
+            .Concat(utf16.GetBytes(csv))
+            .ToArray();
+        var control = Read(utf16Bytes, Profile("utf-16", CsvBomPolicy.Required));
+        Assert.AreEqual(1, control.Rows.Count);
+        Assert.AreEqual("00123", control.Rows[0].GetCell(1).TextValue);
+    }
+
+    [TestMethod]
+    public void T06_20_MalformedWorksheetXmlUsesImportDiagnosticAndCancellationStillEscapes()
+    {
+        using (var malformed = new MemoryStream(CorruptWorksheetXml()))
+        {
+            var error = Assert.ThrowsExactly<DomainRuleException>(() =>
+                new XlsxImportAdapter().ReadAsync(
+                    malformed,
+                    "malformed.xlsx",
+                    XlsxProfile(),
+                    CancellationToken.None).GetAwaiter().GetResult());
+            Assert.AreEqual("IMP_XLSX_INVALID", error.Diagnostic.Code);
+        }
+
+        var valid = ReadXlsx("t06-xlsx-1900-v1.xlsx");
+        Assert.AreEqual(2, valid.Rows.Count);
+
+        using var stream = File.OpenRead(Path.Combine(
+            AppContext.BaseDirectory,
+            "Fixtures",
+            "t06-xlsx-1900-v1.xlsx"));
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        Assert.ThrowsExactly<OperationCanceledException>(() =>
+            new XlsxImportAdapter().ReadAsync(
+                stream,
+                "t06-xlsx-1900-v1.xlsx",
+                XlsxProfile(),
+                cancellation.Token).GetAwaiter().GetResult());
     }
 
 }
