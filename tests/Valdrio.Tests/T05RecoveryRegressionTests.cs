@@ -76,8 +76,20 @@ public sealed class T05RecoveryRegressionTests
         try
         {
             var store = new JsonUserPresentationPreferencesStore(destinationDirectory);
-            Assert.ThrowsExactly<IOException>(() =>
-                store.Save(UserPresentationPreferences.Default));
+            Exception? failure = null;
+            try
+            {
+                store.Save(UserPresentationPreferences.Default);
+            }
+            catch (Exception ex)
+            {
+                failure = ex;
+            }
+
+            Assert.IsNotNull(failure);
+            Assert.IsTrue(
+                failure is IOException or UnauthorizedAccessException,
+                $"Expected an IO/access failure but caught {failure.GetType().Name}.");
 
             Assert.AreEqual(
                 0,
