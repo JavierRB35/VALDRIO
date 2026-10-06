@@ -402,6 +402,13 @@ try {
     $modelChecks = Get-Content -LiteralPath (Join-Path $captureDir "models/interaction.json") -Raw | ConvertFrom-Json
     if ($modelChecks.Status -ne "passed" -or $modelChecks.PassedChecks.Count -ne 53) { throw "Model WPF interaction evidence is incomplete." }
     Write-Host "Model WPF checks passed: $($modelChecks.PassedChecks.Count)."
+    $importChecks = Get-Content -LiteralPath (Join-Path $captureDir "import-columns/interaction.json") -Raw | ConvertFrom-Json
+    if ($importChecks.Status -ne "passed" -or $importChecks.PassedChecks.Count -ne 13) {
+      throw "Import column selection WPF interaction evidence is incomplete."
+    }
+    $importImages = @(Get-ChildItem -LiteralPath (Join-Path $captureDir "import-columns") -Filter *.png)
+    if ($importImages.Count -ne 2) { throw "Expected CSV and Excel import column selection images." }
+    Write-Host "Import column selection WPF checks passed: $($importChecks.PassedChecks.Count)."
     $studyChecks = Get-Content -LiteralPath (Join-Path $captureDir "studies/interaction.json") -Raw | ConvertFrom-Json
     if ($studyChecks.Status -ne "passed" -or $studyChecks.PassedChecks.Count -ne 73) { throw "Expected all 73 final study WPF checks." }
     foreach ($region in @("es-ES", "en-US", "de-DE", "en-GB")) {
@@ -495,6 +502,8 @@ try {
         ModelChecks = $modelChecks.PassedChecks.Count
         CompanyChecks = $companyChecks.PassedChecks.Count
         FxChecks = $fxChecks.PassedChecks.Count
+        ImportColumnChecks = $importChecks.PassedChecks.Count
+        ImportColumnImages = $importImages.Count
         StudyImages = $studyImages.Count
         ModelAndStudyManifests = "verified"
         RepositoryClean = $true

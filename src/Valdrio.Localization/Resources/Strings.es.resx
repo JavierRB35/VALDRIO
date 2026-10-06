@@ -300,4 +300,50 @@ Completa: {5}</value></data>
   <data name="Import.XlsxFormatUnsupported" xml:space="preserve"><value>El formato numérico XLSX no puede interpretarse sin ambigüedad. Usa un formato explícito soportado.</value></data>
   <data name="Import.SourceLimit" xml:space="preserve"><value>El origen supera el límite técnico de lectura configurado.</value></data>
   <data name="Preferences.RetrySave" xml:space="preserve"><value>Reintentar guardar preferencias</value></data>
+  <data name="ImportMapping.OpenMapping" xml:space="preserve"><value>Seleccionar columnas de importación…</value></data>
+  <data name="ImportMapping.Title" xml:space="preserve"><value>Selección de columnas de importación</value></data>
+  <data name="ImportMapping.Intro" xml:space="preserve"><value>Elige la estructura del archivo y después las columnas de código de cuenta e importe por posición y encabezado.</value></data>
+  <data name="ImportMapping.Open" xml:space="preserve"><value>Elegir CSV o Excel</value></data>
+  <data name="ImportMapping.Worksheet" xml:space="preserve"><value>Hoja de Excel</value></data>
+  <data name="ImportMapping.HeaderRow" xml:space="preserve"><value>Fila de encabezados (0 = sin encabezados)</value></data>
+  <data name="ImportMapping.FirstDataRow" xml:space="preserve"><value>Primera fila de datos</value></data>
+  <data name="ImportMapping.Delimiter" xml:space="preserve"><value>Separador CSV</value></data>
+  <data name="ImportMapping.Encoding" xml:space="preserve"><value>Codificación CSV</value></data>
+  <data name="ImportMapping.Read" xml:space="preserve"><value>Leer columnas</value></data>
+  <data name="ImportMapping.AccountColumn" xml:space="preserve"><value>Columna del código de cuenta</value></data>
+  <data name="ImportMapping.AmountColumn" xml:space="preserve"><value>Columna del importe</value></data>
+  <data name="ImportMapping.Decimal" xml:space="preserve"><value>Separador decimal del texto</value></data>
+  <data name="ImportMapping.Grouping" xml:space="preserve"><value>Separador de miles del texto</value></data>
+  <data name="ImportMapping.Negative" xml:space="preserve"><value>Notación negativa admitida</value></data>
+  <data name="ImportMapping.NumberHelp" xml:space="preserve"><value>Estos separadores se aplican a CSV y celdas de texto de Excel. Los números nativos de Excel usan su valor exacto almacenado. La región del ordenador no determina cómo se lee el origen.</value></data>
+  <data name="ImportMapping.NumericAccounts" xml:space="preserve"><value>Aceptar cuentas numéricas de Excel con su representación almacenada</value></data>
+  <data name="ImportMapping.NumericWarning" xml:space="preserve"><value>Úsalo solo si los códigos del origen son numéricos intencionadamente. Los ceros iniciales ya perdidos en Excel no se pueden recuperar. Las fechas y los booleanos nunca son códigos de cuenta.</value></data>
+  <data name="ImportMapping.Validate" xml:space="preserve"><value>Validar las columnas seleccionadas</value></data>
+  <data name="ImportMapping.PreviewHelp" xml:space="preserve"><value>Vista previa de las primeras 50 filas de datos. La validación comprueba todas las filas, incluidas las que no se muestran. Los importes vacíos son errores y nunca se convierten en cero.</value></data>
+  <data name="ImportMapping.Row" xml:space="preserve"><value>Fila</value></data>
+  <data name="ImportMapping.Original" xml:space="preserve"><value>Importe original</value></data>
+  <data name="ImportMapping.Parsed" xml:space="preserve"><value>Importe interpretado</value></data>
+  <data name="ImportMapping.Issues" xml:space="preserve"><value>Errores</value></data>
+  <data name="ImportMapping.StagingOnly" xml:space="preserve"><value>Este paso prepara y valida la selección de columnas. Todavía no guarda los importes en el estudio.</value></data>
+  <data name="ImportMapping.Cancel" xml:space="preserve"><value>Cancelar lectura</value></data>
+  <data name="ImportMapping.Close" xml:space="preserve"><value>Cerrar</value></data>
+  <data name="ImportMapping.ChooseFile" xml:space="preserve"><value>Elige un archivo CSV o XLSX para comenzar.</value></data>
+  <data name="ImportMapping.ReadSource" xml:space="preserve"><value>Comprueba la estructura y lee las columnas.</value></data>
+  <data name="ImportMapping.SelectColumns" xml:space="preserve"><value>Selecciona las columnas de cuenta e importe y después valida.</value></data>
+  <data name="ImportMapping.SelectWorksheet" xml:space="preserve"><value>Selecciona expresamente la hoja de Excel y después lee sus columnas.</value></data>
+  <data name="ImportMapping.Working" xml:space="preserve"><value>Leyendo y validando…</value></data>
+  <data name="ImportMapping.Cancelled" xml:space="preserve"><value>Operación cancelada. No se han modificado los datos del estudio.</value></data>
+  <data name="ImportMapping.FileError" xml:space="preserve"><value>No se ha podido leer el archivo de origen. Comprueba su disponibilidad y permisos.</value></data>
+  <data name="ImportMapping.Ready" xml:space="preserve"><value>Las columnas seleccionadas son válidas. El mapeo se conserva para el siguiente paso de importación.</value></data>
+  <data name="ImportMapping.HasErrors" xml:space="preserve"><value>Las columnas seleccionadas contienen errores bloqueantes. Corrige el origen o la selección.</value></data>
+  <data name="ImportMapping.Summary" xml:space="preserve"><value>{0} filas de datos · {1} errores · {2}</value></data>
+  <data name="ImportMapping.Valid" xml:space="preserve"><value>Válido</value></data>
+  <data name="ImportMapping.Blocked" xml:space="preserve"><value>Bloqueado</value></data>
+  <data name="ImportMapping.None" xml:space="preserve"><value>Ninguno</value></data>
+  <data name="ImportMapping.Space" xml:space="preserve"><value>Espacio</value></data>
+  <data name="ImportMapping.Tab" xml:space="preserve"><value>Tabulación</value></data>
+  <data name="ImportMapping.NoHeader" xml:space="preserve"><value>Sin encabezado</value></data>
+  <data name="Import.ColumnsRequired" xml:space="preserve"><value>Selecciona columnas de cuenta e importe que existan en el origen.</value></data>
+  <data name="Import.ColumnsDistinct" xml:space="preserve"><value>El código de cuenta y el importe deben utilizar columnas distintas.</value></data>
+  <data name="Import.NoData" xml:space="preserve"><value>La estructura seleccionada no contiene filas de datos.</value></data>
 </root>

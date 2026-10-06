@@ -1,0 +1,76 @@
+<Window x:Class="Valdrio.Desktop.ImportColumnMappingWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="{Binding Title}" Width="1040" Height="780" MinWidth="720" MinHeight="560" WindowStartupLocation="CenterOwner">
+ <Window.Resources>
+  <BooleanToVisibilityConverter x:Key="Visible"/>
+  <Style TargetType="Button"><Setter Property="Padding" Value="12,6"/><Setter Property="Margin" Value="0,4,8,4"/></Style>
+  <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,3,8,3"/></Style>
+  <Style TargetType="ComboBox"><Setter Property="MinWidth" Value="145"/><Setter Property="Margin" Value="0,3,12,3"/></Style>
+ </Window.Resources>
+ <ScrollViewer VerticalScrollBarVisibility="Auto">
+ <StackPanel Margin="18">
+  <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="21"/>
+  <TextBlock Text="{Binding [Intro]}"/>
+  <WrapPanel>
+   <Button x:Name="OpenSourceButton" Content="{Binding [Open]}" Command="{Binding OpenCommand}" AutomationProperties.Name="{Binding [Open]}"/>
+   <TextBlock Text="{Binding FileName}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+  </WrapPanel>
+  <StackPanel IsEnabled="{Binding IsIdle}">
+   <WrapPanel IsEnabled="{Binding HasFile}">
+    <StackPanel Visibility="{Binding IsXlsx,Converter={StaticResource Visible}}"><TextBlock Text="{Binding [Worksheet]}"/>
+     <ComboBox x:Name="WorksheetBox" ItemsSource="{Binding Worksheets}" SelectedItem="{Binding Worksheet}"
+      AutomationProperties.Name="{Binding [Worksheet]}" MinWidth="200"/></StackPanel>
+    <StackPanel><TextBlock Text="{Binding [HeaderRow]}"/><TextBox x:Name="HeaderRowBox" Width="120" HorizontalAlignment="Left"
+      Text="{Binding HeaderRow,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [HeaderRow]}" Margin="0,3,12,3"/></StackPanel>
+    <StackPanel><TextBlock Text="{Binding [FirstDataRow]}"/><TextBox x:Name="FirstDataRowBox" Width="140" HorizontalAlignment="Left"
+      Text="{Binding FirstDataRow,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [FirstDataRow]}" Margin="0,3,12,3"/></StackPanel>
+   </WrapPanel>
+   <WrapPanel Visibility="{Binding IsCsv,Converter={StaticResource Visible}}">
+    <StackPanel><TextBlock Text="{Binding [Delimiter]}"/><ComboBox x:Name="DelimiterBox" ItemsSource="{Binding Delimiters}"
+     SelectedValuePath="Value" DisplayMemberPath="Label" SelectedValue="{Binding Delimiter}" AutomationProperties.Name="{Binding [Delimiter]}"/></StackPanel>
+    <StackPanel><TextBlock Text="{Binding [Encoding]}"/><ComboBox ItemsSource="{Binding Encodings}"
+     SelectedItem="{Binding Encoding}" AutomationProperties.Name="{Binding [Encoding]}"/></StackPanel>
+   </WrapPanel>
+   <Button x:Name="ReadSourceButton" Content="{Binding [Read]}" Command="{Binding ReadCommand}" HorizontalAlignment="Left"/>
+   <WrapPanel IsEnabled="{Binding HasColumns}">
+    <StackPanel Width="360"><TextBlock Text="{Binding [AccountColumn]}"/>
+     <ComboBox x:Name="AccountColumnBox" ItemsSource="{Binding Columns}" DisplayMemberPath="Label"
+      SelectedValuePath="Index" SelectedValue="{Binding AccountColumn}" AutomationProperties.Name="{Binding [AccountColumn]}"/></StackPanel>
+    <StackPanel Width="360"><TextBlock Text="{Binding [AmountColumn]}"/>
+     <ComboBox x:Name="AmountColumnBox" ItemsSource="{Binding Columns}" DisplayMemberPath="Label"
+      SelectedValuePath="Index" SelectedValue="{Binding AmountColumn}" AutomationProperties.Name="{Binding [AmountColumn]}"/></StackPanel>
+   </WrapPanel>
+   <WrapPanel IsEnabled="{Binding HasColumns}">
+    <StackPanel><TextBlock Text="{Binding [Decimal]}"/><ComboBox ItemsSource="{Binding DecimalSeparators}"
+     SelectedItem="{Binding DecimalSeparator}" AutomationProperties.Name="{Binding [Decimal]}"/></StackPanel>
+    <StackPanel><TextBlock Text="{Binding [Grouping]}"/><ComboBox ItemsSource="{Binding GroupSeparators}" DisplayMemberPath="Label"
+     SelectedValuePath="Value" SelectedValue="{Binding GroupSeparator}" AutomationProperties.Name="{Binding [Grouping]}"/></StackPanel>
+    <StackPanel><TextBlock Text="{Binding [Negative]}"/><ComboBox ItemsSource="{Binding NegativeSyntaxes}" DisplayMemberPath="Label"
+     SelectedValuePath="Value" SelectedValue="{Binding NegativeSyntax}" AutomationProperties.Name="{Binding [Negative]}"/></StackPanel>
+   </WrapPanel>
+   <TextBlock Text="{Binding [NumberHelp]}"/>
+   <CheckBox x:Name="NumericAccountsBox" Content="{Binding [NumericAccounts]}" IsChecked="{Binding AllowNumericAccounts}"
+    Visibility="{Binding IsXlsx,Converter={StaticResource Visible}}" Margin="0,6,0,6"/>
+   <TextBlock Text="{Binding [NumericWarning]}" Visibility="{Binding IsXlsx,Converter={StaticResource Visible}}"/>
+   <Button x:Name="ValidateMappingButton" Content="{Binding [Validate]}" Command="{Binding ValidateCommand}" HorizontalAlignment="Left"/>
+  </StackPanel>
+  <TextBlock Text="{Binding Status}" Foreground="DarkSlateBlue" AutomationProperties.LiveSetting="Polite"/>
+  <TextBlock Text="{Binding Summary}" FontWeight="SemiBold"/>
+  <TextBlock Text="{Binding [PreviewHelp]}"/>
+  <DataGrid x:Name="PreviewGrid" ItemsSource="{Binding Preview}" AutoGenerateColumns="False" IsReadOnly="True"
+   CanUserAddRows="False" Height="210" FlowDirection="LeftToRight" EnableRowVirtualization="True">
+   <DataGrid.Columns>
+    <DataGridTextColumn Binding="{Binding Row}" Width="65"/>
+    <DataGridTextColumn Binding="{Binding Account}" Width="155"/>
+    <DataGridTextColumn Binding="{Binding OriginalAmount}" Width="155"/>
+    <DataGridTextColumn Binding="{Binding ParsedAmount}" Width="155"/>
+    <DataGridTextColumn Binding="{Binding Issues}" Width="*"/>
+   </DataGrid.Columns>
+  </DataGrid>
+  <TextBlock Text="{Binding GlobalIssues}" Foreground="DarkRed"/>
+  <TextBlock Text="{Binding [StagingOnly]}" FontStyle="Italic"/>
+  <WrapPanel><Button Content="{Binding [Cancel]}" Command="{Binding CancelCommand}"/>
+   <Button x:Name="CloseMappingButton" Content="{Binding [Close]}" Click="CloseMapping" IsEnabled="{Binding IsIdle}"/></WrapPanel>
+ </StackPanel>
+ </ScrollViewer>
+</Window>

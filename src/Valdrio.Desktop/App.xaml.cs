@@ -15,7 +15,8 @@ public partial class App : System.Windows.Application
     private CompanyFileViewModel? company;
     private StudyWorkspaceViewModel? studies;
     private ModelWorkspaceViewModel? models;
-    protected override void OnExit(ExitEventArgs e) { studies?.Dispose(); models?.Dispose(); company?.Dispose(); base.OnExit(e); }
+    private ImportColumnMappingViewModel? importColumns;
+    protected override void OnExit(ExitEventArgs e) { importColumns?.Dispose(); studies?.Dispose(); models?.Dispose(); company?.Dispose(); base.OnExit(e); }
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -118,7 +119,10 @@ public partial class App : System.Windows.Application
             companyDialogs, currencyCatalog, texts, preferences, formatter);
         var modelDialogs = captureDirectory is null ? (IModelEditorDialogs)new ModelEditorDialogs() : new QueuedModelEditorDialogs();
         models = new ModelWorkspaceViewModel(company, texts, preferences, modelDialogs, formatter);
-        studies = new StudyWorkspaceViewModel(company, currencyCatalog, texts, preferences, formatter, modelDialogs);
+        var importDialogs = captureDirectory is null ? (IImportSourceDialogs)new ImportSourceDialogs() : new QueuedImportSourceDialogs();
+        importColumns = new ImportColumnMappingViewModel(new ImportSourceSessionFactory(), importDialogs, texts, preferences);
+        studies = new StudyWorkspaceViewModel(company, currencyCatalog, texts, preferences, formatter, modelDialogs)
+            { ImportColumns = importColumns };
         var viewModel =
             new MainWindowViewModel(
                 texts,
@@ -193,6 +197,10 @@ public partial class App : System.Windows.Application
                             (QueuedCompanyFileDialogs)companyDialogs, (QueuedModelEditorDialogs)modelDialogs, viewModel);
                         await window.StudyPanel.RunStudyInteractionChecks(captureDirectory,
                             (QueuedCompanyFileDialogs)companyDialogs, (QueuedModelEditorDialogs)modelDialogs, viewModel);
+                        var importWindow = new ImportColumnMappingWindow { Owner = window, DataContext = importColumns };
+                        importWindow.Show();
+                        await importWindow.RunImportMappingChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs, viewModel);
+                        importWindow.Close();
                         CaptureVisualEvidence(
                             window,
                             viewModel,
