@@ -294,4 +294,10 @@ Completa: {5}</value></data>
   <data name="Import.XlsxBooleanAccount" xml:space="preserve"><value>La celda de cuenta es booleana; los valores booleanos no son identidades de cuenta válidas.</value></data>
   <data name="Preferences.SaveFailed" xml:space="preserve"><value>El cambio de presentación se ha aplicado, pero no se pudo guardar el archivo de preferencias. El próximo inicio puede usar la preferencia anterior.</value></data>
   <data name="Study.CommittedRefreshPending" xml:space="preserve"><value>La escritura quedó confirmada, pero falló la actualización de la pantalla. Actualiza de nuevo para reconciliar las listas mostradas.</value></data>
+  <data name="Model.CommittedRefreshPending" xml:space="preserve"><value>La escritura quedó confirmada, pero no se pudo actualizar la pantalla. Actualiza para reconciliar las listas. Se conservarán las ediciones pendientes.</value></data>
+  <data name="Model.Refresh" xml:space="preserve"><value>Actualizar</value></data>
+  <data name="Import.XlsxDateAccount" xml:space="preserve"><value>Una celda de fecha no puede usarse como identidad de cuenta.</value></data>
+  <data name="Import.XlsxFormatUnsupported" xml:space="preserve"><value>El formato numérico XLSX no puede interpretarse sin ambigüedad. Usa un formato explícito soportado.</value></data>
+  <data name="Import.SourceLimit" xml:space="preserve"><value>El origen supera el límite técnico de lectura configurado.</value></data>
+  <data name="Preferences.RetrySave" xml:space="preserve"><value>Reintentar guardar preferencias</value></data>
 </root>

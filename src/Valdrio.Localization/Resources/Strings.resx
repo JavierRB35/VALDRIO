@@ -294,4 +294,10 @@ Full: {5}</value></data>
   <data name="Import.XlsxBooleanAccount" xml:space="preserve"><value>The account cell is boolean; boolean values are not valid account identities.</value></data>
   <data name="Preferences.SaveFailed" xml:space="preserve"><value>The presentation change was applied, but the preference file could not be saved. The next start may use the previous preference.</value></data>
   <data name="Study.CommittedRefreshPending" xml:space="preserve"><value>The write was committed, but refreshing the screen failed. Refresh again to reconcile the displayed lists.</value></data>
+  <data name="Model.CommittedRefreshPending" xml:space="preserve"><value>The write was committed, but the screen could not be refreshed. Refresh to reconcile the lists. Pending edits will be preserved.</value></data>
+  <data name="Model.Refresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="Import.XlsxDateAccount" xml:space="preserve"><value>A date cell cannot be used as an account identity.</value></data>
+  <data name="Import.XlsxFormatUnsupported" xml:space="preserve"><value>The XLSX number format cannot be interpreted unambiguously. Use an explicit supported format.</value></data>
+  <data name="Import.SourceLimit" xml:space="preserve"><value>The source exceeds the configured technical reading limit.</value></data>
+  <data name="Preferences.RetrySave" xml:space="preserve"><value>Retry saving preferences</value></data>
 </root>

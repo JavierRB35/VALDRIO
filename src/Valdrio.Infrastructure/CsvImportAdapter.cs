@@ -6,6 +6,8 @@ namespace Valdrio.Infrastructure;
 
 public sealed class CsvImportAdapter : IImportAdapter
 {
+    private readonly ImportReadLimits limits;
+    public CsvImportAdapter(ImportReadLimits? limits = null) => this.limits = limits ?? ImportReadLimits.Default;
     public ImportSourceKind SourceKind => ImportSourceKind.Csv;
 
     public async Task<ImportSourceDocument> ReadAsync(
@@ -24,7 +26,7 @@ public sealed class CsvImportAdapter : IImportAdapter
 
         cancellationToken.ThrowIfCancellationRequested();
         using var buffer = new MemoryStream();
-        await source.CopyToAsync(buffer, cancellationToken).ConfigureAwait(false);
+        await BoundedImportRead.CopyAsync(source, buffer, limits, cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
 
         var bytes = buffer.ToArray();
@@ -117,7 +119,7 @@ public sealed class CsvImportAdapter : IImportAdapter
         return 0;
     }
 
-    private static IReadOnlyList<SourceRow> Parse(
+    private IReadOnlyList<SourceRow> Parse(
         string text,
         CsvSourceDialect dialect,
         CancellationToken cancellationToken)
@@ -136,6 +138,9 @@ public sealed class CsvImportAdapter : IImportAdapter
 
         void AddCell()
         {
+            ImportReadLimits.Require(value.Length <= limits.MaxCellCharacters && raw.Length <= limits.MaxCellCharacters,
+                "cellCharacters", limits.MaxCellCharacters);
+            ImportReadLimits.Require(cells.Count < limits.MaxColumns, "columns", limits.MaxColumns);
             var textValue = value.ToString();
             cells.Add(new SourceCell(
                 cells.Count + 1,
@@ -152,6 +157,7 @@ public sealed class CsvImportAdapter : IImportAdapter
 
         void AddRow()
         {
+            ImportReadLimits.Require(rows.Count < limits.MaxRows, "rows", limits.MaxRows);
             AddCell();
             rows.Add(new SourceRow(recordNumber++, recordStartLine, cells.ToArray()));
             cells.Clear();
@@ -160,6 +166,8 @@ public sealed class CsvImportAdapter : IImportAdapter
         for (var index = 0; index < text.Length; index++)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ImportReadLimits.Require(raw.Length <= limits.MaxCellCharacters && value.Length <= limits.MaxCellCharacters,
+                "cellCharacters", limits.MaxCellCharacters);
             var character = text[index];
 
             if (inQuotes)

@@ -1,29 +1,35 @@
 # ESTADO_PROYECTO
 
-Fecha de revisión: 2026-10-05  
-Repositorio: `JavierRB35/VALDRIO`
+Fecha de revisión 2026-10-06. Repositorio `JavierRB35/VALDRIO`.
 
-## Fuentes
+## Estado vigente
 
-El paquete `VALDRIO_Paquete_Desarrollo_v0_4.zip` está disponible e íntegro.
+| Entrega | Estado |
+|---|---|
+| T00–T04 y T02A | Cerradas e integradas |
+| T05 | Cerrada e integrada en `main@99c9dec289cb749094f6036c6b3f17bb3841e855`; la antigua PR #14 está fusionada |
+| T06.1 | Lectura CSV/XLSX y staging implementados; correcciones E01–E07 y N01–N05 en validación final de Windows |
+| T06.2–T06.6 | Pendientes; no existen todavía PrepareImport completo, ConfirmImport, recursos persistidos ni UI/runner T06 |
 
-- SHA-256: `1d8f8c21e3386117426f0eede257508a0bae30ed8c48cec7d2fb0e8ac68d7ced`.
-- 59 entradas.
-- `sha256sum -c SHA256SUMS.txt`: OK.
-- referencias matemáticas globales: **39/39**.
-- **R07 — CERRADA** mediante PR #9; fuentes canónicas v0.4 versionadas y verificadas. Evidencia: `docs/evidencias/R07_2026-10-05.md`.
+La rama de cierre parte de `audit/t06-import-hardening-20261006@8e193c9d5e909f7c9be34532f2dfdbe331e45f16` y conserva su historia. El bloque corrige compilación, recuperación de modelos/maestros, formatos y tipos de fecha XLSX, errores controlados de libros corruptos, precisión de seriales y semántica de auditoría del estudio. También añade límites técnicos de lectura, lectura conjunta del workspace y aviso visible/reintento de preferencias.
 
-## Estado de tareas
+La evidencia vigente está en [AUDITORIA_CIERRE_2026-10-06.md](docs/evidencias/AUDITORIA_CIERRE_2026-10-06.md). El cierre de T06.1 requiere CI Windows aprobada y artifacts atribuibles al último HEAD antes de integrar. Las suites de los commits anteriores no sustituyen esa puerta.
 
-- **T00 — CERRADA**.
-- **T01 — CERRADA**.
-- **T01A — CERRADA**.
-- **T02 — CERRADA**.
-- **T02A — CERRADA**: Money/metadatos, tiempo canónico y RateSet/FX completados y verificados.
-- **T03 — CERRADA**: archivo de empresa SQLite, bloqueo, transacciones, copias/restauración y WPF.
-- **T04 — CERRADA**: centros físicos, modelos/nodos/pools, publicación inmutable y duplicación.
-- **T05 — IMPLEMENTADA, CIERRE BLOQUEADO**: `64aac29f` verificado externamente con solución completa 0 avisos/errores y 188/188 tests. G02 y regresiones reales B01 se endurecieron después en `2a6b5e70`/`fffda702`; falta ejecutar esos HEAD posteriores y la aceptación Windows visual.
-- **T06 — PENDIENTE**: importación verificable; requiere muestra D03 antes de confirmar fuente real. [Directrices T06](docs/directrices/T06_SIGUIENTE_FASE.md).
+## Decisiones y alcance
+
+D01/D02 aceptadas. D03 sigue pendiente de un archivo real representativo aprobado; las fuentes de importación son sintéticas. D04–D07 siguen como propuestas y D08/D09/D12 diferidas. A07/I14 conserva la integración persistente de FX, recursos, particiones y ejecución pendiente en T06A/T07/T12.
+
+La especificación canónica v0.4 y las fixtures históricas se conservan. Las 39 referencias matemáticas son referencias sintéticas; no certifican un motor de reparto implementado. El catálogo monetario completo de producto, el motor económico posterior y el soporte de fuentes contables productivas siguen pendientes.
+
+## Entregas y referencias
+
+- [T05](docs/tareas/T05.md) y [evidencia T05](docs/evidencias/T05_2026-10-05.md).
+- [T06](docs/tareas/T06.md), [directrices](docs/directrices/T06_SIGUIENTE_FASE.md) y [ADR-0005](docs/adr/ADR-0005-import-staging-profile-v1.md).
+- Fuentes canónicas [R07](docs/evidencias/R07_2026-10-05.md).
+
+## Registro histórico hasta el 5 de octubre
+
+Las secciones siguientes conservan las comprobaciones y bloqueos en la fecha de cada entrega. Sus referencias a PR abiertas, falta de SDK o bloqueo de T05 están superadas por el estado vigente y no describen la situación actual.
 
 ## T02A.1 — Money y metadatos monetarios
 

@@ -13,8 +13,10 @@ public sealed class XlsxImportAdapter : IImportAdapter
 {
     private static readonly HashSet<uint> BuiltInDateFormats =
     [
-        14, 15, 16, 17, 22, 27, 28, 30, 36, 50, 57
+        14, 15, 16, 17, 22, 27, 28, 29, 30, 31, 36, 50, 51, 54, 57, 58
     ];
+    private readonly ImportReadLimits limits;
+    public XlsxImportAdapter(ImportReadLimits? limits = null) => this.limits = limits ?? ImportReadLimits.Default;
 
     public ImportSourceKind SourceKind => ImportSourceKind.Xlsx;
 
@@ -35,16 +37,17 @@ public sealed class XlsxImportAdapter : IImportAdapter
 
         cancellationToken.ThrowIfCancellationRequested();
         using var buffer = new MemoryStream();
-        await source.CopyToAsync(buffer, cancellationToken).ConfigureAwait(false);
+        await BoundedImportRead.CopyAsync(source, buffer, limits, cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
 
-        var bytes = buffer.ToArray();
-        var hash = Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
+        var hash = Convert.ToHexString(SHA256.HashData(buffer.GetBuffer().AsSpan(0, (int)buffer.Length))).ToLowerInvariant();
         buffer.Position = 0;
 
         try
         {
-            using var document = SpreadsheetDocument.Open(buffer, false);
+            BoundedImportRead.ValidatePackage(buffer, limits, cancellationToken);
+            using var document = SpreadsheetDocument.Open(buffer, false,
+                new OpenSettings { MaxCharactersInPart = limits.MaxPartBytes });
             if (document.DocumentType != SpreadsheetDocumentType.Workbook)
                 throw ImportRules.Error("IMP_XLSX_UNSUPPORTED_TYPE", "Import.XlsxUnsupportedType");
 
@@ -65,7 +68,8 @@ public sealed class XlsxImportAdapter : IImportAdapter
 
             var relationshipId = selected.Id?.Value;
             if (string.IsNullOrWhiteSpace(relationshipId) ||
-                workbookPart.GetPartById(relationshipId) is not WorksheetPart worksheetPart)
+                !workbookPart.TryGetPartById(relationshipId, out var selectedPart) ||
+                selectedPart is not WorksheetPart worksheetPart)
                 throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
 
             var worksheet = worksheetPart.Worksheet ??
@@ -79,24 +83,39 @@ public sealed class XlsxImportAdapter : IImportAdapter
                 .Elements<SharedStringItem>()
                 .ToArray() ?? [];
             var styleContext = XlsxStyleContext.Create(workbookPart.WorkbookStylesPart?.Stylesheet);
+            ImportReadLimits.Require(sharedStrings.Length <= limits.MaxSharedStrings, "sharedStrings", limits.MaxSharedStrings);
+            foreach (var shared in sharedStrings)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                ImportReadLimits.Require(shared.InnerText.Length <= limits.MaxCellCharacters,
+                    "cellCharacters", limits.MaxCellCharacters);
+            }
 
             var rows = new List<SourceRow>();
+            var rowNumbers = new HashSet<int>();
             foreach (var row in sheetData.Elements<Row>())
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 if (row.RowIndex?.Value is not uint rawRow ||
                     rawRow == 0 ||
-                    rawRow > int.MaxValue)
+                    rawRow > 1_048_576)
                     throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
 
                 var rowNumber = checked((int)rawRow);
+                if (!rowNumbers.Add(rowNumber))
+                    throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
+                ImportReadLimits.Require(rows.Count < limits.MaxRows, "rows", limits.MaxRows);
                 var cells = new List<SourceCell>();
+                var columns = new HashSet<int>();
                 foreach (var cell in row.Elements<Cell>())
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     var (column, referenceRow) = ParseReference(cell.CellReference?.Value);
-                    if (referenceRow != rowNumber)
+                    if (referenceRow != rowNumber || !columns.Add(column))
                         throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
+                    ImportReadLimits.Require(column <= limits.MaxColumns, "columns", limits.MaxColumns);
+                    ImportReadLimits.Require(cell.InnerText.Length <= limits.MaxCellCharacters,
+                        "cellCharacters", limits.MaxCellCharacters);
 
                     cells.Add(ReadCell(
                         cell,
@@ -233,7 +252,15 @@ public sealed class XlsxImportAdapter : IImportAdapter
         if (type == CellValues.Boolean)
             return new SourceCell(column, SourceValueKind.Boolean, raw, raw, false);
 
-        if (type == CellValues.String || type == CellValues.Date)
+        if (type == CellValues.Date)
+        {
+            if (cell.CellValue is null ||
+                !(cell.CellValue.TryGetDateTime(out _) || cell.CellValue.TryGetDateTimeOffset(out _)))
+                throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
+            return new SourceCell(column, SourceValueKind.DateIso, raw, raw, false);
+        }
+
+        if (type == CellValues.String)
             return new SourceCell(column, SourceValueKind.Text, raw, raw, false);
 
         if (raw is null)
@@ -271,10 +298,10 @@ public sealed class XlsxImportAdapter : IImportAdapter
         var index = 0;
         while (index < reference.Length && char.IsAsciiLetterUpper(reference[index]))
         {
-            checked
-            {
-                column = column * 26 + reference[index] - 'A' + 1;
-            }
+            var digit = reference[index] - 'A' + 1;
+            if (column > (16_384 - digit) / 26)
+                throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
+            column = column * 26 + digit;
             index++;
         }
 
@@ -282,7 +309,7 @@ public sealed class XlsxImportAdapter : IImportAdapter
             index == 0 ||
             index == reference.Length ||
             !int.TryParse(reference[index..], NumberStyles.None, CultureInfo.InvariantCulture, out var row) ||
-            row < 1)
+            row is < 1 or > 1_048_576)
             throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
 
         return (column, row);
@@ -320,104 +347,25 @@ public sealed class XlsxImportAdapter : IImportAdapter
 
         public bool IsDate(Cell cell)
         {
-            var styleIndex = cell.StyleIndex?.Value ?? 0U;
-            if (styleIndex >= (uint)cellFormats.Length)
+            if (cell.CellValue is null) return false;
+            if (cell.DataType?.Value is { } type && type != CellValues.Number)
                 return false;
+            var styleIndex = cell.StyleIndex?.Value ?? 0U;
+            if (cellFormats.Length == 0 && styleIndex == 0 && cell.StyleIndex is null)
+                return false;
+            if (styleIndex >= (uint)cellFormats.Length)
+                throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
 
             var numberFormatId = cellFormats[(int)styleIndex].NumberFormatId?.Value ?? 0U;
+            if (customFormats.TryGetValue(numberFormatId, out var code))
+                return XlsxNumberFormatClassifier.IsDate(code, cell.CellValue?.InnerText);
             if (BuiltInDateFormats.Contains(numberFormatId))
                 return true;
 
-            return customFormats.TryGetValue(numberFormatId, out var code) &&
-                   LooksLikeDateFormat(code);
-        }
-
-        private static bool LooksLikeDateFormat(string formatCode)
-        {
-            var effective = new System.Text.StringBuilder();
-            var quoted = false;
-
-            for (var index = 0; index < formatCode.Length; index++)
-            {
-                var character = formatCode[index];
-                if (character == '"')
-                {
-                    quoted = !quoted;
-                    continue;
-                }
-
-                if (quoted)
-                    continue;
-
-                if (character == '[')
-                {
-                    var closing = formatCode.IndexOf(']', index + 1);
-                    if (closing < 0)
-                        throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
-
-                    var bracket = formatCode[(index + 1)..closing];
-                    if (bracket.Length != 0 &&
-                        bracket.All(value => char.ToLowerInvariant(value) is 'h' or 'm' or 's'))
-                    {
-                        // Elapsed-time brackets are time context, never a month token.
-                        effective.Append('h');
-                    }
-
-                    index = closing;
-                    continue;
-                }
-
-                if (character is '\\' or '_' or '*')
-                {
-                    if (index + 1 >= formatCode.Length)
-                        throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
-                    index++;
-                    continue;
-                }
-
-                effective.Append(char.ToLowerInvariant(character));
-            }
-
-            if (quoted)
-                throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
-
-            var value = effective.ToString();
-            return value.Contains('y') ||
-                   value.Contains('d') ||
-                   ContainsMonthToken(value);
-        }
-
-        private static bool ContainsMonthToken(string value)
-        {
-            for (var index = 0; index < value.Length; index++)
-            {
-                if (value[index] != 'm')
-                    continue;
-
-                var start = index;
-                while (index + 1 < value.Length && value[index + 1] == 'm')
-                    index++;
-
-                var previous = FindDateTimeToken(value, start - 1, -1);
-                var next = FindDateTimeToken(value, index + 1, 1);
-                if (previous != 'h' && next != 's')
-                    return true;
-            }
-
+            if (numberFormatId is 34 or 35 or 52 or 53 or 55 or 56 || numberFormatId > 58)
+                throw ImportRules.Error("IMP_XLSX_FORMAT_UNSUPPORTED", "Import.XlsxFormatUnsupported");
             return false;
         }
 
-        private static char? FindDateTimeToken(string value, int index, int step)
-        {
-            while (index >= 0 && index < value.Length)
-            {
-                var character = value[index];
-                if (character is 'y' or 'm' or 'd' or 'h' or 's')
-                    return character;
-                index += step;
-            }
-
-            return null;
-        }
     }
 }

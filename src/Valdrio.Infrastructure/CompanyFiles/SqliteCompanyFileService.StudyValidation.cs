@@ -25,6 +25,10 @@ public sealed partial class SqliteCompanyFileService
                 Invalid(after.Id != study.Id || after.CompanyId != file.Id || after.Revision != i || row.Revision != i || row.BeforeJson != previous ||
                     after.CreatedAtUtc != study.CreatedAtUtc || (prior is not null && prior.State == StudyState.Closed && row.Operation != "ChangeStudyState"), "Study audit chain invalid");
                 Invalid(i == 0 ? row.Operation != "CreateStudy" : row.Operation is not ("UpdateStudyContext" or "ChangeStudyState"), "Study operation invalid");
+                Invalid(i == 0 && after.State != StudyState.Open, "Study must be created open");
+                if (prior is not null && row.Operation == "UpdateStudyContext")
+                    Invalid(prior.State != StudyState.Open || after.State != prior.State,
+                        "Context update changes study state");
                 _ = RequiredPublication(db, file.Id, after.SelectedModelVersionId);
                 if (prior is not null && row.Operation == "ChangeStudyState")
                     Invalid(Json(Changed(prior, prior.Name, prior.PeriodStart, prior.PeriodEnd, prior.Purpose, prior.ScenarioKind,

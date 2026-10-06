@@ -39,6 +39,7 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
     private IReadOnlyList<DriverUnitState> unitValues = [];
     private IReadOnlyList<ModelVersionSnapshot> modelValues = [];
     private bool loading;
+    private bool committedRefreshPending;
     private string? boundPath;
     public ModelWorkspaceViewModel(CompanyFileViewModel company, UiTextCatalog texts, PresentationPreferencesService preferences, IModelEditorDialogs dialogs, PresentationFormatter formatter)
     {
@@ -66,6 +67,7 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
                 SetCurrent(Current);
         }, () => !busy && (dirty || nodeFormEdited));
         CancelCommand = new RelayCommand(() => cancellation?.Cancel(), () => busy);
+        RefreshCommand = new AsyncRelayCommand(() => Run(Reload), () => Ready);
         preferences.Changed += PreferencesChanged;
         company.PropertyChanged += CompanyStateChanged;
         company.WorkspaceBusy = () => busy;
@@ -310,6 +312,8 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
     public IRelayCommand NewNodeCommand { get; }
     public IRelayCommand DiscardCommand { get; }
     public IRelayCommand CancelCommand { get; }
+    public IAsyncRelayCommand RefreshCommand { get; }
+    public bool HasPendingRefresh => committedRefreshPending;
     private CultureInfo Ui => CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag);
     private CultureInfo Format => CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
 
@@ -334,7 +338,7 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
         return d.Code + ": " + localized.Message + (detail.Length == 0 ? "" : " [" + detail + "]");
     }
 
-    public string Status => diagnostic is null ? Text(statusKey) : DiagnosticText(diagnostic);
+    public string Status => diagnostic is null ? Text(committedRefreshPending && !busy ? "Model.CommittedRefreshPending" : statusKey) : DiagnosticText(diagnostic);
     public string ValidationText => string.Join(Environment.NewLine, validation.Select(DiagnosticText));
     public string Details => Current is null ? Text("Model.NoneSelected") : string.Format(Format, Text("Model.Details"), Current.Structure.Description, Text(Current.Status == ModelStatus.Draft ? "Model.Draft" : "Model.Published"), Current.Structure.VersionNumber, Current.Revision, Current.Structure.ParentVersionId?.ToString() ?? "—", Current.PublishedAtUtc is null ? "—" : formatter.FormatInstant(Current.PublishedAtUtc.Value.Value, preferences.Current.DisplayTimeZoneId, Format), Current.StructuralHash ?? "—", IsDirty ? Text("Model.Unsaved") : Text("Model.Saved"));
     public string HistoricalDefinitions => Current?.Publication is not { } p ? "" : string.Join(Environment.NewLine, p.PhysicalCenters.Select(c => c.Code + " · " + c.Name).Concat(p.DriverUnits.Select(u => u.Code + " · " + u.Dimension + " · " + u.Symbol)));
@@ -368,6 +372,7 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
     public string RemoveLabel => Text("Model.RemoveNode");
     public string ToggleUnitLabel => Text("Model.ToggleUnit");
     public string CancelLabel => Text("CompanyCancel");
+    public string RefreshLabel => Text("Model.Refresh");
 
     private void RefreshCommands()
     {
@@ -387,7 +392,8 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
             RemoveNodeCommand,
             NewNodeCommand,
             DiscardCommand,
-            CancelCommand
+            CancelCommand,
+            RefreshCommand
         }
 
         )
@@ -512,11 +518,56 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
     private async Task Reload(CancellationToken token)
     {
         var port = company.ActiveModels!;
-        var data = await Task.Run(() => (port.ReadCenters(token), port.ReadDriverUnits(token), port.ReadModels(token)), token);
-        centerValues = data.Item1;
-        unitValues = data.Item2;
-        modelValues = data.Item3;
+        var editedMaster = MasterEdited ? master?.Value : null;
+        var modelWasClean = !dirty && !nodeFormEdited;
+        var data = await Task.Run(() => port.ReadWorkspace(token), token);
+        centerValues = editedMaster is null ? data.Centers :
+            data.Centers.Select(c => c.Id == editedMaster.Id ? editedMaster : c).ToArray();
+        unitValues = data.DriverUnits;
+        modelValues = data.Models;
+        committedRefreshPending = false;
         Reformat();
+        if (editedMaster is null && master is not null)
+            SetMaster(master.Value.Id);
+        if (modelWasClean && Current is not null &&
+            modelValues.SingleOrDefault(m => m.Structure.Id == Current.Structure.Id) is { } refreshed)
+            SetCurrent(refreshed);
+    }
+
+    private async Task ApplyConfirmedThenReload<T>(T confirmed, Action<T> apply)
+    {
+        var outcome = await ConfirmedCommitRefresh.ApplyThenRefreshAsync(
+            confirmed, apply, () => Reload(CancellationToken.None));
+        if (!outcome.RefreshSucceeded)
+        {
+            committedRefreshPending = true;
+            statusKey = "Model.CommittedRefreshPending";
+            Trace.TraceWarning("Model commit succeeded; refresh pending: {0}", outcome.RefreshFailure);
+        }
+    }
+
+    private void ApplyConfirmedModel(ModelVersionSnapshot value)
+    {
+        modelValues = modelValues.Where(m => m.Structure.Id != value.Structure.Id).Append(value).ToArray();
+        SetCurrent(value);
+    }
+
+    private void ApplyConfirmedCenter(PhysicalCenter value)
+    {
+        centerValues = centerValues.Where(c => c.Id != value.Id).Append(value).ToArray();
+        // Commit acknowledgment also clears the committed center's pending form.
+        centerCode = value.Code;
+        centerName = value.Name;
+        Reformat();
+        SetMaster(value.Id);
+    }
+
+    private void ApplyConfirmedUnit(DriverUnitState value)
+    {
+        unitValues = unitValues.Where(u => u.Definition.Id != value.Definition.Id).Append(value).ToArray();
+        Reformat();
+        unitMaster = Units.Single(u => u.Value.Definition.Id == value.Definition.Id);
+        Refresh();
     }
 
     public async Task CompanyChanged()
@@ -525,6 +576,7 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
         if (company.ActiveModels is null)
         {
             statusKey = "Model.NoFile";
+            committedRefreshPending = false;
             Current = null;
             dirty = false;
             master = null;
@@ -655,8 +707,7 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
     private async Task CreateCenter() => await Run(async t =>
     {
         var c = await Task.Run(() => company.ActiveModels!.CreateCenter(new(company.Snapshot!.Id, CenterCode, CenterName, "local-user"), t));
-        await Reload(t);
-        SetMaster(c.Id);
+        await ApplyConfirmedThenReload(c, ApplyConfirmedCenter);
     });
     private async Task SaveCenter() => await ChangeCenter(Master!.Value.IsActive);
     private async Task ToggleCenter() => await ChangeCenter(!Master!.Value.IsActive);
@@ -664,14 +715,13 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
     {
         var c = Master!.Value;
         var result = await Task.Run(() => company.ActiveModels!.ChangeCenter(new(company.Snapshot!.Id, c.Id, c.Revision, CenterCode, CenterName, active, "local-user"), t));
-        await Reload(t);
-        SetMaster(result.Id);
+        await ApplyConfirmedThenReload(result, ApplyConfirmedCenter);
     });
     private async Task ToggleUnit() => await Run(async t =>
     {
         var u = UnitMaster!.Value;
-        await Task.Run(() => company.ActiveModels!.ChangeUnitState(new(company.Snapshot!.Id, u.Definition.Id, u.Revision, !u.IsActive, "local-user"), t));
-        await Reload(t);
+        var result = await Task.Run(() => company.ActiveModels!.ChangeUnitState(new(company.Snapshot!.Id, u.Definition.Id, u.Revision, !u.IsActive, "local-user"), t));
+        await ApplyConfirmedThenReload(result, ApplyConfirmedUnit);
     });
     private async Task NewDraft()
     {
@@ -680,8 +730,7 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
         await Run(async t =>
         {
             var value = await Task.Run(() => company.ActiveModels!.CreateDraft(new(company.Snapshot!.Id, Description, "local-user"), t));
-            await Reload(t);
-            SetCurrent(value);
+            await ApplyConfirmedThenReload(value, ApplyConfirmedModel);
         });
     }
 
@@ -708,8 +757,7 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
             var port = company.ActiveModels!;
             var current = Current!;
             var saved = await Task.Run(() => port.SaveDraft(new(value, current.Revision, "local-user"), t));
-            SetCurrent(saved);
-            await Reload(CancellationToken.None);
+            await ApplyConfirmedThenReload(saved, ApplyConfirmedModel);
         });
     }
 
@@ -723,15 +771,13 @@ public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
     {
         var current = Current!;
         var result = await Task.Run(() => company.ActiveModels!.Publish(new(company.Snapshot!.Id, current.Structure.Id, current.Revision, "local-user"), t));
-        SetCurrent(result);
-        await Reload(CancellationToken.None);
+        await ApplyConfirmedThenReload(result, ApplyConfirmedModel);
     });
     private async Task Clone() => await Run(async t =>
     {
         var current = Current!;
         var result = await Task.Run(() => company.ActiveModels!.Clone(new(company.Snapshot!.Id, current.Structure.Id, current.Revision, new(Guid.NewGuid()), current.Structure.Description, "local-user"), t));
-        SetCurrent(result);
-        await Reload(CancellationToken.None);
+        await ApplyConfirmedThenReload(result, ApplyConfirmedModel);
     });
     private void ApplyNode()
     {

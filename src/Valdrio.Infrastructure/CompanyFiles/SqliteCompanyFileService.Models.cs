@@ -122,6 +122,8 @@ public sealed partial class SqliteCompanyFileService
             AddAudit(db, new() { Id = NewId(), CompanyId = file.Id.ToString(), Revision = revision, Operation = operation, Actor = actor, AtUtc = owner.time.GetUtcNow().ToCanonicalString(), BeforeJson = before is null ? "null" : CanonicalSnapshotJson.Serialize(before), AfterJson = CanonicalSnapshotJson.Serialize(after) }, type, id.ToString(), CanonicalSnapshotJson.SchemaVersion, requestId);
         }
 
+        public ModelWorkspaceData ReadWorkspace(CancellationToken token = default) =>
+            Workspace(false, token, (db, _) => new ModelWorkspaceData(Centers(db), DriverUnits(db), Models(db)));
         public IReadOnlyList<PhysicalCenter> ReadCenters(CancellationToken token = default) => Workspace(false, token, (db, _) => Centers(db));
         public IReadOnlyList<DriverUnitState> ReadDriverUnits(CancellationToken token = default) => Workspace(false, token, (db, _) => DriverUnits(db));
         public IReadOnlyList<ModelVersionSnapshot> ReadModels(CancellationToken token = default) => Workspace(false, token, (db, _) => Models(db));

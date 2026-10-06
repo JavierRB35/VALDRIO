@@ -462,7 +462,9 @@ public sealed class T06ImportAdapterTests
             var workbookPart = document.WorkbookPart ??
                 throw new InvalidOperationException("Workbook part missing from T06 fixture.");
             var worksheetPart = workbookPart.WorksheetParts.Single();
-            var cell = worksheetPart.Worksheet
+            var worksheet = worksheetPart.Worksheet ??
+                throw new InvalidOperationException("Worksheet missing from T06 fixture.");
+            var cell = worksheet
                 .Descendants<Cell>()
                 .Single(item => string.Equals(
                     item.CellReference?.Value,
@@ -481,7 +483,8 @@ public sealed class T06ImportAdapterTests
 
                 var stylesPart = workbookPart.WorkbookStylesPart ??
                     throw new InvalidOperationException("Styles part missing from T06 fixture.");
-                var stylesheet = stylesPart.Stylesheet;
+                var stylesheet = stylesPart.Stylesheet ??
+                    throw new InvalidOperationException("Stylesheet missing from T06 fixture.");
                 var formatId = builtInFormatId.GetValueOrDefault();
 
                 if (customFormat is not null)
@@ -520,7 +523,7 @@ public sealed class T06ImportAdapterTests
                 stylesheet.Save();
             }
 
-            worksheetPart.Worksheet.Save();
+            worksheet.Save();
         }
 
         return stream.ToArray();

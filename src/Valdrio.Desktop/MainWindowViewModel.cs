@@ -16,6 +16,8 @@ public sealed class MainWindowViewModel : ObservableObject
 
     private readonly UiTextCatalog texts;
     private readonly PresentationPreferencesService preferences;
+    private readonly PresentationPreferencesPersistence? preferencesPersistence;
+    private PresentationPreferencesPersistenceFailure? preferencesSaveFailure;
     private readonly PresentationFormatter formatter;
     private readonly T02RoundingExample roundingExample;
     private readonly TemporalContractExampleService temporalContractExampleService;
@@ -46,10 +48,12 @@ public sealed class MainWindowViewModel : ObservableObject
         T02RoundingExampleService roundingExampleService,
         CurrencyMetadataExampleService currencyMetadataExampleService,
         TemporalContractExampleService temporalContractExampleService,
-        FxConversionExampleService fxConversionExampleService)
+        FxConversionExampleService fxConversionExampleService,
+        PresentationPreferencesPersistence? preferencesPersistence = null)
     {
         this.texts = texts;
         this.preferences = preferences;
+        this.preferencesPersistence = preferencesPersistence;
         this.formatter = formatter;
         roundingExample = roundingExampleService.BuildC07();
         RoundingRows = roundingExample.Rows;
@@ -72,9 +76,11 @@ public sealed class MainWindowViewModel : ObservableObject
         StartEditCommand = new RelayCommand(StartEdit);
         CommitEditCommand = new RelayCommand(CommitEdit);
         ApplyFxRateCommand = new RelayCommand(ApplyFxRate);
+        RetrySavePreferencesCommand = new RelayCommand(PersistPreferences, () => preferencesSaveFailure is not null);
 
         preferences.Changed += (_, _) =>
         {
+            PersistPreferences();
             RefreshPresentation();
             PresentationChanged?.Invoke(this, EventArgs.Empty);
         };
@@ -94,6 +100,20 @@ public sealed class MainWindowViewModel : ObservableObject
     public IRelayCommand StartEditCommand { get; }
     public IRelayCommand CommitEditCommand { get; }
     public IRelayCommand ApplyFxRateCommand { get; }
+    public IRelayCommand RetrySavePreferencesCommand { get; }
+    public bool ShowPreferencesSaveWarning => preferencesSaveFailure is not null;
+    public string PreferencesSaveWarning => preferencesSaveFailure is null ? "" : Text(preferencesSaveFailure.MessageKey);
+    public string RetrySavePreferencesLabel => Text("Preferences.RetrySave");
+
+    private void PersistPreferences()
+    {
+        if (preferencesPersistence is null) return;
+        if (!preferencesPersistence.TrySave(preferences.Current, out preferencesSaveFailure))
+            Trace.TraceWarning("{0}: {1}", preferencesSaveFailure!.Code, PreferencesSaveWarning);
+        OnPropertyChanged(nameof(ShowPreferencesSaveWarning));
+        OnPropertyChanged(nameof(PreferencesSaveWarning));
+        RetrySavePreferencesCommand.NotifyCanExecuteChanged();
+    }
 
     public UserPresentationPreferences CurrentPreferences => preferences.Current;
     public bool ForceRtlForTest => forceRtlForTest;
@@ -525,6 +545,8 @@ public sealed class MainWindowViewModel : ObservableObject
             nameof(SpecificationVersion),
             nameof(HeaderSubtitle),
             nameof(PreferencesTitle),
+            nameof(PreferencesSaveWarning),
+            nameof(RetrySavePreferencesLabel),
             nameof(LabelUiLanguage),
             nameof(LabelFormatCulture),
             nameof(LabelTimeZone),

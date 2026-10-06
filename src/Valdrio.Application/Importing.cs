@@ -34,7 +34,8 @@ public enum SourceValueKind
     FormulaWithCachedValue = 5,
     FormulaWithoutCachedValue = 6,
     Error = 7,
-    Boolean = 8
+    Boolean = 8,
+    DateIso = 9
 }
 
 public static class ImportRules
@@ -297,6 +298,8 @@ public sealed record SourceCell(
 
 public sealed class SourceRow
 {
+    private readonly IReadOnlyDictionary<int, SourceCell> cellsByColumn;
+
     public SourceRow(int recordNumber, int physicalStartLine, IReadOnlyList<SourceCell> cells)
     {
         if (recordNumber < 1 || physicalStartLine < 1 || cells is null ||
@@ -305,6 +308,7 @@ public sealed class SourceRow
         RecordNumber = recordNumber;
         PhysicalStartLine = physicalStartLine;
         Cells = FrozenList.Copy(cells.OrderBy(cell => cell.Column));
+        cellsByColumn = Cells.ToDictionary(cell => cell.Column);
     }
 
     public int RecordNumber { get; }
@@ -312,7 +316,7 @@ public sealed class SourceRow
     public IReadOnlyList<SourceCell> Cells { get; }
 
     public SourceCell GetCell(int column) =>
-        Cells.FirstOrDefault(cell => cell.Column == column) ?? SourceCell.Missing(column);
+        cellsByColumn.TryGetValue(column, out var cell) ? cell : SourceCell.Missing(column);
 }
 
 public sealed class ImportSourceDocument
@@ -498,18 +502,9 @@ public static class XlsxDateSerialParser
 {
     public static XlsxDateSerialParseResult Parse(string? rawLexical, XlsxDateSystem dateSystem)
     {
-        if (!Enum.IsDefined(dateSystem) || string.IsNullOrWhiteSpace(rawLexical) ||
-            !decimal.TryParse(
-                rawLexical,
-                System.Globalization.NumberStyles.AllowLeadingSign | System.Globalization.NumberStyles.AllowDecimalPoint,
-                System.Globalization.CultureInfo.InvariantCulture,
-                out var serial) ||
-            decimal.Truncate(serial) != serial ||
-            serial < 0m ||
-            serial > int.MaxValue)
+        if (!Enum.IsDefined(dateSystem) || !TryReadWholeDays(rawLexical, out var days))
             return Failure("IMP_XLSX_DATE_INVALID", "Import.XlsxDateInvalid", rawLexical);
 
-        var days = decimal.ToInt32(serial);
         if (dateSystem == XlsxDateSystem.Date1900 && days == 60)
             return Failure("IMP_XLSX_DATE_SERIAL_60", "Import.XlsxDateSerial60", rawLexical);
 
@@ -533,6 +528,20 @@ public static class XlsxDateSerialParser
         }
     }
 
+    private static bool TryReadWholeDays(string? raw, out int days)
+    {
+        days = 0;
+        if (string.IsNullOrEmpty(raw)) return false;
+        var dot = raw.IndexOf('.');
+        var integer = dot < 0 ? raw : raw[..dot];
+        if (dot >= 0 && (dot == raw.Length - 1 || raw[(dot + 1)..].Any(c => c != '0')))
+            return false;
+        var digits = integer.StartsWith('+') || integer.StartsWith('-') ? integer[1..] : integer;
+        return digits.Length != 0 && digits.All(char.IsAsciiDigit) &&
+            int.TryParse(integer, System.Globalization.NumberStyles.AllowLeadingSign,
+                System.Globalization.CultureInfo.InvariantCulture, out days) && days >= 0;
+    }
+
     private static XlsxDateSerialParseResult Failure(string code, string key, string? value) =>
         new(null, new DomainDiagnostic(code, key,
         [
@@ -544,7 +553,8 @@ public static class ImportSourceInspector
 {
     public static IReadOnlyList<ImportDiagnostic> ValidateBasic(
         ImportSourceDocument source,
-        SourceParseProfileVersion profile)
+        SourceParseProfileVersion profile,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(profile);
@@ -553,12 +563,15 @@ public static class ImportSourceInspector
 
         var diagnostics = new List<ImportDiagnostic>();
         var accounts = new Dictionary<string, SourceRow>(StringComparer.Ordinal);
+        var mappedColumns = MappedColumns(profile).ToArray();
 
+        cancellationToken.ThrowIfCancellationRequested();
         foreach (var row in source.Rows)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (source.SourceKind == ImportSourceKind.Xlsx)
             {
-                foreach (var column in MappedColumns(profile))
+                foreach (var column in mappedColumns)
                 {
                     var mapped = row.GetCell(column);
                     if (mapped.Kind == SourceValueKind.FormulaWithoutCachedValue)
@@ -579,10 +592,32 @@ public static class ImportSourceInspector
                             row,
                             column,
                             mapped.RawLexical ?? "<error>"));
+                    else if ((mapped.Kind == SourceValueKind.DateSerial ||
+                              mapped.Kind == SourceValueKind.FormulaWithCachedValue &&
+                              mapped.CachedValueKind == SourceValueKind.DateSerial) &&
+                             mapped.DateValue is null)
+                    {
+                        var failure = XlsxDateSerialParser.Parse(mapped.RawLexical, source.XlsxDateSystem!.Value).Diagnostic ??
+                            new DomainDiagnostic("IMP_XLSX_DATE_INVALID", "Import.XlsxDateInvalid",
+                                [new DiagnosticArgument("value", DiagnosticArgumentType.Text, mapped.RawLexical ?? "<missing>")]);
+                        diagnostics.Add(new ImportDiagnostic(failure, ImportDiagnosticSeverity.Blocking,
+                            new ImportFieldLocation(source.FileName, source.SheetName, row.RecordNumber,
+                                row.PhysicalStartLine, column)));
+                    }
                 }
             }
 
             var cell = row.GetCell(profile.Columns.Account);
+            var effectiveKind = cell.Kind == SourceValueKind.FormulaWithCachedValue
+                ? cell.CachedValueKind : cell.Kind;
+            if (source.SourceKind == ImportSourceKind.Xlsx &&
+                effectiveKind is SourceValueKind.DateIso or SourceValueKind.DateSerial)
+            {
+                diagnostics.Add(Diagnostic(
+                    "IMP_XLSX_DATE_ACCOUNT", "Import.XlsxDateAccount", source, row,
+                    profile.Columns.Account, cell.RawLexical ?? "<date>"));
+                continue;
+            }
             if (source.SourceKind == ImportSourceKind.Xlsx &&
                 (cell.Kind == SourceValueKind.Boolean ||
                  cell.Kind == SourceValueKind.FormulaWithCachedValue &&
@@ -600,9 +635,8 @@ public static class ImportSourceInspector
 
             if (source.SourceKind == ImportSourceKind.Xlsx &&
                 (cell.Kind == SourceValueKind.Number ||
-                 cell.Kind == SourceValueKind.DateSerial ||
                  cell.Kind == SourceValueKind.FormulaWithCachedValue &&
-                 cell.CachedValueKind is SourceValueKind.Number or SourceValueKind.DateSerial) &&
+                 cell.CachedValueKind == SourceValueKind.Number) &&
                 profile.XlsxNumericAccountPolicy == XlsxNumericAccountPolicy.Reject)
             {
                 diagnostics.Add(Diagnostic(

@@ -39,8 +39,15 @@ public sealed record SaveModelDraft(ModelStructure Structure, long ExpectedRevis
 public sealed record PublishModel(EntityId CompanyId, EntityId Id, long ExpectedRevision, string Actor);
 public sealed record CloneModel(EntityId CompanyId, EntityId Id, long ExpectedRevision, EntityId RequestId, string Description, string Actor);
 // The workspace shares the lifetime and serialization gate of its company file session.
+public sealed record ModelWorkspaceData(
+    IReadOnlyList<PhysicalCenter> Centers,
+    IReadOnlyList<DriverUnitState> DriverUnits,
+    IReadOnlyList<ModelVersionSnapshot> Models);
+
 public interface IModelWorkspace
 {
+    ModelWorkspaceData ReadWorkspace(CancellationToken token = default) =>
+        new(ReadCenters(token), ReadDriverUnits(token), ReadModels(token));
     IReadOnlyList<PhysicalCenter> ReadCenters(CancellationToken token = default);
     IReadOnlyList<DriverUnitState> ReadDriverUnits(CancellationToken token = default);
     IReadOnlyList<ModelVersionSnapshot> ReadModels(CancellationToken token = default);

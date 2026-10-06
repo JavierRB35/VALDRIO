@@ -74,20 +74,8 @@ public partial class App : System.Windows.Application
                     e.Args,
                     baseline));
 
-        if (captureDirectory is null)
-        {
-            var persistence = new PresentationPreferencesPersistence(store);
-            preferences.Changed +=
-                (_, args) =>
-                {
-                    if (persistence.TrySave(args.Current, out var failure)) return;
-                    var ui = CultureInfo.GetCultureInfo(args.Current.UiLanguageTag);
-                    Trace.TraceWarning(
-                        "{0}: {1}",
-                        failure!.Code,
-                        texts.Get(failure.MessageKey, ui));
-                };
-        }
+        var preferencesPersistence = captureDirectory is null
+            ? new PresentationPreferencesPersistence(store) : null;
 
         var formatter =
             new PresentationFormatter(
@@ -140,7 +128,8 @@ public partial class App : System.Windows.Application
                 roundingExampleService,
                 currencyMetadataExampleService,
                 temporalContractExampleService,
-                fxConversionExampleService) { Company = company, Models = models, Studies = studies };
+                fxConversionExampleService,
+                preferencesPersistence) { Company = company, Models = models, Studies = studies };
 
         if (!viewModel.TryLoadDevelopmentSample(
                 samplePath,
