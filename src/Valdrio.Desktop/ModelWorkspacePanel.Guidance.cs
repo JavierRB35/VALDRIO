@@ -69,7 +69,7 @@ public partial class ModelWorkspacePanel
         if (vm.HasPendingCenter)
         {
             if (ModelSteps.SelectedIndex != 1) { FocusAt(1, CenterNameBox); return false; }
-            await vm.SaveCenterCommand.ExecuteAsync(null);
+            await vm.SaveCenterFormCommand.ExecuteAsync(null);
             if (vm.HasPendingCenter) { FocusAt(1, CenterNameBox); return false; }
         }
         if (vm.Current is null)
@@ -90,7 +90,7 @@ public partial class ModelWorkspacePanel
                 if (!vm.HasActiveCenter || !vm.HasActiveUnit) { ShowNextRequiredStep(); return false; }
                 ModelSteps.SelectedIndex = 2; break;
             case 2:
-                if (vm.HasPendingNode) vm.ApplyNodeCommand.Execute(null);
+                if (vm.HasPendingNode) await vm.SaveNodeCommand.ExecuteAsync(null);
                 if (vm.HasPendingNode || !vm.HasPrincipal) { ShowNextRequiredStep(); return false; }
                 ModelSteps.SelectedIndex = 3; break;
             case 3:
