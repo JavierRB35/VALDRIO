@@ -475,7 +475,7 @@ Full: {5}</value></data>
   <data name="Guide.Back" xml:space="preserve"><value>Back</value></data>
   <data name="Guide.Next" xml:space="preserve"><value>Continue</value></data>
   <data name="Guide.SaveAndImport" xml:space="preserve"><value>Save analysis and continue to import</value></data>
-  <data name="Guide.OpenImport" xml:space="preserve"><value>Import Excel or CSV into this study</value></data>
+  <data name="Guide.OpenImport" xml:space="preserve"><value>Import Excel or CSV into this analysis</value></data>
   <data name="Guide.Preview" xml:space="preserve"><value>Only inspect a file (without saving it to a study)</value></data>
   <data name="Guide.NeedCompany" xml:space="preserve"><value>First create or open a company file. Cost structures, analyses and imports are stored inside that file.</value></data>
   <data name="Guide.CompanyReady" xml:space="preserve"><value>Company open. Continue to Cost structure to define how costs will be allocated.</value></data>
@@ -499,13 +499,13 @@ Full: {5}</value></data>
   <data name="Guide.SaveStudy" xml:space="preserve"><value>Click Save analysis and continue. It will be stored inside the open company file and you can import the period data.</value></data>
   <data name="Guide.StudyComplete" xml:space="preserve"><value>Analysis saved. You can now import the Excel or CSV for the period. The final import step stores the selected records in this analysis.</value></data>
   <data name="Guide.PreviewOnly" xml:space="preserve"><value>Review mode: you can read and select records but cannot save an import. To save, follow Company → Cost structure → Cost analysis → Import.</value></data>
-  <data name="Guide.NeedMapping" xml:space="preserve"><value>Select the columns and check how numbers are interpreted before continuing.</value></data>
-  <data name="Guide.NeedRecords" xml:space="preserve"><value>Select at least one record. You can select all and untick those to exclude.</value></data>
-  <data name="Guide.NeedMeaning" xml:space="preserve"><value>Explicitly choose what the amounts represent: period movements, full closing balance or difference between cumulative balances.</value></data>
-  <data name="Guide.NeedCurrency" xml:space="preserve"><value>Enter the amounts currency, for example EUR. It is not inferred from regional settings.</value></data>
-  <data name="Guide.NeedExample" xml:space="preserve"><value>Enter an account and its expected amount after grouping selected records, for example 6005 = 358.35 EUR.</value></data>
-  <data name="Guide.NeedApproval" xml:space="preserve"><value>Check the amount explanation and tick the confirmation box to prepare the final review.</value></data>
-  <data name="Guide.ReadyReview" xml:space="preserve"><value>You can prepare the final review. Nothing is saved yet; review totals before saving.</value></data>
+  <data name="Guide.NeedMapping" xml:space="preserve"><value>Identify the account and amount columns, then click Check and continue.</value></data>
+  <data name="Guide.NeedRecords" xml:space="preserve"><value>Select at least one row to import. You can keep all rows selected and exclude only those that do not belong.</value></data>
+  <data name="Guide.NeedMeaning" xml:space="preserve"><value>Choose what the amounts represent: period movements, full closing balance, or difference between cumulative balances.</value></data>
+  <data name="Guide.NeedCurrency" xml:space="preserve"><value>Check the currency of the amounts. The analysis currency is suggested, but you can change it.</value></data>
+  <data name="Guide.NeedExample" xml:space="preserve"><value>Enter an example you checked, for example “Account 6005 = 358.35 EUR”.</value></data>
+  <data name="Guide.NeedApproval" xml:space="preserve"><value>Tick the confirmation stating that the selected option correctly describes the file amounts.</value></data>
+  <data name="Guide.ReadyReview" xml:space="preserve"><value>Everything required is set. Click Review import to check totals before saving.</value></data>
   <data name="Guide.ImportFile" xml:space="preserve"><value>1. Choose file</value></data>
   <data name="Guide.ImportColumns" xml:space="preserve"><value>2. Identify columns</value></data>
   <data name="Guide.ImportRecords" xml:space="preserve"><value>3. Choose records</value></data>
@@ -514,10 +514,10 @@ Full: {5}</value></data>
   <data name="Guide.ReadNext" xml:space="preserve"><value>Continue with this file</value></data>
   <data name="Guide.ValidateNext" xml:space="preserve"><value>Check and continue</value></data>
   <data name="Guide.ReviewNext" xml:space="preserve"><value>Review import</value></data>
-  <data name="Guide.SaveImport" xml:space="preserve"><value>Save import into study</value></data>
-  <data name="Guide.SavedImport" xml:space="preserve"><value>Import saved. You can close this window and view the result in the study.</value></data>
+  <data name="Guide.SaveImport" xml:space="preserve"><value>Save data into analysis</value></data>
+  <data name="Guide.SavedImport" xml:space="preserve"><value>Data saved. You can close this window and continue to resource preparation.</value></data>
   <data name="Guide.ReviewHelp" xml:space="preserve"><value>Check the destination analysis, record count and totals. Nothing is added until you click Save data.</value></data>
-  <data name="Guide.EditReview" xml:space="preserve"><value>The preparation has changed or contains errors. Return to the relevant step, correct the data and prepare again.</value></data>
+  <data name="Guide.EditReview" xml:space="preserve"><value>You changed some data or something needs correction. Review the indicated step before saving.</value></data>
   <data name="Guide.FileHelp" xml:space="preserve"><value>Choose the file. VALDRIO does not modify the original. For Excel, select the worksheet containing the data.</value></data>
   <data name="Guide.ColumnsHelp" xml:space="preserve"><value>Indicate where the account and amount are. VALDRIO checks every row when you continue and points out exactly what needs correction.</value></data>
   <data name="Guide.RecordsHelp" xml:space="preserve"><value>Choose which rows to add. All valid rows are selected by default. Repeated accounts are added without losing the original-row detail.</value></data>
@@ -594,7 +594,7 @@ Full: {5}</value></data>
   <data name="Guide.Help.Rates" xml:space="preserve"><value>Per row: identifier, original currency, rate to functional currency (decimal point), ISO date yyyy-MM-dd and source. Rates are not automatically fetched or inverted.</value></data>
   <data name="Guide.Help.Records" xml:space="preserve"><value>Check or uncheck rows to import. Select all, none or exclude just some.</value></data>
   <data name="Guide.Help.RateSelections" xml:space="preserve"><value>Enter the selected rate identifier for each included record requiring conversion.</value></data>
-  <data name="Guide.MeaningChosen" xml:space="preserve"><value>I have chosen the meaning of the amounts shown above.</value></data>
+  <data name="Guide.MeaningChosen" xml:space="preserve"><value>I confirm that this option describes what the file represents.</value></data>
   <data name="Guide.OtherStudy" xml:space="preserve"><value>Other operations: new analysis, closure and data checkpoints</value></data>
   <data name="Guide.OtherModel" xml:space="preserve"><value>Other cost-structure operations</value></data>
   <data name="Guide.OtherFile" xml:space="preserve"><value>Backups, restore and file upgrades</value></data>
