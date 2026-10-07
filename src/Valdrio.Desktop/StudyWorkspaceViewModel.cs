@@ -67,9 +67,16 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         init { importColumns = value; if (value is not null) value.PropertyChanged += ImportStateChanged; }
     }
     private void ImportStateChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e) => Refresh();
-    public async Task<bool> AttachImportTarget()
+    public async Task<bool> AttachImportTarget(bool previewOnly = false)
     {
-        if (busy || ImportColumns is null) return false;
+        if (busy || ImportColumns is null || ImportColumns.IsBusy) return false;
+        if (previewOnly)
+        {
+            // Inspection never writes or resolves pending study edits, even for a saved study.
+            ImportColumns.BindTarget(null, null, false, null);
+            ImportColumns.SetExistingBatches([]);
+            return true;
+        }
         // Reading a source does not abandon the unsaved study form. Only a saved,
         // unchanged study can be used as a destination for confirmation.
         if (Current is not null && !await CanLeaveAsync()) return false;

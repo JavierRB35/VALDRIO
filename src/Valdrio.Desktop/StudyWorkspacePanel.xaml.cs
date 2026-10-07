@@ -26,14 +26,9 @@ public partial class StudyWorkspacePanel : UserControl
             main.ModelPanel.Focus();
         }
     }
-    private async void ContinueToImport(object sender, RoutedEventArgs e)
-    {
-        if (DataContext is StudyWorkspaceViewModel studies && await studies.SaveForImport() && Window.GetWindow(this) is MainWindow main)
-            await main.NavigateWorkflow(3);
-    }
     private async void OpenImportColumns(object sender, RoutedEventArgs e)
     {
-        if (DataContext is StudyWorkspaceViewModel { ImportColumns: { } vm } studies && await studies.AttachImportTarget())
+        if (DataContext is StudyWorkspaceViewModel { ImportColumns: { } vm } studies && await studies.AttachImportTarget(previewOnly: true))
             new ImportColumnMappingWindow { Owner = Window.GetWindow(this), DataContext = vm }.ShowDialog();
     }
 }

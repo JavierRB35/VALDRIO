@@ -29,7 +29,8 @@ public partial class MainWindow
     private void WorkflowChanged(object? sender, PropertyChangedEventArgs e) => UpdateWorkflow();
     private string? lastHelpKey;
     internal void ShowFieldHelp(string text, string? key = null) { lastHelpKey = key; FieldHelpText.Text = text; }
-    private void UpdateWorkflow()
+    internal void ClearFieldHelp() { lastHelpKey = null; UpdateWorkflow(); }
+    internal void UpdateWorkflow()
     {
         if (viewModel is not { } vm) return;
         var keys = new[] { "Company", "Model", "Study", "Import", "Settings" };
@@ -53,11 +54,19 @@ public partial class MainWindow
             _ => vm.Guide("HelpHint")
         };
         SaveLocation.Text = vm.Company?.ActivePath is { Length: > 0 } path ? vm.Guide("StoredAt") + path : "";
-        WorkflowBack.Content = vm.Guide("Back"); WorkflowBack.IsEnabled = workflowStep > 0;
-        WorkflowNext.Content = vm.Guide(workflowStep == 2 ? vm.Studies?.HasImportDestination == true ? "Next" : "SaveAndImport" : workflowStep == 3 ? "OpenImport" : "Next");
+        WorkflowBack.Content = vm.Guide("Back"); WorkflowBack.IsEnabled = workflowStep > 0 && vm.Company?.WorkspaceIdle != false;
+        WorkflowNext.Content = vm.Guide(workflowStep switch
+        {
+            0 when vm.Company?.Snapshot is null => "CreateCompanyNext",
+            1 => ModelPanel.NextActionKey,
+            2 when vm.Company?.CanWrite == false => "ReadOnlyAction",
+            2 => vm.Studies?.HasImportDestination == true ? "ContinueImport" : "SaveAndImport",
+            3 => "OpenImport",
+            _ => "Next"
+        });
         WorkflowNext.Visibility = workflowStep == 4 ? Visibility.Collapsed : Visibility.Visible;
-        WorkflowNext.IsEnabled = vm.Company?.WorkspaceIdle != false;
-        StartGuidedImportButton.Content = vm.Guide("OpenImport");
+        WorkflowNext.IsEnabled = vm.Company?.WorkspaceIdle != false &&
+            (workflowStep is not (1 or 2) || vm.Company?.CanWrite == true);
         FieldHelpText.Text = vm.Guide(lastHelpKey is null ? "HelpHint" : "Help." + lastHelpKey);
     }
     internal async Task NavigateWorkflow(int step)
@@ -65,6 +74,7 @@ public partial class MainWindow
         if (viewModel is not { } vm) return;
         if (step is > 0 and < 4 && vm.Company?.Snapshot is null) step = 0;
         if (step == 3 && vm.Studies?.HasImportDestination != true) step = 2;
+        lastHelpKey = null;
         workflowStep = step;
         if (step == 2 && vm.Studies?.RefreshCommand.CanExecute(null) == true)
             await vm.Studies.RefreshCommand.ExecuteAsync(null);
@@ -75,21 +85,37 @@ public partial class MainWindow
     private async void ChooseStudy(object sender, RoutedEventArgs e) => await NavigateWorkflow(2);
     private async void ChooseImport(object sender, RoutedEventArgs e) => await NavigateWorkflow(3);
     private async void ChooseSettings(object sender, RoutedEventArgs e) => await NavigateWorkflow(4);
-    private async void PreviousStep(object sender, RoutedEventArgs e) => await NavigateWorkflow(Math.Max(0, workflowStep - 1));
-    private async void ContinueWorkflow(object sender, RoutedEventArgs e)
+    private async void PreviousStep(object sender, RoutedEventArgs e) => await GoBackWorkflow();
+    internal async Task GoBackWorkflow()
     {
-        if (viewModel is not { } vm) return;
+        if (viewModel?.Company?.WorkspaceIdle == false) return;
+        if (workflowStep == 1 && ModelPanel.PreviousModelStep()) { UpdateWorkflow(); return; }
+        await NavigateWorkflow(Math.Max(0, workflowStep - 1));
+    }
+    private async void ContinueWorkflow(object sender, RoutedEventArgs e) => await AdvanceWorkflow();
+    internal async Task AdvanceWorkflow()
+    {
+        if (viewModel is not { } vm || vm.Company?.WorkspaceIdle == false) return;
         if (workflowStep == 2)
         {
             if (vm.Studies is { } studies && await studies.SaveForImport()) await NavigateWorkflow(3);
             else { UpdateWorkflow(); StudyPanel.ActionStatus.BringIntoView(); }
         }
         else if (workflowStep == 3) await OpenGuidedImport();
-        else if (workflowStep == 1 && vm.Models?.IsPublished != true && vm.Studies?.HasPublishedModels != true)
-        { ModelPanel.ShowNextRequiredStep(); UpdateWorkflow(); }
+        else if (workflowStep == 1)
+        {
+            if (await ModelPanel.AdvanceModel()) await NavigateWorkflow(2);
+            UpdateWorkflow();
+        }
+        else if (workflowStep == 0 && vm.Company?.Snapshot is null)
+        {
+            if (vm.Company is not { } company) return;
+            if (string.IsNullOrWhiteSpace(company.CompanyName)) { CompanyPanel.NameBox.Focus(); return; }
+            if (company.CreateCommand.CanExecute(null)) await company.CreateCommand.ExecuteAsync(null);
+            if (company.Snapshot is not null) await NavigateWorkflow(1);
+        }
         else await NavigateWorkflow(workflowStep + 1);
     }
-    private async void LaunchGuidedImport(object sender, RoutedEventArgs e) => await OpenGuidedImport();
     internal async Task OpenGuidedImport()
     {
         if (viewModel?.Studies is not { } studies) return;

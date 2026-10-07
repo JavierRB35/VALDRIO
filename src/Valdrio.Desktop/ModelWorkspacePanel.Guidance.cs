@@ -21,38 +21,97 @@ public partial class ModelWorkspacePanel
         var keys = new[] { "DraftTab", "MastersTab", "NodesTab", "PublishTab" };
         for (var i = 0; i < 4; i++) ((TabItem)ModelSteps.Items[i]).Header = vm.Guide(keys[i]);
         MastersHelp.Text = vm.Guide("MasterHelp"); NodesHelp.Text = vm.Guide("NodesHelp");
-        ModelBack.Content = vm.Guide("Back"); ModelBack.IsEnabled = ModelSteps.SelectedIndex > 0;
-        ModelNext.Content = vm.Guide("Next"); ModelNext.Visibility = ModelSteps.SelectedIndex < 3 ? Visibility.Visible : Visibility.Collapsed;
-        PublishGuidedButton.Content = vm.Guide("PublishNext");
-        PublishGuidedButton.IsEnabled = vm.CanEdit;
+        (Window.GetWindow(this) as MainWindow)?.UpdateWorkflow();
     }
-    private void ModelStepChanged(object sender, SelectionChangedEventArgs e) { if (e.Source == ModelSteps) RefreshGuidance(); }
-    private void ModelPrevious(object sender, RoutedEventArgs e) => ModelSteps.SelectedIndex = Math.Max(0, ModelSteps.SelectedIndex - 1);
-    private void ModelContinue(object sender, RoutedEventArgs e)
+    private void ModelStepChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (DataContext is not ModelWorkspaceViewModel vm) return;
-        if (ModelSteps.SelectedIndex == 0 && vm.Current is null) { DescriptionBox.Focus(); return; }
-        if (ModelSteps.SelectedIndex == 1 && (vm.Centers.Count == 0 || vm.Units.Count == 0)) return;
-        ModelSteps.SelectedIndex = Math.Min(3, ModelSteps.SelectedIndex + 1);
+        if (e.Source != ModelSteps) return;
+        (Window.GetWindow(this) as MainWindow)?.ClearFieldHelp();
+        RefreshGuidance();
+    }
+    internal string NextActionKey => DataContext is not ModelWorkspaceViewModel vm ? "Next" :
+        !vm.CanWriteInGuide ? "ReadOnlyAction" :
+        vm.HasPendingCenter ? ModelSteps.SelectedIndex == 1 ? "SaveCenterNext" : "ReviewCenter" :
+        vm.Current is null ? string.IsNullOrWhiteSpace(vm.Description) && vm.ModelChoice is not null ? "LoadModelNext" : "CreateModelNext" :
+        vm.IsPublished ? "ContinueStudy" : ModelSteps.SelectedIndex switch
+        {
+            2 when vm.HasPendingNode => "ApplyNodeNext",
+            3 => "PublishContinue",
+            _ => "Next"
+        };
+    internal bool PreviousModelStep()
+    {
+        if (ModelSteps.SelectedIndex <= 0) return false;
+        ModelSteps.SelectedIndex--;
+        return true;
+    }
+    private void FocusAt(int step, FrameworkElement field)
+    {
+        ModelSteps.SelectedIndex = step;
+        UpdateLayout(); field.BringIntoView(); field.Focus();
     }
     internal void ShowNextRequiredStep()
     {
         if (DataContext is not ModelWorkspaceViewModel vm) return;
-        ModelSteps.SelectedIndex = vm.Current is null ? 0 : vm.Centers.Count == 0 || vm.Units.Count == 0 ? 1 : vm.Nodes.Count == 0 ? 2 : 3;
+        if (vm.HasPendingCenter) FocusAt(1, CenterNameBox);
+        else if (vm.Current is null) FocusAt(0, DescriptionBox);
+        else if (!vm.HasActiveCenter) FocusAt(1, CenterCodeBox);
+        else if (!vm.HasActiveUnit) FocusAt(1, UnitsCreationHost);
+        else if (vm.HasPendingNode || !vm.HasPrincipal)
+            FocusAt(2, string.IsNullOrWhiteSpace(vm.NodeCode) ? NodeCodeBox :
+                vm.Physical is null ? PhysicalBox : vm.DriverUnit is null ? UnitBox : RoleBox);
+        else ModelSteps.SelectedIndex = 3;
+    }
+    internal async Task<bool> AdvanceModel()
+    {
+        if (DataContext is not ModelWorkspaceViewModel { InputsEnabled: true } vm || !vm.CanWriteInGuide) return false;
+        // A centre is a separate saved entity. Reveal its form before offering its save action.
+        if (vm.HasPendingCenter)
+        {
+            if (ModelSteps.SelectedIndex != 1) { FocusAt(1, CenterNameBox); return false; }
+            await vm.SaveCenterCommand.ExecuteAsync(null);
+            if (vm.HasPendingCenter) { FocusAt(1, CenterNameBox); return false; }
+        }
+        if (vm.Current is null)
+        {
+            if (string.IsNullOrWhiteSpace(vm.Description) && vm.ModelChoice is not null)
+                await vm.LoadCommand.ExecuteAsync(null);
+            else if (!string.IsNullOrWhiteSpace(vm.Description)) await vm.NewDraftCommand.ExecuteAsync(null);
+            if (vm.Current is null) { FocusAt(0, DescriptionBox); return false; }
+            if (vm.IsPublished) return true;
+            ModelSteps.SelectedIndex = 1;
+            return false;
+        }
+        if (vm.IsPublished) return true;
+        switch (ModelSteps.SelectedIndex)
+        {
+            case 0: ModelSteps.SelectedIndex = 1; break;
+            case 1:
+                if (!vm.HasActiveCenter || !vm.HasActiveUnit) { ShowNextRequiredStep(); return false; }
+                ModelSteps.SelectedIndex = 2; break;
+            case 2:
+                if (vm.HasPendingNode) vm.ApplyNodeCommand.Execute(null);
+                if (vm.HasPendingNode || !vm.HasPrincipal) { ShowNextRequiredStep(); return false; }
+                ModelSteps.SelectedIndex = 3; break;
+            case 3:
+                if (vm.HasPendingNode || !vm.HasActiveCenter || !vm.HasActiveUnit || !vm.HasPrincipal)
+                { ShowNextRequiredStep(); return false; }
+                await PublishForStudy();
+                return vm.IsPublished;
+        }
+        return false;
     }
     internal void RevealElement(FrameworkElement element)
     {
         foreach (TabItem tab in ModelSteps.Items)
             if (GuidedUi.Contains(tab, element)) { ModelSteps.SelectedItem = tab; break; }
     }
-    private async void SaveValidatePublish(object sender, RoutedEventArgs e)
-        => await (PublicationTask = PublishForStudy());
-    internal Task? PublicationTask { get; private set; }
     internal async Task PublishForStudy()
     {
         if (DataContext is not ModelWorkspaceViewModel vm || !vm.CanEdit) return;
+        if (vm.HasPendingCenter) { ShowNextRequiredStep(); return; }
         if (vm.SaveCommand.CanExecute(null)) await vm.SaveCommand.ExecuteAsync(null);
-        if (vm.IsDirty) return;
+        if (vm.IsDirty) { ShowNextRequiredStep(); return; }
         if (vm.ValidateCommand.CanExecute(null)) await vm.ValidateCommand.ExecuteAsync(null);
         if (!string.IsNullOrWhiteSpace(vm.ValidationText)) return;
         if (vm.PublishCommand.CanExecute(null)) await vm.PublishCommand.ExecuteAsync(null);

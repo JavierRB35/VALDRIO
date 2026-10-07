@@ -43,7 +43,7 @@
     <Button x:Name="CloseMappingButton" Content="{Binding [Close]}" Click="CloseMapping" IsEnabled="{Binding IsIdle}" />
    </WrapPanel>
   </StackPanel>
-  <TabControl SelectionChanged="ImportStepChanged" x:Name="ImportSteps">
+  <TabControl SelectionChanged="ImportStepChanged" x:Name="ImportSteps" IsEnabled="{Binding IsIdle}">
    <TabItem x:Name="ImportTab0">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
      <StackPanel Margin="4,8,4,8">

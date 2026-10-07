@@ -131,6 +131,7 @@ public sealed partial class ImportColumnMappingViewModel
     }
     private void InvalidatePreparation(bool resetApproval)
     {
+        if (preparedImport is not null || confirmedImport is not null) statusKey = "ReviewChanged";
         preparedImport = null; confirmedImport = null; requestId = new(Guid.NewGuid());
         if (resetApproval) interpretationApproved = false;
     }

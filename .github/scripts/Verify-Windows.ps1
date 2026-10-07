@@ -493,9 +493,11 @@ try {
     $guidedFolder = Join-Path $captureDir "guided-workflow"
     $guidedChecks = Get-Content -LiteralPath (Join-Path $guidedFolder "interaction.json") -Raw | ConvertFrom-Json
     if ($guidedChecks.Status -ne "passed" -or $guidedChecks.PassedChecks.Count -ne 19) { throw "Expected all 19 guided workflow checks." }
-    foreach ($imageName in @("destination-es.png", "review-es.png", "review-pseudo-rtl.png")) {
+    foreach ($imageName in @("structure-es.png", "destination-es.png", "review-es.png", "review-pseudo-rtl.png")) {
         if (-not (Test-Path -LiteralPath (Join-Path $guidedFolder $imageName))) { throw "Missing guided workflow screenshot: $imageName" }
     }
+    $usabilityAudit = Get-Content -LiteralPath (Join-Path $guidedFolder "audit.json") -Raw | ConvertFrom-Json
+    if ($usabilityAudit.Status -ne "passed" -or $usabilityAudit.PassedChecks.Count -ne 20) { throw "Expected all 20 usability audit regression checks." }
     $internationalChecks = Get-Content -LiteralPath (Join-Path $internationalFolder "interaction.json") -Raw | ConvertFrom-Json
     if ($internationalChecks.Status -ne "passed" -or $internationalChecks.PassedChecks.Count -ne 10) { throw "Expected all 10 T06A WPF checks." }
     $internationalImages = @(Get-ChildItem -LiteralPath $internationalFolder -Filter *.png)
@@ -609,6 +611,7 @@ try {
         ImportCompletionChecks = $completionChecks.PassedChecks.Count
         InternationalImportChecks = $internationalChecks.PassedChecks.Count
         GuidedWorkflowChecks = $guidedChecks.PassedChecks.Count
+        UsabilityAuditChecks = $usabilityAudit.PassedChecks.Count
         ImportConfirmationImages = $confirmationImages.Count
         ImportConfirmationManifest = "verified"
         DebitCreditChecks = $debitChecks.PassedChecks.Count

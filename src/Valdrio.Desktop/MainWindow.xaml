@@ -303,7 +303,6 @@
     <StackPanel Visibility="Collapsed" Grid.Row="8" x:Name="ImportHome">
      <TextBlock Text="{Binding Studies.Details}" TextWrapping="Wrap" />
      <TextBlock Text="{Binding Studies.ImportedAmounts}" TextWrapping="Wrap" Margin="0,8,0,8" />
-     <Button Click="LaunchGuidedImport" HorizontalAlignment="Left" Padding="14,8" x:Name="StartGuidedImportButton" />
     </StackPanel>
    </Grid>
   </ScrollViewer>

@@ -481,8 +481,8 @@ Completa: {5}</value></data>
   <data name="Guide.NeedCompany" xml:space="preserve"><value>Primero crea o abre un archivo de empresa. Todos los modelos, estudios e importaciones se guardarán dentro de ese archivo.</value></data>
   <data name="Guide.CompanyReady" xml:space="preserve"><value>Empresa abierta. Continúa a Estructura para crear o elegir el modelo que utilizará el estudio.</value></data>
   <data name="Guide.NeedDraft" xml:space="preserve"><value>Escribe el nombre de la estructura y pulsa Crear modelo nuevo, o selecciona una versión existente y cárgala.</value></data>
-  <data name="Guide.NeedCenter" xml:space="preserve"><value>Añade al menos un centro: su código identifica el centro y su nombre explica qué representa. Después crea las unidades de actividad.</value></data>
-  <data name="Guide.NeedUnit" xml:space="preserve"><value>Falta una unidad de actividad. Créala aquí, por ejemplo HORAS / time / h, si esa es la unidad que corresponde a tu modelo.</value></data>
+  <data name="Guide.NeedCenter" xml:space="preserve"><value>Crea o activa al menos un centro físico en Centros y unidades. Identifica el lugar o departamento donde se realiza la actividad.</value></data>
+  <data name="Guide.NeedUnit" xml:space="preserve"><value>Crea o activa una unidad de driver en Centros y unidades (por ejemplo, horas). Cada nodo necesita una unidad.</value></data>
   <data name="Guide.NeedNodeCode" xml:space="preserve"><value>Completa el código del nodo que estás editando. Es su identificador dentro de este modelo.</value></data>
   <data name="Guide.NeedNodeCenter" xml:space="preserve"><value>Selecciona el centro físico al que pertenece este nodo. Puedes crear centros en el paso Centros y unidades.</value></data>
   <data name="Guide.NeedNodeUnit" xml:space="preserve"><value>Selecciona la unidad de actividad del nodo. Si la lista está vacía, créala en Centros y unidades.</value></data>
@@ -603,4 +603,19 @@ Completa: {5}</value></data>
   <data name="Guide.Help.SelectedFormatCultureTag" xml:space="preserve"><value>Región utilizada para mostrar números y fechas. El formato del archivo importado se elige por separado.</value></data>
   <data name="Guide.Help.SelectedTimeZoneId" xml:space="preserve"><value>Zona para mostrar instantes del historial. No cambia las fechas de negocio del estudio.</value></data>
   <data name="Guide.CorrectImport" xml:space="preserve"><value>Volver a corregir los datos</value></data>
+  <data name="Guide.Working" xml:space="preserve"><value>Operación en curso. Espera a que termine; se conservan tus datos.</value></data>
+  <data name="Guide.ReadOnly" xml:space="preserve"><value>El archivo de empresa está abierto para consulta. Puedes revisar sus datos; para guardar necesitas abrir un archivo de empresa editable.</value></data>
+  <data name="Guide.PendingCenter" xml:space="preserve"><value>El centro físico tiene cambios pendientes. Revísalos en Centros y unidades y guarda el centro antes de continuar.</value></data>
+  <data name="Guide.ReviewCenter" xml:space="preserve"><value>Revisar centro pendiente</value></data>
+  <data name="Guide.SaveCenterNext" xml:space="preserve"><value>Guardar centro y continuar</value></data>
+  <data name="Guide.CreateCompanyNext" xml:space="preserve"><value>Crear archivo de empresa y continuar</value></data>
+  <data name="Guide.CreateModelNext" xml:space="preserve"><value>Crear modelo y continuar</value></data>
+  <data name="Guide.LoadModelNext" xml:space="preserve"><value>Cargar modelo seleccionado y continuar</value></data>
+  <data name="Guide.ApplyNodeNext" xml:space="preserve"><value>Aplicar nodo y continuar</value></data>
+  <data name="Guide.PublishContinue" xml:space="preserve"><value>Guardar, publicar y continuar al estudio</value></data>
+  <data name="Guide.ContinueStudy" xml:space="preserve"><value>Continuar al estudio</value></data>
+  <data name="Guide.ContinueImport" xml:space="preserve"><value>Continuar a la importación</value></data>
+  <data name="Guide.Help.StudyModelChoice" xml:space="preserve"><value>Selecciona la estructura publicada que utilizará este estudio. Se vincula al guardar el estudio; no necesitas pulsar otro botón para cargarla.</value></data>
+  <data name="ImportMapping.ReviewChanged" xml:space="preserve"><value>La revisión actual ha cambiado. Vuelve a prepararla y comprobarla antes de guardar; los lotes ya guardados permanecen en el estudio.</value></data>
+  <data name="Guide.ReadOnlyAction" xml:space="preserve"><value>Archivo de empresa de solo lectura</value></data>
 </root>

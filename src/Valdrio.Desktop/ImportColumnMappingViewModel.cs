@@ -225,6 +225,8 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     }
     private async Task Validate()
     {
+        // Rechecking unchanged columns must preserve record inclusion and manual rate assignments.
+        if (IsReady) return;
         validation = null; ResetAccountChoices(); InvalidatePreparation(true);
         await Run(async token =>
         {

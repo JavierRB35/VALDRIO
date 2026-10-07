@@ -137,7 +137,6 @@
     </TabItem>
     <TabItem x:Name="ModelTab3">
      <StackPanel Margin="8">
-      <Button Click="SaveValidatePublish" Padding="12,8" HorizontalAlignment="Left" x:Name="PublishGuidedButton" />
       <Button x:Name="SaveModelButton" Content="{Binding SaveLabel}" Command="{Binding SaveCommand}" TabIndex="34" />
       <TextBlock Text="{Binding Details}" />
       <TextBlock Text="{Binding HistoricalDefinitions}" />
@@ -153,10 +152,6 @@
      </StackPanel>
     </TabItem>
    </TabControl>
-   <WrapPanel>
-    <Button Click="ModelPrevious" x:Name="ModelBack" />
-    <Button Click="ModelContinue" x:Name="ModelNext" />
-   </WrapPanel>
   </StackPanel>
  </GroupBox>
 </UserControl>

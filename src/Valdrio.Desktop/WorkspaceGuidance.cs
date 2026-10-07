@@ -16,12 +16,20 @@ public sealed partial class ModelWorkspaceViewModel
 {
     public string Guide(string key) => Text("Guide." + key);
     public string OtherOperationsLabel => Guide("OtherModel");
-    public string NextRequirement => Guide(!InputsEnabled ? "NeedCompany" : Current is null ? "NeedDraft" :
-        IsPublished ? "ModelComplete" : Centers.Count == 0 ? "NeedCenter" : Units.Count == 0 ? "NeedUnit" :
+    public bool HasPendingCenter => MasterEdited;
+    public bool HasPendingNode => nodeFormEdited;
+    public bool HasActiveCenter => Centers.Any(c => c.Value.IsActive);
+    public bool HasActiveUnit => Units.Any(u => u.Value.IsActive);
+    public bool HasPrincipal => draftNodes.Any(n => n.Role == NodeRole.Principal && n.IsActive);
+    public bool CanWriteInGuide => company.CanWrite;
+    public string NextRequirement => Guide(company.Snapshot is null ? "NeedCompany" :
+        !company.CanWrite ? "ReadOnly" : IsBusy || !company.WorkspaceIdle ? "Working" :
+        MasterEdited ? "PendingCenter" : Current is null ? "NeedDraft" :
+        IsPublished ? "ModelComplete" : !HasActiveCenter ? "NeedCenter" : !HasActiveUnit ? "NeedUnit" :
         nodeFormEdited && string.IsNullOrWhiteSpace(NodeCode) ? "NeedNodeCode" :
         nodeFormEdited && Physical is null ? "NeedNodeCenter" :
         nodeFormEdited && DriverUnit is null ? "NeedNodeUnit" :
-        nodeFormEdited ? "ApplyNode" : !draftNodes.Any(n => n.Role == NodeRole.Principal && n.IsActive) ? "NeedPrincipal" :
+        nodeFormEdited ? "ApplyNode" : !HasPrincipal ? "NeedPrincipal" :
         dirty ? "SaveModel" : "PublishModel");
 }
 
@@ -31,16 +39,16 @@ public sealed partial class StudyWorkspaceViewModel
     public string OtherOperationsLabel => Guide("OtherStudy");
     public string CreateVisibility => Current is null ? "Visible" : "Collapsed";
     public string SaveVisibility => Current is null ? "Collapsed" : "Visible";
-    public string ImportContinueLabel => Guide(HasImportDestination ? "OpenImport" : "SaveAndImport");
     public string InspectFileLabel => Guide("Preview");
     public bool HasImportDestination => Current?.State == StudyState.Open && !IsDirty && company.CanWrite;
-    public string NextRequirement => Guide(!Ready ? "NeedCompany" : !HasPublishedModels ? "NeedPublished" :
+    public string NextRequirement => Guide(company.Snapshot is null ? "NeedCompany" :
+        !company.CanWrite ? "ReadOnly" : !Ready ? "Working" : !HasPublishedModels ? "NeedPublished" :
         string.IsNullOrWhiteSpace(Name) ? "NeedStudyName" : ModelChoice is null ? "NeedStudyModel" :
         PeriodStart is null || PeriodEnd is null ? "NeedDates" : PeriodStart > PeriodEnd ? "InvalidDates" :
         Current?.State == StudyState.Closed ? "ClosedStudy" : Current is null || IsDirty ? "SaveStudy" : "StudyComplete");
     public async Task<bool> SaveForImport()
     {
-        if (!Ready) return false;
+        if (!Ready || !company.CanWrite) return false;
         if (Current is null) await CreateCommand.ExecuteAsync(null);
         else if (SaveCommand.CanExecute(null)) await SaveCommand.ExecuteAsync(null);
         return HasImportDestination;

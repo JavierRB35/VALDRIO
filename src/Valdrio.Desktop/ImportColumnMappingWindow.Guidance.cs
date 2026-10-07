@@ -6,6 +6,7 @@ namespace Valdrio.Desktop;
 public partial class ImportColumnMappingWindow
 {
     private Valdrio.Application.PreparedImport? displayedPreparation;
+    private Valdrio.Application.ImportedBatch? displayedConfirmation;
     private string? lastHelpKey;
     internal void ShowFieldHelp(string text, string? key = null) { lastHelpKey = key; ImportFieldHelp.Text = text; }
     private void RefreshGuidance()
@@ -15,6 +16,11 @@ public partial class ImportColumnMappingWindow
         {
             displayedPreparation = vm.Preparation;
             if (displayedPreparation is not null) { ImportSteps.SelectedIndex = 4; UpdateLayout(); }
+        }
+        if (!ReferenceEquals(displayedConfirmation, vm.ConfirmedImport))
+        {
+            displayedConfirmation = vm.ConfirmedImport;
+            if (displayedConfirmation is not null) ImportSteps.SelectedIndex = 4;
         }
         var keys = new[] { "ImportFile", "ImportColumns", "ImportRecords", "ImportMeaning", "ImportReview" };
         for (var i = 0; i < 5; i++) ((TabItem)ImportSteps.Items[i]).Header = vm.Guide(keys[i]);
@@ -37,11 +43,11 @@ public partial class ImportColumnMappingWindow
         // Keep the next action discoverable. Missing requirements are explained on click.
         ImportNext.IsEnabled = vm.IsIdle;
         ImportFieldHelp.Text = vm.Guide(lastHelpKey is null ? "HelpHint" : "Help." + lastHelpKey);
-        if (vm.ConfirmedImport is not null) ImportSteps.SelectedIndex = 4;
     }
     private void ImportStepChanged(object sender, SelectionChangedEventArgs e)
     {
         if (e.Source != ImportSteps) return;
+        lastHelpKey = null;
         RefreshGuidance();
     }
     private void PreviousImportStep(object sender, RoutedEventArgs e) => ImportSteps.SelectedIndex = Math.Max(0, ImportSteps.SelectedIndex - 1);
@@ -58,12 +64,12 @@ public partial class ImportColumnMappingWindow
             case 0:
                 if (!vm.HasFile) await vm.OpenCommand.ExecuteAsync(null);
                 if (!vm.ReadCommand.CanExecute(null)) return;
-                await vm.ReadCommand.ExecuteAsync(null);
+                if (!vm.HasColumns) await vm.ReadCommand.ExecuteAsync(null);
                 if (vm.HasColumns) ImportSteps.SelectedIndex = 1;
                 break;
             case 1:
                 if (!vm.ValidateCommand.CanExecute(null)) { ImportStepHelp.Text = vm.Guide("NeedMapping"); return; }
-                await vm.ValidateCommand.ExecuteAsync(null);
+                if (!vm.IsReady) await vm.ValidateCommand.ExecuteAsync(null);
                 if (vm.IsReady) ImportSteps.SelectedIndex = 2;
                 break;
             case 2:

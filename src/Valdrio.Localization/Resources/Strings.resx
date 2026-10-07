@@ -481,8 +481,8 @@ Full: {5}</value></data>
   <data name="Guide.NeedCompany" xml:space="preserve"><value>First create or open a company file. Models, studies and imports will be saved inside that file.</value></data>
   <data name="Guide.CompanyReady" xml:space="preserve"><value>Company open. Continue to Structure to create or choose the model for the study.</value></data>
   <data name="Guide.NeedDraft" xml:space="preserve"><value>Name the structure and create a new model, or select and load an existing version.</value></data>
-  <data name="Guide.NeedCenter" xml:space="preserve"><value>Add at least one centre: its code identifies it and its name explains what it represents. Then create activity units.</value></data>
-  <data name="Guide.NeedUnit" xml:space="preserve"><value>An activity unit is missing. Create it here, for example HOURS / time / h, if that is appropriate for your model.</value></data>
+  <data name="Guide.NeedCenter" xml:space="preserve"><value>Create or activate at least one physical centre in Centres and units. It identifies the place or department where work takes place.</value></data>
+  <data name="Guide.NeedUnit" xml:space="preserve"><value>Create or activate a driver unit in Centres and units (for example, hours). Each node needs a unit.</value></data>
   <data name="Guide.NeedNodeCode" xml:space="preserve"><value>Enter the code of the node being edited. This identifies it within the model.</value></data>
   <data name="Guide.NeedNodeCenter" xml:space="preserve"><value>Select the physical centre for this node. You can create centres in the Centres and units step.</value></data>
   <data name="Guide.NeedNodeUnit" xml:space="preserve"><value>Select the node activity unit. If the list is empty, create it in Centres and units.</value></data>
@@ -603,4 +603,19 @@ Full: {5}</value></data>
   <data name="Guide.Help.SelectedFormatCultureTag" xml:space="preserve"><value>Region used to display numbers and dates. Source file format is chosen separately.</value></data>
   <data name="Guide.Help.SelectedTimeZoneId" xml:space="preserve"><value>Zone used to display history timestamps. Does not change study business dates.</value></data>
   <data name="Guide.CorrectImport" xml:space="preserve"><value>Go back to correct the data</value></data>
+  <data name="Guide.Working" xml:space="preserve"><value>Operation in progress. Please wait; your entries are preserved.</value></data>
+  <data name="Guide.ReadOnly" xml:space="preserve"><value>This company file is open for reading. You can inspect data, but saving requires an editable company file.</value></data>
+  <data name="Guide.PendingCenter" xml:space="preserve"><value>The physical centre has unsaved changes. Review them in Centres and units, then save the centre before continuing.</value></data>
+  <data name="Guide.ReviewCenter" xml:space="preserve"><value>Review pending centre</value></data>
+  <data name="Guide.SaveCenterNext" xml:space="preserve"><value>Save centre and continue</value></data>
+  <data name="Guide.CreateCompanyNext" xml:space="preserve"><value>Create company file and continue</value></data>
+  <data name="Guide.CreateModelNext" xml:space="preserve"><value>Create model and continue</value></data>
+  <data name="Guide.LoadModelNext" xml:space="preserve"><value>Load selected model and continue</value></data>
+  <data name="Guide.ApplyNodeNext" xml:space="preserve"><value>Add node changes and continue</value></data>
+  <data name="Guide.PublishContinue" xml:space="preserve"><value>Save, publish and continue to study</value></data>
+  <data name="Guide.ContinueStudy" xml:space="preserve"><value>Continue to study</value></data>
+  <data name="Guide.ContinueImport" xml:space="preserve"><value>Continue to import</value></data>
+  <data name="Guide.Help.StudyModelChoice" xml:space="preserve"><value>Choose the published structure this study will use. It is linked when you save the study; no separate load action is required.</value></data>
+  <data name="ImportMapping.ReviewChanged" xml:space="preserve"><value>The current review has changed. Prepare and check it again before saving; previously saved imports remain in the study.</value></data>
+  <data name="Guide.ReadOnlyAction" xml:space="preserve"><value>Read-only company file</value></data>
 </root>
