@@ -93,6 +93,7 @@ public sealed partial class ImportColumnMappingViewModel
     public IAsyncRelayCommand ConfirmCommand { get; }
     public PreparedImport? Preparation => preparedImport;
     public ImportedBatch? ConfirmedImport => confirmedImport;
+    public bool HasPreparedReview => preparedImport is not null || confirmedImport is not null;
     public bool HasPreparedGroups => preparedImport?.Groups is { Count: > 0 };
     public IReadOnlyList<ImportGroupPreview> PreparedGroups => preparedImport?.Groups?.Select(g => new ImportGroupPreview(
         g.Code, string.Join(", ", g.Records), g.Amount.Amount.ToString(CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)) + (international ? " " + g.Amount.Currency : "")))
