@@ -241,10 +241,14 @@
         <TextBox x:Name="PoolBox" Text="{Binding PoolDescription,UpdateSourceTrigger=PropertyChanged}"
                  TabIndex="47" AutomationProperties.Name="{Binding PoolLabel}" local:FieldHelp.Key="PoolDescription" />
 
-        <TextBlock Text="{Binding FunctionLabel}" />
-        <TextBlock Text="{Binding FunctionHelp}" Style="{StaticResource SectionHelp}" />
-        <TextBox x:Name="FunctionBox" Text="{Binding FunctionTags,UpdateSourceTrigger=PropertyChanged}"
-                 TabIndex="44" AutomationProperties.Name="{Binding FunctionLabel}" local:FieldHelp.Key="FunctionTags" />
+        <Expander Header="{Binding OptionalNodeDataLabel}" Margin="0,6,0,4">
+         <StackPanel>
+          <TextBlock Text="{Binding FunctionHelp}" Style="{StaticResource SectionHelp}" />
+          <TextBlock Text="{Binding FunctionLabel}" />
+          <TextBox x:Name="FunctionBox" Text="{Binding FunctionTags,UpdateSourceTrigger=PropertyChanged}"
+                   TabIndex="44" AutomationProperties.Name="{Binding FunctionLabel}" local:FieldHelp.Key="FunctionTags" />
+         </StackPanel>
+        </Expander>
 
         <TextBlock Text="{Binding NodePersistenceHelp}" Style="{StaticResource SectionHelp}" />
         <WrapPanel>
