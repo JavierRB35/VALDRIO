@@ -106,12 +106,12 @@
   <data name="CompanyBackup" xml:space="preserve"><value>Crear copia…</value></data>
   <data name="CompanyRestore" xml:space="preserve"><value>Restaurar en archivo nuevo…</value></data>
   <data name="CompanyCancel" xml:space="preserve"><value>Cancelar operación</value></data>
-  <data name="CompanyUnitLabel" xml:space="preserve"><value>Código de unidad (texto)</value></data>
-  <data name="CompanyDimensionLabel" xml:space="preserve"><value>Código de dimensión</value></data>
-  <data name="CompanySymbolLabel" xml:space="preserve"><value>Símbolo</value></data>
-  <data name="CompanyScaleLabel" xml:space="preserve"><value>Decimales (0–12)</value></data>
-  <data name="CompanyDiscreteLabel" xml:space="preserve"><value>Unidad discreta</value></data>
-  <data name="CompanyAddUnit" xml:space="preserve"><value>Guardar nueva unidad</value></data>
+  <data name="CompanyUnitLabel" xml:space="preserve"><value>Código de la unidad</value></data>
+  <data name="CompanyDimensionLabel" xml:space="preserve"><value>Tipo de medida (dimensión)</value></data>
+  <data name="CompanySymbolLabel" xml:space="preserve"><value>Símbolo visible</value></data>
+  <data name="CompanyScaleLabel" xml:space="preserve"><value>Decimales permitidos (0–12)</value></data>
+  <data name="CompanyDiscreteLabel" xml:space="preserve"><value>Solo admite unidades enteras</value></data>
+  <data name="CompanyAddUnit" xml:space="preserve"><value>Guardar unidad de actividad</value></data>
   <data name="CompanyNotes" xml:space="preserve"><value>Archivo local, un editor. La moneda sugiere la de un futuro estudio; no la fija. Copias y restauración usan rutas nuevas. El catálogo contiene por ahora EUR, USD, JPY y KWD. El cifrado y el cálculo económico están pendientes.</value></data>
   <data name="CompanyNoFile" xml:space="preserve"><value>No hay archivo de empresa abierto.</value></data>
   <data name="CompanyWorking" xml:space="preserve"><value>Operación en curso. Cancelar tiene efecto antes de la confirmación.</value></data>
@@ -482,7 +482,7 @@ Completa: {5}</value></data>
   <data name="Guide.CompanyReady" xml:space="preserve"><value>Empresa abierta. Continúa a Estructura para crear o elegir el modelo que utilizará el estudio.</value></data>
   <data name="Guide.NeedDraft" xml:space="preserve"><value>Escribe el nombre de la estructura y pulsa Crear modelo nuevo, o selecciona una versión existente y cárgala.</value></data>
   <data name="Guide.NeedCenter" xml:space="preserve"><value>Crea o activa al menos un centro físico en Centros y unidades. Identifica el lugar o departamento donde se realiza la actividad.</value></data>
-  <data name="Guide.NeedUnit" xml:space="preserve"><value>Crea o activa una unidad de actividad en Centros y unidades, por ejemplo horas, lotes o unidades. Cada nodo necesita una.</value></data>
+  <data name="Guide.NeedUnit" xml:space="preserve"><value>Aún no hay una unidad de actividad disponible. Puedes crearla aquí o continuar a Nodos y crearla allí mismo cuando el nodo la necesite.</value></data>
   <data name="Guide.NeedNodeCode" xml:space="preserve"><value>Completa el código del nodo que estás editando. Es su identificador dentro de este modelo.</value></data>
   <data name="Guide.NeedNodeCenter" xml:space="preserve"><value>Selecciona el centro físico al que pertenece este nodo. Puedes crear centros en el paso Centros y unidades.</value></data>
   <data name="Guide.NeedNodeUnit" xml:space="preserve"><value>Selecciona la unidad de actividad del nodo. Si la lista está vacía, créala en Centros y unidades.</value></data>
@@ -535,7 +535,7 @@ Completa: {5}</value></data>
   <data name="Guide.Help.CompanyName" xml:space="preserve"><value>Nombre para identificar la empresa. Crear archivo te pedirá una ubicación; ese archivo contendrá todos sus datos.</value></data>
   <data name="Guide.Help.Currency" xml:space="preserve"><value>Moneda funcional del estudio: unidad monetaria en la que se expresarán sus resultados. En Empresa solo es una sugerencia para nuevos estudios.</value></data>
   <data name="Guide.Help.UnitCode" xml:space="preserve"><value>Identificador único de esta unidad, por ejemplo HORAS. No es un número de cuenta.</value></data>
-  <data name="Guide.Help.UnitDimension" xml:space="preserve"><value>Tipo de magnitud: por ejemplo time para tiempo. Unidades de magnitudes distintas no se pueden tratar como equivalentes.</value></data>
+  <data name="Guide.Help.UnitDimension" xml:space="preserve"><value>Indica qué se está midiendo, por ejemplo time para tiempo o batch para lotes. Unidades con dimensiones distintas no se consideran equivalentes.</value></data>
   <data name="Guide.Help.UnitSymbol" xml:space="preserve"><value>Símbolo visible de la unidad, por ejemplo h para horas.</value></data>
   <data name="Guide.Help.UnitScale" xml:space="preserve"><value>Número de decimales permitido para medir esta unidad, entre 0 y 12.</value></data>
   <data name="Guide.Help.UnitDiscrete" xml:space="preserve"><value>Marca esta opción si la magnitud se cuenta en unidades enteras indivisibles.</value></data>
@@ -866,7 +866,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.ModelStepHelp" xml:space="preserve"><value>El modelo define la estructura que usarán los estudios. Puedes abrir uno existente o crear un borrador nuevo. Los modelos publicados se conservan sin cambios; para modificarlos, duplica la versión.</value></data>
   <data name="Model.ExistingModelHelp" xml:space="preserve"><value>Abrir un modelo existente</value></data>
   <data name="Model.NewModelHelp" xml:space="preserve"><value>Crear un modelo nuevo</value></data>
-  <data name="Model.UnitSectionHelp" xml:space="preserve"><value>Las unidades de actividad indican cómo se medirá el trabajo de los nodos, por ejemplo horas, lotes o unidades. Crea aquí las que necesites antes de configurar los nodos.</value></data>
+  <data name="Model.UnitSectionHelp" xml:space="preserve"><value>Las unidades de actividad indican cómo se medirá el trabajo de los nodos, por ejemplo horas, lotes o unidades. Puedes crearlas aquí como catálogo reutilizable, pero no es obligatorio hacerlo por adelantado: también podrás crear una nueva directamente al configurar un nodo.</value></data>
   <data name="Model.ReviewModelHelp" xml:space="preserve"><value>Revisa el resumen del modelo. Guardar conserva los cambios del borrador; Validar comprueba que la estructura sea coherente; Publicar bloquea esta versión para poder usarla en estudios.</value></data>
   <data name="Model.CenterSectionHelp" xml:space="preserve"><value>Un centro físico representa un área reconocible de la empresa, como Prensa, Mantenimiento o Administración. Añade los centros uno a uno; los ya guardados permanecen visibles en la tabla.</value></data>
   <data name="Model.CenterListTitle" xml:space="preserve"><value>Centros ya guardados</value></data>
@@ -910,4 +910,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.Ready" xml:space="preserve"><value>Listo para continuar.</value></data>
   <data name="Model.CenterRequiredHelp" xml:space="preserve"><value>Obligatorio: código y nombre. El código identifica el centro dentro de la empresa.</value></data>
   <data name="Model.NodeRequiredHelp" xml:space="preserve"><value>Obligatorio: código, centro, tipo de nodo y unidad de actividad. La descripción del grupo de costes y las funciones son opcionales.</value></data>
+  <data name="CompanyUnitSaved" xml:space="preserve"><value>Unidad de actividad guardada correctamente. El formulario está listo para crear otra.</value></data>
+  <data name="Model.CreateUnitHere" xml:space="preserve"><value>¿No aparece la unidad que necesitas? Crear una aquí</value></data>
+  <data name="Model.CreateUnitHereHelp" xml:space="preserve"><value>Crea la unidad sin salir del nodo. Se guardará como unidad reutilizable de la empresa y, si el alta termina correctamente, VALDRIO la seleccionará automáticamente en este nodo.</value></data>
 </root>
