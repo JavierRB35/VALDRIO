@@ -383,6 +383,11 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string CenterStateActionLabel => Text(Master?.Value.IsActive == false ? "Model.CenterReactivate" : "Model.CenterDeactivate");
     public string CenterStateHelp => Text("Model.CenterStateHelp");
     public string ModelLabel => Text("Model.Models");
+    public string ModelStepHelp => Text("Model.ModelStepHelp");
+    public string ExistingModelHelp => Text("Model.ExistingModelHelp");
+    public string NewModelHelp => Text("Model.NewModelHelp");
+    public string UnitSectionHelp => Text("Model.UnitSectionHelp");
+    public string ReviewModelHelp => Text("Model.ReviewModelHelp");
     public string DescriptionLabel => Text("Model.Description");
     public string NewDraftLabel => Text("Model.NewDraft");
     public string LoadLabel => Text("Model.Load");
@@ -398,6 +403,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string NodeFormTitle => Text(SelectedNode is null ? "Model.NodeFormNew" : "Model.NodeFormEdit");
     public string NodePrimaryActionLabel => Text(SelectedNode is null ? "Model.NodeSaveCreate" : "Model.NodeSaveEdit");
     public string NodePersistenceHelp => Text("Model.NodePersistenceHelp");
+    public string OptionalNodeDataLabel => Text("Model.OptionalNodeData");
+    public string FunctionHelp => Text("Model.FunctionHelp");
     public string NodeCodeLabel => Text("Model.NodeCode");
     public string PhysicalLabel => Text("Model.Physical");
     public string RoleLabel => Text("Model.Role");
