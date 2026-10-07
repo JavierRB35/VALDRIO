@@ -663,12 +663,12 @@ Full: {5}</value></data>
 Direct: {3} · Pools: {4} · Excluded: {5} · Pending: {6}
 Difference to distribute: {7}</value></data>
   <data name="Resources.Code" xml:space="preserve"><value>Account / code</value></data>
-  <data name="Resources.Originals" xml:space="preserve"><value>Originals by currency</value></data>
-  <data name="Resources.Converted" xml:space="preserve"><value>Converted original</value></data>
-  <data name="Resources.Adjustments" xml:space="preserve"><value>Adjustments</value></data>
-  <data name="Resources.Effective" xml:space="preserve"><value>Effective</value></data>
-  <data name="Resources.PendingAmount" xml:space="preserve"><value>Pending amount</value></data>
-  <data name="Resources.Difference" xml:space="preserve"><value>Difference</value></data>
+  <data name="Resources.Originals" xml:space="preserve"><value>Imported amount (by currency)</value></data>
+  <data name="Resources.Converted" xml:space="preserve"><value>Imported amount in analysis currency</value></data>
+  <data name="Resources.Adjustments" xml:space="preserve"><value>Corrections</value></data>
+  <data name="Resources.Effective" xml:space="preserve"><value>Effective amount</value></data>
+  <data name="Resources.PendingAmount" xml:space="preserve"><value>Pending assignment</value></data>
+  <data name="Resources.Difference" xml:space="preserve"><value>Unexplained difference</value></data>
   <data name="Resources.Amount" xml:space="preserve"><value>Functional amount</value></data>
   <data name="Resources.PartAmount" xml:space="preserve"><value>Part amount (study currency)</value></data>
   <data name="Resources.Route" xml:space="preserve"><value>Route for this part</value></data>
@@ -676,10 +676,10 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.Behavior" xml:space="preserve"><value>Behavior</value></data>
   <data name="Resources.Layer" xml:space="preserve"><value>Cost layer</value></data>
   <data name="Resources.Original" xml:space="preserve"><value>Original amount</value></data>
-  <data name="Resources.Functional" xml:space="preserve"><value>Functional amount</value></data>
+  <data name="Resources.Functional" xml:space="preserve"><value>Amount in analysis currency</value></data>
   <data name="Resources.Type" xml:space="preserve"><value>Adjustment type</value></data>
   <data name="Resources.Reason" xml:space="preserve"><value>Adjustment or reversal reason</value></data>
-  <data name="Resources.State" xml:space="preserve"><value>Movement kind</value></data>
+  <data name="Resources.State" xml:space="preserve"><value>Correction status</value></data>
   <data name="Resources.SignedAmount" xml:space="preserve"><value>Amount correction (+ increase / − reduce)</value></data>
   <data name="Resources.Currency" xml:space="preserve"><value>Adjustment currency</value></data>
   <data name="Resources.Quote" xml:space="preserve"><value>Rate: study currency per 1 source unit</value></data>
