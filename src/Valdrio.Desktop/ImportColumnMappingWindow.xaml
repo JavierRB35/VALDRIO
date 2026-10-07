@@ -237,6 +237,8 @@
    <TabItem x:Name="ImportTab2">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
      <StackPanel Margin="4,8,4,8">
+      <TextBlock Text="{Binding [RecordsStepTitle]}" Style="{StaticResource StepTitle}" />
+      <TextBlock Text="{Binding [RecordsStepHelp]}" Style="{StaticResource StepHelp}" />
       <StackPanel Visibility="{Binding HasAccountChoices,Converter={StaticResource Visible}}">
        <TextBlock Text="{Binding [SelectAccounts]}" FontWeight="SemiBold" />
        <TextBlock Text="{Binding [AccountSelectionHelp]}" />
@@ -276,17 +278,30 @@
    <TabItem x:Name="ImportTab3">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
      <StackPanel Margin="4,8,4,8">
-      <TextBlock Text="{Binding ReviewRequirement}" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite" />
+      <TextBlock Text="{Binding [MeaningStepTitle]}" Style="{StaticResource StepTitle}" />
+      <TextBlock Text="{Binding [MeaningStepHelp]}" Style="{StaticResource StepHelp}" />
+      <TextBlock Text="{Binding ReviewRequirement}" Style="{StaticResource Requirement}" AutomationProperties.LiveSetting="Polite" />
       <TextBlock Text="{Binding Target}" FontWeight="SemiBold" />
-      <CheckBox x:Name="ReplaceBatchBox" Content="{Binding [ReplaceBatch]}" IsChecked="{Binding ReplaceBatch}" local:FieldHelp.Key="ReplaceBatch" />
-      <ComboBox x:Name="ReplacementBox" ItemsSource="{Binding ExistingBatches}" DisplayMemberPath="Label" SelectedItem="{Binding Replacement}" IsEnabled="{Binding ReplaceBatch}" AutomationProperties.Name="{Binding [ReplaceBatch]}" local:FieldHelp.Key="Replacement" />
-      <TextBlock Text="{Binding [ReplacementHelp]}" />
-      <TextBlock Text="{Binding [AmountMode]}" />
+
+      <Expander Header="{Binding [ReplaceAdvancedTitle]}" Margin="0,6,0,8">
+       <StackPanel Margin="8,4,0,0">
+        <CheckBox x:Name="ReplaceBatchBox" Content="{Binding [ReplaceBatch]}" IsChecked="{Binding ReplaceBatch}" local:FieldHelp.Key="ReplaceBatch" />
+        <ComboBox x:Name="ReplacementBox" ItemsSource="{Binding ExistingBatches}" DisplayMemberPath="Label"
+                  SelectedItem="{Binding Replacement}" IsEnabled="{Binding ReplaceBatch}"
+                  AutomationProperties.Name="{Binding [ReplaceBatch]}" local:FieldHelp.Key="Replacement" />
+        <TextBlock Text="{Binding [ReplacementHelp]}" />
+       </StackPanel>
+      </Expander>
+
+      <TextBlock Text="{Binding [AmountMode]}" FontWeight="SemiBold" />
       <ComboBox x:Name="AmountModeBox" ItemsSource="{Binding AmountModes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding AmountMode,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [AmountMode]}" local:FieldHelp.Key="AmountMode" SelectionChanged="AmountMeaningChanged" />
       <CheckBox Content="{Binding MeaningChosenLabel}" IsChecked="{Binding HasAmountMeaning,UpdateSourceTrigger=PropertyChanged}" Margin="0,8,0,8" x:Name="MeaningChoiceConfirmed" />
       <TextBlock Text="{Binding AmountBasis}" TextWrapping="Wrap" FontWeight="SemiBold" />
-      <TextBlock Text="{Binding [SourceCurrency]}" />
-      <TextBox x:Name="SourceCurrencyBox" Text="{Binding SourceCurrency,UpdateSourceTrigger=PropertyChanged}" Width="100" HorizontalAlignment="Left" MaxLength="3" AutomationProperties.Name="{Binding [SourceCurrency]}" local:FieldHelp.Key="SourceCurrency" />
+      <TextBlock Text="{Binding [SourceCurrency]}" FontWeight="SemiBold" />
+      <TextBox x:Name="SourceCurrencyBox" Text="{Binding SourceCurrency,UpdateSourceTrigger=PropertyChanged}" Width="100"
+               HorizontalAlignment="Left" MaxLength="3" AutomationProperties.Name="{Binding [SourceCurrency]}"
+               local:FieldHelp.Key="SourceCurrency" />
+      <TextBlock Text="{Binding [SourceCurrencyHelp]}" Style="{StaticResource StepHelp}" />
       <CheckBox Content="{Binding [International]}" IsChecked="{Binding International}" local:FieldHelp.Key="International" />
       <StackPanel Visibility="{Binding International,Converter={StaticResource Visible}}">
        <TextBlock Text="{Binding [ConversionHelp]}" />
@@ -323,12 +338,16 @@
         </DataGrid.Columns>
        </DataGrid>
       </StackPanel>
-      <TextBlock Text="{Binding [ApprovalReference]}" />
-      <TextBox x:Name="ApprovalReferenceBox" Text="{Binding ApprovalReference,UpdateSourceTrigger=PropertyChanged}" MaxLength="1000" AutomationProperties.Name="{Binding [ApprovalReference]}" local:FieldHelp.Key="ApprovalReference" />
-      <CheckBox x:Name="ApproveInterpretationBox" IsChecked="{Binding InterpretationApproved}" Margin="0,8,0,8" local:FieldHelp.Key="InterpretationApproved">
+      <TextBlock Text="{Binding [ApprovalReference]}" FontWeight="SemiBold" />
+      <TextBlock Text="{Binding [ApprovalReferenceHelp]}" Style="{StaticResource StepHelp}" />
+      <TextBox x:Name="ApprovalReferenceBox" Text="{Binding ApprovalReference,UpdateSourceTrigger=PropertyChanged}"
+               MaxLength="1000" AutomationProperties.Name="{Binding [ApprovalReference]}" local:FieldHelp.Key="ApprovalReference" />
+      <CheckBox x:Name="ApproveInterpretationBox" IsChecked="{Binding InterpretationApproved}" Margin="0,8,0,8"
+                local:FieldHelp.Key="InterpretationApproved">
        <TextBlock Text="{Binding InterpretationPrompt}" TextWrapping="Wrap" />
       </CheckBox>
-      <Expander x:Name="ComparisonPanel" Header="{Binding [ComparisonTitle]}">
+      <Expander x:Name="ComparisonPanel" Header="{Binding [ComparisonTitle]}"
+                Visibility="{Binding IsCumulativeMode,Converter={StaticResource Visible}}">
        <StackPanel>
         <TextBlock Text="{Binding [ComparisonHelp]}" />
         <TextBlock Text="{Binding [FiscalStart]}" />
@@ -352,6 +371,8 @@
    <TabItem x:Name="ImportTab4">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
      <StackPanel Margin="4,8,4,8">
+      <TextBlock Text="{Binding [ReviewStepTitle]}" Style="{StaticResource StepTitle}" />
+      <TextBlock Text="{Binding [ReviewStepHelp]}" Style="{StaticResource StepHelp}" />
       <StackPanel x:Name="ConversionPreviewPanel" Visibility="{Binding HasConversion,Converter={StaticResource Visible}}">
        <TextBlock Text="{Binding [ConversionPreview]}" FontWeight="SemiBold" />
        <DataGrid x:Name="ConversionGrid" ItemsSource="{Binding ConversionRows}" AutoGenerateColumns="False" ColumnHeaderStyle="{StaticResource WrappedHeader}" IsReadOnly="True" CanUserAddRows="False" Height="220" FlowDirection="LeftToRight">
