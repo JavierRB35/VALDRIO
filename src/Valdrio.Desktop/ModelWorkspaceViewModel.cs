@@ -937,26 +937,79 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     private async Task SaveNode()
     {
         if (!nodeFormEdited) return;
+
+        var selectedId = SelectedNode?.Node.Id;
+        var code = NodeCode;
+        var functions = FunctionTags;
+        var pool = PoolDescription;
+        var physicalId = Physical?.Value.Id;
+        var unitId = DriverUnit?.Value.Definition.Id;
+        var roleValue = Role?.Value;
+        var layerValue = Layer?.Value;
+        var wasDirty = dirty;
+        var originalNodes = draftNodes.ToArray();
+        var originalPools = draftPools.ToArray();
+
         ApplyNode();
         if (nodeFormEdited || diagnostic is not null) return;
+
         await Save();
         if (!IsDirty && diagnostic is null)
         {
             statusKey = "Model.NodeSaved";
             Refresh();
+            return;
         }
+
+        // Persistence failed: restore the saved draft and the user's form so retrying is safe.
+        draftNodes.Clear();
+        draftNodes.AddRange(originalNodes);
+        draftPools.Clear();
+        draftPools.AddRange(originalPools);
+        dirty = wasDirty;
+        Reformat();
+
+        loading = true;
+        node = selectedId is null ? null : Nodes.SingleOrDefault(n => n.Node.Id == selectedId);
+        nodeCode = code;
+        functionTags = functions;
+        poolDescription = pool;
+        physical = Centers.SingleOrDefault(c => c.Value.Id == physicalId);
+        unit = Units.SingleOrDefault(u => u.Value.Definition.Id == unitId);
+        role = roleValue is null ? Roles.FirstOrDefault() : Roles.SingleOrDefault(r => r.Value == roleValue);
+        layer = layerValue is null ? Layers.FirstOrDefault() : Layers.SingleOrDefault(l => l.Value == layerValue);
+        nodeFormEdited = true;
+        loading = false;
+        Refresh();
     }
 
     private async Task DeleteNode()
     {
         if (SelectedNode is null || nodeFormEdited) return;
+
+        var selectedId = SelectedNode.Node.Id;
+        var wasDirty = dirty;
+        var originalNodes = draftNodes.ToArray();
+        var originalPools = draftPools.ToArray();
+
         RemoveNode();
         await Save();
         if (!IsDirty && diagnostic is null)
         {
             statusKey = "Model.NodeRemoved";
             Refresh();
+            return;
         }
+
+        // Failed deletion must not make the UI look as if persistence succeeded.
+        draftNodes.Clear();
+        draftNodes.AddRange(originalNodes);
+        draftPools.Clear();
+        draftPools.AddRange(originalPools);
+        dirty = wasDirty;
+        Reformat();
+        SelectedNode = Nodes.SingleOrDefault(n => n.Node.Id == selectedId);
+        Refresh();
     }
 
     private void RemoveNode()
