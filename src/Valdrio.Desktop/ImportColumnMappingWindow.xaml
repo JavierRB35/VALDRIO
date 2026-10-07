@@ -94,11 +94,11 @@
    <StackPanel Visibility="{Binding HasAccountChoices,Converter={StaticResource Visible}}">
     <TextBlock Text="{Binding [SelectAccounts]}" FontWeight="SemiBold"/>
     <TextBlock Text="{Binding [AccountSelectionHelp]}"/>
-    <CheckBox x:Name="ImportAllAccountsBox" IsChecked="{Binding ImportAllAccounts}" Margin="0,6,0,6">
-     <TextBlock Text="{Binding [AllAccounts]}"/>
-    </CheckBox>
+    <WrapPanel>
+     <Button x:Name="SelectAllRecordsButton" Content="{Binding [SelectAllRecords]}" Command="{Binding SelectAllRecordsCommand}"/>
+     <Button x:Name="DeselectAllRecordsButton" Content="{Binding [DeselectAllRecords]}" Command="{Binding DeselectAllRecordsCommand}"/>
+    </WrapPanel>
     <DataGrid x:Name="AccountSelectionGrid" ItemsSource="{Binding AccountChoices}" AutoGenerateColumns="False"
-     Visibility="{Binding IsExplicitAccountSelection,Converter={StaticResource Visible}}"
      CanUserAddRows="False" CanUserDeleteRows="False" Height="190" FlowDirection="LeftToRight"
      EnableRowVirtualization="True" AutomationProperties.Name="{Binding [SelectAccounts]}">
      <DataGrid.Columns>
@@ -108,6 +108,7 @@
          VerticalAlignment="Center" AutomationProperties.Name="{Binding Account}"/>
        </DataTemplate></DataGridTemplateColumn.CellTemplate>
       </DataGridTemplateColumn>
+      <DataGridTextColumn Binding="{Binding RecordNumber}" IsReadOnly="True" Width="70"/>
       <DataGridTextColumn Binding="{Binding Account}" IsReadOnly="True" Width="*"/>
       <DataGridTextColumn Binding="{Binding FormattedAmount}" IsReadOnly="True" Width="*"/>
      </DataGrid.Columns>
@@ -130,6 +131,17 @@
    </CheckBox>
    <TextBlock x:Name="ConfirmationSummaryText" Text="{Binding ConfirmationSummary}" FontWeight="SemiBold"/>
    <TextBlock Text="{Binding PreparationIssues}" Foreground="DarkRed"/>
+   <StackPanel Visibility="{Binding HasPreparedGroups,Converter={StaticResource Visible}}">
+    <TextBlock Text="{Binding [GroupedPreview]}" FontWeight="SemiBold"/>
+    <DataGrid x:Name="GroupedPreviewGrid" ItemsSource="{Binding PreparedGroups}" AutoGenerateColumns="False"
+     IsReadOnly="True" CanUserAddRows="False" Height="170" FlowDirection="LeftToRight" EnableRowVirtualization="True">
+     <DataGrid.Columns>
+      <DataGridTextColumn Binding="{Binding Code}" Width="*"/>
+      <DataGridTextColumn Binding="{Binding Records}" Width="*"/>
+      <DataGridTextColumn Binding="{Binding Amount}" Width="*"/>
+     </DataGrid.Columns>
+    </DataGrid>
+   </StackPanel>
    <WrapPanel>
     <Button x:Name="PrepareImportButton" Content="{Binding [PrepareImport]}" Command="{Binding PrepareCommand}"/>
     <Button x:Name="ConfirmImportButton" Content="{Binding [ConfirmImport]}" Command="{Binding ConfirmCommand}"/>

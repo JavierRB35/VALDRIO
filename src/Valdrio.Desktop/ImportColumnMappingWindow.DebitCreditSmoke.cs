@@ -161,7 +161,7 @@ public partial class ImportColumnMappingWindow
             "changing interpretation clears preparation columns and approval");
         var snapshot = Path.Combine(output, "snapshot.json"); File.WriteAllText(snapshot, CanonicalSnapshotJson.Serialize(photo));
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }));
-        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = 4,
+        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = SqliteCompanyFileService.SchemaVersion,
             Source = "synthetic native WPF debit minus credit import", StudyId = study.Id.ToString(),
             BatchIds = new[] { csvBatch.Id.ToString(), xlsxBatch.Id.ToString() },
             Files = new[] { path, backup, restored, snapshot, csv, xlsx }.Select(p => new { Name = Path.GetFileName(p), Sha256 = Hash(p) }) }));

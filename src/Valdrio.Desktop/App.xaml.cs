@@ -204,6 +204,7 @@ public partial class App : System.Windows.Application
                             (QueuedCompanyFileDialogs)companyDialogs, viewModel);
                         await importWindow.RunDebitCreditChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs,
                             (QueuedCompanyFileDialogs)companyDialogs, viewModel);
+                        await importWindow.RunImportGroupingChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs, viewModel);
                         importWindow.Close();
                         CaptureVisualEvidence(
                             window,

@@ -82,8 +82,9 @@ public sealed partial class SqliteCompanyFileService
                     BatchId = result.Id.ToString(), Account = resource.Account, OriginalAmount = CanonicalDecimal.Format(resource.Original.Amount),
                     FunctionalAmount = CanonicalDecimal.Format(resource.Functional.Amount), Currency = resource.Functional.Currency.ToString(),
                     PeriodStart = resource.PeriodStart.ToString(), PeriodEnd = resource.PeriodEnd.ToString() });
-                db.ResourceSourceLinks.Add(new() { ResourceId = resource.Id.ToString(), CompanyId = file.Id.ToString(), StudyId = before.Id.ToString(),
-                    BatchId = result.Id.ToString(), RecordNumber = resource.RecordNumber });
+                foreach (var record in resource.SourceRecords ?? [resource.RecordNumber])
+                    db.ResourceSourceLinks.Add(new() { ResourceId = resource.Id.ToString(), CompanyId = file.Id.ToString(), StudyId = before.Id.ToString(),
+                        BatchId = result.Id.ToString(), RecordNumber = record });
             }
             Apply(row, after);
             Audit(db, file, "Study", before.Id, after.Revision, "ConfirmImport", command.Actor, before, after);

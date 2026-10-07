@@ -1,16 +1,18 @@
 using System.ComponentModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Valdrio.Application;
 
 namespace Valdrio.Desktop;
 
-public sealed class ImportAccountChoice(string account, decimal amount) : ObservableObject
+public sealed class ImportAccountChoice(string account, decimal amount, int recordNumber) : ObservableObject
 {
     private bool included;
     private string formattedAmount = "";
     public string Account { get; } = account;
     public decimal Amount { get; } = amount;
+    public int RecordNumber { get; } = recordNumber;
     public bool Included { get => included; set => SetProperty(ref included, value); }
     public string FormattedAmount { get => formattedAmount; private set => SetProperty(ref formattedAmount, value); }
     internal void Reformat(CultureInfo culture) => FormattedAmount = Amount.ToString(culture);
@@ -19,6 +21,7 @@ public sealed class ImportAccountChoice(string account, decimal amount) : Observ
 public sealed partial class ImportColumnMappingViewModel
 {
     private bool importAllAccounts = true;
+    private bool selectingRecords;
     private IReadOnlyList<ImportAccountChoice> accountChoices = [];
     public IReadOnlyList<ImportAccountChoice> AccountChoices => accountChoices;
     public bool ImportAllAccounts
@@ -26,19 +29,23 @@ public sealed partial class ImportColumnMappingViewModel
         get => importAllAccounts;
         set
         {
-            if (!SetProperty(ref importAllAccounts, value)) return;
+            importAllAccounts = value;
+            selectingRecords = true;
+            try { foreach (var choice in accountChoices) choice.Included = value; }
+            finally { selectingRecords = false; }
             cancellation?.Cancel(); InvalidatePreparation(true); Refresh();
         }
     }
     public bool IsExplicitAccountSelection => !importAllAccounts;
     public bool HasAccountChoices => accountChoices.Count > 0;
-    public bool IsAccountSelectionReady => importAllAccounts || accountChoices.Any(c => c.Included);
+    public bool IsAccountSelectionReady => accountChoices.Any(c => c.Included);
     public string AccountSelectionSummary => string.Format(Ui, this["AccountSelectionSummary"],
-        importAllAccounts ? accountChoices.Count : accountChoices.Count(c => c.Included), accountChoices.Count);
+        accountChoices.Count(c => c.Included), accountChoices.Count);
 
-    private ImportAccountSelection SelectedAccounts() => importAllAccounts ? ImportAccountSelection.All :
-        new(ImportAccountSelectionKind.ExplicitList, accountChoices.Where(c => c.Included)
-            .Select(c => c.Account).Order(StringComparer.Ordinal).ToArray());
+    public IRelayCommand SelectAllRecordsCommand { get; private set; } = null!;
+    public IRelayCommand DeselectAllRecordsCommand { get; private set; } = null!;
+    private ImportGroupingPlan SelectedRecords() => new(accountChoices.Where(c => c.Included)
+        .Select(c => new ImportRecordTarget(c.RecordNumber, c.Account)).ToArray());
 
     private void ResetAccountChoices()
     {
@@ -51,8 +58,8 @@ public sealed partial class ImportColumnMappingViewModel
         ResetAccountChoices();
         if (!result.IsValid) return;
         var culture = CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
-        accountChoices = result.Rows.Select(r => new ImportAccountChoice(r.Account!, r.Amount!.Value))
-            .OrderBy(c => c.Account, StringComparer.Ordinal).ToArray();
+        accountChoices = result.Rows.Select(r => new ImportAccountChoice(r.Account!, r.Amount!.Value, r.RecordNumber)
+            { Included = importAllAccounts }).ToArray();
         foreach (var choice in accountChoices)
         {
             choice.Reformat(culture);
@@ -61,7 +68,8 @@ public sealed partial class ImportColumnMappingViewModel
     }
     private void AccountChoiceChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName != nameof(ImportAccountChoice.Included)) return;
+        if (selectingRecords || e.PropertyName != nameof(ImportAccountChoice.Included)) return;
+        importAllAccounts = accountChoices.All(c => c.Included);
         cancellation?.Cancel(); InvalidatePreparation(true); Refresh();
     }
 }

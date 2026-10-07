@@ -310,7 +310,7 @@ Completa: {5}</value></data>
   <data name="ImportMapping.Delimiter" xml:space="preserve"><value>Separador CSV</value></data>
   <data name="ImportMapping.Encoding" xml:space="preserve"><value>Codificación CSV</value></data>
   <data name="ImportMapping.Read" xml:space="preserve"><value>Leer columnas</value></data>
-  <data name="ImportMapping.AccountColumn" xml:space="preserve"><value>Columna del código de cuenta</value></data>
+  <data name="ImportMapping.AccountColumn" xml:space="preserve"><value>Columna del código (cuenta, agrupación o gasto)</value></data>
   <data name="ImportMapping.AmountColumn" xml:space="preserve"><value>Columna del importe</value></data>
   <data name="ImportMapping.Decimal" xml:space="preserve"><value>Separador decimal del texto</value></data>
   <data name="ImportMapping.Grouping" xml:space="preserve"><value>Separador de miles del texto</value></data>
@@ -394,9 +394,15 @@ Completa: {5}</value></data>
   <data name="ImportMapping.ClosingMode" xml:space="preserve"><value>Saldo íntegro al cierre para este estudio</value></data>
   <data name="ImportMapping.PeriodBasis" xml:space="preserve"><value>Se utilizan los movimientos correspondientes al periodo del estudio.</value></data>
   <data name="ImportMapping.PeriodMode" xml:space="preserve"><value>Importes del periodo</value></data>
-  <data name="ImportMapping.AccountSelectionHelp" xml:space="preserve"><value>Elige las cuentas de pérdidas y ganancias para este estudio. La numeración no determina qué se incluye. Se conservan todas las filas originales; solo las cuentas incluidas generan recursos.</value></data>
-  <data name="ImportMapping.AccountSelectionSummary" xml:space="preserve"><value>{0} de {1} cuentas incluidas. Cambiar la selección exige preparar y aprobar de nuevo.</value></data>
+  <data name="ImportMapping.AccountSelectionHelp" xml:space="preserve"><value>Selecciona todos, ninguno o filas individuales. Los registros elegidos con el mismo código se suman, independientemente de sus descripciones. Se conserva cada fila original.</value></data>
+  <data name="ImportMapping.AccountSelectionSummary" xml:space="preserve"><value>{0} de {1} registros seleccionados. Cambiar la selección exige preparar y aprobar de nuevo.</value></data>
   <data name="ImportMapping.AllAccounts" xml:space="preserve"><value>Incluir todas las cuentas de este archivo</value></data>
   <data name="ImportMapping.IncludeAccount" xml:space="preserve"><value>Incluir</value></data>
-  <data name="ImportMapping.SelectAccounts" xml:space="preserve"><value>Cuentas que se importarán</value></data>
+  <data name="ImportMapping.SelectAccounts" xml:space="preserve"><value>Registros que se importarán</value></data>
+  <data name="Import.GroupingInvalid" xml:space="preserve"><value>Los registros seleccionados o su agrupación no son válidos. Revisa la selección y vuelve a preparar.</value></data>
+  <data name="ImportMapping.DeselectAllRecords" xml:space="preserve"><value>Deseleccionar todos</value></data>
+  <data name="ImportMapping.GroupedPreview" xml:space="preserve"><value>Registros seleccionados agrupados por código</value></data>
+  <data name="ImportMapping.SelectAllRecords" xml:space="preserve"><value>Seleccionar todos</value></data>
+  <data name="ImportMapping.SourceCode" xml:space="preserve"><value>Código</value></data>
+  <data name="ImportMapping.SourceRecords" xml:space="preserve"><value>Filas de origen</value></data>
 </root>

@@ -102,7 +102,7 @@ public sealed class T04ModelTests
         using (var originalReader = OriginalService().Open(source))
             Assert.AreEqual(company, originalReader.Read().Id.ToString());
         Assert.AreEqual(audit, Query(upgraded.Path, "SELECT group_concat(AfterJson) FROM AuditEvents WHERE AggregateType='Company' ORDER BY Revision"));
-        Assert.AreEqual("3", Query(upgraded.Path, "SELECT count(*) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
+        Assert.AreEqual("4", Query(upgraded.Path, "SELECT count(*) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
         using var conn = new SqliteConnection("Data Source=" + upgraded.Path + ";Pooling=False");
         conn.Open();
         using var db = new ModelDbContext(conn);

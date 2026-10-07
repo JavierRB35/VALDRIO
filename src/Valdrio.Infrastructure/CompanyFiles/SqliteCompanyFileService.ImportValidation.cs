@@ -17,6 +17,7 @@ public sealed partial class SqliteCompanyFileService
         foreach (var batch in batches)
         {
             var study = batch.Prepared.StudyContext;
+            Invalid(file.SchemaVersion < 5 && batch.Prepared.Profile.Grouping is not null, "Grouped import in legacy schema");
             Invalid(study.CompanyId != file.Id || batch.Prepared.PrecisionPolicy != file.PrecisionPolicy, "Import scope/precision invalid");
             var expectedRows = batch.Prepared.Rows.ToDictionary(r => r.RecordNumber);
             var originalRows = batch.Prepared.Source.Rows.ToDictionary(r => r.RecordNumber);
@@ -33,17 +34,19 @@ public sealed partial class SqliteCompanyFileService
             }
             var expectedResources = batch.Resources.ToDictionary(r => r.Id.ToString());
             var savedResources = resources[batch.Id.ToString()].ToArray();
-            var savedLinks = links[batch.Id.ToString()].ToDictionary(l => l.ResourceId);
-            Invalid(savedResources.Length != expectedResources.Count || savedLinks.Count != expectedResources.Count, "Import resource/link count differs");
+            var savedLinks = links[batch.Id.ToString()].ToLookup(l => l.ResourceId);
+            Invalid(savedResources.Length != expectedResources.Count || savedLinks.Sum(g => g.Count()) !=
+                expectedResources.Values.Sum(r => r.SourceRecords?.Count ?? 1), "Import resource/link count differs");
             foreach (var row in savedResources)
             {
                 Invalid(row.CompanyId != file.Id.ToString() || row.StudyId != study.Id.ToString() ||
-                    !expectedResources.ContainsKey(row.Id) || !savedLinks.ContainsKey(row.Id), "Resource scope invalid");
-                var expected = expectedResources[row.Id]; var link = savedLinks[row.Id];
+                    !expectedResources.ContainsKey(row.Id) || !savedLinks.Contains(row.Id), "Resource scope invalid");
+                var expected = expectedResources[row.Id]; var resourceLinks = savedLinks[row.Id].ToArray();
                 Invalid(row.Account != expected.Account || row.OriginalAmount != CanonicalDecimal.Format(expected.Original.Amount) ||
                     row.FunctionalAmount != CanonicalDecimal.Format(expected.Functional.Amount) || row.Currency != expected.Functional.Currency.ToString() ||
                     row.PeriodStart != expected.PeriodStart.ToString() || row.PeriodEnd != expected.PeriodEnd.ToString() ||
-                    link.RecordNumber != expected.RecordNumber || link.CompanyId != row.CompanyId || link.StudyId != row.StudyId,
+                    !resourceLinks.Select(l => l.RecordNumber).Order().SequenceEqual((expected.SourceRecords ?? [expected.RecordNumber]).Order()) ||
+                    resourceLinks.Any(link => link.CompanyId != row.CompanyId || link.StudyId != row.StudyId),
                     "Resource/source link differs");
             }
             var events = audit.Where(a => a.Id == batch.Id.ToString()).ToArray();

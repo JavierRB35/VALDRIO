@@ -2,6 +2,22 @@
 
 Fecha de revisión 2026-10-07. Repositorio `JavierRB35/VALDRIO`.
 
+## Continuidad — selección de registros y agrupación, 2026-10-07
+
+La elección pasa de cuentas a registros individuales: todos, ninguno, algunos o todos
+menos algunos. Los registros seleccionados se suman por el código de la columna elegida
+(cuenta, agrupación o gasto). Las descripciones no intervienen, por instrucción expresa
+del propietario. Ejemplo confirmado: las filas 7 y 8 de 6005 producen 358,35 EUR;
+seleccionar solo la fila 8 produce 78,35 EUR.
+
+Archivo de empresa v5, perfil/preparado v2 para agrupaciones y snapshots v3. Los formatos
+históricos conservan sus lectores; los archivos anteriores se actualizan a una copia.
+Ver [ADR-0009](docs/adr/ADR-0009-registros-y-agrupacion-por-codigo.md) y
+[evidencia](docs/evidencias/AGRUPACION_REGISTROS_2026-10-07.md).
+Esta sección sustituye las restricciones de agrupación/una fila por recurso anteriores.
+T06 no está cerrada: siguen sustitución de lotes, diferencias comparables, aceptación
+global y definición productiva del alcance/periodo de la fuente. T06A/T07 después.
+
 ## Continuidad — 2026-10-07: selección explícita de cuentas
 
 Sobre `8909e88`, el asistente permite importar todas las cuentas del archivo o marcar

@@ -4,7 +4,7 @@ using Valdrio.Infrastructure.CompanyFiles.Migrations;
 
 namespace Valdrio.Infrastructure.CompanyFiles;
 
-internal sealed class ImportDbContext(SqliteConnection connection) : StudyDbContext(connection)
+internal class ImportDbContext(SqliteConnection connection) : StudyDbContext(connection)
 {
     public DbSet<ImportBatchRow> ImportBatches => Set<ImportBatchRow>();
     public DbSet<ImportedRow> ImportedRows => Set<ImportedRow>();

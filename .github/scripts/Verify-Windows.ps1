@@ -422,7 +422,7 @@ try {
     }
     $confirmationManifest = Get-Content -LiteralPath (Join-Path $confirmationFolder "manifest.json") -Raw | ConvertFrom-Json
     $confirmationNames = @("import.valdrio", "import.valdrio-backup", "restored.valdrio", "snapshot.json", "period-amounts.csv")
-    if ($confirmationManifest.SchemaVersion -ne 4 -or $confirmationManifest.Files.Count -ne $confirmationNames.Count -or
+    if ($confirmationManifest.SchemaVersion -ne 5 -or $confirmationManifest.Files.Count -ne $confirmationNames.Count -or
         @(Compare-Object ($confirmationNames | Sort-Object) (@($confirmationManifest.Files.Name) | Sort-Object)).Count -ne 0) {
       throw "Import confirmation manifest is incomplete."
     }
@@ -443,7 +443,7 @@ try {
     if ($debitImages.Count -ne 3) { throw "Expected CSV prepared/confirmed and Excel debit/credit screenshots." }
     $debitManifest = Get-Content -LiteralPath (Join-Path $debitFolder "manifest.json") -Raw | ConvertFrom-Json
     $debitNames = @("import.valdrio", "import.valdrio-backup", "restored.valdrio", "snapshot.json", "debit-credit.csv", "debit-credit.xlsx")
-    if ($debitManifest.SchemaVersion -ne 4 -or $debitManifest.BatchIds.Count -ne 2 -or $debitManifest.Files.Count -ne $debitNames.Count -or
+    if ($debitManifest.SchemaVersion -ne 5 -or $debitManifest.BatchIds.Count -ne 2 -or $debitManifest.Files.Count -ne $debitNames.Count -or
         @(Compare-Object ($debitNames | Sort-Object) (@($debitManifest.Files.Name) | Sort-Object)).Count -ne 0) {
       throw "Debit/credit import manifest is incomplete."
     }
@@ -455,6 +455,28 @@ try {
     dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $debitFolder "snapshot.json")
     if ($LASTEXITCODE -ne 0) { throw "Runner could not verify the actual WPF debit/credit snapshot." }
     Write-Host "Debit/credit import WPF checks passed: $($debitChecks.PassedChecks.Count)."
+    $groupingFolder = Join-Path $captureDir "import-grouping"
+    $groupingChecks = Get-Content -LiteralPath (Join-Path $groupingFolder "interaction.json") -Raw | ConvertFrom-Json
+    if ($groupingChecks.Status -ne "passed" -or $groupingChecks.PassedChecks.Count -ne 11) {
+      throw "Grouped import WPF interaction evidence is incomplete."
+    }
+    $groupingImages = @(Get-ChildItem -LiteralPath $groupingFolder -Filter *.png)
+    if (@(Compare-Object (@("records-es.png", "groups-es.png", "groups-pseudo.png") | Sort-Object)
+          (@($groupingImages.Name) | Sort-Object)).Count -ne 0) { throw "Missing grouped import screenshots." }
+    $groupingManifest = Get-Content -LiteralPath (Join-Path $groupingFolder "manifest.json") -Raw | ConvertFrom-Json
+    $groupingNames = @("grouping.valdrio", "grouping.valdrio-backup", "restored.valdrio", "snapshot.json", "grouping.csv")
+    if ($groupingManifest.SchemaVersion -ne 5 -or $groupingManifest.Files.Count -ne $groupingNames.Count -or
+        @(Compare-Object ($groupingNames | Sort-Object) (@($groupingManifest.Files.Name) | Sort-Object)).Count -ne 0) {
+      throw "Grouped import manifest is incomplete."
+    }
+    foreach ($entry in $groupingManifest.Files) {
+      if ((Get-FileHash -LiteralPath (Join-Path $groupingFolder $entry.Name) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $entry.Sha256) {
+        throw "Grouped import artifact hash mismatch."
+      }
+    }
+    dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $groupingFolder "snapshot.json")
+    if ($LASTEXITCODE -ne 0) { throw "Runner could not verify grouped import snapshot." }
+    Write-Host "Grouped import WPF checks passed: $($groupingChecks.PassedChecks.Count)."
     $studyChecks = Get-Content -LiteralPath (Join-Path $captureDir "studies/interaction.json") -Raw | ConvertFrom-Json
     if ($studyChecks.Status -ne "passed" -or $studyChecks.PassedChecks.Count -ne 73) { throw "Expected all 73 final study WPF checks." }
     foreach ($region in @("es-ES", "en-US", "de-DE", "en-GB")) {
@@ -551,6 +573,7 @@ try {
         ImportColumnChecks = $importChecks.PassedChecks.Count
         ImportColumnImages = $importImages.Count
         ImportConfirmationChecks = $confirmationChecks.PassedChecks.Count
+        ImportGroupingChecks = $groupingChecks.PassedChecks.Count
         ImportConfirmationImages = $confirmationImages.Count
         ImportConfirmationManifest = "verified"
         DebitCreditChecks = $debitChecks.PassedChecks.Count

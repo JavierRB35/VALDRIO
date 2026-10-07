@@ -310,7 +310,7 @@ Full: {5}</value></data>
   <data name="ImportMapping.Delimiter" xml:space="preserve"><value>CSV delimiter</value></data>
   <data name="ImportMapping.Encoding" xml:space="preserve"><value>CSV encoding</value></data>
   <data name="ImportMapping.Read" xml:space="preserve"><value>Read columns</value></data>
-  <data name="ImportMapping.AccountColumn" xml:space="preserve"><value>Account code column</value></data>
+  <data name="ImportMapping.AccountColumn" xml:space="preserve"><value>Code column (account, group or expense)</value></data>
   <data name="ImportMapping.AmountColumn" xml:space="preserve"><value>Amount column</value></data>
   <data name="ImportMapping.Decimal" xml:space="preserve"><value>Text decimal separator</value></data>
   <data name="ImportMapping.Grouping" xml:space="preserve"><value>Text thousands separator</value></data>
@@ -394,9 +394,15 @@ Full: {5}</value></data>
   <data name="ImportMapping.ClosingMode" xml:space="preserve"><value>Full closing balance for this study</value></data>
   <data name="ImportMapping.PeriodBasis" xml:space="preserve"><value>Use movements belonging to the study period.</value></data>
   <data name="ImportMapping.PeriodMode" xml:space="preserve"><value>Period amounts</value></data>
-  <data name="ImportMapping.AccountSelectionHelp" xml:space="preserve"><value>Choose the profit and loss accounts for this study. Account numbers do not determine inclusion. All original rows are retained; only included accounts create resources.</value></data>
-  <data name="ImportMapping.AccountSelectionSummary" xml:space="preserve"><value>{0} of {1} accounts included. Changing the selection requires a new preparation and approval.</value></data>
+  <data name="ImportMapping.AccountSelectionHelp" xml:space="preserve"><value>Select all, none or individual rows. Selected records with the same code are added together, regardless of their descriptions. Every original row is retained.</value></data>
+  <data name="ImportMapping.AccountSelectionSummary" xml:space="preserve"><value>{0} of {1} records selected. Changing the selection requires a new preparation and approval.</value></data>
   <data name="ImportMapping.AllAccounts" xml:space="preserve"><value>Include all accounts in this file</value></data>
   <data name="ImportMapping.IncludeAccount" xml:space="preserve"><value>Include</value></data>
-  <data name="ImportMapping.SelectAccounts" xml:space="preserve"><value>Accounts to import</value></data>
+  <data name="ImportMapping.SelectAccounts" xml:space="preserve"><value>Records to import</value></data>
+  <data name="Import.GroupingInvalid" xml:space="preserve"><value>The selected records or their grouping are invalid. Review the selection and prepare again.</value></data>
+  <data name="ImportMapping.DeselectAllRecords" xml:space="preserve"><value>Deselect all</value></data>
+  <data name="ImportMapping.GroupedPreview" xml:space="preserve"><value>Selected records grouped by code</value></data>
+  <data name="ImportMapping.SelectAllRecords" xml:space="preserve"><value>Select all</value></data>
+  <data name="ImportMapping.SourceCode" xml:space="preserve"><value>Code</value></data>
+  <data name="ImportMapping.SourceRecords" xml:space="preserve"><value>Source rows</value></data>
 </root>

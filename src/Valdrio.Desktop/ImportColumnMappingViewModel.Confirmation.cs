@@ -5,6 +5,8 @@ using Valdrio.Domain;
 
 namespace Valdrio.Desktop;
 
+public sealed record ImportGroupPreview(string Code, string Records, string Amount);
+
 public sealed partial class ImportColumnMappingViewModel
 {
     private string amountMode = "period";
@@ -31,6 +33,10 @@ public sealed partial class ImportColumnMappingViewModel
     public IAsyncRelayCommand ConfirmCommand { get; }
     public PreparedImport? Preparation => preparedImport;
     public ImportedBatch? ConfirmedImport => confirmedImport;
+    public bool HasPreparedGroups => preparedImport?.Groups is { Count: > 0 };
+    public IReadOnlyList<ImportGroupPreview> PreparedGroups => preparedImport?.Groups?.Select(g => new ImportGroupPreview(
+        g.Code, string.Join(", ", g.Records), g.Amount.Amount.ToString(CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag))))
+        .ToArray() ?? [];
     public string SourceCurrency
     {
         get => sourceCurrency;
@@ -82,7 +88,7 @@ public sealed partial class ImportColumnMappingViewModel
         {
             var selected = validation!; var study = targetStudy!; var currency = new CurrencyCode(sourceCurrency);
             var approved = interpretationApproved && !string.IsNullOrWhiteSpace(approvalReference);
-            var profile = new SourceParseProfileVersion(SourceParseProfileVersion.CurrentSchema, new(Guid.NewGuid()), 1,
+            var profile = new SourceParseProfileVersion(SourceParseProfileVersion.GroupingSchema, new(Guid.NewGuid()), 1,
                 selected.Source.FileName, selected.Settings.SourceKind, selected.Settings.WorksheetName,
                 selected.Settings.HeaderRow, selected.Settings.FirstDataRow, selected.Columns, selected.Settings.Csv,
                 selected.NumberFormat, "yyyy-MM-dd", amountMode switch
@@ -92,10 +98,10 @@ public sealed partial class ImportColumnMappingViewModel
                     _ => throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile")
                 },
                 selected.Columns.Debit.HasValue ? ImportSignConvention.DebitMinusCredit : ImportSignConvention.SignedAmount,
-                study.PeriodStart, study.PeriodEnd, currency, null, ImportDuplicatePolicy.Reject, ImportZeroPolicy.Keep,
-                SelectedAccounts(), new(approved ? ImportProfileApprovalState.ApprovedBusiness : ImportProfileApprovalState.PendingBusinessApproval,
+                study.PeriodStart, study.PeriodEnd, currency, null, ImportDuplicatePolicy.AggregateWithProvenance, ImportZeroPolicy.Keep,
+                ImportAccountSelection.All, new(approved ? ImportProfileApprovalState.ApprovedBusiness : ImportProfileApprovalState.PendingBusinessApproval,
                     string.IsNullOrWhiteSpace(approvalReference) ? "pending" : approvalReference), approved,
-                xlsxNumericAccountPolicy: selected.NumericAccountPolicy);
+                xlsxNumericAccountPolicy: selected.NumericAccountPolicy, grouping: SelectedRecords());
             var port = importPort!;
             var prepared = await Task.Run(() => port.PrepareImport(study.CompanyId, study.Id, study.Revision,
                 new(Guid.NewGuid()), selected.Source, profile, token), token);

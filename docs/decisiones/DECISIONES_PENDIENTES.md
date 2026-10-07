@@ -23,6 +23,20 @@ Aceptación del propietario registrada el 2026-10-04.
 
 ## Precisión de alcance de la fuente — 2026-10-07
 
+### Registros y códigos (confirmación posterior del mismo día)
+
+El propietario confirma 6005: 280 + 78,35 = 358,35 EUR. La selección debe ofrecer
+todos, ninguno, algunos o todos menos algunos registros, incluidas filas individuales
+que compartan código. La agrupación se realiza por la columna de código elegida,
+que puede contener cuentas, agrupaciones o códigos de gasto. Las descripciones
+se ignoran para agrupar y se conservan como procedencia. Esta instrucción sustituye
+la exigencia previa de resolver descripciones diferentes. Ver ADR-0009.
+
+El ejemplo XLSX aportado se ha validado para lectura, selección, agrupación y guardado
+local. Sus etiquetas incluyen todavía conceptos patrimoniales. La validación técnica
+y el ejemplo aprobado no certifican automáticamente su clasificación como costes ni
+el intervalo productivo del estudio. La decisión de pérdidas y ganancias sigue vigente.
+
 El propietario indicó en el chat «Guiar instalación de Visual Studio» que para
 calcular costes solo son necesarias cuentas de pérdidas y ganancias; las cuentas
 de balance quedan fuera. La muestra de patrimonio personal aportada solo sirve

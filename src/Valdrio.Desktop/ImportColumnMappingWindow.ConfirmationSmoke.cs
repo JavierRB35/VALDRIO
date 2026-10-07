@@ -60,8 +60,7 @@ public partial class ImportColumnMappingWindow
         files.Paths.Enqueue(csv); await Click(OpenSourceButton); await Click(ReadSourceButton);
         Select(AccountColumnBox, 3); Select(AmountColumnBox, 1); vm.GroupSeparator = "."; await Click(ValidateMappingButton);
         Check(vm.IsReady && !ConfirmImportButton.IsEnabled, "column validation alone cannot confirm");
-        ((IToggleProvider)new CheckBoxAutomationPeer(ImportAllAccountsBox).GetPattern(PatternInterface.Toggle)).Toggle();
-        ImportAllAccountsBox.GetBindingExpression(CheckBox.IsCheckedProperty)!.UpdateSource();
+        await Click(DeselectAllRecordsButton);
         Check(vm.IsExplicitAccountSelection && !PrepareImportButton.IsEnabled && vm.AccountChoices.Count == 3,
             "explicit selection with no included account blocks preparation");
         async Task ToggleAccount(string account)
@@ -100,7 +99,7 @@ public partial class ImportColumnMappingWindow
         Check(vm.Preparation is null && !vm.InterpretationApproved && !ConfirmImportButton.IsEnabled,
             "changing an account checkbox invalidates preparation and approval");
         await ToggleAccount("ZERO"); Approve(); await Click(PrepareImportButton);
-        Check(vm.Preparation!.Profile.AccountSelection.Kind == ImportAccountSelectionKind.ExplicitList &&
+        Check(vm.Preparation!.Profile.Grouping?.Records.Count == 2 &&
             vm.Preparation.Reconciliation.IgnoredRows == 1 && vm.Preparation.Reconciliation.SelectedRows == 2,
             "selected and excluded source rows reconcile before saving");
         AmountModeBox.SetCurrentValue(ComboBox.SelectedValueProperty, "closing-full");
@@ -134,7 +133,7 @@ public partial class ImportColumnMappingWindow
         Check(!ConfirmImportButton.IsEnabled, "double click cannot duplicate confirmed batch");
         Check(Hash(csv) == csvHash && Hash(previousPath) == previousHash, "source bytes and previous study artifact remain unchanged");
         await Click(panel.CaptureStudyButton); var photo = studies.SnapshotChoice!.Value;
-        Check(photo.PayloadSchema == ImportedStudySnapshotInput.Schema && photo.Input.Resources.Count == 2,
+        Check(photo.PayloadSchema == ImportedStudySnapshotInput.GroupedSchema && photo.Input.Resources.Count == 2,
             "native snapshot includes actual imported resources");
         Check(studies.Snapshots.Single(s => s.Value.Id == originalPhoto.Id).Value.CanonicalJson == originalPhoto.CanonicalJson,
             "context-only snapshot remains identical");
@@ -166,7 +165,7 @@ public partial class ImportColumnMappingWindow
         vm.ImportAllAccounts = true;
         var snapshot = Path.Combine(output, "snapshot.json"); File.WriteAllText(snapshot, CanonicalSnapshotJson.Serialize(photo));
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }));
-        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = 4, Source = "synthetic native WPF period import",
+        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = SqliteCompanyFileService.SchemaVersion, Source = "synthetic native WPF period import",
             StudyId = study.Id.ToString(), BatchId = batch.Id.ToString(), Files = new[] { path, backup, restored, snapshot, csv }
                 .Select(p => new { Name = Path.GetFileName(p), Sha256 = Hash(p) }) }));
     }

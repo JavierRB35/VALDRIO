@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Text.Json.Serialization;
 using Valdrio.Domain;
 
 namespace Valdrio.Application;
@@ -170,6 +171,7 @@ public sealed record ImportProfileApproval
 public sealed record SourceParseProfileVersion
 {
     public const string CurrentSchema = "valdrio-source-parse-profile-v1";
+    public const string GroupingSchema = "valdrio-source-parse-profile-v2";
 
     public SourceParseProfileVersion(
         string schemaVersion,
@@ -196,10 +198,11 @@ public sealed record SourceParseProfileVersion
         ImportProfileApproval approval,
         bool signConventionConfirmed,
         string? cultureTag = null,
-        XlsxNumericAccountPolicy xlsxNumericAccountPolicy = XlsxNumericAccountPolicy.Reject)
+        XlsxNumericAccountPolicy xlsxNumericAccountPolicy = XlsxNumericAccountPolicy.Reject,
+        ImportGroupingPlan? grouping = null)
     {
         id.EnsureValid();
-        if (schemaVersion != CurrentSchema || version < 1 || string.IsNullOrWhiteSpace(name) ||
+        if (schemaVersion is not (CurrentSchema or GroupingSchema) || version < 1 || string.IsNullOrWhiteSpace(name) ||
             !Enum.IsDefined(sourceKind) || !Enum.IsDefined(amountMode) || !Enum.IsDefined(signConvention) ||
             !Enum.IsDefined(duplicatePolicy) || !Enum.IsDefined(zeroPolicy) ||
             !Enum.IsDefined(xlsxNumericAccountPolicy) ||
@@ -216,6 +219,11 @@ public sealed record SourceParseProfileVersion
         ArgumentNullException.ThrowIfNull(numberFormat);
         ArgumentNullException.ThrowIfNull(accountSelection);
         ArgumentNullException.ThrowIfNull(approval);
+        if ((schemaVersion == GroupingSchema) != (grouping is not null) ||
+            grouping is not null && (duplicatePolicy != ImportDuplicatePolicy.AggregateWithProvenance ||
+                accountSelection.Kind != ImportAccountSelectionKind.All || zeroPolicy != ImportZeroPolicy.Keep))
+            throw ImportRules.Error("IMP_GROUPING_INVALID", "Import.GroupingInvalid");
+        Grouping = grouping;
 
         if (signConvention == ImportSignConvention.SignedAmount &&
             (columns.Amount is null || columns.Debit is not null || columns.Credit is not null) ||
@@ -257,6 +265,7 @@ public sealed record SourceParseProfileVersion
     }
 
     public string SchemaVersion { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public ImportGroupingPlan? Grouping { get; }
     public EntityId Id { get; }
     public int Version { get; }
     public string Name { get; }

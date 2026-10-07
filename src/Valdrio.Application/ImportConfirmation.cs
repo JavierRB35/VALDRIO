@@ -45,7 +45,7 @@ public sealed class PreparedImport
         void Block(string code, string key) => diagnostics.Add(new(new(code, key, []), ImportDiagnosticSeverity.Blocking,
             new(source.FileName, source.SheetName, null, null, null)));
         if ((profile.AmountMode != ImportAmountMode.PeriodAmount && profile.AmountMode != ImportAmountMode.ClosingBalanceAsStudyAmount) ||
-            profile.DuplicatePolicy != ImportDuplicatePolicy.Reject)
+            profile.DuplicatePolicy != ImportDuplicatePolicy.Reject && profile.Grouping is null)
             Block("IMP_MODE_UNAVAILABLE", "Import.ModeUnavailable");
         if (profile.Approval.State != ImportProfileApprovalState.ApprovedBusiness || !profile.SignConventionConfirmed)
             Block("IMP_APPROVAL_REQUIRED", "Import.ApprovalRequired");
@@ -55,12 +55,13 @@ public sealed class PreparedImport
             Block("IMP_FX_REQUIRED", "Import.FxRequired");
         if (studyContext.State != StudyState.Open) Block("STUDY_CLOSED", "Study.ClosedDiagnostic");
         var selectedAccounts = profile.AccountSelection.Accounts.ToHashSet(StringComparer.Ordinal);
+        var selectedRecords = profile.Grouping?.Records.Select(r => r.RecordNumber).ToHashSet();
         var rows = new List<PreparedAmountRow>();
         if (profile.SignConvention is ImportSignConvention.SignedAmount or ImportSignConvention.DebitMinusCredit)
         {
             var selection = ImportColumnSelection.Validate(source,
                 new(profile.SourceKind, profile.WorksheetName, profile.HeaderRow, profile.FirstDataRow, profile.Csv),
-                profile.Columns, profile.NumberFormat, profile.XlsxNumericAccountPolicy, token);
+                profile.Columns, profile.NumberFormat, profile.XlsxNumericAccountPolicy, token, profile.DuplicatePolicy);
             diagnostics.AddRange(selection.Diagnostics);
             var blockedRows = selection.Diagnostics.Where(d => d.Severity == ImportDiagnosticSeverity.Blocking)
                 .Select(d => d.Location.RecordNumber).ToHashSet();
@@ -81,6 +82,7 @@ public sealed class PreparedImport
                 if (row.Amount is { } amount) Validate(amount, profile.Columns.Amount, "amount");
                 var invalid = !validAmount || blockedRows.Contains(row.RecordNumber);
                 var selected = !invalid && row.Amount.HasValue &&
+                    (selectedRecords is null || selectedRecords.Contains(row.RecordNumber)) &&
                     (profile.AccountSelection.Kind == ImportAccountSelectionKind.All ||
                      selectedAccounts.Contains(row.Account!)) &&
                     (profile.ZeroPolicy == ImportZeroPolicy.Keep || row.Amount != 0m);
@@ -97,16 +99,20 @@ public sealed class PreparedImport
                 else negative = checked(negative + row.Original.Value.Amount);
         }
         catch (OverflowException) { Block("IMP_TOTAL_OVERFLOW", "Import.TotalOverflow"); }
-        var selectedCount = rows.Count(r => r.Selected);
-        if (selectedCount == 0) Block("IMP_NO_SELECTED_ROWS", "Import.NoSelectedRows");
+        // Group-level errors must not count a valid selected source row as invalid as well.
         var invalidCount = diagnostics.Where(d => d.Severity == ImportDiagnosticSeverity.Blocking && d.Location.RecordNumber.HasValue)
             .Select(d => d.Location.RecordNumber).Distinct().Count();
+        if (profile.Grouping is not null)
+            Groups = ImportGrouping.Prepare(source, profile, rows, precisionPolicy, diagnostics, token);
+        var selectedCount = rows.Count(r => r.Selected);
+        if (selectedCount == 0) Block("IMP_NO_SELECTED_ROWS", "Import.NoSelectedRows");
         Rows = FrozenList.Copy(rows); Diagnostics = FrozenList.Copy(diagnostics);
         Reconciliation = new(source.Rows.Count, invalidCount, rows.Count - invalidCount - selectedCount,
             selectedCount, profile.FixedCurrency ?? studyContext.Currency.FunctionalCurrencyCode, positive, negative,
             rows.Count(r => r.Selected && r.Original?.Amount == 0m), checked(positive + negative));
     }
-    public string SchemaVersion => Schema;
+    public string SchemaVersion => Profile.Grouping is null ? Schema : "valdrio-prepared-import-v2";
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public IReadOnlyList<PreparedImportGroup>? Groups { get; }
     public EntityId Id { get; }
     public StudyDefinition StudyContext { get; }
     public PrecisionPolicy PrecisionPolicy { get; }
@@ -117,7 +123,9 @@ public sealed class PreparedImport
     public ImportReconciliation Reconciliation { get; }
     public bool CanConfirm => Rows.Any(r => r.Selected) && !Diagnostics.Any(d => d.Severity == ImportDiagnosticSeverity.Blocking);
     [JsonIgnore] public string Fingerprint => PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(this));
-    [JsonIgnore] public string DuplicateFingerprint => PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new
+    [JsonIgnore] public string DuplicateFingerprint => Profile.Grouping is null ? LegacyDuplicateFingerprint :
+        PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new { LegacyDuplicateFingerprint, Profile.Grouping }));
+    [JsonIgnore] private string LegacyDuplicateFingerprint => PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new
     {
         Source.FileHash, Profile.SourceKind, Profile.WorksheetName, Profile.HeaderRow, Profile.FirstDataRow,
         Profile.Columns, Profile.Csv, Profile.NumberFormat, Profile.DatePattern, Profile.AmountMode, Profile.SignConvention,
@@ -127,7 +135,8 @@ public sealed class PreparedImport
 }
 
 public sealed record ImportedResource(EntityId Id, EntityId BatchId, int RecordNumber, string Account,
-    Money Original, Money Functional, BusinessDate PeriodStart, BusinessDate PeriodEnd);
+    Money Original, Money Functional, BusinessDate PeriodStart, BusinessDate PeriodEnd,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<int>? SourceRecords = null);
 
 public sealed class ImportedBatch
 {
@@ -140,7 +149,10 @@ public sealed class ImportedBatch
             throw ImportRules.Error("IMP_PREPARED_INVALID", "Import.PreparedInvalid");
         Id = id; Prepared = prepared; PreparedFingerprint = preparedFingerprint; ConfirmedStudy = confirmedStudy;
         ConfirmedAtUtc = confirmedAtUtc; Actor = actor;
-        Resources = FrozenList.Copy(prepared.Rows.Where(r => r.Selected).Select(r => new ImportedResource(
+        Resources = prepared.Groups is { } groups ? FrozenList.Copy(groups.Select(g => new ImportedResource(
+            GroupResourceId(id, g.Code), id, g.Records[0], g.Code, g.Amount, g.Amount,
+            prepared.Profile.PeriodStart, prepared.Profile.PeriodEnd, g.Records)).OrderBy(r => r.Id)) :
+            FrozenList.Copy(prepared.Rows.Where(r => r.Selected).Select(r => new ImportedResource(
             ResourceId(id, r.RecordNumber), id, r.RecordNumber, r.Account!, r.Original!.Value, r.Original.Value,
             prepared.Profile.PeriodStart, prepared.Profile.PeriodEnd)).OrderBy(r => r.Id));
     }
@@ -151,6 +163,8 @@ public sealed class ImportedBatch
     public UtcInstant ConfirmedAtUtc { get; }
     public string Actor { get; }
     public IReadOnlyList<ImportedResource> Resources { get; }
+    private static EntityId GroupResourceId(EntityId batch, string code) =>
+        new(new Guid(SHA256.HashData(Encoding.UTF8.GetBytes("valdrio-import-resource-v2|" + batch + "|" + code)).AsSpan(0, 16)));
     private static EntityId ResourceId(EntityId batch, int record)
     {
         var hash = SHA256.HashData(Encoding.UTF8.GetBytes("valdrio-import-resource-v1|" + batch + "|" +

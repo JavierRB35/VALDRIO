@@ -60,6 +60,8 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         PrepareCommand = new AsyncRelayCommand(Prepare, () => !busy && IsReady && IsAccountSelectionReady && targetStudy?.State == StudyState.Open && importPort is not null);
         ConfirmCommand = new AsyncRelayCommand(Confirm, () => !busy && writable && preparedImport?.CanConfirm == true && confirmedImport is null);
         CancelCommand = new RelayCommand(() => cancellation?.Cancel(), () => busy);
+        SelectAllRecordsCommand = new RelayCommand(() => ImportAllAccounts = true, () => !busy && HasAccountChoices);
+        DeselectAllRecordsCommand = new RelayCommand(() => ImportAllAccounts = false, () => !busy && HasAccountChoices);
         preferences.Changed += PreferencesChanged;
         Reformat();
     }
@@ -163,6 +165,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         OnPropertyChanged(""); OpenCommand.NotifyCanExecuteChanged(); ReadCommand.NotifyCanExecuteChanged();
         ValidateCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
         PrepareCommand.NotifyCanExecuteChanged(); ConfirmCommand.NotifyCanExecuteChanged();
+        SelectAllRecordsCommand.NotifyCanExecuteChanged(); DeselectAllRecordsCommand.NotifyCanExecuteChanged();
     }
     private async Task Run(Func<CancellationToken, Task> action, bool keepSelection = false)
     {
@@ -229,7 +232,8 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
                 new ImportColumnMap(accountColumn!.Value, debit: debitColumn!.Value, credit: creditColumn!.Value);
             var policy = allowNumericAccounts ? XlsxNumericAccountPolicy.PreserveStoredLexical : XlsxNumericAccountPolicy.Reject;
             var source = document!; var settings = readSettings!;
-            var result = await Task.Run(() => ImportColumnSelection.Validate(source, settings, columns, number, policy, token), token);
+            var result = await Task.Run(() => ImportColumnSelection.Validate(source, settings, columns, number, policy, token,
+                ImportDuplicatePolicy.AggregateWithProvenance), token);
             token.ThrowIfCancellationRequested(); validation = result; SetAccountChoices(result); statusKey = result.IsValid ? "Ready" : "HasErrors";
         });
     }
