@@ -187,7 +187,7 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.Load" xml:space="preserve"><value>Cargar selección</value></data>
   <data name="Model.Save" xml:space="preserve"><value>Guardar borrador</value></data>
   <data name="Model.Validate" xml:space="preserve"><value>Validar estructura</value></data>
-  <data name="Model.Publish" xml:space="preserve"><value>Publicar estructura</value></data>
+  <data name="Model.Publish" xml:space="preserve"><value>Publicar estructura guardada</value></data>
   <data name="Model.Clone" xml:space="preserve"><value>Duplicar como borrador</value></data>
   <data name="Model.Discard" xml:space="preserve"><value>Descartar cambios del borrador</value></data>
   <data name="Model.Nodes" xml:space="preserve"><value>Nodos y pools</value></data>
@@ -198,7 +198,7 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.DriverUnit" xml:space="preserve"><value>Unidades de driver</value></data>
   <data name="Model.CostLayer" xml:space="preserve"><value>Clasificación del coste (sin política de cálculo)</value></data>
   <data name="Model.PoolDescription" xml:space="preserve"><value>Descripción del pool</value></data>
-  <data name="Model.ApplyNode" xml:space="preserve"><value>Aplicar nodo al borrador</value></data>
+  <data name="Model.ApplyNode" xml:space="preserve"><value>Añadir / actualizar nodo en el borrador</value></data>
   <data name="Model.NewNode" xml:space="preserve"><value>Limpiar formulario / nuevo nodo</value></data>
   <data name="Model.RemoveNode" xml:space="preserve"><value>Quitar nodo seleccionado</value></data>
   <data name="Model.ToggleUnit" xml:space="preserve"><value>Activar / desactivar unidad</value></data>
@@ -241,8 +241,8 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Study.Model" xml:space="preserve"><value>Modelo publicado</value></data>
   <data name="Study.Scenario" xml:space="preserve"><value>Escenario</value></data>
   <data name="Study.New" xml:space="preserve"><value>Limpiar formulario / preparar otro estudio</value></data>
-  <data name="Study.Create" xml:space="preserve"><value>Guardar este estudio</value></data>
-  <data name="Study.Save" xml:space="preserve"><value>Guardar contexto</value></data>
+  <data name="Study.Create" xml:space="preserve"><value>Guardar estudio</value></data>
+  <data name="Study.Save" xml:space="preserve"><value>Guardar cambios del estudio</value></data>
   <data name="Study.Load" xml:space="preserve"><value>Cargar estudio</value></data>
   <data name="Study.Refresh" xml:space="preserve"><value>Actualizar estudios/modelos</value></data>
   <data name="Study.Capture" xml:space="preserve"><value>Capturar instantánea</value></data>
@@ -366,7 +366,7 @@ Completa: {5}</value></data>
   <data name="ImportMapping.ApprovalReference" xml:space="preserve"><value>Ejemplo representativo que has comprobado, con su cuenta e importe esperado</value></data>
   <data name="ImportMapping.ApproveInterpretation" xml:space="preserve"><value>He comprobado que son importes firmados del periodo indicado, en la moneda de origen declarada. Los negativos y ceros conservan su significado original.</value></data>
   <data name="ImportMapping.PrepareImport" xml:space="preserve"><value>Preparar importación y totales</value></data>
-  <data name="ImportMapping.ConfirmImport" xml:space="preserve"><value>Confirmar importación en el estudio</value></data>
+  <data name="ImportMapping.ConfirmImport" xml:space="preserve"><value>Guardar importación en el estudio</value></data>
   <data name="ImportMapping.PreparedReady" xml:space="preserve"><value>El lote está preparado. Revisa los totales antes de confirmar.</value></data>
   <data name="ImportMapping.Totals" xml:space="preserve"><value>Leídas {0} · seleccionadas {1} · ignoradas {2} · inválidas {3}. Positivos {4} · negativos {5} · neto {6} {7}.</value></data>
   <data name="ImportMapping.Confirmed" xml:space="preserve"><value>Importación confirmada y guardada.</value></data>
@@ -406,14 +406,14 @@ Completa: {5}</value></data>
   <data name="ImportMapping.SourceCode" xml:space="preserve"><value>Código</value></data>
   <data name="ImportMapping.SourceRecords" xml:space="preserve"><value>Filas de origen</value></data>
   <data name="Study.ChooseExisting" xml:space="preserve"><value>Estudios guardados: selecciona uno y pulsa Cargar estudio.</value></data>
-  <data name="Study.ChooseModelHelp" xml:space="preserve"><value>Selecciona el modelo publicado que utilizará este estudio. Si acabas de publicarlo, pulsa Actualizar estudios/modelos.</value></data>
+  <data name="Study.ChooseModelHelp" xml:space="preserve"><value>Elige la estructura publicada para este estudio. La lista se actualiza al entrar en este paso.</value></data>
   <data name="Study.GoToModels" xml:space="preserve"><value>Ir a modelos para crear o publicar la estructura</value></data>
-  <data name="Study.CreationHelp" xml:space="preserve"><value>Para guardar: indica nombre, fechas, moneda y modelo publicado; después pulsa Guardar este estudio. Se guarda dentro del archivo de empresa abierto.</value></data>
-  <data name="Study.PreviewHelp" xml:space="preserve"><value>Puedes abrir el Excel o CSV, elegir columnas y seleccionar registros sin guardar el estudio. Para confirmar la importación necesitarás un estudio guardado. El formulario se conserva al revisar el archivo.</value></data>
+  <data name="Study.CreationHelp" xml:space="preserve"><value>Completa el nombre, modelo publicado, fechas y moneda. Pulsa Guardar estudio y continuar para pasar a la importación.</value></data>
+  <data name="Study.PreviewHelp" xml:space="preserve"><value>El recorrido guiado guarda primero el estudio. La revisión sin estudio es opcional y no permite guardar importaciones.</value></data>
   <data name="Study.NoStudiesYet" xml:space="preserve"><value>Todavía no hay estudios guardados. Completa el formulario inferior para guardar el primero.</value></data>
   <data name="Study.NoModelsHelp" xml:space="preserve"><value>No hay modelos publicados disponibles. Ve a Modelos, crea y guarda su estructura y pulsa Publicar estructura. Después vuelve aquí y pulsa Actualizar estudios/modelos. Puedes revisar el Excel o CSV mientras tanto.</value></data>
-  <data name="Study.ImportHelp" xml:space="preserve"><value>Siguiente paso: selecciona las columnas y los registros del Excel o CSV; prepara los totales y confirma la importación.</value></data>
-  <data name="Study.SavedHelp" xml:space="preserve"><value>Estudio guardado. Usa Guardar contexto para conservar cambios o Seleccionar columnas de importación para incorporar datos.</value></data>
+  <data name="Study.ImportHelp" xml:space="preserve"><value>Continúa a Importación para elegir el archivo, revisar los registros y guardarlos en este estudio.</value></data>
+  <data name="Study.SavedHelp" xml:space="preserve"><value>El estudio se guarda dentro del archivo de empresa. Guardar cambios actualiza su contexto; Guardar importación incorpora los registros del Excel o CSV.</value></data>
   <data name="ImportMapping.SelectionOverflow" xml:space="preserve"><value>No se pueden representar los totales de esta selección: se ha superado el límite numérico. Revisa los importes del origen.</value></data>
   <data name="ImportMapping.SelectionPreviewHelp" xml:space="preserve"><value>Sumas por código, actualizadas al marcar registros. Importes del origen, sin conversión de moneda. Esta revisión no guarda datos; Preparar importación comprobará también el periodo, la moneda y los límites del estudio.</value></data>
   <data name="ImportMapping.SelectionReconciliation" xml:space="preserve"><value>Incluidos: {0} registros → {2} códigos. Excluidos: {1} registros. Positivos incluidos: {3}; negativos incluidos: {4}; neto incluido: {5}; neto excluido: {6}.</value></data>
@@ -468,4 +468,139 @@ Completa: {5}</value></data>
   <data name="ImportMapping.RoundingAdjustment" xml:space="preserve"><value>Ajuste de redondeo de conversión</value></data>
   <data name="ImportMapping.CurrencyTotals" xml:space="preserve"><value>Original {0}: positivos {1}; negativos {2}; neto {3}</value></data>
   <data name="ImportMapping.FunctionalTotal" xml:space="preserve"><value>Total funcional: {0} {1}. Ajuste de redondeo de conversión: {2} {1}.</value></data>
+  <data name="Guide.Company" xml:space="preserve"><value>1. Empresa</value></data>
+  <data name="Guide.Model" xml:space="preserve"><value>2. Estructura</value></data>
+  <data name="Guide.Study" xml:space="preserve"><value>3. Estudio</value></data>
+  <data name="Guide.Import" xml:space="preserve"><value>4. Importación</value></data>
+  <data name="Guide.Settings" xml:space="preserve"><value>Preferencias y herramientas</value></data>
+  <data name="Guide.Back" xml:space="preserve"><value>Anterior</value></data>
+  <data name="Guide.Next" xml:space="preserve"><value>Continuar</value></data>
+  <data name="Guide.SaveAndImport" xml:space="preserve"><value>Guardar estudio y continuar a la importación</value></data>
+  <data name="Guide.OpenImport" xml:space="preserve"><value>Importar Excel o CSV en este estudio</value></data>
+  <data name="Guide.Preview" xml:space="preserve"><value>Solo revisar un archivo (sin guardarlo en un estudio)</value></data>
+  <data name="Guide.NeedCompany" xml:space="preserve"><value>Primero crea o abre un archivo de empresa. Todos los modelos, estudios e importaciones se guardarán dentro de ese archivo.</value></data>
+  <data name="Guide.CompanyReady" xml:space="preserve"><value>Empresa abierta. Continúa a Estructura para crear o elegir el modelo que utilizará el estudio.</value></data>
+  <data name="Guide.NeedDraft" xml:space="preserve"><value>Escribe el nombre de la estructura y pulsa Crear modelo nuevo, o selecciona una versión existente y cárgala.</value></data>
+  <data name="Guide.NeedCenter" xml:space="preserve"><value>Añade al menos un centro: su código identifica el centro y su nombre explica qué representa. Después crea las unidades de actividad.</value></data>
+  <data name="Guide.NeedUnit" xml:space="preserve"><value>Falta una unidad de actividad. Créala aquí, por ejemplo HORAS / time / h, si esa es la unidad que corresponde a tu modelo.</value></data>
+  <data name="Guide.NeedNodeCode" xml:space="preserve"><value>Completa el código del nodo que estás editando. Es su identificador dentro de este modelo.</value></data>
+  <data name="Guide.NeedNodeCenter" xml:space="preserve"><value>Selecciona el centro físico al que pertenece este nodo. Puedes crear centros en el paso Centros y unidades.</value></data>
+  <data name="Guide.NeedNodeUnit" xml:space="preserve"><value>Selecciona la unidad de actividad del nodo. Si la lista está vacía, créala en Centros y unidades.</value></data>
+  <data name="Guide.ApplyNode" xml:space="preserve"><value>Pulsa Añadir / actualizar nodo. Después guarda el modelo: añadir un nodo al borrador todavía no lo guarda en el archivo.</value></data>
+  <data name="Guide.NeedPrincipal" xml:space="preserve"><value>El modelo necesita al menos un nodo activo con papel Principal. Los auxiliares pueden coexistir. Elige el papel según tu metodología, no solo para superar este paso.</value></data>
+  <data name="Guide.SaveModel" xml:space="preserve"><value>Hay cambios pendientes. Guarda el borrador antes de validar y publicar la estructura.</value></data>
+  <data name="Guide.PublishModel" xml:space="preserve"><value>Borrador guardado. Valida y publica la estructura para que esté disponible al crear el estudio. Publicar fija esta versión; no calcula costes.</value></data>
+  <data name="Guide.ModelComplete" xml:space="preserve"><value>Estructura publicada. Ya puedes continuar al estudio. Para modificarla, crea una copia como borrador.</value></data>
+  <data name="Guide.NeedPublished" xml:space="preserve"><value>Falta una estructura publicada. Vuelve al paso 2, guarda y publica el modelo. Al volver aquí se actualizará la lista.</value></data>
+  <data name="Guide.NeedStudyName" xml:space="preserve"><value>Escribe un nombre para reconocer este estudio, por ejemplo Saldos octubre 2026.</value></data>
+  <data name="Guide.NeedStudyModel" xml:space="preserve"><value>Selecciona la versión publicada del modelo que utilizará este estudio.</value></data>
+  <data name="Guide.NeedDates" xml:space="preserve"><value>Selecciona el inicio y el final del periodo. La fecha de cierre del archivo importado debe corresponder al significado que confirmarás.</value></data>
+  <data name="Guide.InvalidDates" xml:space="preserve"><value>La fecha de inicio no puede ser posterior a la de final. Corrige las fechas.</value></data>
+  <data name="Guide.ClosedStudy" xml:space="preserve"><value>Este estudio está cerrado. Reábrelo para importar nuevos datos, o crea otro estudio.</value></data>
+  <data name="Guide.SaveStudy" xml:space="preserve"><value>Pulsa Guardar estudio y continuar. Se guardará dentro del archivo de empresa abierto y pasarás a importar los datos.</value></data>
+  <data name="Guide.StudyComplete" xml:space="preserve"><value>Estudio guardado. Ya puedes importar Excel o CSV. El último paso de la importación guardará los registros seleccionados en este estudio.</value></data>
+  <data name="Guide.PreviewOnly" xml:space="preserve"><value>Modo de revisión: puedes leer y seleccionar registros, pero no guardar una importación. Para guardar, utiliza el recorrido Empresa → Estructura → Estudio → Importación. Tu selección se conserva al cerrar esta ventana.</value></data>
+  <data name="Guide.NeedMapping" xml:space="preserve"><value>Selecciona las columnas y comprueba la interpretación de los números antes de continuar.</value></data>
+  <data name="Guide.NeedRecords" xml:space="preserve"><value>Selecciona al menos un registro. Puedes marcar todos y desmarcar los que quieras excluir.</value></data>
+  <data name="Guide.NeedMeaning" xml:space="preserve"><value>Elige explícitamente qué representan los importes: movimientos del periodo, saldo íntegro al cierre o diferencia entre acumulados.</value></data>
+  <data name="Guide.NeedCurrency" xml:space="preserve"><value>Indica la moneda de los importes, por ejemplo EUR. No se deduce de la configuración regional.</value></data>
+  <data name="Guide.NeedExample" xml:space="preserve"><value>Anota una cuenta y su importe esperado tras agrupar los registros seleccionados; por ejemplo 6005 = 358,35 EUR.</value></data>
+  <data name="Guide.NeedApproval" xml:space="preserve"><value>Comprueba la explicación de los importes y marca la casilla de confirmación para preparar la revisión final.</value></data>
+  <data name="Guide.ReadyReview" xml:space="preserve"><value>Ya puedes preparar la revisión final. Todavía no se guardará nada; revisarás los totales antes de guardar.</value></data>
+  <data name="Guide.ImportFile" xml:space="preserve"><value>1. Archivo</value></data>
+  <data name="Guide.ImportColumns" xml:space="preserve"><value>2. Columnas y números</value></data>
+  <data name="Guide.ImportRecords" xml:space="preserve"><value>3. Registros</value></data>
+  <data name="Guide.ImportMeaning" xml:space="preserve"><value>4. Significado y moneda</value></data>
+  <data name="Guide.ImportReview" xml:space="preserve"><value>5. Revisar y guardar</value></data>
+  <data name="Guide.ReadNext" xml:space="preserve"><value>Leer archivo y continuar</value></data>
+  <data name="Guide.ValidateNext" xml:space="preserve"><value>Comprobar columnas y continuar</value></data>
+  <data name="Guide.ReviewNext" xml:space="preserve"><value>Preparar revisión final</value></data>
+  <data name="Guide.SaveImport" xml:space="preserve"><value>Guardar importación en el estudio</value></data>
+  <data name="Guide.SavedImport" xml:space="preserve"><value>Importación guardada. Puedes cerrar esta ventana y consultar el resultado en el estudio.</value></data>
+  <data name="Guide.ReviewHelp" xml:space="preserve"><value>Revisa el destino, los registros y los totales. Guardar importación escribe los datos en el archivo de empresa; cerrar antes de guardar solo conserva la selección para revisarla después.</value></data>
+  <data name="Guide.EditReview" xml:space="preserve"><value>La preparación ha cambiado o contiene errores. Vuelve al paso correspondiente, corrige los datos y prepara otra vez.</value></data>
+  <data name="Guide.FileHelp" xml:space="preserve"><value>Elige el archivo y la hoja. Indica dónde están los títulos y dónde empiezan los datos. Leer no modifica el archivo original.</value></data>
+  <data name="Guide.ColumnsHelp" xml:space="preserve"><value>Asocia la cuenta y el importe a las columnas del archivo. Las descripciones no se usan para agrupar. Revisa la vista previa y corrige cualquier error.</value></data>
+  <data name="Guide.RecordsHelp" xml:space="preserve"><value>Se importarán solo las filas marcadas. Las filas de la misma cuenta se suman conservando su origen.</value></data>
+  <data name="Guide.MeaningHelp" xml:space="preserve"><value>Este paso decide cómo se incorporan los importes. No se deduce por el nombre del archivo: elige la opción que representa tus datos.</value></data>
+  <data name="Guide.DraftTab" xml:space="preserve"><value>1. Elegir o crear modelo</value></data>
+  <data name="Guide.MastersTab" xml:space="preserve"><value>2. Centros y unidades</value></data>
+  <data name="Guide.NodesTab" xml:space="preserve"><value>3. Añadir nodos</value></data>
+  <data name="Guide.PublishTab" xml:space="preserve"><value>4. Guardar y publicar</value></data>
+  <data name="Guide.PublishNext" xml:space="preserve"><value>Guardar, validar y publicar estructura</value></data>
+  <data name="Guide.MasterHelp" xml:space="preserve"><value>Centro: área física u organizativa. Unidad de actividad: lo que medirás, como horas o unidades. Crea aquí los que necesites; después podrás seleccionarlos en los nodos.</value></data>
+  <data name="Guide.NodesHelp" xml:space="preserve"><value>Nodo: elemento de la estructura de cálculo vinculado a un centro. Su pool agrupa costes. Añadir lo incorpora al borrador; Guardar y publicar lo conserva para usarlo en estudios.</value></data>
+  <data name="Guide.HelpHint" xml:space="preserve"><value>Ayuda: sitúa el cursor sobre un campo o selecciónalo con Tab para ver su explicación aquí.</value></data>
+  <data name="Guide.StoredAt" xml:space="preserve"><value>Archivo donde se guardan los datos: </value></data>
+  <data name="Guide.Help.CompanyName" xml:space="preserve"><value>Nombre para identificar la empresa. Crear archivo te pedirá una ubicación; ese archivo contendrá todos sus datos.</value></data>
+  <data name="Guide.Help.Currency" xml:space="preserve"><value>Moneda funcional del estudio: unidad monetaria en la que se expresarán sus resultados. En Empresa solo es una sugerencia para nuevos estudios.</value></data>
+  <data name="Guide.Help.UnitCode" xml:space="preserve"><value>Identificador único de esta unidad, por ejemplo HORAS. No es un número de cuenta.</value></data>
+  <data name="Guide.Help.UnitDimension" xml:space="preserve"><value>Tipo de magnitud: por ejemplo time para tiempo. Unidades de magnitudes distintas no se pueden tratar como equivalentes.</value></data>
+  <data name="Guide.Help.UnitSymbol" xml:space="preserve"><value>Símbolo visible de la unidad, por ejemplo h para horas.</value></data>
+  <data name="Guide.Help.UnitScale" xml:space="preserve"><value>Número de decimales permitido para medir esta unidad, entre 0 y 12.</value></data>
+  <data name="Guide.Help.UnitDiscrete" xml:space="preserve"><value>Marca esta opción si la magnitud se cuenta en unidades enteras indivisibles.</value></data>
+  <data name="Guide.Help.CenterCode" xml:space="preserve"><value>Código único del centro físico u organizativo, por ejemplo ADM01.</value></data>
+  <data name="Guide.Help.CenterName" xml:space="preserve"><value>Nombre comprensible del centro, por ejemplo Administración. No determina automáticamente su papel en el reparto.</value></data>
+  <data name="Guide.Help.Master" xml:space="preserve"><value>Selecciona un centro existente para consultar o modificar sus datos. Crear centro utiliza el código y nombre escritos.</value></data>
+  <data name="Guide.Help.ModelChoice" xml:space="preserve"><value>Versión del modelo. Cargar selección abre esa versión; publicar fija su estructura para utilizarla en estudios.</value></data>
+  <data name="Guide.Help.Description" xml:space="preserve"><value>Nombre de la estructura de costes. Crear modelo nuevo inicia un borrador; no crea un estudio.</value></data>
+  <data name="Guide.Help.SelectedNode" xml:space="preserve"><value>Selecciona un nodo ya añadido para editarlo. Para otro nodo usa Limpiar formulario / nuevo nodo.</value></data>
+  <data name="Guide.Help.NodeCode" xml:space="preserve"><value>Código único del nodo dentro de este modelo. Puede pertenecer a un centro que tenga otros nodos.</value></data>
+  <data name="Guide.Help.Physical" xml:space="preserve"><value>Centro al que pertenece el nodo. Si no existe, créalo en Centros y unidades.</value></data>
+  <data name="Guide.Help.Role" xml:space="preserve"><value>Principal o Auxiliar según la metodología del modelo. Es independiente de las funciones y de la clasificación del coste. Se exige al menos un Principal activo.</value></data>
+  <data name="Guide.Help.FunctionTags" xml:space="preserve"><value>Etiquetas opcionales para describir las funciones del nodo, separadas por comas. No asignan reglas de cálculo.</value></data>
+  <data name="Guide.Help.DriverUnit" xml:space="preserve"><value>Unidad en la que se medirá la actividad del nodo, por ejemplo horas. Es obligatoria; puedes crearla en Centros y unidades.</value></data>
+  <data name="Guide.Help.Layer" xml:space="preserve"><value>Clasificación del coste para este pool. No establece todavía una política de cálculo. No se deduce de la cuenta.</value></data>
+  <data name="Guide.Help.PoolDescription" xml:space="preserve"><value>Descripción opcional del conjunto de costes asociado a este nodo.</value></data>
+  <data name="Guide.Help.UnitMaster" xml:space="preserve"><value>Selecciona la unidad cuyo estado quieres activar o desactivar. Esto no crea una unidad nueva.</value></data>
+  <data name="Guide.Help.Name" xml:space="preserve"><value>Nombre con el que identificarás el estudio al volver a abrir la empresa.</value></data>
+  <data name="Guide.Help.PeriodStart" xml:space="preserve"><value>Primer día incluido en el periodo del estudio. Selecciónalo en el calendario.</value></data>
+  <data name="Guide.Help.PeriodEnd" xml:space="preserve"><value>Último día incluido. Para saldos al cierre, es la fecha que representan los saldos importados.</value></data>
+  <data name="Guide.Help.Scenario" xml:space="preserve"><value>Distingue datos reales, presupuesto o simulación. No cambia por sí solo los importes importados.</value></data>
+  <data name="Guide.Help.StudyChoice" xml:space="preserve"><value>Elige un estudio guardado y pulsa Cargar estudio para trabajar en él.</value></data>
+  <data name="Guide.Help.SnapshotChoice" xml:space="preserve"><value>Una instantánea conserva los datos y el contexto de un momento. No es el botón para guardar una importación.</value></data>
+  <data name="Guide.Help.Worksheet" xml:space="preserve"><value>Hoja del Excel que contiene las cuentas y los importes.</value></data>
+  <data name="Guide.Help.HeaderRow" xml:space="preserve"><value>Número de fila con los títulos de las columnas, por ejemplo 1.</value></data>
+  <data name="Guide.Help.FirstDataRow" xml:space="preserve"><value>Primera fila con datos que deben leerse, normalmente la siguiente a los títulos.</value></data>
+  <data name="Guide.Help.Delimiter" xml:space="preserve"><value>Carácter que separa columnas en el CSV: punto y coma, coma o tabulador.</value></data>
+  <data name="Guide.Help.Encoding" xml:space="preserve"><value>Codificación del CSV. UTF-8 es habitual; cámbiala si los caracteres del origen requieren otra.</value></data>
+  <data name="Guide.Help.AmountLayout" xml:space="preserve"><value>Elige una columna con importes firmados o dos columnas Debe y Haber. En el segundo caso se calcula Debe menos Haber.</value></data>
+  <data name="Guide.Help.AccountColumn" xml:space="preserve"><value>Columna del código de cuenta. Agrupamos por este código, nunca por la descripción.</value></data>
+  <data name="Guide.Help.AmountColumn" xml:space="preserve"><value>Columna que contiene el importe con su signo. No elijas una columna de descripción o de totales ajenos a las cuentas.</value></data>
+  <data name="Guide.Help.DebitColumn" xml:space="preserve"><value>Columna de cargos. Se restará el Haber de este valor; se validan ambas columnas.</value></data>
+  <data name="Guide.Help.CreditColumn" xml:space="preserve"><value>Columna de abonos. Su valor se resta del Debe.</value></data>
+  <data name="Guide.Help.DecimalSeparator" xml:space="preserve"><value>Separador decimal del archivo de origen. Ejemplo: coma en 123,45; punto en 123.45.</value></data>
+  <data name="Guide.Help.GroupSeparator" xml:space="preserve"><value>Separador de miles del origen. Elige Ninguno si los números no lo tienen. No es el separador de columnas del CSV.</value></data>
+  <data name="Guide.Help.NegativeSyntax" xml:space="preserve"><value>Cómo se escriben los negativos en el origen: -123, (123) o 123-.</value></data>
+  <data name="Guide.Help.AllowNumericAccounts" xml:space="preserve"><value>Permite códigos almacenados como números en Excel. Comprueba los ceros iniciales: Excel puede haberlos eliminado.</value></data>
+  <data name="Guide.Help.ReplaceBatch" xml:space="preserve"><value>Opcional. Reemplaza una importación identificada; conserva su historial y deja de contar sus importes. Sin marcar añade una importación.</value></data>
+  <data name="Guide.Help.Replacement" xml:space="preserve"><value>Importación concreta que se sustituirá íntegramente. Revisa la selección antes de guardar.</value></data>
+  <data name="Guide.Help.AmountMode" xml:space="preserve"><value>Periodo: movimientos entre las fechas. Saldo íntegro: incorpora el saldo completo al cierre. Acumulados: resta un cierre anterior preparado explícitamente.</value></data>
+  <data name="Guide.Help.SourceCurrency" xml:space="preserve"><value>Código de moneda de los importes del archivo, por ejemplo EUR. No se deduce del símbolo o de la región.</value></data>
+  <data name="Guide.Help.ApprovalReference" xml:space="preserve"><value>Ejemplo que has contrastado con el origen: cuenta y total esperado de las filas seleccionadas. Sirve para dejar constancia de tu comprobación.</value></data>
+  <data name="Guide.Help.InterpretationApproved" xml:space="preserve"><value>Confirma que el periodo, el significado, la moneda y el ejemplo son correctos. Cambiar datos relevantes exige revisar de nuevo.</value></data>
+  <data name="Guide.Help.International" xml:space="preserve"><value>Opciones para moneda por fila, fecha de documento y conversiones. Los tipos se introducen explícitamente y se conservan con la importación.</value></data>
+  <data name="Guide.Help.CurrencyFromColumn" xml:space="preserve"><value>Activa si cada fila indica su propia moneda y elige la columna correspondiente.</value></data>
+  <data name="Guide.Help.CurrencyColumn" xml:space="preserve"><value>Columna con códigos de moneda como EUR o USD.</value></data>
+  <data name="Guide.Help.DateColumn" xml:space="preserve"><value>Columna opcional con la fecha del documento. No reemplaza las fechas del estudio.</value></data>
+  <data name="Guide.Help.DatePattern" xml:space="preserve"><value>Patrón explícito para fechas de texto, por ejemplo dd/MM/yyyy. Evita interpretar una fecha ambigua según la región del ordenador.</value></data>
+  <data name="Guide.Help.RateSetName" xml:space="preserve"><value>Nombre del conjunto de tipos manuales que quedará conservado con la importación.</value></data>
+  <data name="Guide.Help.AllowedRateStart" xml:space="preserve"><value>Primera fecha admitida para los tipos de cambio que selecciones.</value></data>
+  <data name="Guide.Help.AllowedRateEnd" xml:space="preserve"><value>Última fecha admitida para los tipos de cambio que selecciones.</value></data>
+  <data name="Guide.Help.RateToApply" xml:space="preserve"><value>Identificador del tipo que aplicarás a las filas seleccionadas. Revisa las asignaciones; no asignes conversión a filas ya expresadas en moneda funcional.</value></data>
+  <data name="Guide.Help.FiscalStart" xml:space="preserve"><value>Inicio del ejercicio común a los dos acumulados comparados.</value></data>
+  <data name="Guide.Help.FiscalEnd" xml:space="preserve"><value>Final del ejercicio común a los dos acumulados comparados.</value></data>
+  <data name="Guide.Help.PreviousEnd" xml:space="preserve"><value>Fecha de cierre del archivo anterior que se restará al actual.</value></data>
+  <data name="Guide.Help.ComparisonScope" xml:space="preserve"><value>Identifica el mismo ámbito contable en ambos archivos. No compares universos de cuentas distintos.</value></data>
+  <data name="Guide.Help.Rates" xml:space="preserve"><value>Por fila: identificador, moneda original, tipo hacia la funcional (punto decimal), fecha ISO yyyy-MM-dd y fuente. No se buscan ni invierten tipos automáticamente.</value></data>
+  <data name="Guide.Help.Records" xml:space="preserve"><value>Marca o desmarca las filas que incorporarás. Puedes seleccionar todas, ninguna o excluir solo algunas.</value></data>
+  <data name="Guide.Help.RateSelections" xml:space="preserve"><value>Escribe el identificador del tipo elegido para cada registro incluido que requiera conversión.</value></data>
+  <data name="Guide.MeaningChosen" xml:space="preserve"><value>He elegido el significado de los importes indicado arriba.</value></data>
+  <data name="Guide.OtherStudy" xml:space="preserve"><value>Otras operaciones: nuevo estudio, cierre e instantáneas</value></data>
+  <data name="Guide.OtherModel" xml:space="preserve"><value>Operaciones individuales y mantenimiento del modelo</value></data>
+  <data name="Guide.OtherFile" xml:space="preserve"><value>Copias, restauración y actualización de archivos</value></data>
+  <data name="Guide.Help.SelectedUiLanguageTag" xml:space="preserve"><value>Idioma de los textos de la aplicación. No cambia los datos guardados.</value></data>
+  <data name="Guide.Help.SelectedFormatCultureTag" xml:space="preserve"><value>Región utilizada para mostrar números y fechas. El formato del archivo importado se elige por separado.</value></data>
+  <data name="Guide.Help.SelectedTimeZoneId" xml:space="preserve"><value>Zona para mostrar instantes del historial. No cambia las fechas de negocio del estudio.</value></data>
+  <data name="Guide.CorrectImport" xml:space="preserve"><value>Volver a corregir los datos</value></data>
 </root>

@@ -18,13 +18,18 @@ public partial class StudyWorkspacePanel : UserControl
             ActionStatus.BringIntoView();
         };
     }
-    private void GoToModels(object sender, RoutedEventArgs e)
+    private async void GoToModels(object sender, RoutedEventArgs e)
     {
         if (Window.GetWindow(this) is MainWindow main)
         {
-            main.ModelPanel.BringIntoView();
+            await main.NavigateWorkflow(1);
             main.ModelPanel.Focus();
         }
+    }
+    private async void ContinueToImport(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is StudyWorkspaceViewModel studies && await studies.SaveForImport() && Window.GetWindow(this) is MainWindow main)
+            await main.NavigateWorkflow(3);
     }
     private async void OpenImportColumns(object sender, RoutedEventArgs e)
     {

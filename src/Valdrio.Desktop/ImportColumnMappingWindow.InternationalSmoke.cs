@@ -24,6 +24,7 @@ public partial class ImportColumnMappingWindow
         void Check(bool ok, string label) { if (!ok) throw new InvalidOperationException("International WPF: " + label); checks.Add(label); }
         async Task Click(Button button)
         {
+            GuidedUi.Reveal(button);
             if (!button.IsEnabled) throw new InvalidOperationException("Disabled international button: " + button.Name);
             ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
@@ -45,19 +46,19 @@ public partial class ImportColumnMappingWindow
         vm.International = true; vm.CurrencyFromColumn = true; vm.CurrencyColumn = 3; vm.DateColumn = 4; vm.DatePattern = "dd/MM/yyyy";
         vm.AllowedRateStart = new(2026, 10, 1); vm.AllowedRateEnd = new(2026, 10, 31); vm.RateSetName = "manual-example-v1";
         vm.ApprovalReference = "Synthetic 100 USD x 0.9 + 20 EUR = 110 EUR"; vm.InterpretationApproved = true;
-        await Click(PrepareImportButton);
+        await PrepareForSmoke();
         Check(vm.Preparation is { CanConfirm: false } && !ConfirmImportButton.IsEnabled && vm.Preparation.Diagnostics.Any(d => d.Diagnostic.Code == "FX_RATE_MISSING"), "missing selected rate blocks confirmation");
         var rate = new ImportRateDraft { Id = "USD-EUR", Currency = "USD", Quote = "0.9", Date = "2026-10-01", Source = "Synthetic manual example" };
-        vm.Rates.Add(rate); vm.AccountChoices[0].RateId = "USD-EUR"; vm.InterpretationApproved = true; await Click(PrepareImportButton);
+        vm.Rates.Add(rate); vm.AccountChoices[0].RateId = "USD-EUR"; vm.InterpretationApproved = true; await PrepareForSmoke();
         Check(vm.Preparation is { CanConfirm: true } && vm.Preparation.Reconciliation.NetAmount == 110m, "100 USD at 0.9 plus 20 EUR prepares 110 EUR");
         Check(vm.Preparation!.ConversionBridge!.OriginalTotals.Count == 2 && vm.SelectionTotals is null, "original currency totals remain separate");
         Check(vm.Preparation.ConversionBridge.Rows[0].DocumentDate?.ToString() == "2026-10-01", "source date pattern produces typed business date");
-        ConversionPreviewPanel.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
+        RevealImportElement(ConversionPreviewPanel); ConversionPreviewPanel.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "conversion-es.png"));
         var fingerprint = vm.Preparation.Fingerprint;
         main.ApplyPresentationPreset("en", "de-DE", "UTC", true, true); FlowDirection = FlowDirection.RightToLeft;
         Check(vm.Preparation.Fingerprint == fingerprint, "presentation and timezone leave prepared conversion unchanged");
-        ConversionPreviewPanel.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
+        RevealImportElement(ConversionPreviewPanel); ConversionPreviewPanel.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "conversion-pseudo.png"));
         FlowDirection = FlowDirection.LeftToRight; main.ApplyPresentationPreset("es", "es-ES", "Europe/Madrid", false, false);
         await Click(ConfirmImportButton); var first = vm.ConfirmedImport!; await Click(panel.CaptureStudyButton);
@@ -66,7 +67,7 @@ public partial class ImportColumnMappingWindow
         await studies.AttachImportTarget(); vm.ReplaceBatch = true; vm.Replacement = vm.ExistingBatches.Single(b => b.Id == first.Id);
         rate.Quote = "0.95"; Check(vm.Preparation is null && !vm.InterpretationApproved, "rate edit clears preparation and approval");
         vm.ApprovalReference = "Synthetic replacement 100 USD x 0.95 + 20 EUR = 115 EUR";
-        vm.InterpretationApproved = true; await Click(PrepareImportButton); await Click(ConfirmImportButton); await Click(panel.CaptureStudyButton);
+        vm.InterpretationApproved = true; await PrepareForSmoke(); await Click(ConfirmImportButton); await Click(panel.CaptureStudyButton);
         var photo = studies.SnapshotChoice!.Value;
         Check(photo.Input.Resources.Sum(r => r.Functional.Amount) == 115m && oldPhoto.Input.Resources.Sum(r => r.Functional.Amount) == 110m,
             "replacement updates active total and preserves old snapshot");

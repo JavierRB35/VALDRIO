@@ -11,11 +11,13 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        InitializeGuidance();
         DataContextChanged += OnDataContextChanged;
     }
 
     public bool RunKeyboardNavigationSmoke()
     {
+        workflowStep = 4; UpdateWorkflow();
         DevelopmentTools.IsExpanded = true;
         UpdateLayout();
 
@@ -86,6 +88,7 @@ public partial class MainWindow : Window
 
     internal void ScrollToElement(FrameworkElement element)
     {
+        RevealWorkflowElement(element);
         Keyboard.ClearFocus(); UpdateLayout();
         var offset=RootScrollViewer.VerticalOffset + element.TranslatePoint(new Point(0,0),RootScrollViewer).Y;
         RootScrollViewer.ScrollToVerticalOffset(offset); UpdateLayout();
@@ -107,6 +110,7 @@ public partial class MainWindow : Window
         {
             viewModel.PresentationChanged += OnPresentationChanged;
             ApplyPresentation();
+            BindGuidance();
         }
     }
 

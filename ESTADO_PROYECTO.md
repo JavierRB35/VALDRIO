@@ -1,3 +1,11 @@
+# Prioridad actual: usabilidad (2026-10-07)
+
+El propietario solicita un recorrido explícito e intuitivo, sin perder funciones ni
+entrar en estética. Implementado el recorrido guiado Empresa → Estructura → Estudio
+→ Importación, ayuda contextual ES/EN y guardado con destino visible. Directriz
+permanente: `docs/directrices/USABILIDAD.md`; evidencia: `docs/evidencias/USABILIDAD_RECORRIDO_GUIADO_2026-10-07.md`.
+El cierre depende del recibo Windows y CI del commit final. T07 no se inicia.
+
 # ESTADO_PROYECTO
 
 Fecha de revisión 2026-10-07. Repositorio `JavierRB35/VALDRIO`.

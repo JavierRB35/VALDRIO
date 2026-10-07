@@ -1,46 +1,61 @@
-<UserControl x:Class="Valdrio.Desktop.CompanyFilePanel"
- xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
- xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:Valdrio.Desktop" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Valdrio.Desktop.CompanyFilePanel">
  <GroupBox Header="{Binding Title}" Padding="16" Margin="0,0,0,14">
   <StackPanel>
-   <TextBlock Text="{Binding ActiveCompanyLabel}" FontWeight="SemiBold"/>
-   <TextBlock x:Name="ActiveCompanyNameText" Text="{Binding ActiveCompanyName}" FontSize="20" FontWeight="SemiBold" Margin="0,4,0,14"/>
+   <TextBlock Text="{Binding ActiveCompanyLabel}" FontWeight="SemiBold" />
+   <TextBlock x:Name="ActiveCompanyNameText" Text="{Binding ActiveCompanyName}" FontSize="20" FontWeight="SemiBold" Margin="0,4,0,14" />
    <Grid IsEnabled="{Binding IsIdle}">
-    <Grid.ColumnDefinitions><ColumnDefinition Width="220"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-    <TextBlock Text="{Binding NameLabel}" TextWrapping="Wrap" Margin="0,4,12,6"/>
-    <TextBox x:Name="NameBox" Grid.Column="1" Text="{Binding CompanyName,UpdateSourceTrigger=PropertyChanged}" TabIndex="10" AutomationProperties.Name="{Binding NameLabel}"/>
-    <TextBlock Grid.Row="1" Text="{Binding CurrencyLabel}" TextWrapping="Wrap" Margin="0,8,12,6"/>
-    <ComboBox x:Name="CurrencyBox" Grid.Row="1" Grid.Column="1" Margin="0,6,0,0" ItemsSource="{Binding CurrencyOptions}" SelectedItem="{Binding Currency,UpdateSourceTrigger=PropertyChanged}" TabIndex="11" AutomationProperties.Name="{Binding CurrencyLabel}"/>
+    <Grid.ColumnDefinitions>
+     <ColumnDefinition Width="220" />
+     <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <TextBlock Text="{Binding NameLabel}" TextWrapping="Wrap" Margin="0,4,12,6" />
+    <TextBox x:Name="NameBox" Grid.Column="1" Text="{Binding CompanyName,UpdateSourceTrigger=PropertyChanged}" TabIndex="10" AutomationProperties.Name="{Binding NameLabel}" local:FieldHelp.Key="CompanyName" />
+    <TextBlock Grid.Row="1" Text="{Binding CurrencyLabel}" TextWrapping="Wrap" Margin="0,8,12,6" />
+    <ComboBox x:Name="CurrencyBox" Grid.Row="1" Grid.Column="1" Margin="0,6,0,0" ItemsSource="{Binding CurrencyOptions}" SelectedItem="{Binding Currency,UpdateSourceTrigger=PropertyChanged}" TabIndex="11" AutomationProperties.Name="{Binding CurrencyLabel}" local:FieldHelp.Key="Currency" />
    </Grid>
    <WrapPanel Margin="0,10,0,10">
-    <Button x:Name="CreateButton" Content="{Binding CreateLabel}" Command="{Binding CreateCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="12"/>
-    <Button x:Name="OpenButton" Content="{Binding OpenLabel}" Command="{Binding OpenCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="13"/>
-    <Button x:Name="CloseButton" Content="{Binding CloseLabel}" Command="{Binding CloseCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="14"/>
-    <Button x:Name="BackupButton" Content="{Binding BackupLabel}" Command="{Binding BackupCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="15"/>
-    <Button x:Name="RestoreButton" Content="{Binding RestoreLabel}" Command="{Binding RestoreCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="16"/>
-    <Button x:Name="UpgradeButton" Content="{Binding UpgradeLabel}" Command="{Binding UpgradeCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="60" AutomationProperties.Name="{Binding UpgradeLabel}"/>
-    <Button Content="{Binding CancelLabel}" Command="{Binding CancelCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="17"/>
+    <Button x:Name="CreateButton" Content="{Binding CreateLabel}" Command="{Binding CreateCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="12" />
+    <Button x:Name="OpenButton" Content="{Binding OpenLabel}" Command="{Binding OpenCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="13" />
+    <Button x:Name="CloseButton" Content="{Binding CloseLabel}" Command="{Binding CloseCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="14" />
+    <Button x:Name="BackupButton" Content="{Binding BackupLabel}" Command="{Binding BackupCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="15" />
+    <Button x:Name="RestoreButton" Content="{Binding RestoreLabel}" Command="{Binding RestoreCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="16" />
+    <Button x:Name="UpgradeButton" Content="{Binding UpgradeLabel}" Command="{Binding UpgradeCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="60" AutomationProperties.Name="{Binding UpgradeLabel}" />
+    <Button Content="{Binding CancelLabel}" Command="{Binding CancelCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="17" />
    </WrapPanel>
-   <TextBlock Text="{Binding Status}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+   <TextBlock Text="{Binding Status}" TextWrapping="Wrap" Margin="0,0,0,8" />
    <Expander Header="{Binding TechnicalDetailsLabel}" Margin="0,0,0,10">
-    <TextBlock Text="{Binding Details}" TextWrapping="Wrap" FlowDirection="LeftToRight" Margin="0,8,0,0"/>
+    <TextBlock Text="{Binding Details}" TextWrapping="Wrap" FlowDirection="LeftToRight" Margin="0,8,0,0" />
    </Expander>
-   <Grid IsEnabled="{Binding IsIdle}">
-    <Grid.ColumnDefinitions><ColumnDefinition Width="220"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-    <TextBlock Text="{Binding UnitLabel}" TextWrapping="Wrap"/>
-    <TextBox x:Name="UnitCodeBox" Grid.Column="1" Text="{Binding UnitCode,UpdateSourceTrigger=PropertyChanged}" TabIndex="18" AutomationProperties.Name="{Binding UnitLabel}"/>
-    <TextBlock Grid.Row="1" Text="{Binding DimensionLabel}" TextWrapping="Wrap"/>
-    <TextBox x:Name="DimensionBox" Grid.Row="1" Grid.Column="1" Text="{Binding UnitDimension,UpdateSourceTrigger=PropertyChanged}" TabIndex="19" AutomationProperties.Name="{Binding DimensionLabel}"/>
-    <TextBlock Grid.Row="2" Text="{Binding SymbolLabel}" TextWrapping="Wrap"/>
-    <TextBox x:Name="SymbolBox" Grid.Row="2" Grid.Column="1" Text="{Binding UnitSymbol,UpdateSourceTrigger=PropertyChanged}" TabIndex="20" AutomationProperties.Name="{Binding SymbolLabel}"/>
-    <TextBlock Grid.Row="3" Text="{Binding ScaleLabel}" TextWrapping="Wrap"/>
-    <ComboBox x:Name="ScaleBox" Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ScaleOptions}" SelectedItem="{Binding UnitScale}" TabIndex="21" AutomationProperties.Name="{Binding ScaleLabel}"/>
-    <CheckBox x:Name="DiscreteBox" Grid.Row="4" Grid.ColumnSpan="2" Content="{Binding DiscreteLabel}" IsChecked="{Binding UnitDiscrete}" Margin="0,8,0,8" TabIndex="22"/>
-   </Grid>
-   <Button x:Name="AddUnitButton" Content="{Binding AddUnitLabel}" Command="{Binding AddUnitCommand}" HorizontalAlignment="Left" Padding="10,6" TabIndex="23"/>
-   <TextBlock Text="{Binding Notes}" TextWrapping="Wrap" Margin="0,12,0,0"/>
+   <TextBlock Text="{Binding Notes}" TextWrapping="Wrap" Margin="0,12,0,0" />
+   <StackPanel x:Name="UnitCreationPanel">
+    <Grid IsEnabled="{Binding IsIdle}">
+     <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="220" />
+      <ColumnDefinition Width="*" />
+     </Grid.ColumnDefinitions>
+     <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+     </Grid.RowDefinitions>
+     <TextBlock Text="{Binding UnitLabel}" TextWrapping="Wrap" />
+     <TextBox x:Name="UnitCodeBox" Grid.Column="1" Text="{Binding UnitCode,UpdateSourceTrigger=PropertyChanged}" TabIndex="18" AutomationProperties.Name="{Binding UnitLabel}" local:FieldHelp.Key="UnitCode" />
+     <TextBlock Grid.Row="1" Text="{Binding DimensionLabel}" TextWrapping="Wrap" />
+     <TextBox x:Name="DimensionBox" Grid.Row="1" Grid.Column="1" Text="{Binding UnitDimension,UpdateSourceTrigger=PropertyChanged}" TabIndex="19" AutomationProperties.Name="{Binding DimensionLabel}" local:FieldHelp.Key="UnitDimension" />
+     <TextBlock Grid.Row="2" Text="{Binding SymbolLabel}" TextWrapping="Wrap" />
+     <TextBox x:Name="SymbolBox" Grid.Row="2" Grid.Column="1" Text="{Binding UnitSymbol,UpdateSourceTrigger=PropertyChanged}" TabIndex="20" AutomationProperties.Name="{Binding SymbolLabel}" local:FieldHelp.Key="UnitSymbol" />
+     <TextBlock Grid.Row="3" Text="{Binding ScaleLabel}" TextWrapping="Wrap" />
+     <ComboBox x:Name="ScaleBox" Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ScaleOptions}" SelectedItem="{Binding UnitScale}" TabIndex="21" AutomationProperties.Name="{Binding ScaleLabel}" local:FieldHelp.Key="UnitScale" />
+     <CheckBox x:Name="DiscreteBox" Grid.Row="4" Grid.ColumnSpan="2" Content="{Binding DiscreteLabel}" IsChecked="{Binding UnitDiscrete}" Margin="0,8,0,8" TabIndex="22" local:FieldHelp.Key="UnitDiscrete" />
+    </Grid>
+    <Button x:Name="AddUnitButton" Content="{Binding AddUnitLabel}" Command="{Binding AddUnitCommand}" HorizontalAlignment="Left" Padding="10,6" TabIndex="23" />
+   </StackPanel>
   </StackPanel>
  </GroupBox>
 </UserControl>

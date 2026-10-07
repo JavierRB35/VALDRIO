@@ -24,6 +24,7 @@ public partial class ImportColumnMappingWindow
         void Check(bool value, string label) { if (!value) throw new InvalidOperationException("Completion WPF: " + label); checks.Add(label); }
         async Task Click(Button button)
         {
+            GuidedUi.Reveal(button);
             if (!button.IsEnabled) throw new InvalidOperationException("Disabled completion button " + button.Name);
             ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
@@ -62,10 +63,10 @@ public partial class ImportColumnMappingWindow
         Text(ComparisonScopeBox, "Same synthetic entity, selected expense accounts and accounting basis");
         Select(AmountModeBox, "closing-full"); Approve(); await Click(FreezeComparisonButton);
         Check(vm.ComparisonStatus.Contains("earlier.csv", StringComparison.Ordinal), "earlier source retained by UI with explicit fiscal dates and scope");
-        await Read(current); Select(AmountModeBox, "cumulative"); Approve(); await Click(PrepareImportButton);
+        await Read(current); Select(AmountModeBox, "cumulative"); Approve(); await PrepareForSmoke();
         Check(vm.Preparation is { CanConfirm: true } && vm.Preparation.Reconciliation.NetAmount == 60m &&
             vm.Preparation.Profile.Comparison!.Source.FileHash != vm.Preparation.Source.FileHash, "160 minus 100 prepares 60 and retains both sources");
-        ComparisonGrid.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
+        RevealImportElement(ComparisonGrid); ComparisonGrid.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "comparison-es.png"));
         var fingerprint = vm.Preparation!.Fingerprint;
         main.ApplyPresentationPreset("en", "de-DE", "UTC", true, true); FlowDirection = FlowDirection.RightToLeft;
@@ -80,7 +81,7 @@ public partial class ImportColumnMappingWindow
         ReplaceBatchBox.SetCurrentValue(CheckBox.IsCheckedProperty, true); ReplaceBatchBox.GetBindingExpression(CheckBox.IsCheckedProperty)!.UpdateSource();
         ReplacementBox.SetCurrentValue(ComboBox.SelectedItemProperty, vm.ExistingBatches.Single(b => b.Id == first.Id));
         ReplacementBox.GetBindingExpression(ComboBox.SelectedItemProperty)!.UpdateSource();
-        Approve(); await Click(PrepareImportButton);
+        Approve(); await PrepareForSmoke();
         Check(vm.Preparation!.Reconciliation.NetAmount == 90m, "replacement prepares corrected difference 190 minus 100");
         await Click(ConfirmImportButton); var replacement = vm.ConfirmedImport!;
         await Click(panel.CaptureStudyButton); var photo = studies.SnapshotChoice!.Value;

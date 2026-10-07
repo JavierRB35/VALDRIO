@@ -14,7 +14,7 @@ public sealed record ModelOption(ModelVersionSnapshot Value, string Label);
 public sealed record RoleOption(NodeRole Value, string Label);
 public sealed record LayerOption(CostLayer Value, string Label);
 public sealed record NodeOption(CalculationNodeDefinition Node, CostPoolDefinition? Pool, string Label);
-public sealed class ModelWorkspaceViewModel : ObservableObject, IDisposable
+public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposable
 {
     private readonly CompanyFileViewModel company;
     private readonly UiTextCatalog texts;

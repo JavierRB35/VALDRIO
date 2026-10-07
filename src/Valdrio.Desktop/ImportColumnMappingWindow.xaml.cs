@@ -14,7 +14,7 @@ public partial class ImportColumnMappingWindow : Window
             if (viewModel is not null) viewModel.PropertyChanged -= Changed;
             viewModel = DataContext as ImportColumnMappingViewModel;
             if (viewModel is not null) viewModel.PropertyChanged += Changed;
-            RefreshHeaders();
+            RefreshHeaders(); RefreshGuidance();
         };
         Closed += (_, _) => { if (viewModel is not null) viewModel.PropertyChanged -= Changed; };
         Closing += (_, e) =>
@@ -24,7 +24,7 @@ public partial class ImportColumnMappingWindow : Window
         };
     }
     private void CloseMapping(object sender, RoutedEventArgs e) => Close();
-    private void Changed(object? sender, System.ComponentModel.PropertyChangedEventArgs e) => RefreshHeaders();
+    private void Changed(object? sender, System.ComponentModel.PropertyChangedEventArgs e) { RefreshHeaders(); RefreshGuidance(); }
     private void RefreshHeaders()
     {
         if (viewModel is null) return;

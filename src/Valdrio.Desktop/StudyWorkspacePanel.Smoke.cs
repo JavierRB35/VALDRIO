@@ -33,6 +33,7 @@ public partial class StudyWorkspacePanel
         void Date(DatePicker picker, DateTime value) { picker.SetCurrentValue(DatePicker.SelectedDateProperty, value); picker.GetBindingExpression(DatePicker.SelectedDateProperty)!.UpdateSource(); }
         async Task Click(Button button)
         {
+            GuidedUi.Reveal(button);
             Check(button.IsEnabled, "enabled: " + button.Name);
             ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);

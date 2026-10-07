@@ -1,68 +1,162 @@
-<UserControl x:Class="Valdrio.Desktop.ModelWorkspacePanel"
- xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:Valdrio.Desktop" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Valdrio.Desktop.ModelWorkspacePanel">
  <UserControl.Resources>
-  <Style TargetType="Button"><Setter Property="Margin" Value="0,4,8,4"/><Setter Property="Padding" Value="10,6"/></Style>
-  <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,4,8,3"/></Style>
-  <Style TargetType="TextBox"><Setter Property="IsEnabled" Value="{Binding InputsEnabled}"/><Setter Property="MinWidth" Value="140"/><Setter Property="Margin" Value="0,3,8,3"/></Style>
-  <Style TargetType="ComboBox"><Setter Property="IsEnabled" Value="{Binding InputsEnabled}"/><Setter Property="MinWidth" Value="160"/><Setter Property="Margin" Value="0,3,8,3"/><Setter Property="DisplayMemberPath" Value="Label"/></Style>
+  <Style TargetType="Button">
+   <Setter Property="Margin" Value="0,4,8,4" />
+   <Setter Property="Padding" Value="10,6" />
+  </Style>
+  <Style TargetType="TextBlock">
+   <Setter Property="TextWrapping" Value="Wrap" />
+   <Setter Property="Margin" Value="0,4,8,3" />
+  </Style>
+  <Style TargetType="TextBox">
+   <Setter Property="IsEnabled" Value="{Binding InputsEnabled}" />
+   <Setter Property="MinWidth" Value="140" />
+   <Setter Property="Margin" Value="0,3,8,3" />
+  </Style>
+  <Style TargetType="ComboBox">
+   <Setter Property="IsEnabled" Value="{Binding InputsEnabled}" />
+   <Setter Property="MinWidth" Value="160" />
+   <Setter Property="Margin" Value="0,3,8,3" />
+   <Setter Property="DisplayMemberPath" Value="Label" />
+  </Style>
  </UserControl.Resources>
  <GroupBox Header="{Binding Title}" Padding="14">
   <StackPanel>
-   <TextBlock Text="{Binding Notes}"/>
-   <TextBlock Text="{Binding Status}" Foreground="DarkSlateBlue" AutomationProperties.LiveSetting="Polite"/>
-   <Expander Header="{Binding CenterLabel}" IsExpanded="True">
-    <StackPanel>
-     <ComboBox x:Name="MasterBox" ItemsSource="{Binding Centers}" SelectedItem="{Binding Master}" TabIndex="24" AutomationProperties.Name="{Binding CenterLabel}"/>
-     <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-      <StackPanel><TextBlock Text="{Binding CenterCodeLabel}"/><TextBox x:Name="CenterCodeBox" Text="{Binding CenterCode,UpdateSourceTrigger=PropertyChanged}" TabIndex="25" FlowDirection="LeftToRight" AutomationProperties.Name="{Binding CenterCodeLabel}"/></StackPanel>
-      <StackPanel Grid.Column="1"><TextBlock Text="{Binding CenterNameLabel}"/><TextBox x:Name="CenterNameBox" Text="{Binding CenterName,UpdateSourceTrigger=PropertyChanged}" TabIndex="26" AutomationProperties.Name="{Binding CenterNameLabel}"/></StackPanel>
-     </Grid>
-     <WrapPanel><Button x:Name="CreateCenterButton" Content="{Binding CreateCenterLabel}" Command="{Binding CreateCenterCommand}" TabIndex="27"/>
-      <Button x:Name="SaveCenterButton" Content="{Binding SaveCenterLabel}" Command="{Binding SaveCenterCommand}" TabIndex="28"/>
-      <Button x:Name="ToggleCenterButton" Content="{Binding ToggleCenterLabel}" Command="{Binding ToggleCenterCommand}" TabIndex="29"/></WrapPanel>
-    </StackPanel>
-   </Expander>
-   <TextBlock Text="{Binding ModelLabel}" FontWeight="SemiBold"/>
-   <DockPanel><Button x:Name="LoadModelButton" DockPanel.Dock="Right" Content="{Binding LoadLabel}" Command="{Binding LoadCommand}" TabIndex="31"/>
-    <ComboBox x:Name="ModelBox" ItemsSource="{Binding Models}" SelectedItem="{Binding ModelChoice}" TabIndex="30" AutomationProperties.Name="{Binding ModelLabel}"/></DockPanel>
-   <TextBlock Text="{Binding DescriptionLabel}"/>
-   <TextBox x:Name="DescriptionBox" IsReadOnly="{Binding IsPublished}" Text="{Binding Description,UpdateSourceTrigger=PropertyChanged}" TabIndex="32" AutomationProperties.Name="{Binding DescriptionLabel}"/>
-   <WrapPanel><Button x:Name="NewDraftButton" Content="{Binding NewDraftLabel}" Command="{Binding NewDraftCommand}" TabIndex="33"/>
-    <Button x:Name="SaveModelButton" Content="{Binding SaveLabel}" Command="{Binding SaveCommand}" TabIndex="34"/>
-    <Button x:Name="ValidateModelButton" Content="{Binding ValidateLabel}" Command="{Binding ValidateCommand}" TabIndex="35"/>
-    <Button x:Name="PublishModelButton" Content="{Binding PublishLabel}" Command="{Binding PublishCommand}" TabIndex="36"/>
-    <Button x:Name="CloneModelButton" Content="{Binding CloneLabel}" Command="{Binding CloneCommand}" TabIndex="37"/>
-    <Button x:Name="DiscardModelButton" Content="{Binding DiscardLabel}" Command="{Binding DiscardCommand}" TabIndex="38"/>
-    <Button x:Name="RefreshModelButton" Content="{Binding RefreshLabel}" Command="{Binding RefreshCommand}" TabIndex="39"/>
-    <Button Content="{Binding CancelLabel}" Command="{Binding CancelCommand}" TabIndex="54"/></WrapPanel>
-   <TextBlock Text="{Binding Details}"/>
-   <TextBlock Text="{Binding HistoricalDefinitions}"/>
-   <TextBlock Text="{Binding ValidationText}" Foreground="DarkRed" AutomationProperties.LiveSetting="Polite"/>
-   <TextBlock Text="{Binding NodeLabel}" FontWeight="SemiBold"/>
-   <ItemsControl x:Name="NodeSummary" ItemsSource="{Binding Nodes}">
-    <ItemsControl.ItemTemplate><DataTemplate><TextBlock Text="{Binding Label}" TextWrapping="Wrap"/></DataTemplate></ItemsControl.ItemTemplate>
-   </ItemsControl>
-   <ComboBox x:Name="NodeBox" ItemsSource="{Binding Nodes}" SelectedItem="{Binding SelectedNode}" TabIndex="40" AutomationProperties.Name="{Binding NodeLabel}"/>
-   <Expander x:Name="NodeEditor" Header="{Binding NodeLabel}" IsExpanded="True" IsEnabled="{Binding CanEdit}">
-    <StackPanel>
-     <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-      <StackPanel><TextBlock Text="{Binding NodeCodeLabel}"/><TextBox x:Name="NodeCodeBox" Text="{Binding NodeCode,UpdateSourceTrigger=PropertyChanged}" TabIndex="41" FlowDirection="LeftToRight" AutomationProperties.Name="{Binding NodeCodeLabel}"/></StackPanel>
-      <StackPanel Grid.Column="1"><TextBlock Text="{Binding PhysicalLabel}"/><ComboBox x:Name="PhysicalBox" ItemsSource="{Binding Centers}" SelectedItem="{Binding Physical}" TabIndex="42" AutomationProperties.Name="{Binding PhysicalLabel}"/></StackPanel>
-      <StackPanel Grid.Column="2"><TextBlock Text="{Binding RoleLabel}"/><ComboBox x:Name="RoleBox" ItemsSource="{Binding Roles}" SelectedItem="{Binding Role}" TabIndex="43" AutomationProperties.Name="{Binding RoleLabel}"/></StackPanel>
-     </Grid>
-     <TextBlock Text="{Binding FunctionLabel}"/><TextBox x:Name="FunctionBox" Text="{Binding FunctionTags,UpdateSourceTrigger=PropertyChanged}" TabIndex="44" AutomationProperties.Name="{Binding FunctionLabel}"/>
-     <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-      <StackPanel><TextBlock Text="{Binding UnitLabel}"/><ComboBox x:Name="UnitBox" ItemsSource="{Binding Units}" SelectedItem="{Binding DriverUnit}" TabIndex="45" AutomationProperties.Name="{Binding UnitLabel}"/></StackPanel>
-      <StackPanel Grid.Column="1"><TextBlock Text="{Binding LayerLabel}"/><ComboBox x:Name="LayerBox" ItemsSource="{Binding Layers}" SelectedItem="{Binding Layer}" TabIndex="46" AutomationProperties.Name="{Binding LayerLabel}"/></StackPanel>
-     </Grid>
-     <TextBlock Text="{Binding PoolLabel}"/><TextBox x:Name="PoolBox" Text="{Binding PoolDescription,UpdateSourceTrigger=PropertyChanged}" TabIndex="47" AutomationProperties.Name="{Binding PoolLabel}"/>
-     <WrapPanel><Button x:Name="ApplyNodeButton" Content="{Binding ApplyLabel}" Command="{Binding ApplyNodeCommand}" TabIndex="48"/>
-      <Button x:Name="NewNodeButton" Content="{Binding NewNodeLabel}" Command="{Binding NewNodeCommand}" TabIndex="49"/>
-      <Button x:Name="RemoveNodeButton" Content="{Binding RemoveLabel}" Command="{Binding RemoveNodeCommand}" TabIndex="50"/></WrapPanel>
-    </StackPanel>
-   </Expander>
-   <Expander Header="{Binding UnitLabel}"><StackPanel><ComboBox ItemsSource="{Binding Units}" SelectedItem="{Binding UnitMaster}" TabIndex="51" AutomationProperties.Name="{Binding UnitLabel}"/>
-    <Button x:Name="ToggleUnitButton" Content="{Binding ToggleUnitLabel}" Command="{Binding ToggleUnitCommand}" TabIndex="52"/></StackPanel></Expander>
+   <TextBlock Text="{Binding NextRequirement}" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite" />
+   <TextBlock Text="{Binding Status}" TextWrapping="Wrap" Foreground="DarkSlateBlue" />
+   <TabControl SelectionChanged="ModelStepChanged" x:Name="ModelSteps">
+    <TabItem x:Name="ModelTab0">
+     <StackPanel Margin="8">
+      <TextBlock Text="{Binding ModelLabel}" FontWeight="SemiBold" />
+      <DockPanel>
+       <Button x:Name="LoadModelButton" DockPanel.Dock="Right" Content="{Binding LoadLabel}" Command="{Binding LoadCommand}" TabIndex="31" />
+       <ComboBox x:Name="ModelBox" ItemsSource="{Binding Models}" SelectedItem="{Binding ModelChoice}" TabIndex="30" AutomationProperties.Name="{Binding ModelLabel}" local:FieldHelp.Key="ModelChoice" />
+      </DockPanel>
+      <TextBlock Text="{Binding DescriptionLabel}" />
+      <TextBox x:Name="DescriptionBox" IsReadOnly="{Binding IsPublished}" Text="{Binding Description,UpdateSourceTrigger=PropertyChanged}" TabIndex="32" AutomationProperties.Name="{Binding DescriptionLabel}" local:FieldHelp.Key="Description" />
+      <Button x:Name="NewDraftButton" Content="{Binding NewDraftLabel}" Command="{Binding NewDraftCommand}" TabIndex="33" />
+      <Button x:Name="CloneModelButton" Content="{Binding CloneLabel}" Command="{Binding CloneCommand}" TabIndex="37" />
+      <Button x:Name="RefreshModelButton" Content="{Binding RefreshLabel}" Command="{Binding RefreshCommand}" TabIndex="39" />
+     </StackPanel>
+    </TabItem>
+    <TabItem x:Name="ModelTab1">
+     <StackPanel Margin="8">
+      <TextBlock TextWrapping="Wrap" x:Name="MastersHelp" />
+      <Expander Header="{Binding CenterLabel}" IsExpanded="True">
+       <StackPanel>
+        <ComboBox x:Name="MasterBox" ItemsSource="{Binding Centers}" SelectedItem="{Binding Master}" TabIndex="24" AutomationProperties.Name="{Binding CenterLabel}" local:FieldHelp.Key="Master" />
+        <Grid>
+         <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+         </Grid.ColumnDefinitions>
+         <StackPanel>
+          <TextBlock Text="{Binding CenterCodeLabel}" />
+          <TextBox x:Name="CenterCodeBox" Text="{Binding CenterCode,UpdateSourceTrigger=PropertyChanged}" TabIndex="25" FlowDirection="LeftToRight" AutomationProperties.Name="{Binding CenterCodeLabel}" local:FieldHelp.Key="CenterCode" />
+         </StackPanel>
+         <StackPanel Grid.Column="1">
+          <TextBlock Text="{Binding CenterNameLabel}" />
+          <TextBox x:Name="CenterNameBox" Text="{Binding CenterName,UpdateSourceTrigger=PropertyChanged}" TabIndex="26" AutomationProperties.Name="{Binding CenterNameLabel}" local:FieldHelp.Key="CenterName" />
+         </StackPanel>
+        </Grid>
+        <WrapPanel>
+         <Button x:Name="CreateCenterButton" Content="{Binding CreateCenterLabel}" Command="{Binding CreateCenterCommand}" TabIndex="27" />
+         <Button x:Name="SaveCenterButton" Content="{Binding SaveCenterLabel}" Command="{Binding SaveCenterCommand}" TabIndex="28" />
+         <Button x:Name="ToggleCenterButton" Content="{Binding ToggleCenterLabel}" Command="{Binding ToggleCenterCommand}" TabIndex="29" />
+        </WrapPanel>
+       </StackPanel>
+      </Expander>
+      <Expander Header="{Binding UnitLabel}">
+       <StackPanel>
+        <ComboBox ItemsSource="{Binding Units}" SelectedItem="{Binding UnitMaster}" TabIndex="51" AutomationProperties.Name="{Binding UnitLabel}" local:FieldHelp.Key="UnitMaster" />
+        <Button x:Name="ToggleUnitButton" Content="{Binding ToggleUnitLabel}" Command="{Binding ToggleUnitCommand}" TabIndex="52" />
+       </StackPanel>
+      </Expander>
+      <ContentControl x:Name="UnitsCreationHost" />
+     </StackPanel>
+    </TabItem>
+    <TabItem x:Name="ModelTab2">
+     <StackPanel Margin="8">
+      <TextBlock TextWrapping="Wrap" x:Name="NodesHelp" />
+      <TextBlock Text="{Binding NodeLabel}" FontWeight="SemiBold" />
+      <ItemsControl x:Name="NodeSummary" ItemsSource="{Binding Nodes}">
+       <ItemsControl.ItemTemplate>
+        <DataTemplate>
+         <TextBlock Text="{Binding Label}" TextWrapping="Wrap" />
+        </DataTemplate>
+       </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <ComboBox x:Name="NodeBox" ItemsSource="{Binding Nodes}" SelectedItem="{Binding SelectedNode}" TabIndex="40" AutomationProperties.Name="{Binding NodeLabel}" local:FieldHelp.Key="SelectedNode" />
+      <Expander x:Name="NodeEditor" Header="{Binding NodeLabel}" IsExpanded="True" IsEnabled="{Binding CanEdit}">
+       <StackPanel>
+        <Grid>
+         <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+         </Grid.ColumnDefinitions>
+         <StackPanel>
+          <TextBlock Text="{Binding NodeCodeLabel}" />
+          <TextBox x:Name="NodeCodeBox" Text="{Binding NodeCode,UpdateSourceTrigger=PropertyChanged}" TabIndex="41" FlowDirection="LeftToRight" AutomationProperties.Name="{Binding NodeCodeLabel}" local:FieldHelp.Key="NodeCode" />
+         </StackPanel>
+         <StackPanel Grid.Column="1">
+          <TextBlock Text="{Binding PhysicalLabel}" />
+          <ComboBox x:Name="PhysicalBox" ItemsSource="{Binding Centers}" SelectedItem="{Binding Physical}" TabIndex="42" AutomationProperties.Name="{Binding PhysicalLabel}" local:FieldHelp.Key="Physical" />
+         </StackPanel>
+         <StackPanel Grid.Column="2">
+          <TextBlock Text="{Binding RoleLabel}" />
+          <ComboBox x:Name="RoleBox" ItemsSource="{Binding Roles}" SelectedItem="{Binding Role}" TabIndex="43" AutomationProperties.Name="{Binding RoleLabel}" local:FieldHelp.Key="Role" />
+         </StackPanel>
+        </Grid>
+        <TextBlock Text="{Binding FunctionLabel}" />
+        <TextBox x:Name="FunctionBox" Text="{Binding FunctionTags,UpdateSourceTrigger=PropertyChanged}" TabIndex="44" AutomationProperties.Name="{Binding FunctionLabel}" local:FieldHelp.Key="FunctionTags" />
+        <Grid>
+         <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+         </Grid.ColumnDefinitions>
+         <StackPanel>
+          <TextBlock Text="{Binding UnitLabel}" />
+          <ComboBox x:Name="UnitBox" ItemsSource="{Binding Units}" SelectedItem="{Binding DriverUnit}" TabIndex="45" AutomationProperties.Name="{Binding UnitLabel}" local:FieldHelp.Key="DriverUnit" />
+         </StackPanel>
+         <StackPanel Grid.Column="1">
+          <TextBlock Text="{Binding LayerLabel}" />
+          <ComboBox x:Name="LayerBox" ItemsSource="{Binding Layers}" SelectedItem="{Binding Layer}" TabIndex="46" AutomationProperties.Name="{Binding LayerLabel}" local:FieldHelp.Key="Layer" />
+         </StackPanel>
+        </Grid>
+        <TextBlock Text="{Binding PoolLabel}" />
+        <TextBox x:Name="PoolBox" Text="{Binding PoolDescription,UpdateSourceTrigger=PropertyChanged}" TabIndex="47" AutomationProperties.Name="{Binding PoolLabel}" local:FieldHelp.Key="PoolDescription" />
+        <WrapPanel>
+         <Button x:Name="ApplyNodeButton" Content="{Binding ApplyLabel}" Command="{Binding ApplyNodeCommand}" TabIndex="48" />
+         <Button x:Name="NewNodeButton" Content="{Binding NewNodeLabel}" Command="{Binding NewNodeCommand}" TabIndex="49" />
+         <Button x:Name="RemoveNodeButton" Content="{Binding RemoveLabel}" Command="{Binding RemoveNodeCommand}" TabIndex="50" />
+        </WrapPanel>
+       </StackPanel>
+      </Expander>
+     </StackPanel>
+    </TabItem>
+    <TabItem x:Name="ModelTab3">
+     <StackPanel Margin="8">
+      <Button Click="SaveValidatePublish" Padding="12,8" HorizontalAlignment="Left" x:Name="PublishGuidedButton" />
+      <Button x:Name="SaveModelButton" Content="{Binding SaveLabel}" Command="{Binding SaveCommand}" TabIndex="34" />
+      <TextBlock Text="{Binding Details}" />
+      <TextBlock Text="{Binding HistoricalDefinitions}" />
+      <TextBlock Text="{Binding ValidationText}" Foreground="DarkRed" AutomationProperties.LiveSetting="Polite" />
+      <Expander Header="{Binding OtherOperationsLabel}">
+       <StackPanel>
+        <Button x:Name="ValidateModelButton" Content="{Binding ValidateLabel}" Command="{Binding ValidateCommand}" TabIndex="35" />
+        <Button x:Name="PublishModelButton" Content="{Binding PublishLabel}" Command="{Binding PublishCommand}" TabIndex="36" />
+        <Button x:Name="DiscardModelButton" Content="{Binding DiscardLabel}" Command="{Binding DiscardCommand}" TabIndex="38" />
+        <Button Content="{Binding CancelLabel}" Command="{Binding CancelCommand}" TabIndex="54" />
+       </StackPanel>
+      </Expander>
+     </StackPanel>
+    </TabItem>
+   </TabControl>
+   <WrapPanel>
+    <Button Click="ModelPrevious" x:Name="ModelBack" />
+    <Button Click="ModelContinue" x:Name="ModelNext" />
+   </WrapPanel>
   </StackPanel>
  </GroupBox>
 </UserControl>

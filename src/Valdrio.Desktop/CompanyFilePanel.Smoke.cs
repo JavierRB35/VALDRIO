@@ -25,6 +25,7 @@ public partial class CompanyFilePanel
         void SetText(TextBox control, string value) { control.SetCurrentValue(TextBox.TextProperty, value); control.GetBindingExpression(TextBox.TextProperty)!.UpdateSource(); }
         async Task Click(Button button)
         {
+            GuidedUi.Reveal(button);
             Check(button.IsEnabled, "enabled: " + button.Name);
             ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);

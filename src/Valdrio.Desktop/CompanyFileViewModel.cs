@@ -8,7 +8,7 @@ using Valdrio.Localization;
 
 namespace Valdrio.Desktop;
 
-public sealed class CompanyFileViewModel : ObservableObject, IDisposable
+public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
 {
     private readonly ICompanyFileService files;
     private readonly ICompanyFileDialogs dialogs;

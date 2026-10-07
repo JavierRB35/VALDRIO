@@ -208,6 +208,7 @@ public partial class App : System.Windows.Application
                         await importWindow.RunImportCompletionChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs, viewModel);
                         await importWindow.RunInternationalImportChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs, viewModel);
                         importWindow.Close();
+                        await window.RunGuidedWorkflowChecks(captureDirectory, (QueuedCompanyFileDialogs)companyDialogs, (QueuedImportSourceDialogs)importDialogs);
                         CaptureVisualEvidence(
                             window,
                             viewModel,
