@@ -173,9 +173,9 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.Published" xml:space="preserve"><value>Estructura publicada</value></data>
   <data name="Model.Unsaved" xml:space="preserve"><value>Cambios sin guardar</value></data>
   <data name="Model.Saved" xml:space="preserve"><value>Guardado</value></data>
-  <data name="Model.Title" xml:space="preserve"><value>Centros y modelos versionados</value></data>
+  <data name="Model.Title" xml:space="preserve"><value>Configurar modelo de costes</value></data>
   <data name="Model.Notes" xml:space="preserve"><value>Configure un centro físico, nodos y un pool homogéneo por nodo. Función y papel son independientes. Aplique el nodo al borrador y después Guarde. La publicación congela solo la estructura; las políticas económicas siguen pendientes y el cálculo no está disponible.</value></data>
-  <data name="Model.Centers" xml:space="preserve"><value>Maestros de centros físicos</value></data>
+  <data name="Model.Centers" xml:space="preserve"><value>Centros físicos</value></data>
   <data name="Model.CenterCode" xml:space="preserve"><value>Código del centro físico (texto)</value></data>
   <data name="Model.CenterName" xml:space="preserve"><value>Nombre del centro físico</value></data>
   <data name="Model.CreateCenter" xml:space="preserve"><value>Crear centro</value></data>
@@ -190,7 +190,7 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.Publish" xml:space="preserve"><value>Publicar estructura guardada</value></data>
   <data name="Model.Clone" xml:space="preserve"><value>Duplicar como borrador</value></data>
   <data name="Model.Discard" xml:space="preserve"><value>Descartar cambios del borrador</value></data>
-  <data name="Model.Nodes" xml:space="preserve"><value>Nodos y pools</value></data>
+  <data name="Model.Nodes" xml:space="preserve"><value>Nodos de cálculo</value></data>
   <data name="Model.NodeCode" xml:space="preserve"><value>Código del nodo</value></data>
   <data name="Model.Physical" xml:space="preserve"><value>Centro físico</value></data>
   <data name="Model.Role" xml:space="preserve"><value>Papel en reparto</value></data>
@@ -198,9 +198,9 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.DriverUnit" xml:space="preserve"><value>Unidades de driver</value></data>
   <data name="Model.CostLayer" xml:space="preserve"><value>Clasificación del coste (sin política de cálculo)</value></data>
   <data name="Model.PoolDescription" xml:space="preserve"><value>Descripción del pool</value></data>
-  <data name="Model.ApplyNode" xml:space="preserve"><value>Añadir / actualizar nodo en el borrador</value></data>
-  <data name="Model.NewNode" xml:space="preserve"><value>Limpiar formulario / nuevo nodo</value></data>
-  <data name="Model.RemoveNode" xml:space="preserve"><value>Quitar nodo seleccionado</value></data>
+  <data name="Model.ApplyNode" xml:space="preserve"><value>Guardar nodo</value></data>
+  <data name="Model.NewNode" xml:space="preserve"><value>Nuevo nodo</value></data>
+  <data name="Model.RemoveNode" xml:space="preserve"><value>Eliminar nodo</value></data>
   <data name="Model.ToggleUnit" xml:space="preserve"><value>Activar / desactivar unidad</value></data>
   <data name="Model.Active" xml:space="preserve"><value>Activo</value></data>
   <data name="Model.Inactive" xml:space="preserve"><value>Inactivo</value></data>
@@ -486,7 +486,7 @@ Completa: {5}</value></data>
   <data name="Guide.NeedNodeCode" xml:space="preserve"><value>Completa el código del nodo que estás editando. Es su identificador dentro de este modelo.</value></data>
   <data name="Guide.NeedNodeCenter" xml:space="preserve"><value>Selecciona el centro físico al que pertenece este nodo. Puedes crear centros en el paso Centros y unidades.</value></data>
   <data name="Guide.NeedNodeUnit" xml:space="preserve"><value>Selecciona la unidad de actividad del nodo. Si la lista está vacía, créala en Centros y unidades.</value></data>
-  <data name="Guide.ApplyNode" xml:space="preserve"><value>Pulsa Añadir / actualizar nodo. Después guarda el modelo: añadir un nodo al borrador todavía no lo guarda en el archivo.</value></data>
+  <data name="Guide.ApplyNode" xml:space="preserve"><value>Completa los datos del nodo y pulsa Guardar nodo. VALDRIO guardará el borrador y limpiará el formulario para que puedas añadir el siguiente.</value></data>
   <data name="Guide.NeedPrincipal" xml:space="preserve"><value>El modelo necesita al menos un nodo activo con papel Principal. Los auxiliares pueden coexistir. Elige el papel según tu metodología, no solo para superar este paso.</value></data>
   <data name="Guide.SaveModel" xml:space="preserve"><value>Hay cambios pendientes. Guarda el borrador antes de validar y publicar la estructura.</value></data>
   <data name="Guide.PublishModel" xml:space="preserve"><value>Borrador guardado. Valida y publica la estructura para que esté disponible al crear el estudio. Publicar fija esta versión; no calcula costes.</value></data>
@@ -523,13 +523,13 @@ Completa: {5}</value></data>
   <data name="Guide.ColumnsHelp" xml:space="preserve"><value>Asocia la cuenta y el importe a las columnas del archivo. Las descripciones no se usan para agrupar. Revisa la vista previa y corrige cualquier error.</value></data>
   <data name="Guide.RecordsHelp" xml:space="preserve"><value>Se importarán solo las filas marcadas. Las filas de la misma cuenta se suman conservando su origen.</value></data>
   <data name="Guide.MeaningHelp" xml:space="preserve"><value>Este paso decide cómo se incorporan los importes. No se deduce por el nombre del archivo: elige la opción que representa tus datos.</value></data>
-  <data name="Guide.DraftTab" xml:space="preserve"><value>1. Elegir o crear modelo</value></data>
+  <data name="Guide.DraftTab" xml:space="preserve"><value>1. Modelo</value></data>
   <data name="Guide.MastersTab" xml:space="preserve"><value>2. Centros y unidades</value></data>
-  <data name="Guide.NodesTab" xml:space="preserve"><value>3. Añadir nodos</value></data>
-  <data name="Guide.PublishTab" xml:space="preserve"><value>4. Guardar y publicar</value></data>
+  <data name="Guide.NodesTab" xml:space="preserve"><value>3. Nodos de cálculo</value></data>
+  <data name="Guide.PublishTab" xml:space="preserve"><value>4. Revisar y publicar</value></data>
   <data name="Guide.PublishNext" xml:space="preserve"><value>Guardar, validar y publicar estructura</value></data>
-  <data name="Guide.MasterHelp" xml:space="preserve"><value>Centro: área física u organizativa. Unidad de actividad: lo que medirás, como horas o unidades. Crea aquí los que necesites; después podrás seleccionarlos en los nodos.</value></data>
-  <data name="Guide.NodesHelp" xml:space="preserve"><value>Nodo: elemento de la estructura de cálculo vinculado a un centro. Su pool agrupa costes. Añadir lo incorpora al borrador; Guardar y publicar lo conserva para usarlo en estudios.</value></data>
+  <data name="Guide.MasterHelp" xml:space="preserve"><value>Primero crea los centros físicos y las unidades de actividad que utilizarán los nodos. Todo lo guardado queda visible en esta pantalla para que sepas qué existe antes de continuar.</value></data>
+  <data name="Guide.NodesHelp" xml:space="preserve"><value>Un nodo es una unidad de cálculo dentro de un centro. Selecciona el centro, su papel y la unidad de actividad. Al pulsar Guardar nodo, VALDRIO guarda inmediatamente el borrador y el nodo aparece en la tabla.</value></data>
   <data name="Guide.HelpHint" xml:space="preserve"><value>Ayuda: sitúa el cursor sobre un campo o selecciónalo con Tab para ver su explicación aquí.</value></data>
   <data name="Guide.StoredAt" xml:space="preserve"><value>Archivo donde se guardan los datos: </value></data>
   <data name="Guide.Help.CompanyName" xml:space="preserve"><value>Nombre para identificar la empresa. Crear archivo te pedirá una ubicación; ese archivo contendrá todos sus datos.</value></data>
@@ -611,7 +611,7 @@ Completa: {5}</value></data>
   <data name="Guide.CreateCompanyNext" xml:space="preserve"><value>Crear archivo de empresa y continuar</value></data>
   <data name="Guide.CreateModelNext" xml:space="preserve"><value>Crear modelo y continuar</value></data>
   <data name="Guide.LoadModelNext" xml:space="preserve"><value>Cargar modelo seleccionado y continuar</value></data>
-  <data name="Guide.ApplyNodeNext" xml:space="preserve"><value>Aplicar nodo y continuar</value></data>
+  <data name="Guide.ApplyNodeNext" xml:space="preserve"><value>Guardar nodo y continuar</value></data>
   <data name="Guide.PublishContinue" xml:space="preserve"><value>Guardar, publicar y continuar al estudio</value></data>
   <data name="Guide.ContinueStudy" xml:space="preserve"><value>Continuar al estudio</value></data>
   <data name="Guide.ContinueImport" xml:space="preserve"><value>Continuar a la importación</value></data>
@@ -863,4 +863,44 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.Help.Resource.ResetAcknowledged" xml:space="preserve"><value>Reiniciar deja todas las cuentas pendientes y retira de la preparación actual sus ajustes y repartos. Conserva el historial y las instantáneas anteriores. Úsalo si necesitas sustituir importaciones que ya has preparado.</value></data>
   <data name="Resource.PartsRequired" xml:space="preserve"><value>Indica al menos una parte para esta cuenta, aunque su importe sea cero. Si falta decidir su destino, elige Pendiente.</value></data>
   <data name="Resources.RevalueFinishAccount" xml:space="preserve"><value>Conservamos la cuenta que estabas editando. Completa sus partes y pulsa Conservar partes antes de revisar otra cuenta de esta revaloración.</value></data>
+  <data name="Model.ModelStepHelp" xml:space="preserve"><value>El modelo define la estructura que usarán los estudios. Puedes abrir uno existente o crear un borrador nuevo. Los modelos publicados se conservan sin cambios; para modificarlos, duplica la versión.</value></data>
+  <data name="Model.ExistingModelHelp" xml:space="preserve"><value>Abrir un modelo existente</value></data>
+  <data name="Model.NewModelHelp" xml:space="preserve"><value>Crear un modelo nuevo</value></data>
+  <data name="Model.UnitSectionHelp" xml:space="preserve"><value>Las unidades de actividad indican cómo se medirá el trabajo de los nodos, por ejemplo horas, lotes o unidades. Crea aquí las que necesites antes de configurar los nodos.</value></data>
+  <data name="Model.ReviewModelHelp" xml:space="preserve"><value>Revisa el resumen del modelo. Guardar conserva los cambios del borrador; Validar comprueba que la estructura sea coherente; Publicar bloquea esta versión para poder usarla en estudios.</value></data>
+  <data name="Model.CenterSectionHelp" xml:space="preserve"><value>Un centro físico representa un área reconocible de la empresa, como Prensa, Mantenimiento o Administración. Añade los centros uno a uno; los ya guardados permanecen visibles en la tabla.</value></data>
+  <data name="Model.CenterListTitle" xml:space="preserve"><value>Centros ya guardados</value></data>
+  <data name="Model.CenterListHelp" xml:space="preserve"><value>Selecciona una fila para editarla. Al guardar, el formulario se limpia automáticamente y la tabla se actualiza.</value></data>
+  <data name="Model.CenterFormNew" xml:space="preserve"><value>Añadir centro</value></data>
+  <data name="Model.CenterFormEdit" xml:space="preserve"><value>Editar centro seleccionado</value></data>
+  <data name="Model.NewCenter" xml:space="preserve"><value>Nuevo centro</value></data>
+  <data name="Model.CenterSaveCreate" xml:space="preserve"><value>Guardar centro</value></data>
+  <data name="Model.CenterSaveEdit" xml:space="preserve"><value>Guardar cambios</value></data>
+  <data name="Model.CenterDeactivate" xml:space="preserve"><value>Desactivar centro</value></data>
+  <data name="Model.CenterReactivate" xml:space="preserve"><value>Reactivar centro</value></data>
+  <data name="Model.CenterStateHelp" xml:space="preserve"><value>Los centros usados históricamente no se borran físicamente. Puedes desactivarlos para que dejen de estar disponibles y reactivarlos cuando sea necesario.</value></data>
+  <data name="Model.CenterCreated" xml:space="preserve"><value>Centro guardado correctamente. El formulario está listo para añadir el siguiente.</value></data>
+  <data name="Model.CenterSaved" xml:space="preserve"><value>Cambios del centro guardados correctamente.</value></data>
+  <data name="Model.CenterStateChanged" xml:space="preserve"><value>Estado del centro actualizado correctamente.</value></data>
+  <data name="Model.NodeSectionHelp" xml:space="preserve"><value>Cada nodo pertenece a un centro y representa una unidad de cálculo. Indica primero los datos esenciales; los datos menos habituales quedan agrupados aparte.</value></data>
+  <data name="Model.NodeListTitle" xml:space="preserve"><value>Nodos del modelo</value></data>
+  <data name="Model.NodeListHelp" xml:space="preserve"><value>La tabla muestra todos los nodos ya guardados en este borrador. Selecciona una fila para editarla o eliminarla.</value></data>
+  <data name="Model.NodeFormNew" xml:space="preserve"><value>Añadir nodo</value></data>
+  <data name="Model.NodeFormEdit" xml:space="preserve"><value>Editar nodo seleccionado</value></data>
+  <data name="Model.NodeSaveCreate" xml:space="preserve"><value>Guardar nodo</value></data>
+  <data name="Model.NodeSaveEdit" xml:space="preserve"><value>Guardar cambios</value></data>
+  <data name="Model.NodeSaved" xml:space="preserve"><value>Nodo guardado correctamente. El formulario está listo para añadir el siguiente.</value></data>
+  <data name="Model.NodeRemoved" xml:space="preserve"><value>Nodo eliminado del borrador y cambios guardados correctamente.</value></data>
+  <data name="Model.NodePersistenceHelp" xml:space="preserve"><value>Guardar nodo actualiza inmediatamente el borrador del modelo en el archivo. No necesitas realizar un segundo guardado para conservar ese nodo.</value></data>
+  <data name="Model.OptionalNodeData" xml:space="preserve"><value>Datos adicionales</value></data>
+  <data name="Model.FunctionHelp" xml:space="preserve"><value>Las etiquetas funcionales describen para qué se utiliza el nodo. Sepáralas con comas, por ejemplo: producción, mantenimiento.</value></data>
+  <data name="Model.ColumnCode" xml:space="preserve"><value>Código</value></data>
+  <data name="Model.ColumnName" xml:space="preserve"><value>Nombre</value></data>
+  <data name="Model.ColumnStatus" xml:space="preserve"><value>Estado</value></data>
+  <data name="Model.ColumnCenter" xml:space="preserve"><value>Centro</value></data>
+  <data name="Model.ColumnRole" xml:space="preserve"><value>Papel</value></data>
+  <data name="Model.ColumnUnit" xml:space="preserve"><value>Unidad</value></data>
+  <data name="Model.ColumnLayer" xml:space="preserve"><value>Capa</value></data>
+  <data name="Model.ColumnPool" xml:space="preserve"><value>Descripción del pool</value></data>
+  <data name="Model.ColumnFunctions" xml:space="preserve"><value>Funciones</value></data>
 </root>
