@@ -80,7 +80,7 @@
        <StackPanel>
         <TextBlock Text="{Binding NewModelHelp}" FontWeight="SemiBold" />
         <TextBlock Text="{Binding DescriptionLabel}" />
-        <TextBox x:Name="DescriptionBox" IsReadOnly="{Binding IsPublished}"
+        <TextBox x:Name="DescriptionBox" IsReadOnly="{Binding DescriptionReadOnly}"
                  Text="{Binding Description,UpdateSourceTrigger=PropertyChanged}" TabIndex="32"
                  AutomationProperties.Name="{Binding DescriptionLabel}" local:FieldHelp.Key="Description" />
         <WrapPanel>
@@ -111,7 +111,7 @@
 
         <TextBlock Grid.ColumnSpan="3" Text="{Binding CenterSectionHelp}" Style="{StaticResource SectionHelp}" />
 
-        <Border Grid.Row="1" Grid.Column="0" BorderBrush="#D8DEE7" BorderThickness="1" CornerRadius="6" Padding="12">
+        <Border Grid.Row="1" Grid.Column="0" BorderBrush="#D8DEE7" BorderThickness="1" CornerRadius="6" Padding="12" IsEnabled="{Binding CanEditMasters}">
          <StackPanel>
           <TextBlock Text="{Binding CenterFormTitle}" Style="{StaticResource SectionTitle}" />
 
