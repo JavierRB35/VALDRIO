@@ -108,7 +108,7 @@
   <data name="CompanyCancel" xml:space="preserve"><value>Cancel operation</value></data>
   <data name="CompanyUnitLabel" xml:space="preserve"><value>Unit code</value></data>
   <data name="CompanyDimensionLabel" xml:space="preserve"><value>Measurement type (dimension)</value></data>
-  <data name="CompanyVisible symbolLabel" xml:space="preserve"><value>Symbol</value></data>
+  <data name="CompanySymbolLabel" xml:space="preserve"><value>Symbol</value></data>
   <data name="CompanyScaleLabel" xml:space="preserve"><value>Allowed decimal places (0–12)</value></data>
   <data name="CompanyDiscreteLabel" xml:space="preserve"><value>Whole units only</value></data>
   <data name="CompanyAddUnit" xml:space="preserve"><value>Save activity unit</value></data>
