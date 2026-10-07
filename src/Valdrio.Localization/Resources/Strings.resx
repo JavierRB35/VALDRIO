@@ -169,7 +169,7 @@ File: {8}</value></data>
   <data name="Model.Details" xml:space="preserve"><value>{0} · {1} · version {2} · revision {3}
 Parent: {4} · published: {5}
 Structural SHA-256: {6} · {7}</value></data>
-  <data name="Model.In progress" xml:space="preserve"><value>Draft</value></data>
+  <data name="Model.Draft" xml:space="preserve"><value>In progress</value></data>
   <data name="Model.Published" xml:space="preserve"><value>Finalized · ready to use</value></data>
   <data name="Model.Unsaved" xml:space="preserve"><value>Unsaved changes</value></data>
   <data name="Model.Saved" xml:space="preserve"><value>Saved</value></data>
