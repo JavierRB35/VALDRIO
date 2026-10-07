@@ -48,4 +48,11 @@
     <None Update="Fixtures/t06-xlsx-1900-v1.xlsx" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t06-xlsx-1904-v1.xlsx" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+  <!-- Keep subprocess tests on the same build configuration, including Visual Studio Debug. -->
+  <Target Name="CopyRunnerForTests" AfterTargets="Build">
+    <ItemGroup>
+      <RunnerOutput Include="../../src/Valdrio.Runner/bin/$(Configuration)/$(TargetFramework)/**/*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(RunnerOutput)" DestinationFiles="@(RunnerOutput->'$(OutDir)runner/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

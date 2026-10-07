@@ -4,7 +4,7 @@ using Valdrio.Domain;
 namespace Valdrio.Application;
 
 public enum ImportSourceKind { Csv = 0, Xlsx = 1 }
-public enum ImportAmountMode { PeriodAmount = 0, ClosingBalance = 1, CumulativeExpenseDifference = 2 }
+public enum ImportAmountMode { PeriodAmount = 0, ClosingBalance = 1, CumulativeExpenseDifference = 2, ClosingBalanceAsStudyAmount = 3 }
 public enum ImportSignConvention { SignedAmount = 0, DebitMinusCredit = 1 }
 public enum ImportDuplicatePolicy { Reject = 0, AggregateWithProvenance = 1 }
 public enum ImportZeroPolicy { Keep = 0, Exclude = 1 }

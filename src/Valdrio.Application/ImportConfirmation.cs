@@ -44,7 +44,7 @@ public sealed class PreparedImport
         var diagnostics = new List<ImportDiagnostic>();
         void Block(string code, string key) => diagnostics.Add(new(new(code, key, []), ImportDiagnosticSeverity.Blocking,
             new(source.FileName, source.SheetName, null, null, null)));
-        if (profile.AmountMode != ImportAmountMode.PeriodAmount ||
+        if ((profile.AmountMode != ImportAmountMode.PeriodAmount && profile.AmountMode != ImportAmountMode.ClosingBalanceAsStudyAmount) ||
             profile.DuplicatePolicy != ImportDuplicatePolicy.Reject)
             Block("IMP_MODE_UNAVAILABLE", "Import.ModeUnavailable");
         if (profile.Approval.State != ImportProfileApprovalState.ApprovedBusiness || !profile.SignConventionConfirmed)

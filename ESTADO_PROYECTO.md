@@ -2,6 +2,24 @@
 
 Fecha de revisión 2026-10-06. Repositorio `JavierRB35/VALDRIO`.
 
+## Continuidad local — 2026-10-06
+
+Rama `codex/local-tests-and-workspace`, sobre `5b66e3c` (PR #21 integrada).
+Pruebas de procesos usan el Runner copiado junto a los tests según Configuration;
+se elimina la dependencia de Release al ejecutar Debug. La interfaz destaca la empresa
+abierta, separa detalles técnicos y agrupa ejemplos en un desplegable; título de espacio
+de trabajo y recursos ES/EN actualizados.
+
+Se añade selección explícita de saldo íntegro al cierre para el estudio según la elección
+del propietario 100→160 produce 160, con aprobación renovada y fecha de cierre visible.
+Ver [ADR-0008](docs/adr/ADR-0008-saldo-integro-cierre.md). D03 está concretada en esa
+interpretación; la muestra real permanece pendiente. T06 no está cerrada y la autodetección
+numérica aún no está implementada. El siguiente bloque es validar la fuente real y completar
+agrupación/sustitución de lotes antes de T06A y T07.
+
+La validación de esta entrega es local; no se han ejecutado Actions ni publicado una PR.
+La evidencia se registra en `docs/evidencias/CONTINUIDAD_LOCAL_2026-10-06.md`.
+Esta sección prevalece sobre los pendientes anteriores que resuelve expresamente.
 ## Estado vigente
 
 | Entrega | Estado |

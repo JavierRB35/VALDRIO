@@ -206,6 +206,7 @@ public sealed class MainWindowViewModel : ObservableObject
     }
 
     public string AppTitle => Text("AppTitle");
+    public string DevelopmentToolsTitle => Text("DevelopmentToolsTitle");
     public string WindowTitle => Text("WindowTitle");
     public string SpecificationVersion => Text("SpecificationVersion");
     public string HeaderSubtitle => Text("HeaderSubtitle");
@@ -543,6 +544,7 @@ public sealed class MainWindowViewModel : ObservableObject
             nameof(SelectedTimeZoneId),
             nameof(AppTitle),
             nameof(WindowTitle),
+            nameof(DevelopmentToolsTitle),
             nameof(SpecificationVersion),
             nameof(HeaderSubtitle),
             nameof(PreferencesTitle),

@@ -140,10 +140,7 @@ public sealed class T03CompanyFileTests
     }
     private Process Probe()
     {
-        var root = new DirectoryInfo(AppContext.BaseDirectory);
-        while (root is not null && !File.Exists(Path.Combine(root.FullName, "Valdrio.slnx"))) root = root.Parent;
-        Assert.IsNotNull(root);
-        var dll = Path.Combine(root.FullName, "src", "Valdrio.Runner", "bin", "Release", "net10.0", "Valdrio.Runner.dll");
+        var dll = Path.Combine(AppContext.BaseDirectory, "runner", "Valdrio.Runner.dll");
         var info = new ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet")
             { RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false };
         info.ArgumentList.Add(dll); info.ArgumentList.Add("--company-lock-probe"); info.ArgumentList.Add(PathOf());

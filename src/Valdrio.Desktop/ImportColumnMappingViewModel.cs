@@ -85,7 +85,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
             amountColumn = debitColumn = creditColumn = null; InvalidateMapping();
         }
     }
-    public string InterpretationPrompt => this[IsDebitCredit ? "ApproveDebitCredit" : "ApproveInterpretation"];
+    public string InterpretationPrompt => this[amountMode == "closing-full" ? (IsDebitCredit ? "ApproveClosingDebitCredit" : "ApproveClosing") : (IsDebitCredit ? "ApproveDebitCredit" : "ApproveInterpretation")];
     public bool HasColumns => document is not null;
     public bool IsReady => validation?.IsValid == true;
     public ImportColumnSelectionResult? ValidatedSelection => IsReady ? validation : null;
@@ -145,6 +145,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         $"{ColumnName(index)} · {(header.Length == 0 ? this["NoHeader"] : Display(header))}";
     private void Reformat()
     {
+        amountModes[0].Label = this["PeriodMode"]; amountModes[1].Label = this["ClosingMode"];
         delimiters[2].Label = this["Tab"]; groups[0].Label = this["None"]; groups[3].Label = this["Space"];
         amountLayouts[0].Label = this["SignedLayout"]; amountLayouts[1].Label = this["DebitCreditLayout"];
         foreach (var c in columnOptions) c.Label = ColumnLabel(c.Index, c.Header); Refresh();

@@ -91,3 +91,20 @@ Cambiar estos parámetros en el futuro requiere una nueva versión de política,
 ## T05 — Decisiones técnicas de contexto
 
 [ADR-0004](../adr/ADR-0004-estudios-y-snapshots-v3.md) define v3, revisiones propias, dos perímetros de hash y captura contextual. No cambia D01–D12. D03 sigue necesitando muestra y resultado esperado antes de confirmar fuentes reales en T06; las restantes propuestas mantienen sus puertas.
+
+## D03 — Fuente de cierre e importe completo, 2026-10-06
+
+El propietario declara «Saldos de cierre» y, ante enero 100 / febrero 160,
+elige «160: saldo completo». Se acepta esa interpretación para su estudio,
+sin deducir una diferencia de 60. Sigue pendiente contrastar una muestra real,
+sus cuentas seleccionadas, fecha, signos y moneda antes de aceptar el perfil productivo.
+
+La implementación distingue ClosingBalanceAsStudyAmount de ClosingBalance
+(evidencia sin interpretación) y CumulativeExpenseDifference. Las dos últimas
+mantienen su bloqueo anterior. La opción de saldo íntegro exige aprobación y
+referencia de ejemplo en cada preparación. La fecha de cierre debe coincidir
+con el final del estudio y se muestra antes de aprobar. No se declara aceptada
+una interpretación universal de cualquier balance ni de todas sus cuentas.
+
+Esta decisión explícita complementa CM01 y las directrices T06 para esta modalidad;
+no cambia los resultados históricos ni las 39 referencias matemáticas originales.

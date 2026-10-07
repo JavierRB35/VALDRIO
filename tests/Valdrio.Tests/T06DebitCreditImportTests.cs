@@ -374,9 +374,8 @@ public sealed class T06DebitCreditImportTests
     private async Task VerifyRunner(StudySnapshotReceipt photo, string net)
     {
         var path = PathOf("snapshot.json"); File.WriteAllText(path, CanonicalSnapshotJson.Serialize(photo));
-        var root = new DirectoryInfo(AppContext.BaseDirectory); while (!File.Exists(Path.Combine(root.FullName, "Valdrio.slnx"))) root = root.Parent!;
         var start = new ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet") { RedirectStandardOutput = true, RedirectStandardError = true };
-        start.ArgumentList.Add(Path.Combine(root.FullName, "src/Valdrio.Runner/bin/Release/net10.0/Valdrio.Runner.dll"));
+        start.ArgumentList.Add(Path.Combine(AppContext.BaseDirectory, "runner", "Valdrio.Runner.dll"));
         start.ArgumentList.Add("--study-snapshot"); start.ArgumentList.Add(path);
         using var process = Process.Start(start)!; var text = await process.StandardOutput.ReadToEndAsync(); var error = await process.StandardError.ReadToEndAsync();
         await process.WaitForExitAsync(); Assert.AreEqual(0, process.ExitCode, error);

@@ -5,9 +5,9 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="AppTitle" xml:space="preserve"><value>VALDRIO</value></data>
-  <data name="WindowTitle" xml:space="preserve"><value>VALDRIO - presentation preferences</value></data>
+  <data name="WindowTitle" xml:space="preserve"><value>VALDRIO - workspace</value></data>
   <data name="SpecificationVersion" xml:space="preserve"><value>Specification v0.4 · T02A complete</value></data>
-  <data name="HeaderSubtitle" xml:space="preserve"><value>International presentation, precision, frozen currency metadata and explicit FX</value></data>
+  <data name="HeaderSubtitle" xml:space="preserve"><value>Companies, models, studies and imports</value></data>
   <data name="PreferencesTitle" xml:space="preserve"><value>Presentation preferences</value></data>
   <data name="LabelUiLanguage" xml:space="preserve"><value>Interface language</value></data>
   <data name="LabelFormatCulture" xml:space="preserve"><value>Regional format</value></data>
@@ -346,7 +346,7 @@ Full: {5}</value></data>
   <data name="Import.ColumnsRequired" xml:space="preserve"><value>Select the account code and all required amount columns from the source.</value></data>
   <data name="Import.ColumnsDistinct" xml:space="preserve"><value>Account code and each amount field must use different columns.</value></data>
   <data name="Import.NoData" xml:space="preserve"><value>The selected layout contains no data rows.</value></data>
-  <data name="Import.ModeUnavailable" xml:space="preserve"><value>This delivery supports period amounts, signed or debit minus credit, with duplicate accounts rejected. Closing balances, cumulative differences and aggregation need their separate interpretation.</value></data>
+  <data name="Import.ModeUnavailable" xml:space="preserve"><value>This delivery supports period amounts or full closing balances explicitly selected and approved for the study, without duplicate accounts. Uninterpreted closing balances, cumulative differences and aggregation remain pending.</value></data>
   <data name="Import.ApprovalRequired" xml:space="preserve"><value>Validate a representative example and explicitly approve the period, currency and signed amounts before confirmation.</value></data>
   <data name="Import.PeriodMismatch" xml:space="preserve"><value>The source period must match the study period.</value></data>
   <data name="Import.FxRequired" xml:space="preserve"><value>Confirmation currently requires a fixed source currency equal to the study functional currency. A foreign currency needs the FX bridge.</value></data>
@@ -359,7 +359,7 @@ Full: {5}</value></data>
   <data name="Import.SourceChanged" xml:space="preserve"><value>The selected file changed after the preview. Open it again and prepare a new import.</value></data>
   <data name="Study.PartitionsPending" xml:space="preserve"><value>Imported resources are available. Assign their partitions before calculating costs.</value></data>
   <data name="Study.ImportedCaptured" xml:space="preserve"><value>The snapshot includes confirmed import resources and their source evidence. Calculation still requires the remaining inputs.</value></data>
-  <data name="ImportMapping.Scope" xml:space="preserve"><value>Confirmation adds a complete batch of signed period amounts in the study functional currency. Closing balances, cumulative differences and FX conversion are pending.</value></data>
+  <data name="ImportMapping.Scope" xml:space="preserve"><value>Confirmation appends a complete batch using the selected mode in the study functional currency. Differences between closing balances and currency conversion remain pending.</value></data>
   <data name="ImportMapping.NoStudy" xml:space="preserve"><value>Open a saved study to prepare and confirm this import.</value></data>
   <data name="ImportMapping.Target" xml:space="preserve"><value>Destination study {0} · period {1} to {2} · functional currency {3} · revision {4}</value></data>
   <data name="ImportMapping.SourceCurrency" xml:space="preserve"><value>Source currency, ISO code such as EUR</value></data>
@@ -384,4 +384,14 @@ Full: {5}</value></data>
   <data name="ImportMapping.DebitCreditHelp" xml:space="preserve"><value>Period amount = debit minus credit. Both columns require explicit numbers, including zero. Empty or missing fields are errors; source negatives retain their declared meaning.</value></data>
   <data name="ImportMapping.ApproveDebitCredit" xml:space="preserve"><value>I have checked the example and confirm debit minus credit as the signed amount for the displayed period, in the stated source currency. Both originals, negatives and zeros retain their meaning.</value></data>
   <data name="Import.AmountOverflow" xml:space="preserve"><value>Debit minus credit exceeds the supported decimal range. Correct the source amounts.</value></data>
+  <data name="CompanyActiveLabel" xml:space="preserve"><value>Open company</value></data>
+  <data name="CompanyTechnicalDetails" xml:space="preserve"><value>File technical details</value></data>
+  <data name="DevelopmentToolsTitle" xml:space="preserve"><value>Development tools and examples</value></data>
+  <data name="ImportMapping.AmountMode" xml:space="preserve"><value>Meaning of amounts</value></data>
+  <data name="ImportMapping.ApproveClosing" xml:space="preserve"><value>I checked the displayed closing date and example. I choose the full balance of the selected accounts for this study, in the declared currency, preserving signs and zeros.</value></data>
+  <data name="ImportMapping.ApproveClosingDebitCredit" xml:space="preserve"><value>I checked that Debit and Credit represent the displayed closing balances. I choose Debit minus Credit as the full balance for this study, without subtracting another closing balance, in the declared currency.</value></data>
+  <data name="ImportMapping.ClosingBasis" xml:space="preserve"><value>Closing date {0} (study end). Use the full balance: 160 remains 160. The previous closing balance is not subtracted.</value></data>
+  <data name="ImportMapping.ClosingMode" xml:space="preserve"><value>Full closing balance for this study</value></data>
+  <data name="ImportMapping.PeriodBasis" xml:space="preserve"><value>Use movements belonging to the study period.</value></data>
+  <data name="ImportMapping.PeriodMode" xml:space="preserve"><value>Period amounts</value></data>
 </root>

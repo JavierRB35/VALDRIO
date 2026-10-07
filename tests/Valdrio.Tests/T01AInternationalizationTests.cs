@@ -99,7 +99,7 @@ public sealed class T01AInternationalizationTests
             "WindowTitle",
             CultureInfo.GetCultureInfo("fr-FR"));
 
-        Assert.AreEqual("VALDRIO - presentation preferences", value);
+        Assert.AreEqual("VALDRIO - workspace", value);
         CollectionAssert.AreEqual(
             new[] { "fr-FR|WindowTitle" },
             sink.Entries.ToArray());

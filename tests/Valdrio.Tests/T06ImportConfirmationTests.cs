@@ -65,6 +65,44 @@ public sealed class T06ImportConfirmationTests
     }
 
     [TestMethod]
+    public async Task ExplicitFullClosingBalanceKeeps160AndPersistsItsDistinctMeaning()
+    {
+        EntityId studyId; ImportedBatch batch; StudySnapshotReceipt photo;
+        using (var file = Baseline())
+        {
+            var study = Study(file); studyId = study.Id;
+            var profile = Profile(study, mode: ImportAmountMode.ClosingBalanceAsStudyAmount);
+            var prepared = Prepare(file, study, await Source(profile, "Amount;Ignored;Account\n160;x;00123"), profile);
+            Assert.IsTrue(prepared.CanConfirm);
+            Assert.AreEqual(160m, prepared.Reconciliation.NetAmount);
+            var command = Command(prepared); batch = file.Imports.ConfirmImport(command);
+            Assert.AreEqual(batch.Id, file.Imports.ConfirmImport(command).Id);
+            Assert.AreEqual(160m, batch.Resources.Single().Functional.Amount);
+            photo = file.Studies.Capture(new(study.CompanyId, study.Id, 1, Id(), "test"));
+        }
+        using var reopened = Service().Open(FileOf("current.valdrio"));
+        var company = reopened.Read(); var saved = reopened.Imports.ReadImports(company.Id, studyId).Single();
+        Assert.AreEqual(ImportAmountMode.ClosingBalanceAsStudyAmount, saved.Prepared.Profile.AmountMode);
+        Assert.AreEqual(BusinessDate.ParseIso("2026-10-31"), saved.Prepared.Profile.PeriodEnd);
+        Assert.AreEqual(160m, saved.Resources.Single().Functional.Amount);
+        Assert.AreEqual(CanonicalSnapshotJson.Serialize(batch), CanonicalSnapshotJson.Serialize(saved));
+        Assert.AreEqual(photo.CanonicalJson, reopened.Studies.ReadSnapshots(company.Id, studyId).Single().CanonicalJson);
+    }
+    [TestMethod]
+    public async Task FullClosingBalanceStillRequiresApprovalAndNeverWritesWhenUnapproved()
+    {
+        using var file = Baseline(); var study = Study(file);
+        var profile = Profile(study, mode: ImportAmountMode.ClosingBalanceAsStudyAmount,
+            approval: ImportProfileApprovalState.PendingBusinessApproval);
+        var before = Hash(file.Path);
+        var prepared = Prepare(file, study, await Source(profile), profile);
+        Assert.IsFalse(prepared.CanConfirm);
+        Assert.IsTrue(prepared.Diagnostics.Any(d => d.Diagnostic.Code == "IMP_APPROVAL_REQUIRED"));
+        Assert.ThrowsExactly<DomainRuleException>(() => file.Imports.ConfirmImport(Command(prepared)));
+        Assert.AreEqual(before, Hash(file.Path));
+        Assert.AreEqual(0, file.Imports.ReadImports(study.CompanyId, study.Id).Count);
+    }
+    [TestMethod]
     public void V4MappingAndMigrationSnapshotHaveNoPendingChanges()
     {
         using var connection = new SqliteConnection("Data Source=:memory:"); connection.Open(); using var context = new ImportDbContext(connection);
@@ -226,9 +264,8 @@ public sealed class T06ImportConfirmationTests
         Assert.IsFalse(readiness.Diagnostics.Any(d => d.Code == "STUDY_RESOURCES_PENDING")); Assert.IsTrue(readiness.Diagnostics.Any(d => d.Code == "STUDY_PARTITIONS_PENDING"));
         Assert.AreNotEqual(before.EconomicInputHash, photo.EconomicInputHash); Assert.AreEqual(before.CanonicalJson, file.Studies.ReadSnapshots(study.CompanyId, study.Id).Single(p => p.Id == before.Id).CanonicalJson);
         var receiptPath = FileOf("imported-snapshot.json"); File.WriteAllText(receiptPath, CanonicalSnapshotJson.Serialize(photo));
-        var root = new DirectoryInfo(AppContext.BaseDirectory); while (!File.Exists(Path.Combine(root.FullName, "Valdrio.slnx"))) root = root.Parent!;
         var process = new System.Diagnostics.ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet") { RedirectStandardOutput = true, RedirectStandardError = true };
-        process.ArgumentList.Add(Path.Combine(root.FullName, "src/Valdrio.Runner/bin/Release/net10.0/Valdrio.Runner.dll"));
+        process.ArgumentList.Add(Path.Combine(AppContext.BaseDirectory, "runner", "Valdrio.Runner.dll"));
         process.ArgumentList.Add("--study-snapshot"); process.ArgumentList.Add(receiptPath);
         using var runner = System.Diagnostics.Process.Start(process)!; var text = await runner.StandardOutput.ReadToEndAsync(); var error = await runner.StandardError.ReadToEndAsync();
         await runner.WaitForExitAsync(); Assert.AreEqual(0, runner.ExitCode, error); using var output = JsonDocument.Parse(text);

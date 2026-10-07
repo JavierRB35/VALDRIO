@@ -92,6 +92,10 @@
   <TextBlock Text="{Binding [Scope]}" FontStyle="Italic"/>
   <StackPanel IsEnabled="{Binding IsIdle}" Margin="0,12,0,0">
    <TextBlock Text="{Binding Target}" FontWeight="SemiBold"/>
+   <TextBlock Text="{Binding [AmountMode]}"/>
+   <ComboBox x:Name="AmountModeBox" ItemsSource="{Binding AmountModes}" DisplayMemberPath="Label" SelectedValuePath="Value"
+    SelectedValue="{Binding AmountMode,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [AmountMode]}"/>
+   <TextBlock Text="{Binding AmountBasis}" TextWrapping="Wrap" FontWeight="SemiBold"/>
    <TextBlock Text="{Binding [SourceCurrency]}"/>
    <TextBox x:Name="SourceCurrencyBox" Text="{Binding SourceCurrency,UpdateSourceTrigger=PropertyChanged}" Width="100"
     HorizontalAlignment="Left" MaxLength="3" AutomationProperties.Name="{Binding [SourceCurrency]}"/>

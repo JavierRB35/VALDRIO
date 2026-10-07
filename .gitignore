@@ -8,3 +8,4 @@ artifacts/
 *.valdrio-backup.lock
 *.creating-*
 *_wpftmp.csproj
+/.vs

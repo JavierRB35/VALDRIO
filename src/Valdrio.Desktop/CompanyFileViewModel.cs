@@ -75,6 +75,9 @@ public sealed class CompanyFileViewModel : ObservableObject, IDisposable
     public CompanyFileSnapshot? Snapshot { get; private set; }
     public string? ActivePath => active?.Path;
     public string Title => Text("CompanyTitle");
+    public string ActiveCompanyLabel => Text("CompanyActiveLabel");
+    public string ActiveCompanyName => Snapshot?.Name ?? Text("CompanyNoFile");
+    public string TechnicalDetailsLabel => Text("CompanyTechnicalDetails");
     public string NameLabel => Text("CompanyNameLabel");
     public string CurrencyLabel => Text("CompanyCurrencyLabel");
     public string CreateLabel => Text("CompanyCreate");

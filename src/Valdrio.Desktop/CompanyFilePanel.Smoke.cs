@@ -37,13 +37,18 @@ public partial class CompanyFilePanel
         CurrencyBox.SetCurrentValue(ComboBox.SelectedItemProperty, "USD"); CurrencyBox.GetBindingExpression(ComboBox.SelectedItemProperty)!.UpdateSource();
         dialogs.Paths.Enqueue(path); await Click(CreateButton);
         Check(vm.Snapshot?.DefaultCurrency.ToString() == "USD", "EN/es-ES/USD creation");
+        Check(ActiveCompanyNameText.Text == "VALDRIO synthetic factory 日本", "active company name shown after create");
+        SetText(NameBox, "Draft for another company");
+        Check(ActiveCompanyNameText.Text == "VALDRIO synthetic factory 日本", "new company draft does not rename active company");
         var id = vm.Snapshot!.Id;
         SetText(UnitCodeBox, "00123"); await Click(AddUnitButton);
         Check(vm.Snapshot.Units.Single().Code == "00123", "bound unit saved");
         dialogs.Paths.Enqueue(backup); await Click(BackupButton);
         Check(File.Exists(backup), "live backup created");
         await Click(CloseButton); Check(vm.Snapshot is null, "close removes active session");
+        Check(ActiveCompanyNameText.Text == vm.ActiveCompanyName && !ActiveCompanyNameText.Text.Contains("synthetic factory", StringComparison.Ordinal), "closing clears active company label");
         dialogs.Paths.Enqueue(path); await Click(OpenButton);
+        Check(ActiveCompanyNameText.Text == "VALDRIO synthetic factory 日本", "reopening shows persisted company name");
         Check(vm.Snapshot?.Id == id && vm.Snapshot.Units.Count == 1, "real reopen retains identity and unit");
         var hash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)));
         var bad = Path.Combine(output, "bad.fixture"); File.WriteAllText(bad, "corrupt");

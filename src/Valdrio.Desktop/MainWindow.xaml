@@ -127,7 +127,16 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="12"
+            <Expander x:Name="DevelopmentTools" Grid.Row="12" Header="{Binding DevelopmentToolsTitle}" TabIndex="100">
+                <Grid Margin="0,12,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/><RowDefinition Height="14"/>
+                        <RowDefinition Height="Auto"/><RowDefinition Height="14"/>
+                        <RowDefinition Height="Auto"/><RowDefinition Height="14"/>
+                        <RowDefinition Height="Auto"/><RowDefinition Height="14"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+            <GroupBox Grid.Row="0"
                       Header="{Binding PreviewTitle}"
                       Padding="16">
                 <Grid>
@@ -203,7 +212,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="14"
+            <GroupBox Grid.Row="2"
                       Header="{Binding FxEditorTitle}"
                       Padding="16">
                 <StackPanel>
@@ -485,7 +494,7 @@
                 </StackPanel>
             </GroupBox>
 
-            <GroupBox Grid.Row="18"
+            <GroupBox Grid.Row="6"
                       Header="{Binding EditTitle}"
                       Padding="16">
                 <Grid>
@@ -547,7 +556,7 @@
                 </Grid>
             </GroupBox>
 
-            <Border Grid.Row="20"
+            <Border Grid.Row="8"
                     BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
                     BorderThickness="1"
                     CornerRadius="6"
@@ -564,6 +573,8 @@
                                TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
+                </Grid>
+            </Expander>
         </Grid>
     </ScrollViewer>
 </Window>

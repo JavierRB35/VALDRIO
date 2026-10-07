@@ -7,6 +7,17 @@ namespace Valdrio.Desktop;
 
 public sealed partial class ImportColumnMappingViewModel
 {
+    private string amountMode = "period";
+    private readonly ImportMappingOption[] amountModes = [new("period", ""), new("closing-full", "")];
+    public IReadOnlyList<ImportMappingOption> AmountModes => amountModes;
+    public string AmountMode
+    {
+        get => amountMode;
+        set { if (SetProperty(ref amountMode, value)) { InvalidatePreparation(true); Refresh(); } }
+    }
+    public string AmountBasis => amountMode == "closing-full"
+        ? string.Format(Ui, this["ClosingBasis"], targetStudy?.PeriodEnd.ToString() ?? "—")
+        : this["PeriodBasis"];
     private IImportWorkspace? importPort;
     private StudyDefinition? targetStudy;
     private Func<ImportedBatch, Task>? afterConfirmed;
@@ -74,7 +85,12 @@ public sealed partial class ImportColumnMappingViewModel
             var profile = new SourceParseProfileVersion(SourceParseProfileVersion.CurrentSchema, new(Guid.NewGuid()), 1,
                 selected.Source.FileName, selected.Settings.SourceKind, selected.Settings.WorksheetName,
                 selected.Settings.HeaderRow, selected.Settings.FirstDataRow, selected.Columns, selected.Settings.Csv,
-                selected.NumberFormat, "yyyy-MM-dd", ImportAmountMode.PeriodAmount,
+                selected.NumberFormat, "yyyy-MM-dd", amountMode switch
+                {
+                    "period" => ImportAmountMode.PeriodAmount,
+                    "closing-full" => ImportAmountMode.ClosingBalanceAsStudyAmount,
+                    _ => throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile")
+                },
                 selected.Columns.Debit.HasValue ? ImportSignConvention.DebitMinusCredit : ImportSignConvention.SignedAmount,
                 study.PeriodStart, study.PeriodEnd, currency, null, ImportDuplicatePolicy.Reject, ImportZeroPolicy.Keep,
                 ImportAccountSelection.All, new(approved ? ImportProfileApprovalState.ApprovedBusiness : ImportProfileApprovalState.PendingBusinessApproval,

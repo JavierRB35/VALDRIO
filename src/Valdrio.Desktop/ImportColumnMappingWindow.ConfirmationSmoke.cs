@@ -71,6 +71,17 @@ public partial class ImportColumnMappingWindow
             prepared.Reconciliation.ZeroRows == 1 && ConfirmImportButton.IsEnabled && ConfirmationSummaryText.Text == vm.ConfirmationSummary &&
             ConfirmationSummaryText.TranslatePoint(new Point(), this).Y < ConfirmImportButton.TranslatePoint(new Point(), this).Y,
             "approved period source reconciles before confirmation");
+        AmountModeBox.SetCurrentValue(ComboBox.SelectedValueProperty, "closing-full");
+        AmountModeBox.GetBindingExpression(ComboBox.SelectedValueProperty)!.UpdateSource();
+        Check(vm.Preparation is null && !vm.InterpretationApproved && !ConfirmImportButton.IsEnabled,
+            "changing meaning invalidates preparation and approval");
+        Approve(); await Click(PrepareImportButton);
+        Check(vm.Preparation is { CanConfirm: true } closing && closing.Profile.AmountMode == ImportAmountMode.ClosingBalanceAsStudyAmount &&
+            closing.Reconciliation.NetAmount == 1250.5m, "full closing selection retains entire balance");
+        AmountModeBox.SetCurrentValue(ComboBox.SelectedValueProperty, "period");
+        AmountModeBox.GetBindingExpression(ComboBox.SelectedValueProperty)!.UpdateSource();
+        Check(vm.Preparation is null && !vm.InterpretationApproved, "returning to period also requires fresh approval");
+        Approve(); await Click(PrepareImportButton);
         var fingerprint = vm.Preparation!.Fingerprint;
         main.ApplyPresentationPreset("es", "en-US", "UTC", false, false);
         Check(vm.Preparation.Fingerprint == fingerprint && vm.InterpretationApproved && AccountColumnBox.SelectedValue is 3,

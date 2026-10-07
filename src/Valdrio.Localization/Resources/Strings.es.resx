@@ -5,9 +5,9 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="AppTitle" xml:space="preserve"><value>VALDRIO</value></data>
-  <data name="WindowTitle" xml:space="preserve"><value>VALDRIO - preferencias de presentación</value></data>
+  <data name="WindowTitle" xml:space="preserve"><value>VALDRIO - espacio de trabajo</value></data>
   <data name="SpecificationVersion" xml:space="preserve"><value>Especificación v0.4 · T02A completada</value></data>
-  <data name="HeaderSubtitle" xml:space="preserve"><value>Presentación internacional, precisión, metadatos monetarios y FX explícito congelado</value></data>
+  <data name="HeaderSubtitle" xml:space="preserve"><value>Empresas, modelos, estudios e importación</value></data>
   <data name="PreferencesTitle" xml:space="preserve"><value>Preferencias de presentación</value></data>
   <data name="LabelUiLanguage" xml:space="preserve"><value>Idioma de interfaz</value></data>
   <data name="LabelFormatCulture" xml:space="preserve"><value>Formato regional</value></data>
@@ -346,7 +346,7 @@ Completa: {5}</value></data>
   <data name="Import.ColumnsRequired" xml:space="preserve"><value>Selecciona la columna de cuenta y todas las columnas de importe necesarias del origen.</value></data>
   <data name="Import.ColumnsDistinct" xml:space="preserve"><value>El código de cuenta y cada campo de importe deben utilizar columnas distintas.</value></data>
   <data name="Import.NoData" xml:space="preserve"><value>La estructura seleccionada no contiene filas de datos.</value></data>
-  <data name="Import.ModeUnavailable" xml:space="preserve"><value>Esta entrega admite importes de periodo, firmados o Debe menos Haber, y rechaza cuentas duplicadas. Los cierres, diferencias de acumulados y agrupación necesitan su interpretación específica.</value></data>
+  <data name="Import.ModeUnavailable" xml:space="preserve"><value>Esta entrega admite importes de periodo o saldo íntegro al cierre explícitamente elegido y aprobado para el estudio, sin cuentas duplicadas. El cierre sin interpretación, las diferencias de acumulados y la agrupación siguen pendientes.</value></data>
   <data name="Import.ApprovalRequired" xml:space="preserve"><value>Valida un ejemplo representativo y aprueba explícitamente el periodo, la moneda y los importes firmados antes de confirmar.</value></data>
   <data name="Import.PeriodMismatch" xml:space="preserve"><value>El periodo del archivo debe coincidir con el del estudio.</value></data>
   <data name="Import.FxRequired" xml:space="preserve"><value>La confirmación requiere una moneda fija de origen igual a la funcional del estudio. Otra moneda necesita el puente de conversión.</value></data>
@@ -359,7 +359,7 @@ Completa: {5}</value></data>
   <data name="Import.SourceChanged" xml:space="preserve"><value>El archivo seleccionado cambió después de la vista previa. Ábrelo de nuevo y prepara otra importación.</value></data>
   <data name="Study.PartitionsPending" xml:space="preserve"><value>Los recursos importados están disponibles. Asigna sus particiones antes de calcular costes.</value></data>
   <data name="Study.ImportedCaptured" xml:space="preserve"><value>La captura incluye recursos importados confirmados y su procedencia. El cálculo necesita las entradas restantes.</value></data>
-  <data name="ImportMapping.Scope" xml:space="preserve"><value>La confirmación añade un lote completo de importes firmados de periodo en la moneda funcional del estudio. Los cierres, diferencias de acumulados y conversión de divisas están pendientes.</value></data>
+  <data name="ImportMapping.Scope" xml:space="preserve"><value>La confirmación añade un lote completo según la modalidad elegida y en la moneda funcional del estudio. Las diferencias entre cierres y la conversión de divisas están pendientes.</value></data>
   <data name="ImportMapping.NoStudy" xml:space="preserve"><value>Abre un estudio guardado para preparar y confirmar esta importación.</value></data>
   <data name="ImportMapping.Target" xml:space="preserve"><value>Estudio de destino {0} · periodo {1} a {2} · moneda funcional {3} · revisión {4}</value></data>
   <data name="ImportMapping.SourceCurrency" xml:space="preserve"><value>Moneda de origen, código ISO como EUR</value></data>
@@ -384,4 +384,14 @@ Completa: {5}</value></data>
   <data name="ImportMapping.DebitCreditHelp" xml:space="preserve"><value>Importe de periodo = Debe menos Haber. Ambas columnas necesitan números explícitos, incluido el cero. Los campos vacíos o ausentes son errores; los negativos conservan su significado declarado.</value></data>
   <data name="ImportMapping.ApproveDebitCredit" xml:space="preserve"><value>He comprobado el ejemplo y confirmo Debe menos Haber como importe firmado del periodo indicado, en la moneda de origen declarada. Ambos originales, negativos y ceros conservan su significado.</value></data>
   <data name="Import.AmountOverflow" xml:space="preserve"><value>Debe menos Haber supera el rango decimal admitido. Corrige los importes del origen.</value></data>
+  <data name="CompanyActiveLabel" xml:space="preserve"><value>Empresa abierta</value></data>
+  <data name="CompanyTechnicalDetails" xml:space="preserve"><value>Detalles técnicos del archivo</value></data>
+  <data name="DevelopmentToolsTitle" xml:space="preserve"><value>Herramientas de desarrollo y ejemplos</value></data>
+  <data name="ImportMapping.AmountMode" xml:space="preserve"><value>Significado de los importes</value></data>
+  <data name="ImportMapping.ApproveClosing" xml:space="preserve"><value>He comprobado la fecha de cierre indicada y el ejemplo. Elijo utilizar el saldo íntegro de las cuentas seleccionadas para este estudio, en la moneda declarada, conservando signos y ceros.</value></data>
+  <data name="ImportMapping.ApproveClosingDebitCredit" xml:space="preserve"><value>He comprobado que Debe y Haber representan los saldos de cierre indicados. Elijo Debe menos Haber como saldo íntegro para este estudio, sin restar otro cierre, en la moneda declarada.</value></data>
+  <data name="ImportMapping.ClosingBasis" xml:space="preserve"><value>Cierre a {0} (fin del estudio). Se utiliza el saldo completo: 160 se conserva como 160. No se resta el cierre anterior.</value></data>
+  <data name="ImportMapping.ClosingMode" xml:space="preserve"><value>Saldo íntegro al cierre para este estudio</value></data>
+  <data name="ImportMapping.PeriodBasis" xml:space="preserve"><value>Se utilizan los movimientos correspondientes al periodo del estudio.</value></data>
+  <data name="ImportMapping.PeriodMode" xml:space="preserve"><value>Importes del periodo</value></data>
 </root>

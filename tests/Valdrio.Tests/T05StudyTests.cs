@@ -110,9 +110,7 @@ public sealed class T05StudyTests
     {
         using var file = Baseline(); var study = file.Studies.Create(CreateCommand(file)); var receipt = file.Studies.Capture(CaptureCommand(study));
         var path = FileOf("snapshot.json"); File.WriteAllText(path, CanonicalSnapshotJson.Serialize(receipt));
-        var root = new DirectoryInfo(AppContext.BaseDirectory);
-        while (!File.Exists(Path.Combine(root.FullName, "Valdrio.slnx"))) root = root.Parent!;
-        var dll = Path.Combine(root.FullName, "src", "Valdrio.Runner", "bin", "Release", "net10.0", "Valdrio.Runner.dll");
+        var dll = Path.Combine(AppContext.BaseDirectory, "runner", "Valdrio.Runner.dll");
         (int Code, string Output) Run()
         {
             var info = new System.Diagnostics.ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet")

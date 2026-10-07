@@ -394,7 +394,7 @@ try {
     Write-Host "FX WPF button interaction checks passed: $($fxChecks.PassedChecks.Count)."
 
     $companyChecks = Get-Content -LiteralPath (Join-Path $captureDir "company-file/interaction.json") -Raw | ConvertFrom-Json
-    if ($companyChecks.Status -ne "passed" -or $companyChecks.PassedChecks.Count -ne 24) {
+    if ($companyChecks.Status -ne "passed" -or $companyChecks.PassedChecks.Count -ne 28) {
       throw "Company WPF interaction evidence is missing or incomplete."
     }
     Write-Host "Company WPF checks passed: $($companyChecks.PassedChecks.Count)."
@@ -411,7 +411,7 @@ try {
     Write-Host "Import column selection WPF checks passed: $($importChecks.PassedChecks.Count)."
     $confirmationFolder = Join-Path $captureDir "import-confirmation"
     $confirmationChecks = Get-Content -LiteralPath (Join-Path $confirmationFolder "interaction.json") -Raw | ConvertFrom-Json
-    if ($confirmationChecks.Status -ne "passed" -or $confirmationChecks.PassedChecks.Count -ne 18) {
+    if ($confirmationChecks.Status -ne "passed" -or $confirmationChecks.PassedChecks.Count -ne 21) {
       throw "Import confirmation WPF interaction evidence is incomplete."
     }
     $confirmationImages = @(Get-ChildItem -LiteralPath $confirmationFolder -Filter *.png)
