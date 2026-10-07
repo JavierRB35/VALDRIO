@@ -397,6 +397,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string ExistingModelHelp => Text("Model.ExistingModelHelp");
     public string NewModelHelp => Text("Model.NewModelHelp");
     public string UnitSectionHelp => Text("Model.UnitSectionHelp");
+    public string UnitCatalogTitle => Text("Model.UnitCatalogTitle");
     public string CreateUnitHereLabel => Text("Model.CreateUnitHere");
     public string CreateUnitHereHelp => Text("Model.CreateUnitHereHelp");
     public string ReviewModelHelp => Text("Model.ReviewModelHelp");
