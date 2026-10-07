@@ -62,7 +62,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         NewCenterCommand = new AsyncRelayCommand(NewCenter, () => Ready && company.CanWrite);
         SaveCenterFormCommand = new AsyncRelayCommand(SaveCenterForm, () => Ready && company.CanWrite &&
             !string.IsNullOrWhiteSpace(CenterCode) && !string.IsNullOrWhiteSpace(CenterName));
-        ToggleCenterCommand = new AsyncRelayCommand(ToggleCenter, () => Ready && company.CanWrite && Master is not null);
+        ToggleCenterCommand = new AsyncRelayCommand(ToggleCenter, () => Ready && company.CanWrite && Master is not null && !MasterEdited);
         ToggleUnitCommand = new AsyncRelayCommand(ToggleUnit, () => Ready && company.CanWrite && UnitMaster is not null);
         NewDraftCommand = new AsyncRelayCommand(NewDraft, () => Ready && company.CanWrite);
         LoadCommand = new AsyncRelayCommand(LoadChosen, () => Ready && ModelChoice is not null);
@@ -119,7 +119,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         get => master;
         set
         {
-            if (!loading && MasterEdited && master != value)
+            if (!loading && CenterFormEdited && master != value)
             {
                 var decision = dialogs.ResolvePending(Text("Model.PendingTitle"), Text("Model.PendingBody"));
                 if (decision == PendingEditChoice.Cancel)
@@ -133,6 +133,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
                     _ = SaveMasterThenSelect(value);
                     return;
                 }
+
+                ClearCenterFormCore();
             }
 
             if (SetProperty(ref master, value) && !loading)
@@ -146,8 +148,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
 
     private async Task SaveMasterThenSelect(CenterOption? selection)
     {
-        await SaveCenter();
-        if (!MasterEdited)
+        await SaveCenterForm();
+        if (!CenterFormEdited)
             Master = Centers.SingleOrDefault(x => x.Value.Id == selection?.Value.Id);
         else
             OnPropertyChanged(nameof(Master));
