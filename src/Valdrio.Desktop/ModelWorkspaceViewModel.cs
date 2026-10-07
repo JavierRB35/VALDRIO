@@ -61,7 +61,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         SaveCenterCommand = new AsyncRelayCommand(SaveCenter, () => Ready && company.CanWrite && Master is not null);
         NewCenterCommand = new AsyncRelayCommand(NewCenter, () => Ready && company.CanWrite);
         SaveCenterFormCommand = new AsyncRelayCommand(SaveCenterForm, () => Ready && company.CanWrite &&
-            !string.IsNullOrWhiteSpace(CenterCode) && !string.IsNullOrWhiteSpace(CenterName));
+            !string.IsNullOrWhiteSpace(CenterCode) && !string.IsNullOrWhiteSpace(CenterName) &&
+            (Master is null || MasterEdited));
         ToggleCenterCommand = new AsyncRelayCommand(ToggleCenter, () => Ready && company.CanWrite && Master is not null && !MasterEdited);
         ToggleUnitCommand = new AsyncRelayCommand(ToggleUnit, () => Ready && company.CanWrite && UnitMaster is not null);
         NewDraftCommand = new AsyncRelayCommand(NewDraft, () => Ready && company.CanWrite);
@@ -409,6 +410,10 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string NodePersistenceHelp => Text("Model.NodePersistenceHelp");
     public string OptionalNodeDataLabel => Text("Model.OptionalNodeData");
     public string FunctionHelp => Text("Model.FunctionHelp");
+    public string RoleHelp => Text("Model.RoleHelp");
+    public string UnitHelp => Text("Model.UnitHelp");
+    public string LayerHelp => Text("Model.LayerHelp");
+    public string PoolHelp => Text("Model.PoolHelp");
     public string NodeCodeLabel => Text("Model.NodeCode");
     public string PhysicalLabel => Text("Model.Physical");
     public string RoleLabel => Text("Model.Role");
