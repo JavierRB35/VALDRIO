@@ -133,7 +133,11 @@ public sealed partial class ImportColumnMappingViewModel
         if (busy) throw new InvalidOperationException("Import is busy.");
         var changed = !ReferenceEquals(importPort, port) || targetStudy != study;
         importPort = port; targetStudy = study; afterConfirmed = onConfirmed; writable = canWrite;
-        if (changed) { sourceCurrency = ""; InvalidatePreparation(true); }
+        if (changed)
+        {
+            sourceCurrency = study?.Currency.FunctionalCurrencyCode.ToString() ?? "";
+            InvalidatePreparation(true);
+        }
         Refresh();
     }
     private void InvalidatePreparation(bool resetApproval)
