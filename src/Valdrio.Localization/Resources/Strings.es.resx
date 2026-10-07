@@ -914,4 +914,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.CreateUnitHere" xml:space="preserve"><value>¿No aparece la unidad que necesitas? Crear una aquí</value></data>
   <data name="Model.CreateUnitHereHelp" xml:space="preserve"><value>Crea la unidad sin salir del nodo. Se guardará como unidad reutilizable de la empresa y, si el alta termina correctamente, VALDRIO la seleccionará automáticamente en este nodo.</value></data>
   <data name="Model.UnitCatalogTitle" xml:space="preserve"><value>Gestionar catálogo de unidades de actividad (opcional)</value></data>
+  <data name="CompanyUnitCreationHelp" xml:space="preserve"><value>Define cómo se medirá la actividad. Por ejemplo: código HORAS, tipo de medida time. La unidad se guarda una sola vez y puede reutilizarse en distintos nodos.</value></data>
+  <data name="CompanyUnitRequiredHelp" xml:space="preserve"><value>Obligatorio: código de unidad y tipo de medida. Símbolo, decimales y unidades enteras son opciones adicionales.</value></data>
+  <data name="CompanyUnitAdvanced" xml:space="preserve"><value>Opciones adicionales de la unidad</value></data>
 </root>
