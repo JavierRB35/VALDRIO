@@ -129,7 +129,7 @@
      </StackPanel>
     </ScrollViewer>
    </TabItem>
-   <TabItem x:Name="ImportTab1">
+   <TabItem x:Name="ImportTab1" IsEnabled="{Binding HasColumns}">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
      <StackPanel Margin="4,8,4,8">
       <TextBlock Text="{Binding [ColumnsStepTitle]}" Style="{StaticResource StepTitle}" />
@@ -234,7 +234,7 @@
      </StackPanel>
     </ScrollViewer>
    </TabItem>
-   <TabItem x:Name="ImportTab2">
+   <TabItem x:Name="ImportTab2" IsEnabled="{Binding IsReady}">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
      <StackPanel Margin="4,8,4,8">
       <TextBlock Text="{Binding [RecordsStepTitle]}" Style="{StaticResource StepTitle}" />
@@ -275,7 +275,7 @@
      </StackPanel>
     </ScrollViewer>
    </TabItem>
-   <TabItem x:Name="ImportTab3">
+   <TabItem x:Name="ImportTab3" IsEnabled="{Binding IsAccountSelectionReady}">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
      <StackPanel Margin="4,8,4,8">
       <TextBlock Text="{Binding [MeaningStepTitle]}" Style="{StaticResource StepTitle}" />
@@ -368,7 +368,7 @@
      </StackPanel>
     </ScrollViewer>
    </TabItem>
-   <TabItem x:Name="ImportTab4">
+   <TabItem x:Name="ImportTab4" IsEnabled="{Binding HasPreparedReview}">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
      <StackPanel Margin="4,8,4,8">
       <TextBlock Text="{Binding [ReviewStepTitle]}" Style="{StaticResource StepTitle}" />
