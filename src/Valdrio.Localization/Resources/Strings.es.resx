@@ -907,4 +907,5 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.UnitHelp" xml:space="preserve"><value>Indica cómo se mide la actividad de este nodo, por ejemplo horas, lotes o unidades.</value></data>
   <data name="Model.LayerHelp" xml:space="preserve"><value>Clasifica el tipo de coste. Esta elección no define por sí sola una política de cálculo.</value></data>
   <data name="Model.PoolHelp" xml:space="preserve"><value>Nombre o explicación breve del grupo de costes asociado al nodo. Es opcional.</value></data>
+  <data name="Model.Ready" xml:space="preserve"><value>Listo para continuar.</value></data>
 </root>
