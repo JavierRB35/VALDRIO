@@ -26,6 +26,21 @@
    <Setter Property="MinWidth" Value="145" />
    <Setter Property="Margin" Value="0,3,12,3" />
   </Style>
+  <Style x:Key="StepTitle" TargetType="TextBlock">
+   <Setter Property="FontSize" Value="18" />
+   <Setter Property="FontWeight" Value="SemiBold" />
+   <Setter Property="Margin" Value="0,2,0,4" />
+  </Style>
+  <Style x:Key="StepHelp" TargetType="TextBlock">
+   <Setter Property="Foreground" Value="#506176" />
+   <Setter Property="Margin" Value="0,0,0,10" />
+  </Style>
+  <Style x:Key="Requirement" TargetType="TextBlock">
+   <Setter Property="Background" Value="#EEF5FF" />
+   <Setter Property="Padding" Value="9" />
+   <Setter Property="Margin" Value="0,4,0,10" />
+   <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
  </Window.Resources>
  <DockPanel Margin="14">
   <StackPanel DockPanel.Dock="Top">
@@ -33,7 +48,19 @@
    <TextBlock TextWrapping="Wrap" Margin="0,4,0,6" AutomationProperties.LiveSetting="Polite" x:Name="ImportStepHelp" />
   </StackPanel>
   <StackPanel DockPanel.Dock="Bottom">
-   <TextBlock Text="{Binding Status}" Foreground="DarkSlateBlue" AutomationProperties.LiveSetting="Polite" />
+   <TextBlock Text="{Binding UserStatus}" Foreground="DarkSlateBlue" AutomationProperties.LiveSetting="Polite">
+    <TextBlock.Style>
+     <Style TargetType="TextBlock">
+      <Setter Property="Foreground" Value="DarkSlateBlue" />
+      <Style.Triggers>
+       <DataTrigger Binding="{Binding HasUserError}" Value="True">
+        <Setter Property="Foreground" Value="DarkRed" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+       </DataTrigger>
+      </Style.Triggers>
+     </Style>
+    </TextBlock.Style>
+   </TextBlock>
    <TextBlock TextWrapping="Wrap" MinHeight="36" x:Name="ImportFieldHelp" />
    <WrapPanel>
     <Button Click="PreviousImportStep" x:Name="ImportBack" />
@@ -47,35 +74,58 @@
    <TabItem x:Name="ImportTab0">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
      <StackPanel Margin="4,8,4,8">
+      <TextBlock Text="{Binding [FileStepTitle]}" Style="{StaticResource StepTitle}" />
+      <TextBlock Text="{Binding [FileStepHelp]}" Style="{StaticResource StepHelp}" />
       <WrapPanel>
-       <Button x:Name="OpenSourceButton" Content="{Binding [Open]}" Command="{Binding OpenCommand}" AutomationProperties.Name="{Binding [Open]}" />
+       <Button x:Name="OpenSourceButton" Content="{Binding [Open]}" Command="{Binding OpenCommand}"
+               AutomationProperties.Name="{Binding [Open]}" FontWeight="SemiBold" />
        <TextBlock Text="{Binding FileName}" FontWeight="SemiBold" VerticalAlignment="Center" />
       </WrapPanel>
-      <WrapPanel IsEnabled="{Binding HasFile}">
-       <StackPanel Visibility="{Binding IsXlsx,Converter={StaticResource Visible}}">
-        <TextBlock Text="{Binding [Worksheet]}" />
-        <ComboBox x:Name="WorksheetBox" ItemsSource="{Binding Worksheets}" SelectedItem="{Binding Worksheet}" AutomationProperties.Name="{Binding [Worksheet]}" MinWidth="200" local:FieldHelp.Key="Worksheet" />
+
+      <StackPanel Visibility="{Binding IsXlsx,Converter={StaticResource Visible}}" IsEnabled="{Binding HasFile}">
+       <TextBlock Text="{Binding [Worksheet]}" />
+       <ComboBox x:Name="WorksheetBox" ItemsSource="{Binding Worksheets}" SelectedItem="{Binding Worksheet}"
+                 AutomationProperties.Name="{Binding [Worksheet]}" MinWidth="260" HorizontalAlignment="Left"
+                 local:FieldHelp.Key="Worksheet" />
+      </StackPanel>
+
+      <Expander Header="{Binding [FileAdvanced]}" IsEnabled="{Binding HasFile}" Margin="0,8,0,4">
+       <StackPanel Margin="8,4,0,0">
+        <TextBlock Text="{Binding [FileAdvancedHelp]}" Style="{StaticResource StepHelp}" />
+        <WrapPanel>
+         <StackPanel>
+          <TextBlock Text="{Binding [HeaderRow]}" />
+          <TextBox x:Name="HeaderRowBox" Width="120" HorizontalAlignment="Left"
+                   Text="{Binding HeaderRow,UpdateSourceTrigger=PropertyChanged}"
+                   AutomationProperties.Name="{Binding [HeaderRow]}" Margin="0,3,12,3"
+                   local:FieldHelp.Key="HeaderRow" />
+         </StackPanel>
+         <StackPanel>
+          <TextBlock Text="{Binding [FirstDataRow]}" />
+          <TextBox x:Name="FirstDataRowBox" Width="140" HorizontalAlignment="Left"
+                   Text="{Binding FirstDataRow,UpdateSourceTrigger=PropertyChanged}"
+                   AutomationProperties.Name="{Binding [FirstDataRow]}" Margin="0,3,12,3"
+                   local:FieldHelp.Key="FirstDataRow" />
+         </StackPanel>
+        </WrapPanel>
+        <WrapPanel Visibility="{Binding IsCsv,Converter={StaticResource Visible}}">
+         <StackPanel>
+          <TextBlock Text="{Binding [Delimiter]}" />
+          <ComboBox x:Name="DelimiterBox" ItemsSource="{Binding Delimiters}" SelectedValuePath="Value"
+                    DisplayMemberPath="Label" SelectedValue="{Binding Delimiter}"
+                    AutomationProperties.Name="{Binding [Delimiter]}" local:FieldHelp.Key="Delimiter" />
+         </StackPanel>
+         <StackPanel>
+          <TextBlock Text="{Binding [Encoding]}" />
+          <ComboBox ItemsSource="{Binding Encodings}" SelectedItem="{Binding Encoding}"
+                    AutomationProperties.Name="{Binding [Encoding]}" local:FieldHelp.Key="Encoding" />
+         </StackPanel>
+        </WrapPanel>
        </StackPanel>
-       <StackPanel>
-        <TextBlock Text="{Binding [HeaderRow]}" />
-        <TextBox x:Name="HeaderRowBox" Width="120" HorizontalAlignment="Left" Text="{Binding HeaderRow,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [HeaderRow]}" Margin="0,3,12,3" local:FieldHelp.Key="HeaderRow" />
-       </StackPanel>
-       <StackPanel>
-        <TextBlock Text="{Binding [FirstDataRow]}" />
-        <TextBox x:Name="FirstDataRowBox" Width="140" HorizontalAlignment="Left" Text="{Binding FirstDataRow,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [FirstDataRow]}" Margin="0,3,12,3" local:FieldHelp.Key="FirstDataRow" />
-       </StackPanel>
-      </WrapPanel>
-      <WrapPanel Visibility="{Binding IsCsv,Converter={StaticResource Visible}}">
-       <StackPanel>
-        <TextBlock Text="{Binding [Delimiter]}" />
-        <ComboBox x:Name="DelimiterBox" ItemsSource="{Binding Delimiters}" SelectedValuePath="Value" DisplayMemberPath="Label" SelectedValue="{Binding Delimiter}" AutomationProperties.Name="{Binding [Delimiter]}" local:FieldHelp.Key="Delimiter" />
-       </StackPanel>
-       <StackPanel>
-        <TextBlock Text="{Binding [Encoding]}" />
-        <ComboBox ItemsSource="{Binding Encodings}" SelectedItem="{Binding Encoding}" AutomationProperties.Name="{Binding [Encoding]}" local:FieldHelp.Key="Encoding" />
-       </StackPanel>
-      </WrapPanel>
-      <Button x:Name="ReadSourceButton" Content="{Binding [Read]}" Command="{Binding ReadCommand}" HorizontalAlignment="Left" />
+      </Expander>
+
+      <TextBlock Text="{Binding FileStepRequirement}" Style="{StaticResource Requirement}" AutomationProperties.LiveSetting="Polite" />
+      <Button x:Name="ReadSourceButton" Content="{Binding [Read]}" Command="{Binding ReadCommand}" Visibility="Collapsed" />
      </StackPanel>
     </ScrollViewer>
    </TabItem>
