@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace Valdrio.Desktop;
 
@@ -11,10 +10,7 @@ public partial class MainWindow
     private readonly List<INotifyPropertyChanged> workflowSources = [];
     private void InitializeGuidance()
     {
-        var units = CompanyPanel.UnitCreationPanel;
-        ((Panel)units.Parent).Children.Remove(units);
-        units.SetBinding(DataContextProperty, new Binding("DataContext") { Source = CompanyPanel });
-        ModelPanel.UnitsCreationHost.Content = units;
+        ModelPanel.AttachUnitCreationPanel(CompanyPanel);
         Closed += (_, _) => { foreach (var source in workflowSources) source.PropertyChanged -= WorkflowChanged; };
     }
     private void BindGuidance()
