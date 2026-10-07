@@ -1,7 +1,9 @@
 <UserControl x:Class="Valdrio.Desktop.CompanyFilePanel"
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
- <GroupBox Header="{Binding Title}" Padding="16" Margin="0,0,0,14">
+ <GroupBox Header="{Binding Title}" Padding="18" Margin="0,0,0,16"
+           Background="{StaticResource SurfaceBrush}"
+           BorderBrush="{StaticResource CompanyAccentBrush}">
   <StackPanel>
    <Grid IsEnabled="{Binding IsIdle}">
     <Grid.ColumnDefinitions><ColumnDefinition Width="220"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
@@ -12,7 +14,7 @@
     <ComboBox x:Name="CurrencyBox" Grid.Row="1" Grid.Column="1" Margin="0,6,0,0" ItemsSource="{Binding CurrencyOptions}" SelectedItem="{Binding Currency,UpdateSourceTrigger=PropertyChanged}" TabIndex="11" AutomationProperties.Name="{Binding CurrencyLabel}"/>
    </Grid>
    <WrapPanel Margin="0,10,0,10">
-    <Button x:Name="CreateButton" Content="{Binding CreateLabel}" Command="{Binding CreateCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="12"/>
+    <Button x:Name="CreateButton" Content="{Binding CreateLabel}" Command="{Binding CreateCommand}" Style="{StaticResource PrimaryButtonStyle}" Padding="10,6" Margin="0,0,8,6" TabIndex="12"/>
     <Button x:Name="OpenButton" Content="{Binding OpenLabel}" Command="{Binding OpenCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="13"/>
     <Button x:Name="CloseButton" Content="{Binding CloseLabel}" Command="{Binding CloseCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="14"/>
     <Button x:Name="BackupButton" Content="{Binding BackupLabel}" Command="{Binding BackupCommand}" Padding="10,6" Margin="0,0,8,6" TabIndex="15"/>
@@ -35,7 +37,7 @@
     <ComboBox x:Name="ScaleBox" Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ScaleOptions}" SelectedItem="{Binding UnitScale}" TabIndex="21" AutomationProperties.Name="{Binding ScaleLabel}"/>
     <CheckBox x:Name="DiscreteBox" Grid.Row="4" Grid.ColumnSpan="2" Content="{Binding DiscreteLabel}" IsChecked="{Binding UnitDiscrete}" Margin="0,8,0,8" TabIndex="22"/>
    </Grid>
-   <Button x:Name="AddUnitButton" Content="{Binding AddUnitLabel}" Command="{Binding AddUnitCommand}" HorizontalAlignment="Left" Padding="10,6" TabIndex="23"/>
+   <Button x:Name="AddUnitButton" Content="{Binding AddUnitLabel}" Command="{Binding AddUnitCommand}" Style="{StaticResource PrimaryButtonStyle}" HorizontalAlignment="Left" Padding="10,6" TabIndex="23"/>
    <TextBlock Text="{Binding Notes}" TextWrapping="Wrap" Margin="0,12,0,0"/>
   </StackPanel>
  </GroupBox>
