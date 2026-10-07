@@ -35,7 +35,7 @@ public sealed partial class SqliteCompanyFileService
         {
             Scope(command.CompanyId, file); command.RequestId.EnsureValid(); ArgumentNullException.ThrowIfNull(command.Prepared);
             var db = (ImportDbContext)context; var prepared = command.Prepared;
-            if (command.Mode != ImportConfirmMode.AppendBatch || command.PreparedFingerprint != prepared.Fingerprint ||
+            if (!Enum.IsDefined(command.Mode) || (command.Mode == ImportConfirmMode.ReplaceIdentifiedBatch) != command.ReplacesBatchId.HasValue || command.PreparedFingerprint != prepared.Fingerprint ||
                 prepared.StudyContext.CompanyId != file.Id || prepared.StudyContext.Id != command.StudyId ||
                 prepared.StudyContext.Revision != command.ExpectedRevision || prepared.PrecisionPolicy != file.PrecisionPolicy ||
                 string.IsNullOrWhiteSpace(command.Actor))
@@ -44,7 +44,7 @@ public sealed partial class SqliteCompanyFileService
             if (existing is not null)
             {
                 var previous = Batch(existing);
-                if (previous.PreparedFingerprint != command.PreparedFingerprint || previous.Actor != command.Actor)
+                if (previous.PreparedFingerprint != command.PreparedFingerprint || previous.Actor != command.Actor || previous.ReplacesBatchId != command.ReplacesBatchId)
                     throw ImportRules.Error("IMP_REQUEST_REUSED", "Import.RequestReused");
                 return previous;
             }
@@ -56,12 +56,14 @@ public sealed partial class SqliteCompanyFileService
             var checkedPreparation = PreparedImport.Create(prepared.Id, before, file.PrecisionPolicy, prepared.Source, prepared.Profile, token);
             if (!checkedPreparation.CanConfirm || checkedPreparation.Fingerprint != command.PreparedFingerprint)
                 throw ImportRules.Error("IMP_PREPARED_INVALID", "Import.PreparedInvalid");
-            if (db.ImportBatches.Any(r => r.CompanyId == file.Id.ToString() && r.StudyId == before.Id.ToString() &&
-                r.DuplicateFingerprint == checkedPreparation.DuplicateFingerprint))
+            var active = ImportConfirmationRules.ActiveBatches(Batches(db, file.Id, before.Id));
+            if (command.ReplacesBatchId is { } replaced && !active.Any(b => b.Id == replaced))
+                throw ImportRules.Error("IMP_REPLACEMENT_INVALID", "Import.ReplacementInvalid");
+            if (active.Any(b => b.Prepared.DuplicateFingerprint == checkedPreparation.DuplicateFingerprint))
                 throw ImportRules.Error("IMP_DUPLICATE_BATCH", "Import.DuplicateBatch");
             var after = Changed(before, before.Name, before.PeriodStart, before.PeriodEnd, before.Purpose, before.ScenarioKind,
                 before.SelectedModelVersionId, before.Currency, before.State);
-            var result = new ImportedBatch(command.RequestId, checkedPreparation, command.PreparedFingerprint, after, owner.time.GetUtcNow(), command.Actor);
+            var result = new ImportedBatch(command.RequestId, checkedPreparation, command.PreparedFingerprint, after, owner.time.GetUtcNow(), command.Actor, command.ReplacesBatchId);
             db.ImportBatches.Add(new() { Id = result.Id.ToString(), CompanyId = file.Id.ToString(), StudyId = before.Id.ToString(),
                 ExpectedRevision = before.Revision, ConfirmedRevision = after.Revision, FileHash = prepared.Source.FileHash,
                 PreparedFingerprint = prepared.Fingerprint, DuplicateFingerprint = prepared.DuplicateFingerprint, CanonicalJson = Json(result) });

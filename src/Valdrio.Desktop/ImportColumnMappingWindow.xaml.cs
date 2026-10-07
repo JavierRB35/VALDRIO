@@ -38,6 +38,8 @@ public partial class ImportColumnMappingWindow : Window
         SelectionPreviewGrid.Columns[0].Header = viewModel["SourceCode"];
         SelectionPreviewGrid.Columns[1].Header = viewModel["SourceRecords"];
         SelectionPreviewGrid.Columns[2].Header = viewModel["Parsed"];
+        var comparisonKeys = new[] { "SourceCode", "EarlierAmount", "CurrentAmount", "DifferenceAmount", "EarlierRecords" };
+        for (var i = 0; i < comparisonKeys.Length; i++) ComparisonGrid.Columns[i].Header = viewModel[comparisonKeys[i]];
         var keys = new[] { "Row", "AccountColumn", "Original", "OriginalDebit", "OriginalCredit", "Parsed", "Issues" };
         for (var i = 0; i < keys.Length; i++) PreviewGrid.Columns[i].Header = viewModel[keys[i]];
         PreviewGrid.Columns[2].Visibility = viewModel.IsSignedAmount ? Visibility.Visible : Visibility.Collapsed;

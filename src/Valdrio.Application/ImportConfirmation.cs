@@ -5,9 +5,10 @@ using Valdrio.Domain;
 
 namespace Valdrio.Application;
 
-public enum ImportConfirmMode { AppendBatch = 0 }
+public enum ImportConfirmMode { AppendBatch = 0, ReplaceIdentifiedBatch = 1 }
 public sealed record ConfirmImport(EntityId CompanyId, EntityId StudyId, long ExpectedRevision,
-    EntityId RequestId, string PreparedFingerprint, PreparedImport Prepared, ImportConfirmMode Mode, string Actor);
+    EntityId RequestId, string PreparedFingerprint, PreparedImport Prepared, ImportConfirmMode Mode, string Actor,
+    EntityId? ReplacesBatchId = null);
 public interface IImportWorkspace
 {
     PreparedImport PrepareImport(EntityId companyId, EntityId studyId, long expectedRevision,
@@ -44,7 +45,7 @@ public sealed class PreparedImport
         var diagnostics = new List<ImportDiagnostic>();
         void Block(string code, string key) => diagnostics.Add(new(new(code, key, []), ImportDiagnosticSeverity.Blocking,
             new(source.FileName, source.SheetName, null, null, null)));
-        if ((profile.AmountMode != ImportAmountMode.PeriodAmount && profile.AmountMode != ImportAmountMode.ClosingBalanceAsStudyAmount) ||
+        if ((profile.AmountMode != ImportAmountMode.PeriodAmount && profile.AmountMode != ImportAmountMode.ClosingBalanceAsStudyAmount && profile.Comparison is null) ||
             profile.DuplicatePolicy != ImportDuplicatePolicy.Reject && profile.Grouping is null)
             Block("IMP_MODE_UNAVAILABLE", "Import.ModeUnavailable");
         if (profile.Approval.State != ImportProfileApprovalState.ApprovedBusiness || !profile.SignConventionConfirmed)
@@ -104,15 +105,29 @@ public sealed class PreparedImport
             .Select(d => d.Location.RecordNumber).Distinct().Count();
         if (profile.Grouping is not null)
             Groups = ImportGrouping.Prepare(source, profile, rows, precisionPolicy, diagnostics, token);
+        if (profile.Comparison is { } comparison)
+        {
+            Groups = comparison.Difference(studyContext, precisionPolicy, profile, Groups!, diagnostics, token, out var details);
+            ComparisonRows = details;
+            positive = 0m; negative = 0m;
+            try
+            {
+                foreach (var group in Groups)
+                    if (group.Amount.Amount >= 0) positive = checked(positive + group.Amount.Amount);
+                    else negative = checked(negative + group.Amount.Amount);
+            }
+            catch (OverflowException) { Block("IMP_TOTAL_OVERFLOW", "Import.TotalOverflow"); }
+        }
         var selectedCount = rows.Count(r => r.Selected);
         if (selectedCount == 0) Block("IMP_NO_SELECTED_ROWS", "Import.NoSelectedRows");
         Rows = FrozenList.Copy(rows); Diagnostics = FrozenList.Copy(diagnostics);
         Reconciliation = new(source.Rows.Count, invalidCount, rows.Count - invalidCount - selectedCount,
             selectedCount, profile.FixedCurrency ?? studyContext.Currency.FunctionalCurrencyCode, positive, negative,
-            rows.Count(r => r.Selected && r.Original?.Amount == 0m), checked(positive + negative));
+            profile.Comparison is null ? rows.Count(r => r.Selected && r.Original?.Amount == 0m) : Groups!.Count(g => g.Amount.Amount == 0m), checked(positive + negative));
     }
-    public string SchemaVersion => Profile.Grouping is null ? Schema : "valdrio-prepared-import-v2";
+    public string SchemaVersion => Profile.Comparison is not null ? "valdrio-prepared-import-v3" : Profile.Grouping is null ? Schema : "valdrio-prepared-import-v2";
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public IReadOnlyList<PreparedImportGroup>? Groups { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public IReadOnlyList<ImportComparisonLine>? ComparisonRows { get; }
     public EntityId Id { get; }
     public StudyDefinition StudyContext { get; }
     public PrecisionPolicy PrecisionPolicy { get; }
@@ -123,7 +138,8 @@ public sealed class PreparedImport
     public ImportReconciliation Reconciliation { get; }
     public bool CanConfirm => Rows.Any(r => r.Selected) && !Diagnostics.Any(d => d.Severity == ImportDiagnosticSeverity.Blocking);
     [JsonIgnore] public string Fingerprint => PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(this));
-    [JsonIgnore] public string DuplicateFingerprint => Profile.Grouping is null ? LegacyDuplicateFingerprint :
+    [JsonIgnore] public string DuplicateFingerprint => Profile.Comparison is not null ?
+        PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new { LegacyDuplicateFingerprint, Profile.Grouping, Comparison = Profile.Comparison.DuplicateFingerprint })) : Profile.Grouping is null ? LegacyDuplicateFingerprint :
         PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new { LegacyDuplicateFingerprint, Profile.Grouping }));
     [JsonIgnore] private string LegacyDuplicateFingerprint => PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new
     {
@@ -141,13 +157,16 @@ public sealed record ImportedResource(EntityId Id, EntityId BatchId, int RecordN
 public sealed class ImportedBatch
 {
     public ImportedBatch(EntityId id, PreparedImport prepared, string preparedFingerprint,
-        StudyDefinition confirmedStudy, UtcInstant confirmedAtUtc, string actor)
+        StudyDefinition confirmedStudy, UtcInstant confirmedAtUtc, string actor, EntityId? replacesBatchId = null)
     {
         id.EnsureValid(); ArgumentNullException.ThrowIfNull(prepared); ArgumentNullException.ThrowIfNull(confirmedStudy);
         if (!prepared.CanConfirm || preparedFingerprint != prepared.Fingerprint || string.IsNullOrWhiteSpace(actor) ||
             !ImportConfirmationRules.IsImportRevision(prepared.StudyContext, confirmedStudy))
             throw ImportRules.Error("IMP_PREPARED_INVALID", "Import.PreparedInvalid");
         Id = id; Prepared = prepared; PreparedFingerprint = preparedFingerprint; ConfirmedStudy = confirmedStudy;
+        replacesBatchId?.EnsureValid();
+        if (replacesBatchId == id) throw ImportRules.Error("IMP_REPLACEMENT_INVALID", "Import.ReplacementInvalid");
+        ReplacesBatchId = replacesBatchId;
         ConfirmedAtUtc = confirmedAtUtc; Actor = actor;
         Resources = prepared.Groups is { } groups ? FrozenList.Copy(groups.Select(g => new ImportedResource(
             GroupResourceId(id, g.Code), id, g.Records[0], g.Code, g.Amount, g.Amount,
@@ -157,6 +176,7 @@ public sealed class ImportedBatch
             prepared.Profile.PeriodStart, prepared.Profile.PeriodEnd)).OrderBy(r => r.Id));
     }
     public EntityId Id { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public EntityId? ReplacesBatchId { get; }
     public PreparedImport Prepared { get; }
     public string PreparedFingerprint { get; }
     public StudyDefinition ConfirmedStudy { get; }
@@ -175,6 +195,25 @@ public sealed class ImportedBatch
 
 public static class ImportConfirmationRules
 {
+    // Ledger is append-only. A replacement retires exactly one active batch in the same study.
+    public static IReadOnlyList<ImportedBatch> ActiveBatches(IEnumerable<ImportedBatch> batches)
+    {
+        var active = new Dictionary<EntityId, ImportedBatch>();
+        foreach (var batch in batches.OrderBy(b => b.ConfirmedStudy.Revision))
+        {
+            if (batch.ReplacesBatchId is { } replaced)
+            {
+                if (!active.TryGetValue(replaced, out var previous) ||
+                    previous.ConfirmedStudy.Id != batch.ConfirmedStudy.Id ||
+                    previous.ConfirmedStudy.CompanyId != batch.ConfirmedStudy.CompanyId ||
+                    previous.ConfirmedStudy.Revision >= batch.ConfirmedStudy.Revision)
+                    throw ImportRules.Error("IMP_REPLACEMENT_INVALID", "Import.ReplacementInvalid");
+                active.Remove(replaced);
+            }
+            if (!active.TryAdd(batch.Id, batch)) throw ImportRules.Error("IMP_REPLACEMENT_INVALID", "Import.ReplacementInvalid");
+        }
+        return FrozenList.Copy(active.Values.OrderBy(b => b.ConfirmedStudy.Revision));
+    }
     public static bool IsImportRevision(StudyDefinition before, StudyDefinition after) =>
         before.State == StudyState.Open && after.Revision == before.Revision + 1 &&
         CanonicalSnapshotJson.Serialize(new StudyDefinition(before.Id, before.CompanyId, before.Name, before.PeriodStart,

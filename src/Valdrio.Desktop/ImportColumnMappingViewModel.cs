@@ -62,6 +62,10 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         CancelCommand = new RelayCommand(() => cancellation?.Cancel(), () => busy);
         SelectAllRecordsCommand = new RelayCommand(() => ImportAllAccounts = true, () => !busy && HasAccountChoices);
         DeselectAllRecordsCommand = new RelayCommand(() => ImportAllAccounts = false, () => !busy && HasAccountChoices);
+        FreezeComparisonCommand = new RelayCommand(FreezeComparison, () => !busy && IsReady && IsAccountSelectionReady &&
+            fiscalStart.HasValue && fiscalEnd.HasValue && previousEnd.HasValue && !string.IsNullOrWhiteSpace(comparisonScope) &&
+            !string.IsNullOrWhiteSpace(sourceCurrency) && interpretationApproved && !string.IsNullOrWhiteSpace(approvalReference));
+        ClearComparisonCommand = new RelayCommand(ClearComparison, () => !busy && comparison is not null);
         preferences.Changed += PreferencesChanged;
         Reformat();
     }
@@ -87,7 +91,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
             amountColumn = debitColumn = creditColumn = null; InvalidateMapping();
         }
     }
-    public string InterpretationPrompt => this[amountMode == "closing-full" ? (IsDebitCredit ? "ApproveClosingDebitCredit" : "ApproveClosing") : (IsDebitCredit ? "ApproveDebitCredit" : "ApproveInterpretation")];
+    public string InterpretationPrompt => this[amountMode == "cumulative" ? "ApproveComparison" : amountMode == "closing-full" ? (IsDebitCredit ? "ApproveClosingDebitCredit" : "ApproveClosing") : (IsDebitCredit ? "ApproveDebitCredit" : "ApproveInterpretation")];
     public bool HasColumns => document is not null;
     public bool IsReady => validation?.IsValid == true;
     public ImportColumnSelectionResult? ValidatedSelection => IsReady ? validation : null;
@@ -149,6 +153,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     {
         foreach (var choice in accountChoices) choice.Reformat(CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag));
         amountModes[0].Label = this["PeriodMode"]; amountModes[1].Label = this["ClosingMode"];
+        amountModes[2].Label = this["CumulativeMode"];
         delimiters[2].Label = this["Tab"]; groups[0].Label = this["None"]; groups[3].Label = this["Space"];
         amountLayouts[0].Label = this["SignedLayout"]; amountLayouts[1].Label = this["DebitCreditLayout"];
         foreach (var c in columnOptions) c.Label = ColumnLabel(c.Index, c.Header); Refresh();
@@ -166,6 +171,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         ValidateCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
         PrepareCommand.NotifyCanExecuteChanged(); ConfirmCommand.NotifyCanExecuteChanged();
         SelectAllRecordsCommand.NotifyCanExecuteChanged(); DeselectAllRecordsCommand.NotifyCanExecuteChanged();
+        FreezeComparisonCommand.NotifyCanExecuteChanged(); ClearComparisonCommand.NotifyCanExecuteChanged();
     }
     private async Task Run(Func<CancellationToken, Task> action, bool keepSelection = false)
     {

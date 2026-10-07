@@ -2,6 +2,25 @@
 
 Fecha de revisión 2026-10-07. Repositorio `JavierRB35/VALDRIO`.
 
+## T06 — implementación completa y aceptación del commit final (2026-10-07)
+
+T06.0–T06.6 implementadas: CSV/XLSX, perfil explícito, selección de registros, agrupación
+por código, periodo/cierre íntegro/diferencia de acumulados comparables, preparación sin
+escritura, confirmación atómica, sustitución identificada, historial, snapshots y runner.
+Formato de empresa v6 con actualización a copia desde v1–v5; inputs históricos intactos.
+La reapertura y el hash económico usan solo los lotes vigentes y conservan los retirados.
+
+433/433 pruebas Release; recorrido WPF completo con nueve comprobaciones adicionales.
+El cierre formal se acredita por el recibo Windows y CI verdes del HEAD asociado al PR;
+no basta con compilar. Ver [matriz F01–F24](docs/evidencias/T06_CIERRE_2026-10-07.md) y
+[ADR-0010](docs/adr/ADR-0010-comparativos-y-sustitucion.md).
+
+El propietario confirma que su Excel es un ejemplo y que declara 31/10/2026 en el formulario.
+D03 se acepta para este ensayo (6005=358,35 EUR), no para una fuente de producción.
+Moneda distinta de la funcional sigue bloqueada en T06: el siguiente trabajo es
+[T06A](docs/directrices/T06A_SIGUIENTE_FASE.md). Cálculo, particiones y consumos no se adelantan.
+Esta sección sustituye los pendientes históricos de comparativos y sustitución descritos abajo.
+
 ## Continuidad — conciliación inmediata de registros, 2026-10-07
 
 Se añade un resultado calculado al seleccionar registros: agrupación ordinal por código,

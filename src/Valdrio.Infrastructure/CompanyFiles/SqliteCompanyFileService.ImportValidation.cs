@@ -18,6 +18,7 @@ public sealed partial class SqliteCompanyFileService
         {
             var study = batch.Prepared.StudyContext;
             Invalid(file.SchemaVersion < 5 && batch.Prepared.Profile.Grouping is not null, "Grouped import in legacy schema");
+            Invalid(file.SchemaVersion < 6 && (batch.ReplacesBatchId is not null || batch.Prepared.Profile.Comparison is not null), "Import ledger in legacy schema");
             Invalid(study.CompanyId != file.Id || batch.Prepared.PrecisionPolicy != file.PrecisionPolicy, "Import scope/precision invalid");
             var expectedRows = batch.Prepared.Rows.ToDictionary(r => r.RecordNumber);
             var originalRows = batch.Prepared.Source.Rows.ToDictionary(r => r.RecordNumber);
@@ -60,6 +61,18 @@ public sealed partial class SqliteCompanyFileService
                 studyEvent.BeforeJson != Json(study) || studyEvent.AfterJson != Json(batch.ConfirmedStudy), "Import has no matching study event");
         }
         var ids = batches.Select(b => b.Id.ToString()).ToHashSet(StringComparer.Ordinal);
+        foreach (var study in batches.GroupBy(b => b.ConfirmedStudy.Id))
+        {
+            // Replay every prefix, not just the final state: an earlier double append is invalid too.
+            var prefix = new List<ImportedBatch>();
+            foreach (var batch in study.OrderBy(b => b.ConfirmedStudy.Revision))
+            {
+                var active = ImportConfirmationRules.ActiveBatches(prefix);
+                Invalid(active.Any(b => b.Prepared.DuplicateFingerprint == batch.Prepared.DuplicateFingerprint), "Repeated active import");
+                prefix.Add(batch);
+                _ = ImportConfirmationRules.ActiveBatches(prefix);
+            }
+        }
         Invalid(audit.Any(a => !ids.Contains(a.Id)) || rows.Any(r => !ids.Contains(r.Key)) ||
             resources.Any(r => !ids.Contains(r.Key)) || links.Any(r => !ids.Contains(r.Key)), "Orphan import data");
     }

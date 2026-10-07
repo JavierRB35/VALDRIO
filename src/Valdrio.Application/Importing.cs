@@ -172,6 +172,7 @@ public sealed record SourceParseProfileVersion
 {
     public const string CurrentSchema = "valdrio-source-parse-profile-v1";
     public const string GroupingSchema = "valdrio-source-parse-profile-v2";
+    public const string ComparisonSchema = "valdrio-source-parse-profile-v3";
 
     public SourceParseProfileVersion(
         string schemaVersion,
@@ -199,10 +200,11 @@ public sealed record SourceParseProfileVersion
         bool signConventionConfirmed,
         string? cultureTag = null,
         XlsxNumericAccountPolicy xlsxNumericAccountPolicy = XlsxNumericAccountPolicy.Reject,
-        ImportGroupingPlan? grouping = null)
+        ImportGroupingPlan? grouping = null,
+        ImportComparison? comparison = null)
     {
         id.EnsureValid();
-        if (schemaVersion is not (CurrentSchema or GroupingSchema) || version < 1 || string.IsNullOrWhiteSpace(name) ||
+        if (schemaVersion is not (CurrentSchema or GroupingSchema or ComparisonSchema) || version < 1 || string.IsNullOrWhiteSpace(name) ||
             !Enum.IsDefined(sourceKind) || !Enum.IsDefined(amountMode) || !Enum.IsDefined(signConvention) ||
             !Enum.IsDefined(duplicatePolicy) || !Enum.IsDefined(zeroPolicy) ||
             !Enum.IsDefined(xlsxNumericAccountPolicy) ||
@@ -219,11 +221,15 @@ public sealed record SourceParseProfileVersion
         ArgumentNullException.ThrowIfNull(numberFormat);
         ArgumentNullException.ThrowIfNull(accountSelection);
         ArgumentNullException.ThrowIfNull(approval);
-        if ((schemaVersion == GroupingSchema) != (grouping is not null) ||
+        if ((schemaVersion is GroupingSchema or ComparisonSchema) != (grouping is not null) ||
             grouping is not null && (duplicatePolicy != ImportDuplicatePolicy.AggregateWithProvenance ||
                 accountSelection.Kind != ImportAccountSelectionKind.All || zeroPolicy != ImportZeroPolicy.Keep))
             throw ImportRules.Error("IMP_GROUPING_INVALID", "Import.GroupingInvalid");
         Grouping = grouping;
+        if ((schemaVersion == ComparisonSchema) != (comparison is not null) ||
+            comparison is not null && amountMode != ImportAmountMode.CumulativeExpenseDifference)
+            throw ImportRules.Error("IMP_COMPARISON_INVALID", "Import.ComparisonInvalid");
+        Comparison = comparison;
 
         if (signConvention == ImportSignConvention.SignedAmount &&
             (columns.Amount is null || columns.Debit is not null || columns.Credit is not null) ||
@@ -266,6 +272,7 @@ public sealed record SourceParseProfileVersion
 
     public string SchemaVersion { get; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public ImportGroupingPlan? Grouping { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public ImportComparison? Comparison { get; }
     public EntityId Id { get; }
     public int Version { get; }
     public string Name { get; }

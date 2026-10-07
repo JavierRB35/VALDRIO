@@ -78,6 +78,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
             await ApplyConfirmedThenReload(batch.ConfirmedStudy, ApplyConfirmedStudy);
             if (committedRefreshPending) throw new InvalidOperationException("Committed import refresh pending.");
         });
+        ImportColumns.SetExistingBatches(importValues);
         return true;
     }
     public string ImportColumnsLabel => Text("ImportMapping.OpenMapping");
@@ -140,9 +141,18 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public string CancelLabel => Text("CompanyCancel");
     public string SnapshotLabel => Text("Study.Snapshots");
     public string RunHistory => Text("Study.RunHistoryEmpty");
-    public string ImportedAmounts => importValues.Count == 0 ? Text("ImportMapping.NoImports") : string.Join(Environment.NewLine,
-        importValues.Select(b => string.Format(Format, Text("ImportMapping.ImportHistory"), b.Id, b.Prepared.Source.FileName,
-            b.Resources.Count, b.Prepared.Reconciliation.NetAmount, b.Prepared.Reconciliation.Currency, b.ConfirmedStudy.Revision)));
+    public string ImportedAmounts
+    {
+        get
+        {
+            if (importValues.Count == 0) return Text("ImportMapping.NoImports");
+            var active = ImportConfirmationRules.ActiveBatches(importValues).Select(b => b.Id).ToHashSet();
+            return string.Join(Environment.NewLine, importValues.Select(b =>
+                Text(active.Contains(b.Id) ? "ImportMapping.BatchActive" : "ImportMapping.BatchReplaced") + " · " +
+                string.Format(Format, Text("ImportMapping.ImportHistory"), b.Id, b.Prepared.Source.FileName,
+                    b.Resources.Count, b.Prepared.Reconciliation.NetAmount, b.Prepared.Reconciliation.Currency, b.ConfirmedStudy.Revision)));
+        }
+    }
     public string Status => diagnostic is null ? Text(statusKey) : DiagnosticText(diagnostic);
     public string Details => Current is null ? Text("Study.NoneSelected") : string.Format(Format, Text("Study.Details"), Current.Name,
         formatter.FormatDate(Current.PeriodStart.Value, Format, DateDisplayPreset.Short), formatter.FormatDate(Current.PeriodEnd.Value, Format, DateDisplayPreset.Short),

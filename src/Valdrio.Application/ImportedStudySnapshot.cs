@@ -8,6 +8,7 @@ public sealed class ImportedStudySnapshotInput : IStudySnapshotInput
 {
     public const string Schema = "valdrio-study-input-v2";
     public const string GroupedSchema = "valdrio-study-input-v3";
+    public const string LedgerSchema = "valdrio-study-input-v4";
     public const string PreparationVersion = "period-import-t06-v1";
     public ImportedStudySnapshotInput(StudyDefinition studyContext, PrecisionPolicy precisionPolicy,
         PublishedModelStructure model, StudySnapshotProvenance provenance, IReadOnlyList<ImportedBatch> imports)
@@ -24,13 +25,13 @@ public sealed class ImportedStudySnapshotInput : IStudySnapshotInput
             throw StudyRules.Error("STUDY_SNAPSHOT_INVALID", "Study.SnapshotInvalid", studyContext.Id);
         StudyContext = studyContext; PrecisionPolicy = precisionPolicy; Model = model; Provenance = provenance;
         Imports = FrozenList.Copy(imports.OrderBy(b => b.ConfirmedStudy.Revision));
-        Resources = FrozenList.Copy(Imports.SelectMany(b => b.Resources).OrderBy(r => r.Id)
+        Resources = FrozenList.Copy(ImportConfirmationRules.ActiveBatches(Imports).SelectMany(b => b.Resources).OrderBy(r => r.Id)
             .Select(r => new ResourceSnapshotInput(r.Id, r.Original, r.Functional, null)));
         if (Resources.Count == 0 || Resources.Select(r => r.Id).Distinct().Count() != Resources.Count)
             throw StudyRules.Error("STUDY_SNAPSHOT_INVALID", "Study.SnapshotInvalid", studyContext.Id);
     }
-    public string SnapshotSchemaVersion => Imports.Any(b => b.Prepared.Profile.Grouping is not null) ? GroupedSchema : Schema;
-    public string InputPreparationVersion => SnapshotSchemaVersion == GroupedSchema ? "grouped-import-t06-v2" : PreparationVersion;
+    public string SnapshotSchemaVersion => Imports.Any(b => b.ReplacesBatchId is not null || b.Prepared.Profile.Comparison is not null) ? LedgerSchema : Imports.Any(b => b.Prepared.Profile.Grouping is not null) ? GroupedSchema : Schema;
+    public string InputPreparationVersion => SnapshotSchemaVersion == LedgerSchema ? "import-ledger-t06-v3" : SnapshotSchemaVersion == GroupedSchema ? "grouped-import-t06-v2" : PreparationVersion;
     public StudyDefinition StudyContext { get; }
     public PrecisionPolicy PrecisionPolicy { get; }
     public PublishedModelStructure Model { get; }
@@ -54,7 +55,7 @@ public static class ImportedStudySnapshotJson
         using var doc = JsonDocument.Parse(json); var root = doc.RootElement;
         if (root.ValueKind != JsonValueKind.Object || root.EnumerateObject().Count() != 2 ||
             root.EnumerateObject().Select(p => p.Name).Distinct(StringComparer.Ordinal).Count() != 2 ||
-            !root.TryGetProperty("SchemaVersion", out var schema) || schema.GetString() is not (ImportedStudySnapshotInput.Schema or ImportedStudySnapshotInput.GroupedSchema) ||
+            !root.TryGetProperty("SchemaVersion", out var schema) || schema.GetString() is not (ImportedStudySnapshotInput.Schema or ImportedStudySnapshotInput.GroupedSchema or ImportedStudySnapshotInput.LedgerSchema) ||
             !root.TryGetProperty("Value", out var value) || value.ValueKind != JsonValueKind.Object)
             throw new JsonException("Unsupported or incomplete imported study snapshot envelope.");
         var result = CanonicalSnapshotJson.Deserialize<ImportedStudySnapshotInput>("{\"SchemaVersion\":\"" +
@@ -70,9 +71,9 @@ public static class ImportedStudySnapshotJson
             input.StudyContext, input.PrecisionPolicy, input.Model, input.Provenance, [], [], [], []);
         return CanonicalSnapshotJson.Serialize(new
         {
-            SchemaVersion = input.SnapshotSchemaVersion == ImportedStudySnapshotInput.GroupedSchema ? "valdrio-study-economy-v3" : "valdrio-study-economy-v2", input.InputPreparationVersion,
+            SchemaVersion = input.SnapshotSchemaVersion == ImportedStudySnapshotInput.LedgerSchema ? "valdrio-study-economy-v4" : input.SnapshotSchemaVersion == ImportedStudySnapshotInput.GroupedSchema ? "valdrio-study-economy-v3" : "valdrio-study-economy-v2", input.InputPreparationVersion,
             ContextEconomy = StudySnapshotJson.EconomicJson(context),
-            Resources = input.Imports.SelectMany(b => b.Resources).OrderBy(r => r.Id).Select(r =>
+            Resources = ImportConfirmationRules.ActiveBatches(input.Imports).SelectMany(b => b.Resources).OrderBy(r => r.Id).Select(r =>
                 new ResourceEconomy(r.Id, r.Account, r.Original, r.Functional, r.PeriodStart, r.PeriodEnd)).ToArray()
         });
     }

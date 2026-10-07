@@ -418,4 +418,28 @@ Completa: {5}</value></data>
   <data name="ImportMapping.SelectionPreviewHelp" xml:space="preserve"><value>Sumas por código, actualizadas al marcar registros. Importes del origen, sin conversión de moneda. Esta revisión no guarda datos; Preparar importación comprobará también el periodo, la moneda y los límites del estudio.</value></data>
   <data name="ImportMapping.SelectionReconciliation" xml:space="preserve"><value>Incluidos: {0} registros → {2} códigos. Excluidos: {1} registros. Positivos incluidos: {3}; negativos incluidos: {4}; neto incluido: {5}; neto excluido: {6}.</value></data>
   <data name="ImportMapping.SelectionPreviewTitle" xml:space="preserve"><value>Resultado de los registros seleccionados</value></data>
+  <data name="ImportMapping.FiscalEnd" xml:space="preserve"><value>Fin del ejercicio común</value></data>
+  <data name="ImportMapping.ComparisonHelp" xml:space="preserve"><value>1. Abre y valida el archivo anterior, selecciona sus registros y declara moneda. 2. Indica aquí ejercicio, cierre y ámbito; aprueba el ejemplo y conserva el anterior. 3. Abre y valida el archivo actual, selecciona los mismos códigos y elige Diferencia de acumulados. El cierre actual es el final del estudio. Aprueba el ejemplo de la diferencia y prepara.</value></data>
+  <data name="ImportMapping.ClearComparison" xml:space="preserve"><value>Quitar acumulado anterior</value></data>
+  <data name="Import.ComparisonInvalid" xml:space="preserve"><value>Los acumulados no son comparables. Declara el mismo ámbito, moneda, signo y ejercicio; el cierre anterior debe ser el día previo al inicio del estudio.</value></data>
+  <data name="ImportMapping.ApproveComparison" xml:space="preserve"><value>He comprobado ambos cierres, el ejercicio, la moneda, los códigos seleccionados y el ámbito común. Apruebo el ejemplo de diferencia, incluidos signos y ceros.</value></data>
+  <data name="Import.ReplacementInvalid" xml:space="preserve"><value>Selecciona un lote vigente de este mismo estudio para sustituirlo.</value></data>
+  <data name="ImportMapping.ComparisonScope" xml:space="preserve"><value>Ámbito común comprobado (empresa, cuentas y criterio contable)</value></data>
+  <data name="ImportMapping.PreviousEnd" xml:space="preserve"><value>Fecha de cierre del acumulado anterior</value></data>
+  <data name="Import.ComparisonMissing" xml:space="preserve"><value>Los códigos seleccionados deben existir en ambos acumulados. Una cuenta ausente no equivale a cero.</value></data>
+  <data name="ImportMapping.ReplacementHelp" xml:space="preserve"><value>Sin marcar: añadir un lote. Al sustituir: el lote elegido queda en el historial y sus importes dejan de contar; el nuevo lo reemplaza íntegramente.</value></data>
+  <data name="ImportMapping.FreezeComparison" xml:space="preserve"><value>Conservar este archivo como acumulado anterior</value></data>
+  <data name="ImportMapping.CumulativeBasis" xml:space="preserve"><value>Importe del estudio = acumulado actual − anterior (160 − 100 = 60). Mismo ejercicio y ámbito; sin convertir cuentas ausentes en cero.</value></data>
+  <data name="ImportMapping.ComparisonReady" xml:space="preserve"><value>Anterior conservado: {0}, cierre {1}. Abre ahora el archivo actual.</value></data>
+  <data name="ImportMapping.FiscalStart" xml:space="preserve"><value>Inicio del ejercicio común</value></data>
+  <data name="ImportMapping.ComparisonTitle" xml:space="preserve"><value>Comparar dos acumulados: preparar el archivo anterior</value></data>
+  <data name="ImportMapping.ReplaceBatch" xml:space="preserve"><value>Sustituir un lote anterior de este estudio</value></data>
+  <data name="ImportMapping.ComparisonEmpty" xml:space="preserve"><value>No hay acumulado anterior conservado.</value></data>
+  <data name="ImportMapping.CumulativeMode" xml:space="preserve"><value>Diferencia de acumulados comparables</value></data>
+<data name="ImportMapping.BatchActive" xml:space="preserve"><value>Vigente</value></data>
+<data name="ImportMapping.BatchReplaced" xml:space="preserve"><value>Sustituido: solo historial</value></data>
+<data name="ImportMapping.CurrentAmount" xml:space="preserve"><value>Acumulado actual</value></data>
+<data name="ImportMapping.DifferenceAmount" xml:space="preserve"><value>Diferencia del periodo</value></data>
+<data name="ImportMapping.EarlierRecords" xml:space="preserve"><value>Filas del anterior</value></data>
+<data name="ImportMapping.EarlierAmount" xml:space="preserve"><value>Acumulado anterior</value></data>
 </root>

@@ -126,7 +126,7 @@ public sealed partial class T06ImportConfirmationTests
         var photos = Query(source, "SELECT group_concat(CanonicalJson) FROM StudySnapshots ORDER BY Id");
         var audit = Query(source, "SELECT group_concat(Id||AfterJson) FROM AuditEvents ORDER BY Id");
         Assert.AreEqual("FILE_UPGRADE_REQUIRED", Assert.ThrowsExactly<CompanyFileException>(() => Service().Open(source)).Diagnostic.Code);
-        using var file = Service().Upgrade(source, FileOf("current.valdrio"), "test"); Assert.AreEqual(5, file.Read().SchemaVersion);
+        using var file = Service().Upgrade(source, FileOf("current.valdrio"), "test"); Assert.AreEqual(6, file.Read().SchemaVersion);
         Assert.AreEqual(sha, Hash(source)); Assert.AreEqual(photos, Query(file.Path, "SELECT group_concat(CanonicalJson) FROM StudySnapshots ORDER BY Id"));
         Assert.AreEqual(audit, Query(file.Path, "SELECT group_concat(Id||AfterJson) FROM AuditEvents WHERE AggregateType<>'CompanyFile' ORDER BY Id"));
         var study = file.Studies.ReadStudies().Single(); var snapshots = file.Studies.ReadSnapshots(study.CompanyId, study.Id);

@@ -14,7 +14,7 @@ public static class StudySnapshotJson
         return schema.GetString() switch
         {
             StudySnapshotInput.Schema => Deserialize(json),
-            ImportedStudySnapshotInput.Schema or ImportedStudySnapshotInput.GroupedSchema => ImportedStudySnapshotJson.Deserialize(json),
+            ImportedStudySnapshotInput.Schema or ImportedStudySnapshotInput.GroupedSchema or ImportedStudySnapshotInput.LedgerSchema => ImportedStudySnapshotJson.Deserialize(json),
             _ => throw new JsonException("Unsupported study snapshot schema.")
         };
     }

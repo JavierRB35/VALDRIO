@@ -4,6 +4,10 @@ Fecha de actualización: 2026-10-04
 Fuente base: `especificacion/03_Decisiones_y_Diccionario.md` del paquete VALDRIO v0.4.  
 Aceptación del propietario registrada el 2026-10-04.
 
+## Aclaración D03 — 2026-10-07
+
+El propietario confirma que el XLSX es solo un ejemplo y que el cierre se declara en el formulario: 31/10/2026. Se acepta el ensayo técnico y el ejemplo 6005=358,35 EUR; no se certifica una fuente productiva. Cada origen real requiere seleccionar registros, declarar periodo/moneda/modalidad y aprobar su ejemplo. T06 se cierra técnicamente con este alcance de prueba y aceptación del commit; el puente FX pertenece a T06A.
+
 ## Registro D01-D12
 
 | ID | Estado vigente | Decisión / propuesta | Próxima puerta |

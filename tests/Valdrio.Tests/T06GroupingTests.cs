@@ -193,7 +193,7 @@ public sealed partial class T06ImportConfirmationTests
         var links = Query(source, "SELECT group_concat(ResourceId||RecordNumber) FROM ResourceSourceLinks ORDER BY ResourceId");
         Assert.AreEqual("FILE_UPGRADE_REQUIRED", Assert.ThrowsExactly<CompanyFileException>(() => Service().Open(source)).Diagnostic.Code);
         using var file = Service().Upgrade(source, FileOf("upgraded-v5.valdrio"), "test");
-        Assert.AreEqual(5, file.Read().SchemaVersion); Assert.AreEqual(before, Hash(source));
+        Assert.AreEqual(6, file.Read().SchemaVersion); Assert.AreEqual(before, Hash(source));
         Assert.AreEqual(batchJson, Query(file.Path, "SELECT CanonicalJson FROM ImportBatches"));
         Assert.AreEqual(photos, Query(file.Path, "SELECT group_concat(CanonicalJson) FROM StudySnapshots ORDER BY Id"));
         Assert.AreEqual(links, Query(file.Path, "SELECT group_concat(ResourceId||RecordNumber) FROM ResourceSourceLinks ORDER BY ResourceId"));

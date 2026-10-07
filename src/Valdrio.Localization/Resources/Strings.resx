@@ -418,4 +418,28 @@ Full: {5}</value></data>
   <data name="ImportMapping.SelectionPreviewHelp" xml:space="preserve"><value>Totals by code, updated as you select records. Source amounts, without currency conversion. This preview saves no data; Prepare import also checks the study period, currency and limits.</value></data>
   <data name="ImportMapping.SelectionReconciliation" xml:space="preserve"><value>Included: {0} records → {2} codes. Excluded: {1} records. Included positive: {3}; included negative: {4}; included net: {5}; excluded net: {6}.</value></data>
   <data name="ImportMapping.SelectionPreviewTitle" xml:space="preserve"><value>Selected records result</value></data>
+  <data name="ImportMapping.FiscalEnd" xml:space="preserve"><value>Shared fiscal year end</value></data>
+  <data name="ImportMapping.ComparisonHelp" xml:space="preserve"><value>1. Open and validate the earlier file, select records and declare currency. 2. Enter fiscal year, closing date and scope here; approve the example and retain the earlier source. 3. Open and validate the current file, select the same codes and choose Cumulative difference. The current closing date is the study end. Approve the difference example and prepare.</value></data>
+  <data name="ImportMapping.ClearComparison" xml:space="preserve"><value>Clear earlier cumulative source</value></data>
+  <data name="Import.ComparisonInvalid" xml:space="preserve"><value>The cumulative balances are not comparable. Declare the same scope, currency, sign and fiscal year; the earlier closing date must be the day before the study starts.</value></data>
+  <data name="ImportMapping.ApproveComparison" xml:space="preserve"><value>I checked both closing dates, fiscal year, currency, selected codes and shared scope. I approve the difference example, including signs and zeros.</value></data>
+  <data name="Import.ReplacementInvalid" xml:space="preserve"><value>Select an active batch from this study to replace it.</value></data>
+  <data name="ImportMapping.ComparisonScope" xml:space="preserve"><value>Verified shared scope (company, accounts and accounting basis)</value></data>
+  <data name="ImportMapping.PreviousEnd" xml:space="preserve"><value>Earlier cumulative closing date</value></data>
+  <data name="Import.ComparisonMissing" xml:space="preserve"><value>Selected codes must exist in both cumulative sources. A missing account is not zero.</value></data>
+  <data name="ImportMapping.ReplacementHelp" xml:space="preserve"><value>Unchecked: append a batch. When replacing, the chosen batch remains in history and its amounts stop contributing; the new batch replaces it entirely.</value></data>
+  <data name="ImportMapping.FreezeComparison" xml:space="preserve"><value>Retain this file as the earlier cumulative source</value></data>
+  <data name="ImportMapping.CumulativeBasis" xml:space="preserve"><value>Study amount = current cumulative − earlier cumulative (160 − 100 = 60). Same fiscal year and scope; missing accounts are not treated as zero.</value></data>
+  <data name="ImportMapping.ComparisonReady" xml:space="preserve"><value>Earlier source retained: {0}, closing {1}. Open the current file now.</value></data>
+  <data name="ImportMapping.FiscalStart" xml:space="preserve"><value>Shared fiscal year start</value></data>
+  <data name="ImportMapping.ComparisonTitle" xml:space="preserve"><value>Compare two cumulative sources: prepare the earlier file</value></data>
+  <data name="ImportMapping.ReplaceBatch" xml:space="preserve"><value>Replace an earlier batch in this study</value></data>
+  <data name="ImportMapping.ComparisonEmpty" xml:space="preserve"><value>No earlier cumulative source retained.</value></data>
+  <data name="ImportMapping.CumulativeMode" xml:space="preserve"><value>Comparable cumulative difference</value></data>
+<data name="ImportMapping.BatchActive" xml:space="preserve"><value>Active</value></data>
+<data name="ImportMapping.BatchReplaced" xml:space="preserve"><value>Replaced: history only</value></data>
+<data name="ImportMapping.CurrentAmount" xml:space="preserve"><value>Current cumulative</value></data>
+<data name="ImportMapping.DifferenceAmount" xml:space="preserve"><value>Period difference</value></data>
+<data name="ImportMapping.EarlierRecords" xml:space="preserve"><value>Earlier source rows</value></data>
+<data name="ImportMapping.EarlierAmount" xml:space="preserve"><value>Earlier cumulative</value></data>
 </root>

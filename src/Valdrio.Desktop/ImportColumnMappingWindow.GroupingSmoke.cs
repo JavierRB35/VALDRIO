@@ -122,7 +122,7 @@ public partial class ImportColumnMappingWindow
         Check(studies.Current?.Revision == 1 && studies.ImportedAmounts.Contains(batch.Id.ToString(), StringComparison.Ordinal), "grouped import survives UI close and reopen");
         var snapshot = Path.Combine(output, "snapshot.json"); File.WriteAllText(snapshot, CanonicalSnapshotJson.Serialize(photo));
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }));
-        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = 5,
+        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = 6,
             Files = new[] { path, backup, restored, csv, snapshot }.Select(p => new { Name = Path.GetFileName(p), Sha256 = Hash(p) }) }));
     }
 }
