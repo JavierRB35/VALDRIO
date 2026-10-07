@@ -300,15 +300,15 @@ Full: {5}</value></data>
   <data name="Import.SourceLimit" xml:space="preserve"><value>The source exceeds the configured technical reading limit.</value></data>
   <data name="Preferences.RetrySave" xml:space="preserve"><value>Retry saving preferences</value></data>
   <data name="ImportMapping.OpenMapping" xml:space="preserve"><value>Select import columns…</value></data>
-  <data name="ImportMapping.Title" xml:space="preserve"><value>Import column selection</value></data>
+  <data name="ImportMapping.Title" xml:space="preserve"><value>Import accounting data</value></data>
   <data name="ImportMapping.Intro" xml:space="preserve"><value>Choose the file layout, then select the account code and a signed amount column or separate debit and credit columns by position and header.</value></data>
-  <data name="ImportMapping.Open" xml:space="preserve"><value>Choose CSV or Excel</value></data>
+  <data name="ImportMapping.Open" xml:space="preserve"><value>Choose CSV or Excel file</value></data>
   <data name="ImportMapping.Worksheet" xml:space="preserve"><value>Excel worksheet</value></data>
   <data name="ImportMapping.HeaderRow" xml:space="preserve"><value>Header row (0 = none)</value></data>
   <data name="ImportMapping.FirstDataRow" xml:space="preserve"><value>First data row</value></data>
   <data name="ImportMapping.Delimiter" xml:space="preserve"><value>CSV delimiter</value></data>
   <data name="ImportMapping.Encoding" xml:space="preserve"><value>CSV encoding</value></data>
-  <data name="ImportMapping.Read" xml:space="preserve"><value>Read columns</value></data>
+  <data name="ImportMapping.Read" xml:space="preserve"><value>Read file</value></data>
   <data name="ImportMapping.AccountColumn" xml:space="preserve"><value>Code column (account, group or expense)</value></data>
   <data name="ImportMapping.AmountColumn" xml:space="preserve"><value>Amount column</value></data>
   <data name="ImportMapping.Decimal" xml:space="preserve"><value>Text decimal separator</value></data>
@@ -317,7 +317,7 @@ Full: {5}</value></data>
   <data name="ImportMapping.NumberHelp" xml:space="preserve"><value>These separators apply to CSV and Excel text cells. Native Excel numbers use their exact stored value. The computer region does not determine how the source is read.</value></data>
   <data name="ImportMapping.NumericAccounts" xml:space="preserve"><value>Allow numeric Excel account codes using their stored representation</value></data>
   <data name="ImportMapping.NumericWarning" xml:space="preserve"><value>Use only if the source codes are intentionally numeric. Leading zeros already lost in Excel cannot be recovered. Dates and booleans are never account codes.</value></data>
-  <data name="ImportMapping.Validate" xml:space="preserve"><value>Validate selected columns</value></data>
+  <data name="ImportMapping.Validate" xml:space="preserve"><value>Check columns</value></data>
   <data name="ImportMapping.PreviewHelp" xml:space="preserve"><value>Preview of the first 50 data rows. Validation checks every data row, including those not displayed. Empty amounts remain errors, never zero.</value></data>
   <data name="ImportMapping.Row" xml:space="preserve"><value>Row</value></data>
   <data name="ImportMapping.Original" xml:space="preserve"><value>Original amount</value></data>
@@ -326,15 +326,15 @@ Full: {5}</value></data>
   <data name="ImportMapping.StagingOnly" xml:space="preserve"><value>This step prepares and validates the column selection. It does not yet save amounts to the study.</value></data>
   <data name="ImportMapping.Cancel" xml:space="preserve"><value>Cancel reading</value></data>
   <data name="ImportMapping.Close" xml:space="preserve"><value>Close</value></data>
-  <data name="ImportMapping.ChooseFile" xml:space="preserve"><value>Choose a CSV or XLSX file to begin.</value></data>
-  <data name="ImportMapping.ReadSource" xml:space="preserve"><value>Check the layout and read the columns.</value></data>
-  <data name="ImportMapping.SelectColumns" xml:space="preserve"><value>Select the account and amount columns, then validate.</value></data>
-  <data name="ImportMapping.SelectWorksheet" xml:space="preserve"><value>Select the Excel worksheet explicitly, then read its columns.</value></data>
-  <data name="ImportMapping.Working" xml:space="preserve"><value>Reading and validating…</value></data>
+  <data name="ImportMapping.ChooseFile" xml:space="preserve"><value>Choose the CSV or Excel file containing the balances or movements you want to add.</value></data>
+  <data name="ImportMapping.ReadSource" xml:space="preserve"><value>File selected. Click Continue to read its contents.</value></data>
+  <data name="ImportMapping.SelectColumns" xml:space="preserve"><value>Choose the column containing the account and the column containing the amount.</value></data>
+  <data name="ImportMapping.SelectWorksheet" xml:space="preserve"><value>Select the Excel worksheet containing the data you want to import.</value></data>
+  <data name="ImportMapping.Working" xml:space="preserve"><value>Checking the file…</value></data>
   <data name="ImportMapping.Cancelled" xml:space="preserve"><value>Operation cancelled. No study data was changed.</value></data>
   <data name="ImportMapping.FileError" xml:space="preserve"><value>The source file could not be read. Check its availability and permissions.</value></data>
-  <data name="ImportMapping.Ready" xml:space="preserve"><value>The selected columns are valid. The mapping is retained for the next import step.</value></data>
-  <data name="ImportMapping.HasErrors" xml:space="preserve"><value>The selected columns contain blocking errors. Correct the source or selection.</value></data>
+  <data name="ImportMapping.Ready" xml:space="preserve"><value>Accounts and amounts were read correctly. You can continue.</value></data>
+  <data name="ImportMapping.HasErrors" xml:space="preserve"><value>Some data needs correction before you can continue. Review the indicated rows.</value></data>
   <data name="ImportMapping.Summary" xml:space="preserve"><value>{0} data rows · {1} errors · {2}</value></data>
   <data name="ImportMapping.Valid" xml:space="preserve"><value>Valid</value></data>
   <data name="ImportMapping.Blocked" xml:space="preserve"><value>Blocked</value></data>
@@ -359,17 +359,17 @@ Full: {5}</value></data>
   <data name="Study.PartitionsPending" xml:space="preserve"><value>Imported resources are available. Assign their partitions before calculating costs.</value></data>
   <data name="Study.ImportedCaptured" xml:space="preserve"><value>The snapshot includes confirmed import resources and their source evidence. Calculation still requires the remaining inputs.</value></data>
   <data name="ImportMapping.Scope" xml:space="preserve"><value>Confirmation saves the complete batch with its originals, conversions and provenance. Review totals and the selected mode before confirming.</value></data>
-  <data name="ImportMapping.NoStudy" xml:space="preserve"><value>File preview: you can choose columns and records. To save the import, close this window, save or load a study and reopen it; your selection is preserved.</value></data>
-  <data name="ImportMapping.Target" xml:space="preserve"><value>Destination study {0} · period {1} to {2} · functional currency {3} · revision {4}</value></data>
-  <data name="ImportMapping.SourceCurrency" xml:space="preserve"><value>Source currency, ISO code such as EUR</value></data>
-  <data name="ImportMapping.ApprovalReference" xml:space="preserve"><value>Representative example you have checked, with its account and expected amount</value></data>
+  <data name="ImportMapping.NoStudy" xml:space="preserve"><value>File preview. To save these data you first need to open or create a cost analysis.</value></data>
+  <data name="ImportMapping.Target" xml:space="preserve"><value>Destination analysis: {0} · period {1} to {2} · currency {3}</value></data>
+  <data name="ImportMapping.SourceCurrency" xml:space="preserve"><value>Currency of the amounts (for example EUR)</value></data>
+  <data name="ImportMapping.ApprovalReference" xml:space="preserve"><value>Check example</value></data>
   <data name="ImportMapping.ApproveInterpretation" xml:space="preserve"><value>I have verified that these are signed amounts for the displayed period, in the stated source currency. Negative amounts and zeros retain their original meaning.</value></data>
-  <data name="ImportMapping.PrepareImport" xml:space="preserve"><value>Prepare import and totals</value></data>
-  <data name="ImportMapping.ConfirmImport" xml:space="preserve"><value>Save import into study</value></data>
-  <data name="ImportMapping.PreparedReady" xml:space="preserve"><value>The batch is prepared. Review the totals before confirming.</value></data>
+  <data name="ImportMapping.PrepareImport" xml:space="preserve"><value>Prepare review</value></data>
+  <data name="ImportMapping.ConfirmImport" xml:space="preserve"><value>Save data into analysis</value></data>
+  <data name="ImportMapping.PreparedReady" xml:space="preserve"><value>Everything is ready. Review the totals before saving the data.</value></data>
   <data name="ImportMapping.Totals" xml:space="preserve"><value>Read {0} · selected {1} · ignored {2} · invalid {3}. Positive {4} · negative {5} · net {6} {7}.</value></data>
-  <data name="ImportMapping.Confirmed" xml:space="preserve"><value>Import confirmed and saved.</value></data>
-  <data name="ImportMapping.ConfirmedSummary" xml:space="preserve"><value>Saved batch {0} · resources {1} · study revision {2}.</value></data>
+  <data name="ImportMapping.Confirmed" xml:space="preserve"><value>Data imported and saved successfully.</value></data>
+  <data name="ImportMapping.ConfirmedSummary" xml:space="preserve"><value>Import saved · {1} resources added.</value></data>
   <data name="ImportMapping.CommittedRefreshPending" xml:space="preserve"><value>The import is saved. The view could not be refreshed; close this window and refresh the study.</value></data>
   <data name="ImportMapping.NoImports" xml:space="preserve"><value>No confirmed import batches in this study.</value></data>
   <data name="ImportMapping.ImportHistory" xml:space="preserve"><value>Batch {0} · {1} · {2} resources · {3} {4} · revision {5}</value></data>
@@ -386,13 +386,13 @@ Full: {5}</value></data>
   <data name="CompanyActiveLabel" xml:space="preserve"><value>Open company</value></data>
   <data name="CompanyTechnicalDetails" xml:space="preserve"><value>File technical details</value></data>
   <data name="DevelopmentToolsTitle" xml:space="preserve"><value>Development tools and examples</value></data>
-  <data name="ImportMapping.AmountMode" xml:space="preserve"><value>Meaning of amounts</value></data>
+  <data name="ImportMapping.AmountMode" xml:space="preserve"><value>What do these amounts represent?</value></data>
   <data name="ImportMapping.ApproveClosing" xml:space="preserve"><value>I checked the displayed closing date and example. I choose the full balance of the selected accounts for this study, in the declared currency, preserving signs and zeros.</value></data>
   <data name="ImportMapping.ApproveClosingDebitCredit" xml:space="preserve"><value>I checked that Debit and Credit represent the displayed closing balances. I choose Debit minus Credit as the full balance for this study, without subtracting another closing balance, in the declared currency.</value></data>
   <data name="ImportMapping.ClosingBasis" xml:space="preserve"><value>Closing date {0} (study end). Use the full balance: 160 remains 160. The previous closing balance is not subtracted.</value></data>
-  <data name="ImportMapping.ClosingMode" xml:space="preserve"><value>Full closing balance for this study</value></data>
+  <data name="ImportMapping.ClosingMode" xml:space="preserve"><value>Full balance at the closing date</value></data>
   <data name="ImportMapping.PeriodBasis" xml:space="preserve"><value>Use movements belonging to the study period.</value></data>
-  <data name="ImportMapping.PeriodMode" xml:space="preserve"><value>Period amounts</value></data>
+  <data name="ImportMapping.PeriodMode" xml:space="preserve"><value>Period movements or amounts</value></data>
   <data name="ImportMapping.AccountSelectionHelp" xml:space="preserve"><value>Select all, none or individual rows. Selected records with the same code are added together, regardless of their descriptions. Every original row is retained.</value></data>
   <data name="ImportMapping.AccountSelectionSummary" xml:space="preserve"><value>{0} of {1} records selected. Changing the selection requires a new preparation and approval.</value></data>
   <data name="ImportMapping.AllAccounts" xml:space="preserve"><value>Include all accounts in this file</value></data>
@@ -426,15 +426,15 @@ Full: {5}</value></data>
   <data name="ImportMapping.ComparisonScope" xml:space="preserve"><value>Verified shared scope (company, accounts and accounting basis)</value></data>
   <data name="ImportMapping.PreviousEnd" xml:space="preserve"><value>Earlier cumulative closing date</value></data>
   <data name="Import.ComparisonMissing" xml:space="preserve"><value>Selected codes must exist in both cumulative sources. A missing account is not zero.</value></data>
-  <data name="ImportMapping.ReplacementHelp" xml:space="preserve"><value>Unchecked: append a batch. When replacing, the chosen batch remains in history and its amounts stop contributing; the new batch replaces it entirely.</value></data>
+  <data name="ImportMapping.ReplacementHelp" xml:space="preserve"><value>Use this only when the new import must completely replace an earlier saved import. The previous import remains in history.</value></data>
   <data name="ImportMapping.FreezeComparison" xml:space="preserve"><value>Retain this file as the earlier cumulative source</value></data>
   <data name="ImportMapping.CumulativeBasis" xml:space="preserve"><value>Study amount = current cumulative − earlier cumulative (160 − 100 = 60). Same fiscal year and scope; missing accounts are not treated as zero.</value></data>
   <data name="ImportMapping.ComparisonReady" xml:space="preserve"><value>Earlier source retained: {0}, closing {1}. Open the current file now.</value></data>
   <data name="ImportMapping.FiscalStart" xml:space="preserve"><value>Shared fiscal year start</value></data>
   <data name="ImportMapping.ComparisonTitle" xml:space="preserve"><value>Compare two cumulative sources: prepare the earlier file</value></data>
-  <data name="ImportMapping.ReplaceBatch" xml:space="preserve"><value>Replace an earlier batch in this study</value></data>
+  <data name="ImportMapping.ReplaceBatch" xml:space="preserve"><value>Correct a previous import</value></data>
   <data name="ImportMapping.ComparisonEmpty" xml:space="preserve"><value>No earlier cumulative source retained.</value></data>
-  <data name="ImportMapping.CumulativeMode" xml:space="preserve"><value>Comparable cumulative difference</value></data>
+  <data name="ImportMapping.CumulativeMode" xml:space="preserve"><value>Difference between two cumulative balances</value></data>
 <data name="ImportMapping.BatchActive" xml:space="preserve"><value>Active</value></data>
 <data name="ImportMapping.BatchReplaced" xml:space="preserve"><value>Replaced: history only</value></data>
 <data name="ImportMapping.CurrentAmount" xml:space="preserve"><value>Current cumulative</value></data>
@@ -446,7 +446,7 @@ Full: {5}</value></data>
   <data name="Import.SourceCurrencyInvalid" xml:space="preserve"><value>The source currency is missing, invalid or outside its declared validity.</value></data>
   <data name="Import.ConversionRateMissing" xml:space="preserve"><value>Select an explicit exchange rate for this foreign-currency record.</value></data>
   <data name="Import.RateDateInvalid" xml:space="preserve"><value>The selected rate date falls outside the approved interval.</value></data>
-  <data name="ImportMapping.International" xml:space="preserve"><value>Configure source currencies, dates and conversions</value></data>
+  <data name="ImportMapping.International" xml:space="preserve"><value>The data uses another currency or needs conversion</value></data>
   <data name="ImportMapping.ConversionHelp" xml:space="preserve"><value>Original totals remain separate by currency. Quotes use a decimal point and express study currency per source unit. Rate dates use yyyy-MM-dd. Choose the permitted date interval explicitly; no current rate is fetched. For cumulative comparisons, each balance is converted with its approved rates before subtracting; both bridges remain visible.</value></data>
   <data name="ImportMapping.CurrencyFromColumn" xml:space="preserve"><value>Read currency from a source column</value></data>
   <data name="ImportMapping.DocumentDateColumn" xml:space="preserve"><value>Document date (optional column)</value></data>
@@ -506,22 +506,22 @@ Full: {5}</value></data>
   <data name="Guide.NeedExample" xml:space="preserve"><value>Enter an account and its expected amount after grouping selected records, for example 6005 = 358.35 EUR.</value></data>
   <data name="Guide.NeedApproval" xml:space="preserve"><value>Check the amount explanation and tick the confirmation box to prepare the final review.</value></data>
   <data name="Guide.ReadyReview" xml:space="preserve"><value>You can prepare the final review. Nothing is saved yet; review totals before saving.</value></data>
-  <data name="Guide.ImportFile" xml:space="preserve"><value>1. File</value></data>
-  <data name="Guide.ImportColumns" xml:space="preserve"><value>2. Columns and numbers</value></data>
-  <data name="Guide.ImportRecords" xml:space="preserve"><value>3. Records</value></data>
-  <data name="Guide.ImportMeaning" xml:space="preserve"><value>4. Meaning and currency</value></data>
+  <data name="Guide.ImportFile" xml:space="preserve"><value>1. Choose file</value></data>
+  <data name="Guide.ImportColumns" xml:space="preserve"><value>2. Identify columns</value></data>
+  <data name="Guide.ImportRecords" xml:space="preserve"><value>3. Choose records</value></data>
+  <data name="Guide.ImportMeaning" xml:space="preserve"><value>4. Explain the amounts</value></data>
   <data name="Guide.ImportReview" xml:space="preserve"><value>5. Review and save</value></data>
-  <data name="Guide.ReadNext" xml:space="preserve"><value>Read file and continue</value></data>
-  <data name="Guide.ValidateNext" xml:space="preserve"><value>Check columns and continue</value></data>
-  <data name="Guide.ReviewNext" xml:space="preserve"><value>Prepare final review</value></data>
+  <data name="Guide.ReadNext" xml:space="preserve"><value>Continue with this file</value></data>
+  <data name="Guide.ValidateNext" xml:space="preserve"><value>Check and continue</value></data>
+  <data name="Guide.ReviewNext" xml:space="preserve"><value>Review import</value></data>
   <data name="Guide.SaveImport" xml:space="preserve"><value>Save import into study</value></data>
   <data name="Guide.SavedImport" xml:space="preserve"><value>Import saved. You can close this window and view the result in the study.</value></data>
-  <data name="Guide.ReviewHelp" xml:space="preserve"><value>Review the destination, records and totals. Save import writes the data into the company file; closing before saving only keeps your selection for later review.</value></data>
+  <data name="Guide.ReviewHelp" xml:space="preserve"><value>Check the destination analysis, record count and totals. Nothing is added until you click Save data.</value></data>
   <data name="Guide.EditReview" xml:space="preserve"><value>The preparation has changed or contains errors. Return to the relevant step, correct the data and prepare again.</value></data>
-  <data name="Guide.FileHelp" xml:space="preserve"><value>Choose the file and worksheet. Identify the header and first data rows. Reading does not modify the original file.</value></data>
-  <data name="Guide.ColumnsHelp" xml:space="preserve"><value>Map account and amount to source columns. Descriptions are not used for grouping. Review the preview and correct any errors.</value></data>
-  <data name="Guide.RecordsHelp" xml:space="preserve"><value>Only checked rows will be imported. Rows with the same account are summed with their source preserved.</value></data>
-  <data name="Guide.MeaningHelp" xml:space="preserve"><value>This step determines how amounts are incorporated. This is not inferred from the filename: choose the option that represents your data.</value></data>
+  <data name="Guide.FileHelp" xml:space="preserve"><value>Choose the file. VALDRIO does not modify the original. For Excel, select the worksheet containing the data.</value></data>
+  <data name="Guide.ColumnsHelp" xml:space="preserve"><value>Indicate where the account and amount are. VALDRIO checks every row when you continue and points out exactly what needs correction.</value></data>
+  <data name="Guide.RecordsHelp" xml:space="preserve"><value>Choose which rows to add. All valid rows are selected by default. Repeated accounts are added without losing the original-row detail.</value></data>
+  <data name="Guide.MeaningHelp" xml:space="preserve"><value>Tell VALDRIO what the amounts mean. This is required so period movements are not confused with cumulative or closing balances.</value></data>
   <data name="Guide.DraftTab" xml:space="preserve"><value>1. Structure</value></data>
   <data name="Guide.MastersTab" xml:space="preserve"><value>2. Centres</value></data>
   <data name="Guide.NodesTab" xml:space="preserve"><value>3. Calculation nodes</value></data>
@@ -601,7 +601,7 @@ Full: {5}</value></data>
   <data name="Guide.Help.SelectedUiLanguageTag" xml:space="preserve"><value>Language of application text. Does not change stored data.</value></data>
   <data name="Guide.Help.SelectedFormatCultureTag" xml:space="preserve"><value>Region used to display numbers and dates. Source file format is chosen separately.</value></data>
   <data name="Guide.Help.SelectedTimeZoneId" xml:space="preserve"><value>Zone used to display history timestamps. Does not change study business dates.</value></data>
-  <data name="Guide.CorrectImport" xml:space="preserve"><value>Go back to correct the data</value></data>
+  <data name="Guide.CorrectImport" xml:space="preserve"><value>Correct data</value></data>
   <data name="Guide.Working" xml:space="preserve"><value>Operation in progress. Please wait; your entries are preserved.</value></data>
   <data name="Guide.ReadOnly" xml:space="preserve"><value>This company file is open for reading. You can inspect data, but saving requires an editable company file.</value></data>
   <data name="Guide.PendingCenter" xml:space="preserve"><value>The physical centre has unsaved changes. Review them in Centres, then save the centre before continuing.</value></data>
@@ -615,7 +615,7 @@ Full: {5}</value></data>
   <data name="Guide.ContinueStudy" xml:space="preserve"><value>Continue to analysis</value></data>
   <data name="Guide.ContinueImport" xml:space="preserve"><value>Continue to import</value></data>
   <data name="Guide.Help.StudyModelChoice" xml:space="preserve"><value>Choose the finalized cost structure this analysis will use. It is linked when you save the analysis; no separate load action is required.</value></data>
-  <data name="ImportMapping.ReviewChanged" xml:space="preserve"><value>The current review has changed. Prepare and check it again before saving; previously saved imports remain in the study.</value></data>
+  <data name="ImportMapping.ReviewChanged" xml:space="preserve"><value>You changed some import data. Review it again before saving; previous imports are not modified.</value></data>
   <data name="Guide.ReadOnlyAction" xml:space="preserve"><value>Read-only company file</value></data>
 <data name="Resource.PartitionMismatch" xml:space="preserve"><value>Resource {0} has a partition difference of {1}.</value></data>
 <data name="Resource.DuplicateId" xml:space="preserve"><value>An identifier is repeated in the resource preparation.</value></data>
@@ -916,4 +916,34 @@ Difference to distribute: {7}</value></data>
   <data name="CompanyUnitCreationHelp" xml:space="preserve"><value>Define how activity is measured. For example: code HOURS, measurement type time. The unit is saved once and can be reused by different nodes.</value></data>
   <data name="CompanyUnitRequiredHelp" xml:space="preserve"><value>Required: unit code and measurement type. Symbol, decimal places and whole-unit behavior are additional options.</value></data>
   <data name="CompanyUnitAdvanced" xml:space="preserve"><value>Additional unit options</value></data>
+  <data name="ImportMapping.FileStepTitle" xml:space="preserve"><value>Select the source file</value></data>
+  <data name="ImportMapping.FileStepHelp" xml:space="preserve"><value>Choose the Excel or CSV file containing the accounting data. In most cases you do not need to change any additional options.</value></data>
+  <data name="ImportMapping.FileAdvanced" xml:space="preserve"><value>File options (only if reading does not match)</value></data>
+  <data name="ImportMapping.FileAdvancedHelp" xml:space="preserve"><value>Change these only if headers or data do not start on the usual rows, or if a CSV uses a different delimiter or encoding.</value></data>
+  <data name="ImportMapping.ColumnsStepTitle" xml:space="preserve"><value>Identify the account and amount columns</value></data>
+  <data name="ImportMapping.ColumnsStepHelp" xml:space="preserve"><value>You do not need technical terminology: choose the column identifying the account and the column or columns containing its amount.</value></data>
+  <data name="ImportMapping.NumberAdvanced" xml:space="preserve"><value>Number format (only if the preview does not match)</value></data>
+  <data name="ImportMapping.NumberAdvancedHelp" xml:space="preserve"><value>The defaults work for most files. Adjust separators or negative syntax only if the preview shows incorrect amounts.</value></data>
+  <data name="ImportMapping.RecordsStepTitle" xml:space="preserve"><value>Choose the records to import</value></data>
+  <data name="ImportMapping.RecordsStepHelp" xml:space="preserve"><value>All valid rows are included initially. Uncheck only the rows that should not be part of this analysis.</value></data>
+  <data name="ImportMapping.MeaningStepTitle" xml:space="preserve"><value>Explain what the amounts represent</value></data>
+  <data name="ImportMapping.MeaningStepHelp" xml:space="preserve"><value>This is an important accounting decision. Choose the option that truly describes the file; VALDRIO does not guess, to avoid duplicating or subtracting amounts incorrectly.</value></data>
+  <data name="ImportMapping.ReplaceAdvancedTitle" xml:space="preserve"><value>Correct a previous import (optional)</value></data>
+  <data name="ImportMapping.SourceCurrencyHelp" xml:space="preserve"><value>The analysis currency is suggested. Change it only when the file amounts use another currency.</value></data>
+  <data name="ImportMapping.ApprovalReferenceHelp" xml:space="preserve"><value>Enter an example you checked, for example “Account 600000 = 1,250.50”. This records how you interpreted the file.</value></data>
+  <data name="ImportMapping.ReviewStepTitle" xml:space="preserve"><value>Check before saving</value></data>
+  <data name="ImportMapping.ReviewStepHelp" xml:space="preserve"><value>This screen summarizes what will be added. The source file is not modified and nothing enters the analysis until you confirm the save.</value></data>
+  <data name="ImportMapping.FriendlyValidSummary" xml:space="preserve"><value>{0} rows read · everything looks correct</value></data>
+  <data name="ImportMapping.FriendlyInvalidSummary" xml:space="preserve"><value>{0} rows read · {1} need correction</value></data>
+  <data name="ImportMapping.FriendlyIssueLine" xml:space="preserve"><value>Row {0}: {1}</value></data>
+  <data name="ImportMapping.NeedFile" xml:space="preserve"><value>Choose a file to continue.</value></data>
+  <data name="ImportMapping.NeedWorksheet" xml:space="preserve"><value>Select the Excel worksheet containing the data.</value></data>
+  <data name="ImportMapping.FileReadReady" xml:space="preserve"><value>File read. You can continue to identify the columns.</value></data>
+  <data name="ImportMapping.FileContinueHint" xml:space="preserve"><value>File ready. Click Continue to read its columns.</value></data>
+  <data name="ImportMapping.NeedReadFirst" xml:space="preserve"><value>Return to the previous step and read the file first.</value></data>
+  <data name="ImportMapping.NeedAccountColumn" xml:space="preserve"><value>Select the column containing the account code or number.</value></data>
+  <data name="ImportMapping.NeedAmountColumn" xml:space="preserve"><value>Select the column containing the amount.</value></data>
+  <data name="ImportMapping.NeedDebitCreditColumns" xml:space="preserve"><value>Select the Debit and Credit columns.</value></data>
+  <data name="ImportMapping.NeedFixRows" xml:space="preserve"><value>Some rows contain errors. Review the table and correct the file or interpretation before continuing.</value></data>
+  <data name="ImportMapping.ColumnsContinueHint" xml:space="preserve"><value>Account and amount are identified. Click Check and continue.</value></data>
 </root>
