@@ -1,4 +1,5 @@
 name: pr25-one-shot-windows-build
+# retry after WPF compile fix
 
 on:
   push:
