@@ -173,8 +173,8 @@
        </Grid>
       </GroupBox>
 
-      <GroupBox Header="{Binding UnitLabel}" Padding="12">
-       <StackPanel>
+      <Expander Header="{Binding UnitCatalogTitle}" Margin="0,2,0,0">
+       <StackPanel Margin="8,6,0,4">
         <TextBlock Text="{Binding UnitSectionHelp}" Style="{StaticResource SectionHelp}" />
         <ComboBox ItemsSource="{Binding Units}" SelectedItem="{Binding UnitMaster}" TabIndex="51"
                   AutomationProperties.Name="{Binding UnitLabel}" local:FieldHelp.Key="UnitMaster" />
@@ -182,7 +182,7 @@
                 HorizontalAlignment="Left" TabIndex="52" />
         <ContentControl x:Name="UnitsCreationHost" />
        </StackPanel>
-      </GroupBox>
+      </Expander>
      </StackPanel>
     </TabItem>
 
