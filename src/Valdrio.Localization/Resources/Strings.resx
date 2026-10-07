@@ -640,25 +640,25 @@ Full: {5}</value></data>
 <data name="Resource.SplitMismatch" xml:space="preserve"><value>Replacement parts must sum exactly to the original part amount.</value></data>
 <data name="Resource.PartNotFound" xml:space="preserve"><value>Select one existing part of this resource.</value></data>
   <data name="Resources.Title" xml:space="preserve"><value>Resources</value></data>
-  <data name="Resources.Introduction" xml:space="preserve"><value>Each account retains its source records. Review adjustments and divide the effective amount among destinations; undecided amounts remain pending.</value></data>
-  <data name="Resources.Ready" xml:space="preserve"><value>Select an account and press Edit account to continue.</value></data>
+  <data name="Resources.Introduction" xml:space="preserve"><value>Review imported accounts here before calculation. The original amount is always preserved: corrections are recorded as reasoned adjustments, then you can split the effective amount among destinations, exclude it, or leave part pending.</value></data>
+  <data name="Resources.Ready" xml:space="preserve"><value>Select an account in the table and click “Review / adjust account”.</value></data>
   <data name="Resources.NeedStudy" xml:space="preserve"><value>Save or load a study in step 3 to prepare its resources.</value></data>
-  <data name="Resources.NeedImport" xml:space="preserve"><value>Import and confirm records in step 4. Then prepare their resources here.</value></data>
+  <data name="Resources.NeedImport" xml:space="preserve"><value>First import and save accounting data in the analysis. When the import finishes, VALDRIO will take you directly here.</value></data>
   <data name="Resources.ReadOnly" xml:space="preserve"><value>The file is open for viewing. Open it for editing to save changes.</value></data>
   <data name="Resources.Closed" xml:space="preserve"><value>The study is closed. Reopen it in the Study step to change its resources.</value></data>
-  <data name="Resources.ChooseAccount" xml:space="preserve"><value>1 of 4 · Choose the account whose adjustments and destinations you want to review.</value></data>
-  <data name="Resources.SelectAccountFirst" xml:space="preserve"><value>Select an account in the table to begin.</value></data>
+  <data name="Resources.ChooseAccount" xml:space="preserve"><value>Select the account you want to review. You will see the imported amount, existing adjustments, effective amount, and anything still pending classification or assignment.</value></data>
+  <data name="Resources.SelectAccountFirst" xml:space="preserve"><value>Select an account from the table to review its amounts.</value></data>
   <data name="Resources.EditAccount" xml:space="preserve"><value>Edit selected account</value></data>
   <data name="Resources.ContinueParts" xml:space="preserve"><value>Continue: distribute the amount</value></data>
   <data name="Resources.ReviewChanges" xml:space="preserve"><value>Continue: review and save</value></data>
-  <data name="Resources.SaveAccount" xml:space="preserve"><value>Save preparation for this account</value></data>
+  <data name="Resources.SaveAccount" xml:space="preserve"><value>Save changes to this account</value></data>
   <data name="Resources.KeepRevalueParts" xml:space="preserve"><value>Apply parts to currency review</value></data>
-  <data name="Resources.AdjustmentStep" xml:space="preserve"><value>2 of 4 · Account adjustments</value></data>
-  <data name="Resources.AdjustmentHelp" xml:space="preserve"><value>An adjustment increases or decreases the imported amount while preserving the Excel or CSV data. Enter a signed amount, currency, type and reason. If no adjustments are needed, continue to distribution.</value></data>
-  <data name="Resources.PartsStep" xml:space="preserve"><value>3 of 4 · Amount destinations</value></data>
-  <data name="Resources.PartsHelp" xml:space="preserve"><value>Choose a part and press Edit part, or create a new one. Each part has one route. The sum must equal this account’s effective amount exactly. You can explicitly leave amounts pending.</value></data>
-  <data name="Resources.ReviewStep" xml:space="preserve"><value>4 of 4 · Review and save</value></data>
-  <data name="Resources.ReviewHelp" xml:space="preserve"><value>Check destinations, adjustments and differences. Every account must have zero difference and a reason for the change before saving. Pending parts remain visible for later completion.</value></data>
+  <data name="Resources.AdjustmentStep" xml:space="preserve"><value>Amount corrections</value></data>
+  <data name="Resources.AdjustmentHelp" xml:space="preserve"><value>If the imported amount needs correction, enter the difference here: a positive value increases it and a negative value reduces it. The original balance is never edited or deleted; the correction is recorded with its reason. To undo an earlier correction, select it and click Reverse.</value></data>
+  <data name="Resources.PartsStep" xml:space="preserve"><value>Distribute or exclude the amount</value></data>
+  <data name="Resources.PartsHelp" xml:space="preserve"><value>Decide what to do with this account’s effective amount. Assign it directly, send it to a cost group, exclude part of it from the analysis, or leave it pending. If you split the account, all parts must add up exactly to the effective amount.</value></data>
+  <data name="Resources.ReviewStep" xml:space="preserve"><value>Check and save this account</value></data>
+  <data name="Resources.ReviewHelp" xml:space="preserve"><value>Check that the effective amount is fully explained by assignments, exclusions, and pending parts. The difference must be zero before saving.</value></data>
   <data name="Resources.Coverage" xml:space="preserve"><value>Converted original: {0} · Adjustments: {1} · Effective: {2}
 Direct: {3} · Pools: {4} · Excluded: {5} · Pending: {6}
 Difference to distribute: {7}</value></data>
@@ -680,7 +680,7 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.Type" xml:space="preserve"><value>Adjustment type</value></data>
   <data name="Resources.Reason" xml:space="preserve"><value>Adjustment or reversal reason</value></data>
   <data name="Resources.State" xml:space="preserve"><value>Movement kind</value></data>
-  <data name="Resources.SignedAmount" xml:space="preserve"><value>Signed adjustment amount</value></data>
+  <data name="Resources.SignedAmount" xml:space="preserve"><value>Amount correction (+ increase / − reduce)</value></data>
   <data name="Resources.Currency" xml:space="preserve"><value>Adjustment currency</value></data>
   <data name="Resources.Quote" xml:space="preserve"><value>Rate: study currency per 1 source unit</value></data>
   <data name="Resources.QuoteHelp" xml:space="preserve"><value>Enter how many units of study currency equal 1 unit of original currency. Each movement is converted separately.</value></data>
@@ -688,16 +688,16 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.RateDateHelp" xml:space="preserve"><value>Business date to which this rate applies. It does not change with the time zone.</value></data>
   <data name="Resources.RateSource" xml:space="preserve"><value>Exchange rate source</value></data>
   <data name="Resources.RateSourceHelp" xml:space="preserve"><value>Record where the rate comes from, such as the bank or a verifiable document reference.</value></data>
-  <data name="Resources.AddAdjustment" xml:space="preserve"><value>Add adjustment to draft</value></data>
-  <data name="Resources.ReverseSelected" xml:space="preserve"><value>Reverse selected adjustment</value></data>
+  <data name="Resources.AddAdjustment" xml:space="preserve"><value>Apply correction</value></data>
+  <data name="Resources.ReverseSelected" xml:space="preserve"><value>Reverse selected correction</value></data>
   <data name="Resources.ClearForm" xml:space="preserve"><value>Clear this form</value></data>
   <data name="Resources.SourceRows" xml:space="preserve"><value>Retained source records</value></data>
   <data name="Resources.Record" xml:space="preserve"><value>Record</value></data>
   <data name="Resources.Earlier" xml:space="preserve"><value>Earlier cumulative balance, subtracted</value></data>
   <data name="Resources.EditPart" xml:space="preserve"><value>Edit selected part</value></data>
-  <data name="Resources.RemovePart" xml:space="preserve"><value>Remove selected part</value></data>
-  <data name="Resources.NewPart" xml:space="preserve"><value>Clear form / new part</value></data>
-  <data name="Resources.PendingRemainder" xml:space="preserve"><value>Add difference as pending</value></data>
+  <data name="Resources.RemovePart" xml:space="preserve"><value>Remove selected split</value></data>
+  <data name="Resources.NewPart" xml:space="preserve"><value>Add another part</value></data>
+  <data name="Resources.PendingRemainder" xml:space="preserve"><value>Leave the difference pending</value></data>
   <data name="Resources.Object" xml:space="preserve"><value>Cost object</value></data>
   <data name="Resources.CreateObject" xml:space="preserve"><value>Create a cost object</value></data>
   <data name="Resources.ObjectHelp" xml:space="preserve"><value>An object is what you want to measure costs for: a product, service, order or another destination. Its code identifies it within this study. Save it and select it as the part’s destination.</value></data>
@@ -803,8 +803,8 @@ Difference to distribute: {7}</value></data>
   <data name="Resource.NumberRequired" xml:space="preserve"><value>Enter a valid number using the regional format captured when the form started. An empty field is not converted to zero.</value></data>
   <data name="Resource.DateRequired" xml:space="preserve"><value>Select a valid date in the calendar.</value></data>
   <data name="Resource.RevalueUnbalanced" xml:space="preserve"><value>The account still has a difference after revaluation. Adjust its parts or explicitly leave the difference pending.</value></data>
-  <data name="Guide.Resources" xml:space="preserve"><value>5. Resources</value></data>
-  <data name="Guide.ContinueResources" xml:space="preserve"><value>Continue: prepare resources</value></data>
+  <data name="Guide.Resources" xml:space="preserve"><value>5. Review and adjust accounts</value></data>
+  <data name="Guide.ContinueResources" xml:space="preserve"><value>Continue: review and adjust accounts</value></data>
   <data name="Guide.AnotherImport" xml:space="preserve"><value>Import another file / correct a previous import</value></data>
   <data name="Resources.LayerHelp" xml:space="preserve"><value>State whether this part belongs to production, commercial or structure. This is independent of fixed or variable behavior and its destination. You may leave it unclassified.</value></data>
   <data name="Resources.PoolHelp" xml:space="preserve"><value>A pool groups costs for later distribution. Choose one from your published model; its node’s principal or auxiliary role does not determine cost behavior.</value></data>
@@ -946,4 +946,7 @@ Difference to distribute: {7}</value></data>
   <data name="ImportMapping.NeedDebitCreditColumns" xml:space="preserve"><value>Select the Debit and Credit columns.</value></data>
   <data name="ImportMapping.NeedFixRows" xml:space="preserve"><value>Some rows contain errors. Review the table and correct the file or interpretation before continuing.</value></data>
   <data name="ImportMapping.ColumnsContinueHint" xml:space="preserve"><value>Account and amount are identified. Click Check and continue.</value></data>
+  <data name="Resources.ListTitle" xml:space="preserve"><value>Imported accounts</value></data>
+  <data name="Resources.ListHelp" xml:space="preserve"><value>This table is your starting point. Select an account to review its original amount, correct it with adjustments, and decide how it is distributed or excluded.</value></data>
+  <data name="Resources.OpenSelected" xml:space="preserve"><value>Review / adjust selected account</value></data>
 </root>
