@@ -1,18 +1,22 @@
 <Window x:Class="Valdrio.Desktop.ImportColumnMappingWindow"
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
- Title="{Binding Title}" Width="1040" Height="780" MinWidth="720" MinHeight="560" WindowStartupLocation="CenterOwner">
+ Title="{Binding Title}" Width="1180" Height="850" MinWidth="900" MinHeight="650" Background="{StaticResource AppBackgroundBrush}" WindowStartupLocation="CenterOwner">
  <Window.Resources>
   <BooleanToVisibilityConverter x:Key="Visible"/>
-  <Style TargetType="Button"><Setter Property="Padding" Value="12,6"/><Setter Property="Margin" Value="0,4,8,4"/></Style>
+  <Style TargetType="Button" BasedOn="{StaticResource ButtonBaseStyle}"><Setter Property="Padding" Value="12,6"/><Setter Property="Margin" Value="0,4,8,4"/></Style>
   <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,3,8,3"/></Style>
-  <Style TargetType="ComboBox"><Setter Property="MinWidth" Value="145"/><Setter Property="Margin" Value="0,3,12,3"/></Style>
+  <Style TargetType="ComboBox"><Setter Property="MinWidth" Value="145"/><Setter Property="MinHeight" Value="34"/><Setter Property="Padding" Value="7,4"/><Setter Property="Margin" Value="0,3,12,3"/><Setter Property="Background" Value="{StaticResource SurfaceBrush}"/><Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/><Setter Property="BorderBrush" Value="#BECBDD"/></Style>
  </Window.Resources>
  <ScrollViewer VerticalScrollBarVisibility="Auto">
- <StackPanel Margin="18">
-  <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="21"/>
-  <TextBlock Text="{Binding [Intro]}"/>
+ <StackPanel Margin="22">
+  <Border Background="#164A76" CornerRadius="12" Padding="20,16" Margin="0,0,0,14">
+   <StackPanel>
+    <TextBlock Text="{Binding Title}" Foreground="White" FontWeight="SemiBold" FontSize="22"/>
+    <TextBlock Text="{Binding [Intro]}" Foreground="#DCEEFF" Margin="0,6,0,0"/>
+   </StackPanel>
+  </Border>
   <WrapPanel>
-   <Button x:Name="OpenSourceButton" Content="{Binding [Open]}" Command="{Binding OpenCommand}" AutomationProperties.Name="{Binding [Open]}"/>
+   <Button x:Name="OpenSourceButton" Content="{Binding [Open]}" Command="{Binding OpenCommand}" Style="{StaticResource PrimaryButtonStyle}" AutomationProperties.Name="{Binding [Open]}"/>
    <TextBlock Text="{Binding FileName}" FontWeight="SemiBold" VerticalAlignment="Center"/>
   </WrapPanel>
   <StackPanel IsEnabled="{Binding IsIdle}">
@@ -31,7 +35,7 @@
     <StackPanel><TextBlock Text="{Binding [Encoding]}"/><ComboBox ItemsSource="{Binding Encodings}"
      SelectedItem="{Binding Encoding}" AutomationProperties.Name="{Binding [Encoding]}"/></StackPanel>
    </WrapPanel>
-   <Button x:Name="ReadSourceButton" Content="{Binding [Read]}" Command="{Binding ReadCommand}" HorizontalAlignment="Left"/>
+   <Button x:Name="ReadSourceButton" Content="{Binding [Read]}" Command="{Binding ReadCommand}" Style="{StaticResource PrimaryButtonStyle}" HorizontalAlignment="Left"/>
    <StackPanel IsEnabled="{Binding HasColumns}"><TextBlock Text="{Binding [AmountLayout]}"/>
     <ComboBox x:Name="AmountLayoutBox" ItemsSource="{Binding AmountLayouts}" DisplayMemberPath="Label" SelectedValuePath="Value"
      SelectedValue="{Binding AmountLayout}" AutomationProperties.Name="{Binding [AmountLayout]}" HorizontalAlignment="Left" MinWidth="280"/>
@@ -63,13 +67,13 @@
    <CheckBox x:Name="NumericAccountsBox" Content="{Binding [NumericAccounts]}" IsChecked="{Binding AllowNumericAccounts}"
     Visibility="{Binding IsXlsx,Converter={StaticResource Visible}}" Margin="0,6,0,6"/>
    <TextBlock Text="{Binding [NumericWarning]}" Visibility="{Binding IsXlsx,Converter={StaticResource Visible}}"/>
-   <Button x:Name="ValidateMappingButton" Content="{Binding [Validate]}" Command="{Binding ValidateCommand}" HorizontalAlignment="Left"/>
+   <Button x:Name="ValidateMappingButton" Content="{Binding [Validate]}" Command="{Binding ValidateCommand}" Style="{StaticResource PrimaryButtonStyle}" HorizontalAlignment="Left"/>
   </StackPanel>
   <TextBlock Text="{Binding Status}" Foreground="DarkSlateBlue" AutomationProperties.LiveSetting="Polite"/>
   <TextBlock Text="{Binding Summary}" FontWeight="SemiBold"/>
   <TextBlock Text="{Binding [PreviewHelp]}"/>
   <DataGrid x:Name="PreviewGrid" ItemsSource="{Binding Preview}" AutoGenerateColumns="False" IsReadOnly="True"
-   CanUserAddRows="False" Height="210" FlowDirection="LeftToRight" EnableRowVirtualization="True">
+   CanUserAddRows="False" Height="260" FlowDirection="LeftToRight" EnableRowVirtualization="True" Margin="0,6,0,8">
    <DataGrid.ColumnHeaderStyle>
     <Style TargetType="DataGridColumnHeader">
      <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -104,8 +108,8 @@
    <TextBlock x:Name="ConfirmationSummaryText" Text="{Binding ConfirmationSummary}" FontWeight="SemiBold"/>
    <TextBlock Text="{Binding PreparationIssues}" Foreground="DarkRed"/>
    <WrapPanel>
-    <Button x:Name="PrepareImportButton" Content="{Binding [PrepareImport]}" Command="{Binding PrepareCommand}"/>
-    <Button x:Name="ConfirmImportButton" Content="{Binding [ConfirmImport]}" Command="{Binding ConfirmCommand}"/>
+    <Button x:Name="PrepareImportButton" Content="{Binding [PrepareImport]}" Command="{Binding PrepareCommand}" Style="{StaticResource PrimaryButtonStyle}"/>
+    <Button x:Name="ConfirmImportButton" Content="{Binding [ConfirmImport]}" Command="{Binding ConfirmCommand}" Style="{StaticResource SuccessButtonStyle}"/>
    </WrapPanel>
   </StackPanel>
   <WrapPanel><Button Content="{Binding [Cancel]}" Command="{Binding CancelCommand}"/>
