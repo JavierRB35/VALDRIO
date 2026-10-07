@@ -173,9 +173,9 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Published" xml:space="preserve"><value>Published structure</value></data>
   <data name="Model.Unsaved" xml:space="preserve"><value>Unsaved changes</value></data>
   <data name="Model.Saved" xml:space="preserve"><value>Saved</value></data>
-  <data name="Model.Title" xml:space="preserve"><value>Centers and versioned models</value></data>
+  <data name="Model.Title" xml:space="preserve"><value>Configure cost model</value></data>
   <data name="Model.Notes" xml:space="preserve"><value>Configure a physical center, nodes and one homogeneous pool per node. Function and role are independent. Apply a node to the draft, then Save. Publication freezes structure only; economic policies remain pending and calculation is unavailable.</value></data>
-  <data name="Model.Centers" xml:space="preserve"><value>Physical center masters</value></data>
+  <data name="Model.Centers" xml:space="preserve"><value>Physical centres</value></data>
   <data name="Model.CenterCode" xml:space="preserve"><value>Physical center code (text)</value></data>
   <data name="Model.CenterName" xml:space="preserve"><value>Physical center name</value></data>
   <data name="Model.CreateCenter" xml:space="preserve"><value>Create center</value></data>
@@ -190,7 +190,7 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Publish" xml:space="preserve"><value>Publish saved structure</value></data>
   <data name="Model.Clone" xml:space="preserve"><value>Duplicate as draft</value></data>
   <data name="Model.Discard" xml:space="preserve"><value>Discard draft changes</value></data>
-  <data name="Model.Nodes" xml:space="preserve"><value>Nodes and pools</value></data>
+  <data name="Model.Nodes" xml:space="preserve"><value>Calculation nodes</value></data>
   <data name="Model.NodeCode" xml:space="preserve"><value>Node code</value></data>
   <data name="Model.Physical" xml:space="preserve"><value>Physical center</value></data>
   <data name="Model.Role" xml:space="preserve"><value>Allocation role</value></data>
@@ -198,9 +198,9 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.DriverUnit" xml:space="preserve"><value>Driver units</value></data>
   <data name="Model.CostLayer" xml:space="preserve"><value>Cost classification (no calculation policy)</value></data>
   <data name="Model.PoolDescription" xml:space="preserve"><value>Pool description</value></data>
-  <data name="Model.ApplyNode" xml:space="preserve"><value>Add / update node in draft</value></data>
-  <data name="Model.NewNode" xml:space="preserve"><value>Clear form / new node</value></data>
-  <data name="Model.RemoveNode" xml:space="preserve"><value>Remove selected node</value></data>
+  <data name="Model.ApplyNode" xml:space="preserve"><value>Save node</value></data>
+  <data name="Model.NewNode" xml:space="preserve"><value>New node</value></data>
+  <data name="Model.RemoveNode" xml:space="preserve"><value>Delete node</value></data>
   <data name="Model.ToggleUnit" xml:space="preserve"><value>Activate / deactivate unit</value></data>
   <data name="Model.Active" xml:space="preserve"><value>Active</value></data>
   <data name="Model.Inactive" xml:space="preserve"><value>Inactive</value></data>
@@ -486,7 +486,7 @@ Full: {5}</value></data>
   <data name="Guide.NeedNodeCode" xml:space="preserve"><value>Enter the code of the node being edited. This identifies it within the model.</value></data>
   <data name="Guide.NeedNodeCenter" xml:space="preserve"><value>Select the physical centre for this node. You can create centres in the Centres and units step.</value></data>
   <data name="Guide.NeedNodeUnit" xml:space="preserve"><value>Select the node activity unit. If the list is empty, create it in Centres and units.</value></data>
-  <data name="Guide.ApplyNode" xml:space="preserve"><value>Click Add / update node. Then save the model: adding a node to the draft does not yet save it to the file.</value></data>
+  <data name="Guide.ApplyNode" xml:space="preserve"><value>Complete the node and press Save node. VALDRIO saves the draft and clears the form so you can add the next one.</value></data>
   <data name="Guide.NeedPrincipal" xml:space="preserve"><value>The model needs at least one active Principal node. Auxiliary nodes can coexist. Choose the role according to your methodology, not just to pass this step.</value></data>
   <data name="Guide.SaveModel" xml:space="preserve"><value>There are pending changes. Save the draft before validating and publishing the structure.</value></data>
   <data name="Guide.PublishModel" xml:space="preserve"><value>Draft saved. Validate and publish the structure to make it available to studies. Publishing freezes this version; it does not calculate costs.</value></data>
@@ -523,13 +523,13 @@ Full: {5}</value></data>
   <data name="Guide.ColumnsHelp" xml:space="preserve"><value>Map account and amount to source columns. Descriptions are not used for grouping. Review the preview and correct any errors.</value></data>
   <data name="Guide.RecordsHelp" xml:space="preserve"><value>Only checked rows will be imported. Rows with the same account are summed with their source preserved.</value></data>
   <data name="Guide.MeaningHelp" xml:space="preserve"><value>This step determines how amounts are incorporated. This is not inferred from the filename: choose the option that represents your data.</value></data>
-  <data name="Guide.DraftTab" xml:space="preserve"><value>1. Choose or create model</value></data>
+  <data name="Guide.DraftTab" xml:space="preserve"><value>1. Model</value></data>
   <data name="Guide.MastersTab" xml:space="preserve"><value>2. Centres and units</value></data>
-  <data name="Guide.NodesTab" xml:space="preserve"><value>3. Add nodes</value></data>
-  <data name="Guide.PublishTab" xml:space="preserve"><value>4. Save and publish</value></data>
+  <data name="Guide.NodesTab" xml:space="preserve"><value>3. Calculation nodes</value></data>
+  <data name="Guide.PublishTab" xml:space="preserve"><value>4. Review and publish</value></data>
   <data name="Guide.PublishNext" xml:space="preserve"><value>Save, validate and publish structure</value></data>
-  <data name="Guide.MasterHelp" xml:space="preserve"><value>Centre: physical or organisational area. Activity unit: what you measure, such as hours or items. Create them here, then select them in nodes.</value></data>
-  <data name="Guide.NodesHelp" xml:space="preserve"><value>Node: calculation structure element linked to a centre. Its pool groups costs. Adding updates the draft; Save and publish preserves it for use in studies.</value></data>
+  <data name="Guide.MasterHelp" xml:space="preserve"><value>First create the physical centres and activity units used by the nodes. Everything you save remains visible on this screen so you always know what already exists.</value></data>
+  <data name="Guide.NodesHelp" xml:space="preserve"><value>A node is a calculation unit within a centre. Choose its centre, role and activity unit. When you press Save node, VALDRIO immediately saves the draft and the node appears in the table.</value></data>
   <data name="Guide.HelpHint" xml:space="preserve"><value>Help: hover over a field or select it with Tab to see its explanation here.</value></data>
   <data name="Guide.StoredAt" xml:space="preserve"><value>Data is saved in: </value></data>
   <data name="Guide.Help.CompanyName" xml:space="preserve"><value>Name identifying the company. Create file asks for a location; that file holds all company data.</value></data>
@@ -611,7 +611,7 @@ Full: {5}</value></data>
   <data name="Guide.CreateCompanyNext" xml:space="preserve"><value>Create company file and continue</value></data>
   <data name="Guide.CreateModelNext" xml:space="preserve"><value>Create model and continue</value></data>
   <data name="Guide.LoadModelNext" xml:space="preserve"><value>Load selected model and continue</value></data>
-  <data name="Guide.ApplyNodeNext" xml:space="preserve"><value>Add node changes and continue</value></data>
+  <data name="Guide.ApplyNodeNext" xml:space="preserve"><value>Save node and continue</value></data>
   <data name="Guide.PublishContinue" xml:space="preserve"><value>Save, publish and continue to study</value></data>
   <data name="Guide.ContinueStudy" xml:space="preserve"><value>Continue to study</value></data>
   <data name="Guide.ContinueImport" xml:space="preserve"><value>Continue to import</value></data>
@@ -863,4 +863,44 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.Help.Resource.ResetAcknowledged" xml:space="preserve"><value>Reset leaves every account pending and removes its adjustments and routes from the current preparation. History and earlier snapshots are retained. Use this when replacing imports you have already prepared.</value></data>
   <data name="Resource.PartsRequired" xml:space="preserve"><value>Specify at least one part for this account, even if its amount is zero. If its destination is undecided, choose Pending.</value></data>
   <data name="Resources.RevalueFinishAccount" xml:space="preserve"><value>Your current account has been retained. Complete its parts and press Keep parts before reviewing another account in this revaluation.</value></data>
+  <data name="Model.ModelStepHelp" xml:space="preserve"><value>The model defines the structure used by studies. Open an existing model or create a new draft. Published models remain immutable; duplicate a published version before changing it.</value></data>
+  <data name="Model.ExistingModelHelp" xml:space="preserve"><value>Open an existing model</value></data>
+  <data name="Model.NewModelHelp" xml:space="preserve"><value>Create a new model</value></data>
+  <data name="Model.UnitSectionHelp" xml:space="preserve"><value>Activity units describe how node work is measured, for example hours, batches or items. Create the units you need before configuring nodes.</value></data>
+  <data name="Model.ReviewModelHelp" xml:space="preserve"><value>Review the model summary. Save preserves draft changes; Validate checks structural consistency; Publish locks this version so it can be used by studies.</value></data>
+  <data name="Model.CenterSectionHelp" xml:space="preserve"><value>A physical centre is a recognisable area of the business, such as Press, Maintenance or Administration. Add centres one by one; saved centres remain visible in the table.</value></data>
+  <data name="Model.CenterListTitle" xml:space="preserve"><value>Saved centres</value></data>
+  <data name="Model.CenterListHelp" xml:space="preserve"><value>Select a row to edit it. After a successful save, the form is cleared automatically and the table refreshes.</value></data>
+  <data name="Model.CenterFormNew" xml:space="preserve"><value>Add centre</value></data>
+  <data name="Model.CenterFormEdit" xml:space="preserve"><value>Edit selected centre</value></data>
+  <data name="Model.NewCenter" xml:space="preserve"><value>New centre</value></data>
+  <data name="Model.CenterSaveCreate" xml:space="preserve"><value>Save centre</value></data>
+  <data name="Model.CenterSaveEdit" xml:space="preserve"><value>Save changes</value></data>
+  <data name="Model.CenterDeactivate" xml:space="preserve"><value>Deactivate centre</value></data>
+  <data name="Model.CenterReactivate" xml:space="preserve"><value>Reactivate centre</value></data>
+  <data name="Model.CenterStateHelp" xml:space="preserve"><value>Centres referenced by history are not physically deleted. Deactivate a centre to stop using it and reactivate it when needed.</value></data>
+  <data name="Model.CenterCreated" xml:space="preserve"><value>Centre saved successfully. The form is ready for the next centre.</value></data>
+  <data name="Model.CenterSaved" xml:space="preserve"><value>Centre changes saved successfully.</value></data>
+  <data name="Model.CenterStateChanged" xml:space="preserve"><value>Centre status updated successfully.</value></data>
+  <data name="Model.NodeSectionHelp" xml:space="preserve"><value>Each node belongs to a centre and represents a calculation unit. Enter the essential data first; less common data is grouped separately.</value></data>
+  <data name="Model.NodeListTitle" xml:space="preserve"><value>Model nodes</value></data>
+  <data name="Model.NodeListHelp" xml:space="preserve"><value>The table shows every node already saved in this draft. Select a row to edit or delete it.</value></data>
+  <data name="Model.NodeFormNew" xml:space="preserve"><value>Add node</value></data>
+  <data name="Model.NodeFormEdit" xml:space="preserve"><value>Edit selected node</value></data>
+  <data name="Model.NodeSaveCreate" xml:space="preserve"><value>Save node</value></data>
+  <data name="Model.NodeSaveEdit" xml:space="preserve"><value>Save changes</value></data>
+  <data name="Model.NodeSaved" xml:space="preserve"><value>Node saved successfully. The form is ready for the next node.</value></data>
+  <data name="Model.NodeRemoved" xml:space="preserve"><value>Node removed from the draft and changes saved successfully.</value></data>
+  <data name="Model.NodePersistenceHelp" xml:space="preserve"><value>Saving a node immediately updates the model draft in the file. You do not need a second save to preserve that node.</value></data>
+  <data name="Model.OptionalNodeData" xml:space="preserve"><value>Additional data</value></data>
+  <data name="Model.FunctionHelp" xml:space="preserve"><value>Function tags describe what the node is used for. Separate them with commas, for example: production, maintenance.</value></data>
+  <data name="Model.ColumnCode" xml:space="preserve"><value>Code</value></data>
+  <data name="Model.ColumnName" xml:space="preserve"><value>Name</value></data>
+  <data name="Model.ColumnStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="Model.ColumnCenter" xml:space="preserve"><value>Centre</value></data>
+  <data name="Model.ColumnRole" xml:space="preserve"><value>Role</value></data>
+  <data name="Model.ColumnUnit" xml:space="preserve"><value>Unit</value></data>
+  <data name="Model.ColumnLayer" xml:space="preserve"><value>Layer</value></data>
+  <data name="Model.ColumnPool" xml:space="preserve"><value>Pool description</value></data>
+  <data name="Model.ColumnFunctions" xml:space="preserve"><value>Functions</value></data>
 </root>
