@@ -129,6 +129,7 @@
         <Border Grid.Row="1" Grid.Column="0" BorderBrush="#D8DEE7" BorderThickness="1" CornerRadius="6" Padding="12" IsEnabled="{Binding CanEditMasters}">
          <StackPanel>
           <TextBlock Text="{Binding CenterFormTitle}" Style="{StaticResource SectionTitle}" />
+          <TextBlock Text="{Binding CenterRequiredHelp}" Style="{StaticResource FieldHint}" />
 
           <TextBlock Text="{Binding CenterCodeLabel}" />
           <TextBox x:Name="CenterCodeBox" Text="{Binding CenterCode,UpdateSourceTrigger=PropertyChanged}"
@@ -211,6 +212,7 @@
       <GroupBox x:Name="NodeEditor" Header="{Binding NodeFormTitle}" IsEnabled="{Binding CanEdit}" Padding="12" Margin="0,12,0,0">
        <StackPanel>
         <TextBlock Text="{Binding NodeSectionHelp}" Style="{StaticResource SectionHelp}" />
+        <TextBlock Text="{Binding NodeRequiredHelp}" Style="{StaticResource FieldHint}" />
 
         <Grid>
          <Grid.ColumnDefinitions>
