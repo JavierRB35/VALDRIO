@@ -524,11 +524,11 @@ Completa: {5}</value></data>
   <data name="Guide.RecordsHelp" xml:space="preserve"><value>Se importarán solo las filas marcadas. Las filas de la misma cuenta se suman conservando su origen.</value></data>
   <data name="Guide.MeaningHelp" xml:space="preserve"><value>Este paso decide cómo se incorporan los importes. No se deduce por el nombre del archivo: elige la opción que representa tus datos.</value></data>
   <data name="Guide.DraftTab" xml:space="preserve"><value>1. Modelo</value></data>
-  <data name="Guide.MastersTab" xml:space="preserve"><value>2. Centros y unidades</value></data>
+  <data name="Guide.MastersTab" xml:space="preserve"><value>2. Centros</value></data>
   <data name="Guide.NodesTab" xml:space="preserve"><value>3. Nodos de cálculo</value></data>
   <data name="Guide.PublishTab" xml:space="preserve"><value>4. Revisar y publicar</value></data>
   <data name="Guide.PublishNext" xml:space="preserve"><value>Guardar, validar y publicar estructura</value></data>
-  <data name="Guide.MasterHelp" xml:space="preserve"><value>Primero crea los centros físicos y las unidades de actividad que utilizarán los nodos. Todo lo guardado queda visible en esta pantalla para que sepas qué existe antes de continuar.</value></data>
+  <data name="Guide.MasterHelp" xml:space="preserve"><value>Define primero los centros físicos u organizativos. Las unidades de actividad no tienes que decidirlas por adelantado: puedes crearlas aquí si ya las conoces o directamente dentro del nodo cuando las necesites.</value></data>
   <data name="Guide.NodesHelp" xml:space="preserve"><value>Un nodo es una unidad de cálculo dentro de un centro. Selecciona el centro, su papel y la unidad de actividad. Al pulsar Guardar nodo, VALDRIO guarda inmediatamente el borrador y el nodo aparece en la tabla.</value></data>
   <data name="Guide.HelpHint" xml:space="preserve"><value>Ayuda: sitúa el cursor sobre un campo o selecciónalo con Tab para ver su explicación aquí.</value></data>
   <data name="Guide.StoredAt" xml:space="preserve"><value>Archivo donde se guardan los datos: </value></data>
@@ -913,4 +913,5 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="CompanyUnitSaved" xml:space="preserve"><value>Unidad de actividad guardada correctamente. El formulario está listo para crear otra.</value></data>
   <data name="Model.CreateUnitHere" xml:space="preserve"><value>¿No aparece la unidad que necesitas? Crear una aquí</value></data>
   <data name="Model.CreateUnitHereHelp" xml:space="preserve"><value>Crea la unidad sin salir del nodo. Se guardará como unidad reutilizable de la empresa y, si el alta termina correctamente, VALDRIO la seleccionará automáticamente en este nodo.</value></data>
+  <data name="Model.UnitCatalogTitle" xml:space="preserve"><value>Gestionar catálogo de unidades de actividad (opcional)</value></data>
 </root>
