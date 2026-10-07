@@ -1,11 +1,11 @@
 <UserControl x:Class="Valdrio.Desktop.StudyWorkspacePanel"
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Valdrio.Desktop">
  <UserControl.Resources>
-  <Style TargetType="Button"><Setter Property="Padding" Value="10,6"/><Setter Property="Margin" Value="0,4,8,4"/></Style>
+  <Style TargetType="Button" BasedOn="{StaticResource ButtonBaseStyle}"><Setter Property="Padding" Value="10,6"/><Setter Property="Margin" Value="0,4,8,4"/></Style>
   <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,4,8,3"/></Style>
-  <Style TargetType="ComboBox"><Setter Property="MinWidth" Value="160"/><Setter Property="Margin" Value="0,3,8,3"/><Setter Property="DisplayMemberPath" Value="Label"/></Style>
+  <Style TargetType="ComboBox"><Setter Property="MinWidth" Value="160"/><Setter Property="MinHeight" Value="34"/><Setter Property="Padding" Value="7,4"/><Setter Property="Margin" Value="0,3,8,3"/><Setter Property="Background" Value="{StaticResource SurfaceBrush}"/><Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/><Setter Property="BorderBrush" Value="#BECBDD"/><Setter Property="DisplayMemberPath" Value="Label"/></Style>
  </UserControl.Resources>
- <GroupBox Header="{Binding Title}" Padding="14">
+ <GroupBox Header="{Binding Title}" Padding="18" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource StudyAccentBrush}">
   <StackPanel>
    <TextBlock Text="{Binding Notes}"/>
    <TextBlock Text="{Binding Status}" Foreground="DarkSlateBlue" AutomationProperties.LiveSetting="Polite"/>
@@ -22,14 +22,14 @@
     <StackPanel Grid.Row="2" Grid.Column="1"><TextBlock Text="{Binding ScenarioLabel}"/><ComboBox x:Name="ScenarioBox" ItemsSource="{Binding Scenarios}" SelectedItem="{Binding Scenario}" TabIndex="68" AutomationProperties.Name="{Binding ScenarioLabel}"/></StackPanel>
    </Grid>
    <WrapPanel><Button x:Name="NewStudyButton" Content="{Binding NewLabel}" Command="{Binding NewCommand}" TabIndex="69"/>
-    <Button x:Name="CreateStudyButton" Content="{Binding CreateLabel}" Command="{Binding CreateCommand}" TabIndex="70"/>
-    <Button x:Name="SaveStudyButton" Content="{Binding SaveLabel}" Command="{Binding SaveCommand}" TabIndex="71"/>
+    <Button x:Name="CreateStudyButton" Content="{Binding CreateLabel}" Command="{Binding CreateCommand}" Style="{StaticResource PrimaryButtonStyle}" TabIndex="70"/>
+    <Button x:Name="SaveStudyButton" Content="{Binding SaveLabel}" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButtonStyle}" TabIndex="71"/>
     <Button x:Name="CaptureStudyButton" Content="{Binding CaptureLabel}" Command="{Binding CaptureCommand}" TabIndex="72"/>
     <Button x:Name="ToggleStudyButton" Content="{Binding ToggleLabel}" Command="{Binding ToggleStateCommand}" TabIndex="73"/>
     <Button x:Name="DiscardStudyButton" Content="{Binding DiscardLabel}" Command="{Binding DiscardCommand}" TabIndex="74"/>
     <Button Content="{Binding CancelLabel}" Command="{Binding CancelCommand}" TabIndex="75"/></WrapPanel>
    <TextBlock Text="{Binding Details}"/>
-   <Button x:Name="ImportColumnsButton" Content="{Binding ImportColumnsLabel}" Click="OpenImportColumns"
+   <Button x:Name="ImportColumnsButton" Content="{Binding ImportColumnsLabel}" Click="OpenImportColumns" Style="{StaticResource PrimaryButtonStyle}"
    IsEnabled="{Binding ImportColumns.IsIdle}" HorizontalAlignment="Left" TabIndex="77"/>
    <TextBlock x:Name="ImportHistoryText" Text="{Binding ImportedAmounts}"/>
    <TextBlock Text="{Binding RunHistory}" FontWeight="SemiBold"/>
