@@ -30,6 +30,14 @@ public partial class ImportColumnMappingWindow
             if (button.Command is IAsyncRelayCommand command && command.ExecutionTask is { } task) await task.WaitAsync(TimeSpan.FromSeconds(45));
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle); UpdateLayout();
         }
+        async Task ContinueVisible()
+        {
+            if (ImportNext.Visibility != Visibility.Visible || !ImportNext.IsEnabled)
+                throw new InvalidOperationException("Visible import continue action is unavailable.");
+            await AdvanceImport();
+            await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+            UpdateLayout();
+        }
         void Select(ComboBox box, object value)
         { box.SetCurrentValue(ComboBox.SelectedValueProperty, value); box.GetBindingExpression(ComboBox.SelectedValueProperty)!.UpdateSource(); }
         var companyPath = main.Company!.ActivePath!;
@@ -40,19 +48,19 @@ public partial class ImportColumnMappingWindow
         var sourceHash = Hash(csv);
         files.Paths.Enqueue(csv); await Click(OpenSourceButton);
         Check(ImportNext.Visibility == Visibility.Visible, "continue appears after choosing a file");
-        await Click(ImportNext);
+        await ContinueVisible();
         Check(ImportSteps.SelectedIndex == 1 && vm.Columns.Count == 3 && vm.AccountColumn is null && vm.AmountColumn is null,
             "visible continue reads the file and advances to column selection");
         Select(AccountColumnBox, 3); Select(AmountColumnBox, 1); vm.GroupSeparator = ".";
-        await Click(ImportNext);
+        await ContinueVisible();
         Check(ImportSteps.SelectedIndex == 2 && vm.IsReady && vm.ValidatedSelection!.Rows.Count == 2 &&
             vm.ValidatedSelection.Rows[0].Amount == 1250.50m, "visible check-and-continue validates columns and advances");
         Check(vm.Preview[0].Account == "00123" && vm.ValidatedSelection!.Rows[1].Amount == 0m, "leading zeros and explicit zero preserved");
         ImportSteps.SelectedIndex = 1;
-        Select(AmountColumnBox, 3); await Click(ImportNext);
+        Select(AmountColumnBox, 3); await ContinueVisible();
         Check(ImportSteps.SelectedIndex == 1 && !vm.IsReady && vm.Status.StartsWith("IMP_COLUMN_SELECTION", StringComparison.Ordinal),
             "invalid mapping stays on columns and reports the correction");
-        Select(AmountColumnBox, 1); await Click(ImportNext);
+        Select(AmountColumnBox, 1); await ContinueVisible();
         var selection = vm.ValidatedSelection;
         main.ApplyPresentationPreset("es", "en-US", "UTC", false, false);
         await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle); UpdateLayout();
@@ -84,14 +92,14 @@ public partial class ImportColumnMappingWindow
         ImportSteps.SelectedIndex = 0;
         files.Paths.Enqueue(xlsx); await Click(OpenSourceButton);
         Check(!vm.ReadCommand.CanExecute(null) && vm.Worksheets.Count == 2, "Excel requires explicit sheet selection");
-        await Click(ImportNext);
+        await ContinueVisible();
         Check(ImportSteps.SelectedIndex == 0 && ImportStepHelp.Text == vm.FileStepRequirement,
             "continue explains that an Excel worksheet must be selected instead of appearing dead");
         WorksheetBox.SetCurrentValue(ComboBox.SelectedItemProperty, "Selected");
         WorksheetBox.GetBindingExpression(ComboBox.SelectedItemProperty)!.UpdateSource();
-        await Click(ImportNext);
+        await ContinueVisible();
         Check(ImportSteps.SelectedIndex == 1, "continue reads the selected worksheet and advances");
-        Select(AccountColumnBox, 3); Select(AmountColumnBox, 1); await Click(ImportNext);
+        Select(AccountColumnBox, 3); Select(AmountColumnBox, 1); await ContinueVisible();
         Check(ImportSteps.SelectedIndex == 2 && vm.IsReady && vm.ValidatedSelection!.Source.SheetName == "Selected" &&
             vm.ValidatedSelection.Rows[0].Amount == 1250.5m, "Excel second sheet and stored amount checked by visible flow");
         main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", true, true);
