@@ -87,12 +87,12 @@ public partial class ModelWorkspacePanel
         await Click(SaveCenterButton);
         Text(CenterCodeBox, "MANT-001");
         Text(CenterNameBox, "Mantenimiento");
-        await Click(CreateCenterButton);
+        await Click(SaveCenterButton);
         Check(vm.Centers.Count == 2 && CenterGrid.Items.Count == 2, "physical masters saved and visibly listed");
         Check(vm.Master is null && string.IsNullOrEmpty(vm.CenterCode) && string.IsNullOrEmpty(vm.CenterName), "center form clears after save");
         Text(CenterCodeBox, "MANT-001");
         Text(CenterNameBox, "Duplicate");
-        await Click(CreateCenterButton);
+        await Click(SaveCenterButton);
         Check(vm.Status.StartsWith("MODEL_DUPLICATE", StringComparison.Ordinal) && vm.Centers.Count == 2, "duplicate diagnostic shown without extra master");
         Text(CenterCodeBox, "");
         Text(CenterNameBox, "");
