@@ -15,8 +15,9 @@ manual con conciliación. La usabilidad sigue siendo prioridad; no es una revisi
 
 Contrato y límites: [T07](docs/tareas/T07.md). Arquitectura:
 [ADR-0012](docs/adr/ADR-0012-recursos-y-particiones.md). Aceptación reproducible:
-[evidencia T07](docs/evidencias/T07_CIERRE_2026-10-07.md). El recibo Windows del commit
-y los checks del PR acreditan los resultados; la integración en main es posterior.
+[evidencia T07](docs/evidencias/T07_CIERRE_2026-10-07.md). La validación local y el recibo Windows del commit
+acreditan los resultados; la integración en main es posterior. GitHub Actions queda
+reservado a una petición expresa del propietario (AGENTS.md, todas las fases).
 Las decisiones económicas propuestas mantienen su estado. Próxima fase funcional:
 T08, sin adelantar repartos, tarifas ni políticas de capacidad.
 
