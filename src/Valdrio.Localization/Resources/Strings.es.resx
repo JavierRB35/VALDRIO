@@ -640,25 +640,25 @@ Completa: {5}</value></data>
 <data name="Resource.SplitMismatch" xml:space="preserve"><value>Las partes de sustitución deben sumar exactamente el importe de la parte original.</value></data>
 <data name="Resource.PartNotFound" xml:space="preserve"><value>Selecciona una parte existente y única de este recurso.</value></data>
   <data name="Resources.Title" xml:space="preserve"><value>Recursos</value></data>
-  <data name="Resources.Introduction" xml:space="preserve"><value>Cada cuenta conserva sus registros de origen. Revisa sus ajustes y divide el importe efectivo entre destinos; los importes que aún no hayas decidido permanecen pendientes.</value></data>
-  <data name="Resources.Ready" xml:space="preserve"><value>Selecciona una cuenta y pulsa Editar cuenta para continuar.</value></data>
+  <data name="Resources.Introduction" xml:space="preserve"><value>Aquí revisas las cuentas importadas antes del cálculo. El importe original siempre se conserva: cualquier corrección se registra como un ajuste con motivo, y después puedes dividir el importe efectivo entre destinos, excluirlo o dejar una parte pendiente.</value></data>
+  <data name="Resources.Ready" xml:space="preserve"><value>Selecciona una cuenta de la tabla y pulsa «Revisar / ajustar cuenta».</value></data>
   <data name="Resources.NeedStudy" xml:space="preserve"><value>Guarda o carga un estudio en el paso 3 para preparar sus recursos.</value></data>
-  <data name="Resources.NeedImport" xml:space="preserve"><value>Importa y confirma registros en el paso 4. Después podrás preparar sus recursos aquí.</value></data>
+  <data name="Resources.NeedImport" xml:space="preserve"><value>Primero importa y guarda datos contables en el análisis. Al terminar la importación, VALDRIO te traerá directamente aquí.</value></data>
   <data name="Resources.ReadOnly" xml:space="preserve"><value>El archivo está abierto para consulta. Ábrelo en modo edición para guardar cambios.</value></data>
   <data name="Resources.Closed" xml:space="preserve"><value>El estudio está cerrado. Reábrelo en el paso Estudio para modificar sus recursos.</value></data>
-  <data name="Resources.ChooseAccount" xml:space="preserve"><value>1 de 4 · Elige la cuenta cuyos ajustes y destinos quieres revisar.</value></data>
-  <data name="Resources.SelectAccountFirst" xml:space="preserve"><value>Selecciona una cuenta en la tabla para empezar.</value></data>
+  <data name="Resources.ChooseAccount" xml:space="preserve"><value>Selecciona la cuenta que quieres revisar. Verás el importe importado, los ajustes ya realizados, el importe efectivo y lo que todavía queda pendiente de clasificar o asignar.</value></data>
+  <data name="Resources.SelectAccountFirst" xml:space="preserve"><value>Selecciona una cuenta de la tabla para revisar sus importes.</value></data>
   <data name="Resources.EditAccount" xml:space="preserve"><value>Editar cuenta seleccionada</value></data>
   <data name="Resources.ContinueParts" xml:space="preserve"><value>Continuar: repartir el importe</value></data>
   <data name="Resources.ReviewChanges" xml:space="preserve"><value>Continuar: revisar y guardar</value></data>
-  <data name="Resources.SaveAccount" xml:space="preserve"><value>Guardar preparación de esta cuenta</value></data>
+  <data name="Resources.SaveAccount" xml:space="preserve"><value>Guardar cambios de esta cuenta</value></data>
   <data name="Resources.KeepRevalueParts" xml:space="preserve"><value>Aplicar partes a la revisión de divisas</value></data>
-  <data name="Resources.AdjustmentStep" xml:space="preserve"><value>2 de 4 · Ajustes de la cuenta</value></data>
-  <data name="Resources.AdjustmentHelp" xml:space="preserve"><value>Un ajuste aumenta o reduce el importe importado sin alterar el Excel o CSV. Indica un importe con signo, su moneda, tipo y motivo. Si no necesitas ajustes, continúa al reparto.</value></data>
-  <data name="Resources.PartsStep" xml:space="preserve"><value>3 de 4 · Destinos del importe</value></data>
-  <data name="Resources.PartsHelp" xml:space="preserve"><value>Elige una parte y pulsa Editar parte, o crea una nueva. Cada parte tiene un solo destino. La suma debe coincidir exactamente con el efectivo de esta cuenta. Puedes dejar explícitamente importes pendientes.</value></data>
-  <data name="Resources.ReviewStep" xml:space="preserve"><value>4 de 4 · Revisar y guardar</value></data>
-  <data name="Resources.ReviewHelp" xml:space="preserve"><value>Comprueba destinos, ajustes y diferencia. Para guardar, la diferencia de cada cuenta debe ser cero y debes explicar el motivo del cambio. Las partes pendientes siguen visibles para completarlas después.</value></data>
+  <data name="Resources.AdjustmentStep" xml:space="preserve"><value>Correcciones del importe</value></data>
+  <data name="Resources.AdjustmentHelp" xml:space="preserve"><value>Si el importe importado necesita una corrección, añade aquí la diferencia: un valor positivo aumenta el importe y uno negativo lo reduce. El saldo original no se modifica ni se borra; la corrección queda registrada con su motivo. Para deshacer una corrección anterior, selecciónala y pulsa Revertir.</value></data>
+  <data name="Resources.PartsStep" xml:space="preserve"><value>Distribuir o excluir el importe</value></data>
+  <data name="Resources.PartsHelp" xml:space="preserve"><value>Decide qué hacer con el importe efectivo de esta cuenta. Puedes asignarlo directamente, enviarlo a un grupo de costes, excluir una parte del análisis o dejarla pendiente. Si divides la cuenta, la suma de todas las partes debe coincidir exactamente con el importe efectivo.</value></data>
+  <data name="Resources.ReviewStep" xml:space="preserve"><value>Comprobar y guardar esta cuenta</value></data>
+  <data name="Resources.ReviewHelp" xml:space="preserve"><value>Comprueba que el importe efectivo queda completamente explicado entre asignaciones, exclusiones y pendientes. La diferencia debe ser cero antes de guardar.</value></data>
   <data name="Resources.Coverage" xml:space="preserve"><value>Original convertido: {0} · Ajustes: {1} · Efectivo: {2}
 Directo: {3} · Pools: {4} · Excluido: {5} · Pendiente: {6}
 Diferencia que falta repartir: {7}</value></data>
@@ -680,7 +680,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.Type" xml:space="preserve"><value>Tipo de ajuste</value></data>
   <data name="Resources.Reason" xml:space="preserve"><value>Motivo del ajuste o reversión</value></data>
   <data name="Resources.State" xml:space="preserve"><value>Clase de movimiento</value></data>
-  <data name="Resources.SignedAmount" xml:space="preserve"><value>Importe del ajuste con signo</value></data>
+  <data name="Resources.SignedAmount" xml:space="preserve"><value>Corrección del importe (+ aumenta / − reduce)</value></data>
   <data name="Resources.Currency" xml:space="preserve"><value>Moneda del ajuste</value></data>
   <data name="Resources.Quote" xml:space="preserve"><value>Tipo: moneda del estudio por 1 de origen</value></data>
   <data name="Resources.QuoteHelp" xml:space="preserve"><value>Introduce cuántas unidades de moneda del estudio equivalen a 1 unidad de la moneda original. Se convierte cada movimiento por separado.</value></data>
@@ -688,16 +688,16 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.RateDateHelp" xml:space="preserve"><value>Fecha de negocio a la que corresponde este tipo de cambio. No cambia con la zona horaria.</value></data>
   <data name="Resources.RateSource" xml:space="preserve"><value>Fuente del tipo de cambio</value></data>
   <data name="Resources.RateSourceHelp" xml:space="preserve"><value>Indica de dónde procede el tipo, por ejemplo el banco o una referencia documental verificable.</value></data>
-  <data name="Resources.AddAdjustment" xml:space="preserve"><value>Añadir ajuste al borrador</value></data>
-  <data name="Resources.ReverseSelected" xml:space="preserve"><value>Revertir el ajuste seleccionado</value></data>
+  <data name="Resources.AddAdjustment" xml:space="preserve"><value>Aplicar corrección</value></data>
+  <data name="Resources.ReverseSelected" xml:space="preserve"><value>Revertir corrección seleccionada</value></data>
   <data name="Resources.ClearForm" xml:space="preserve"><value>Limpiar este formulario</value></data>
   <data name="Resources.SourceRows" xml:space="preserve"><value>Registros de origen conservados</value></data>
   <data name="Resources.Record" xml:space="preserve"><value>Registro</value></data>
   <data name="Resources.Earlier" xml:space="preserve"><value>Acumulado anterior, restado</value></data>
   <data name="Resources.EditPart" xml:space="preserve"><value>Editar parte seleccionada</value></data>
-  <data name="Resources.RemovePart" xml:space="preserve"><value>Quitar parte seleccionada</value></data>
-  <data name="Resources.NewPart" xml:space="preserve"><value>Limpiar formulario / nueva parte</value></data>
-  <data name="Resources.PendingRemainder" xml:space="preserve"><value>Añadir la diferencia como pendiente</value></data>
+  <data name="Resources.RemovePart" xml:space="preserve"><value>Quitar división seleccionada</value></data>
+  <data name="Resources.NewPart" xml:space="preserve"><value>Añadir otra parte</value></data>
+  <data name="Resources.PendingRemainder" xml:space="preserve"><value>Dejar la diferencia como pendiente</value></data>
   <data name="Resources.Object" xml:space="preserve"><value>Objeto de coste</value></data>
   <data name="Resources.CreateObject" xml:space="preserve"><value>Crear un objeto de coste</value></data>
   <data name="Resources.ObjectHelp" xml:space="preserve"><value>Un objeto es aquello cuyo coste quieres conocer: un producto, servicio, orden u otro destino. Su código lo identifica dentro de este estudio. Guárdalo y selecciónalo como destino de la parte.</value></data>
@@ -803,8 +803,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resource.NumberRequired" xml:space="preserve"><value>Escribe un número válido con el formato regional capturado al empezar el formulario. Un campo vacío no se convierte en cero.</value></data>
   <data name="Resource.DateRequired" xml:space="preserve"><value>Selecciona una fecha válida en el calendario.</value></data>
   <data name="Resource.RevalueUnbalanced" xml:space="preserve"><value>La cuenta todavía tiene una diferencia tras la revalorización. Ajusta las partes o deja expresamente la diferencia pendiente.</value></data>
-  <data name="Guide.Resources" xml:space="preserve"><value>5. Recursos</value></data>
-  <data name="Guide.ContinueResources" xml:space="preserve"><value>Continuar: preparar recursos</value></data>
+  <data name="Guide.Resources" xml:space="preserve"><value>5. Revisar y ajustar cuentas</value></data>
+  <data name="Guide.ContinueResources" xml:space="preserve"><value>Continuar: revisar y ajustar cuentas</value></data>
   <data name="Guide.AnotherImport" xml:space="preserve"><value>Importar otro archivo / corregir una importación anterior</value></data>
   <data name="Resources.LayerHelp" xml:space="preserve"><value>Indica si esta parte pertenece a producción, comercial o estructura. Es independiente de que sea fija o variable y de su destino. Puedes dejarla sin clasificar.</value></data>
   <data name="Resources.PoolHelp" xml:space="preserve"><value>El pool reúne costes que se repartirán después. Elige uno de tu modelo publicado; el papel principal o auxiliar de su nodo no determina el comportamiento del coste.</value></data>
@@ -946,4 +946,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="ImportMapping.NeedDebitCreditColumns" xml:space="preserve"><value>Selecciona las columnas Debe y Haber.</value></data>
   <data name="ImportMapping.NeedFixRows" xml:space="preserve"><value>Hay filas con errores. Revisa la tabla y corrige el archivo o la interpretación antes de continuar.</value></data>
   <data name="ImportMapping.ColumnsContinueHint" xml:space="preserve"><value>Cuenta e importe están identificados. Pulsa Comprobar y continuar.</value></data>
+  <data name="Resources.ListTitle" xml:space="preserve"><value>Cuentas importadas</value></data>
+  <data name="Resources.ListHelp" xml:space="preserve"><value>Esta tabla es tu punto de partida. Selecciona una cuenta para revisar su importe original, corregirlo mediante ajustes y decidir cómo se distribuye o excluye.</value></data>
+  <data name="Resources.OpenSelected" xml:space="preserve"><value>Revisar / ajustar cuenta seleccionada</value></data>
 </root>
