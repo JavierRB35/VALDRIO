@@ -160,6 +160,11 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
         {
             if (ResourceChoice is null) { statusKey = "SelectAccountFirst"; Refresh(); return; }
             if (editing?.Id == ResourceChoice.Id) { stage = 1; Refresh(); return; }
+            if (IsRevaluing && editing is not null && HasResourceChanges)
+            {
+                ResourceChoice = Rows.Single(r => r.Id == editing.Id);
+                stage = 1; statusKey = "RevalueFinishAccount"; Refresh(); return;
+            }
             var selectedId = ResourceChoice.Id;
             if (!IsRevaluing && !await CanLeaveAsync()) return;
             LoadAccount(selectedId); stage = 1; Refresh();

@@ -116,7 +116,8 @@ public sealed partial class T06ImportConfirmationTests
     [TestMethod]
     public async Task T07_UiRevaluationPreviewsReconcilesAndSavesAllAmountsAtomically()
     {
-        using var ui = await ResourceUiReady(); var vm = ui.Resources;
+        using var ui = await ResourceUiReady("Amount;Ignored;Account\n1000;x;6000\n200;y;6001"); var vm = ui.Resources;
+        vm.ResourceChoice = vm.Rows.Single(r => r.Code == "6000");
         await vm.AdvanceAsync();
         vm.AdjustmentForm["Amount"] = "-50"; vm.AdjustmentForm["Currency"] = "USD"; vm.AdjustmentForm["Quote"] = "2";
         vm.AdjustmentForm["RateSource"] = "Synthetic"; vm.AdjustmentForm["Type"] = "Correction"; vm.AdjustmentForm["Reason"] = "Synthetic delta";
@@ -130,12 +131,18 @@ public sealed partial class T06ImportConfirmationTests
         vm.RevalueReason = "Explicit new rate"; await vm.CommitRevalueCommand.ExecuteAsync(null);
         Assert.AreEqual(before, Hash(ui.Company.ActivePath!)); Assert.IsTrue(vm.IsRevaluing);
         await vm.AdvanceAsync(); await vm.AdvanceAsync();
-        vm.PartChoice = vm.Parts.Single(); vm.LoadPartCommand.Execute(null); vm.PartForm["Amount"] = "850"; vm.ApplyPartCommand.Execute(null);
+        vm.PartChoice = vm.Parts.Single(); vm.LoadPartCommand.Execute(null); vm.PartForm["Amount"] = "850";
+        Assert.IsTrue(vm.PreviousStep()); Assert.IsTrue(vm.PreviousStep());
+        vm.ResourceChoice = vm.Rows.Single(r => r.Code == "6001"); await vm.AdvanceAsync();
+        Assert.AreEqual("6000", vm.CurrentAccount); Assert.AreEqual("850", vm.PartForm["Amount"]);
+        Assert.AreEqual(vm["RevalueFinishAccount"], vm.Status);
+        await vm.AdvanceAsync(); vm.ApplyPartCommand.Execute(null);
         await vm.AdvanceAsync(); await vm.AdvanceAsync();
         Assert.AreEqual(0, vm.Stage, vm.Status); Assert.IsTrue(vm.IsRevaluing);
         await vm.CommitRevalueCommand.ExecuteAsync(null); Assert.IsFalse(vm.IsRevaluing, vm.Status); Assert.IsFalse(vm.IsDirty);
         var saved = ui.Company.ActiveResources!.ReadResources(ui.Company.Snapshot!.Id, ui.Studies.Current!.Id);
-        Assert.AreEqual(850m, saved.Preparation.Coverage.Single().Effective.Amount);
+        Assert.AreEqual(850m, saved.Preparation.Coverage.Single(c => c.ResourceId == saved.Origins.Single(o => o.Code == "6000").Id).Effective.Amount);
+        Assert.AreEqual(200m, saved.Preparation.Coverage.Single(c => c.ResourceId == saved.Origins.Single(o => o.Code == "6001").Id).Effective.Amount);
         Assert.AreEqual(3L, saved.Study.Revision);
     }
 }

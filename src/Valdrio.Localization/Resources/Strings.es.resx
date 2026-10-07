@@ -862,4 +862,5 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.Help.Resource.KeepCulture" xml:space="preserve"><value>Confirmo mantener el formato con el que empecé</value></data>
   <data name="Guide.Help.Resource.ResetAcknowledged" xml:space="preserve"><value>Reiniciar deja todas las cuentas pendientes y retira de la preparación actual sus ajustes y repartos. Conserva el historial y las instantáneas anteriores. Úsalo si necesitas sustituir importaciones que ya has preparado.</value></data>
   <data name="Resource.PartsRequired" xml:space="preserve"><value>Indica al menos una parte para esta cuenta, aunque su importe sea cero. Si falta decidir su destino, elige Pendiente.</value></data>
+  <data name="Resources.RevalueFinishAccount" xml:space="preserve"><value>Conservamos la cuenta que estabas editando. Completa sus partes y pulsa Conservar partes antes de revisar otra cuenta de esta revaloración.</value></data>
 </root>

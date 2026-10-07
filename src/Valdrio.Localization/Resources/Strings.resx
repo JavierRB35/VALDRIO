@@ -862,4 +862,5 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.Help.Resource.KeepCulture" xml:space="preserve"><value>Confirm keeping the format I started with</value></data>
   <data name="Guide.Help.Resource.ResetAcknowledged" xml:space="preserve"><value>Reset leaves every account pending and removes its adjustments and routes from the current preparation. History and earlier snapshots are retained. Use this when replacing imports you have already prepared.</value></data>
   <data name="Resource.PartsRequired" xml:space="preserve"><value>Specify at least one part for this account, even if its amount is zero. If its destination is undecided, choose Pending.</value></data>
+  <data name="Resources.RevalueFinishAccount" xml:space="preserve"><value>Your current account has been retained. Complete its parts and press Keep parts before reviewing another account in this revaluation.</value></data>
 </root>
