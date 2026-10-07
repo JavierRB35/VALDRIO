@@ -893,7 +893,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.NodeRemoved" xml:space="preserve"><value>Nodo eliminado del borrador y cambios guardados correctamente.</value></data>
   <data name="Model.NodePersistenceHelp" xml:space="preserve"><value>Guardar nodo actualiza inmediatamente el borrador del modelo en el archivo. No necesitas realizar un segundo guardado para conservar ese nodo.</value></data>
   <data name="Model.OptionalNodeData" xml:space="preserve"><value>Datos adicionales</value></data>
-  <data name="Model.FunctionHelp" xml:space="preserve"><value>Las etiquetas funcionales describen para qué se utiliza el nodo. Sepáralas con comas, por ejemplo: producción, mantenimiento.</value></data>
+  <data name="Model.FunctionHelp" xml:space="preserve"><value>Las funciones son obligatorias y describen para qué se utiliza el nodo. Escribe al menos una y separa varias con comas, por ejemplo: producción, mantenimiento.</value></data>
   <data name="Model.ColumnCode" xml:space="preserve"><value>Código</value></data>
   <data name="Model.ColumnName" xml:space="preserve"><value>Nombre</value></data>
   <data name="Model.ColumnStatus" xml:space="preserve"><value>Estado</value></data>
