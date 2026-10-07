@@ -38,6 +38,11 @@
    <Setter Property="TextWrapping" Value="Wrap" />
    <Setter Property="Margin" Value="4,2" />
   </Style>
+  <Style x:Key="FieldHint" TargetType="TextBlock">
+   <Setter Property="Foreground" Value="#617286" />
+   <Setter Property="FontSize" Value="11" />
+   <Setter Property="Margin" Value="0,0,8,6" />
+  </Style>
  </UserControl.Resources>
 
  <GroupBox Header="{Binding Title}" Padding="14">
@@ -217,6 +222,7 @@
           <TextBlock Text="{Binding RoleLabel}" />
           <ComboBox x:Name="RoleBox" ItemsSource="{Binding Roles}" SelectedItem="{Binding Role}"
                     TabIndex="43" AutomationProperties.Name="{Binding RoleLabel}" local:FieldHelp.Key="Role" />
+          <TextBlock Text="{Binding RoleHelp}" Style="{StaticResource FieldHint}" />
          </StackPanel>
         </Grid>
 
@@ -229,15 +235,18 @@
           <TextBlock Text="{Binding UnitLabel}" />
           <ComboBox x:Name="UnitBox" ItemsSource="{Binding Units}" SelectedItem="{Binding DriverUnit}"
                     TabIndex="45" AutomationProperties.Name="{Binding UnitLabel}" local:FieldHelp.Key="DriverUnit" />
+          <TextBlock Text="{Binding UnitHelp}" Style="{StaticResource FieldHint}" />
          </StackPanel>
          <StackPanel Grid.Column="1">
           <TextBlock Text="{Binding LayerLabel}" />
           <ComboBox x:Name="LayerBox" ItemsSource="{Binding Layers}" SelectedItem="{Binding Layer}"
                     TabIndex="46" AutomationProperties.Name="{Binding LayerLabel}" local:FieldHelp.Key="Layer" />
+          <TextBlock Text="{Binding LayerHelp}" Style="{StaticResource FieldHint}" />
          </StackPanel>
         </Grid>
 
         <TextBlock Text="{Binding PoolLabel}" />
+        <TextBlock Text="{Binding PoolHelp}" Style="{StaticResource FieldHint}" />
         <TextBox x:Name="PoolBox" Text="{Binding PoolDescription,UpdateSourceTrigger=PropertyChanged}"
                  TabIndex="47" AutomationProperties.Name="{Binding PoolLabel}" local:FieldHelp.Key="PoolDescription" />
 
