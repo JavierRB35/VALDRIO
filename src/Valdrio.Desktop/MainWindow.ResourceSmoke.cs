@@ -58,10 +58,11 @@ public partial class MainWindow
                 prepared, ImportConfirmMode.AppendBatch, "native-test"));
             await studies.ApplyResourceReceiptAsync(batch.ConfirmedStudy);
         }
-        await NavigateWorkflow(3); await AdvanceWorkflow();
-        Check(workflowStep == 4 && vm.Stage == 0 && panel.IsVisible, "saved import advances to resources with one primary action");
+        await NavigateWorkflow(3); await ContinueAfterGuidedImport(0);
+        Check(workflowStep == 4 && vm.Stage == 0 && panel.IsVisible, "newly saved import opens account review automatically");
         Check(vm.Rows.Count == 1 && vm.Rows.Single().Code == "6000", "account appears with converted original and pending coverage");
-        await AdvanceWorkflow(); Check(vm.Stage == 1, "choose account advances to adjustments");
+        await Click(panel.OpenSelectedResourceButton);
+        Check(vm.Stage == 1, "visible review-adjust action opens selected account corrections");
         Text(panel.AdjustmentForm_AmountBox, "-100"); Text(panel.AdjustmentForm_TypeBox, "Corrección"); Text(panel.AdjustmentForm_ReasonBox, "Partida que no representa coste");
         await AdvanceWorkflow(); Check(vm.Stage == 1, "unapplied adjustment prevents silent loss on continue");
         await Click(panel.AddAdjustmentButton); Check(vm.Adjustments.Single().Value.Conversion.OriginalMoney.Amount == -100m, "signed adjustment retains original currency and amount");

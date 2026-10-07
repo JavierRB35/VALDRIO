@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace Valdrio.Desktop;
 
@@ -11,10 +10,7 @@ public partial class MainWindow
     private readonly List<INotifyPropertyChanged> workflowSources = [];
     private void InitializeGuidance()
     {
-        var units = CompanyPanel.UnitCreationPanel;
-        ((Panel)units.Parent).Children.Remove(units);
-        units.SetBinding(DataContextProperty, new Binding("DataContext") { Source = CompanyPanel });
-        ModelPanel.UnitsCreationHost.Content = units;
+        ModelPanel.AttachUnitCreationPanel(CompanyPanel);
         Closed += (_, _) => { foreach (var source in workflowSources) source.PropertyChanged -= WorkflowChanged; };
     }
     private void BindGuidance()
@@ -138,8 +134,20 @@ public partial class MainWindow
         if (viewModel?.Studies is not { } studies) return;
         if (!studies.HasImportDestination) { await NavigateWorkflow(2); return; }
         if (await studies.AttachImportTarget())
+        {
+            var importCountBefore = studies.ConfirmedImportCount;
             new ImportColumnMappingWindow { Owner = this, DataContext = studies.ImportColumns }.ShowDialog();
+            await ContinueAfterGuidedImport(importCountBefore);
+            return;
+        }
         UpdateWorkflow();
+    }
+    internal async Task ContinueAfterGuidedImport(int importCountBefore)
+    {
+        if (viewModel?.Studies is { } studies && studies.ConfirmedImportCount > importCountBefore)
+            await NavigateWorkflow(4);
+        else
+            UpdateWorkflow();
     }
     internal void RevealWorkflowElement(FrameworkElement element)
     {

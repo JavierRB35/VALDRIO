@@ -32,7 +32,9 @@
    </Expander>
    <TextBlock Text="{Binding Notes}" TextWrapping="Wrap" Margin="0,12,0,0" />
    <StackPanel x:Name="UnitCreationPanel">
-    <TextBlock x:Name="UnitActionStatus" Text="{Binding Status}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Assertive" Margin="0,8,0,8" />
+    <TextBlock Text="{Binding UnitCreationHelp}" TextWrapping="Wrap" Margin="0,4,0,4" />
+    <TextBlock Text="{Binding UnitRequiredHelp}" TextWrapping="Wrap" Foreground="#617286" FontSize="11" Margin="0,0,0,8" />
+
     <Grid IsEnabled="{Binding IsIdle}">
      <Grid.ColumnDefinitions>
       <ColumnDefinition Width="220" />
@@ -41,21 +43,40 @@
      <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
      </Grid.RowDefinitions>
      <TextBlock Text="{Binding UnitLabel}" TextWrapping="Wrap" />
-     <TextBox x:Name="UnitCodeBox" Grid.Column="1" Text="{Binding UnitCode,UpdateSourceTrigger=PropertyChanged}" TabIndex="18" AutomationProperties.Name="{Binding UnitLabel}" local:FieldHelp.Key="UnitCode" />
+     <TextBox x:Name="UnitCodeBox" Grid.Column="1" Text="{Binding UnitCode,UpdateSourceTrigger=PropertyChanged}" TabIndex="18"
+              AutomationProperties.Name="{Binding UnitLabel}" local:FieldHelp.Key="UnitCode" />
      <TextBlock Grid.Row="1" Text="{Binding DimensionLabel}" TextWrapping="Wrap" />
-     <TextBox x:Name="DimensionBox" Grid.Row="1" Grid.Column="1" Text="{Binding UnitDimension,UpdateSourceTrigger=PropertyChanged}" TabIndex="19" AutomationProperties.Name="{Binding DimensionLabel}" local:FieldHelp.Key="UnitDimension" />
-     <TextBlock Grid.Row="2" Text="{Binding SymbolLabel}" TextWrapping="Wrap" />
-     <TextBox x:Name="SymbolBox" Grid.Row="2" Grid.Column="1" Text="{Binding UnitSymbol,UpdateSourceTrigger=PropertyChanged}" TabIndex="20" AutomationProperties.Name="{Binding SymbolLabel}" local:FieldHelp.Key="UnitSymbol" />
-     <TextBlock Grid.Row="3" Text="{Binding ScaleLabel}" TextWrapping="Wrap" />
-     <ComboBox x:Name="ScaleBox" Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ScaleOptions}" SelectedItem="{Binding UnitScale}" TabIndex="21" AutomationProperties.Name="{Binding ScaleLabel}" local:FieldHelp.Key="UnitScale" />
-     <CheckBox x:Name="DiscreteBox" Grid.Row="4" Grid.ColumnSpan="2" Content="{Binding DiscreteLabel}" IsChecked="{Binding UnitDiscrete}" Margin="0,8,0,8" TabIndex="22" local:FieldHelp.Key="UnitDiscrete" />
+     <TextBox x:Name="DimensionBox" Grid.Row="1" Grid.Column="1" Text="{Binding UnitDimension,UpdateSourceTrigger=PropertyChanged}" TabIndex="19"
+              AutomationProperties.Name="{Binding DimensionLabel}" local:FieldHelp.Key="UnitDimension" />
     </Grid>
-    <Button x:Name="AddUnitButton" Content="{Binding AddUnitLabel}" Command="{Binding AddUnitCommand}" HorizontalAlignment="Left" Padding="10,6" TabIndex="23" />
+
+    <Expander Header="{Binding UnitAdvancedLabel}" Margin="0,6,0,4">
+     <Grid IsEnabled="{Binding IsIdle}" Margin="8,4,0,0">
+      <Grid.ColumnDefinitions>
+       <ColumnDefinition Width="220" />
+       <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+       <RowDefinition Height="Auto" />
+       <RowDefinition Height="Auto" />
+       <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <TextBlock Text="{Binding SymbolLabel}" TextWrapping="Wrap" />
+      <TextBox x:Name="SymbolBox" Grid.Column="1" Text="{Binding UnitSymbol,UpdateSourceTrigger=PropertyChanged}" TabIndex="20"
+               AutomationProperties.Name="{Binding SymbolLabel}" local:FieldHelp.Key="UnitSymbol" />
+      <TextBlock Grid.Row="1" Text="{Binding ScaleLabel}" TextWrapping="Wrap" />
+      <ComboBox x:Name="ScaleBox" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ScaleOptions}" SelectedItem="{Binding UnitScale}" TabIndex="21"
+                AutomationProperties.Name="{Binding ScaleLabel}" local:FieldHelp.Key="UnitScale" />
+      <CheckBox x:Name="DiscreteBox" Grid.Row="2" Grid.ColumnSpan="2" Content="{Binding DiscreteLabel}" IsChecked="{Binding UnitDiscrete}"
+                Margin="0,8,0,8" TabIndex="22" local:FieldHelp.Key="UnitDiscrete" />
+     </Grid>
+    </Expander>
+
+    <Button x:Name="AddUnitButton" Content="{Binding AddUnitLabel}" Command="{Binding AddUnitCommand}"
+            HorizontalAlignment="Left" Padding="10,6" TabIndex="23" FontWeight="SemiBold" />
+    <TextBlock x:Name="UnitActionStatus" Text="{Binding Status}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Assertive" Margin="0,6,0,8" />
    </StackPanel>
   </StackPanel>
  </GroupBox>

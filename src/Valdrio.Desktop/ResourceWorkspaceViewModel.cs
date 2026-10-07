@@ -36,6 +36,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     {
         this.company = company; this.studies = studies; this.catalog = catalog; this.texts = texts; this.preferences = preferences; this.dialogs = dialogs;
         RefreshCommand = new AsyncRelayCommand(async () => { if (await CanLeaveAsync()) await EnterAsync(true); }, () => !busy);
+        OpenSelectedResourceCommand = new AsyncRelayCommand(AdvanceAsync, () => CanAdvance && stage == 0 && ResourceChoice is not null);
         ApplyPartCommand = new RelayCommand(() => Try(ApplyPart), () => CanEdit && editing is not null);
         RemovePartCommand = new RelayCommand(() => Try(() => { if (PartChoice is { } p) { parts.RemoveAll(x => x.Id == p.Value.Id); dirty = true; ClearPart(); Recompute(); } }), () => CanEdit && PartChoice is not null);
         LoadPartCommand = new RelayCommand(() => Try(LoadPart), () => !busy && PartChoice is not null && !partDirty);
@@ -65,6 +66,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     [ObservableProperty] private ResourceGridRow? resourceChoice;
     [ObservableProperty] private ResourcePartRow? partChoice;
     [ObservableProperty] private ResourceAdjustmentRow? adjustmentChoice;
+    partial void OnResourceChoiceChanged(ResourceGridRow? value) => RefreshCommands();
     partial void OnPartChoiceChanged(ResourcePartRow? value) => RefreshCommands();
     partial void OnAdjustmentChoiceChanged(ResourceAdjustmentRow? value) => RefreshCommands();
     public ObservableCollection<ResourceGridRow> Rows { get; } = [];
@@ -106,7 +108,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     public string Requirement => this[workspace is null ? "NeedStudy" : workspace.Resources.Count == 0 ? "NeedImport" : !company.CanWrite ? "ReadOnly" :
         workspace.Study.State == StudyState.Closed ? "Closed" : stage switch { 0 => "ChooseAccount", 1 => "AdjustmentHelp", 2 => "PartsHelp", _ => "ReviewHelp" }];
     public string Status => diagnostic is null ? this[statusKey] : new DomainDiagnosticFormatter(texts)
-        .Format(diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message + " (" + diagnostic.Code + ")";
+        .Format(diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message;
     public string CurrentAccount => workspace is null || editing is null ? "" : workspace.Origins.Single(o => o.Id == editing.Id).Code;
     public string SaveDestination => workspace is null ? "" : workspace.Study.Name + " · " + company.ActivePath;
     public string Reason { get => reason; set { if (SetProperty(ref reason, value) && !loading) { dirty = true; Refresh(); } } }
@@ -123,6 +125,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     public string History => string.Join(Environment.NewLine, history.Select(h => string.Format(Format, this["HistoryRow"], h.ConfirmedStudy.Revision,
         h.AtUtc.ToString(), h.Request.Actor, this[h.Request.Kind.ToString()], h.Request.Reason)));
     public IAsyncRelayCommand RefreshCommand { get; }
+    public IAsyncRelayCommand OpenSelectedResourceCommand { get; }
     public IRelayCommand ApplyPartCommand { get; }
     public IRelayCommand RemovePartCommand { get; }
     public IRelayCommand LoadPartCommand { get; }
@@ -291,7 +294,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     private void Refresh() { OnPropertyChanged(string.Empty); RefreshCommands(); }
     private void RefreshCommands()
     {
-        foreach (var command in new IRelayCommand?[] { RefreshCommand, ApplyPartCommand, RemovePartCommand, LoadPartCommand, ClearPartCommand, AddPendingCommand,
+        foreach (var command in new IRelayCommand?[] { RefreshCommand, OpenSelectedResourceCommand, ApplyPartCommand, RemovePartCommand, LoadPartCommand, ClearPartCommand, AddPendingCommand,
             AddAdjustmentCommand, ReverseAdjustmentCommand, ClearAdjustmentCommand, PutObjectCommand, ClearObjectCommand, DiscardCommand, CancelCommand, ResetCommand,
             AcknowledgeCultureCommand, PrepareRevalueCommand, CommitRevalueCommand, CancelRevalueCommand, StartRevalueCommand }) command?.NotifyCanExecuteChanged();
     }

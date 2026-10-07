@@ -40,9 +40,9 @@ public partial class ImportColumnMappingWindow
         studies.ModelChoice = studies.PublishedModels.Single(); await Click(panel.CreateStudyButton); await studies.AttachImportTarget();
         var study = studies.Current!; var csv = Path.Combine(output, "source.csv");
         File.WriteAllText(csv, "Code;Amount;Currency;Date\n00123;100;USD;01/10/2026\n00123;20;EUR;02/10/2026");
-        files.Paths.Enqueue(csv); await Click(OpenSourceButton); await Click(ReadSourceButton);
+        files.Paths.Enqueue(csv); await Click(OpenSourceButton); await vm.ReadCommand.ExecuteAsync(null);
         vm.AccountColumn = 1; vm.AmountColumn = 2; vm.DecimalSeparator = "."; vm.GroupSeparator = ""; vm.ImportAllAccounts = true;
-        await Click(ValidateMappingButton); vm.ClearComparisonCommand.Execute(null); ComparisonPanel.IsExpanded = false; vm.AmountMode = "period";
+        await vm.ValidateCommand.ExecuteAsync(null); vm.ClearComparisonCommand.Execute(null); ComparisonPanel.IsExpanded = false; vm.AmountMode = "period";
         vm.International = true; vm.CurrencyFromColumn = true; vm.CurrencyColumn = 3; vm.DateColumn = 4; vm.DatePattern = "dd/MM/yyyy";
         vm.AllowedRateStart = new(2026, 10, 1); vm.AllowedRateEnd = new(2026, 10, 31); vm.RateSetName = "manual-example-v1";
         vm.ApprovalReference = "Synthetic 100 USD x 0.9 + 20 EUR = 110 EUR"; vm.InterpretationApproved = true;

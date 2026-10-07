@@ -51,17 +51,25 @@ public partial class MainWindow
         Audit(models.Current is not null && ModelPanel.ModelSteps.SelectedIndex == 1, "primary action creates the draft and advances to masters");
         await AdvanceWorkflow();
         Audit(ModelPanel.ModelSteps.SelectedIndex == 1 && WorkflowRequirement.Text == models.Guide("NeedCenter"), "missing centre keeps its form visible with a remedy");
-        Text(ModelPanel.CenterCodeBox, "CENTRO"); Text(ModelPanel.CenterNameBox, "Centro de prueba"); await Click(ModelPanel.CreateCenterButton);
+        Text(ModelPanel.CenterCodeBox, "CENTRO"); Text(ModelPanel.CenterNameBox, "Centro de prueba"); await Click(ModelPanel.SaveCenterButton);
+        Audit(models.Master is null && string.IsNullOrEmpty(models.CenterCode) && ModelPanel.CenterGrid.Items.Count == 1,
+            "saving a centre clears the form and adds it to the persistent table");
         await AdvanceWorkflow();
-        Audit(ModelPanel.ModelSteps.SelectedIndex == 1 && WorkflowRequirement.Text == models.Guide("NeedUnit"), "missing unit keeps masters visible with a remedy");
-        Text(CompanyPanel.UnitCodeBox, ""); await Click(CompanyPanel.AddUnitButton);
-        Audit(CompanyPanel.UnitActionStatus.IsVisible && CompanyPanel.UnitActionStatus.Text == company.Status && models.Units.Count == 0,
-            "invalid unit reports its error in the visible masters screen");
+        Audit(ModelPanel.ModelSteps.SelectedIndex == 2 && ModelPanel.NodeUnitCreator.IsExpanded,
+            "the user can continue to nodes without defining activity units in advance");
+        Check(GuidedUi.Contains(ModelPanel.NodeUnitsCreationHost, CompanyPanel.UnitCreationPanel),
+            "activity-unit creation is available where the node needs the unit");
+
+        Text(CompanyPanel.UnitCodeBox, "");
+        Audit(!CompanyPanel.AddUnitButton.IsEnabled && models.Units.Count == 0,
+            "inline unit save stays disabled until the required unit code is entered");
+
         Text(CompanyPanel.UnitCodeBox, "HORAS"); Text(CompanyPanel.DimensionBox, "time"); Text(CompanyPanel.SymbolBox, "h");
         Select(CompanyPanel.ScaleBox, 2); CompanyPanel.DiscreteBox.IsChecked = false; await Click(CompanyPanel.AddUnitButton);
-        Check(GuidedUi.Contains(ModelPanel, CompanyPanel.UnitCreationPanel) && models.Units.Count == 1, "units are created beside centres without leaving structure setup");
-        await AdvanceWorkflow();
-        Audit(workflowStep == 1 && ModelPanel.ModelSteps.SelectedIndex == 2, "single advance enters nodes after masters are ready");
+        Audit(models.Units.Count == 1 && models.DriverUnit?.Value.Definition.Code == "HORAS",
+            "a unit created inside the node is saved and selected automatically");
+        Check(string.IsNullOrEmpty(company.UnitCode) && !ModelPanel.NodeUnitCreator.IsExpanded,
+            "successful inline unit creation clears the unit form and returns focus to the node");
         await GoBackWorkflow();
         Audit(workflowStep == 1 && ModelPanel.ModelSteps.SelectedIndex == 1, "global back returns to the previous model step");
         await AdvanceWorkflow();
@@ -77,13 +85,15 @@ public partial class MainWindow
         Check(!models.IsPublished && models.NodeCode == "NODO", "incomplete node cannot publish and its form is retained");
         Select(ModelPanel.UnitBox, models.Units.Single()); await Click(ModelPanel.ApplyNodeButton);
         ModelPanel.ModelSteps.SelectedIndex = 3;
+        Select(ModelPanel.MasterBox, models.Centers.Single());
         models.CenterName = "Centro revisado";
         await AdvanceWorkflow();
         Audit(ModelPanel.ModelSteps.SelectedIndex == 1 && models.HasPendingCenter && !models.IsPublished &&
             WorkflowNext.Content.ToString() == models.Guide("SaveCenterNext"), "pending centre is revealed before offering its explicit save action");
         await AdvanceWorkflow();
-        Audit(!models.HasPendingCenter && models.Master!.Value.Name == "Centro revisado" && ModelPanel.ModelSteps.SelectedIndex == 2,
-            "centre save persists the edit and resumes the model steps");
+        Audit(!models.HasPendingCenter && models.Centers.Single().Value.Name == "Centro revisado" &&
+            models.Master is null && string.IsNullOrEmpty(models.CenterCode) && ModelPanel.ModelSteps.SelectedIndex == 2,
+            "centre save persists the edit, clears the form and resumes the model steps");
         await AdvanceWorkflow();
         Audit(ModelPanel.ModelSteps.SelectedIndex == 3 && WorkflowNext.Content.ToString() == models.Guide("PublishContinue"), "publication has one named primary action");
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "structure-es.png"));

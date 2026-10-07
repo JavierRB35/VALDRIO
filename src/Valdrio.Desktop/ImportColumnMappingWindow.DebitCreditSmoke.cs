@@ -64,19 +64,19 @@ public partial class ImportColumnMappingWindow
         await Click(panel.CaptureStudyButton); var originalPhoto = studies.SnapshotChoice!.Value; await studies.AttachImportTarget();
         var csv = Path.Combine(output, "debit-credit.csv");
         File.WriteAllText(csv, "Credit;Ignored;Account;Debit\n20;not money;00123;180\n7,50;x;CREDIT;0\n0;x;ZERO;0"); var csvHash = Hash(csv);
-        files.Paths.Enqueue(csv); await Click(OpenSourceButton); await Click(ReadSourceButton); Select(AmountLayoutBox, "debit-credit");
-        Check(vm.IsDebitCredit && vm.DebitColumn is null && vm.CreditColumn is null && !ValidateMappingButton.IsEnabled,
+        files.Paths.Enqueue(csv); await Click(OpenSourceButton); await vm.ReadCommand.ExecuteAsync(null); Select(AmountLayoutBox, "debit-credit");
+        Check(vm.IsDebitCredit && vm.DebitColumn is null && vm.CreditColumn is null && !vm.ValidateCommand.CanExecute(null),
             "debit and credit require explicit column selection");
         Check(PreviewGrid.Columns[2].Visibility == Visibility.Collapsed && PreviewGrid.Columns[3].Visibility == Visibility.Visible &&
             PreviewGrid.Columns[4].Visibility == Visibility.Visible, "both original preview columns visible");
         Select(AccountColumnBox, 3); Select(DebitColumnBox, 4); Select(CreditColumnBox, 1); vm.GroupSeparator = "";
-        await Click(ValidateMappingButton);
+        await vm.ValidateCommand.ExecuteAsync(null);
         Check(vm.IsReady && vm.ValidatedSelection!.Rows[0].Amount == 160m && vm.ValidatedSelection.Rows[1].Amount == -7.5m &&
             vm.ValidatedSelection.Rows[2].Amount == 0m && vm.Preview[0].OriginalDebit == "180" && vm.Preview[0].OriginalCredit == "20",
             "CSV arbitrary debit credit columns preserve originals and signed differences");
-        Select(CreditColumnBox, 4); await Click(ValidateMappingButton);
+        Select(CreditColumnBox, 4); await vm.ValidateCommand.ExecuteAsync(null);
         Check(!vm.IsReady && vm.Status.StartsWith("IMP_COLUMN_SELECTION", StringComparison.Ordinal), "same debit and credit column blocked");
-        Select(CreditColumnBox, 1); await Click(ValidateMappingButton); SetText(SourceCurrencyBox, "EUR");
+        Select(CreditColumnBox, 1); await vm.ValidateCommand.ExecuteAsync(null); SetText(SourceCurrencyBox, "EUR");
         var before = Hash(path); await PrepareForSmoke();
         Check(vm.Preparation is { CanConfirm: false } && !ConfirmImportButton.IsEnabled && Hash(path) == before,
             "debit credit approval required before company mutation");
@@ -125,9 +125,9 @@ public partial class ImportColumnMappingWindow
             }
         }
         var xlsxHash = Hash(xlsx); files.Paths.Enqueue(xlsx); await Click(OpenSourceButton);
-        Check(!ReadSourceButton.IsEnabled && vm.Worksheets.Count == 2, "Excel debit credit requires explicit worksheet");
+        Check(!vm.ReadCommand.CanExecute(null) && vm.Worksheets.Count == 2, "Excel debit credit requires explicit worksheet");
         WorksheetBox.SetCurrentValue(ComboBox.SelectedItemProperty, "Selected"); WorksheetBox.GetBindingExpression(ComboBox.SelectedItemProperty)!.UpdateSource();
-        await Click(ReadSourceButton); Select(AccountColumnBox, 3); Select(DebitColumnBox, 4); Select(CreditColumnBox, 1); await Click(ValidateMappingButton);
+        await vm.ReadCommand.ExecuteAsync(null); Select(AccountColumnBox, 3); Select(DebitColumnBox, 4); Select(CreditColumnBox, 1); await vm.ValidateCommand.ExecuteAsync(null);
         Check(vm.IsReady && vm.ValidatedSelection!.Rows[0].Amount == 160m && vm.ValidatedSelection.Source.SheetName == "Selected" &&
             vm.ValidatedSelection.Source.Rows[0].GetCell(4).RawLexical == "180.00", "Excel selected worksheet uses exact stored debit and cached credit");
         SetText(SourceCurrencyBox, "EUR"); Approve(); await PrepareForSmoke(); await Capture("xlsx-prepared-es.png");

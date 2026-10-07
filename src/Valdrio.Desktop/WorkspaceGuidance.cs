@@ -18,7 +18,7 @@ public sealed partial class ModelWorkspaceViewModel
 {
     public string Guide(string key) => Text("Guide." + key);
     public string OtherOperationsLabel => Guide("OtherModel");
-    public bool HasPendingCenter => MasterEdited;
+    public bool HasPendingCenter => CenterFormEdited;
     public bool HasPendingNode => nodeFormEdited;
     public bool HasActiveCenter => Centers.Any(c => c.Value.IsActive);
     public bool HasActiveUnit => Units.Any(u => u.Value.IsActive);

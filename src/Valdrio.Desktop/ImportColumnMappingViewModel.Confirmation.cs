@@ -65,10 +65,17 @@ public sealed partial class ImportColumnMappingViewModel
         Refresh();
     }
     public IReadOnlyList<ImportMappingOption> AmountModes => amountModes;
+    public bool IsCumulativeMode => amountMode == "cumulative";
     public string AmountMode
     {
         get => amountMode;
-        set { if (SetProperty(ref amountMode, value)) { InvalidatePreparation(true); Refresh(); } }
+        set
+        {
+            if (!SetProperty(ref amountMode, value)) return;
+            OnPropertyChanged(nameof(IsCumulativeMode));
+            InvalidatePreparation(true);
+            Refresh();
+        }
     }
     public string AmountBasis => amountMode == "cumulative" ? this["CumulativeBasis"] : amountMode == "closing-full"
         ? string.Format(Ui, this["ClosingBasis"], targetStudy?.PeriodEnd.ToString() ?? "—")
@@ -86,6 +93,7 @@ public sealed partial class ImportColumnMappingViewModel
     public IAsyncRelayCommand ConfirmCommand { get; }
     public PreparedImport? Preparation => preparedImport;
     public ImportedBatch? ConfirmedImport => confirmedImport;
+    public bool HasPreparedReview => preparedImport is not null || confirmedImport is not null;
     public bool HasPreparedGroups => preparedImport?.Groups is { Count: > 0 };
     public IReadOnlyList<ImportGroupPreview> PreparedGroups => preparedImport?.Groups?.Select(g => new ImportGroupPreview(
         g.Code, string.Join(", ", g.Records), g.Amount.Amount.ToString(CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)) + (international ? " " + g.Amount.Currency : "")))
@@ -120,13 +128,19 @@ public sealed partial class ImportColumnMappingViewModel
         }
     }
     public string PreparationIssues => preparedImport is null ? "" : string.Join("\n", preparedImport.Diagnostics.Take(100).Select(d =>
-        $"{d.Location.RecordNumber?.ToString(CultureInfo.InvariantCulture) ?? "—"} · {d.Location.Column?.ToString(CultureInfo.InvariantCulture) ?? "—"} · {FormatDiagnostic(d.Diagnostic)}"));
+        string.Format(Ui, this["FriendlyIssueLine"],
+            d.Location.RecordNumber?.ToString(CultureInfo.InvariantCulture) ?? "—",
+            FormatDiagnosticMessage(d.Diagnostic))));
     public void BindTarget(IImportWorkspace? port, StudyDefinition? study, bool canWrite, Func<ImportedBatch, Task>? onConfirmed)
     {
         if (busy) throw new InvalidOperationException("Import is busy.");
         var changed = !ReferenceEquals(importPort, port) || targetStudy != study;
         importPort = port; targetStudy = study; afterConfirmed = onConfirmed; writable = canWrite;
-        if (changed) { sourceCurrency = ""; InvalidatePreparation(true); }
+        if (changed)
+        {
+            sourceCurrency = study?.Currency.FunctionalCurrencyCode.ToString() ?? "";
+            InvalidatePreparation(true);
+        }
         Refresh();
     }
     private void InvalidatePreparation(bool resetApproval)
