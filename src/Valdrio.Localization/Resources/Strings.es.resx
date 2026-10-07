@@ -318,12 +318,12 @@ Completa: {5}</value></data>
   <data name="ImportMapping.NumericAccounts" xml:space="preserve"><value>Aceptar cuentas numéricas de Excel con su representación almacenada</value></data>
   <data name="ImportMapping.NumericWarning" xml:space="preserve"><value>Úsalo solo si los códigos del origen son numéricos intencionadamente. Los ceros iniciales ya perdidos en Excel no se pueden recuperar. Las fechas y los booleanos nunca son códigos de cuenta.</value></data>
   <data name="ImportMapping.Validate" xml:space="preserve"><value>Comprobar columnas</value></data>
-  <data name="ImportMapping.PreviewHelp" xml:space="preserve"><value>Vista previa de las primeras 50 filas de datos. La validación comprueba todas las filas, incluidas las que no se muestran. Los importes vacíos son errores y nunca se convierten en cero.</value></data>
+  <data name="ImportMapping.PreviewHelp" xml:space="preserve"><value>Vista previa de las primeras 50 filas. Al pulsar Comprobar y continuar, VALDRIO revisa todas las filas del archivo. Un importe vacío se marca para corregir; nunca se convierte automáticamente en cero.</value></data>
   <data name="ImportMapping.Row" xml:space="preserve"><value>Fila</value></data>
   <data name="ImportMapping.Original" xml:space="preserve"><value>Importe original</value></data>
   <data name="ImportMapping.Parsed" xml:space="preserve"><value>Importe interpretado</value></data>
   <data name="ImportMapping.Issues" xml:space="preserve"><value>Errores</value></data>
-  <data name="ImportMapping.StagingOnly" xml:space="preserve"><value>Este paso prepara y valida la selección de columnas. Todavía no guarda los importes en el estudio.</value></data>
+  <data name="ImportMapping.StagingOnly" xml:space="preserve"><value>Esta pantalla solo revisa cómo leer el archivo. Los importes no se guardan en el análisis hasta el último paso.</value></data>
   <data name="ImportMapping.Cancel" xml:space="preserve"><value>Cancelar lectura</value></data>
   <data name="ImportMapping.Close" xml:space="preserve"><value>Cerrar</value></data>
   <data name="ImportMapping.ChooseFile" xml:space="preserve"><value>Elige el archivo CSV o Excel que contiene los saldos o movimientos que quieres incorporar.</value></data>
@@ -331,7 +331,7 @@ Completa: {5}</value></data>
   <data name="ImportMapping.SelectColumns" xml:space="preserve"><value>Indica qué columna contiene la cuenta y cuál contiene el importe.</value></data>
   <data name="ImportMapping.SelectWorksheet" xml:space="preserve"><value>Selecciona la hoja de Excel que contiene los datos que quieres importar.</value></data>
   <data name="ImportMapping.Working" xml:space="preserve"><value>Comprobando el archivo…</value></data>
-  <data name="ImportMapping.Cancelled" xml:space="preserve"><value>Operación cancelada. No se han modificado los datos del estudio.</value></data>
+  <data name="ImportMapping.Cancelled" xml:space="preserve"><value>Operación cancelada. No se han modificado los datos del análisis.</value></data>
   <data name="ImportMapping.FileError" xml:space="preserve"><value>No se ha podido leer el archivo de origen. Comprueba su disponibilidad y permisos.</value></data>
   <data name="ImportMapping.Ready" xml:space="preserve"><value>Las cuentas y los importes se han leído correctamente. Puedes continuar.</value></data>
   <data name="ImportMapping.HasErrors" xml:space="preserve"><value>Hay datos que necesitan corrección antes de continuar. Revisa las filas indicadas.</value></data>
@@ -358,7 +358,7 @@ Completa: {5}</value></data>
   <data name="Import.SourceChanged" xml:space="preserve"><value>El archivo seleccionado cambió después de la vista previa. Ábrelo de nuevo y prepara otra importación.</value></data>
   <data name="Study.PartitionsPending" xml:space="preserve"><value>Los recursos importados están disponibles. Asigna sus particiones antes de calcular costes.</value></data>
   <data name="Study.ImportedCaptured" xml:space="preserve"><value>La captura incluye recursos importados confirmados y su procedencia. El cálculo necesita las entradas restantes.</value></data>
-  <data name="ImportMapping.Scope" xml:space="preserve"><value>La confirmación guarda el lote completo con sus originales, conversiones y procedencia. Revisa los totales y la modalidad antes de confirmar.</value></data>
+  <data name="ImportMapping.Scope" xml:space="preserve"><value>Al guardar se conserva el archivo de origen, la interpretación elegida, los importes y su procedencia para que el análisis sea trazable.</value></data>
   <data name="ImportMapping.NoStudy" xml:space="preserve"><value>Vista previa del archivo. Para guardar estos datos necesitas abrir o crear antes un análisis de costes.</value></data>
   <data name="ImportMapping.Target" xml:space="preserve"><value>Análisis de destino: {0} · periodo {1} a {2} · moneda {3}</value></data>
   <data name="ImportMapping.SourceCurrency" xml:space="preserve"><value>Moneda de los importes (por ejemplo EUR)</value></data>
@@ -370,9 +370,9 @@ Completa: {5}</value></data>
   <data name="ImportMapping.Totals" xml:space="preserve"><value>Leídas {0} · seleccionadas {1} · ignoradas {2} · inválidas {3}. Positivos {4} · negativos {5} · neto {6} {7}.</value></data>
   <data name="ImportMapping.Confirmed" xml:space="preserve"><value>Datos importados y guardados correctamente.</value></data>
   <data name="ImportMapping.ConfirmedSummary" xml:space="preserve"><value>Importación guardada · {1} recursos incorporados.</value></data>
-  <data name="ImportMapping.CommittedRefreshPending" xml:space="preserve"><value>La importación está guardada. No se ha podido refrescar la vista. Cierra esta ventana y actualiza el estudio.</value></data>
-  <data name="ImportMapping.NoImports" xml:space="preserve"><value>Este estudio todavía no tiene lotes de importación confirmados.</value></data>
-  <data name="ImportMapping.ImportHistory" xml:space="preserve"><value>Lote {0} · {1} · {2} recursos · {3} {4} · revisión {5}</value></data>
+  <data name="ImportMapping.CommittedRefreshPending" xml:space="preserve"><value>Los datos están guardados, pero la pantalla no se ha podido actualizar. Cierra esta ventana y actualiza el análisis; no vuelvas a importar el archivo.</value></data>
+  <data name="ImportMapping.NoImports" xml:space="preserve"><value>Este análisis todavía no tiene importaciones guardadas.</value></data>
+  <data name="ImportMapping.ImportHistory" xml:space="preserve"><value>Importación {0} · {1} · {2} recursos · {3} {4} · revisión {5}</value></data>
   <data name="ImportMapping.AmountLayout" xml:space="preserve"><value>Interpretación del importe</value></data>
   <data name="ImportMapping.SignedLayout" xml:space="preserve"><value>Importe firmado en una columna</value></data>
   <data name="ImportMapping.DebitCreditLayout" xml:space="preserve"><value>Debe menos Haber en dos columnas</value></data>
@@ -387,11 +387,11 @@ Completa: {5}</value></data>
   <data name="CompanyTechnicalDetails" xml:space="preserve"><value>Detalles técnicos del archivo</value></data>
   <data name="DevelopmentToolsTitle" xml:space="preserve"><value>Herramientas de desarrollo y ejemplos</value></data>
   <data name="ImportMapping.AmountMode" xml:space="preserve"><value>¿Qué representan estos importes?</value></data>
-  <data name="ImportMapping.ApproveClosing" xml:space="preserve"><value>He comprobado la fecha de cierre indicada y el ejemplo. Elijo utilizar el saldo íntegro de las cuentas seleccionadas para este estudio, en la moneda declarada, conservando signos y ceros.</value></data>
-  <data name="ImportMapping.ApproveClosingDebitCredit" xml:space="preserve"><value>He comprobado que Debe y Haber representan los saldos de cierre indicados. Elijo Debe menos Haber como saldo íntegro para este estudio, sin restar otro cierre, en la moneda declarada.</value></data>
-  <data name="ImportMapping.ClosingBasis" xml:space="preserve"><value>Cierre a {0} (fin del estudio). Se utiliza el saldo completo: 160 se conserva como 160. No se resta el cierre anterior.</value></data>
+  <data name="ImportMapping.ApproveClosing" xml:space="preserve"><value>He comprobado la fecha de cierre y el ejemplo. Confirmo que quiero utilizar el saldo completo de las cuentas seleccionadas para este análisis, conservando signos y ceros.</value></data>
+  <data name="ImportMapping.ApproveClosingDebitCredit" xml:space="preserve"><value>He comprobado que Debe y Haber representan los saldos de cierre indicados. Confirmo que Debe menos Haber es el saldo completo que debe utilizarse en este análisis.</value></data>
+  <data name="ImportMapping.ClosingBasis" xml:space="preserve"><value>Fecha de cierre: {0}. Se utiliza el saldo completo mostrado; no se resta automáticamente otro cierre anterior.</value></data>
   <data name="ImportMapping.ClosingMode" xml:space="preserve"><value>Saldo completo a la fecha de cierre</value></data>
-  <data name="ImportMapping.PeriodBasis" xml:space="preserve"><value>Se utilizan los movimientos correspondientes al periodo del estudio.</value></data>
+  <data name="ImportMapping.PeriodBasis" xml:space="preserve"><value>Se utilizan los movimientos correspondientes al periodo del análisis.</value></data>
   <data name="ImportMapping.PeriodMode" xml:space="preserve"><value>Movimientos o importes del periodo</value></data>
   <data name="ImportMapping.AccountSelectionHelp" xml:space="preserve"><value>Selecciona todos, ninguno o filas individuales. Los registros elegidos con el mismo código se suman, independientemente de sus descripciones. Se conserva cada fila original.</value></data>
   <data name="ImportMapping.AccountSelectionSummary" xml:space="preserve"><value>{0} de {1} registros seleccionados. Cambiar la selección exige preparar y aprobar de nuevo.</value></data>
@@ -414,21 +414,21 @@ Completa: {5}</value></data>
   <data name="Study.ImportHelp" xml:space="preserve"><value>Continúa a Importación para elegir un archivo, revisar registros y guardarlos dentro de este análisis.</value></data>
   <data name="Study.SavedHelp" xml:space="preserve"><value>El análisis se guarda dentro del archivo de empresa. Reúne el periodo, la estructura elegida y los datos que importes o prepares para calcular costes.</value></data>
   <data name="ImportMapping.SelectionOverflow" xml:space="preserve"><value>No se pueden representar los totales de esta selección: se ha superado el límite numérico. Revisa los importes del origen.</value></data>
-  <data name="ImportMapping.SelectionPreviewHelp" xml:space="preserve"><value>Sumas por código, actualizadas al marcar registros. Importes del origen, sin conversión de moneda. Esta revisión no guarda datos; Preparar importación comprobará también el periodo, la moneda y los límites del estudio.</value></data>
+  <data name="ImportMapping.SelectionPreviewHelp" xml:space="preserve"><value>Totales por cuenta según las filas marcadas. Es una vista previa: todavía no se guarda nada.</value></data>
   <data name="ImportMapping.SelectionReconciliation" xml:space="preserve"><value>Incluidos: {0} registros → {2} códigos. Excluidos: {1} registros. Positivos incluidos: {3}; negativos incluidos: {4}; neto incluido: {5}; neto excluido: {6}.</value></data>
   <data name="ImportMapping.SelectionPreviewTitle" xml:space="preserve"><value>Resultado de los registros seleccionados</value></data>
   <data name="ImportMapping.FiscalEnd" xml:space="preserve"><value>Fin del ejercicio común</value></data>
-  <data name="ImportMapping.ComparisonHelp" xml:space="preserve"><value>1. Abre y valida el archivo anterior, selecciona sus registros y declara moneda. 2. Indica aquí ejercicio, cierre y ámbito; aprueba el ejemplo y conserva el anterior. 3. Abre y valida el archivo actual, selecciona los mismos códigos y elige Diferencia de acumulados. El cierre actual es el final del estudio. Aprueba el ejemplo de la diferencia y prepara.</value></data>
+  <data name="ImportMapping.ComparisonHelp" xml:space="preserve"><value>Para obtener una diferencia entre acumulados necesitas dos cierres comparables del mismo ejercicio, ámbito, moneda y criterio de signos. Indica el cierre anterior y conserva el actual como final del periodo del análisis.</value></data>
   <data name="ImportMapping.ClearComparison" xml:space="preserve"><value>Quitar acumulado anterior</value></data>
-  <data name="Import.ComparisonInvalid" xml:space="preserve"><value>Los acumulados no son comparables. Declara el mismo ámbito, moneda, signo y ejercicio; el cierre anterior debe ser el día previo al inicio del estudio.</value></data>
+  <data name="Import.ComparisonInvalid" xml:space="preserve"><value>Los dos saldos acumulados no son comparables. Comprueba ejercicio, ámbito, moneda, signos y que el cierre anterior sea el día previo al inicio del análisis.</value></data>
   <data name="ImportMapping.ApproveComparison" xml:space="preserve"><value>He comprobado ambos cierres, el ejercicio, la moneda, los códigos seleccionados y el ámbito común. Apruebo el ejemplo de diferencia, incluidos signos y ceros.</value></data>
-  <data name="Import.ReplacementInvalid" xml:space="preserve"><value>Selecciona un lote vigente de este mismo estudio para sustituirlo.</value></data>
+  <data name="Import.ReplacementInvalid" xml:space="preserve"><value>Selecciona una importación anterior activa de este análisis para sustituirla.</value></data>
   <data name="ImportMapping.ComparisonScope" xml:space="preserve"><value>Ámbito común comprobado (empresa, cuentas y criterio contable)</value></data>
   <data name="ImportMapping.PreviousEnd" xml:space="preserve"><value>Fecha de cierre del acumulado anterior</value></data>
   <data name="Import.ComparisonMissing" xml:space="preserve"><value>Los códigos seleccionados deben existir en ambos acumulados. Una cuenta ausente no equivale a cero.</value></data>
   <data name="ImportMapping.ReplacementHelp" xml:space="preserve"><value>Usa esta opción solo si esta importación debe reemplazar completamente otra ya guardada. La anterior se conserva en el historial.</value></data>
   <data name="ImportMapping.FreezeComparison" xml:space="preserve"><value>Conservar este archivo como acumulado anterior</value></data>
-  <data name="ImportMapping.CumulativeBasis" xml:space="preserve"><value>Importe del estudio = acumulado actual − anterior (160 − 100 = 60). Mismo ejercicio y ámbito; sin convertir cuentas ausentes en cero.</value></data>
+  <data name="ImportMapping.CumulativeBasis" xml:space="preserve"><value>Importe del análisis = saldo acumulado actual − saldo acumulado anterior. Las cuentas ausentes no se convierten automáticamente en cero.</value></data>
   <data name="ImportMapping.ComparisonReady" xml:space="preserve"><value>Anterior conservado: {0}, cierre {1}. Abre ahora el archivo actual.</value></data>
   <data name="ImportMapping.FiscalStart" xml:space="preserve"><value>Inicio del ejercicio común</value></data>
   <data name="ImportMapping.ComparisonTitle" xml:space="preserve"><value>Comparar dos acumulados: preparar el archivo anterior</value></data>
@@ -447,7 +447,7 @@ Completa: {5}</value></data>
   <data name="Import.ConversionRateMissing" xml:space="preserve"><value>Selecciona un tipo de cambio explícito para este registro en otra moneda.</value></data>
   <data name="Import.RateDateInvalid" xml:space="preserve"><value>La fecha del tipo seleccionado queda fuera del intervalo aprobado.</value></data>
   <data name="ImportMapping.International" xml:space="preserve"><value>Configurar monedas, fechas y conversiones del origen</value></data>
-  <data name="ImportMapping.ConversionHelp" xml:space="preserve"><value>Los totales originales se separan por moneda. Escribe los tipos con punto decimal: moneda del estudio por unidad de origen. Las fechas de tipo usan yyyy-MM-dd. Declara su intervalo permitido; no se consulta una cotización actual. En comparativos se convierte cada saldo con sus tipos aprobados antes de restar; ambos puentes quedan visibles.</value></data>
+  <data name="ImportMapping.ConversionHelp" xml:space="preserve"><value>Si el archivo contiene otra moneda, conserva los importes originales y define los tipos de cambio que deben aplicarse. VALDRIO no consulta ni adivina cotizaciones actuales.</value></data>
   <data name="ImportMapping.CurrencyFromColumn" xml:space="preserve"><value>Leer la moneda de una columna del archivo</value></data>
   <data name="ImportMapping.DocumentDateColumn" xml:space="preserve"><value>Fecha del documento (columna opcional)</value></data>
   <data name="ImportMapping.DatePattern" xml:space="preserve"><value>Formato de fecha del origen, p. ej. dd/MM/yyyy</value></data>
@@ -459,7 +459,7 @@ Completa: {5}</value></data>
   <data name="ImportMapping.Quote" xml:space="preserve"><value>Tipo (destino/origen)</value></data>
   <data name="ImportMapping.RateDate" xml:space="preserve"><value>Fecha del tipo</value></data>
   <data name="ImportMapping.RateSource" xml:space="preserve"><value>Fuente del tipo</value></data>
-  <data name="ImportMapping.RateSelectionHelp" xml:space="preserve"><value>Indica el identificador de tipo en cada registro incluido de otra moneda. Déjalo vacío para la moneda del estudio. El botón copia el identificador escrito a todos los registros incluidos; revisa cada elección antes de preparar.</value></data>
+  <data name="ImportMapping.RateSelectionHelp" xml:space="preserve"><value>Asigna el tipo de cambio a los registros que estén en otra moneda. Los registros que ya estén en la moneda del análisis no necesitan tipo.</value></data>
   <data name="ImportMapping.ApplyRate" xml:space="preserve"><value>Aplicar identificador a los registros incluidos</value></data>
   <data name="ImportMapping.InternationalSelectionTotals" xml:space="preserve"><value>Prepara la importación para ver totales separados por moneda de origen y el total convertido conciliado.</value></data>
   <data name="ImportMapping.ConversionPreview" xml:space="preserve"><value>Revisa originales y conversiones antes de confirmar</value></data>
@@ -476,7 +476,7 @@ Completa: {5}</value></data>
   <data name="Guide.Next" xml:space="preserve"><value>Continuar</value></data>
   <data name="Guide.SaveAndImport" xml:space="preserve"><value>Guardar análisis y continuar a la importación</value></data>
   <data name="Guide.OpenImport" xml:space="preserve"><value>Importar Excel o CSV en este análisis</value></data>
-  <data name="Guide.Preview" xml:space="preserve"><value>Solo revisar un archivo (sin guardarlo en un estudio)</value></data>
+  <data name="Guide.Preview" xml:space="preserve"><value>Solo revisar un archivo (sin guardarlo en un análisis)</value></data>
   <data name="Guide.NeedCompany" xml:space="preserve"><value>Primero crea o abre un archivo de empresa. Las estructuras de costes, los análisis y las importaciones se guardarán dentro de ese archivo.</value></data>
   <data name="Guide.CompanyReady" xml:space="preserve"><value>Empresa abierta. Continúa a Estructura de costes para definir cómo se repartirán los costes.</value></data>
   <data name="Guide.NeedDraft" xml:space="preserve"><value>Pon un nombre a la estructura y crea una nueva, o selecciona y abre una versión existente.</value></data>
@@ -581,7 +581,7 @@ Completa: {5}</value></data>
   <data name="Guide.Help.International" xml:space="preserve"><value>Opciones para moneda por fila, fecha de documento y conversiones. Los tipos se introducen explícitamente y se conservan con la importación.</value></data>
   <data name="Guide.Help.CurrencyFromColumn" xml:space="preserve"><value>Activa si cada fila indica su propia moneda y elige la columna correspondiente.</value></data>
   <data name="Guide.Help.CurrencyColumn" xml:space="preserve"><value>Columna con códigos de moneda como EUR o USD.</value></data>
-  <data name="Guide.Help.DateColumn" xml:space="preserve"><value>Columna opcional con la fecha del documento. No reemplaza las fechas del estudio.</value></data>
+  <data name="Guide.Help.DateColumn" xml:space="preserve"><value>Columna opcional con la fecha del documento. No sustituye las fechas del análisis.</value></data>
   <data name="Guide.Help.DatePattern" xml:space="preserve"><value>Patrón explícito para fechas de texto, por ejemplo dd/MM/yyyy. Evita interpretar una fecha ambigua según la región del ordenador.</value></data>
   <data name="Guide.Help.RateSetName" xml:space="preserve"><value>Nombre del conjunto de tipos manuales que quedará conservado con la importación.</value></data>
   <data name="Guide.Help.AllowedRateStart" xml:space="preserve"><value>Primera fecha admitida para los tipos de cambio que selecciones.</value></data>
@@ -805,7 +805,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resource.RevalueUnbalanced" xml:space="preserve"><value>La cuenta todavía tiene una diferencia tras la revalorización. Ajusta las partes o deja expresamente la diferencia pendiente.</value></data>
   <data name="Guide.Resources" xml:space="preserve"><value>5. Recursos</value></data>
   <data name="Guide.ContinueResources" xml:space="preserve"><value>Continuar: preparar recursos</value></data>
-  <data name="Guide.AnotherImport" xml:space="preserve"><value>Importar otro archivo / sustituir un lote</value></data>
+  <data name="Guide.AnotherImport" xml:space="preserve"><value>Importar otro archivo / corregir una importación anterior</value></data>
   <data name="Resources.LayerHelp" xml:space="preserve"><value>Indica si esta parte pertenece a producción, comercial o estructura. Es independiente de que sea fija o variable y de su destino. Puedes dejarla sin clasificar.</value></data>
   <data name="Resources.PoolHelp" xml:space="preserve"><value>El pool reúne costes que se repartirán después. Elige uno de tu modelo publicado; el papel principal o auxiliar de su nodo no determina el comportamiento del coste.</value></data>
   <data name="Resources.ExclusionHelp" xml:space="preserve"><value>Explica por qué este importe queda fuera del estudio. La exclusión conserva el importe y su origen para poder revisarla.</value></data>
