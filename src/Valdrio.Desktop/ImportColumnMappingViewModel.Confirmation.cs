@@ -127,7 +127,9 @@ public sealed partial class ImportColumnMappingViewModel
         }
     }
     public string PreparationIssues => preparedImport is null ? "" : string.Join("\n", preparedImport.Diagnostics.Take(100).Select(d =>
-        $"{d.Location.RecordNumber?.ToString(CultureInfo.InvariantCulture) ?? "—"} · {d.Location.Column?.ToString(CultureInfo.InvariantCulture) ?? "—"} · {FormatDiagnostic(d.Diagnostic)}"));
+        string.Format(Ui, this["FriendlyIssueLine"],
+            d.Location.RecordNumber?.ToString(CultureInfo.InvariantCulture) ?? "—",
+            FormatDiagnosticMessage(d.Diagnostic))));
     public void BindTarget(IImportWorkspace? port, StudyDefinition? study, bool canWrite, Func<ImportedBatch, Task>? onConfirmed)
     {
         if (busy) throw new InvalidOperationException("Import is busy.");
