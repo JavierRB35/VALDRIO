@@ -1,5 +1,12 @@
 # Decisiones de producto y negocio
 
+## Adelanto técnico T07 — 2026-10-07
+
+El propietario acepta comenzar las reglas y pruebas independientes de T07 mientras
+T06 continúa, en una rama y copia de trabajo separadas. Se conserva la dependencia
+T06/T06A para la integración. No supone aceptar D04/D05/D07/D11 ni cambiar los
+contratos canónicos. Alcance y pendientes: [T07](../tareas/T07.md).
+
 Fecha de actualización: 2026-10-04  
 Fuente base: `especificacion/03_Decisiones_y_Diccionario.md` del paquete VALDRIO v0.4.  
 Aceptación del propietario registrada el 2026-10-04.

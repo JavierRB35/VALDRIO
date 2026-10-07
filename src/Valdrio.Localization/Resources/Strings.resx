@@ -399,4 +399,15 @@ Full: {5}</value></data>
   <data name="ImportMapping.AllAccounts" xml:space="preserve"><value>Include all accounts in this file</value></data>
   <data name="ImportMapping.IncludeAccount" xml:space="preserve"><value>Include</value></data>
   <data name="ImportMapping.SelectAccounts" xml:space="preserve"><value>Accounts to import</value></data>
+  <data name="Resource.PartitionMismatch" xml:space="preserve"><value>Resource {0} has a partition difference of {1}.</value></data>
+  <data name="Resource.DuplicateId" xml:space="preserve"><value>An identifier is repeated in the resource preparation.</value></data>
+  <data name="Resource.SourceRequired" xml:space="preserve"><value>A resource requires at least one original source.</value></data>
+  <data name="Resource.SourceReused" xml:space="preserve"><value>An original source row cannot supply more than one resource.</value></data>
+  <data name="Resource.ReversalInvalid" xml:space="preserve"><value>The reversal must cancel one existing adjustment in the same resource exactly once.</value></data>
+  <data name="Resource.RouteConflict" xml:space="preserve"><value>Choose exactly one route for each resource part.</value></data>
+  <data name="Resource.DirectMismatch" xml:space="preserve"><value>Direct assignments must sum exactly to the part amount and identify their objects.</value></data>
+  <data name="Resource.PoolRequired" xml:space="preserve"><value>Select the destination pool for this part.</value></data>
+  <data name="Resource.ExclusionReasonRequired" xml:space="preserve"><value>Enter a reason for excluding this part.</value></data>
+  <data name="Resource.AdjustmentReasonRequired" xml:space="preserve"><value>Enter the adjustment type and reason.</value></data>
+  <data name="Resource.ConversionInvalid" xml:space="preserve"><value>The stored conversion does not match the original amount and its selected exchange rate.</value></data>
 </root>

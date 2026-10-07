@@ -1,5 +1,14 @@
 # ESTADO_PROYECTO
 
+## Rama paralela T07 — 2026-10-07
+
+El propietario autoriza adelantar reglas y pruebas de T07 en una rama independiente.
+`codex/t07-resource-rules`, basada en `d1ff159`, incorpora preparación pura de ajustes
+y particiones, reversión conservando FX y validación por recurso/origen. No contiene
+los cambios en curso de agrupación de T06. T06/T06A siguen siendo dependencias para
+integrar T07; clasificación contextual, persistencia y editor permanecen pendientes.
+Ver [alcance de T07](docs/tareas/T07.md) y su evidencia. Este avance no cierra T07.
+
 Fecha de revisión 2026-10-07. Repositorio `JavierRB35/VALDRIO`.
 
 ## Continuidad — 2026-10-07: selección explícita de cuentas

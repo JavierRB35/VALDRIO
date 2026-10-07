@@ -399,4 +399,15 @@ Completa: {5}</value></data>
   <data name="ImportMapping.AllAccounts" xml:space="preserve"><value>Incluir todas las cuentas de este archivo</value></data>
   <data name="ImportMapping.IncludeAccount" xml:space="preserve"><value>Incluir</value></data>
   <data name="ImportMapping.SelectAccounts" xml:space="preserve"><value>Cuentas que se importarán</value></data>
+  <data name="Resource.PartitionMismatch" xml:space="preserve"><value>El recurso {0} tiene una diferencia de partición de {1}.</value></data>
+  <data name="Resource.DuplicateId" xml:space="preserve"><value>Hay un identificador repetido en la preparación de recursos.</value></data>
+  <data name="Resource.SourceRequired" xml:space="preserve"><value>Un recurso necesita al menos un origen.</value></data>
+  <data name="Resource.SourceReused" xml:space="preserve"><value>Una fila de origen no puede aportar valor a más de un recurso.</value></data>
+  <data name="Resource.ReversalInvalid" xml:space="preserve"><value>La reversión debe anular exactamente una vez un ajuste existente del mismo recurso.</value></data>
+  <data name="Resource.RouteConflict" xml:space="preserve"><value>Elige una sola ruta para cada parte del recurso.</value></data>
+  <data name="Resource.DirectMismatch" xml:space="preserve"><value>Las imputaciones directas deben sumar exactamente el importe de la parte e identificar sus objetos.</value></data>
+  <data name="Resource.PoolRequired" xml:space="preserve"><value>Selecciona el pool de destino de esta parte.</value></data>
+  <data name="Resource.ExclusionReasonRequired" xml:space="preserve"><value>Indica el motivo de exclusión de esta parte.</value></data>
+  <data name="Resource.AdjustmentReasonRequired" xml:space="preserve"><value>Indica el tipo y el motivo del ajuste.</value></data>
+  <data name="Resource.ConversionInvalid" xml:space="preserve"><value>La conversión guardada no coincide con el importe original y el tipo de cambio elegido.</value></data>
 </root>
