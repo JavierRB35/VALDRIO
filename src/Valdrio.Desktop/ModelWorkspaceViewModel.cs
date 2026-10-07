@@ -384,6 +384,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string SaveCenterLabel => Text("Model.SaveCenter");
     public string ToggleCenterLabel => Text("Model.ToggleCenter");
     public string CenterSectionHelp => Text("Model.CenterSectionHelp");
+    public string CenterRequiredHelp => Text("Model.CenterRequiredHelp");
     public string CenterListTitle => Text("Model.CenterListTitle");
     public string CenterListHelp => Text("Model.CenterListHelp");
     public string CenterFormTitle => Text(IsEditingCenter ? "Model.CenterFormEdit" : "Model.CenterFormNew");
@@ -407,6 +408,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string DiscardLabel => Text("Model.Discard");
     public string NodeLabel => Text("Model.Nodes");
     public string NodeSectionHelp => Text("Model.NodeSectionHelp");
+    public string NodeRequiredHelp => Text("Model.NodeRequiredHelp");
     public string NodeListTitle => Text("Model.NodeListTitle");
     public string NodeListHelp => Text("Model.NodeListHelp");
     public string NodeFormTitle => Text(SelectedNode is null ? "Model.NodeFormNew" : "Model.NodeFormEdit");
