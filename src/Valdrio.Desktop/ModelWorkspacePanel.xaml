@@ -43,6 +43,16 @@
    <Setter Property="FontSize" Value="11" />
    <Setter Property="Margin" Value="0,0,8,6" />
   </Style>
+  <Style x:Key="InlineStatus" TargetType="TextBlock">
+   <Setter Property="Foreground" Value="DarkSlateBlue" />
+   <Setter Property="Margin" Value="0,6,0,4" />
+   <Style.Triggers>
+    <DataTrigger Binding="{Binding HasError}" Value="True">
+     <Setter Property="Foreground" Value="DarkRed" />
+     <Setter Property="FontWeight" Value="SemiBold" />
+    </DataTrigger>
+   </Style.Triggers>
+  </Style>
  </UserControl.Resources>
 
  <GroupBox Header="{Binding Title}" Padding="14">
@@ -131,10 +141,11 @@
 
           <WrapPanel Margin="0,6,0,0">
            <Button x:Name="SaveCenterButton" Content="{Binding CenterPrimaryActionLabel}"
-                   Command="{Binding SaveCenterFormCommand}" TabIndex="27" />
+                   Command="{Binding SaveCenterFormCommand}" TabIndex="27" FontWeight="SemiBold" />
            <Button x:Name="CreateCenterButton" Content="{Binding NewCenterLabel}"
                    Command="{Binding NewCenterCommand}" TabIndex="28" />
           </WrapPanel>
+          <TextBlock Text="{Binding Status}" Style="{StaticResource InlineStatus}" AutomationProperties.LiveSetting="Assertive" />
 
           <Separator Margin="0,8,0,6" />
           <TextBlock Text="{Binding CenterStateHelp}" Style="{StaticResource SectionHelp}" />
@@ -262,10 +273,12 @@
         <TextBlock Text="{Binding NodePersistenceHelp}" Style="{StaticResource SectionHelp}" />
         <WrapPanel>
          <Button x:Name="ApplyNodeButton" Content="{Binding NodePrimaryActionLabel}"
-                 Command="{Binding SaveNodeCommand}" TabIndex="48" />
+                 Command="{Binding SaveNodeCommand}" TabIndex="48" FontWeight="SemiBold" />
          <Button x:Name="NewNodeButton" Content="{Binding NewNodeLabel}" Command="{Binding NewNodeCommand}" TabIndex="49" />
-         <Button x:Name="RemoveNodeButton" Content="{Binding RemoveLabel}" Command="{Binding DeleteNodeCommand}" TabIndex="50" />
+         <Button x:Name="RemoveNodeButton" Content="{Binding RemoveLabel}" Command="{Binding DeleteNodeCommand}"
+                 TabIndex="50" Foreground="DarkRed" />
         </WrapPanel>
+        <TextBlock Text="{Binding Status}" Style="{StaticResource InlineStatus}" AutomationProperties.LiveSetting="Assertive" />
        </StackPanel>
       </GroupBox>
      </StackPanel>
