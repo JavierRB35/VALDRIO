@@ -122,7 +122,7 @@ public partial class ModelWorkspacePanel
             ModelSteps.SelectedIndex = 2;
             NodeUnitCreator.IsExpanded = true;
             UpdateLayout();
-            FocusAt(2, unitCompanyPanel?.UnitCodeBox ?? UnitBox);
+            FocusAt(2, unitCompanyPanel?.UnitCodeBox is FrameworkElement unitCodeBox ? unitCodeBox : UnitBox);
         }
         else if (vm.HasPendingNode || !vm.HasPrincipal)
             FocusAt(2, string.IsNullOrWhiteSpace(vm.NodeCode) ? NodeCodeBox :
