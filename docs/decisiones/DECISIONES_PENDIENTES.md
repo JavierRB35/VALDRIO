@@ -21,6 +21,15 @@ Aceptación del propietario registrada el 2026-10-04.
 | D11 Cobertura definitiva | **PROPUESTA** | Ejecución definitiva exige cobertura completa; borrador/provisional conserva pendientes visibles. | Revisar antes de publicación definitiva. |
 | D12 Módulos avanzados | **PENDIENTE AVANZADO** | Estándares, TDABC y simulación requieren datos/supuestos propios. | T28-T31; no bloquea R0/R1 actual. |
 
+## Precisión de alcance de la fuente — 2026-10-07
+
+El propietario indicó en el chat «Guiar instalación de Visual Studio» que para
+calcular costes solo son necesarias cuentas de pérdidas y ganancias; las cuentas
+de balance quedan fuera. La muestra de patrimonio personal aportada solo sirve
+para ensayar lectura, no para aceptar D03 en producción. La selección de cuentas
+es explícita y no se deriva de prefijos de un plan contable nacional. El asistente
+materializa esta elección mediante todas las cuentas o una lista marcada por el usuario.
+
 ## Separación monetaria aceptada como requisito de producto
 
 - La **empresa propone una moneda predeterminada**.

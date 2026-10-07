@@ -394,4 +394,9 @@ Full: {5}</value></data>
   <data name="ImportMapping.ClosingMode" xml:space="preserve"><value>Full closing balance for this study</value></data>
   <data name="ImportMapping.PeriodBasis" xml:space="preserve"><value>Use movements belonging to the study period.</value></data>
   <data name="ImportMapping.PeriodMode" xml:space="preserve"><value>Period amounts</value></data>
+  <data name="ImportMapping.AccountSelectionHelp" xml:space="preserve"><value>Choose the profit and loss accounts for this study. Account numbers do not determine inclusion. All original rows are retained; only included accounts create resources.</value></data>
+  <data name="ImportMapping.AccountSelectionSummary" xml:space="preserve"><value>{0} of {1} accounts included. Changing the selection requires a new preparation and approval.</value></data>
+  <data name="ImportMapping.AllAccounts" xml:space="preserve"><value>Include all accounts in this file</value></data>
+  <data name="ImportMapping.IncludeAccount" xml:space="preserve"><value>Include</value></data>
+  <data name="ImportMapping.SelectAccounts" xml:space="preserve"><value>Accounts to import</value></data>
 </root>

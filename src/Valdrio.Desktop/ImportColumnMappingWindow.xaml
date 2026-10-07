@@ -91,6 +91,29 @@
   <TextBlock Text="{Binding GlobalIssues}" Foreground="DarkRed"/>
   <TextBlock Text="{Binding [Scope]}" FontStyle="Italic"/>
   <StackPanel IsEnabled="{Binding IsIdle}" Margin="0,12,0,0">
+   <StackPanel Visibility="{Binding HasAccountChoices,Converter={StaticResource Visible}}">
+    <TextBlock Text="{Binding [SelectAccounts]}" FontWeight="SemiBold"/>
+    <TextBlock Text="{Binding [AccountSelectionHelp]}"/>
+    <CheckBox x:Name="ImportAllAccountsBox" IsChecked="{Binding ImportAllAccounts}" Margin="0,6,0,6">
+     <TextBlock Text="{Binding [AllAccounts]}"/>
+    </CheckBox>
+    <DataGrid x:Name="AccountSelectionGrid" ItemsSource="{Binding AccountChoices}" AutoGenerateColumns="False"
+     Visibility="{Binding IsExplicitAccountSelection,Converter={StaticResource Visible}}"
+     CanUserAddRows="False" CanUserDeleteRows="False" Height="190" FlowDirection="LeftToRight"
+     EnableRowVirtualization="True" AutomationProperties.Name="{Binding [SelectAccounts]}">
+     <DataGrid.Columns>
+      <DataGridTemplateColumn Width="95">
+       <DataGridTemplateColumn.CellTemplate><DataTemplate>
+        <CheckBox IsChecked="{Binding Included,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"
+         VerticalAlignment="Center" AutomationProperties.Name="{Binding Account}"/>
+       </DataTemplate></DataGridTemplateColumn.CellTemplate>
+      </DataGridTemplateColumn>
+      <DataGridTextColumn Binding="{Binding Account}" IsReadOnly="True" Width="*"/>
+      <DataGridTextColumn Binding="{Binding FormattedAmount}" IsReadOnly="True" Width="*"/>
+     </DataGrid.Columns>
+    </DataGrid>
+    <TextBlock Text="{Binding AccountSelectionSummary}" FontWeight="SemiBold"/>
+   </StackPanel>
    <TextBlock Text="{Binding Target}" FontWeight="SemiBold"/>
    <TextBlock Text="{Binding [AmountMode]}"/>
    <ComboBox x:Name="AmountModeBox" ItemsSource="{Binding AmountModes}" DisplayMemberPath="Label" SelectedValuePath="Value"

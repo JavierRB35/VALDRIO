@@ -17,6 +17,7 @@
     <Compile Include="../../src/Valdrio.Desktop/MainWindowViewModel.cs" Link="Desktop/MainWindowViewModel.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ImportColumnMappingViewModel.cs" Link="Desktop/ImportColumnMappingViewModel.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ImportColumnMappingViewModel.Confirmation.cs" Link="Desktop/ImportColumnMappingViewModel.Confirmation.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/ImportColumnMappingViewModel.Accounts.cs" Link="Desktop/ImportColumnMappingViewModel.Accounts.cs" />
     <Compile Include="../../src/Valdrio.Desktop/WorkspaceDialogContracts.cs" Link="Desktop/WorkspaceDialogContracts.cs" />
   </ItemGroup>
   <ItemGroup>

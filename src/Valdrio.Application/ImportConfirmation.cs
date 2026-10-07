@@ -54,6 +54,7 @@ public sealed class PreparedImport
         if (profile.FixedCurrency != studyContext.Currency.FunctionalCurrencyCode || profile.CurrencyColumn is not null)
             Block("IMP_FX_REQUIRED", "Import.FxRequired");
         if (studyContext.State != StudyState.Open) Block("STUDY_CLOSED", "Study.ClosedDiagnostic");
+        var selectedAccounts = profile.AccountSelection.Accounts.ToHashSet(StringComparer.Ordinal);
         var rows = new List<PreparedAmountRow>();
         if (profile.SignConvention is ImportSignConvention.SignedAmount or ImportSignConvention.DebitMinusCredit)
         {
@@ -81,7 +82,7 @@ public sealed class PreparedImport
                 var invalid = !validAmount || blockedRows.Contains(row.RecordNumber);
                 var selected = !invalid && row.Amount.HasValue &&
                     (profile.AccountSelection.Kind == ImportAccountSelectionKind.All ||
-                     profile.AccountSelection.Accounts.Contains(row.Account!, StringComparer.Ordinal)) &&
+                     selectedAccounts.Contains(row.Account!)) &&
                     (profile.ZeroPolicy == ImportZeroPolicy.Keep || row.Amount != 0m);
                 // Foreign amounts retain their declared currency; they are never silently converted.
                 rows.Add(new(row.RecordNumber, row.PhysicalLine, row.Account,

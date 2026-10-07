@@ -57,7 +57,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         ReadCommand = new AsyncRelayCommand(Read, () => !busy && session is not null && (!IsXlsx || !string.IsNullOrEmpty(worksheet)));
         ValidateCommand = new AsyncRelayCommand(Validate, () => !busy && document is not null && AccountColumn.HasValue &&
             (IsSignedAmount && AmountColumn.HasValue || IsDebitCredit && DebitColumn.HasValue && CreditColumn.HasValue));
-        PrepareCommand = new AsyncRelayCommand(Prepare, () => !busy && IsReady && targetStudy?.State == StudyState.Open && importPort is not null);
+        PrepareCommand = new AsyncRelayCommand(Prepare, () => !busy && IsReady && IsAccountSelectionReady && targetStudy?.State == StudyState.Open && importPort is not null);
         ConfirmCommand = new AsyncRelayCommand(Confirm, () => !busy && writable && preparedImport?.CanConfirm == true && confirmedImport is null);
         CancelCommand = new RelayCommand(() => cancellation?.Cancel(), () => busy);
         preferences.Changed += PreferencesChanged;
@@ -145,17 +145,18 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         $"{ColumnName(index)} · {(header.Length == 0 ? this["NoHeader"] : Display(header))}";
     private void Reformat()
     {
+        foreach (var choice in accountChoices) choice.Reformat(CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag));
         amountModes[0].Label = this["PeriodMode"]; amountModes[1].Label = this["ClosingMode"];
         delimiters[2].Label = this["Tab"]; groups[0].Label = this["None"]; groups[3].Label = this["Space"];
         amountLayouts[0].Label = this["SignedLayout"]; amountLayouts[1].Label = this["DebitCreditLayout"];
         foreach (var c in columnOptions) c.Label = ColumnLabel(c.Index, c.Header); Refresh();
     }
     private void InvalidateMapping()
-    { cancellation?.Cancel(); validation = null; InvalidatePreparation(true); diagnostic = null; statusKey = "SelectColumns"; Refresh(); }
+    { cancellation?.Cancel(); validation = null; ResetAccountChoices(); InvalidatePreparation(true); diagnostic = null; statusKey = "SelectColumns"; Refresh(); }
     private void InvalidateSource()
     {
         cancellation?.Cancel(); document = null; readSettings = null; accountColumn = amountColumn = debitColumn = creditColumn = null;
-        columnOptions = []; validation = null; InvalidatePreparation(true); diagnostic = null; statusKey = "ReadSource"; Refresh();
+        columnOptions = []; validation = null; ResetAccountChoices(); InvalidatePreparation(true); diagnostic = null; statusKey = "ReadSource"; Refresh();
     }
     private void Refresh()
     {
@@ -199,7 +200,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     private async Task Read()
     {
         document = null; validation = null; readSettings = null; accountColumn = amountColumn = debitColumn = creditColumn = null;
-        columnOptions = []; InvalidatePreparation(true);
+        columnOptions = []; ResetAccountChoices(); InvalidatePreparation(true);
         await Run(async token =>
         {
             var settings = Settings(); var source = await session!.ReadAsync(settings, token);
@@ -211,7 +212,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     }
     private async Task Validate()
     {
-        validation = null; InvalidatePreparation(true);
+        validation = null; ResetAccountChoices(); InvalidatePreparation(true);
         await Run(async token =>
         {
             var assigned = IsSignedAmount ? new[] { accountColumn, amountColumn } :
@@ -229,8 +230,8 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
             var policy = allowNumericAccounts ? XlsxNumericAccountPolicy.PreserveStoredLexical : XlsxNumericAccountPolicy.Reject;
             var source = document!; var settings = readSettings!;
             var result = await Task.Run(() => ImportColumnSelection.Validate(source, settings, columns, number, policy, token), token);
-            token.ThrowIfCancellationRequested(); validation = result; statusKey = result.IsValid ? "Ready" : "HasErrors";
+            token.ThrowIfCancellationRequested(); validation = result; SetAccountChoices(result); statusKey = result.IsValid ? "Ready" : "HasErrors";
         });
     }
-    public void Dispose() { cancellation?.Cancel(); session?.Dispose(); preferences.Changed -= PreferencesChanged; }
+    public void Dispose() { cancellation?.Cancel(); session?.Dispose(); ResetAccountChoices(); preferences.Changed -= PreferencesChanged; }
 }

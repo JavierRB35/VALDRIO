@@ -1,6 +1,25 @@
 # ESTADO_PROYECTO
 
-Fecha de revisión 2026-10-06. Repositorio `JavierRB35/VALDRIO`.
+Fecha de revisión 2026-10-07. Repositorio `JavierRB35/VALDRIO`.
+
+## Continuidad — 2026-10-07: selección explícita de cuentas
+
+Sobre `8909e88`, el asistente permite importar todas las cuentas del archivo o marcar
+una lista explícita después de validar las columnas. El propietario ha precisado que
+el estudio de costes utiliza cuentas de pérdidas y ganancias, no cuentas de balance.
+La elección no se deduce de la numeración, país o idioma. No se considera aceptada
+una muestra productiva por añadir esta pantalla.
+
+Cambiar una cuenta invalida la preparación y la aprobación. Una lista vacía bloquea
+preparar; releer o cambiar el mapeo borra las marcas anteriores. La selección incluye
+todas las cuentas validadas, no solo las primeras 50 filas de la vista previa.
+El perfil v1 ya contemplaba `ExplicitList`: se reutiliza con formato de empresa v4,
+conservando todas las filas originales y generando recursos solo para las seleccionadas.
+
+Evidencia: [selección de cuentas](docs/evidencias/SELECCION_CUENTAS_2026-10-07.md).
+Esta subentrega no cierra T06. Siguen pendientes muestra real de pérdidas y ganancias,
+agrupación con resolución de descripciones/procedencia, sustitución de lotes,
+diferencias comparables y aceptación global; después T06A y T07.
 
 ## Continuidad local — 2026-10-06
 

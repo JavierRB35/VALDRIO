@@ -394,4 +394,9 @@ Completa: {5}</value></data>
   <data name="ImportMapping.ClosingMode" xml:space="preserve"><value>Saldo íntegro al cierre para este estudio</value></data>
   <data name="ImportMapping.PeriodBasis" xml:space="preserve"><value>Se utilizan los movimientos correspondientes al periodo del estudio.</value></data>
   <data name="ImportMapping.PeriodMode" xml:space="preserve"><value>Importes del periodo</value></data>
+  <data name="ImportMapping.AccountSelectionHelp" xml:space="preserve"><value>Elige las cuentas de pérdidas y ganancias para este estudio. La numeración no determina qué se incluye. Se conservan todas las filas originales; solo las cuentas incluidas generan recursos.</value></data>
+  <data name="ImportMapping.AccountSelectionSummary" xml:space="preserve"><value>{0} de {1} cuentas incluidas. Cambiar la selección exige preparar y aprobar de nuevo.</value></data>
+  <data name="ImportMapping.AllAccounts" xml:space="preserve"><value>Incluir todas las cuentas de este archivo</value></data>
+  <data name="ImportMapping.IncludeAccount" xml:space="preserve"><value>Incluir</value></data>
+  <data name="ImportMapping.SelectAccounts" xml:space="preserve"><value>Cuentas que se importarán</value></data>
 </root>

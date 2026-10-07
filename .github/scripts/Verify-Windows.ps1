@@ -411,11 +411,15 @@ try {
     Write-Host "Import column selection WPF checks passed: $($importChecks.PassedChecks.Count)."
     $confirmationFolder = Join-Path $captureDir "import-confirmation"
     $confirmationChecks = Get-Content -LiteralPath (Join-Path $confirmationFolder "interaction.json") -Raw | ConvertFrom-Json
-    if ($confirmationChecks.Status -ne "passed" -or $confirmationChecks.PassedChecks.Count -ne 21) {
+    if ($confirmationChecks.Status -ne "passed" -or $confirmationChecks.PassedChecks.Count -ne 26) {
       throw "Import confirmation WPF interaction evidence is incomplete."
     }
     $confirmationImages = @(Get-ChildItem -LiteralPath $confirmationFolder -Filter *.png)
-    if ($confirmationImages.Count -ne 2) { throw "Expected prepared and confirmed import screenshots." }
+    if ($confirmationImages.Count -ne 3 -or
+        @(Compare-Object (@("accounts-es.png", "prepared-es.png", "confirmed-pseudo.png") | Sort-Object)
+          (@($confirmationImages.Name) | Sort-Object)).Count -ne 0) {
+      throw "Expected account selection, prepared and confirmed import screenshots."
+    }
     $confirmationManifest = Get-Content -LiteralPath (Join-Path $confirmationFolder "manifest.json") -Raw | ConvertFrom-Json
     $confirmationNames = @("import.valdrio", "import.valdrio-backup", "restored.valdrio", "snapshot.json", "period-amounts.csv")
     if ($confirmationManifest.SchemaVersion -ne 4 -or $confirmationManifest.Files.Count -ne $confirmationNames.Count -or

@@ -340,15 +340,109 @@ public sealed class T06ImportConfirmationTests
     }
     private sealed class Dialogs(string path) : IImportSourceDialogs { public string? SelectSource() => path; }
     private async Task<ImportColumnMappingViewModel> Vm(ICompanyFileSession file, StudyDefinition study, Func<ImportedBatch, Task>? refreshed = null,
-        IImportWorkspace? port = null)
+        IImportWorkspace? port = null, string? csv = null)
     {
-        var path = FileOf("ui.csv"); File.WriteAllText(path, "Amount;Ignored;Account\n1.250,50;x;00123\n0;y;ZERO");
+        var path = FileOf("ui.csv"); File.WriteAllText(path, csv ?? "Amount;Ignored;Account\n1.250,50;x;00123\n0;y;ZERO");
         var vm = new ImportColumnMappingViewModel(new ImportSourceSessionFactory(), new Dialogs(path), new UiTextCatalog(),
             new PresentationPreferencesService(new LanguageCatalog(), UserPresentationPreferences.Default));
         vm.BindTarget(port ?? file.Imports, study, true, refreshed); await vm.OpenCommand.ExecuteAsync(null); await vm.ReadCommand.ExecuteAsync(null);
         vm.AccountColumn = 3; vm.AmountColumn = 1; vm.GroupSeparator = "."; await vm.ValidateCommand.ExecuteAsync(null);
         vm.SourceCurrency = "EUR"; vm.ApprovalReference = "Synthetic checked 00123=1250.5 and ZERO=0"; vm.InterpretationApproved = true;
         await vm.PrepareCommand.ExecuteAsync(null); return vm;
+    }
+    [TestMethod]
+    public async Task ExplicitAccountSelectionPersistsOnlyChosenResourcesAndKeepsExcludedEvidence()
+    {
+        EntityId companyId, studyId; string canonical;
+        using (var file = Baseline())
+        {
+            var study = Study(file); companyId = study.CompanyId; studyId = study.Id;
+            using var vm = await Vm(file, study, csv: "Amount;Ignored;Account\n160;x;00123\n-2,50;y;返金\n0;z;ZERO\n9000;b;BALANCE");
+            var original = Hash(file.Path);
+            vm.ImportAllAccounts = false;
+            Assert.IsFalse(vm.PrepareCommand.CanExecute(null));
+            foreach (var choice in vm.AccountChoices.Where(c => c.Account != "BALANCE")) choice.Included = true;
+            Assert.IsFalse(vm.InterpretationApproved);
+            vm.InterpretationApproved = true; await vm.PrepareCommand.ExecuteAsync(null);
+            var prepared = vm.Preparation!;
+            Assert.IsTrue(prepared.CanConfirm);
+            Assert.AreEqual(3, prepared.Reconciliation.SelectedRows);
+            Assert.AreEqual(1, prepared.Reconciliation.IgnoredRows);
+            Assert.AreEqual(157.5m, prepared.Reconciliation.NetAmount);
+            Assert.AreEqual(1, prepared.Reconciliation.ZeroRows);
+            Assert.AreEqual(original, Hash(file.Path));
+            await vm.ConfirmCommand.ExecuteAsync(null);
+            var batch = vm.ConfirmedImport!;
+            Assert.AreEqual(3, batch.Resources.Count);
+            Assert.IsFalse(batch.Resources.Any(r => r.Account == "BALANCE"));
+            Assert.AreEqual(9000m, batch.Prepared.Rows.Single(r => r.Account == "BALANCE").Original!.Value.Amount);
+            Assert.IsFalse(batch.Prepared.Rows.Single(r => r.Account == "BALANCE").Selected);
+            Assert.AreEqual("4", Query(file.Path, "SELECT count(*) FROM ImportedRows"));
+            Assert.AreEqual("3", Query(file.Path, "SELECT count(*) FROM ResourceSourceLinks"));
+            canonical = CanonicalSnapshotJson.Serialize(batch);
+            var photo = file.Studies.Capture(new(companyId, studyId, 1, Id(), "test"));
+            Assert.AreEqual(3, photo.Input.Resources.Count);
+        }
+        using var reopened = Service().Open(FileOf("current.valdrio"));
+        var saved = reopened.Imports.ReadImports(companyId, studyId).Single();
+        Assert.AreEqual(canonical, CanonicalSnapshotJson.Serialize(saved));
+        Assert.AreEqual(ImportAccountSelectionKind.ExplicitList, saved.Prepared.Profile.AccountSelection.Kind);
+        Assert.AreEqual(3, reopened.Studies.ReadSnapshots(companyId, studyId).Single().Input.Resources.Count);
+    }
+    [TestMethod]
+    public async Task ChangingAccountsRevokesApprovalAndRereadingNeverReusesOldChoices()
+    {
+        using var file = Baseline(); var study = Study(file); using var vm = await Vm(file, study);
+        var original = Hash(file.Path);
+        vm.ImportAllAccounts = false;
+        var oldChoice = vm.AccountChoices.Single(c => c.Account == "00123"); oldChoice.Included = true;
+        vm.InterpretationApproved = true; await vm.PrepareCommand.ExecuteAsync(null);
+        var fingerprint = vm.Preparation!.Fingerprint;
+        vm.AccountChoices.Single(c => c.Account == "ZERO").Included = true;
+        Assert.IsNull(vm.Preparation); Assert.IsFalse(vm.InterpretationApproved); Assert.IsFalse(vm.ConfirmCommand.CanExecute(null));
+        vm.InterpretationApproved = true; await vm.PrepareCommand.ExecuteAsync(null);
+        Assert.AreNotEqual(fingerprint, vm.Preparation!.Fingerprint);
+        vm.ImportAllAccounts = true;
+        Assert.IsNull(vm.Preparation); Assert.IsFalse(vm.InterpretationApproved);
+        vm.ImportAllAccounts = false;
+        await vm.ReadCommand.ExecuteAsync(null);
+        Assert.AreEqual(0, vm.AccountChoices.Count);
+        vm.AccountColumn = 3; vm.AmountColumn = 1; await vm.ValidateCommand.ExecuteAsync(null);
+        Assert.IsTrue(vm.IsReady); Assert.IsTrue(vm.IsExplicitAccountSelection);
+        Assert.IsTrue(vm.AccountChoices.All(c => !c.Included)); Assert.IsFalse(vm.PrepareCommand.CanExecute(null));
+        vm.AccountChoices[0].Included = true; vm.InterpretationApproved = true;
+        oldChoice.Included = false;
+        Assert.IsTrue(vm.InterpretationApproved, "Detached choices must not change the active selection.");
+        Assert.AreEqual(original, Hash(file.Path));
+    }
+    [TestMethod]
+    public async Task AccountSelectionIncludesRowsBeyondPreviewAndComparesCodesOrdinally()
+    {
+        using var file = Baseline(); var study = Study(file);
+        var csv = "Amount;Ignored;Account\n" + string.Join("\n", Enumerable.Range(1, 55).Select(i => $"1;x;{i:D5}")) +
+            "\n2;x;a\n3;x;A\n4;x;é";
+        using var vm = await Vm(file, study, csv: csv);
+        Assert.AreEqual(50, vm.Preview.Count); Assert.AreEqual(58, vm.AccountChoices.Count);
+        vm.ImportAllAccounts = false;
+        foreach (var choice in vm.AccountChoices.Where(c => c.Account is "00055" or "a" or "é")) choice.Included = true;
+        vm.InterpretationApproved = true; await vm.PrepareCommand.ExecuteAsync(null);
+        Assert.IsTrue(vm.Preparation!.CanConfirm);
+        Assert.AreEqual(7m, vm.Preparation.Reconciliation.NetAmount);
+        Assert.IsFalse(vm.Preparation.Rows.Single(r => r.Account == "A").Selected);
+        CollectionAssert.AreEqual(new[] { "00055", "a", "é" }, vm.Preparation.Profile.AccountSelection.Accounts.ToArray());
+    }
+    [TestMethod]
+    public async Task InvalidSourceCannotBeMadeReadyByChoosingOnlyValidAccounts()
+    {
+        using var file = Baseline(); var study = Study(file);
+        using var vm = await Vm(file, study);
+        File.WriteAllText(FileOf("ui.csv"), "Amount;Ignored;Account\n160;x;00123\ninvalid;y;BAD");
+        await vm.OpenCommand.ExecuteAsync(null); await vm.ReadCommand.ExecuteAsync(null);
+        vm.AccountColumn = 3; vm.AmountColumn = 1; await vm.ValidateCommand.ExecuteAsync(null);
+        vm.ImportAllAccounts = false;
+        Assert.IsFalse(vm.IsReady); Assert.AreEqual(0, vm.AccountChoices.Count);
+        Assert.IsFalse(vm.PrepareCommand.CanExecute(null)); Assert.IsFalse(vm.ConfirmCommand.CanExecute(null));
+        Assert.AreEqual(0, file.Imports.ReadImports(study.CompanyId, study.Id).Count);
     }
     [TestMethod]
     public async Task ProductionViewModelConfirmedStateSurvivesFailedRefreshAndDisablesDoubleClick()

@@ -93,7 +93,7 @@ public sealed partial class ImportColumnMappingViewModel
                 },
                 selected.Columns.Debit.HasValue ? ImportSignConvention.DebitMinusCredit : ImportSignConvention.SignedAmount,
                 study.PeriodStart, study.PeriodEnd, currency, null, ImportDuplicatePolicy.Reject, ImportZeroPolicy.Keep,
-                ImportAccountSelection.All, new(approved ? ImportProfileApprovalState.ApprovedBusiness : ImportProfileApprovalState.PendingBusinessApproval,
+                SelectedAccounts(), new(approved ? ImportProfileApprovalState.ApprovedBusiness : ImportProfileApprovalState.PendingBusinessApproval,
                     string.IsNullOrWhiteSpace(approvalReference) ? "pending" : approvalReference), approved,
                 xlsxNumericAccountPolicy: selected.NumericAccountPolicy);
             var port = importPort!;
