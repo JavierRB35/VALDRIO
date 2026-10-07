@@ -336,7 +336,7 @@ try {
         # WPF invalid-preferences recovery smoke
         $exe = (Resolve-Path "artifacts/desktop/Valdrio.Desktop.exe").Path
         $sample = (Resolve-Path "samples/t01-smoke.valdrio-dev.json").Path
-        $invalidPreferences = Join-Path $env:RUNNER_TEMP "valdrio-invalid-preferences.json"
+        $invalidPreferences = Join-Path ([IO.Path]::GetTempPath()) ("valdrio-invalid-preferences-" + [Guid]::NewGuid().ToString("N") + ".json")
 
         @{
           UiLanguageTag = "en"
@@ -416,8 +416,7 @@ try {
     }
     $confirmationImages = @(Get-ChildItem -LiteralPath $confirmationFolder -Filter *.png)
     if ($confirmationImages.Count -ne 3 -or
-        @(Compare-Object (@("accounts-es.png", "prepared-es.png", "confirmed-pseudo.png") | Sort-Object)
-          (@($confirmationImages.Name) | Sort-Object)).Count -ne 0) {
+        @(Compare-Object (@("accounts-es.png", "prepared-es.png", "confirmed-pseudo.png") | Sort-Object) (@($confirmationImages.Name) | Sort-Object)).Count -ne 0) {
       throw "Expected account selection, prepared and confirmed import screenshots."
     }
     $confirmationManifest = Get-Content -LiteralPath (Join-Path $confirmationFolder "manifest.json") -Raw | ConvertFrom-Json
@@ -461,8 +460,7 @@ try {
       throw "Grouped import WPF interaction evidence is incomplete."
     }
     $groupingImages = @(Get-ChildItem -LiteralPath $groupingFolder -Filter *.png)
-    if (@(Compare-Object (@("records-es.png", "groups-es.png", "groups-pseudo.png") | Sort-Object)
-          (@($groupingImages.Name) | Sort-Object)).Count -ne 0) { throw "Missing grouped import screenshots." }
+    if (@(Compare-Object (@("records-es.png", "groups-es.png", "groups-pseudo.png") | Sort-Object) (@($groupingImages.Name) | Sort-Object)).Count -ne 0) { throw "Missing grouped import screenshots." }
     $groupingManifest = Get-Content -LiteralPath (Join-Path $groupingFolder "manifest.json") -Raw | ConvertFrom-Json
     $groupingNames = @("grouping.valdrio", "grouping.valdrio-backup", "restored.valdrio", "snapshot.json", "grouping.csv")
     if ($groupingManifest.SchemaVersion -ne 6 -or $groupingManifest.Files.Count -ne $groupingNames.Count -or
