@@ -258,6 +258,13 @@
          </StackPanel>
         </Grid>
 
+        <Expander x:Name="NodeUnitCreator" Header="{Binding CreateUnitHereLabel}" Margin="0,4,0,8">
+         <StackPanel Margin="8,4,0,4">
+          <TextBlock Text="{Binding CreateUnitHereHelp}" Style="{StaticResource SectionHelp}" />
+          <ContentControl x:Name="NodeUnitsCreationHost" />
+         </StackPanel>
+        </Expander>
+
         <TextBlock Text="{Binding PoolLabel}" />
         <TextBlock Text="{Binding PoolHelp}" Style="{StaticResource FieldHint}" />
         <TextBox x:Name="PoolBox" Text="{Binding PoolDescription,UpdateSourceTrigger=PropertyChanged}"
