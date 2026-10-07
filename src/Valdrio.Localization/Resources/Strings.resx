@@ -907,4 +907,5 @@ Difference to distribute: {7}</value></data>
   <data name="Model.UnitHelp" xml:space="preserve"><value>Choose how this node's activity is measured, for example hours, batches or items.</value></data>
   <data name="Model.LayerHelp" xml:space="preserve"><value>Classifies the type of cost. This choice does not define a calculation policy by itself.</value></data>
   <data name="Model.PoolHelp" xml:space="preserve"><value>A short name or explanation for the cost group associated with the node. This is optional.</value></data>
+  <data name="Model.Ready" xml:space="preserve"><value>Ready to continue.</value></data>
 </root>
