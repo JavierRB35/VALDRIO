@@ -288,6 +288,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     }
     public Func<Task<bool>>? BeforeChangeAsync { get; set; }
     public bool HasConfirmedImports => importValues.Count > 0;
+    public int ConfirmedImportCount => importValues.Count;
     public Task ApplyResourceReceiptAsync(StudyDefinition confirmed) => ApplyConfirmedThenReload(confirmed, ApplyConfirmedStudy);
     public async Task<bool> CanLeaveAsync()
     {
