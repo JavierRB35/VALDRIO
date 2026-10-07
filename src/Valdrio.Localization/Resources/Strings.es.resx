@@ -663,12 +663,12 @@ Completa: {5}</value></data>
 Directo: {3} · Pools: {4} · Excluido: {5} · Pendiente: {6}
 Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.Code" xml:space="preserve"><value>Cuenta / código</value></data>
-  <data name="Resources.Originals" xml:space="preserve"><value>Originales por moneda</value></data>
-  <data name="Resources.Converted" xml:space="preserve"><value>Original convertido</value></data>
-  <data name="Resources.Adjustments" xml:space="preserve"><value>Ajustes</value></data>
-  <data name="Resources.Effective" xml:space="preserve"><value>Efectivo</value></data>
-  <data name="Resources.PendingAmount" xml:space="preserve"><value>Importe pendiente</value></data>
-  <data name="Resources.Difference" xml:space="preserve"><value>Diferencia</value></data>
+  <data name="Resources.Originals" xml:space="preserve"><value>Importe importado (por moneda)</value></data>
+  <data name="Resources.Converted" xml:space="preserve"><value>Importe importado en moneda del análisis</value></data>
+  <data name="Resources.Adjustments" xml:space="preserve"><value>Correcciones</value></data>
+  <data name="Resources.Effective" xml:space="preserve"><value>Importe efectivo</value></data>
+  <data name="Resources.PendingAmount" xml:space="preserve"><value>Pendiente de asignar</value></data>
+  <data name="Resources.Difference" xml:space="preserve"><value>Diferencia sin explicar</value></data>
   <data name="Resources.Amount" xml:space="preserve"><value>Importe funcional</value></data>
   <data name="Resources.PartAmount" xml:space="preserve"><value>Importe de la parte (moneda del estudio)</value></data>
   <data name="Resources.Route" xml:space="preserve"><value>Destino de esta parte</value></data>
@@ -676,10 +676,10 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.Behavior" xml:space="preserve"><value>Comportamiento</value></data>
   <data name="Resources.Layer" xml:space="preserve"><value>Capa de coste</value></data>
   <data name="Resources.Original" xml:space="preserve"><value>Importe original</value></data>
-  <data name="Resources.Functional" xml:space="preserve"><value>Importe funcional</value></data>
+  <data name="Resources.Functional" xml:space="preserve"><value>Importe en moneda del análisis</value></data>
   <data name="Resources.Type" xml:space="preserve"><value>Tipo de ajuste</value></data>
   <data name="Resources.Reason" xml:space="preserve"><value>Motivo del ajuste o reversión</value></data>
-  <data name="Resources.State" xml:space="preserve"><value>Clase de movimiento</value></data>
+  <data name="Resources.State" xml:space="preserve"><value>Estado de la corrección</value></data>
   <data name="Resources.SignedAmount" xml:space="preserve"><value>Corrección del importe (+ aumenta / − reduce)</value></data>
   <data name="Resources.Currency" xml:space="preserve"><value>Moneda del ajuste</value></data>
   <data name="Resources.Quote" xml:space="preserve"><value>Tipo: moneda del estudio por 1 de origen</value></data>
