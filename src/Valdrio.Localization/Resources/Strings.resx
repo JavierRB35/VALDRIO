@@ -914,4 +914,7 @@ Difference to distribute: {7}</value></data>
   <data name="Model.CreateUnitHere" xml:space="preserve"><value>Can't find the unit you need? Create one here</value></data>
   <data name="Model.CreateUnitHereHelp" xml:space="preserve"><value>Create the unit without leaving the node. It is saved as a reusable company unit and, after a successful save, VALDRIO automatically selects it for this node.</value></data>
   <data name="Model.UnitCatalogTitle" xml:space="preserve"><value>Manage reusable activity-unit catalogue (optional)</value></data>
+  <data name="CompanyUnitCreationHelp" xml:space="preserve"><value>Define how activity is measured. For example: code HOURS, measurement type time. The unit is saved once and can be reused by different nodes.</value></data>
+  <data name="CompanyUnitRequiredHelp" xml:space="preserve"><value>Required: unit code and measurement type. Symbol, decimal places and whole-unit behavior are additional options.</value></data>
+  <data name="CompanyUnitAdvanced" xml:space="preserve"><value>Additional unit options</value></data>
 </root>
