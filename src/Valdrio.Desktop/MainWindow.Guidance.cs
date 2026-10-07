@@ -134,7 +134,14 @@ public partial class MainWindow
         if (viewModel?.Studies is not { } studies) return;
         if (!studies.HasImportDestination) { await NavigateWorkflow(2); return; }
         if (await studies.AttachImportTarget())
+        {
             new ImportColumnMappingWindow { Owner = this, DataContext = studies.ImportColumns }.ShowDialog();
+            if (studies.ImportColumns?.ConfirmedImport is not null)
+            {
+                await NavigateWorkflow(4);
+                return;
+            }
+        }
         UpdateWorkflow();
     }
     internal void RevealWorkflowElement(FrameworkElement element)
