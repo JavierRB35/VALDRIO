@@ -55,15 +55,21 @@ public partial class MainWindow
         Audit(models.Master is null && string.IsNullOrEmpty(models.CenterCode) && ModelPanel.CenterGrid.Items.Count == 1,
             "saving a centre clears the form and adds it to the persistent table");
         await AdvanceWorkflow();
-        Audit(ModelPanel.ModelSteps.SelectedIndex == 1 && WorkflowRequirement.Text == models.Guide("NeedUnit"), "missing unit keeps masters visible with a remedy");
+        Audit(ModelPanel.ModelSteps.SelectedIndex == 2 && ModelPanel.NodeUnitCreator.IsExpanded,
+            "the user can continue to nodes without defining activity units in advance");
+        Check(GuidedUi.Contains(ModelPanel.NodeUnitsCreationHost, CompanyPanel.UnitCreationPanel),
+            "activity-unit creation is available where the node needs the unit");
+
         Text(CompanyPanel.UnitCodeBox, ""); await Click(CompanyPanel.AddUnitButton);
         Audit(CompanyPanel.UnitActionStatus.IsVisible && CompanyPanel.UnitActionStatus.Text == company.Status && models.Units.Count == 0,
-            "invalid unit reports its error in the visible masters screen");
+            "invalid inline unit reports its error without leaving the node");
+
         Text(CompanyPanel.UnitCodeBox, "HORAS"); Text(CompanyPanel.DimensionBox, "time"); Text(CompanyPanel.SymbolBox, "h");
         Select(CompanyPanel.ScaleBox, 2); CompanyPanel.DiscreteBox.IsChecked = false; await Click(CompanyPanel.AddUnitButton);
-        Check(GuidedUi.Contains(ModelPanel, CompanyPanel.UnitCreationPanel) && models.Units.Count == 1, "units are created beside centres without leaving structure setup");
-        await AdvanceWorkflow();
-        Audit(workflowStep == 1 && ModelPanel.ModelSteps.SelectedIndex == 2, "single advance enters nodes after masters are ready");
+        Audit(models.Units.Count == 1 && models.DriverUnit?.Value.Definition.Code == "HORAS",
+            "a unit created inside the node is saved and selected automatically");
+        Check(string.IsNullOrEmpty(company.UnitCode) && !ModelPanel.NodeUnitCreator.IsExpanded,
+            "successful inline unit creation clears the unit form and returns focus to the node");
         await GoBackWorkflow();
         Audit(workflowStep == 1 && ModelPanel.ModelSteps.SelectedIndex == 1, "global back returns to the previous model step");
         await AdvanceWorkflow();
