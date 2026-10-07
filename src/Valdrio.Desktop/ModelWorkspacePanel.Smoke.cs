@@ -46,6 +46,7 @@ public partial class ModelWorkspacePanel
 
         async Task Click(Button button)
         {
+            GuidedUi.Reveal(button);
             Check(button.IsEnabled, "enabled: " + button.Name);
             ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
             await Dispatcher.InvokeAsync(() =>

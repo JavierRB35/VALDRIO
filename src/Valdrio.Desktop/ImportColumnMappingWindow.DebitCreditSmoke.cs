@@ -29,6 +29,7 @@ public partial class ImportColumnMappingWindow
         { if (!value) throw new InvalidOperationException("Debit/credit WPF: " + label); checks.Add(label); }
         async Task Click(Button button)
         {
+            GuidedUi.Reveal(button);
             if (!button.IsEnabled) throw new InvalidOperationException("Disabled debit/credit button " + button.Name);
             ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
@@ -48,7 +49,7 @@ public partial class ImportColumnMappingWindow
         }
         async Task Capture(string name)
         {
-            ConfirmImportButton.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
+            RevealImportElement(ConfirmImportButton); ConfirmImportButton.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
             VisualEvidenceCapture.Capture(this, Path.Combine(output, name));
         }
         static string Hash(string path) => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))).ToLowerInvariant();
@@ -76,11 +77,11 @@ public partial class ImportColumnMappingWindow
         Select(CreditColumnBox, 4); await Click(ValidateMappingButton);
         Check(!vm.IsReady && vm.Status.StartsWith("IMP_COLUMN_SELECTION", StringComparison.Ordinal), "same debit and credit column blocked");
         Select(CreditColumnBox, 1); await Click(ValidateMappingButton); SetText(SourceCurrencyBox, "EUR");
-        var before = Hash(path); await Click(PrepareImportButton);
+        var before = Hash(path); await PrepareForSmoke();
         Check(vm.Preparation is { CanConfirm: false } && !ConfirmImportButton.IsEnabled && Hash(path) == before,
             "debit credit approval required before company mutation");
         Check(vm.InterpretationPrompt.Contains("Debe menos Haber", StringComparison.Ordinal), "visible consent states debit minus credit");
-        Approve(); await Click(PrepareImportButton);
+        Approve(); await PrepareForSmoke();
         var prepared = vm.Preparation ?? throw new InvalidOperationException(vm.Status);
         Check(prepared.CanConfirm && prepared.Profile.SignConvention == ImportSignConvention.DebitMinusCredit &&
             prepared.Reconciliation.NetAmount == 152.5m && prepared.Reconciliation.PositiveAmount == 160m &&
@@ -129,7 +130,7 @@ public partial class ImportColumnMappingWindow
         await Click(ReadSourceButton); Select(AccountColumnBox, 3); Select(DebitColumnBox, 4); Select(CreditColumnBox, 1); await Click(ValidateMappingButton);
         Check(vm.IsReady && vm.ValidatedSelection!.Rows[0].Amount == 160m && vm.ValidatedSelection.Source.SheetName == "Selected" &&
             vm.ValidatedSelection.Source.Rows[0].GetCell(4).RawLexical == "180.00", "Excel selected worksheet uses exact stored debit and cached credit");
-        SetText(SourceCurrencyBox, "EUR"); Approve(); await Click(PrepareImportButton); await Capture("xlsx-prepared-es.png");
+        SetText(SourceCurrencyBox, "EUR"); Approve(); await PrepareForSmoke(); await Capture("xlsx-prepared-es.png");
         await Click(ConfirmImportButton); var xlsxBatch = vm.ConfirmedImport ?? throw new InvalidOperationException(vm.Status);
         Check(xlsxBatch.Resources.Count == 1 && xlsxBatch.Resources[0].Functional.Amount == 160m && studies.Current?.Revision == 2 && Hash(xlsx) == xlsxHash,
             "native Excel confirmation appends identified batch and revision");
@@ -161,7 +162,7 @@ public partial class ImportColumnMappingWindow
             "changing interpretation clears preparation columns and approval");
         var snapshot = Path.Combine(output, "snapshot.json"); File.WriteAllText(snapshot, CanonicalSnapshotJson.Serialize(photo));
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }));
-        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = 4,
+        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = SqliteCompanyFileService.SchemaVersion,
             Source = "synthetic native WPF debit minus credit import", StudyId = study.Id.ToString(),
             BatchIds = new[] { csvBatch.Id.ToString(), xlsxBatch.Id.ToString() },
             Files = new[] { path, backup, restored, snapshot, csv, xlsx }.Select(p => new { Name = Path.GetFileName(p), Sha256 = Hash(p) }) }));

@@ -44,6 +44,89 @@ public sealed class WorkspaceAuditClosureTests
     }
 
     [TestMethod]
+    public async Task ImportPreviewPreservesUnsavedStudyAndCannotConfirmWithoutTarget()
+    {
+        var preferences = new PresentationPreferencesService(new LanguageCatalog(), UserPresentationPreferences.Default);
+        var formatter = new PresentationFormatter(new DisplayTimeZoneResolver());
+        var texts = new UiTextCatalog();
+        var dialogs = new Dialogs();
+        using var company = new CompanyFileViewModel(Service(), dialogs, Catalog, texts, preferences, formatter);
+        using var imports = new ImportColumnMappingViewModel(new ImportSourceSessionFactory(), new PreviewDialogs(), texts, preferences);
+        using var studies = new StudyWorkspaceViewModel(company, Catalog, texts, preferences, formatter, new NoPromptDialogs()) { ImportColumns = imports };
+        await company.OpenPath(Baseline());
+        studies.Name = "Pending study";
+        studies.PeriodStart = new DateTime(2026, 1, 1);
+        Assert.IsTrue(await studies.AttachImportTarget());
+        Assert.AreEqual("Pending study", studies.Name);
+        Assert.IsTrue(studies.IsDirty);
+        Assert.IsNull(studies.Current);
+        Assert.IsFalse(imports.PrepareCommand.CanExecute(null));
+        Assert.IsFalse(imports.ConfirmCommand.CanExecute(null));
+        Assert.IsTrue(imports.OpenCommand.CanExecute(null));
+        Assert.IsFalse(studies.HasStudies);
+        Assert.IsTrue(studies.HasPublishedModels);
+    }
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task PreviewOfSavedStudyCannotWriteOrPromptAndRetainsPendingContext(bool pending)
+    {
+        var preferences = new PresentationPreferencesService(new LanguageCatalog(), UserPresentationPreferences.Default);
+        var formatter = new PresentationFormatter(new DisplayTimeZoneResolver());
+        var texts = new UiTextCatalog();
+        using var company = new CompanyFileViewModel(Service(), new Dialogs(), Catalog, texts, preferences, formatter);
+        using var imports = new ImportColumnMappingViewModel(new ImportSourceSessionFactory(), new PreviewDialogs(), texts, preferences);
+        using var studies = new StudyWorkspaceViewModel(company, Catalog, texts, preferences, formatter, new NoPromptDialogs()) { ImportColumns = imports };
+        var path = Baseline(); await company.OpenPath(path);
+        studies.Name = "Saved study";
+        studies.PeriodStart = new(2026, 1, 1); studies.PeriodEnd = new(2026, 10, 31);
+        studies.Currency = "EUR"; studies.ModelChoice = studies.PublishedModels.First();
+        Assert.IsTrue(await studies.SaveForImport());
+        Assert.IsTrue(await studies.AttachImportTarget());
+        Assert.IsTrue(imports.HasImportDestination);
+        var saved = studies.Current!;
+        if (pending) studies.Name = "Pending edit";
+        var before = System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(path));
+        Assert.IsTrue(await studies.AttachImportTarget(previewOnly: true));
+        Assert.AreEqual(pending ? "Pending edit" : "Saved study", studies.Name);
+        Assert.AreEqual(pending, studies.IsDirty);
+        Assert.AreEqual(saved, studies.Current);
+        Assert.IsFalse(imports.HasImportDestination);
+        Assert.IsFalse(imports.PrepareCommand.CanExecute(null));
+        Assert.IsFalse(imports.ConfirmCommand.CanExecute(null));
+        CollectionAssert.AreEqual(before, System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(path)));
+    }
+
+    [TestMethod]
+    public async Task GuidedModelReportsPendingMasterBeforePublicationAndRequiresActiveMasters()
+    {
+        var preferences = new PresentationPreferencesService(new LanguageCatalog(), UserPresentationPreferences.Default);
+        var formatter = new PresentationFormatter(new DisplayTimeZoneResolver());
+        var dialogs = new Dialogs();
+        using var company = new CompanyFileViewModel(Service(), dialogs, Catalog, new UiTextCatalog(), preferences, formatter);
+        using var vm = new ModelWorkspaceViewModel(company, new UiTextCatalog(), preferences, dialogs, formatter);
+        await company.OpenPath(Baseline());
+        vm.ModelChoice = vm.Models.First(m => m.Value.Status == ModelStatus.Draft);
+        await vm.LoadCommand.ExecuteAsync(null);
+        vm.Master = vm.Centers.First(); vm.CenterName += " pending";
+        Assert.IsTrue(vm.HasPendingCenter);
+        Assert.AreEqual(vm.Guide("PendingCenter"), vm.NextRequirement);
+        await vm.SaveCenterCommand.ExecuteAsync(null);
+        Assert.IsFalse(vm.HasPendingCenter);
+        foreach (var center in vm.Centers.Where(c => c.Value.IsActive).ToArray())
+        { vm.Master = center; await vm.ToggleCenterCommand.ExecuteAsync(null); }
+        Assert.IsTrue(vm.Centers.Count > 0);
+        Assert.IsFalse(vm.HasActiveCenter);
+        Assert.AreEqual(vm.Guide("NeedCenter"), vm.NextRequirement);
+    }
+
+    private sealed class PreviewDialogs : IImportSourceDialogs { public string? SelectSource() => null; }
+    private sealed class NoPromptDialogs : IModelEditorDialogs
+    {
+        public PendingEditChoice ResolvePending(string title, string body) => throw new AssertFailedException("Preview must not ask to save or discard the study.");
+    }
+
+    [TestMethod]
     [DataRow("CreateCenter")]
     [DataRow("ChangeCenter")]
     [DataRow("ToggleCenter")]

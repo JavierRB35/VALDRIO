@@ -13,6 +13,8 @@ if (args.Length == 2 && args[0] == "--study-snapshot")
         receipt.EnsureValid();
         var preparation = StudyPreparationService.Evaluate(receipt.Input);
         var input = receipt.Input;
+        var activeBatchIds = input is ImportedStudySnapshotInput ledger
+            ? ImportConfirmationRules.ActiveBatches(ledger.Imports).Select(b => b.Id).ToHashSet() : [];
         using var output = JsonDocument.Parse(CanonicalSnapshotJson.Serialize(new { status = "verified", outputSchema = "valdrio-study-verification-v2",
             task = input is ImportedStudySnapshotInput ? "T06-period-import" : "T05-context-only", receipt.Id,
             receipt.StudyId, receipt.InputRevision, receipt.PayloadSchema, receipt.EconomicInputHash, receipt.FullSnapshotHash,
@@ -20,7 +22,7 @@ if (args.Length == 2 && args[0] == "--study-snapshot")
             currency = receipt.Input.StudyContext.Currency.FunctionalCurrencyCode.ToString(), preparation.ReadyForCalculation,
             resourceCount = input.Resources.Count,
             imports = input is ImportedStudySnapshotInput imported ? imported.Imports.Select(b =>
-                new { b.Id, b.Prepared.Reconciliation }).ToArray() : [],
+                new { b.Id, b.ReplacesBatchId, active = activeBatchIds.Contains(b.Id), b.Prepared.Reconciliation, b.Prepared.ConversionBridge }).ToArray() : [],
             diagnostics = preparation.Diagnostics.Select(d => d.Code) }));
         Console.WriteLine(output.RootElement.GetProperty("Value").GetRawText());
         return 0;

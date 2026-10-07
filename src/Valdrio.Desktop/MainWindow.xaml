@@ -1,580 +1,310 @@
-<Window x:Class="Valdrio.Desktop.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:Valdrio.Desktop"
-        Title="{Binding WindowTitle}"
-        Height="760"
-        Width="940"
-        MinHeight="620"
-        MinWidth="760"
-        WindowStartupLocation="CenterScreen">
-    <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanVisibility" />
-        <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap" /></Style>
-    </Window.Resources>
-    <ScrollViewer x:Name="RootScrollViewer"
-                  VerticalScrollBarVisibility="Auto"
-                  HorizontalScrollBarVisibility="Disabled">
-        <Grid Margin="28">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="18" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="14" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="14" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="14" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="14" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="14" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="14" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="14" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="14" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-            <TextBlock Grid.Row="0"
-                       Text="{Binding AppTitle}"
-                       FontSize="34"
-                       FontWeight="SemiBold" />
-
-            <TextBlock Grid.Row="1"
-                       Margin="0,5,0,0"
-                       Text="{Binding HeaderSubtitle}"
-                       TextWrapping="Wrap"
-                       FontSize="17" />
-
-            <TextBlock Grid.Row="2"
-                       Margin="0,3,0,0"
-                       Text="{Binding SpecificationVersion}" />
-
-            <local:CompanyFilePanel x:Name="CompanyPanel" Grid.Row="4" DataContext="{Binding Company}" />
-
-            <local:ModelWorkspacePanel x:Name="ModelPanel" Grid.Row="6" DataContext="{Binding Models}" />
-
-            <local:StudyWorkspacePanel x:Name="StudyPanel" Grid.Row="8" DataContext="{Binding Studies}" />
-
-            <GroupBox Grid.Row="10"
-                      Header="{Binding PreferencesTitle}"
-                      Padding="16">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="220" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="10" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="10" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="10" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Grid.Row="0" Grid.Column="0"
-                               Margin="0,4,16,0"
-                               Text="{Binding LabelUiLanguage}"
-                               TextWrapping="Wrap" />
-                    <ComboBox x:Name="UiLanguageSelector"
-                              Grid.Row="0"
-                              Grid.Column="1"
-                              MinWidth="200"
-                              ItemsSource="{Binding UiLanguageOptions}"
-                              SelectedItem="{Binding SelectedUiLanguageTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                              TabIndex="0"
-                              AutomationProperties.Name="{Binding LabelUiLanguage}" />
-
-                    <TextBlock Grid.Row="2" Grid.Column="0"
-                               Margin="0,4,16,0"
-                               Text="{Binding LabelFormatCulture}"
-                               TextWrapping="Wrap" />
-                    <ComboBox x:Name="FormatCultureSelector"
-                              Grid.Row="2"
-                              Grid.Column="1"
-                              MinWidth="200"
-                              ItemsSource="{Binding FormatCultureOptions}"
-                              SelectedItem="{Binding SelectedFormatCultureTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                              TabIndex="1"
-                              AutomationProperties.Name="{Binding LabelFormatCulture}" />
-
-                    <TextBlock Grid.Row="4" Grid.Column="0"
-                               Margin="0,4,16,0"
-                               Text="{Binding LabelTimeZone}"
-                               TextWrapping="Wrap" />
-                    <ComboBox x:Name="TimeZoneSelector"
-                              Grid.Row="4"
-                              Grid.Column="1"
-                              MinWidth="280"
-                              ItemsSource="{Binding TimeZoneOptions}"
-                              SelectedItem="{Binding SelectedTimeZoneId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                              TabIndex="2"
-                              AutomationProperties.Name="{Binding LabelTimeZone}" />
-                    <StackPanel Grid.Row="6" Grid.ColumnSpan="2"
-                                Visibility="{Binding ShowPreferencesSaveWarning, Converter={StaticResource BooleanVisibility}}">
-                        <TextBlock Text="{Binding PreferencesSaveWarning}" Foreground="DarkRed"
-                                   AutomationProperties.LiveSetting="Polite" />
-                        <Button Content="{Binding RetrySavePreferencesLabel}" Command="{Binding RetrySavePreferencesCommand}"
-                                HorizontalAlignment="Left" Margin="0,8,0,0" />
-                    </StackPanel>
-                </Grid>
-            </GroupBox>
-
-            <Expander x:Name="DevelopmentTools" Grid.Row="12" Header="{Binding DevelopmentToolsTitle}" TabIndex="100">
-                <Grid Margin="0,12,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/><RowDefinition Height="14"/>
-                        <RowDefinition Height="Auto"/><RowDefinition Height="14"/>
-                        <RowDefinition Height="Auto"/><RowDefinition Height="14"/>
-                        <RowDefinition Height="Auto"/><RowDefinition Height="14"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-            <GroupBox Grid.Row="0"
-                      Header="{Binding PreviewTitle}"
-                      Padding="16">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="220" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="8" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="8" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="8" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="8" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="8" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Grid.Row="0" Grid.Column="0"
-                               Margin="0,0,16,0"
-                               Text="{Binding LabelMoneyPreview}"
-                               TextWrapping="Wrap" />
-                    <TextBlock Grid.Row="0" Grid.Column="1"
-                               Text="{Binding PreviewMoney}"
-                               FontFamily="Consolas"
-                               FlowDirection="LeftToRight" />
-
-                    <TextBlock Grid.Row="2" Grid.Column="0"
-                               Margin="0,0,16,0"
-                               Text="{Binding LabelDatePreview}"
-                               TextWrapping="Wrap" />
-                    <TextBlock Grid.Row="2" Grid.Column="1"
-                               Text="{Binding PreviewDate}"
-                               FlowDirection="LeftToRight" />
-
-                    <TextBlock Grid.Row="4" Grid.Column="0"
-                               Margin="0,0,16,0"
-                               Text="{Binding LabelInstantPreview}"
-                               TextWrapping="Wrap" />
-                    <TextBlock Grid.Row="4" Grid.Column="1"
-                               Text="{Binding PreviewInstant}"
-                               FlowDirection="LeftToRight" />
-
-                    <TextBlock Grid.Row="6" Grid.Column="0"
-                               Margin="0,0,16,0"
-                               Text="{Binding LabelCanonicalBusinessDate}"
-                               TextWrapping="Wrap" />
-                    <TextBlock Grid.Row="6" Grid.Column="1"
-                               Text="{Binding CanonicalBusinessDate}"
-                               FontFamily="Consolas"
-                               FlowDirection="LeftToRight" />
-
-                    <TextBlock Grid.Row="8" Grid.Column="0"
-                               Margin="0,0,16,0"
-                               Text="{Binding LabelCanonicalUtcInstant}"
-                               TextWrapping="Wrap" />
-                    <TextBlock Grid.Row="8" Grid.Column="1"
-                               Text="{Binding CanonicalUtcInstant}"
-                               FontFamily="Consolas"
-                               FlowDirection="LeftToRight" />
-
-                    <TextBlock Grid.Row="10" Grid.Column="0"
-                               Margin="0,0,16,0"
-                               Text="{Binding LabelResolvedLocalInstant}"
-                               TextWrapping="Wrap" />
-                    <TextBlock Grid.Row="10" Grid.Column="1"
-                               Text="{Binding ResolvedLocalInstant}"
-                               FontFamily="Consolas"
-                               FlowDirection="LeftToRight" />
-                </Grid>
-            </GroupBox>
-
-            <GroupBox Grid.Row="2"
-                      Header="{Binding FxEditorTitle}"
-                      Padding="16">
-                <StackPanel>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="220" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="8" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="8" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="8" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="8" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="8" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="8" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="8" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="8" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Grid.Row="0" Grid.Column="0"
-                                   Margin="0,4,16,0"
-                                   Text="{Binding LabelFxOriginal}" />
-                        <TextBlock Grid.Row="0" Grid.Column="1"
-                                   Text="{Binding FxOriginal}"
-                                   FontFamily="Consolas"
-                                   FlowDirection="LeftToRight" />
-
-                        <TextBlock Grid.Row="2" Grid.Column="0"
-                                   Margin="0,4,16,0"
-                                   Text="{Binding LabelFxOrientation}" />
-                        <TextBlock Grid.Row="2" Grid.Column="1"
-                                   Text="{Binding FxOrientation}"
-                                   FontFamily="Consolas"
-                                   FlowDirection="LeftToRight" />
-
-                        <TextBlock Grid.Row="4" Grid.Column="0"
-                                   Margin="0,4,16,0"
-                                   Text="{Binding LabelFxQuote}" />
-                        <TextBox x:Name="FxQuoteBox"
-                                 Grid.Row="4" Grid.Column="1"
-                                 Text="{Binding FxQuoteText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 GotKeyboardFocus="OnFxQuoteGotKeyboardFocus"
-                                 TabIndex="3"
-                                 FlowDirection="LeftToRight"
-                                 AutomationProperties.Name="{Binding LabelFxQuote}" />
-
-                        <TextBlock Grid.Row="6" Grid.Column="0"
-                                   Margin="0,4,16,0"
-                                   Text="{Binding LabelFxRateDate}" />
-                        <TextBox x:Name="FxRateDateBox"
-                                 Grid.Row="6" Grid.Column="1"
-                                 Text="{Binding FxRateDateText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 TabIndex="4"
-                                 FlowDirection="LeftToRight"
-                                 AutomationProperties.Name="{Binding LabelFxRateDate}" />
-
-                        <TextBlock Grid.Row="8" Grid.Column="0"
-                                   Margin="0,4,16,0"
-                                   Text="{Binding LabelFxRateSource}" />
-                        <TextBox x:Name="FxRateSourceBox"
-                                 Grid.Row="8" Grid.Column="1"
-                                 Text="{Binding FxRateSourceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 TabIndex="5"
-                                 AutomationProperties.Name="{Binding LabelFxRateSource}" />
-
-                        <TextBlock Grid.Row="10" Grid.Column="0"
-                                   Margin="0,4,16,0"
-                                   Text="{Binding LabelFxFunctional}" />
-                        <TextBlock Grid.Row="10" Grid.Column="1"
-                                   Text="{Binding FxFunctional}"
-                                   FontFamily="Consolas"
-                                   FlowDirection="LeftToRight" />
-
-                        <TextBlock Grid.Row="12" Grid.Column="0"
-                                   Margin="0,4,16,0"
-                                   Text="{Binding LabelFxRounding}" />
-                        <TextBlock Grid.Row="12" Grid.Column="1"
-                                   Text="{Binding FxRounding}"
-                                   FontFamily="Consolas"
-                                   FlowDirection="LeftToRight" />
-
-                        <TextBlock Grid.Row="14" Grid.Column="0"
-                                   Margin="0,4,16,0"
-                                   Text="{Binding LabelFxRateSet}" />
-                        <TextBlock Grid.Row="14" Grid.Column="1"
-                                   Text="{Binding FxRateSetVersion}"
-                                   FontFamily="Consolas"
-                                   FlowDirection="LeftToRight" />
-
-                        <Button x:Name="ApplyFxRateButton"
-                                Grid.Row="16"
-                                Grid.ColumnSpan="2"
-                                HorizontalAlignment="Left"
-                                Padding="14,7"
-                                Content="{Binding ActionApplyFxRate}"
-                                Command="{Binding ApplyFxRateCommand}"
-                                TabIndex="6" />
-                    </Grid>
-
-                    <TextBlock Margin="0,10,0,0"
-                               Text="{Binding FxStatus}"
-                               TextWrapping="Wrap" />
-                    <TextBlock Margin="0,6,0,0"
-                               Text="{Binding FxEditorExplanation}"
-                               TextWrapping="Wrap" />
-                </StackPanel>
-            </GroupBox>
-
-            <GroupBox x:Name="T02RoundingGroup"
-                      Grid.Row="16"
-                      Header="{Binding RoundingTitle}"
-                      Padding="16">
-                <StackPanel>
-                    <Grid Margin="0,0,0,12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="130" />
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="130" />
-                            <ColumnDefinition Width="130" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0"
-                                   Text="{Binding LabelRoundingReference}"
-                                   FontWeight="SemiBold" />
-                        <TextBlock Grid.Column="1"
-                                   Text="{Binding RoundingReferenceCase}"
-                                   FlowDirection="LeftToRight" />
-                        <TextBlock Grid.Column="2"
-                                   Text="{Binding LabelRoundingSource}"
-                                   FontWeight="SemiBold" />
-                        <TextBlock Grid.Column="3"
-                                   Text="{Binding RoundingSourceTotal}"
-                                   FlowDirection="LeftToRight"
-                                   FontFamily="Consolas" />
-                        <TextBlock Grid.Column="4"
-                                   Text="{Binding LabelRoundingQuantum}"
-                                   FontWeight="SemiBold" />
-                        <TextBlock Grid.Column="5"
-                                   Text="{Binding RoundingQuantum}"
-                                   FlowDirection="LeftToRight"
-                                   FontFamily="Consolas" />
-                    </Grid>
-
-                    <Grid Margin="0,0,0,4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70" />
-                            <ColumnDefinition Width="280" />
-                            <ColumnDefinition Width="280" />
-                            <ColumnDefinition Width="140" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                                   Text="{Binding LabelRoundingId}"
-                                   FontWeight="SemiBold" />
-                        <TextBlock Grid.Column="1"
-                                   Text="{Binding LabelRoundingRaw}"
-                                   FontWeight="SemiBold" />
-                        <TextBlock Grid.Column="2"
-                                   Text="{Binding LabelRoundingAdjustment}"
-                                   FontWeight="SemiBold" />
-                        <TextBlock Grid.Column="3"
-                                   Text="{Binding LabelRoundingPosted}"
-                                   FontWeight="SemiBold" />
-                    </Grid>
-
-                    <ItemsControl ItemsSource="{Binding RoundingRows}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="0,2">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="70" />
-                                        <ColumnDefinition Width="280" />
-                                        <ColumnDefinition Width="280" />
-                                        <ColumnDefinition Width="140" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0"
-                                               Text="{Binding DestinationId}"
-                                               FlowDirection="LeftToRight" />
-                                    <TextBlock Grid.Column="1"
-                                               Text="{Binding RawAmount}"
-                                               FontFamily="Consolas"
-                                               FlowDirection="LeftToRight" />
-                                    <TextBlock Grid.Column="2"
-                                               Text="{Binding RoundingAdjustment}"
-                                               FontFamily="Consolas"
-                                               FlowDirection="LeftToRight" />
-                                    <TextBlock Grid.Column="3"
-                                               Text="{Binding PostedAmount}"
-                                               FontFamily="Consolas"
-                                               FlowDirection="LeftToRight" />
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-
-                    <TextBlock Margin="0,10,0,0"
-                               Text="{Binding RoundingExplanation}"
-                               TextWrapping="Wrap" />
-
-                    <GroupBox Margin="0,14,0,0"
-                              Header="{Binding CurrencyMetadataTitle}"
-                              Padding="12">
-                        <StackPanel>
-                            <Grid Margin="0,0,0,4">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="90" />
-                                    <ColumnDefinition Width="120" />
-                                    <ColumnDefinition Width="160" />
-                                    <ColumnDefinition Width="140" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0"
-                                           Text="{Binding LabelCurrencyCode}"
-                                           FontWeight="SemiBold" />
-                                <TextBlock Grid.Column="1"
-                                           Text="{Binding LabelNumericCode}"
-                                           FontWeight="SemiBold" />
-                                <TextBlock Grid.Column="2"
-                                           Text="{Binding LabelMinorUnitDigits}"
-                                           FontWeight="SemiBold" />
-                                <TextBlock Grid.Column="3"
-                                           Text="{Binding LabelCurrencyQuantum}"
-                                           FontWeight="SemiBold" />
-                                <TextBlock Grid.Column="4"
-                                           Text="{Binding LabelCurrencyProjection}"
-                                           FontWeight="SemiBold" />
-                            </Grid>
-
-                            <ItemsControl ItemsSource="{Binding CurrencyMetadataRows}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Margin="0,2">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="90" />
-                                                <ColumnDefinition Width="120" />
-                                                <ColumnDefinition Width="160" />
-                                                <ColumnDefinition Width="140" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0"
-                                                       Text="{Binding AlphaCode}"
-                                                       FontFamily="Consolas"
-                                                       FlowDirection="LeftToRight" />
-                                            <TextBlock Grid.Column="1"
-                                                       Text="{Binding NumericCode}"
-                                                       FontFamily="Consolas"
-                                                       FlowDirection="LeftToRight" />
-                                            <TextBlock Grid.Column="2"
-                                                       Text="{Binding MinorUnitDigits}"
-                                                       FlowDirection="LeftToRight" />
-                                            <TextBlock Grid.Column="3"
-                                                       Text="{Binding Quantum}"
-                                                       FontFamily="Consolas"
-                                                       FlowDirection="LeftToRight" />
-                                            <TextBlock Grid.Column="4"
-                                                       Text="{Binding ProjectedDistribution}"
-                                                       FontFamily="Consolas"
-                                                       FlowDirection="LeftToRight" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-
-                            <TextBlock Margin="0,8,0,0"
-                                       Text="{Binding CurrencyMetadataExplanation}"
-                                       TextWrapping="Wrap" />
-                        </StackPanel>
-                    </GroupBox>
-                </StackPanel>
-            </GroupBox>
-
-            <GroupBox Grid.Row="6"
-                      Header="{Binding EditTitle}"
-                      Padding="16">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="220" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="8" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="8" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="10" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Grid.Row="0" Grid.Column="0"
-                               Margin="0,4,16,0"
-                               Text="{Binding LabelPendingValue}"
-                               TextWrapping="Wrap" />
-                    <TextBox x:Name="PendingEditBox"
-                             Grid.Row="0"
-                             Grid.Column="1"
-                             Text="{Binding PendingEditText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             TabIndex="7"
-                             FlowDirection="LeftToRight"
-                             AutomationProperties.Name="{Binding LabelPendingValue}" />
-
-                    <TextBlock Grid.Row="2" Grid.Column="0"
-                               Margin="0,0,16,0"
-                               Text="{Binding LabelCapturedCulture}"
-                               TextWrapping="Wrap" />
-                    <TextBlock Grid.Row="2" Grid.Column="1"
-                               Text="{Binding CapturedEditCulture}"
-                               FlowDirection="LeftToRight" />
-
-                    <TextBlock Grid.Row="4" Grid.Column="0"
-                               Margin="0,0,16,0"
-                               Text="{Binding LabelEditStatus}"
-                               TextWrapping="Wrap" />
-                    <TextBlock Grid.Row="4" Grid.Column="1"
-                               Text="{Binding EditStatus}"
-                               TextWrapping="Wrap" />
-
-                    <WrapPanel Grid.Row="6" Grid.ColumnSpan="2">
-                        <Button x:Name="StartEditButton"
-                                Margin="0,0,10,0"
-                                Padding="14,7"
-                                Content="{Binding ActionStartEdit}"
-                                Command="{Binding StartEditCommand}"
-                                TabIndex="8" />
-                        <Button x:Name="CommitEditButton"
-                                Padding="14,7"
-                                Content="{Binding ActionCommitEdit}"
-                                Command="{Binding CommitEditCommand}"
-                                TabIndex="9" />
-                    </WrapPanel>
-                </Grid>
-            </GroupBox>
-
-            <Border Grid.Row="8"
-                    BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
-                    BorderThickness="1"
-                    CornerRadius="6"
-                    Padding="14">
-                <StackPanel>
-                    <TextBlock Text="{Binding FooterDevelopmentOnly}"
-                               TextWrapping="Wrap"
-                               FontStyle="Italic" />
-                    <TextBlock Margin="0,8,0,0"
-                               Text="{Binding Status}"
-                               TextWrapping="Wrap" />
-                    <TextBlock Margin="0,4,0,0"
-                               Text="{Binding SampleName}"
-                               TextWrapping="Wrap" />
-                </StackPanel>
-            </Border>
-                </Grid>
-            </Expander>
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:Valdrio.Desktop" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Valdrio.Desktop.MainWindow" Title="{Binding WindowTitle}" Height="760" Width="940" MinHeight="620" MinWidth="760" WindowStartupLocation="CenterScreen">
+ <Window.Resources>
+  <BooleanToVisibilityConverter x:Key="BooleanVisibility" />
+  <Style TargetType="TextBlock">
+   <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+ </Window.Resources>
+ <DockPanel LastChildFill="True">
+  <StackPanel Margin="18,12,18,6" DockPanel.Dock="Top">
+   <WrapPanel>
+    <Button Click="ChooseCompany" Padding="12,7" Margin="0,0,8,6" x:Name="CompanyStep" />
+    <Button Click="ChooseModel" Padding="12,7" Margin="0,0,8,6" x:Name="ModelStep" />
+    <Button Click="ChooseStudy" Padding="12,7" Margin="0,0,8,6" x:Name="StudyStep" />
+    <Button Click="ChooseImport" Padding="12,7" Margin="0,0,8,6" x:Name="ImportStep" />
+    <Button Click="ChooseSettings" Padding="12,7" Margin="0,0,8,6" x:Name="SettingsStep" />
+   </WrapPanel>
+   <TextBlock FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" x:Name="WorkflowTitle" />
+   <TextBlock TextWrapping="Wrap" Margin="0,6,0,0" AutomationProperties.LiveSetting="Polite" x:Name="WorkflowRequirement" />
+   <TextBlock TextWrapping="Wrap" Margin="0,4,0,0" x:Name="SaveLocation" />
+  </StackPanel>
+  <StackPanel Margin="18,6,18,12" DockPanel.Dock="Bottom">
+   <TextBlock TextWrapping="Wrap" MinHeight="38" AutomationProperties.LiveSetting="Polite" x:Name="FieldHelpText" />
+   <WrapPanel>
+    <Button Click="PreviousStep" Padding="14,7" Margin="0,4,8,0" x:Name="WorkflowBack" />
+    <Button Click="ContinueWorkflow" Padding="14,7" Margin="0,4,8,0" x:Name="WorkflowNext" />
+   </WrapPanel>
+  </StackPanel>
+  <ScrollViewer x:Name="RootScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+   <Grid Margin="18,6,18,12">
+    <Grid.RowDefinitions>
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="18" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="14" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="14" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="14" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="14" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="14" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="14" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="14" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="14" />
+     <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <local:CompanyFilePanel x:Name="CompanyPanel" Grid.Row="4" DataContext="{Binding Company}" />
+    <local:ModelWorkspacePanel x:Name="ModelPanel" Grid.Row="6" DataContext="{Binding Models}" />
+    <local:StudyWorkspacePanel x:Name="StudyPanel" Grid.Row="8" DataContext="{Binding Studies}" />
+    <GroupBox Grid.Row="10" Header="{Binding PreferencesTitle}" Padding="16" x:Name="PreferencesPanel">
+     <Grid>
+      <Grid.ColumnDefinitions>
+       <ColumnDefinition Width="220" />
+       <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+       <RowDefinition Height="Auto" />
+       <RowDefinition Height="10" />
+       <RowDefinition Height="Auto" />
+       <RowDefinition Height="10" />
+       <RowDefinition Height="Auto" />
+       <RowDefinition Height="10" />
+       <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelUiLanguage}" TextWrapping="Wrap" />
+      <ComboBox local:FieldHelp.Key="SelectedUiLanguageTag" x:Name="UiLanguageSelector" Grid.Row="0" Grid.Column="1" MinWidth="200" ItemsSource="{Binding UiLanguageOptions}" SelectedItem="{Binding SelectedUiLanguageTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TabIndex="0" AutomationProperties.Name="{Binding LabelUiLanguage}" />
+      <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelFormatCulture}" TextWrapping="Wrap" />
+      <ComboBox local:FieldHelp.Key="SelectedFormatCultureTag" x:Name="FormatCultureSelector" Grid.Row="2" Grid.Column="1" MinWidth="200" ItemsSource="{Binding FormatCultureOptions}" SelectedItem="{Binding SelectedFormatCultureTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TabIndex="1" AutomationProperties.Name="{Binding LabelFormatCulture}" />
+      <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelTimeZone}" TextWrapping="Wrap" />
+      <ComboBox local:FieldHelp.Key="SelectedTimeZoneId" x:Name="TimeZoneSelector" Grid.Row="4" Grid.Column="1" MinWidth="280" ItemsSource="{Binding TimeZoneOptions}" SelectedItem="{Binding SelectedTimeZoneId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TabIndex="2" AutomationProperties.Name="{Binding LabelTimeZone}" />
+      <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Visibility="{Binding ShowPreferencesSaveWarning, Converter={StaticResource BooleanVisibility}}">
+       <TextBlock Text="{Binding PreferencesSaveWarning}" Foreground="DarkRed" AutomationProperties.LiveSetting="Polite" />
+       <Button Content="{Binding RetrySavePreferencesLabel}" Command="{Binding RetrySavePreferencesCommand}" HorizontalAlignment="Left" Margin="0,8,0,0" />
+      </StackPanel>
+     </Grid>
+    </GroupBox>
+    <Expander x:Name="DevelopmentTools" Grid.Row="12" Header="{Binding DevelopmentToolsTitle}" TabIndex="100">
+     <Grid Margin="0,12,0,0">
+      <Grid.RowDefinitions>
+       <RowDefinition Height="Auto" />
+       <RowDefinition Height="14" />
+       <RowDefinition Height="Auto" />
+       <RowDefinition Height="14" />
+       <RowDefinition Height="Auto" />
+       <RowDefinition Height="14" />
+       <RowDefinition Height="Auto" />
+       <RowDefinition Height="14" />
+       <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <GroupBox Grid.Row="0" Header="{Binding PreviewTitle}" Padding="16">
+       <Grid>
+        <Grid.ColumnDefinitions>
+         <ColumnDefinition Width="220" />
+         <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+         <RowDefinition Height="Auto" />
+         <RowDefinition Height="8" />
+         <RowDefinition Height="Auto" />
+         <RowDefinition Height="8" />
+         <RowDefinition Height="Auto" />
+         <RowDefinition Height="8" />
+         <RowDefinition Height="Auto" />
+         <RowDefinition Height="8" />
+         <RowDefinition Height="Auto" />
+         <RowDefinition Height="8" />
+         <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,16,0" Text="{Binding LabelMoneyPreview}" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding PreviewMoney}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+        <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,0,16,0" Text="{Binding LabelDatePreview}" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding PreviewDate}" FlowDirection="LeftToRight" />
+        <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,0,16,0" Text="{Binding LabelInstantPreview}" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding PreviewInstant}" FlowDirection="LeftToRight" />
+        <TextBlock Grid.Row="6" Grid.Column="0" Margin="0,0,16,0" Text="{Binding LabelCanonicalBusinessDate}" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding CanonicalBusinessDate}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+        <TextBlock Grid.Row="8" Grid.Column="0" Margin="0,0,16,0" Text="{Binding LabelCanonicalUtcInstant}" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding CanonicalUtcInstant}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+        <TextBlock Grid.Row="10" Grid.Column="0" Margin="0,0,16,0" Text="{Binding LabelResolvedLocalInstant}" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding ResolvedLocalInstant}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+       </Grid>
+      </GroupBox>
+      <GroupBox Grid.Row="2" Header="{Binding FxEditorTitle}" Padding="16">
+       <StackPanel>
+        <Grid>
+         <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="220" />
+          <ColumnDefinition Width="*" />
+         </Grid.ColumnDefinitions>
+         <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="8" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="8" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="8" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="8" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="8" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="8" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="8" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="8" />
+          <RowDefinition Height="Auto" />
+         </Grid.RowDefinitions>
+         <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelFxOriginal}" />
+         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding FxOriginal}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+         <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelFxOrientation}" />
+         <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding FxOrientation}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+         <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelFxQuote}" />
+         <TextBox x:Name="FxQuoteBox" Grid.Row="4" Grid.Column="1" Text="{Binding FxQuoteText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" GotKeyboardFocus="OnFxQuoteGotKeyboardFocus" TabIndex="3" FlowDirection="LeftToRight" AutomationProperties.Name="{Binding LabelFxQuote}" />
+         <TextBlock Grid.Row="6" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelFxRateDate}" />
+         <TextBox x:Name="FxRateDateBox" Grid.Row="6" Grid.Column="1" Text="{Binding FxRateDateText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TabIndex="4" FlowDirection="LeftToRight" AutomationProperties.Name="{Binding LabelFxRateDate}" />
+         <TextBlock Grid.Row="8" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelFxRateSource}" />
+         <TextBox x:Name="FxRateSourceBox" Grid.Row="8" Grid.Column="1" Text="{Binding FxRateSourceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TabIndex="5" AutomationProperties.Name="{Binding LabelFxRateSource}" />
+         <TextBlock Grid.Row="10" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelFxFunctional}" />
+         <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding FxFunctional}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+         <TextBlock Grid.Row="12" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelFxRounding}" />
+         <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding FxRounding}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+         <TextBlock Grid.Row="14" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelFxRateSet}" />
+         <TextBlock Grid.Row="14" Grid.Column="1" Text="{Binding FxRateSetVersion}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+         <Button x:Name="ApplyFxRateButton" Grid.Row="16" Grid.ColumnSpan="2" HorizontalAlignment="Left" Padding="14,7" Content="{Binding ActionApplyFxRate}" Command="{Binding ApplyFxRateCommand}" TabIndex="6" />
         </Grid>
-    </ScrollViewer>
+        <TextBlock Margin="0,10,0,0" Text="{Binding FxStatus}" TextWrapping="Wrap" />
+        <TextBlock Margin="0,6,0,0" Text="{Binding FxEditorExplanation}" TextWrapping="Wrap" />
+       </StackPanel>
+      </GroupBox>
+      <GroupBox x:Name="T02RoundingGroup" Grid.Row="16" Header="{Binding RoundingTitle}" Padding="16">
+       <StackPanel>
+        <Grid Margin="0,0,0,12">
+         <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="150" />
+          <ColumnDefinition Width="130" />
+          <ColumnDefinition Width="150" />
+          <ColumnDefinition Width="130" />
+          <ColumnDefinition Width="130" />
+          <ColumnDefinition Width="*" />
+         </Grid.ColumnDefinitions>
+         <TextBlock Grid.Column="0" Text="{Binding LabelRoundingReference}" FontWeight="SemiBold" />
+         <TextBlock Grid.Column="1" Text="{Binding RoundingReferenceCase}" FlowDirection="LeftToRight" />
+         <TextBlock Grid.Column="2" Text="{Binding LabelRoundingSource}" FontWeight="SemiBold" />
+         <TextBlock Grid.Column="3" Text="{Binding RoundingSourceTotal}" FlowDirection="LeftToRight" FontFamily="Consolas" />
+         <TextBlock Grid.Column="4" Text="{Binding LabelRoundingQuantum}" FontWeight="SemiBold" />
+         <TextBlock Grid.Column="5" Text="{Binding RoundingQuantum}" FlowDirection="LeftToRight" FontFamily="Consolas" />
+        </Grid>
+        <Grid Margin="0,0,0,4">
+         <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="70" />
+          <ColumnDefinition Width="280" />
+          <ColumnDefinition Width="280" />
+          <ColumnDefinition Width="140" />
+         </Grid.ColumnDefinitions>
+         <TextBlock Grid.Column="0" Text="{Binding LabelRoundingId}" FontWeight="SemiBold" />
+         <TextBlock Grid.Column="1" Text="{Binding LabelRoundingRaw}" FontWeight="SemiBold" />
+         <TextBlock Grid.Column="2" Text="{Binding LabelRoundingAdjustment}" FontWeight="SemiBold" />
+         <TextBlock Grid.Column="3" Text="{Binding LabelRoundingPosted}" FontWeight="SemiBold" />
+        </Grid>
+        <ItemsControl ItemsSource="{Binding RoundingRows}">
+         <ItemsControl.ItemTemplate>
+          <DataTemplate>
+           <Grid Margin="0,2">
+            <Grid.ColumnDefinitions>
+             <ColumnDefinition Width="70" />
+             <ColumnDefinition Width="280" />
+             <ColumnDefinition Width="280" />
+             <ColumnDefinition Width="140" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{Binding DestinationId}" FlowDirection="LeftToRight" />
+            <TextBlock Grid.Column="1" Text="{Binding RawAmount}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+            <TextBlock Grid.Column="2" Text="{Binding RoundingAdjustment}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+            <TextBlock Grid.Column="3" Text="{Binding PostedAmount}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+           </Grid>
+          </DataTemplate>
+         </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <TextBlock Margin="0,10,0,0" Text="{Binding RoundingExplanation}" TextWrapping="Wrap" />
+        <GroupBox Margin="0,14,0,0" Header="{Binding CurrencyMetadataTitle}" Padding="12">
+         <StackPanel>
+          <Grid Margin="0,0,0,4">
+           <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="90" />
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="160" />
+            <ColumnDefinition Width="140" />
+            <ColumnDefinition Width="*" />
+           </Grid.ColumnDefinitions>
+           <TextBlock Grid.Column="0" Text="{Binding LabelCurrencyCode}" FontWeight="SemiBold" />
+           <TextBlock Grid.Column="1" Text="{Binding LabelNumericCode}" FontWeight="SemiBold" />
+           <TextBlock Grid.Column="2" Text="{Binding LabelMinorUnitDigits}" FontWeight="SemiBold" />
+           <TextBlock Grid.Column="3" Text="{Binding LabelCurrencyQuantum}" FontWeight="SemiBold" />
+           <TextBlock Grid.Column="4" Text="{Binding LabelCurrencyProjection}" FontWeight="SemiBold" />
+          </Grid>
+          <ItemsControl ItemsSource="{Binding CurrencyMetadataRows}">
+           <ItemsControl.ItemTemplate>
+            <DataTemplate>
+             <Grid Margin="0,2">
+              <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="90" />
+               <ColumnDefinition Width="120" />
+               <ColumnDefinition Width="160" />
+               <ColumnDefinition Width="140" />
+               <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <TextBlock Grid.Column="0" Text="{Binding AlphaCode}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+              <TextBlock Grid.Column="1" Text="{Binding NumericCode}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+              <TextBlock Grid.Column="2" Text="{Binding MinorUnitDigits}" FlowDirection="LeftToRight" />
+              <TextBlock Grid.Column="3" Text="{Binding Quantum}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+              <TextBlock Grid.Column="4" Text="{Binding ProjectedDistribution}" FontFamily="Consolas" FlowDirection="LeftToRight" />
+             </Grid>
+            </DataTemplate>
+           </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Margin="0,8,0,0" Text="{Binding CurrencyMetadataExplanation}" TextWrapping="Wrap" />
+         </StackPanel>
+        </GroupBox>
+       </StackPanel>
+      </GroupBox>
+      <GroupBox Grid.Row="6" Header="{Binding EditTitle}" Padding="16">
+       <Grid>
+        <Grid.ColumnDefinitions>
+         <ColumnDefinition Width="220" />
+         <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+         <RowDefinition Height="Auto" />
+         <RowDefinition Height="8" />
+         <RowDefinition Height="Auto" />
+         <RowDefinition Height="8" />
+         <RowDefinition Height="Auto" />
+         <RowDefinition Height="10" />
+         <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelPendingValue}" TextWrapping="Wrap" />
+        <TextBox x:Name="PendingEditBox" Grid.Row="0" Grid.Column="1" Text="{Binding PendingEditText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TabIndex="7" FlowDirection="LeftToRight" AutomationProperties.Name="{Binding LabelPendingValue}" />
+        <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,0,16,0" Text="{Binding LabelCapturedCulture}" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CapturedEditCulture}" FlowDirection="LeftToRight" />
+        <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,0,16,0" Text="{Binding LabelEditStatus}" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding EditStatus}" TextWrapping="Wrap" />
+        <WrapPanel Grid.Row="6" Grid.ColumnSpan="2">
+         <Button x:Name="StartEditButton" Margin="0,0,10,0" Padding="14,7" Content="{Binding ActionStartEdit}" Command="{Binding StartEditCommand}" TabIndex="8" />
+         <Button x:Name="CommitEditButton" Padding="14,7" Content="{Binding ActionCommitEdit}" Command="{Binding CommitEditCommand}" TabIndex="9" />
+        </WrapPanel>
+       </Grid>
+      </GroupBox>
+      <Border Grid.Row="8" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" BorderThickness="1" CornerRadius="6" Padding="14">
+       <StackPanel>
+        <TextBlock Text="{Binding FooterDevelopmentOnly}" TextWrapping="Wrap" FontStyle="Italic" />
+        <TextBlock Margin="0,8,0,0" Text="{Binding Status}" TextWrapping="Wrap" />
+        <TextBlock Margin="0,4,0,0" Text="{Binding SampleName}" TextWrapping="Wrap" />
+       </StackPanel>
+      </Border>
+     </Grid>
+    </Expander>
+    <StackPanel Visibility="Collapsed" Grid.Row="8" x:Name="ImportHome">
+     <TextBlock Text="{Binding Studies.Details}" TextWrapping="Wrap" />
+     <TextBlock Text="{Binding Studies.ImportedAmounts}" TextWrapping="Wrap" Margin="0,8,0,8" />
+    </StackPanel>
+   </Grid>
+  </ScrollViewer>
+ </DockPanel>
 </Window>

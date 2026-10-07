@@ -18,6 +18,20 @@ Fecha de actualización: 2026-10-04
 Fuente base: `especificacion/03_Decisiones_y_Diccionario.md` del paquete VALDRIO v0.4.  
 Aceptación del propietario registrada el 2026-10-04.
 
+## Aclaración D03 — 2026-10-07
+
+El propietario confirma que el XLSX es solo un ejemplo y que el cierre se declara en el formulario: 31/10/2026. Se acepta el ensayo técnico y el ejemplo 6005=358,35 EUR; no se certifica una fuente productiva. Cada origen real requiere seleccionar registros, declarar periodo/moneda/modalidad y aprobar su ejemplo. T06 se cierra técnicamente con este alcance de prueba y aceptación del commit; el puente FX pertenece a T06A.
+
+## Continuidad T06A/T07 — 2026-10-07
+
+El propietario autoriza completar T06A y pide comentar T07 antes de implementarla.
+T06A aplica selecciones manuales explícitas y congeladas por registro; no utiliza
+cotizaciones de demostración sin aprobación ni consulta tipos actuales. El catálogo
+instalado sigue siendo el subconjunto de ejemplo. Véase ADR-0011 para comparativos,
+agrupación funcional por cuenta y conservación de originales separados por moneda.
+La dificultad de guardado de centro/modelo queda para revisión posterior a petición
+expresa. No se deduce una aprobación productiva de su Excel de prueba.
+
 ## Registro D01-D12
 
 | ID | Estado vigente | Decisión / propuesta | Próxima puerta |
@@ -36,6 +50,20 @@ Aceptación del propietario registrada el 2026-10-04.
 | D12 Módulos avanzados | **PENDIENTE AVANZADO** | Estándares, TDABC y simulación requieren datos/supuestos propios. | T28-T31; no bloquea R0/R1 actual. |
 
 ## Precisión de alcance de la fuente — 2026-10-07
+
+### Registros y códigos (confirmación posterior del mismo día)
+
+El propietario confirma 6005: 280 + 78,35 = 358,35 EUR. La selección debe ofrecer
+todos, ninguno, algunos o todos menos algunos registros, incluidas filas individuales
+que compartan código. La agrupación se realiza por la columna de código elegida,
+que puede contener cuentas, agrupaciones o códigos de gasto. Las descripciones
+se ignoran para agrupar y se conservan como procedencia. Esta instrucción sustituye
+la exigencia previa de resolver descripciones diferentes. Ver ADR-0009.
+
+El ejemplo XLSX aportado se ha validado para lectura, selección, agrupación y guardado
+local. Sus etiquetas incluyen todavía conceptos patrimoniales. La validación técnica
+y el ejemplo aprobado no certifican automáticamente su clasificación como costes ni
+el intervalo productivo del estudio. La decisión de pérdidas y ganancias sigue vigente.
 
 El propietario indicó en el chat «Guiar instalación de Visual Studio» que para
 calcular costes solo son necesarias cuentas de pérdidas y ganancias; las cuentas

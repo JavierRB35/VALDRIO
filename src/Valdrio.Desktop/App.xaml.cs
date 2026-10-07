@@ -120,7 +120,7 @@ public partial class App : System.Windows.Application
         var modelDialogs = captureDirectory is null ? (IModelEditorDialogs)new ModelEditorDialogs() : new QueuedModelEditorDialogs();
         models = new ModelWorkspaceViewModel(company, texts, preferences, modelDialogs, formatter);
         var importDialogs = captureDirectory is null ? (IImportSourceDialogs)new ImportSourceDialogs() : new QueuedImportSourceDialogs();
-        importColumns = new ImportColumnMappingViewModel(new ImportSourceSessionFactory(), importDialogs, texts, preferences);
+        importColumns = new ImportColumnMappingViewModel(new ImportSourceSessionFactory(), importDialogs, texts, preferences, currencyCatalog);
         studies = new StudyWorkspaceViewModel(company, currencyCatalog, texts, preferences, formatter, modelDialogs)
             { ImportColumns = importColumns };
         var viewModel =
@@ -204,7 +204,11 @@ public partial class App : System.Windows.Application
                             (QueuedCompanyFileDialogs)companyDialogs, viewModel);
                         await importWindow.RunDebitCreditChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs,
                             (QueuedCompanyFileDialogs)companyDialogs, viewModel);
+                        await importWindow.RunImportGroupingChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs, viewModel);
+                        await importWindow.RunImportCompletionChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs, viewModel);
+                        await importWindow.RunInternationalImportChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs, viewModel);
                         importWindow.Close();
+                        await window.RunGuidedWorkflowChecks(captureDirectory, (QueuedCompanyFileDialogs)companyDialogs, (QueuedImportSourceDialogs)importDialogs);
                         CaptureVisualEvidence(
                             window,
                             viewModel,

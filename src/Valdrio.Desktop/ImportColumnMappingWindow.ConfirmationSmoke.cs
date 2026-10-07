@@ -26,6 +26,7 @@ public partial class ImportColumnMappingWindow
         void Check(bool value, string label) { if (!value) throw new InvalidOperationException("Import confirmation WPF: " + label); checks.Add(label); }
         async Task Click(Button button)
         {
+            GuidedUi.Reveal(button);
             if (!button.IsEnabled) throw new InvalidOperationException("Disabled confirmation button " + button.Name);
             ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
@@ -60,14 +61,13 @@ public partial class ImportColumnMappingWindow
         files.Paths.Enqueue(csv); await Click(OpenSourceButton); await Click(ReadSourceButton);
         Select(AccountColumnBox, 3); Select(AmountColumnBox, 1); vm.GroupSeparator = "."; await Click(ValidateMappingButton);
         Check(vm.IsReady && !ConfirmImportButton.IsEnabled, "column validation alone cannot confirm");
-        ((IToggleProvider)new CheckBoxAutomationPeer(ImportAllAccountsBox).GetPattern(PatternInterface.Toggle)).Toggle();
-        ImportAllAccountsBox.GetBindingExpression(CheckBox.IsCheckedProperty)!.UpdateSource();
-        Check(vm.IsExplicitAccountSelection && !PrepareImportButton.IsEnabled && vm.AccountChoices.Count == 3,
+        await Click(DeselectAllRecordsButton);
+        Check(vm.IsExplicitAccountSelection && !vm.PrepareCommand.CanExecute(null) && vm.AccountChoices.Count == 3,
             "explicit selection with no included account blocks preparation");
         async Task ToggleAccount(string account)
         {
             var choice = vm.AccountChoices.Single(c => c.Account == account);
-            AccountSelectionGrid.ScrollIntoView(choice); AccountSelectionGrid.UpdateLayout();
+            RevealImportElement(AccountSelectionGrid); AccountSelectionGrid.ScrollIntoView(choice); AccountSelectionGrid.UpdateLayout();
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
             var row = (DataGridRow)AccountSelectionGrid.ItemContainerGenerator.ContainerFromItem(choice);
             static CheckBox? FindCheck(DependencyObject parent)
@@ -85,13 +85,13 @@ public partial class ImportColumnMappingWindow
         await ToggleAccount("00123"); await ToggleAccount("ZERO");
         Check(vm.AccountChoices.Count(c => c.Included) == 2 && !vm.AccountChoices.Single(c => c.Account == "BALANCE").Included,
             "native account checkboxes select costs and retain balance exclusion");
-        SetText(SourceCurrencyBox, "EUR"); var companyHash = Hash(path); await Click(PrepareImportButton);
+        SetText(SourceCurrencyBox, "EUR"); var companyHash = Hash(path); await PrepareForSmoke();
         Check(vm.Preparation is { CanConfirm: false } && !ConfirmImportButton.IsEnabled && Hash(path) == companyHash,
             "approval required and preparation preserves company bytes");
-        SetText(SourceCurrencyBox, "USD"); Approve(); await Click(PrepareImportButton);
+        SetText(SourceCurrencyBox, "USD"); Approve(); await PrepareForSmoke();
         Check(vm.Preparation!.Diagnostics.Any(d => d.Diagnostic.Code == "IMP_FX_REQUIRED") && !ConfirmImportButton.IsEnabled,
             "foreign currency blocked without FX bridge");
-        SetText(SourceCurrencyBox, "EUR"); Approve(); await Click(PrepareImportButton);
+        SetText(SourceCurrencyBox, "EUR"); Approve(); await PrepareForSmoke();
         Check(vm.Preparation is { CanConfirm: true } prepared && prepared.Reconciliation.NetAmount == 1250.5m &&
             prepared.Reconciliation.ZeroRows == 1 && ConfirmImportButton.IsEnabled && ConfirmationSummaryText.Text == vm.ConfirmationSummary &&
             ConfirmationSummaryText.TranslatePoint(new Point(), this).Y < ConfirmImportButton.TranslatePoint(new Point(), this).Y,
@@ -99,29 +99,29 @@ public partial class ImportColumnMappingWindow
         await ToggleAccount("ZERO");
         Check(vm.Preparation is null && !vm.InterpretationApproved && !ConfirmImportButton.IsEnabled,
             "changing an account checkbox invalidates preparation and approval");
-        await ToggleAccount("ZERO"); Approve(); await Click(PrepareImportButton);
-        Check(vm.Preparation!.Profile.AccountSelection.Kind == ImportAccountSelectionKind.ExplicitList &&
+        await ToggleAccount("ZERO"); Approve(); await PrepareForSmoke();
+        Check(vm.Preparation!.Profile.Grouping?.Records.Count == 2 &&
             vm.Preparation.Reconciliation.IgnoredRows == 1 && vm.Preparation.Reconciliation.SelectedRows == 2,
             "selected and excluded source rows reconcile before saving");
         AmountModeBox.SetCurrentValue(ComboBox.SelectedValueProperty, "closing-full");
         AmountModeBox.GetBindingExpression(ComboBox.SelectedValueProperty)!.UpdateSource();
         Check(vm.Preparation is null && !vm.InterpretationApproved && !ConfirmImportButton.IsEnabled,
             "changing meaning invalidates preparation and approval");
-        Approve(); await Click(PrepareImportButton);
+        Approve(); await PrepareForSmoke();
         Check(vm.Preparation is { CanConfirm: true } closing && closing.Profile.AmountMode == ImportAmountMode.ClosingBalanceAsStudyAmount &&
             closing.Reconciliation.NetAmount == 1250.5m, "full closing selection retains entire balance");
         AmountModeBox.SetCurrentValue(ComboBox.SelectedValueProperty, "period");
         AmountModeBox.GetBindingExpression(ComboBox.SelectedValueProperty)!.UpdateSource();
         Check(vm.Preparation is null && !vm.InterpretationApproved, "returning to period also requires fresh approval");
-        Approve(); await Click(PrepareImportButton);
+        Approve(); await PrepareForSmoke();
         var fingerprint = vm.Preparation!.Fingerprint;
         main.ApplyPresentationPreset("es", "en-US", "UTC", false, false);
         Check(vm.Preparation.Fingerprint == fingerprint && vm.InterpretationApproved && AccountColumnBox.SelectedValue is 3 &&
             vm.AccountChoices.Count(c => c.Included) == 2 && vm.IsExplicitAccountSelection,
             "language and region preserve prepared fingerprint and visible selection");
-        ConfirmImportButton.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
+        RevealImportElement(ConfirmImportButton); ConfirmImportButton.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "prepared-es.png"));
-        AccountSelectionGrid.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
+        RevealImportElement(AccountSelectionGrid); AccountSelectionGrid.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "accounts-es.png"));
         await Click(ConfirmImportButton); var batch = vm.ConfirmedImport ?? throw new InvalidOperationException(vm.Status);
         Check(batch.Resources.Count == 2 && batch.Resources.Single(r => r.Account == "00123").Functional.Amount == 1250.5m,
@@ -134,7 +134,7 @@ public partial class ImportColumnMappingWindow
         Check(!ConfirmImportButton.IsEnabled, "double click cannot duplicate confirmed batch");
         Check(Hash(csv) == csvHash && Hash(previousPath) == previousHash, "source bytes and previous study artifact remain unchanged");
         await Click(panel.CaptureStudyButton); var photo = studies.SnapshotChoice!.Value;
-        Check(photo.PayloadSchema == ImportedStudySnapshotInput.Schema && photo.Input.Resources.Count == 2,
+        Check(photo.PayloadSchema == ImportedStudySnapshotInput.GroupedSchema && photo.Input.Resources.Count == 2,
             "native snapshot includes actual imported resources");
         Check(studies.Snapshots.Single(s => s.Value.Id == originalPhoto.Id).Value.CanonicalJson == originalPhoto.CanonicalJson,
             "context-only snapshot remains identical");
@@ -145,7 +145,7 @@ public partial class ImportColumnMappingWindow
             Check(read.Imports.ReadImports(study.CompanyId, study.Id).Single().PreparedFingerprint == fingerprint,
                 "independent reader verifies confirmed source evidence");
         main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", true, true); FlowDirection = FlowDirection.RightToLeft;
-        ConfirmImportButton.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
+        RevealImportElement(ConfirmImportButton); ConfirmImportButton.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "confirmed-pseudo.png"));
         FlowDirection = FlowDirection.LeftToRight; main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", false, false);
         await Click(window.CompanyPanel.CloseButton); companyFiles.Paths.Enqueue(path); await Click(window.CompanyPanel.OpenButton);
@@ -166,7 +166,7 @@ public partial class ImportColumnMappingWindow
         vm.ImportAllAccounts = true;
         var snapshot = Path.Combine(output, "snapshot.json"); File.WriteAllText(snapshot, CanonicalSnapshotJson.Serialize(photo));
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }));
-        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = 4, Source = "synthetic native WPF period import",
+        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = SqliteCompanyFileService.SchemaVersion, Source = "synthetic native WPF period import",
             StudyId = study.Id.ToString(), BatchId = batch.Id.ToString(), Files = new[] { path, backup, restored, snapshot, csv }
                 .Select(p => new { Name = Path.GetFileName(p), Sha256 = Hash(p) }) }));
     }

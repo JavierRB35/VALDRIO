@@ -46,12 +46,13 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     private bool allowNumericAccounts;
     private IReadOnlyList<ImportColumnOption> columnOptions = [];
     private readonly ImportMappingOption[] delimiters = [new(";", ";"), new(",", ","), new("tab", "")];
-    private readonly ImportMappingOption[] groups = [new("", ""), new(".", "."), new(",", ","), new(" ", "")];
+    private readonly ImportMappingOption[] groups = [new("", ""), new(".", "."), new(",", ","), new(" ", ""), new("\u00a0", "NBSP"), new("\u202f", "NNBSP")];
     private readonly ImportMappingOption[] amountLayouts = [new("amount", ""), new("debit-credit", "")];
 
     public ImportColumnMappingViewModel(IImportSourceSessionFactory factory, IImportSourceDialogs dialogs,
-        UiTextCatalog texts, PresentationPreferencesService preferences)
+        UiTextCatalog texts, PresentationPreferencesService preferences, ICurrencyCatalog? currencyCatalog = null)
     {
+        this.currencyCatalog = currencyCatalog;
         this.factory = factory; this.dialogs = dialogs; this.texts = texts; this.preferences = preferences;
         OpenCommand = new AsyncRelayCommand(Open, () => !busy);
         ReadCommand = new AsyncRelayCommand(Read, () => !busy && session is not null && (!IsXlsx || !string.IsNullOrEmpty(worksheet)));
@@ -60,6 +61,13 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         PrepareCommand = new AsyncRelayCommand(Prepare, () => !busy && IsReady && IsAccountSelectionReady && targetStudy?.State == StudyState.Open && importPort is not null);
         ConfirmCommand = new AsyncRelayCommand(Confirm, () => !busy && writable && preparedImport?.CanConfirm == true && confirmedImport is null);
         CancelCommand = new RelayCommand(() => cancellation?.Cancel(), () => busy);
+        SelectAllRecordsCommand = new RelayCommand(() => ImportAllAccounts = true, () => !busy && HasAccountChoices);
+        DeselectAllRecordsCommand = new RelayCommand(() => ImportAllAccounts = false, () => !busy && HasAccountChoices);
+        FreezeComparisonCommand = new RelayCommand(FreezeComparison, () => !busy && IsReady && IsAccountSelectionReady &&
+            fiscalStart.HasValue && fiscalEnd.HasValue && previousEnd.HasValue && !string.IsNullOrWhiteSpace(comparisonScope) &&
+            (international && currencyFromColumn || !string.IsNullOrWhiteSpace(sourceCurrency)) && interpretationApproved && !string.IsNullOrWhiteSpace(approvalReference));
+        ClearComparisonCommand = new RelayCommand(ClearComparison, () => !busy && comparison is not null);
+        InitializeConversion();
         preferences.Changed += PreferencesChanged;
         Reformat();
     }
@@ -85,7 +93,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
             amountColumn = debitColumn = creditColumn = null; InvalidateMapping();
         }
     }
-    public string InterpretationPrompt => this[amountMode == "closing-full" ? (IsDebitCredit ? "ApproveClosingDebitCredit" : "ApproveClosing") : (IsDebitCredit ? "ApproveDebitCredit" : "ApproveInterpretation")];
+    public string InterpretationPrompt => this[amountMode == "cumulative" ? "ApproveComparison" : amountMode == "closing-full" ? (IsDebitCredit ? "ApproveClosingDebitCredit" : "ApproveClosing") : (IsDebitCredit ? "ApproveDebitCredit" : "ApproveInterpretation")];
     public bool HasColumns => document is not null;
     public bool IsReady => validation?.IsValid == true;
     public ImportColumnSelectionResult? ValidatedSelection => IsReady ? validation : null;
@@ -147,6 +155,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     {
         foreach (var choice in accountChoices) choice.Reformat(CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag));
         amountModes[0].Label = this["PeriodMode"]; amountModes[1].Label = this["ClosingMode"];
+        amountModes[2].Label = this["CumulativeMode"];
         delimiters[2].Label = this["Tab"]; groups[0].Label = this["None"]; groups[3].Label = this["Space"];
         amountLayouts[0].Label = this["SignedLayout"]; amountLayouts[1].Label = this["DebitCreditLayout"];
         foreach (var c in columnOptions) c.Label = ColumnLabel(c.Index, c.Header); Refresh();
@@ -156,6 +165,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     private void InvalidateSource()
     {
         cancellation?.Cancel(); document = null; readSettings = null; accountColumn = amountColumn = debitColumn = creditColumn = null;
+        currencyColumn = dateColumn = null;
         columnOptions = []; validation = null; ResetAccountChoices(); InvalidatePreparation(true); diagnostic = null; statusKey = "ReadSource"; Refresh();
     }
     private void Refresh()
@@ -163,6 +173,9 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         OnPropertyChanged(""); OpenCommand.NotifyCanExecuteChanged(); ReadCommand.NotifyCanExecuteChanged();
         ValidateCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
         PrepareCommand.NotifyCanExecuteChanged(); ConfirmCommand.NotifyCanExecuteChanged();
+        SelectAllRecordsCommand.NotifyCanExecuteChanged(); DeselectAllRecordsCommand.NotifyCanExecuteChanged();
+        FreezeComparisonCommand.NotifyCanExecuteChanged(); ClearComparisonCommand.NotifyCanExecuteChanged();
+        AddRateCommand?.NotifyCanExecuteChanged(); ApplyRateCommand?.NotifyCanExecuteChanged();
     }
     private async Task Run(Func<CancellationToken, Task> action, bool keepSelection = false)
     {
@@ -212,6 +225,8 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     }
     private async Task Validate()
     {
+        // Rechecking unchanged columns must preserve record inclusion and manual rate assignments.
+        if (IsReady) return;
         validation = null; ResetAccountChoices(); InvalidatePreparation(true);
         await Run(async token =>
         {
@@ -229,7 +244,8 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
                 new ImportColumnMap(accountColumn!.Value, debit: debitColumn!.Value, credit: creditColumn!.Value);
             var policy = allowNumericAccounts ? XlsxNumericAccountPolicy.PreserveStoredLexical : XlsxNumericAccountPolicy.Reject;
             var source = document!; var settings = readSettings!;
-            var result = await Task.Run(() => ImportColumnSelection.Validate(source, settings, columns, number, policy, token), token);
+            var result = await Task.Run(() => ImportColumnSelection.Validate(source, settings, columns, number, policy, token,
+                ImportDuplicatePolicy.AggregateWithProvenance), token);
             token.ThrowIfCancellationRequested(); validation = result; SetAccountChoices(result); statusKey = result.IsValid ? "Ready" : "HasErrors";
         });
     }

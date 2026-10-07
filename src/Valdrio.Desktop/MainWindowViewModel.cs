@@ -10,7 +10,7 @@ using Valdrio.Localization;
 
 namespace Valdrio.Desktop;
 
-public sealed class MainWindowViewModel : ObservableObject
+public sealed partial class MainWindowViewModel : ObservableObject
 {
     private const string ExpectedKind = "valdrio-development-smoke-v1";
 

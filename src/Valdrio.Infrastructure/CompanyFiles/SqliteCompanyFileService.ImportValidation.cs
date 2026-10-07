@@ -17,6 +17,9 @@ public sealed partial class SqliteCompanyFileService
         foreach (var batch in batches)
         {
             var study = batch.Prepared.StudyContext;
+            Invalid(file.SchemaVersion < 7 && batch.Prepared.Profile.Conversion is not null, "International import in legacy schema");
+            Invalid(file.SchemaVersion < 5 && batch.Prepared.Profile.Grouping is not null, "Grouped import in legacy schema");
+            Invalid(file.SchemaVersion < 6 && (batch.ReplacesBatchId is not null || batch.Prepared.Profile.Comparison is not null), "Import ledger in legacy schema");
             Invalid(study.CompanyId != file.Id || batch.Prepared.PrecisionPolicy != file.PrecisionPolicy, "Import scope/precision invalid");
             var expectedRows = batch.Prepared.Rows.ToDictionary(r => r.RecordNumber);
             var originalRows = batch.Prepared.Source.Rows.ToDictionary(r => r.RecordNumber);
@@ -33,17 +36,19 @@ public sealed partial class SqliteCompanyFileService
             }
             var expectedResources = batch.Resources.ToDictionary(r => r.Id.ToString());
             var savedResources = resources[batch.Id.ToString()].ToArray();
-            var savedLinks = links[batch.Id.ToString()].ToDictionary(l => l.ResourceId);
-            Invalid(savedResources.Length != expectedResources.Count || savedLinks.Count != expectedResources.Count, "Import resource/link count differs");
+            var savedLinks = links[batch.Id.ToString()].ToLookup(l => l.ResourceId);
+            Invalid(savedResources.Length != expectedResources.Count || savedLinks.Sum(g => g.Count()) !=
+                expectedResources.Values.Sum(r => r.SourceRecords?.Count ?? 1), "Import resource/link count differs");
             foreach (var row in savedResources)
             {
                 Invalid(row.CompanyId != file.Id.ToString() || row.StudyId != study.Id.ToString() ||
-                    !expectedResources.ContainsKey(row.Id) || !savedLinks.ContainsKey(row.Id), "Resource scope invalid");
-                var expected = expectedResources[row.Id]; var link = savedLinks[row.Id];
+                    !expectedResources.ContainsKey(row.Id) || !savedLinks.Contains(row.Id), "Resource scope invalid");
+                var expected = expectedResources[row.Id]; var resourceLinks = savedLinks[row.Id].ToArray();
                 Invalid(row.Account != expected.Account || row.OriginalAmount != CanonicalDecimal.Format(expected.Original.Amount) ||
                     row.FunctionalAmount != CanonicalDecimal.Format(expected.Functional.Amount) || row.Currency != expected.Functional.Currency.ToString() ||
                     row.PeriodStart != expected.PeriodStart.ToString() || row.PeriodEnd != expected.PeriodEnd.ToString() ||
-                    link.RecordNumber != expected.RecordNumber || link.CompanyId != row.CompanyId || link.StudyId != row.StudyId,
+                    !resourceLinks.Select(l => l.RecordNumber).Order().SequenceEqual((expected.SourceRecords ?? [expected.RecordNumber]).Order()) ||
+                    resourceLinks.Any(link => link.CompanyId != row.CompanyId || link.StudyId != row.StudyId),
                     "Resource/source link differs");
             }
             var events = audit.Where(a => a.Id == batch.Id.ToString()).ToArray();
@@ -57,6 +62,18 @@ public sealed partial class SqliteCompanyFileService
                 studyEvent.BeforeJson != Json(study) || studyEvent.AfterJson != Json(batch.ConfirmedStudy), "Import has no matching study event");
         }
         var ids = batches.Select(b => b.Id.ToString()).ToHashSet(StringComparer.Ordinal);
+        foreach (var study in batches.GroupBy(b => b.ConfirmedStudy.Id))
+        {
+            // Replay every prefix, not just the final state: an earlier double append is invalid too.
+            var prefix = new List<ImportedBatch>();
+            foreach (var batch in study.OrderBy(b => b.ConfirmedStudy.Revision))
+            {
+                var active = ImportConfirmationRules.ActiveBatches(prefix);
+                Invalid(active.Any(b => b.Prepared.DuplicateFingerprint == batch.Prepared.DuplicateFingerprint), "Repeated active import");
+                prefix.Add(batch);
+                _ = ImportConfirmationRules.ActiveBatches(prefix);
+            }
+        }
         Invalid(audit.Any(a => !ids.Contains(a.Id)) || rows.Any(r => !ids.Contains(r.Key)) ||
             resources.Any(r => !ids.Contains(r.Key)) || links.Any(r => !ids.Contains(r.Key)), "Orphan import data");
     }

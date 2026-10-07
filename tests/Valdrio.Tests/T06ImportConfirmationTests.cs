@@ -18,7 +18,7 @@ using Valdrio.Localization;
 namespace Valdrio.Tests;
 
 [TestClass]
-public sealed class T06ImportConfirmationTests
+public sealed partial class T06ImportConfirmationTests
 {
     private string directory = null!;
     private static EntityId Id() => new(Guid.NewGuid());
@@ -126,7 +126,7 @@ public sealed class T06ImportConfirmationTests
         var photos = Query(source, "SELECT group_concat(CanonicalJson) FROM StudySnapshots ORDER BY Id");
         var audit = Query(source, "SELECT group_concat(Id||AfterJson) FROM AuditEvents ORDER BY Id");
         Assert.AreEqual("FILE_UPGRADE_REQUIRED", Assert.ThrowsExactly<CompanyFileException>(() => Service().Open(source)).Diagnostic.Code);
-        using var file = Service().Upgrade(source, FileOf("current.valdrio"), "test"); Assert.AreEqual(4, file.Read().SchemaVersion);
+        using var file = Service().Upgrade(source, FileOf("current.valdrio"), "test"); Assert.AreEqual(7, file.Read().SchemaVersion);
         Assert.AreEqual(sha, Hash(source)); Assert.AreEqual(photos, Query(file.Path, "SELECT group_concat(CanonicalJson) FROM StudySnapshots ORDER BY Id"));
         Assert.AreEqual(audit, Query(file.Path, "SELECT group_concat(Id||AfterJson) FROM AuditEvents WHERE AggregateType<>'CompanyFile' ORDER BY Id"));
         var study = file.Studies.ReadStudies().Single(); var snapshots = file.Studies.ReadSnapshots(study.CompanyId, study.Id);
@@ -386,7 +386,7 @@ public sealed class T06ImportConfirmationTests
         using var reopened = Service().Open(FileOf("current.valdrio"));
         var saved = reopened.Imports.ReadImports(companyId, studyId).Single();
         Assert.AreEqual(canonical, CanonicalSnapshotJson.Serialize(saved));
-        Assert.AreEqual(ImportAccountSelectionKind.ExplicitList, saved.Prepared.Profile.AccountSelection.Kind);
+        Assert.AreEqual(3, saved.Prepared.Profile.Grouping!.Records.Count);
         Assert.AreEqual(3, reopened.Studies.ReadSnapshots(companyId, studyId).Single().Input.Resources.Count);
     }
     [TestMethod]
@@ -429,7 +429,7 @@ public sealed class T06ImportConfirmationTests
         Assert.IsTrue(vm.Preparation!.CanConfirm);
         Assert.AreEqual(7m, vm.Preparation.Reconciliation.NetAmount);
         Assert.IsFalse(vm.Preparation.Rows.Single(r => r.Account == "A").Selected);
-        CollectionAssert.AreEqual(new[] { "00055", "a", "é" }, vm.Preparation.Profile.AccountSelection.Accounts.ToArray());
+        CollectionAssert.AreEqual(new[] { "00055", "a", "é" }, vm.Preparation.Profile.Grouping!.Records.Select(r => r.Code).ToArray());
     }
     [TestMethod]
     public async Task InvalidSourceCannotBeMadeReadyByChoosingOnlyValidAccounts()

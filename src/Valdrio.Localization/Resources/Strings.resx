@@ -140,8 +140,8 @@ File: {8}</value></data>
   <data name="File.RevisionChanged" xml:space="preserve"><value>The revision changed. Reload the current company before saving.</value></data>
   <data name="File.DuplicateUnit" xml:space="preserve"><value>The unit ID or code already exists. Use a unique code. No change was confirmed.</value></data>
   <data name="File.InputInvalid" xml:space="preserve"><value>Review the entered name, currency and unit. No change was confirmed.</value></data>
-  <data name="CompanyUpgrade" xml:space="preserve"><value>Upgrade v1 to a new file</value></data>
-  <data name="File.UpgradeRequired" xml:space="preserve"><value>This v1 file needs an explicit upgrade to a new file. Select Upgrade; keep the original.</value></data>
+  <data name="CompanyUpgrade" xml:space="preserve"><value>Upgrade an older file to a new copy</value></data>
+  <data name="File.UpgradeRequired" xml:space="preserve"><value>This older file needs an explicit upgrade to a new file. Select Upgrade; keep the original.</value></data>
   <data name="File.UpgradeNotRequired" xml:space="preserve"><value>The file is already current; no upgrade was performed.</value></data>
   <data name="File.MigrationLocked" xml:space="preserve"><value>The source contains an active or stale migration lock. Keep it and inspect its origin before recovery.</value></data>
   <data name="Model.PolicyInvalid" xml:space="preserve"><value>A policy reference is incomplete or invalid.</value></data>
@@ -187,7 +187,7 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Load" xml:space="preserve"><value>Load selection</value></data>
   <data name="Model.Save" xml:space="preserve"><value>Save draft</value></data>
   <data name="Model.Validate" xml:space="preserve"><value>Validate structure</value></data>
-  <data name="Model.Publish" xml:space="preserve"><value>Publish structure</value></data>
+  <data name="Model.Publish" xml:space="preserve"><value>Publish saved structure</value></data>
   <data name="Model.Clone" xml:space="preserve"><value>Duplicate as draft</value></data>
   <data name="Model.Discard" xml:space="preserve"><value>Discard draft changes</value></data>
   <data name="Model.Nodes" xml:space="preserve"><value>Nodes and pools</value></data>
@@ -198,7 +198,7 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.DriverUnit" xml:space="preserve"><value>Driver units</value></data>
   <data name="Model.CostLayer" xml:space="preserve"><value>Cost classification (no calculation policy)</value></data>
   <data name="Model.PoolDescription" xml:space="preserve"><value>Pool description</value></data>
-  <data name="Model.ApplyNode" xml:space="preserve"><value>Apply node to draft</value></data>
+  <data name="Model.ApplyNode" xml:space="preserve"><value>Add / update node in draft</value></data>
   <data name="Model.NewNode" xml:space="preserve"><value>Clear form / new node</value></data>
   <data name="Model.RemoveNode" xml:space="preserve"><value>Remove selected node</value></data>
   <data name="Model.ToggleUnit" xml:space="preserve"><value>Activate / deactivate unit</value></data>
@@ -240,9 +240,9 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Study.Currency" xml:space="preserve"><value>Functional currency</value></data>
   <data name="Study.Model" xml:space="preserve"><value>Published model</value></data>
   <data name="Study.Scenario" xml:space="preserve"><value>Scenario</value></data>
-  <data name="Study.New" xml:space="preserve"><value>New study</value></data>
-  <data name="Study.Create" xml:space="preserve"><value>Create study</value></data>
-  <data name="Study.Save" xml:space="preserve"><value>Save context</value></data>
+  <data name="Study.New" xml:space="preserve"><value>Clear form / start another study</value></data>
+  <data name="Study.Create" xml:space="preserve"><value>Save study</value></data>
+  <data name="Study.Save" xml:space="preserve"><value>Save study changes</value></data>
   <data name="Study.Load" xml:space="preserve"><value>Load study</value></data>
   <data name="Study.Refresh" xml:space="preserve"><value>Refresh studies/models</value></data>
   <data name="Study.Capture" xml:space="preserve"><value>Capture input snapshot</value></data>
@@ -310,7 +310,7 @@ Full: {5}</value></data>
   <data name="ImportMapping.Delimiter" xml:space="preserve"><value>CSV delimiter</value></data>
   <data name="ImportMapping.Encoding" xml:space="preserve"><value>CSV encoding</value></data>
   <data name="ImportMapping.Read" xml:space="preserve"><value>Read columns</value></data>
-  <data name="ImportMapping.AccountColumn" xml:space="preserve"><value>Account code column</value></data>
+  <data name="ImportMapping.AccountColumn" xml:space="preserve"><value>Code column (account, group or expense)</value></data>
   <data name="ImportMapping.AmountColumn" xml:space="preserve"><value>Amount column</value></data>
   <data name="ImportMapping.Decimal" xml:space="preserve"><value>Text decimal separator</value></data>
   <data name="ImportMapping.Grouping" xml:space="preserve"><value>Text thousands separator</value></data>
@@ -349,7 +349,7 @@ Full: {5}</value></data>
   <data name="Import.ModeUnavailable" xml:space="preserve"><value>This delivery supports period amounts or full closing balances explicitly selected and approved for the study, without duplicate accounts. Uninterpreted closing balances, cumulative differences and aggregation remain pending.</value></data>
   <data name="Import.ApprovalRequired" xml:space="preserve"><value>Validate a representative example and explicitly approve the period, currency and signed amounts before confirmation.</value></data>
   <data name="Import.PeriodMismatch" xml:space="preserve"><value>The source period must match the study period.</value></data>
-  <data name="Import.FxRequired" xml:space="preserve"><value>Confirmation currently requires a fixed source currency equal to the study functional currency. A foreign currency needs the FX bridge.</value></data>
+  <data name="Import.FxRequired" xml:space="preserve"><value>To import another currency, enable source currencies, dates and conversions and select the required rates.</value></data>
   <data name="Import.TotalOverflow" xml:space="preserve"><value>The imported total exceeds the decimal range. No amounts can be confirmed.</value></data>
   <data name="Import.NoSelectedRows" xml:space="preserve"><value>No valid rows are selected for import.</value></data>
   <data name="Import.PreparedInvalid" xml:space="preserve"><value>The prepared import is blocked, incomplete or no longer matches the study. Prepare it again.</value></data>
@@ -359,14 +359,14 @@ Full: {5}</value></data>
   <data name="Import.SourceChanged" xml:space="preserve"><value>The selected file changed after the preview. Open it again and prepare a new import.</value></data>
   <data name="Study.PartitionsPending" xml:space="preserve"><value>Imported resources are available. Assign their partitions before calculating costs.</value></data>
   <data name="Study.ImportedCaptured" xml:space="preserve"><value>The snapshot includes confirmed import resources and their source evidence. Calculation still requires the remaining inputs.</value></data>
-  <data name="ImportMapping.Scope" xml:space="preserve"><value>Confirmation appends a complete batch using the selected mode in the study functional currency. Differences between closing balances and currency conversion remain pending.</value></data>
-  <data name="ImportMapping.NoStudy" xml:space="preserve"><value>Open a saved study to prepare and confirm this import.</value></data>
+  <data name="ImportMapping.Scope" xml:space="preserve"><value>Confirmation saves the complete batch with its originals, conversions and provenance. Review totals and the selected mode before confirming.</value></data>
+  <data name="ImportMapping.NoStudy" xml:space="preserve"><value>File preview: you can choose columns and records. To save the import, close this window, save or load a study and reopen it; your selection is preserved.</value></data>
   <data name="ImportMapping.Target" xml:space="preserve"><value>Destination study {0} · period {1} to {2} · functional currency {3} · revision {4}</value></data>
   <data name="ImportMapping.SourceCurrency" xml:space="preserve"><value>Source currency, ISO code such as EUR</value></data>
   <data name="ImportMapping.ApprovalReference" xml:space="preserve"><value>Representative example you have checked, with its account and expected amount</value></data>
   <data name="ImportMapping.ApproveInterpretation" xml:space="preserve"><value>I have verified that these are signed amounts for the displayed period, in the stated source currency. Negative amounts and zeros retain their original meaning.</value></data>
   <data name="ImportMapping.PrepareImport" xml:space="preserve"><value>Prepare import and totals</value></data>
-  <data name="ImportMapping.ConfirmImport" xml:space="preserve"><value>Confirm import into study</value></data>
+  <data name="ImportMapping.ConfirmImport" xml:space="preserve"><value>Save import into study</value></data>
   <data name="ImportMapping.PreparedReady" xml:space="preserve"><value>The batch is prepared. Review the totals before confirming.</value></data>
   <data name="ImportMapping.Totals" xml:space="preserve"><value>Read {0} · selected {1} · ignored {2} · invalid {3}. Positive {4} · negative {5} · net {6} {7}.</value></data>
   <data name="ImportMapping.Confirmed" xml:space="preserve"><value>Import confirmed and saved.</value></data>
@@ -394,31 +394,250 @@ Full: {5}</value></data>
   <data name="ImportMapping.ClosingMode" xml:space="preserve"><value>Full closing balance for this study</value></data>
   <data name="ImportMapping.PeriodBasis" xml:space="preserve"><value>Use movements belonging to the study period.</value></data>
   <data name="ImportMapping.PeriodMode" xml:space="preserve"><value>Period amounts</value></data>
-  <data name="ImportMapping.AccountSelectionHelp" xml:space="preserve"><value>Choose the profit and loss accounts for this study. Account numbers do not determine inclusion. All original rows are retained; only included accounts create resources.</value></data>
-  <data name="ImportMapping.AccountSelectionSummary" xml:space="preserve"><value>{0} of {1} accounts included. Changing the selection requires a new preparation and approval.</value></data>
+  <data name="ImportMapping.AccountSelectionHelp" xml:space="preserve"><value>Select all, none or individual rows. Selected records with the same code are added together, regardless of their descriptions. Every original row is retained.</value></data>
+  <data name="ImportMapping.AccountSelectionSummary" xml:space="preserve"><value>{0} of {1} records selected. Changing the selection requires a new preparation and approval.</value></data>
   <data name="ImportMapping.AllAccounts" xml:space="preserve"><value>Include all accounts in this file</value></data>
   <data name="ImportMapping.IncludeAccount" xml:space="preserve"><value>Include</value></data>
-  <data name="ImportMapping.SelectAccounts" xml:space="preserve"><value>Accounts to import</value></data>
-  <data name="Resource.PartitionMismatch" xml:space="preserve"><value>Resource {0} has a partition difference of {1}.</value></data>
-  <data name="Resource.DuplicateId" xml:space="preserve"><value>An identifier is repeated in the resource preparation.</value></data>
-  <data name="Resource.SourceRequired" xml:space="preserve"><value>A resource requires at least one original source.</value></data>
-  <data name="Resource.SourceReused" xml:space="preserve"><value>An original source row cannot supply more than one resource.</value></data>
-  <data name="Resource.ReversalInvalid" xml:space="preserve"><value>The reversal must cancel one existing adjustment in the same resource exactly once.</value></data>
-  <data name="Resource.RouteConflict" xml:space="preserve"><value>Choose exactly one route for each resource part.</value></data>
-  <data name="Resource.DirectMismatch" xml:space="preserve"><value>Direct assignments must sum exactly to the part amount and identify their objects.</value></data>
-  <data name="Resource.PoolRequired" xml:space="preserve"><value>Select the destination pool for this part.</value></data>
-  <data name="Resource.ExclusionReasonRequired" xml:space="preserve"><value>Enter a reason for excluding this part.</value></data>
-  <data name="Resource.AdjustmentReasonRequired" xml:space="preserve"><value>Enter the adjustment type and reason.</value></data>
-  <data name="Resource.ConversionInvalid" xml:space="preserve"><value>The stored conversion does not match the original amount and its selected exchange rate.</value></data>
-  <data name="Resource.ClassificationInvalid" xml:space="preserve"><value>The resource classification contains an unsupported value.</value></data>
-  <data name="Resource.BehaviorContextRequired" xml:space="preserve"><value>Fixed and variable behavior require a driver, horizon and activity range.</value></data>
-  <data name="Resource.BehaviorHorizonInvalid" xml:space="preserve"><value>The behavior horizon must end on or after its start.</value></data>
-  <data name="Resource.BehaviorRangeInvalid" xml:space="preserve"><value>Activity quantities must be nonnegative and the range must be ordered.</value></data>
-  <data name="Resource.CapacityOwnerInvalid" xml:space="preserve"><value>Capacity assessment requires one owner pool and node matching the part route; other treatments cannot carry an owner.</value></data>
-  <data name="Resource.ActivityUnitMismatch" xml:space="preserve"><value>The activity quantity does not use its declared unit.</value></data>
-  <data name="Resource.BehaviorUnclassified" xml:space="preserve"><value>Part {0} is not classified as fixed or variable.</value></data>
-  <data name="Resource.BehaviorMixedPending" xml:space="preserve"><value>Part {0} is mixed and must be split before definitive absorption.</value></data>
-  <data name="Resource.SplitRequiresParts" xml:space="preserve"><value>Choose at least two replacement parts.</value></data>
-  <data name="Resource.SplitMismatch" xml:space="preserve"><value>Replacement parts must sum exactly to the original part amount.</value></data>
-  <data name="Resource.PartNotFound" xml:space="preserve"><value>Select one existing part of this resource.</value></data>
+  <data name="ImportMapping.SelectAccounts" xml:space="preserve"><value>Records to import</value></data>
+  <data name="Import.GroupingInvalid" xml:space="preserve"><value>The selected records or their grouping are invalid. Review the selection and prepare again.</value></data>
+  <data name="ImportMapping.DeselectAllRecords" xml:space="preserve"><value>Deselect all</value></data>
+  <data name="ImportMapping.GroupedPreview" xml:space="preserve"><value>Selected records grouped by code</value></data>
+  <data name="ImportMapping.SelectAllRecords" xml:space="preserve"><value>Select all</value></data>
+  <data name="ImportMapping.SourceCode" xml:space="preserve"><value>Code</value></data>
+  <data name="ImportMapping.SourceRecords" xml:space="preserve"><value>Source rows</value></data>
+  <data name="Study.ChooseExisting" xml:space="preserve"><value>Saved studies: select one and click Load study.</value></data>
+  <data name="Study.ChooseModelHelp" xml:space="preserve"><value>Choose the published structure for this study. The list refreshes when entering this step.</value></data>
+  <data name="Study.GoToModels" xml:space="preserve"><value>Go to models to create or publish the structure</value></data>
+  <data name="Study.CreationHelp" xml:space="preserve"><value>Enter name, published model, dates and currency. Click Save study and continue to proceed to import.</value></data>
+  <data name="Study.PreviewHelp" xml:space="preserve"><value>The guided workflow saves the study first. Inspection without a study is optional and cannot save imports.</value></data>
+  <data name="Study.NoStudiesYet" xml:space="preserve"><value>No studies saved yet. Complete the form below to save the first one.</value></data>
+  <data name="Study.NoModelsHelp" xml:space="preserve"><value>No published models are available. Go to Models, create and save the structure, then click Publish structure. Return here and click Refresh studies/models. You can review the Excel or CSV meanwhile.</value></data>
+  <data name="Study.ImportHelp" xml:space="preserve"><value>Continue to Import to choose a file, review records and save them into this study.</value></data>
+  <data name="Study.SavedHelp" xml:space="preserve"><value>The study is saved inside the company file. Save changes updates its context; Save import incorporates Excel or CSV records.</value></data>
+  <data name="ImportMapping.SelectionOverflow" xml:space="preserve"><value>The totals for this selection exceed the numeric limit. Review the source amounts.</value></data>
+  <data name="ImportMapping.SelectionPreviewHelp" xml:space="preserve"><value>Totals by code, updated as you select records. Source amounts, without currency conversion. This preview saves no data; Prepare import also checks the study period, currency and limits.</value></data>
+  <data name="ImportMapping.SelectionReconciliation" xml:space="preserve"><value>Included: {0} records → {2} codes. Excluded: {1} records. Included positive: {3}; included negative: {4}; included net: {5}; excluded net: {6}.</value></data>
+  <data name="ImportMapping.SelectionPreviewTitle" xml:space="preserve"><value>Selected records result</value></data>
+  <data name="ImportMapping.FiscalEnd" xml:space="preserve"><value>Shared fiscal year end</value></data>
+  <data name="ImportMapping.ComparisonHelp" xml:space="preserve"><value>1. Open and validate the earlier file, select records and declare currency. 2. Enter fiscal year, closing date and scope here; approve the example and retain the earlier source. 3. Open and validate the current file, select the same codes and choose Cumulative difference. The current closing date is the study end. Approve the difference example and prepare.</value></data>
+  <data name="ImportMapping.ClearComparison" xml:space="preserve"><value>Clear earlier cumulative source</value></data>
+  <data name="Import.ComparisonInvalid" xml:space="preserve"><value>The cumulative balances are not comparable. Declare the same scope, currency, sign and fiscal year; the earlier closing date must be the day before the study starts.</value></data>
+  <data name="ImportMapping.ApproveComparison" xml:space="preserve"><value>I checked both closing dates, fiscal year, currency, selected codes and shared scope. I approve the difference example, including signs and zeros.</value></data>
+  <data name="Import.ReplacementInvalid" xml:space="preserve"><value>Select an active batch from this study to replace it.</value></data>
+  <data name="ImportMapping.ComparisonScope" xml:space="preserve"><value>Verified shared scope (company, accounts and accounting basis)</value></data>
+  <data name="ImportMapping.PreviousEnd" xml:space="preserve"><value>Earlier cumulative closing date</value></data>
+  <data name="Import.ComparisonMissing" xml:space="preserve"><value>Selected codes must exist in both cumulative sources. A missing account is not zero.</value></data>
+  <data name="ImportMapping.ReplacementHelp" xml:space="preserve"><value>Unchecked: append a batch. When replacing, the chosen batch remains in history and its amounts stop contributing; the new batch replaces it entirely.</value></data>
+  <data name="ImportMapping.FreezeComparison" xml:space="preserve"><value>Retain this file as the earlier cumulative source</value></data>
+  <data name="ImportMapping.CumulativeBasis" xml:space="preserve"><value>Study amount = current cumulative − earlier cumulative (160 − 100 = 60). Same fiscal year and scope; missing accounts are not treated as zero.</value></data>
+  <data name="ImportMapping.ComparisonReady" xml:space="preserve"><value>Earlier source retained: {0}, closing {1}. Open the current file now.</value></data>
+  <data name="ImportMapping.FiscalStart" xml:space="preserve"><value>Shared fiscal year start</value></data>
+  <data name="ImportMapping.ComparisonTitle" xml:space="preserve"><value>Compare two cumulative sources: prepare the earlier file</value></data>
+  <data name="ImportMapping.ReplaceBatch" xml:space="preserve"><value>Replace an earlier batch in this study</value></data>
+  <data name="ImportMapping.ComparisonEmpty" xml:space="preserve"><value>No earlier cumulative source retained.</value></data>
+  <data name="ImportMapping.CumulativeMode" xml:space="preserve"><value>Comparable cumulative difference</value></data>
+<data name="ImportMapping.BatchActive" xml:space="preserve"><value>Active</value></data>
+<data name="ImportMapping.BatchReplaced" xml:space="preserve"><value>Replaced: history only</value></data>
+<data name="ImportMapping.CurrentAmount" xml:space="preserve"><value>Current cumulative</value></data>
+<data name="ImportMapping.DifferenceAmount" xml:space="preserve"><value>Period difference</value></data>
+<data name="ImportMapping.EarlierRecords" xml:space="preserve"><value>Earlier source rows</value></data>
+<data name="ImportMapping.EarlierAmount" xml:space="preserve"><value>Earlier cumulative</value></data>
+  <data name="Import.ConversionInvalid" xml:space="preserve"><value>Review the currency catalogue, dates, rate identifiers and conversion choices.</value></data>
+  <data name="Import.DocumentDateInvalid" xml:space="preserve"><value>The document date does not match the declared source pattern.</value></data>
+  <data name="Import.SourceCurrencyInvalid" xml:space="preserve"><value>The source currency is missing, invalid or outside its declared validity.</value></data>
+  <data name="Import.ConversionRateMissing" xml:space="preserve"><value>Select an explicit exchange rate for this foreign-currency record.</value></data>
+  <data name="Import.RateDateInvalid" xml:space="preserve"><value>The selected rate date falls outside the approved interval.</value></data>
+  <data name="ImportMapping.International" xml:space="preserve"><value>Configure source currencies, dates and conversions</value></data>
+  <data name="ImportMapping.ConversionHelp" xml:space="preserve"><value>Original totals remain separate by currency. Quotes use a decimal point and express study currency per source unit. Rate dates use yyyy-MM-dd. Choose the permitted date interval explicitly; no current rate is fetched. For cumulative comparisons, each balance is converted with its approved rates before subtracting; both bridges remain visible.</value></data>
+  <data name="ImportMapping.CurrencyFromColumn" xml:space="preserve"><value>Read currency from a source column</value></data>
+  <data name="ImportMapping.DocumentDateColumn" xml:space="preserve"><value>Document date (optional column)</value></data>
+  <data name="ImportMapping.DatePattern" xml:space="preserve"><value>Source date pattern, e.g. dd/MM/yyyy</value></data>
+  <data name="ImportMapping.RateSet" xml:space="preserve"><value>Name/version of this frozen rate set</value></data>
+  <data name="ImportMapping.AllowedRateStart" xml:space="preserve"><value>Earliest permitted rate date</value></data>
+  <data name="ImportMapping.AllowedRateEnd" xml:space="preserve"><value>Latest permitted rate date</value></data>
+  <data name="ImportMapping.AddRate" xml:space="preserve"><value>Add manual rate</value></data>
+  <data name="ImportMapping.RateId" xml:space="preserve"><value>Rate identifier</value></data>
+  <data name="ImportMapping.Quote" xml:space="preserve"><value>Quote (destination/source)</value></data>
+  <data name="ImportMapping.RateDate" xml:space="preserve"><value>Rate date</value></data>
+  <data name="ImportMapping.RateSource" xml:space="preserve"><value>Rate source</value></data>
+  <data name="ImportMapping.RateSelectionHelp" xml:space="preserve"><value>Enter a rate identifier for each included foreign-currency record. Leave it empty for study-currency records. The button copies the entered identifier to all included records; review each choice before preparing.</value></data>
+  <data name="ImportMapping.ApplyRate" xml:space="preserve"><value>Apply identifier to included records</value></data>
+  <data name="ImportMapping.InternationalSelectionTotals" xml:space="preserve"><value>Prepare the import to see separate totals by source currency and the reconciled functional total.</value></data>
+  <data name="ImportMapping.ConversionPreview" xml:space="preserve"><value>Review originals and conversions before confirming</value></data>
+  <data name="ImportMapping.Converted" xml:space="preserve"><value>Converted amount</value></data>
+  <data name="ImportMapping.RoundingAdjustment" xml:space="preserve"><value>Conversion rounding adjustment</value></data>
+  <data name="ImportMapping.CurrencyTotals" xml:space="preserve"><value>Original {0}: positive {1}; negative {2}; net {3}</value></data>
+  <data name="ImportMapping.FunctionalTotal" xml:space="preserve"><value>Functional total: {0} {1}. Conversion rounding adjustment: {2} {1}.</value></data>
+  <data name="Guide.Company" xml:space="preserve"><value>1. Company</value></data>
+  <data name="Guide.Model" xml:space="preserve"><value>2. Structure</value></data>
+  <data name="Guide.Study" xml:space="preserve"><value>3. Study</value></data>
+  <data name="Guide.Import" xml:space="preserve"><value>4. Import</value></data>
+  <data name="Guide.Settings" xml:space="preserve"><value>Preferences and tools</value></data>
+  <data name="Guide.Back" xml:space="preserve"><value>Back</value></data>
+  <data name="Guide.Next" xml:space="preserve"><value>Continue</value></data>
+  <data name="Guide.SaveAndImport" xml:space="preserve"><value>Save study and continue to import</value></data>
+  <data name="Guide.OpenImport" xml:space="preserve"><value>Import Excel or CSV into this study</value></data>
+  <data name="Guide.Preview" xml:space="preserve"><value>Only inspect a file (without saving it to a study)</value></data>
+  <data name="Guide.NeedCompany" xml:space="preserve"><value>First create or open a company file. Models, studies and imports will be saved inside that file.</value></data>
+  <data name="Guide.CompanyReady" xml:space="preserve"><value>Company open. Continue to Structure to create or choose the model for the study.</value></data>
+  <data name="Guide.NeedDraft" xml:space="preserve"><value>Name the structure and create a new model, or select and load an existing version.</value></data>
+  <data name="Guide.NeedCenter" xml:space="preserve"><value>Create or activate at least one physical centre in Centres and units. It identifies the place or department where work takes place.</value></data>
+  <data name="Guide.NeedUnit" xml:space="preserve"><value>Create or activate a driver unit in Centres and units (for example, hours). Each node needs a unit.</value></data>
+  <data name="Guide.NeedNodeCode" xml:space="preserve"><value>Enter the code of the node being edited. This identifies it within the model.</value></data>
+  <data name="Guide.NeedNodeCenter" xml:space="preserve"><value>Select the physical centre for this node. You can create centres in the Centres and units step.</value></data>
+  <data name="Guide.NeedNodeUnit" xml:space="preserve"><value>Select the node activity unit. If the list is empty, create it in Centres and units.</value></data>
+  <data name="Guide.ApplyNode" xml:space="preserve"><value>Click Add / update node. Then save the model: adding a node to the draft does not yet save it to the file.</value></data>
+  <data name="Guide.NeedPrincipal" xml:space="preserve"><value>The model needs at least one active Principal node. Auxiliary nodes can coexist. Choose the role according to your methodology, not just to pass this step.</value></data>
+  <data name="Guide.SaveModel" xml:space="preserve"><value>There are pending changes. Save the draft before validating and publishing the structure.</value></data>
+  <data name="Guide.PublishModel" xml:space="preserve"><value>Draft saved. Validate and publish the structure to make it available to studies. Publishing freezes this version; it does not calculate costs.</value></data>
+  <data name="Guide.ModelComplete" xml:space="preserve"><value>Structure published. You can continue to the study. To modify it, duplicate it as a draft.</value></data>
+  <data name="Guide.NeedPublished" xml:space="preserve"><value>A published structure is required. Return to step 2, save and publish the model. The list refreshes when you return here.</value></data>
+  <data name="Guide.NeedStudyName" xml:space="preserve"><value>Enter a recognisable study name, for example October 2026 balances.</value></data>
+  <data name="Guide.NeedStudyModel" xml:space="preserve"><value>Select the published model version for this study.</value></data>
+  <data name="Guide.NeedDates" xml:space="preserve"><value>Select the period start and end. The imported closing date must match the meaning you confirm.</value></data>
+  <data name="Guide.InvalidDates" xml:space="preserve"><value>The start date cannot be after the end date. Correct the dates.</value></data>
+  <data name="Guide.ClosedStudy" xml:space="preserve"><value>This study is closed. Reopen it to import data, or create another study.</value></data>
+  <data name="Guide.SaveStudy" xml:space="preserve"><value>Click Save study and continue. It will be saved inside the open company file and you can import data.</value></data>
+  <data name="Guide.StudyComplete" xml:space="preserve"><value>Study saved. You can import Excel or CSV. The final import step saves selected records into this study.</value></data>
+  <data name="Guide.PreviewOnly" xml:space="preserve"><value>Inspection mode: you can read and select records but cannot save an import. To save, follow Company → Structure → Study → Import. Your selection is kept when closing this window.</value></data>
+  <data name="Guide.NeedMapping" xml:space="preserve"><value>Select the columns and check how numbers are interpreted before continuing.</value></data>
+  <data name="Guide.NeedRecords" xml:space="preserve"><value>Select at least one record. You can select all and untick those to exclude.</value></data>
+  <data name="Guide.NeedMeaning" xml:space="preserve"><value>Explicitly choose what the amounts represent: period movements, full closing balance or difference between cumulative balances.</value></data>
+  <data name="Guide.NeedCurrency" xml:space="preserve"><value>Enter the amounts currency, for example EUR. It is not inferred from regional settings.</value></data>
+  <data name="Guide.NeedExample" xml:space="preserve"><value>Enter an account and its expected amount after grouping selected records, for example 6005 = 358.35 EUR.</value></data>
+  <data name="Guide.NeedApproval" xml:space="preserve"><value>Check the amount explanation and tick the confirmation box to prepare the final review.</value></data>
+  <data name="Guide.ReadyReview" xml:space="preserve"><value>You can prepare the final review. Nothing is saved yet; review totals before saving.</value></data>
+  <data name="Guide.ImportFile" xml:space="preserve"><value>1. File</value></data>
+  <data name="Guide.ImportColumns" xml:space="preserve"><value>2. Columns and numbers</value></data>
+  <data name="Guide.ImportRecords" xml:space="preserve"><value>3. Records</value></data>
+  <data name="Guide.ImportMeaning" xml:space="preserve"><value>4. Meaning and currency</value></data>
+  <data name="Guide.ImportReview" xml:space="preserve"><value>5. Review and save</value></data>
+  <data name="Guide.ReadNext" xml:space="preserve"><value>Read file and continue</value></data>
+  <data name="Guide.ValidateNext" xml:space="preserve"><value>Check columns and continue</value></data>
+  <data name="Guide.ReviewNext" xml:space="preserve"><value>Prepare final review</value></data>
+  <data name="Guide.SaveImport" xml:space="preserve"><value>Save import into study</value></data>
+  <data name="Guide.SavedImport" xml:space="preserve"><value>Import saved. You can close this window and view the result in the study.</value></data>
+  <data name="Guide.ReviewHelp" xml:space="preserve"><value>Review the destination, records and totals. Save import writes the data into the company file; closing before saving only keeps your selection for later review.</value></data>
+  <data name="Guide.EditReview" xml:space="preserve"><value>The preparation has changed or contains errors. Return to the relevant step, correct the data and prepare again.</value></data>
+  <data name="Guide.FileHelp" xml:space="preserve"><value>Choose the file and worksheet. Identify the header and first data rows. Reading does not modify the original file.</value></data>
+  <data name="Guide.ColumnsHelp" xml:space="preserve"><value>Map account and amount to source columns. Descriptions are not used for grouping. Review the preview and correct any errors.</value></data>
+  <data name="Guide.RecordsHelp" xml:space="preserve"><value>Only checked rows will be imported. Rows with the same account are summed with their source preserved.</value></data>
+  <data name="Guide.MeaningHelp" xml:space="preserve"><value>This step determines how amounts are incorporated. This is not inferred from the filename: choose the option that represents your data.</value></data>
+  <data name="Guide.DraftTab" xml:space="preserve"><value>1. Choose or create model</value></data>
+  <data name="Guide.MastersTab" xml:space="preserve"><value>2. Centres and units</value></data>
+  <data name="Guide.NodesTab" xml:space="preserve"><value>3. Add nodes</value></data>
+  <data name="Guide.PublishTab" xml:space="preserve"><value>4. Save and publish</value></data>
+  <data name="Guide.PublishNext" xml:space="preserve"><value>Save, validate and publish structure</value></data>
+  <data name="Guide.MasterHelp" xml:space="preserve"><value>Centre: physical or organisational area. Activity unit: what you measure, such as hours or items. Create them here, then select them in nodes.</value></data>
+  <data name="Guide.NodesHelp" xml:space="preserve"><value>Node: calculation structure element linked to a centre. Its pool groups costs. Adding updates the draft; Save and publish preserves it for use in studies.</value></data>
+  <data name="Guide.HelpHint" xml:space="preserve"><value>Help: hover over a field or select it with Tab to see its explanation here.</value></data>
+  <data name="Guide.StoredAt" xml:space="preserve"><value>Data is saved in: </value></data>
+  <data name="Guide.Help.CompanyName" xml:space="preserve"><value>Name identifying the company. Create file asks for a location; that file holds all company data.</value></data>
+  <data name="Guide.Help.Currency" xml:space="preserve"><value>Study functional currency: currency used for results. At company level it is only a suggestion for new studies.</value></data>
+  <data name="Guide.Help.UnitCode" xml:space="preserve"><value>Unique identifier for this unit, for example HOURS. This is not an account number.</value></data>
+  <data name="Guide.Help.UnitDimension" xml:space="preserve"><value>Kind of quantity, for example time. Units of different dimensions cannot be treated as equivalent.</value></data>
+  <data name="Guide.Help.UnitSymbol" xml:space="preserve"><value>Visible unit symbol, for example h for hours.</value></data>
+  <data name="Guide.Help.UnitScale" xml:space="preserve"><value>Number of decimal places allowed for quantities in this unit, from 0 to 12.</value></data>
+  <data name="Guide.Help.UnitDiscrete" xml:space="preserve"><value>Select if this quantity is counted in indivisible whole units.</value></data>
+  <data name="Guide.Help.CenterCode" xml:space="preserve"><value>Unique physical or organisational centre code, for example ADM01.</value></data>
+  <data name="Guide.Help.CenterName" xml:space="preserve"><value>Recognisable centre name, for example Administration. This does not automatically determine its allocation role.</value></data>
+  <data name="Guide.Help.Master" xml:space="preserve"><value>Select an existing centre to inspect or edit it. Create centre uses the entered code and name.</value></data>
+  <data name="Guide.Help.ModelChoice" xml:space="preserve"><value>Model version. Load selection opens that version; publishing freezes its structure for studies.</value></data>
+  <data name="Guide.Help.Description" xml:space="preserve"><value>Cost structure name. Create new model starts a draft; it does not create a study.</value></data>
+  <data name="Guide.Help.SelectedNode" xml:space="preserve"><value>Select an added node to edit it. For another node use Clear form / new node.</value></data>
+  <data name="Guide.Help.NodeCode" xml:space="preserve"><value>Unique node code within this model. A centre may contain several nodes.</value></data>
+  <data name="Guide.Help.Physical" xml:space="preserve"><value>Centre to which this node belongs. Create it in Centres and units if missing.</value></data>
+  <data name="Guide.Help.Role" xml:space="preserve"><value>Principal or Auxiliary according to the model methodology. Independent of functions and cost classification. At least one active Principal is required.</value></data>
+  <data name="Guide.Help.FunctionTags" xml:space="preserve"><value>Optional comma-separated tags describing node functions. They do not assign calculation rules.</value></data>
+  <data name="Guide.Help.DriverUnit" xml:space="preserve"><value>Unit used to measure node activity, for example hours. Required; create it in Centres and units.</value></data>
+  <data name="Guide.Help.Layer" xml:space="preserve"><value>Cost classification for this pool. It does not yet establish a calculation policy and is not inferred from the account.</value></data>
+  <data name="Guide.Help.PoolDescription" xml:space="preserve"><value>Optional description of the cost pool associated with this node.</value></data>
+  <data name="Guide.Help.UnitMaster" xml:space="preserve"><value>Select the unit to activate or deactivate. This does not create a new unit.</value></data>
+  <data name="Guide.Help.Name" xml:space="preserve"><value>Name identifying this study when reopening the company.</value></data>
+  <data name="Guide.Help.PeriodStart" xml:space="preserve"><value>First day included in the study period. Select it in the calendar.</value></data>
+  <data name="Guide.Help.PeriodEnd" xml:space="preserve"><value>Last included day. For closing balances, this is the date represented by imported balances.</value></data>
+  <data name="Guide.Help.Scenario" xml:space="preserve"><value>Distinguishes actual, budget or what-if data. It does not itself change imported amounts.</value></data>
+  <data name="Guide.Help.StudyChoice" xml:space="preserve"><value>Choose a saved study and click Load study to work in it.</value></data>
+  <data name="Guide.Help.SnapshotChoice" xml:space="preserve"><value>A snapshot preserves data and context at a point in time. It is not the action for saving an import.</value></data>
+  <data name="Guide.Help.Worksheet" xml:space="preserve"><value>Excel worksheet containing accounts and amounts.</value></data>
+  <data name="Guide.Help.HeaderRow" xml:space="preserve"><value>Row number containing column headings, for example 1.</value></data>
+  <data name="Guide.Help.FirstDataRow" xml:space="preserve"><value>First row containing data to read, usually the row after headings.</value></data>
+  <data name="Guide.Help.Delimiter" xml:space="preserve"><value>Character separating CSV columns: semicolon, comma or tab.</value></data>
+  <data name="Guide.Help.Encoding" xml:space="preserve"><value>CSV text encoding. UTF-8 is common; change it if source characters require another encoding.</value></data>
+  <data name="Guide.Help.AmountLayout" xml:space="preserve"><value>Choose one signed amount column or separate Debit and Credit columns. The latter calculates Debit minus Credit.</value></data>
+  <data name="Guide.Help.AccountColumn" xml:space="preserve"><value>Account code column. Grouping uses this code, never the description.</value></data>
+  <data name="Guide.Help.AmountColumn" xml:space="preserve"><value>Column containing signed amounts. Do not select descriptions or totals unrelated to account rows.</value></data>
+  <data name="Guide.Help.DebitColumn" xml:space="preserve"><value>Debit column. Credit is subtracted from this value; both columns are validated.</value></data>
+  <data name="Guide.Help.CreditColumn" xml:space="preserve"><value>Credit column. Its value is subtracted from Debit.</value></data>
+  <data name="Guide.Help.DecimalSeparator" xml:space="preserve"><value>Source decimal separator: comma in 123,45; point in 123.45.</value></data>
+  <data name="Guide.Help.GroupSeparator" xml:space="preserve"><value>Source thousands separator. Choose None if absent. This is not the CSV column delimiter.</value></data>
+  <data name="Guide.Help.NegativeSyntax" xml:space="preserve"><value>How source negatives are written: -123, (123) or 123-.</value></data>
+  <data name="Guide.Help.AllowNumericAccounts" xml:space="preserve"><value>Allows account codes stored as Excel numbers. Check leading zeros: Excel may already have removed them.</value></data>
+  <data name="Guide.Help.ReplaceBatch" xml:space="preserve"><value>Optional. Replaces an identified import, preserving history while removing its amounts from active totals. Unchecked adds an import.</value></data>
+  <data name="Guide.Help.Replacement" xml:space="preserve"><value>Specific import to replace in full. Review the selection before saving.</value></data>
+  <data name="Guide.Help.AmountMode" xml:space="preserve"><value>Period: movements between dates. Full balance: incorporates the entire closing balance. Cumulative: subtracts an explicitly prepared earlier closing.</value></data>
+  <data name="Guide.Help.SourceCurrency" xml:space="preserve"><value>Currency code for source amounts, for example EUR. Not inferred from symbol or region.</value></data>
+  <data name="Guide.Help.ApprovalReference" xml:space="preserve"><value>Example checked against the source: account and expected total of selected rows. Records your interpretation check.</value></data>
+  <data name="Guide.Help.InterpretationApproved" xml:space="preserve"><value>Confirms that period, meaning, currency and example are correct. Relevant edits require another review.</value></data>
+  <data name="Guide.Help.International" xml:space="preserve"><value>Options for currency per row, document dates and conversion. Rates are entered explicitly and preserved with the import.</value></data>
+  <data name="Guide.Help.CurrencyFromColumn" xml:space="preserve"><value>Enable if each row supplies its own currency, then choose the column.</value></data>
+  <data name="Guide.Help.CurrencyColumn" xml:space="preserve"><value>Column containing currency codes such as EUR or USD.</value></data>
+  <data name="Guide.Help.DateColumn" xml:space="preserve"><value>Optional document date column. Does not replace study dates.</value></data>
+  <data name="Guide.Help.DatePattern" xml:space="preserve"><value>Explicit text date pattern, for example dd/MM/yyyy. Avoids interpreting ambiguous dates from computer regional settings.</value></data>
+  <data name="Guide.Help.RateSetName" xml:space="preserve"><value>Name of the manual rate set preserved with the import.</value></data>
+  <data name="Guide.Help.AllowedRateStart" xml:space="preserve"><value>Earliest permitted date for selected exchange rates.</value></data>
+  <data name="Guide.Help.AllowedRateEnd" xml:space="preserve"><value>Latest permitted date for selected exchange rates.</value></data>
+  <data name="Guide.Help.RateToApply" xml:space="preserve"><value>Rate identifier to apply to selected rows. Review assignments; do not assign conversion to rows already in functional currency.</value></data>
+  <data name="Guide.Help.FiscalStart" xml:space="preserve"><value>Start of the fiscal year shared by both compared cumulative balances.</value></data>
+  <data name="Guide.Help.FiscalEnd" xml:space="preserve"><value>End of the fiscal year shared by both compared cumulative balances.</value></data>
+  <data name="Guide.Help.PreviousEnd" xml:space="preserve"><value>Closing date of the earlier file to subtract from the current file.</value></data>
+  <data name="Guide.Help.ComparisonScope" xml:space="preserve"><value>Identifies the shared accounting scope. Do not compare different account populations.</value></data>
+  <data name="Guide.Help.Rates" xml:space="preserve"><value>Per row: identifier, original currency, rate to functional currency (decimal point), ISO date yyyy-MM-dd and source. Rates are not automatically fetched or inverted.</value></data>
+  <data name="Guide.Help.Records" xml:space="preserve"><value>Check or uncheck rows to import. Select all, none or exclude just some.</value></data>
+  <data name="Guide.Help.RateSelections" xml:space="preserve"><value>Enter the selected rate identifier for each included record requiring conversion.</value></data>
+  <data name="Guide.MeaningChosen" xml:space="preserve"><value>I have chosen the meaning of the amounts shown above.</value></data>
+  <data name="Guide.OtherStudy" xml:space="preserve"><value>Other operations: new study, closure and snapshots</value></data>
+  <data name="Guide.OtherModel" xml:space="preserve"><value>Individual operations and model maintenance</value></data>
+  <data name="Guide.OtherFile" xml:space="preserve"><value>Backups, restore and file upgrades</value></data>
+  <data name="Guide.Help.SelectedUiLanguageTag" xml:space="preserve"><value>Language of application text. Does not change stored data.</value></data>
+  <data name="Guide.Help.SelectedFormatCultureTag" xml:space="preserve"><value>Region used to display numbers and dates. Source file format is chosen separately.</value></data>
+  <data name="Guide.Help.SelectedTimeZoneId" xml:space="preserve"><value>Zone used to display history timestamps. Does not change study business dates.</value></data>
+  <data name="Guide.CorrectImport" xml:space="preserve"><value>Go back to correct the data</value></data>
+  <data name="Guide.Working" xml:space="preserve"><value>Operation in progress. Please wait; your entries are preserved.</value></data>
+  <data name="Guide.ReadOnly" xml:space="preserve"><value>This company file is open for reading. You can inspect data, but saving requires an editable company file.</value></data>
+  <data name="Guide.PendingCenter" xml:space="preserve"><value>The physical centre has unsaved changes. Review them in Centres and units, then save the centre before continuing.</value></data>
+  <data name="Guide.ReviewCenter" xml:space="preserve"><value>Review pending centre</value></data>
+  <data name="Guide.SaveCenterNext" xml:space="preserve"><value>Save centre and continue</value></data>
+  <data name="Guide.CreateCompanyNext" xml:space="preserve"><value>Create company file and continue</value></data>
+  <data name="Guide.CreateModelNext" xml:space="preserve"><value>Create model and continue</value></data>
+  <data name="Guide.LoadModelNext" xml:space="preserve"><value>Load selected model and continue</value></data>
+  <data name="Guide.ApplyNodeNext" xml:space="preserve"><value>Add node changes and continue</value></data>
+  <data name="Guide.PublishContinue" xml:space="preserve"><value>Save, publish and continue to study</value></data>
+  <data name="Guide.ContinueStudy" xml:space="preserve"><value>Continue to study</value></data>
+  <data name="Guide.ContinueImport" xml:space="preserve"><value>Continue to import</value></data>
+  <data name="Guide.Help.StudyModelChoice" xml:space="preserve"><value>Choose the published structure this study will use. It is linked when you save the study; no separate load action is required.</value></data>
+  <data name="ImportMapping.ReviewChanged" xml:space="preserve"><value>The current review has changed. Prepare and check it again before saving; previously saved imports remain in the study.</value></data>
+  <data name="Guide.ReadOnlyAction" xml:space="preserve"><value>Read-only company file</value></data>
+<data name="Resource.PartitionMismatch" xml:space="preserve"><value>Resource {0} has a partition difference of {1}.</value></data>
+<data name="Resource.DuplicateId" xml:space="preserve"><value>An identifier is repeated in the resource preparation.</value></data>
+<data name="Resource.SourceRequired" xml:space="preserve"><value>A resource requires at least one original source.</value></data>
+<data name="Resource.SourceReused" xml:space="preserve"><value>An original source row cannot supply more than one resource.</value></data>
+<data name="Resource.ReversalInvalid" xml:space="preserve"><value>The reversal must cancel one existing adjustment in the same resource exactly once.</value></data>
+<data name="Resource.RouteConflict" xml:space="preserve"><value>Choose exactly one route for each resource part.</value></data>
+<data name="Resource.DirectMismatch" xml:space="preserve"><value>Direct assignments must sum exactly to the part amount and identify their objects.</value></data>
+<data name="Resource.PoolRequired" xml:space="preserve"><value>Select the destination pool for this part.</value></data>
+<data name="Resource.ExclusionReasonRequired" xml:space="preserve"><value>Enter a reason for excluding this part.</value></data>
+<data name="Resource.AdjustmentReasonRequired" xml:space="preserve"><value>Enter the adjustment type and reason.</value></data>
+<data name="Resource.ConversionInvalid" xml:space="preserve"><value>The stored conversion does not match the original amount and its selected exchange rate.</value></data>
+<data name="Resource.ClassificationInvalid" xml:space="preserve"><value>The resource classification contains an unsupported value.</value></data>
+<data name="Resource.BehaviorContextRequired" xml:space="preserve"><value>Fixed and variable behavior require a driver, horizon and activity range.</value></data>
+<data name="Resource.BehaviorHorizonInvalid" xml:space="preserve"><value>The behavior horizon must end on or after its start.</value></data>
+<data name="Resource.BehaviorRangeInvalid" xml:space="preserve"><value>Activity quantities must be nonnegative and the range must be ordered.</value></data>
+<data name="Resource.CapacityOwnerInvalid" xml:space="preserve"><value>Capacity assessment requires one owner pool and node matching the part route; other treatments cannot carry an owner.</value></data>
+<data name="Resource.ActivityUnitMismatch" xml:space="preserve"><value>The activity quantity does not use its declared unit.</value></data>
+<data name="Resource.BehaviorUnclassified" xml:space="preserve"><value>Part {0} is not classified as fixed or variable.</value></data>
+<data name="Resource.BehaviorMixedPending" xml:space="preserve"><value>Part {0} is mixed and must be split before definitive absorption.</value></data>
+<data name="Resource.SplitRequiresParts" xml:space="preserve"><value>Choose at least two replacement parts.</value></data>
+<data name="Resource.SplitMismatch" xml:space="preserve"><value>Replacement parts must sum exactly to the original part amount.</value></data>
+<data name="Resource.PartNotFound" xml:space="preserve"><value>Select one existing part of this resource.</value></data>
 </root>

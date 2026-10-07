@@ -7,10 +7,28 @@ namespace Valdrio.Desktop;
 
 public partial class StudyWorkspacePanel : UserControl
 {
-    public StudyWorkspacePanel() => InitializeComponent();
+    public StudyWorkspacePanel()
+    {
+        InitializeComponent();
+        CreateStudyButton.Click += async (_, _) =>
+        {
+            // Wait until the command has finished before revealing its result.
+            await Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.Background);
+            if (DataContext is StudyWorkspaceViewModel vm && vm.CreateCommand.ExecutionTask is { } task) await task;
+            ActionStatus.BringIntoView();
+        };
+    }
+    private async void GoToModels(object sender, RoutedEventArgs e)
+    {
+        if (Window.GetWindow(this) is MainWindow main)
+        {
+            await main.NavigateWorkflow(1);
+            main.ModelPanel.Focus();
+        }
+    }
     private async void OpenImportColumns(object sender, RoutedEventArgs e)
     {
-        if (DataContext is StudyWorkspaceViewModel { ImportColumns: { } vm } studies && await studies.AttachImportTarget())
+        if (DataContext is StudyWorkspaceViewModel { ImportColumns: { } vm } studies && await studies.AttachImportTarget(previewOnly: true))
             new ImportColumnMappingWindow { Owner = Window.GetWindow(this), DataContext = vm }.ShowDialog();
     }
 }

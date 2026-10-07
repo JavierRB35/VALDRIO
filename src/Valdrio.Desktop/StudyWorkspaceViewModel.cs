@@ -67,17 +67,35 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         init { importColumns = value; if (value is not null) value.PropertyChanged += ImportStateChanged; }
     }
     private void ImportStateChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e) => Refresh();
-    public async Task<bool> AttachImportTarget()
+    public async Task<bool> AttachImportTarget(bool previewOnly = false)
     {
-        if (!await CanLeaveAsync() || ImportColumns is null) return false;
+        if (busy || ImportColumns is null || ImportColumns.IsBusy) return false;
+        if (previewOnly)
+        {
+            // Inspection never writes or resolves pending study edits, even for a saved study.
+            ImportColumns.BindTarget(null, null, false, null);
+            ImportColumns.SetExistingBatches([]);
+            return true;
+        }
+        // Reading a source does not abandon the unsaved study form. Only a saved,
+        // unchanged study can be used as a destination for confirmation.
+        if (Current is not null && !await CanLeaveAsync()) return false;
         ImportColumns.BindTarget(company.ActiveImports, Current, company.CanWrite, async batch =>
         {
             await ApplyConfirmedThenReload(batch.ConfirmedStudy, ApplyConfirmedStudy);
             if (committedRefreshPending) throw new InvalidOperationException("Committed import refresh pending.");
         });
+        ImportColumns.SetExistingBatches(importValues);
         return true;
     }
     public string ImportColumnsLabel => Text("ImportMapping.OpenMapping");
+    public bool HasStudies => Studies.Count > 0;
+    public bool HasPublishedModels => PublishedModels.Count > 0;
+    public string StudyListHelp => Text(HasStudies ? "Study.ChooseExisting" : "Study.NoStudiesYet");
+    public string ModelHelp => Text(HasPublishedModels ? "Study.ChooseModelHelp" : "Study.NoModelsHelp");
+    public string GoToModelsLabel => Text("Study.GoToModels");
+    public string WorkflowHelp => Text(Current is null ? "Study.CreationHelp" : "Study.SavedHelp");
+    public string ImportHelp => Text(Current is null ? "Study.PreviewHelp" : "Study.ImportHelp");
     public bool IsDirty => dirty;
     public bool Ready => !busy && company.WorkspaceIdle && company.ActiveStudies is not null;
     public bool CanEdit => Ready && Current?.State != StudyState.Closed;
@@ -130,9 +148,23 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public string CancelLabel => Text("CompanyCancel");
     public string SnapshotLabel => Text("Study.Snapshots");
     public string RunHistory => Text("Study.RunHistoryEmpty");
-    public string ImportedAmounts => importValues.Count == 0 ? Text("ImportMapping.NoImports") : string.Join(Environment.NewLine,
-        importValues.Select(b => string.Format(Format, Text("ImportMapping.ImportHistory"), b.Id, b.Prepared.Source.FileName,
-            b.Resources.Count, b.Prepared.Reconciliation.NetAmount, b.Prepared.Reconciliation.Currency, b.ConfirmedStudy.Revision)));
+    public string ImportedAmounts
+    {
+        get
+        {
+            if (importValues.Count == 0) return Text("ImportMapping.NoImports");
+            var active = ImportConfirmationRules.ActiveBatches(importValues).Select(b => b.Id).ToHashSet();
+            return string.Join(Environment.NewLine, importValues.Select(b =>
+                Text(active.Contains(b.Id) ? "ImportMapping.BatchActive" : "ImportMapping.BatchReplaced") + " · " +
+                string.Format(Format, Text("ImportMapping.ImportHistory"), b.Id, b.Prepared.Source.FileName,
+                      b.Resources.Count, b.Prepared.Reconciliation.NetAmount, b.Prepared.Reconciliation.Currency, b.ConfirmedStudy.Revision) +
+                  (b.Prepared.ConversionBridge is not { } bridge ? "" : Environment.NewLine +
+                      string.Join(Environment.NewLine, bridge.OriginalTotals.Select(t => string.Format(Format, Text("ImportMapping.CurrencyTotals"),
+                          t.Currency, t.Positive, t.Negative, t.Net))) + Environment.NewLine +
+                      string.Format(Format, Text("ImportMapping.FunctionalTotal"), bridge.FunctionalTotal,
+                          b.Prepared.Reconciliation.Currency, bridge.RoundingAdjustment))));
+        }
+    }
     public string Status => diagnostic is null ? Text(statusKey) : DiagnosticText(diagnostic);
     public string Details => Current is null ? Text("Study.NoneSelected") : string.Format(Format, Text("Study.Details"), Current.Name,
         formatter.FormatDate(Current.PeriodStart.Value, Format, DateDisplayPreset.Short), formatter.FormatDate(Current.PeriodEnd.Value, Format, DateDisplayPreset.Short),
