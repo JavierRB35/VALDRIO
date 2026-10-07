@@ -135,15 +135,33 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
             Display(creditColumn is { } c ? row.GetCell(c).TextValue : null));
     }).ToArray();
     public string Status => diagnostic is null ? this[statusKey] : FormatDiagnostic(diagnostic);
+    public string UserStatus => diagnostic is null ? this[statusKey] : FormatDiagnosticMessage(diagnostic);
+    public bool HasUserError => diagnostic is not null || validation is { IsValid: false };
     public string Summary => validation is null ? "" : string.Format(Ui, this["Summary"],
         validation.Rows.Count, validation.Diagnostics.Count, validation.IsValid ? this["Valid"] : this["Blocked"]);
+    public string FriendlySummary => validation is null ? "" : validation.IsValid
+        ? string.Format(Ui, this["FriendlyValidSummary"], validation.Rows.Count)
+        : string.Format(Ui, this["FriendlyInvalidSummary"], validation.Rows.Count, validation.Diagnostics.Count);
     public string GlobalIssues => validation is null ? "" : string.Join("\n", validation.Diagnostics.Take(100).Select(d =>
         $"{d.Location.RecordNumber?.ToString(CultureInfo.InvariantCulture) ?? "—"} · {d.Location.Column?.ToString(CultureInfo.InvariantCulture) ?? "—"} · {FormatDiagnostic(d.Diagnostic)}"));
+    public string FriendlyGlobalIssues => validation is null ? "" : string.Join("\n", validation.Diagnostics.Take(100).Select(d =>
+        string.Format(Ui, this["FriendlyIssueLine"],
+            d.Location.RecordNumber?.ToString(CultureInfo.InvariantCulture) ?? "—",
+            FormatDiagnosticMessage(d.Diagnostic))));
+    public string FileStepRequirement => !HasFile ? this["NeedFile"] :
+        IsXlsx && string.IsNullOrWhiteSpace(Worksheet) ? this["NeedWorksheet"] :
+        HasColumns ? this["FileReadReady"] : this["FileContinueHint"];
+    public string ColumnStepRequirement => !HasColumns ? this["NeedReadFirst"] :
+        !AccountColumn.HasValue ? this["NeedAccountColumn"] :
+        IsSignedAmount && !AmountColumn.HasValue ? this["NeedAmountColumn"] :
+        IsDebitCredit && (!DebitColumn.HasValue || !CreditColumn.HasValue) ? this["NeedDebitCreditColumns"] :
+        validation is { IsValid: false } ? this["NeedFixRows"] : this["ColumnsContinueHint"];
 
     private CultureInfo Ui => CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag);
     private string Text(string key) { var value = texts.Get(key, Ui); return pseudo ? PseudoLocalization.Expand(value) : value; }
-    private string FormatDiagnostic(DomainDiagnostic value) => value.Code + " · " +
+    private string FormatDiagnosticMessage(DomainDiagnostic value) =>
         new DomainDiagnosticFormatter(texts).Format(value, Ui, CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)).Message;
+    private string FormatDiagnostic(DomainDiagnostic value) => value.Code + " · " + FormatDiagnosticMessage(value);
     private static string Display(string? value) => value is null ? "" : value.Length <= 200 ? value : value[..200] + "…";
     private static string ColumnName(int index)
     { var text = ""; while (index > 0) { index--; text = (char)('A' + index % 26) + text; index /= 26; } return text; }
