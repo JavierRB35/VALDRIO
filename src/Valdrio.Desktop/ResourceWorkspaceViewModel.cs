@@ -108,7 +108,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     public string Requirement => this[workspace is null ? "NeedStudy" : workspace.Resources.Count == 0 ? "NeedImport" : !company.CanWrite ? "ReadOnly" :
         workspace.Study.State == StudyState.Closed ? "Closed" : stage switch { 0 => "ChooseAccount", 1 => "AdjustmentHelp", 2 => "PartsHelp", _ => "ReviewHelp" }];
     public string Status => diagnostic is null ? this[statusKey] : new DomainDiagnosticFormatter(texts)
-        .Format(diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message + " (" + diagnostic.Code + ")";
+        .Format(diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message;
     public string CurrentAccount => workspace is null || editing is null ? "" : workspace.Origins.Single(o => o.Id == editing.Id).Code;
     public string SaveDestination => workspace is null ? "" : workspace.Study.Name + " · " + company.ActivePath;
     public string Reason { get => reason; set { if (SetProperty(ref reason, value) && !loading) { dirty = true; Refresh(); } } }
