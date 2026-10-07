@@ -58,8 +58,8 @@ public partial class ImportColumnMappingWindow
         await Click(panel.CaptureStudyButton); var originalPhoto = studies.SnapshotChoice!.Value;
         await studies.AttachImportTarget();
         var csv = Path.Combine(output, "period-amounts.csv"); File.WriteAllText(csv, "Amount;Ignored;Account\n\"1.250,50\";x;00123\n0;y;ZERO\n9000;b;BALANCE"); var csvHash = Hash(csv);
-        files.Paths.Enqueue(csv); await Click(OpenSourceButton); await Click(ReadSourceButton);
-        Select(AccountColumnBox, 3); Select(AmountColumnBox, 1); vm.GroupSeparator = "."; await Click(ValidateMappingButton);
+        files.Paths.Enqueue(csv); await Click(OpenSourceButton); await vm.ReadCommand.ExecuteAsync(null);
+        Select(AccountColumnBox, 3); Select(AmountColumnBox, 1); vm.GroupSeparator = "."; await vm.ValidateCommand.ExecuteAsync(null);
         Check(vm.IsReady && !ConfirmImportButton.IsEnabled, "column validation alone cannot confirm");
         await Click(DeselectAllRecordsButton);
         Check(vm.IsExplicitAccountSelection && !vm.PrepareCommand.CanExecute(null) && vm.AccountChoices.Count == 3,
