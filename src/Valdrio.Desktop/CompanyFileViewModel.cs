@@ -161,6 +161,17 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
             Snapshot = await Task.Run(() => active!.AddUnits([unit], Snapshot!.Revision, "local-user", token));
             if (AfterChangeAsync is not null) await AfterChangeAsync();
         });
+
+        if (diagnostic is null && statusKey == "CompanyCompleted")
+        {
+            statusKey = "CompanyUnitSaved";
+            UnitCode = "";
+            UnitDimension = "time";
+            UnitSymbol = "h";
+            UnitScale = 12;
+            UnitDiscrete = false;
+            Refresh();
+        }
     }
     private async Task Backup()
     {
