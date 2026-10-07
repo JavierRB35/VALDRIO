@@ -481,11 +481,11 @@ Completa: {5}</value></data>
   <data name="Guide.NeedCompany" xml:space="preserve"><value>Primero crea o abre un archivo de empresa. Todos los modelos, estudios e importaciones se guardarán dentro de ese archivo.</value></data>
   <data name="Guide.CompanyReady" xml:space="preserve"><value>Empresa abierta. Continúa a Estructura para crear o elegir el modelo que utilizará el estudio.</value></data>
   <data name="Guide.NeedDraft" xml:space="preserve"><value>Escribe el nombre de la estructura y pulsa Crear modelo nuevo, o selecciona una versión existente y cárgala.</value></data>
-  <data name="Guide.NeedCenter" xml:space="preserve"><value>Crea o activa al menos un centro físico en Centros y unidades. Identifica el lugar o departamento donde se realiza la actividad.</value></data>
+  <data name="Guide.NeedCenter" xml:space="preserve"><value>Crea o activa al menos un centro físico en Centros. Identifica el lugar o departamento donde se realiza la actividad.</value></data>
   <data name="Guide.NeedUnit" xml:space="preserve"><value>Aún no hay una unidad de actividad disponible. Puedes crearla aquí o continuar a Nodos y crearla allí mismo cuando el nodo la necesite.</value></data>
   <data name="Guide.NeedNodeCode" xml:space="preserve"><value>Completa el código del nodo que estás editando. Es su identificador dentro de este modelo.</value></data>
-  <data name="Guide.NeedNodeCenter" xml:space="preserve"><value>Selecciona el centro físico al que pertenece este nodo. Puedes crear centros en el paso Centros y unidades.</value></data>
-  <data name="Guide.NeedNodeUnit" xml:space="preserve"><value>Selecciona la unidad de actividad del nodo. Si la lista está vacía, créala en Centros y unidades.</value></data>
+  <data name="Guide.NeedNodeCenter" xml:space="preserve"><value>Selecciona el centro físico al que pertenece este nodo. Puedes crear centros en el paso Centros.</value></data>
+  <data name="Guide.NeedNodeUnit" xml:space="preserve"><value>Selecciona la unidad de actividad del nodo. Si no existe la que necesitas, créala aquí mismo con «Crear una aquí».</value></data>
   <data name="Guide.ApplyNode" xml:space="preserve"><value>Completa los datos del nodo y pulsa Guardar nodo. VALDRIO guardará el borrador y limpiará el formulario para que puedas añadir el siguiente.</value></data>
   <data name="Guide.NeedPrincipal" xml:space="preserve"><value>El modelo necesita al menos un nodo activo con papel Principal. Los auxiliares pueden coexistir. Elige el papel según tu metodología, no solo para superar este paso.</value></data>
   <data name="Guide.SaveModel" xml:space="preserve"><value>Hay cambios pendientes. Guarda el borrador antes de comprobar y publicar el modelo.</value></data>
