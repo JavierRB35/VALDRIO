@@ -69,8 +69,9 @@ public partial class ModelWorkspacePanel
         if (vm.HasPendingCenter)
         {
             if (ModelSteps.SelectedIndex != 1) { FocusAt(1, CenterNameBox); return false; }
-            await vm.SaveCenterFormCommand.ExecuteAsync(null);
-            if (vm.HasPendingCenter) { FocusAt(1, CenterNameBox); return false; }
+            if (vm.SaveCenterFormCommand.CanExecute(null))
+                await vm.SaveCenterFormCommand.ExecuteAsync(null);
+            if (vm.HasPendingCenter) { FocusAt(1, string.IsNullOrWhiteSpace(vm.CenterCode) ? CenterCodeBox : CenterNameBox); return false; }
         }
         if (vm.Current is null)
         {
