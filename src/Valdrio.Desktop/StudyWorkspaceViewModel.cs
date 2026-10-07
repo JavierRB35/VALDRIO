@@ -150,7 +150,12 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
             return string.Join(Environment.NewLine, importValues.Select(b =>
                 Text(active.Contains(b.Id) ? "ImportMapping.BatchActive" : "ImportMapping.BatchReplaced") + " · " +
                 string.Format(Format, Text("ImportMapping.ImportHistory"), b.Id, b.Prepared.Source.FileName,
-                    b.Resources.Count, b.Prepared.Reconciliation.NetAmount, b.Prepared.Reconciliation.Currency, b.ConfirmedStudy.Revision)));
+                      b.Resources.Count, b.Prepared.Reconciliation.NetAmount, b.Prepared.Reconciliation.Currency, b.ConfirmedStudy.Revision) +
+                  (b.Prepared.ConversionBridge is not { } bridge ? "" : Environment.NewLine +
+                      string.Join(Environment.NewLine, bridge.OriginalTotals.Select(t => string.Format(Format, Text("ImportMapping.CurrencyTotals"),
+                          t.Currency, t.Positive, t.Negative, t.Net))) + Environment.NewLine +
+                      string.Format(Format, Text("ImportMapping.FunctionalTotal"), bridge.FunctionalTotal,
+                          b.Prepared.Reconciliation.Currency, bridge.RoundingAdjustment))));
         }
     }
     public string Status => diagnostic is null ? Text(statusKey) : DiagnosticText(diagnostic);

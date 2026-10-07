@@ -92,7 +92,7 @@ public sealed partial class SqliteCompanyFileService
                 {
                     var file = Validate(Path, token);
                     using var connection = Connect(Path, write ? Microsoft.Data.Sqlite.SqliteOpenMode.ReadWrite : Microsoft.Data.Sqlite.SqliteOpenMode.ReadOnly);
-                    using var db = new ImportLedgerDbContext(connection);
+                    using var db = new InternationalImportDbContext(connection);
                     using var tx = db.Database.BeginTransaction();
                     var result = action(db, file);
                     if (write)

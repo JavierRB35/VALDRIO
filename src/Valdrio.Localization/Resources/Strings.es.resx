@@ -140,8 +140,8 @@ Archivo: {8}</value></data>
   <data name="File.RevisionChanged" xml:space="preserve"><value>La revisión ha cambiado. Recarga la empresa antes de guardar.</value></data>
   <data name="File.DuplicateUnit" xml:space="preserve"><value>El ID o código de unidad ya existe. Usa un código único. No se ha confirmado ningún cambio.</value></data>
   <data name="File.InputInvalid" xml:space="preserve"><value>Revisa el nombre, la moneda y la unidad introducidos. No se ha confirmado ningún cambio.</value></data>
-  <data name="CompanyUpgrade" xml:space="preserve"><value>Actualizar v1 a un archivo nuevo</value></data>
-  <data name="File.UpgradeRequired" xml:space="preserve"><value>Este archivo v1 requiere actualización a un archivo nuevo. Seleccione Actualizar y conserve el original.</value></data>
+  <data name="CompanyUpgrade" xml:space="preserve"><value>Actualizar un archivo anterior a una copia nueva</value></data>
+  <data name="File.UpgradeRequired" xml:space="preserve"><value>Este archivo anterior requiere actualización a un archivo nuevo. Seleccione Actualizar y conserve el original.</value></data>
   <data name="File.UpgradeNotRequired" xml:space="preserve"><value>El archivo ya tiene la versión actual; no se ha actualizado.</value></data>
   <data name="File.MigrationLocked" xml:space="preserve"><value>El origen contiene un bloqueo de migración activo o antiguo. Consérvelo y revise su procedencia antes de recuperarlo.</value></data>
   <data name="Model.PolicyInvalid" xml:space="preserve"><value>Una referencia de política está incompleta o no es válida.</value></data>
@@ -349,7 +349,7 @@ Completa: {5}</value></data>
   <data name="Import.ModeUnavailable" xml:space="preserve"><value>Esta entrega admite importes de periodo o saldo íntegro al cierre explícitamente elegido y aprobado para el estudio, sin cuentas duplicadas. El cierre sin interpretación, las diferencias de acumulados y la agrupación siguen pendientes.</value></data>
   <data name="Import.ApprovalRequired" xml:space="preserve"><value>Valida un ejemplo representativo y aprueba explícitamente el periodo, la moneda y los importes firmados antes de confirmar.</value></data>
   <data name="Import.PeriodMismatch" xml:space="preserve"><value>El periodo del archivo debe coincidir con el del estudio.</value></data>
-  <data name="Import.FxRequired" xml:space="preserve"><value>La confirmación requiere una moneda fija de origen igual a la funcional del estudio. Otra moneda necesita el puente de conversión.</value></data>
+  <data name="Import.FxRequired" xml:space="preserve"><value>Para importar otra moneda, activa «Configurar monedas, fechas y conversiones del origen» y selecciona los tipos necesarios.</value></data>
   <data name="Import.TotalOverflow" xml:space="preserve"><value>El total importado supera el rango decimal. No se puede confirmar ningún importe.</value></data>
   <data name="Import.NoSelectedRows" xml:space="preserve"><value>No hay filas válidas seleccionadas para importar.</value></data>
   <data name="Import.PreparedInvalid" xml:space="preserve"><value>La importación preparada está bloqueada, incompleta o ya no coincide con el estudio. Prepárala de nuevo.</value></data>
@@ -359,7 +359,7 @@ Completa: {5}</value></data>
   <data name="Import.SourceChanged" xml:space="preserve"><value>El archivo seleccionado cambió después de la vista previa. Ábrelo de nuevo y prepara otra importación.</value></data>
   <data name="Study.PartitionsPending" xml:space="preserve"><value>Los recursos importados están disponibles. Asigna sus particiones antes de calcular costes.</value></data>
   <data name="Study.ImportedCaptured" xml:space="preserve"><value>La captura incluye recursos importados confirmados y su procedencia. El cálculo necesita las entradas restantes.</value></data>
-  <data name="ImportMapping.Scope" xml:space="preserve"><value>La confirmación añade un lote completo según la modalidad elegida y en la moneda funcional del estudio. Las diferencias entre cierres y la conversión de divisas están pendientes.</value></data>
+  <data name="ImportMapping.Scope" xml:space="preserve"><value>La confirmación guarda el lote completo con sus originales, conversiones y procedencia. Revisa los totales y la modalidad antes de confirmar.</value></data>
   <data name="ImportMapping.NoStudy" xml:space="preserve"><value>Revisión del archivo: puedes elegir columnas y registros. Para guardar la importación, cierra esta ventana, guarda o carga un estudio y vuelve a abrirla; se conservará tu selección.</value></data>
   <data name="ImportMapping.Target" xml:space="preserve"><value>Estudio de destino {0} · periodo {1} a {2} · moneda funcional {3} · revisión {4}</value></data>
   <data name="ImportMapping.SourceCurrency" xml:space="preserve"><value>Moneda de origen, código ISO como EUR</value></data>
@@ -442,4 +442,30 @@ Completa: {5}</value></data>
 <data name="ImportMapping.DifferenceAmount" xml:space="preserve"><value>Diferencia del periodo</value></data>
 <data name="ImportMapping.EarlierRecords" xml:space="preserve"><value>Filas del anterior</value></data>
 <data name="ImportMapping.EarlierAmount" xml:space="preserve"><value>Acumulado anterior</value></data>
+  <data name="Import.ConversionInvalid" xml:space="preserve"><value>Revisa el catálogo de monedas, las fechas, los identificadores de tipo y las conversiones seleccionadas.</value></data>
+  <data name="Import.DocumentDateInvalid" xml:space="preserve"><value>La fecha del documento no coincide con el formato declarado del origen.</value></data>
+  <data name="Import.SourceCurrencyInvalid" xml:space="preserve"><value>La moneda de origen falta, no es válida o está fuera de su vigencia declarada.</value></data>
+  <data name="Import.ConversionRateMissing" xml:space="preserve"><value>Selecciona un tipo de cambio explícito para este registro en otra moneda.</value></data>
+  <data name="Import.RateDateInvalid" xml:space="preserve"><value>La fecha del tipo seleccionado queda fuera del intervalo aprobado.</value></data>
+  <data name="ImportMapping.International" xml:space="preserve"><value>Configurar monedas, fechas y conversiones del origen</value></data>
+  <data name="ImportMapping.ConversionHelp" xml:space="preserve"><value>Los totales originales se separan por moneda. Escribe los tipos con punto decimal: moneda del estudio por unidad de origen. Las fechas de tipo usan yyyy-MM-dd. Declara su intervalo permitido; no se consulta una cotización actual. En comparativos se convierte cada saldo con sus tipos aprobados antes de restar; ambos puentes quedan visibles.</value></data>
+  <data name="ImportMapping.CurrencyFromColumn" xml:space="preserve"><value>Leer la moneda de una columna del archivo</value></data>
+  <data name="ImportMapping.DocumentDateColumn" xml:space="preserve"><value>Fecha del documento (columna opcional)</value></data>
+  <data name="ImportMapping.DatePattern" xml:space="preserve"><value>Formato de fecha del origen, p. ej. dd/MM/yyyy</value></data>
+  <data name="ImportMapping.RateSet" xml:space="preserve"><value>Nombre/versión de este conjunto de tipos</value></data>
+  <data name="ImportMapping.AllowedRateStart" xml:space="preserve"><value>Primera fecha de tipo permitida</value></data>
+  <data name="ImportMapping.AllowedRateEnd" xml:space="preserve"><value>Última fecha de tipo permitida</value></data>
+  <data name="ImportMapping.AddRate" xml:space="preserve"><value>Añadir tipo manual</value></data>
+  <data name="ImportMapping.RateId" xml:space="preserve"><value>Identificador del tipo</value></data>
+  <data name="ImportMapping.Quote" xml:space="preserve"><value>Tipo (destino/origen)</value></data>
+  <data name="ImportMapping.RateDate" xml:space="preserve"><value>Fecha del tipo</value></data>
+  <data name="ImportMapping.RateSource" xml:space="preserve"><value>Fuente del tipo</value></data>
+  <data name="ImportMapping.RateSelectionHelp" xml:space="preserve"><value>Indica el identificador de tipo en cada registro incluido de otra moneda. Déjalo vacío para la moneda del estudio. El botón copia el identificador escrito a todos los registros incluidos; revisa cada elección antes de preparar.</value></data>
+  <data name="ImportMapping.ApplyRate" xml:space="preserve"><value>Aplicar identificador a los registros incluidos</value></data>
+  <data name="ImportMapping.InternationalSelectionTotals" xml:space="preserve"><value>Prepara la importación para ver totales separados por moneda de origen y el total convertido conciliado.</value></data>
+  <data name="ImportMapping.ConversionPreview" xml:space="preserve"><value>Revisa originales y conversiones antes de confirmar</value></data>
+  <data name="ImportMapping.Converted" xml:space="preserve"><value>Importe convertido</value></data>
+  <data name="ImportMapping.RoundingAdjustment" xml:space="preserve"><value>Ajuste de redondeo de conversión</value></data>
+  <data name="ImportMapping.CurrencyTotals" xml:space="preserve"><value>Original {0}: positivos {1}; negativos {2}; neto {3}</value></data>
+  <data name="ImportMapping.FunctionalTotal" xml:space="preserve"><value>Total funcional: {0} {1}. Ajuste de redondeo de conversión: {2} {1}.</value></data>
 </root>

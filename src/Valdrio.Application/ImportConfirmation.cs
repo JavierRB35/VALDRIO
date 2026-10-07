@@ -17,7 +17,8 @@ public interface IImportWorkspace
     IReadOnlyList<ImportedBatch> ReadImports(EntityId companyId, EntityId studyId, CancellationToken token = default);
 }
 
-public sealed record PreparedAmountRow(int RecordNumber, int PhysicalLine, string? Account, Money? Original, bool Selected);
+public sealed record PreparedAmountRow(int RecordNumber, int PhysicalLine, string? Account, Money? Original, bool Selected,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] BusinessDate? ParsedDate = null);
 public sealed record ImportReconciliation(int ReadRows, int InvalidRows, int IgnoredRows, int SelectedRows,
     CurrencyCode Currency, decimal PositiveAmount, decimal NegativeAmount, int ZeroRows, decimal NetAmount);
 
@@ -52,9 +53,40 @@ public sealed class PreparedImport
             Block("IMP_APPROVAL_REQUIRED", "Import.ApprovalRequired");
         if (profile.PeriodStart != studyContext.PeriodStart || profile.PeriodEnd != studyContext.PeriodEnd)
             Block("IMP_PERIOD_MISMATCH", "Import.PeriodMismatch");
-        if (profile.FixedCurrency != studyContext.Currency.FunctionalCurrencyCode || profile.CurrencyColumn is not null)
+        if (profile.Conversion is null && (profile.FixedCurrency != studyContext.Currency.FunctionalCurrencyCode || profile.CurrencyColumn is not null))
             Block("IMP_FX_REQUIRED", "Import.FxRequired");
         if (studyContext.State != StudyState.Open) Block("STUDY_CLOSED", "Study.ClosedDiagnostic");
+        if (profile.Conversion is not null)
+        {
+            var converted = ImportConversion.Prepare(studyContext, precisionPolicy, source, profile, diagnostics, token);
+            Rows = converted.Rows; ConversionBridge = converted.Bridge;
+            if (!Rows.Any(r => r.Selected)) Block("IMP_NO_SELECTED_ROWS", "Import.NoSelectedRows");
+            Groups = [];
+            try
+            {
+                Groups = FrozenList.Copy(ConversionBridge.Groups.GroupBy(g => g.Code, StringComparer.Ordinal)
+                    .Select(g => new PreparedImportGroup(g.Key,
+                        new(g.Sum(r => r.Functional.Amount), studyContext.Currency.FunctionalCurrencyCode, precisionPolicy),
+                        FrozenList.Copy(g.SelectMany(r => r.Records).Order()))));
+            }
+            catch (OverflowException) { Block("IMP_TOTAL_OVERFLOW", "Import.TotalOverflow"); }
+            catch (DomainRuleException ex) { diagnostics.Add(new(ex.Diagnostic, ImportDiagnosticSeverity.Blocking,
+                new(source.FileName, source.SheetName, null, null, null))); }
+            var invalidRows = diagnostics.Where(d => d.Severity == ImportDiagnosticSeverity.Blocking && d.Location.RecordNumber.HasValue)
+                .Select(d => d.Location.RecordNumber).Distinct().Count();
+            decimal positiveTotal = 0m, negativeTotal = 0m;
+            try
+            {
+                positiveTotal = ConversionBridge.Groups.Where(g => g.Functional.Amount > 0).Sum(g => g.Functional.Amount);
+                negativeTotal = ConversionBridge.Groups.Where(g => g.Functional.Amount < 0).Sum(g => g.Functional.Amount);
+            }
+            catch (OverflowException) { Block("IMP_TOTAL_OVERFLOW", "Import.TotalOverflow"); }
+            Diagnostics = FrozenList.Copy(diagnostics);
+            Reconciliation = new(source.Rows.Count, invalidRows, Rows.Count(r => !r.Selected && r.Original.HasValue),
+                Rows.Count(r => r.Selected), studyContext.Currency.FunctionalCurrencyCode, positiveTotal, negativeTotal,
+                ConversionBridge.Groups.Count(g => g.Functional.Amount == 0), ConversionBridge.FunctionalTotal);
+            return;
+        }
         var selectedAccounts = profile.AccountSelection.Accounts.ToHashSet(StringComparer.Ordinal);
         var selectedRecords = profile.Grouping?.Records.Select(r => r.RecordNumber).ToHashSet();
         var rows = new List<PreparedAmountRow>();
@@ -125,7 +157,8 @@ public sealed class PreparedImport
             selectedCount, profile.FixedCurrency ?? studyContext.Currency.FunctionalCurrencyCode, positive, negative,
             profile.Comparison is null ? rows.Count(r => r.Selected && r.Original?.Amount == 0m) : Groups!.Count(g => g.Amount.Amount == 0m), checked(positive + negative));
     }
-    public string SchemaVersion => Profile.Comparison is not null ? "valdrio-prepared-import-v3" : Profile.Grouping is null ? Schema : "valdrio-prepared-import-v2";
+    public string SchemaVersion => Profile.Conversion is not null ? "valdrio-prepared-import-v4" : Profile.Comparison is not null ? "valdrio-prepared-import-v3" : Profile.Grouping is null ? Schema : "valdrio-prepared-import-v2";
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public ImportConversionBridge? ConversionBridge { get; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public IReadOnlyList<PreparedImportGroup>? Groups { get; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public IReadOnlyList<ImportComparisonLine>? ComparisonRows { get; }
     public EntityId Id { get; }
@@ -138,7 +171,10 @@ public sealed class PreparedImport
     public ImportReconciliation Reconciliation { get; }
     public bool CanConfirm => Rows.Any(r => r.Selected) && !Diagnostics.Any(d => d.Severity == ImportDiagnosticSeverity.Blocking);
     [JsonIgnore] public string Fingerprint => PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(this));
-    [JsonIgnore] public string DuplicateFingerprint => Profile.Comparison is not null ?
+    [JsonIgnore] public string DuplicateFingerprint => Profile.Conversion is not null ?
+        PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new { LegacyDuplicateFingerprint, Profile.Grouping,
+            Profile.Conversion.DateColumn, Profile.Conversion.RateSet, Profile.Conversion.Selections,
+            Comparison = Profile.Comparison?.DuplicateFingerprint })) : Profile.Comparison is not null ?
         PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new { LegacyDuplicateFingerprint, Profile.Grouping, Comparison = Profile.Comparison.DuplicateFingerprint })) : Profile.Grouping is null ? LegacyDuplicateFingerprint :
         PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new { LegacyDuplicateFingerprint, Profile.Grouping }));
     [JsonIgnore] private string LegacyDuplicateFingerprint => PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new
@@ -168,7 +204,10 @@ public sealed class ImportedBatch
         if (replacesBatchId == id) throw ImportRules.Error("IMP_REPLACEMENT_INVALID", "Import.ReplacementInvalid");
         ReplacesBatchId = replacesBatchId;
         ConfirmedAtUtc = confirmedAtUtc; Actor = actor;
-        Resources = prepared.Groups is { } groups ? FrozenList.Copy(groups.Select(g => new ImportedResource(
+        Resources = prepared.ConversionBridge is { } bridge ? FrozenList.Copy(bridge.Groups.Select(g => new ImportedResource(
+            InternationalResourceId(id, g.Code, g.Original.Currency), id, g.Records[0], g.Code, g.Original, g.Functional,
+            prepared.Profile.PeriodStart, prepared.Profile.PeriodEnd, g.Records)).OrderBy(r => r.Id)) :
+            prepared.Groups is { } groups ? FrozenList.Copy(groups.Select(g => new ImportedResource(
             GroupResourceId(id, g.Code), id, g.Records[0], g.Code, g.Amount, g.Amount,
             prepared.Profile.PeriodStart, prepared.Profile.PeriodEnd, g.Records)).OrderBy(r => r.Id)) :
             FrozenList.Copy(prepared.Rows.Where(r => r.Selected).Select(r => new ImportedResource(
@@ -185,6 +224,8 @@ public sealed class ImportedBatch
     public IReadOnlyList<ImportedResource> Resources { get; }
     private static EntityId GroupResourceId(EntityId batch, string code) =>
         new(new Guid(SHA256.HashData(Encoding.UTF8.GetBytes("valdrio-import-resource-v2|" + batch + "|" + code)).AsSpan(0, 16)));
+    private static EntityId InternationalResourceId(EntityId batch, string code, CurrencyCode currency) =>
+        new(new Guid(SHA256.HashData(Encoding.UTF8.GetBytes(CanonicalSnapshotJson.Serialize(new { batch, code, currency }))).AsSpan(0, 16)));
     private static EntityId ResourceId(EntityId batch, int record)
     {
         var hash = SHA256.HashData(Encoding.UTF8.GetBytes("valdrio-import-resource-v1|" + batch + "|" +

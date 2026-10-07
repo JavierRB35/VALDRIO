@@ -13,6 +13,8 @@ public sealed record ImportSelectionTotals(int SelectedRows, int ExcludedRows, i
 public sealed class ImportAccountChoice(string account, decimal amount, int recordNumber) : ObservableObject
 {
     private bool included;
+    private string rateId = "";
+    public string RateId { get => rateId; set => SetProperty(ref rateId, value); }
     private string formattedAmount = "";
     public string Account { get; } = account;
     public decimal Amount { get; } = amount;
@@ -37,6 +39,7 @@ public sealed partial class ImportColumnMappingViewModel
     {
         get
         {
+            if (international) return this["InternationalSelectionTotals"];
             if (SelectionOverflow) return this["SelectionOverflow"];
             if (SelectionTotals is not { } totals) return "";
             var culture = CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
@@ -49,7 +52,7 @@ public sealed partial class ImportColumnMappingViewModel
     private void RecalculateSelection()
     {
         selectionGroups = []; SelectionTotals = null; SelectionOverflow = false;
-        if (accountChoices.Count == 0) return;
+        if (accountChoices.Count == 0 || international) return;
         try
         {
             var selected = accountChoices.Where(c => c.Included).ToArray();
@@ -113,7 +116,7 @@ public sealed partial class ImportColumnMappingViewModel
     }
     private void AccountChoiceChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (selectingRecords || e.PropertyName != nameof(ImportAccountChoice.Included)) return;
+        if (selectingRecords || e.PropertyName is not (nameof(ImportAccountChoice.Included) or nameof(ImportAccountChoice.RateId))) return;
         importAllAccounts = accountChoices.All(c => c.Included);
         RecalculateSelection();
         cancellation?.Cancel(); InvalidatePreparation(true); Refresh();

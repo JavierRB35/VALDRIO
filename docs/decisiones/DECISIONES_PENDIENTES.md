@@ -8,6 +8,16 @@ Aceptación del propietario registrada el 2026-10-04.
 
 El propietario confirma que el XLSX es solo un ejemplo y que el cierre se declara en el formulario: 31/10/2026. Se acepta el ensayo técnico y el ejemplo 6005=358,35 EUR; no se certifica una fuente productiva. Cada origen real requiere seleccionar registros, declarar periodo/moneda/modalidad y aprobar su ejemplo. T06 se cierra técnicamente con este alcance de prueba y aceptación del commit; el puente FX pertenece a T06A.
 
+## Continuidad T06A/T07 — 2026-10-07
+
+El propietario autoriza completar T06A y pide comentar T07 antes de implementarla.
+T06A aplica selecciones manuales explícitas y congeladas por registro; no utiliza
+cotizaciones de demostración sin aprobación ni consulta tipos actuales. El catálogo
+instalado sigue siendo el subconjunto de ejemplo. Véase ADR-0011 para comparativos,
+agrupación funcional por cuenta y conservación de originales separados por moneda.
+La dificultad de guardado de centro/modelo queda para revisión posterior a petición
+expresa. No se deduce una aprobación productiva de su Excel de prueba.
+
 ## Registro D01-D12
 
 | ID | Estado vigente | Decisión / propuesta | Próxima puerta |

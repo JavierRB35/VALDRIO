@@ -17,6 +17,7 @@
     <Compile Include="../../src/Valdrio.Desktop/MainWindowViewModel.cs" Link="Desktop/MainWindowViewModel.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ImportColumnMappingViewModel.cs" Link="Desktop/ImportColumnMappingViewModel.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ImportColumnMappingViewModel.Confirmation.cs" Link="Desktop/ImportColumnMappingViewModel.Confirmation.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/ImportColumnMappingViewModel.Conversion.cs" Link="Desktop/ImportColumnMappingViewModel.Conversion.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ImportColumnMappingViewModel.Accounts.cs" Link="Desktop/ImportColumnMappingViewModel.Accounts.cs" />
     <Compile Include="../../src/Valdrio.Desktop/WorkspaceDialogContracts.cs" Link="Desktop/WorkspaceDialogContracts.cs" />
   </ItemGroup>
@@ -44,6 +45,7 @@
     <None Update="Fixtures/t04-v2.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t05-v3.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t06-period-v4.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Fixtures/t06a-v6.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t06-v5.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t06-v4.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t03-v1.json" CopyToOutputDirectory="PreserveNewest" />

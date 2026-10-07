@@ -489,6 +489,20 @@ try {
     }
     dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $completionFolder "snapshot.json")
     if ($LASTEXITCODE -ne 0) { throw "Runner could not verify comparison/replacement snapshot." }
+    $internationalFolder = Join-Path $captureDir "import-international"
+    $internationalChecks = Get-Content -LiteralPath (Join-Path $internationalFolder "interaction.json") -Raw | ConvertFrom-Json
+    if ($internationalChecks.Status -ne "passed" -or $internationalChecks.PassedChecks.Count -ne 10) { throw "Expected all 10 T06A WPF checks." }
+    $internationalImages = @(Get-ChildItem -LiteralPath $internationalFolder -Filter *.png)
+    if (@(Compare-Object (@("conversion-es.png", "conversion-pseudo.png") | Sort-Object) (@($internationalImages.Name) | Sort-Object)).Count -ne 0) { throw "Missing international screenshots." }
+    $internationalManifest = Get-Content -LiteralPath (Join-Path $internationalFolder "manifest.json") -Raw | ConvertFrom-Json
+    $internationalNames = @("international.valdrio", "international.valdrio-backup", "restored.valdrio", "snapshot.json", "source.csv")
+    if ($internationalManifest.SchemaVersion -ne 1 -or $internationalManifest.Files.Count -ne $internationalNames.Count -or
+        @(Compare-Object ($internationalNames | Sort-Object) (@($internationalManifest.Files.Name) | Sort-Object)).Count -ne 0) { throw "Invalid T06A manifest." }
+    foreach ($entry in $internationalManifest.Files) {
+      if ((Get-FileHash -LiteralPath (Join-Path $internationalFolder $entry.Name) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $entry.Sha256) { throw "T06A artifact hash differs." }
+    }
+    dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $internationalFolder "snapshot.json")
+    if ($LASTEXITCODE -ne 0) { throw "Runner could not verify international import snapshot." }
     $studyChecks = Get-Content -LiteralPath (Join-Path $captureDir "studies/interaction.json") -Raw | ConvertFrom-Json
     if ($studyChecks.Status -ne "passed" -or $studyChecks.PassedChecks.Count -ne 73) { throw "Expected all 73 final study WPF checks." }
     foreach ($region in @("es-ES", "en-US", "de-DE", "en-GB")) {
@@ -587,6 +601,7 @@ try {
         ImportConfirmationChecks = $confirmationChecks.PassedChecks.Count
         ImportGroupingChecks = $groupingChecks.PassedChecks.Count
         ImportCompletionChecks = $completionChecks.PassedChecks.Count
+        InternationalImportChecks = $internationalChecks.PassedChecks.Count
         ImportConfirmationImages = $confirmationImages.Count
         ImportConfirmationManifest = "verified"
         DebitCreditChecks = $debitChecks.PassedChecks.Count

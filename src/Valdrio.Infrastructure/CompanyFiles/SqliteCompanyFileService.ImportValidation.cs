@@ -17,6 +17,7 @@ public sealed partial class SqliteCompanyFileService
         foreach (var batch in batches)
         {
             var study = batch.Prepared.StudyContext;
+            Invalid(file.SchemaVersion < 7 && batch.Prepared.Profile.Conversion is not null, "International import in legacy schema");
             Invalid(file.SchemaVersion < 5 && batch.Prepared.Profile.Grouping is not null, "Grouped import in legacy schema");
             Invalid(file.SchemaVersion < 6 && (batch.ReplacesBatchId is not null || batch.Prepared.Profile.Comparison is not null), "Import ledger in legacy schema");
             Invalid(study.CompanyId != file.Id || batch.Prepared.PrecisionPolicy != file.PrecisionPolicy, "Import scope/precision invalid");

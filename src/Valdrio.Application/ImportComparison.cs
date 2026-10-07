@@ -23,7 +23,10 @@ public sealed class ImportComparison
     public BusinessDate FiscalYearStart { get; }
     public BusinessDate FiscalYearEnd { get; }
     public string ScopeReference { get; }
-    [JsonIgnore] public string DuplicateFingerprint => PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new
+    [JsonIgnore] public string DuplicateFingerprint => Profile.Conversion is null ? LegacyDuplicateFingerprint :
+        PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new { LegacyDuplicateFingerprint,
+            Profile.Conversion.DateColumn, Profile.Conversion.RateSet, Profile.Conversion.Selections }));
+    [JsonIgnore] private string LegacyDuplicateFingerprint => PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new
     {
         Source.FileHash, Profile.SourceKind, Profile.WorksheetName, Profile.HeaderRow, Profile.FirstDataRow,
         Profile.Columns, Profile.Csv, Profile.NumberFormat, Profile.DatePattern, Profile.AmountMode, Profile.SignConvention,

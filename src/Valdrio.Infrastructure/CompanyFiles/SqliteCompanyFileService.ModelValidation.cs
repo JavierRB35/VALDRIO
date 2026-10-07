@@ -121,7 +121,7 @@ public sealed partial class SqliteCompanyFileService
         Invalid(file.SchemaVersion < 3 && audit.Any(a => a.Type is "Study" or "StudySnapshot"), "Study audit in old schema");
         var upgrades = audit.Where(a => a.Type == "CompanyFile").OrderBy(a => a.Row.Revision).ToArray();
         Invalid(file.SchemaVersion < 4 && audit.Any(a => a.Type == "ImportBatch"), "Import audit in old schema");
-        Invalid(upgrades.Length > 5, "Too many format upgrades");
+        Invalid(upgrades.Length > 6, "Too many format upgrades");
         int? previousSchema = null;
         for (var i = 0; i < upgrades.Length; i++)
         {
@@ -129,10 +129,10 @@ public sealed partial class SqliteCompanyFileService
             var before = CanonicalSnapshotJson.Deserialize<FormatUpgrade>(a.Row.BeforeJson);
             var after = CanonicalSnapshotJson.Deserialize<FormatUpgrade>(a.Row.AfterJson);
             Invalid(a.AggregateId != file.Id.ToString() || a.Row.Revision != i || a.Row.Operation != "UpgradeFormat" ||
-                before.FromSchema is not (1 or 2 or 3 or 4 or 5) || before.FromSchema != before.ToSchema || after.FromSchema != before.FromSchema ||
+                before.FromSchema is not (1 or 2 or 3 or 4 or 5 or 6) || before.FromSchema != before.ToSchema || after.FromSchema != before.FromSchema ||
                 after.ToSchema != before.FromSchema + 1 || (previousSchema.HasValue && before.FromSchema != previousSchema) ||
-                before.MigrationId != (before.FromSchema switch { 1 => MigrationId, 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, _ => GroupedImportMigrationId }) ||
-                after.MigrationId != (after.ToSchema switch { 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, 5 => GroupedImportMigrationId, _ => ImportLedgerMigrationId }), "Format upgrade audit invalid");
+                before.MigrationId != (before.FromSchema switch { 1 => MigrationId, 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, 5 => GroupedImportMigrationId, _ => ImportLedgerMigrationId }) ||
+                after.MigrationId != (after.ToSchema switch { 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, 5 => GroupedImportMigrationId, 6 => ImportLedgerMigrationId, _ => InternationalImportMigrationId }), "Format upgrade audit invalid");
             previousSchema = after.ToSchema;
         }
         Invalid(previousSchema.HasValue && previousSchema.Value != file.SchemaVersion, "Format upgrade history incomplete");

@@ -2,6 +2,19 @@
 
 Fecha de revisión 2026-10-07. Repositorio `JavierRB35/VALDRIO`.
 
+## T06A — puente internacional implementado (2026-10-07)
+
+Las tres subentregas están implementadas: perfil internacional, originales/fechas y
+selección explícita de tipos por registro, conversión y conciliación, confirmación
+atómica, historia, snapshots y runner. Empresa v7; perfil/preparado v4; snapshot v5.
+Actualización siempre a copia desde v1–v6. Ver docs/adr/ADR-0011-importacion-internacional.md
+ y docs/evidencias/T06A_CIERRE_2026-10-07.md. El recibo Windows y CI verdes del HEAD
+acreditan el cierre final. El catálogo instalado conserva las cuatro monedas de ejemplo.
+
+Siguiente conversación: T07, ajustes/clasificación/particiones. El propietario pide
+comentarlo antes de implementar; T07 no está iniciada. El problema de guardado de
+centro/modelo se revisará más adelante por petición expresa; no se declara solucionado.
+
 ## T06 — implementación completa y aceptación del commit final (2026-10-07)
 
 T06.0–T06.6 implementadas: CSV/XLSX, perfil explícito, selección de registros, agrupación

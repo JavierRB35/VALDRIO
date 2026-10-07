@@ -22,7 +22,7 @@ if (args.Length == 2 && args[0] == "--study-snapshot")
             currency = receipt.Input.StudyContext.Currency.FunctionalCurrencyCode.ToString(), preparation.ReadyForCalculation,
             resourceCount = input.Resources.Count,
             imports = input is ImportedStudySnapshotInput imported ? imported.Imports.Select(b =>
-                new { b.Id, b.ReplacesBatchId, active = activeBatchIds.Contains(b.Id), b.Prepared.Reconciliation }).ToArray() : [],
+                new { b.Id, b.ReplacesBatchId, active = activeBatchIds.Contains(b.Id), b.Prepared.Reconciliation, b.Prepared.ConversionBridge }).ToArray() : [],
             diagnostics = preparation.Diagnostics.Select(d => d.Code) }));
         Console.WriteLine(output.RootElement.GetProperty("Value").GetRawText());
         return 0;

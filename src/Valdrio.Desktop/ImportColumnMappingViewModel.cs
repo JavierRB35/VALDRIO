@@ -46,12 +46,13 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     private bool allowNumericAccounts;
     private IReadOnlyList<ImportColumnOption> columnOptions = [];
     private readonly ImportMappingOption[] delimiters = [new(";", ";"), new(",", ","), new("tab", "")];
-    private readonly ImportMappingOption[] groups = [new("", ""), new(".", "."), new(",", ","), new(" ", "")];
+    private readonly ImportMappingOption[] groups = [new("", ""), new(".", "."), new(",", ","), new(" ", ""), new("\u00a0", "NBSP"), new("\u202f", "NNBSP")];
     private readonly ImportMappingOption[] amountLayouts = [new("amount", ""), new("debit-credit", "")];
 
     public ImportColumnMappingViewModel(IImportSourceSessionFactory factory, IImportSourceDialogs dialogs,
-        UiTextCatalog texts, PresentationPreferencesService preferences)
+        UiTextCatalog texts, PresentationPreferencesService preferences, ICurrencyCatalog? currencyCatalog = null)
     {
+        this.currencyCatalog = currencyCatalog;
         this.factory = factory; this.dialogs = dialogs; this.texts = texts; this.preferences = preferences;
         OpenCommand = new AsyncRelayCommand(Open, () => !busy);
         ReadCommand = new AsyncRelayCommand(Read, () => !busy && session is not null && (!IsXlsx || !string.IsNullOrEmpty(worksheet)));
@@ -64,8 +65,9 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         DeselectAllRecordsCommand = new RelayCommand(() => ImportAllAccounts = false, () => !busy && HasAccountChoices);
         FreezeComparisonCommand = new RelayCommand(FreezeComparison, () => !busy && IsReady && IsAccountSelectionReady &&
             fiscalStart.HasValue && fiscalEnd.HasValue && previousEnd.HasValue && !string.IsNullOrWhiteSpace(comparisonScope) &&
-            !string.IsNullOrWhiteSpace(sourceCurrency) && interpretationApproved && !string.IsNullOrWhiteSpace(approvalReference));
+            (international && currencyFromColumn || !string.IsNullOrWhiteSpace(sourceCurrency)) && interpretationApproved && !string.IsNullOrWhiteSpace(approvalReference));
         ClearComparisonCommand = new RelayCommand(ClearComparison, () => !busy && comparison is not null);
+        InitializeConversion();
         preferences.Changed += PreferencesChanged;
         Reformat();
     }
@@ -163,6 +165,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     private void InvalidateSource()
     {
         cancellation?.Cancel(); document = null; readSettings = null; accountColumn = amountColumn = debitColumn = creditColumn = null;
+        currencyColumn = dateColumn = null;
         columnOptions = []; validation = null; ResetAccountChoices(); InvalidatePreparation(true); diagnostic = null; statusKey = "ReadSource"; Refresh();
     }
     private void Refresh()
@@ -172,6 +175,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         PrepareCommand.NotifyCanExecuteChanged(); ConfirmCommand.NotifyCanExecuteChanged();
         SelectAllRecordsCommand.NotifyCanExecuteChanged(); DeselectAllRecordsCommand.NotifyCanExecuteChanged();
         FreezeComparisonCommand.NotifyCanExecuteChanged(); ClearComparisonCommand.NotifyCanExecuteChanged();
+        AddRateCommand?.NotifyCanExecuteChanged(); ApplyRateCommand?.NotifyCanExecuteChanged();
     }
     private async Task Run(Func<CancellationToken, Task> action, bool keepSelection = false)
     {

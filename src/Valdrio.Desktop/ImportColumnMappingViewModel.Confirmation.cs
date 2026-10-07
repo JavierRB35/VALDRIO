@@ -47,15 +47,15 @@ public sealed partial class ImportColumnMappingViewModel
         try
         {
             var selected = validation!;
-            var prior = new SourceParseProfileVersion(SourceParseProfileVersion.GroupingSchema, new(Guid.NewGuid()), 1,
+            var prior = new SourceParseProfileVersion(international ? SourceParseProfileVersion.InternationalSchema : SourceParseProfileVersion.GroupingSchema, new(Guid.NewGuid()), 1,
                 selected.Source.FileName, selected.Settings.SourceKind, selected.Settings.WorksheetName,
                 selected.Settings.HeaderRow, selected.Settings.FirstDataRow, selected.Columns, selected.Settings.Csv,
-                selected.NumberFormat, "yyyy-MM-dd", ImportAmountMode.ClosingBalanceAsStudyAmount,
+                selected.NumberFormat, international ? datePattern : "yyyy-MM-dd", ImportAmountMode.ClosingBalanceAsStudyAmount,
                 selected.Columns.Debit.HasValue ? ImportSignConvention.DebitMinusCredit : ImportSignConvention.SignedAmount,
-                new(DateOnly.FromDateTime(fiscalStart!.Value)), new(DateOnly.FromDateTime(previousEnd!.Value)), new CurrencyCode(sourceCurrency), null,
+                new(DateOnly.FromDateTime(fiscalStart!.Value)), new(DateOnly.FromDateTime(previousEnd!.Value)), international && currencyFromColumn ? null : new CurrencyCode(sourceCurrency), international && currencyFromColumn ? currencyColumn : null,
                 ImportDuplicatePolicy.AggregateWithProvenance, ImportZeroPolicy.Keep, ImportAccountSelection.All,
                 new(ImportProfileApprovalState.ApprovedBusiness, approvalReference), true,
-                xlsxNumericAccountPolicy: selected.NumericAccountPolicy, grouping: SelectedRecords());
+                xlsxNumericAccountPolicy: selected.NumericAccountPolicy, grouping: SelectedRecords(), conversion: international ? BuildConversion() : null);
             comparison = new(selected.Source, prior, new(DateOnly.FromDateTime(fiscalStart.Value)),
                 new(DateOnly.FromDateTime(fiscalEnd!.Value)), comparisonScope);
             comparisonPath = sourcePath; InvalidatePreparation(true); diagnostic = null;
@@ -88,7 +88,7 @@ public sealed partial class ImportColumnMappingViewModel
     public ImportedBatch? ConfirmedImport => confirmedImport;
     public bool HasPreparedGroups => preparedImport?.Groups is { Count: > 0 };
     public IReadOnlyList<ImportGroupPreview> PreparedGroups => preparedImport?.Groups?.Select(g => new ImportGroupPreview(
-        g.Code, string.Join(", ", g.Records), g.Amount.Amount.ToString(CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag))))
+        g.Code, string.Join(", ", g.Records), g.Amount.Amount.ToString(CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)) + (international ? " " + g.Amount.Currency : "")))
         .ToArray() ?? [];
     public string SourceCurrency
     {
@@ -139,14 +139,14 @@ public sealed partial class ImportColumnMappingViewModel
         preparedImport = null; confirmedImport = null;
         await Run(async token =>
         {
-            var selected = validation!; var study = targetStudy!; var currency = new CurrencyCode(sourceCurrency);
+            var selected = validation!; var study = targetStudy!; CurrencyCode? currency = international && currencyFromColumn ? null : new CurrencyCode(sourceCurrency);
             var approved = interpretationApproved && !string.IsNullOrWhiteSpace(approvalReference);
             if (amountMode == "cumulative" && comparison is null) throw ImportRules.Error("IMP_COMPARISON_INVALID", "Import.ComparisonInvalid");
             if (replaceBatch && replacement is null) throw ImportRules.Error("IMP_REPLACEMENT_INVALID", "Import.ReplacementInvalid");
-            var profile = new SourceParseProfileVersion(amountMode == "cumulative" ? SourceParseProfileVersion.ComparisonSchema : SourceParseProfileVersion.GroupingSchema, new(Guid.NewGuid()), 1,
+            var profile = new SourceParseProfileVersion(international ? SourceParseProfileVersion.InternationalSchema : amountMode == "cumulative" ? SourceParseProfileVersion.ComparisonSchema : SourceParseProfileVersion.GroupingSchema, new(Guid.NewGuid()), 1,
                 selected.Source.FileName, selected.Settings.SourceKind, selected.Settings.WorksheetName,
                 selected.Settings.HeaderRow, selected.Settings.FirstDataRow, selected.Columns, selected.Settings.Csv,
-                selected.NumberFormat, "yyyy-MM-dd", amountMode switch
+                selected.NumberFormat, international ? datePattern : "yyyy-MM-dd", amountMode switch
                 {
                     "period" => ImportAmountMode.PeriodAmount,
                     "closing-full" => ImportAmountMode.ClosingBalanceAsStudyAmount,
@@ -154,10 +154,10 @@ public sealed partial class ImportColumnMappingViewModel
                     _ => throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile")
                 },
                 selected.Columns.Debit.HasValue ? ImportSignConvention.DebitMinusCredit : ImportSignConvention.SignedAmount,
-                study.PeriodStart, study.PeriodEnd, currency, null, ImportDuplicatePolicy.AggregateWithProvenance, ImportZeroPolicy.Keep,
+                study.PeriodStart, study.PeriodEnd, currency, international && currencyFromColumn ? currencyColumn : null, ImportDuplicatePolicy.AggregateWithProvenance, ImportZeroPolicy.Keep,
                 ImportAccountSelection.All, new(approved ? ImportProfileApprovalState.ApprovedBusiness : ImportProfileApprovalState.PendingBusinessApproval,
                     string.IsNullOrWhiteSpace(approvalReference) ? "pending" : approvalReference), approved,
-                xlsxNumericAccountPolicy: selected.NumericAccountPolicy, grouping: SelectedRecords(), comparison: amountMode == "cumulative" ? comparison : null);
+                xlsxNumericAccountPolicy: selected.NumericAccountPolicy, grouping: SelectedRecords(), comparison: amountMode == "cumulative" ? comparison : null, conversion: international ? BuildConversion() : null);
             var port = importPort!;
             var prepared = await Task.Run(() => port.PrepareImport(study.CompanyId, study.Id, study.Revision,
                 new(Guid.NewGuid()), selected.Source, profile, token), token);

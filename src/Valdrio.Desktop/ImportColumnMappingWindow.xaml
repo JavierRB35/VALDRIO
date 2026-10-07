@@ -3,6 +3,12 @@
  Title="{Binding Title}" Width="1040" Height="780" MinWidth="720" MinHeight="560" WindowStartupLocation="CenterOwner">
  <Window.Resources>
   <BooleanToVisibilityConverter x:Key="Visible"/>
+  <Style x:Key="WrappedHeader" TargetType="DataGridColumnHeader">
+   <Setter Property="ContentTemplate"><Setter.Value><DataTemplate>
+    <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="4"/>
+   </DataTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="WrappedCell" TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="3"/></Style>
   <Style TargetType="Button"><Setter Property="Padding" Value="12,6"/><Setter Property="Margin" Value="0,4,8,4"/></Style>
   <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,3,8,3"/></Style>
   <Style TargetType="ComboBox"><Setter Property="MinWidth" Value="145"/><Setter Property="Margin" Value="0,3,12,3"/></Style>
@@ -140,6 +146,38 @@
    <TextBlock Text="{Binding [SourceCurrency]}"/>
    <TextBox x:Name="SourceCurrencyBox" Text="{Binding SourceCurrency,UpdateSourceTrigger=PropertyChanged}" Width="100"
     HorizontalAlignment="Left" MaxLength="3" AutomationProperties.Name="{Binding [SourceCurrency]}"/>
+   <CheckBox Content="{Binding [International]}" IsChecked="{Binding International}"/>
+   <StackPanel Visibility="{Binding International,Converter={StaticResource Visible}}">
+    <TextBlock Text="{Binding [ConversionHelp]}"/>
+    <CheckBox Content="{Binding [CurrencyFromColumn]}" IsChecked="{Binding CurrencyFromColumn}"/>
+    <ComboBox ItemsSource="{Binding Columns}" DisplayMemberPath="Label" SelectedValuePath="Index" SelectedValue="{Binding CurrencyColumn}" IsEnabled="{Binding CurrencyFromColumn}" AutomationProperties.Name="{Binding [CurrencyFromColumn]}"/>
+    <TextBlock Text="{Binding [DocumentDateColumn]}"/>
+    <ComboBox ItemsSource="{Binding Columns}" DisplayMemberPath="Label" SelectedValuePath="Index" SelectedValue="{Binding DateColumn}" AutomationProperties.Name="{Binding [DocumentDateColumn]}"/>
+    <TextBlock Text="{Binding [DatePattern]}"/><TextBox Text="{Binding DatePattern,UpdateSourceTrigger=PropertyChanged}"/>
+    <TextBlock Text="{Binding [RateSet]}"/><TextBox Text="{Binding RateSetName,UpdateSourceTrigger=PropertyChanged}"/>
+    <TextBlock Text="{Binding [AllowedRateStart]}"/><local:CalendarDatePicker SelectedDate="{Binding AllowedRateStart}" Language="{Binding DateLanguageTag,ConverterCulture=en-US}"/>
+    <TextBlock Text="{Binding [AllowedRateEnd]}"/><local:CalendarDatePicker SelectedDate="{Binding AllowedRateEnd}" Language="{Binding DateLanguageTag,ConverterCulture=en-US}"/>
+    <Button Content="{Binding [AddRate]}" Command="{Binding AddRateCommand}"/>
+    <DataGrid x:Name="RatesGrid" ItemsSource="{Binding Rates}" AutoGenerateColumns="False" ColumnHeaderStyle="{StaticResource WrappedHeader}" CanUserAddRows="False" Height="140" FlowDirection="LeftToRight">
+     <DataGrid.Columns>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Id,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Currency,UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Quote,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Date,UpdateSourceTrigger=PropertyChanged}" Width="130"/>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Source,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+     </DataGrid.Columns>
+    </DataGrid>
+    <TextBlock Text="{Binding [RateSelectionHelp]}"/>
+    <TextBox Text="{Binding RateToApply,UpdateSourceTrigger=PropertyChanged}"/>
+    <Button Content="{Binding [ApplyRate]}" Command="{Binding ApplyRateCommand}"/>
+    <DataGrid x:Name="RateSelectionsGrid" ItemsSource="{Binding AccountChoices}" AutoGenerateColumns="False" ColumnHeaderStyle="{StaticResource WrappedHeader}" CanUserAddRows="False" CanUserDeleteRows="False" Height="150" FlowDirection="LeftToRight">
+     <DataGrid.Columns>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding RecordNumber}" IsReadOnly="True" Width="80"/>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Account}" IsReadOnly="True" Width="*"/>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding RateId,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+     </DataGrid.Columns>
+    </DataGrid>
+   </StackPanel>
    <TextBlock Text="{Binding [ApprovalReference]}"/>
    <TextBox x:Name="ApprovalReferenceBox" Text="{Binding ApprovalReference,UpdateSourceTrigger=PropertyChanged}" MaxLength="1000"
     AutomationProperties.Name="{Binding [ApprovalReference]}"/>
@@ -158,6 +196,22 @@
      <TextBlock Text="{Binding ComparisonStatus}" FontWeight="SemiBold"/>
     </StackPanel>
    </Expander>
+   <StackPanel x:Name="ConversionPreviewPanel" Visibility="{Binding HasConversion,Converter={StaticResource Visible}}">
+    <TextBlock Text="{Binding [ConversionPreview]}" FontWeight="SemiBold"/>
+    <DataGrid x:Name="ConversionGrid" ItemsSource="{Binding ConversionRows}" AutoGenerateColumns="False" ColumnHeaderStyle="{StaticResource WrappedHeader}" IsReadOnly="True" CanUserAddRows="False" Height="220" FlowDirection="LeftToRight">
+     <DataGrid.Columns>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Record}" Width="100"/>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding DocumentDate}" Width="110"/>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Original}" Width="*"/>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Converted}" Width="*"/>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Rate}" Width="*"/>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding RateDate}" Width="110"/>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Source}" Width="*"/>
+      <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Adjustment}" Width="*"/>
+     </DataGrid.Columns>
+    </DataGrid>
+    <TextBlock Text="{Binding ConversionTotals}" FontWeight="SemiBold"/>
+   </StackPanel>
    <TextBlock x:Name="ConfirmationSummaryText" Text="{Binding ConfirmationSummary}" FontWeight="SemiBold"/>
    <TextBlock Text="{Binding PreparationIssues}" Foreground="DarkRed"/>
    <DataGrid x:Name="ComparisonGrid" ItemsSource="{Binding ComparisonRows}" Visibility="{Binding HasComparisonRows,Converter={StaticResource Visible}}"
