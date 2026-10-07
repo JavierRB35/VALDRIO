@@ -273,15 +273,15 @@ Completa: {5}</value></data>
   <data name="Study.PendingTitle" xml:space="preserve"><value>Cambios del análisis sin guardar</value></data>
   <data name="Study.PendingBody" xml:space="preserve"><value>¿Guardar los cambios antes de continuar? Sí guarda, No descarta y Cancelar permite seguir editando.</value></data>
   <data name="Study.DatesRequired" xml:space="preserve"><value>Selecciona las dos fechas del periodo en el calendario.</value></data>
-  <data name="Import.AmbiguousFormat" xml:space="preserve"><value>El formato de origen es ambiguo. Selecciona un perfil de importación explícito.</value></data>
-  <data name="Import.InvalidAmount" xml:space="preserve"><value>El importe de origen no es válido para el perfil seleccionado.</value></data>
-  <data name="Import.DuplicateAccount" xml:space="preserve"><value>La cuenta está repetida y el perfil actual rechaza duplicados.</value></data>
-  <data name="Import.SignUnconfirmed" xml:space="preserve"><value>La sintaxis de signo del origen no está confirmada por el perfil seleccionado.</value></data>
+  <data name="Import.AmbiguousFormat" xml:space="preserve"><value>No puedo interpretar estos números con seguridad. Revisa los separadores y el formato de negativos en «Formato de números».</value></data>
+  <data name="Import.InvalidAmount" xml:space="preserve"><value>Este importe no se puede interpretar con el formato elegido. Revisa el valor original y los separadores.</value></data>
+  <data name="Import.DuplicateAccount" xml:space="preserve"><value>Esta cuenta aparece repetida de una forma que la opción actual no permite.</value></data>
+  <data name="Import.SignUnconfirmed" xml:space="preserve"><value>Revisa cómo aparecen los importes negativos en el archivo.</value></data>
   <data name="Import.AccountRequired" xml:space="preserve"><value>El campo de cuenta está ausente o vacío.</value></data>
-  <data name="Import.InvalidCsv" xml:space="preserve"><value>La estructura CSV no es válida para el perfil seleccionado.</value></data>
-  <data name="Import.EncodingMismatch" xml:space="preserve"><value>El encoding o BOM del CSV no coincide con el perfil seleccionado.</value></data>
-  <data name="Import.InvalidProfile" xml:space="preserve"><value>El perfil de importación está incompleto o es incoherente.</value></data>
-  <data name="Import.InvalidSource" xml:space="preserve"><value>El origen preparado está incompleto o es incoherente.</value></data>
+  <data name="Import.InvalidCsv" xml:space="preserve"><value>No se puede leer correctamente la estructura del CSV. Revisa separador, filas y codificación en Opciones del archivo.</value></data>
+  <data name="Import.EncodingMismatch" xml:space="preserve"><value>La codificación elegida no coincide con el CSV. Prueba otra en Opciones del archivo.</value></data>
+  <data name="Import.InvalidProfile" xml:space="preserve"><value>Falta algún dato necesario para interpretar el archivo. Revisa las opciones indicadas en este paso.</value></data>
+  <data name="Import.InvalidSource" xml:space="preserve"><value>El archivo no se ha podido preparar de forma coherente. Vuelve a abrirlo y revisa sus opciones.</value></data>
   <data name="Import.XlsxInvalid" xml:space="preserve"><value>La estructura del libro XLSX no es válida o no está soportada.</value></data>
   <data name="Import.XlsxSheetNotFound" xml:space="preserve"><value>No se ha encontrado la hoja XLSX seleccionada.</value></data>
   <data name="Import.XlsxUnsupportedType" xml:space="preserve"><value>Solo se aceptan libros XLSX sin macros.</value></data>
@@ -289,7 +289,7 @@ Completa: {5}</value></data>
   <data name="Import.XlsxCellError" xml:space="preserve"><value>La celda XLSX contiene un valor de error.</value></data>
   <data name="Import.XlsxDateSerial60" xml:space="preserve"><value>La fecha serial 60 de Excel en el sistema 1900 no es válida.</value></data>
   <data name="Import.XlsxDateInvalid" xml:space="preserve"><value>La fecha serial XLSX no puede interpretarse como fecha de negocio.</value></data>
-  <data name="Import.XlsxNumericAccount" xml:space="preserve"><value>La celda de cuenta es numérica; el perfil seleccionado no autoriza usar su representación almacenada como identidad de cuenta.</value></data>
+  <data name="Import.XlsxNumericAccount" xml:space="preserve"><value>Esta cuenta está almacenada por Excel como número. Si quieres conservar su representación almacenada como código de cuenta, activa la opción correspondiente en Formato de números.</value></data>
   <data name="Import.XlsxBooleanAccount" xml:space="preserve"><value>La celda de cuenta es booleana; los valores booleanos no son identidades de cuenta válidas.</value></data>
   <data name="Preferences.SaveFailed" xml:space="preserve"><value>El cambio de presentación se ha aplicado, pero no se pudo guardar el archivo de preferencias. El próximo inicio puede usar la preferencia anterior.</value></data>
   <data name="Study.CommittedRefreshPending" xml:space="preserve"><value>La escritura quedó confirmada, pero falló la actualización de la pantalla. Actualiza de nuevo para reconciliar las listas mostradas.</value></data>
@@ -342,20 +342,20 @@ Completa: {5}</value></data>
   <data name="ImportMapping.Space" xml:space="preserve"><value>Espacio</value></data>
   <data name="ImportMapping.Tab" xml:space="preserve"><value>Tabulación</value></data>
   <data name="ImportMapping.NoHeader" xml:space="preserve"><value>Sin encabezado</value></data>
-  <data name="Import.ColumnsRequired" xml:space="preserve"><value>Selecciona la columna de cuenta y todas las columnas de importe necesarias del origen.</value></data>
-  <data name="Import.ColumnsDistinct" xml:space="preserve"><value>El código de cuenta y cada campo de importe deben utilizar columnas distintas.</value></data>
-  <data name="Import.NoData" xml:space="preserve"><value>La estructura seleccionada no contiene filas de datos.</value></data>
+  <data name="Import.ColumnsRequired" xml:space="preserve"><value>Indica la columna de cuenta y la columna de importe, o las columnas Debe y Haber.</value></data>
+  <data name="Import.ColumnsDistinct" xml:space="preserve"><value>La cuenta y los importes deben estar en columnas distintas.</value></data>
+  <data name="Import.NoData" xml:space="preserve"><value>No se han encontrado filas de datos con las filas de cabecera e inicio elegidas.</value></data>
   <data name="Import.ModeUnavailable" xml:space="preserve"><value>Esta entrega admite importes de periodo o saldo íntegro al cierre explícitamente elegido y aprobado para el estudio, sin cuentas duplicadas. El cierre sin interpretación, las diferencias de acumulados y la agrupación siguen pendientes.</value></data>
-  <data name="Import.ApprovalRequired" xml:space="preserve"><value>Valida un ejemplo representativo y aprueba explícitamente el periodo, la moneda y los importes firmados antes de confirmar.</value></data>
-  <data name="Import.PeriodMismatch" xml:space="preserve"><value>El periodo del archivo debe coincidir con el del estudio.</value></data>
+  <data name="Import.ApprovalRequired" xml:space="preserve"><value>Antes de guardar, comprueba un ejemplo y confirma qué representan los importes, su periodo y su moneda.</value></data>
+  <data name="Import.PeriodMismatch" xml:space="preserve"><value>Las fechas del archivo no son compatibles con el periodo de este análisis.</value></data>
   <data name="Import.FxRequired" xml:space="preserve"><value>Para importar otra moneda, activa «Los datos incluyen otra moneda o necesitan conversión» y selecciona los tipos necesarios.</value></data>
   <data name="Import.TotalOverflow" xml:space="preserve"><value>El total importado supera el rango decimal. No se puede confirmar ningún importe.</value></data>
   <data name="Import.NoSelectedRows" xml:space="preserve"><value>No hay filas válidas seleccionadas para importar.</value></data>
-  <data name="Import.PreparedInvalid" xml:space="preserve"><value>La importación preparada está bloqueada, incompleta o ya no coincide con el estudio. Prepárala de nuevo.</value></data>
+  <data name="Import.PreparedInvalid" xml:space="preserve"><value>La revisión ya no coincide con las opciones actuales. Vuelve a revisar la importación antes de guardar.</value></data>
   <data name="Import.RequestReused" xml:space="preserve"><value>Esta solicitud de confirmación ya se utilizó para otra importación.</value></data>
-  <data name="Import.DuplicateBatch" xml:space="preserve"><value>Este origen, mapeo y periodo ya se importaron. Se ha bloqueado la confirmación para evitar duplicar importes.</value></data>
-  <data name="Import.ContextLocked" xml:space="preserve"><value>Este estudio tiene recursos importados. Cambiar el periodo, modelo o moneda funcional requiere otro estudio o la transformación correspondiente.</value></data>
-  <data name="Import.SourceChanged" xml:space="preserve"><value>El archivo seleccionado cambió después de la vista previa. Ábrelo de nuevo y prepara otra importación.</value></data>
+  <data name="Import.DuplicateBatch" xml:space="preserve"><value>Este mismo archivo, con la misma interpretación y periodo, ya fue importado. Se bloquea para evitar duplicar costes.</value></data>
+  <data name="Import.ContextLocked" xml:space="preserve"><value>Este análisis ya contiene datos importados. Para cambiar periodo, estructura de costes o moneda debes crear otro análisis o utilizar la operación específica correspondiente.</value></data>
+  <data name="Import.SourceChanged" xml:space="preserve"><value>El archivo ha cambiado desde que lo revisaste. Ábrelo de nuevo para evitar guardar datos distintos de los mostrados.</value></data>
   <data name="Study.PartitionsPending" xml:space="preserve"><value>Los recursos importados están disponibles. Asigna sus particiones antes de calcular costes.</value></data>
   <data name="Study.ImportedCaptured" xml:space="preserve"><value>La captura incluye recursos importados confirmados y su procedencia. El cálculo necesita las entradas restantes.</value></data>
   <data name="ImportMapping.Scope" xml:space="preserve"><value>Al guardar se conserva el archivo de origen, la interpretación elegida, los importes y su procedencia para que el análisis sea trazable.</value></data>
@@ -398,7 +398,7 @@ Completa: {5}</value></data>
   <data name="ImportMapping.AllAccounts" xml:space="preserve"><value>Incluir todas las cuentas de este archivo</value></data>
   <data name="ImportMapping.IncludeAccount" xml:space="preserve"><value>Incluir</value></data>
   <data name="ImportMapping.SelectAccounts" xml:space="preserve"><value>Registros que se importarán</value></data>
-  <data name="Import.GroupingInvalid" xml:space="preserve"><value>Los registros seleccionados o su agrupación no son válidos. Revisa la selección y vuelve a preparar.</value></data>
+  <data name="Import.GroupingInvalid" xml:space="preserve"><value>La selección de filas no es coherente. Revisa qué registros están marcados antes de continuar.</value></data>
   <data name="ImportMapping.DeselectAllRecords" xml:space="preserve"><value>Deseleccionar todos</value></data>
   <data name="ImportMapping.GroupedPreview" xml:space="preserve"><value>Registros seleccionados agrupados por código</value></data>
   <data name="ImportMapping.SelectAllRecords" xml:space="preserve"><value>Seleccionar todos</value></data>
