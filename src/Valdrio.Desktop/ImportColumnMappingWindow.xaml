@@ -48,7 +48,7 @@
    <TextBlock TextWrapping="Wrap" Margin="0,4,0,6" AutomationProperties.LiveSetting="Polite" x:Name="ImportStepHelp" />
   </StackPanel>
   <StackPanel DockPanel.Dock="Bottom">
-   <TextBlock Text="{Binding UserStatus}" Foreground="DarkSlateBlue" AutomationProperties.LiveSetting="Polite">
+   <TextBlock Text="{Binding UserStatus}" AutomationProperties.LiveSetting="Polite">
     <TextBlock.Style>
      <Style TargetType="TextBlock">
       <Setter Property="Foreground" Value="DarkSlateBlue" />
