@@ -147,7 +147,7 @@ File: {8}</value></data>
   <data name="Model.PolicyInvalid" xml:space="preserve"><value>A policy reference is incomplete or invalid.</value></data>
   <data name="Model.PolicyNotImplemented" xml:space="preserve"><value>Economic policies cannot be accepted in this structural editor.</value></data>
   <data name="Model.CenterInvalid" xml:space="preserve"><value>Center code and name are required; revision must be valid.</value></data>
-  <data name="Model.NodeInvalid" xml:space="preserve"><value>The node needs a code, Principal or Auxiliary role, and unique nonempty function tags.</value></data>
+  <data name="Model.NodeInvalid" xml:space="preserve"><value>The node needs a code and a valid role. If functions are provided, each must contain text and must not be repeated.</value></data>
   <data name="Model.PoolInvalid" xml:space="preserve"><value>The pool needs a valid unit, classification and pending capacity policy.</value></data>
   <data name="Model.StructureInvalid" xml:space="preserve"><value>The model identity, description or policy reference is incomplete.</value></data>
   <data name="Model.ScopeInvalid" xml:space="preserve"><value>The reference belongs to another company or model version.</value></data>
@@ -893,7 +893,7 @@ Difference to distribute: {7}</value></data>
   <data name="Model.NodeRemoved" xml:space="preserve"><value>Node removed from the draft and changes saved successfully.</value></data>
   <data name="Model.NodePersistenceHelp" xml:space="preserve"><value>Saving a node immediately updates the model draft in the file. You do not need a second save to preserve that node.</value></data>
   <data name="Model.OptionalNodeData" xml:space="preserve"><value>Additional data</value></data>
-  <data name="Model.FunctionHelp" xml:space="preserve"><value>Functions are required and describe what the node is used for. Enter at least one and separate multiple values with commas, for example: production, maintenance.</value></data>
+  <data name="Model.FunctionHelp" xml:space="preserve"><value>Functions are optional and describe what the node is used for. If you add several, separate them with commas and do not repeat names, for example: production, maintenance.</value></data>
   <data name="Model.ColumnCode" xml:space="preserve"><value>Code</value></data>
   <data name="Model.ColumnName" xml:space="preserve"><value>Name</value></data>
   <data name="Model.ColumnStatus" xml:space="preserve"><value>Status</value></data>
