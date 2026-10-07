@@ -524,11 +524,11 @@ Full: {5}</value></data>
   <data name="Guide.RecordsHelp" xml:space="preserve"><value>Only checked rows will be imported. Rows with the same account are summed with their source preserved.</value></data>
   <data name="Guide.MeaningHelp" xml:space="preserve"><value>This step determines how amounts are incorporated. This is not inferred from the filename: choose the option that represents your data.</value></data>
   <data name="Guide.DraftTab" xml:space="preserve"><value>1. Model</value></data>
-  <data name="Guide.MastersTab" xml:space="preserve"><value>2. Centres and units</value></data>
+  <data name="Guide.MastersTab" xml:space="preserve"><value>2. Centres</value></data>
   <data name="Guide.NodesTab" xml:space="preserve"><value>3. Calculation nodes</value></data>
   <data name="Guide.PublishTab" xml:space="preserve"><value>4. Review and publish</value></data>
   <data name="Guide.PublishNext" xml:space="preserve"><value>Save, validate and publish structure</value></data>
-  <data name="Guide.MasterHelp" xml:space="preserve"><value>First create the physical centres and activity units used by the nodes. Everything you save remains visible on this screen so you always know what already exists.</value></data>
+  <data name="Guide.MasterHelp" xml:space="preserve"><value>Define the physical or organisational centres first. You do not have to decide activity units in advance: create them here if you already know them, or directly inside a node when you need one.</value></data>
   <data name="Guide.NodesHelp" xml:space="preserve"><value>A node is a calculation unit within a centre. Choose its centre, role and activity unit. When you press Save node, VALDRIO immediately saves the draft and the node appears in the table.</value></data>
   <data name="Guide.HelpHint" xml:space="preserve"><value>Help: hover over a field or select it with Tab to see its explanation here.</value></data>
   <data name="Guide.StoredAt" xml:space="preserve"><value>Data is saved in: </value></data>
@@ -913,4 +913,5 @@ Difference to distribute: {7}</value></data>
   <data name="CompanyUnitSaved" xml:space="preserve"><value>Activity unit saved successfully. The form is ready for another unit.</value></data>
   <data name="Model.CreateUnitHere" xml:space="preserve"><value>Can't find the unit you need? Create one here</value></data>
   <data name="Model.CreateUnitHereHelp" xml:space="preserve"><value>Create the unit without leaving the node. It is saved as a reusable company unit and, after a successful save, VALDRIO automatically selects it for this node.</value></data>
+  <data name="Model.UnitCatalogTitle" xml:space="preserve"><value>Manage reusable activity-unit catalogue (optional)</value></data>
 </root>
