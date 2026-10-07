@@ -92,7 +92,7 @@ public partial class MainWindow
         await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         System.Windows.Input.Keyboard.Focus(wizard.SourceCurrencyBox);
         Check(!string.IsNullOrEmpty(AutomationProperties.GetHelpText(wizard.SourceCurrencyBox)) &&
-            wizard.ImportFieldHelp.Text == vm.Guide("Help.SourceCurrency"), "field explanation is available to keyboard and assistive technology");
+            wizard.ImportFieldHelp.Text == vm.Guide("Help." + nameof(vm.SourceCurrency)), "field explanation is available to keyboard and assistive technology");
         await wizard.AdvanceImport();
         Check(wizard.ImportSteps.SelectedIndex == 4 && vm.Preparation?.CanConfirm == true && vm.ConfirmedImport is null, "review shows prepared totals without writing the import");
         VisualEvidenceCapture.Capture(wizard, Path.Combine(output, "review-es.png"));
