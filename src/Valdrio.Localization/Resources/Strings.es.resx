@@ -908,4 +908,6 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.LayerHelp" xml:space="preserve"><value>Clasifica el tipo de coste. Esta elección no define por sí sola una política de cálculo.</value></data>
   <data name="Model.PoolHelp" xml:space="preserve"><value>Nombre o explicación breve del grupo de costes asociado al nodo. Es opcional.</value></data>
   <data name="Model.Ready" xml:space="preserve"><value>Listo para continuar.</value></data>
+  <data name="Model.CenterRequiredHelp" xml:space="preserve"><value>Obligatorio: código y nombre. El código identifica el centro dentro de la empresa.</value></data>
+  <data name="Model.NodeRequiredHelp" xml:space="preserve"><value>Obligatorio: código, centro, tipo de nodo y unidad de actividad. La descripción del grupo de costes y las funciones son opcionales.</value></data>
 </root>
