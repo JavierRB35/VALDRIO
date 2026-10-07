@@ -155,7 +155,7 @@ File: {8}</value></data>
   <data name="Model.PrincipalRequired" xml:space="preserve"><value>Add at least one active principal node before publication.</value></data>
   <data name="Model.CenterUnavailable" xml:space="preserve"><value>The physical center is missing, belongs elsewhere or is inactive.</value></data>
   <data name="Model.PoolRequired" xml:space="preserve"><value>Each active node needs exactly one homogeneous pool.</value></data>
-  <data name="Model.DriverUnavailable" xml:space="preserve"><value>The driver unit is missing, belongs elsewhere or is inactive.</value></data>
+  <data name="Model.DriverUnavailable" xml:space="preserve"><value>The activity unit is missing, belongs elsewhere or is inactive.</value></data>
   <data name="Model.SnapshotInvalid" xml:space="preserve"><value>The frozen structure does not contain its required definitions.</value></data>
   <data name="Model.RevisionChanged" xml:space="preserve"><value>The data changed since it was read. Reload before saving.</value></data>
   <data name="Model.PublishedImmutable" xml:space="preserve"><value>Published models are immutable. Duplicate to edit a new draft.</value></data>
@@ -163,7 +163,7 @@ File: {8}</value></data>
   <data name="Model.ActorRequired" xml:space="preserve"><value>A change actor is required.</value></data>
   <data name="Model.ParentNotPublished" xml:space="preserve"><value>Only a published model can be duplicated.</value></data>
   <data name="Model.RequestConflict" xml:space="preserve"><value>This duplicate request identifier was already used for a different operation.</value></data>
-  <data name="Model.InputInvalid" xml:space="preserve"><value>Complete the code, center, role and driver unit. Check the highlighted operation.</value></data>
+  <data name="Model.InputInvalid" xml:space="preserve"><value>Complete the code, centre, node type and activity unit. Check the highlighted operation.</value></data>
   <data name="Model.NoFile" xml:space="preserve"><value>Open a company file to configure centers and models.</value></data>
   <data name="Model.NoneSelected" xml:space="preserve"><value>No model loaded. Select one and press Load, or enter a description and create a draft.</value></data>
   <data name="Model.Details" xml:space="preserve"><value>{0} · {1} · version {2} · revision {3}
@@ -174,7 +174,7 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Unsaved" xml:space="preserve"><value>Unsaved changes</value></data>
   <data name="Model.Saved" xml:space="preserve"><value>Saved</value></data>
   <data name="Model.Title" xml:space="preserve"><value>Configure cost model</value></data>
-  <data name="Model.Notes" xml:space="preserve"><value>Configure the model step by step: model, centres and units, nodes, then final review. Every saved centre and node remains visible in its table. Publishing locks this version so studies can use it.</value></data>
+  <data name="Model.Notes" xml:space="preserve"><value>Configure the model step by step: model, centres, nodes, then final review. Create activity units when you need them; they remain available for reuse.</value></data>
   <data name="Model.Centers" xml:space="preserve"><value>Physical centres</value></data>
   <data name="Model.CenterCode" xml:space="preserve"><value>Centre code</value></data>
   <data name="Model.CenterName" xml:space="preserve"><value>Centre name</value></data>
@@ -546,10 +546,10 @@ Full: {5}</value></data>
   <data name="Guide.Help.Description" xml:space="preserve"><value>Cost structure name. Create new model starts a draft; it does not create a study.</value></data>
   <data name="Guide.Help.SelectedNode" xml:space="preserve"><value>Select an added node to edit it. For another node use Clear form / new node.</value></data>
   <data name="Guide.Help.NodeCode" xml:space="preserve"><value>Unique node code within this model. A centre may contain several nodes.</value></data>
-  <data name="Guide.Help.Physical" xml:space="preserve"><value>Centre to which this node belongs. Create it in Centres and units if missing.</value></data>
+  <data name="Guide.Help.Physical" xml:space="preserve"><value>Centre to which this node belongs. Create it in the Centres step if missing.</value></data>
   <data name="Guide.Help.Role" xml:space="preserve"><value>Principal or Auxiliary according to the model methodology. Independent of functions and cost classification. At least one active Principal is required.</value></data>
   <data name="Guide.Help.FunctionTags" xml:space="preserve"><value>Optional comma-separated tags describing node functions. They do not assign calculation rules.</value></data>
-  <data name="Guide.Help.DriverUnit" xml:space="preserve"><value>Unit used to measure node activity, for example hours. Required; create it in Centres and units.</value></data>
+  <data name="Guide.Help.DriverUnit" xml:space="preserve"><value>Unit used to measure node activity, for example hours. It is required; if it is missing, create it right here without leaving the node.</value></data>
   <data name="Guide.Help.Layer" xml:space="preserve"><value>Cost classification for this pool. It does not yet establish a calculation policy and is not inferred from the account.</value></data>
   <data name="Guide.Help.PoolDescription" xml:space="preserve"><value>Optional description of the cost pool associated with this node.</value></data>
   <data name="Guide.Help.UnitMaster" xml:space="preserve"><value>Select the unit to activate or deactivate. This does not create a new unit.</value></data>
@@ -605,7 +605,7 @@ Full: {5}</value></data>
   <data name="Guide.CorrectImport" xml:space="preserve"><value>Go back to correct the data</value></data>
   <data name="Guide.Working" xml:space="preserve"><value>Operation in progress. Please wait; your entries are preserved.</value></data>
   <data name="Guide.ReadOnly" xml:space="preserve"><value>This company file is open for reading. You can inspect data, but saving requires an editable company file.</value></data>
-  <data name="Guide.PendingCenter" xml:space="preserve"><value>The physical centre has unsaved changes. Review them in Centres and units, then save the centre before continuing.</value></data>
+  <data name="Guide.PendingCenter" xml:space="preserve"><value>The physical centre has unsaved changes. Review them in Centres, then save the centre before continuing.</value></data>
   <data name="Guide.ReviewCenter" xml:space="preserve"><value>Review pending centre</value></data>
   <data name="Guide.SaveCenterNext" xml:space="preserve"><value>Save centre and continue</value></data>
   <data name="Guide.CreateCompanyNext" xml:space="preserve"><value>Create company file and continue</value></data>
