@@ -155,7 +155,7 @@ Archivo: {8}</value></data>
   <data name="Model.PrincipalRequired" xml:space="preserve"><value>Añada al menos un nodo principal activo antes de publicar.</value></data>
   <data name="Model.CenterUnavailable" xml:space="preserve"><value>El centro físico no existe, pertenece a otro ámbito o está inactivo.</value></data>
   <data name="Model.PoolRequired" xml:space="preserve"><value>Cada nodo activo requiere exactamente un pool homogéneo.</value></data>
-  <data name="Model.DriverUnavailable" xml:space="preserve"><value>La unidad del driver no existe, pertenece a otro ámbito o está inactiva.</value></data>
+  <data name="Model.DriverUnavailable" xml:space="preserve"><value>La unidad de actividad no existe, pertenece a otro ámbito o está inactiva.</value></data>
   <data name="Model.SnapshotInvalid" xml:space="preserve"><value>La estructura congelada no contiene las definiciones necesarias.</value></data>
   <data name="Model.RevisionChanged" xml:space="preserve"><value>Los datos han cambiado desde su lectura. Recargue antes de guardar.</value></data>
   <data name="Model.PublishedImmutable" xml:space="preserve"><value>Los modelos publicados son inmutables. Duplique para editar un borrador nuevo.</value></data>
@@ -163,7 +163,7 @@ Archivo: {8}</value></data>
   <data name="Model.ActorRequired" xml:space="preserve"><value>Se necesita identificar al autor del cambio.</value></data>
   <data name="Model.ParentNotPublished" xml:space="preserve"><value>Solo se puede duplicar un modelo publicado.</value></data>
   <data name="Model.RequestConflict" xml:space="preserve"><value>El identificador de esta solicitud de duplicación ya se utilizó para otra operación.</value></data>
-  <data name="Model.InputInvalid" xml:space="preserve"><value>Complete código, centro, papel y unidad del driver. Revise la operación indicada.</value></data>
+  <data name="Model.InputInvalid" xml:space="preserve"><value>Completa código, centro, tipo de nodo y unidad de actividad. Revisa la operación indicada.</value></data>
   <data name="Model.NoFile" xml:space="preserve"><value>Abra un archivo de empresa para configurar centros y modelos.</value></data>
   <data name="Model.NoneSelected" xml:space="preserve"><value>No hay un modelo cargado. Seleccione uno y pulse Cargar, o escriba una descripción y cree un borrador.</value></data>
   <data name="Model.Details" xml:space="preserve"><value>{0} · {1} · versión {2} · revisión {3}
@@ -174,7 +174,7 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.Unsaved" xml:space="preserve"><value>Cambios sin guardar</value></data>
   <data name="Model.Saved" xml:space="preserve"><value>Guardado</value></data>
   <data name="Model.Title" xml:space="preserve"><value>Configurar modelo de costes</value></data>
-  <data name="Model.Notes" xml:space="preserve"><value>Configura el modelo paso a paso: modelo, centros y unidades, nodos y revisión final. Cada centro y nodo guardado queda visible en su tabla. Publicar bloquea esta versión para poder usarla en estudios.</value></data>
+  <data name="Model.Notes" xml:space="preserve"><value>Configura el modelo paso a paso: modelo, centros, nodos y revisión final. Las unidades de actividad se crean cuando las necesites y quedan disponibles para reutilizarlas.</value></data>
   <data name="Model.Centers" xml:space="preserve"><value>Centros físicos</value></data>
   <data name="Model.CenterCode" xml:space="preserve"><value>Código del centro</value></data>
   <data name="Model.CenterName" xml:space="preserve"><value>Nombre del centro</value></data>
@@ -546,10 +546,10 @@ Completa: {5}</value></data>
   <data name="Guide.Help.Description" xml:space="preserve"><value>Nombre de la estructura de costes. Crear modelo nuevo inicia un borrador; no crea un estudio.</value></data>
   <data name="Guide.Help.SelectedNode" xml:space="preserve"><value>Selecciona un nodo ya añadido para editarlo. Para otro nodo usa Limpiar formulario / nuevo nodo.</value></data>
   <data name="Guide.Help.NodeCode" xml:space="preserve"><value>Código único del nodo dentro de este modelo. Puede pertenecer a un centro que tenga otros nodos.</value></data>
-  <data name="Guide.Help.Physical" xml:space="preserve"><value>Centro al que pertenece el nodo. Si no existe, créalo en Centros y unidades.</value></data>
+  <data name="Guide.Help.Physical" xml:space="preserve"><value>Centro al que pertenece el nodo. Si no existe, créalo en el paso Centros.</value></data>
   <data name="Guide.Help.Role" xml:space="preserve"><value>Principal o Auxiliar según la metodología del modelo. Es independiente de las funciones y de la clasificación del coste. Se exige al menos un Principal activo.</value></data>
   <data name="Guide.Help.FunctionTags" xml:space="preserve"><value>Etiquetas opcionales para describir las funciones del nodo, separadas por comas. No asignan reglas de cálculo.</value></data>
-  <data name="Guide.Help.DriverUnit" xml:space="preserve"><value>Unidad en la que se medirá la actividad del nodo, por ejemplo horas. Es obligatoria; puedes crearla en Centros y unidades.</value></data>
+  <data name="Guide.Help.DriverUnit" xml:space="preserve"><value>Unidad en la que se medirá la actividad del nodo, por ejemplo horas. Es obligatoria; si no existe, créala aquí mismo sin salir del nodo.</value></data>
   <data name="Guide.Help.Layer" xml:space="preserve"><value>Clasificación del coste para este pool. No establece todavía una política de cálculo. No se deduce de la cuenta.</value></data>
   <data name="Guide.Help.PoolDescription" xml:space="preserve"><value>Descripción opcional del conjunto de costes asociado a este nodo.</value></data>
   <data name="Guide.Help.UnitMaster" xml:space="preserve"><value>Selecciona la unidad cuyo estado quieres activar o desactivar. Esto no crea una unidad nueva.</value></data>
@@ -605,7 +605,7 @@ Completa: {5}</value></data>
   <data name="Guide.CorrectImport" xml:space="preserve"><value>Volver a corregir los datos</value></data>
   <data name="Guide.Working" xml:space="preserve"><value>Operación en curso. Espera a que termine; se conservan tus datos.</value></data>
   <data name="Guide.ReadOnly" xml:space="preserve"><value>El archivo de empresa está abierto para consulta. Puedes revisar sus datos; para guardar necesitas abrir un archivo de empresa editable.</value></data>
-  <data name="Guide.PendingCenter" xml:space="preserve"><value>El centro físico tiene cambios pendientes. Revísalos en Centros y unidades y guarda el centro antes de continuar.</value></data>
+  <data name="Guide.PendingCenter" xml:space="preserve"><value>El centro físico tiene cambios pendientes. Revísalos en Centros y guarda el centro antes de continuar.</value></data>
   <data name="Guide.ReviewCenter" xml:space="preserve"><value>Revisar centro pendiente</value></data>
   <data name="Guide.SaveCenterNext" xml:space="preserve"><value>Guardar centro y continuar</value></data>
   <data name="Guide.CreateCompanyNext" xml:space="preserve"><value>Crear archivo de empresa y continuar</value></data>
