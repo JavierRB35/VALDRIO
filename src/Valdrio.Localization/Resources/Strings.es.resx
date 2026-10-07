@@ -147,7 +147,7 @@ Archivo: {8}</value></data>
   <data name="Model.PolicyInvalid" xml:space="preserve"><value>Una referencia de política está incompleta o no es válida.</value></data>
   <data name="Model.PolicyNotImplemented" xml:space="preserve"><value>Este editor estructural no permite aceptar políticas económicas.</value></data>
   <data name="Model.CenterInvalid" xml:space="preserve"><value>Indique código y nombre del centro; la revisión debe ser válida.</value></data>
-  <data name="Model.NodeInvalid" xml:space="preserve"><value>El nodo requiere código, papel principal o auxiliar y funciones únicas no vacías.</value></data>
+  <data name="Model.NodeInvalid" xml:space="preserve"><value>El nodo requiere código y un papel válido. Si indicas funciones, cada una debe tener texto y no puede repetirse.</value></data>
   <data name="Model.PoolInvalid" xml:space="preserve"><value>El pool requiere unidad válida, clasificación y política de capacidad pendiente.</value></data>
   <data name="Model.StructureInvalid" xml:space="preserve"><value>La identidad, descripción o referencia de política del modelo está incompleta.</value></data>
   <data name="Model.ScopeInvalid" xml:space="preserve"><value>La referencia pertenece a otra empresa o versión de modelo.</value></data>
@@ -893,7 +893,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.NodeRemoved" xml:space="preserve"><value>Nodo eliminado del borrador y cambios guardados correctamente.</value></data>
   <data name="Model.NodePersistenceHelp" xml:space="preserve"><value>Guardar nodo actualiza inmediatamente el borrador del modelo en el archivo. No necesitas realizar un segundo guardado para conservar ese nodo.</value></data>
   <data name="Model.OptionalNodeData" xml:space="preserve"><value>Datos adicionales</value></data>
-  <data name="Model.FunctionHelp" xml:space="preserve"><value>Las funciones son obligatorias y describen para qué se utiliza el nodo. Escribe al menos una y separa varias con comas, por ejemplo: producción, mantenimiento.</value></data>
+  <data name="Model.FunctionHelp" xml:space="preserve"><value>Las funciones son opcionales y describen para qué se utiliza el nodo. Si añades varias, sepáralas con comas y no repitas nombres, por ejemplo: producción, mantenimiento.</value></data>
   <data name="Model.ColumnCode" xml:space="preserve"><value>Código</value></data>
   <data name="Model.ColumnName" xml:space="preserve"><value>Nombre</value></data>
   <data name="Model.ColumnStatus" xml:space="preserve"><value>Estado</value></data>
