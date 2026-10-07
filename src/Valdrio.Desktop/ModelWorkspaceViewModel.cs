@@ -368,6 +368,10 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     }
 
     public string Status => diagnostic is null ? Text(committedRefreshPending && !busy ? "Model.CommittedRefreshPending" : statusKey) : DiagnosticText(diagnostic);
+    public string CenterFeedback => diagnostic is not null && CenterFormEdited ||
+        statusKey.StartsWith("Model.Center", StringComparison.Ordinal) ? Status : "";
+    public string NodeFeedback => diagnostic is not null && nodeFormEdited ||
+        statusKey.StartsWith("Model.Node", StringComparison.Ordinal) ? Status : "";
     public string ValidationText => string.Join(Environment.NewLine, validation.Select(DiagnosticText));
     public string Details => Current is null ? Text("Model.NoneSelected") : string.Format(Format, Text("Model.Details"), Current.Structure.Description, Text(Current.Status == ModelStatus.Draft ? "Model.Draft" : "Model.Published"), Current.Structure.VersionNumber, Current.Revision, Current.Structure.ParentVersionId?.ToString() ?? "—", Current.PublishedAtUtc is null ? "—" : formatter.FormatInstant(Current.PublishedAtUtc.Value.Value, preferences.Current.DisplayTimeZoneId, Format), Current.StructuralHash ?? "—", IsDirty ? Text("Model.Unsaved") : Text("Model.Saved"));
     public string HistoricalDefinitions => Current?.Publication is not { } p ? "" : string.Join(Environment.NewLine, p.PhysicalCenters.Select(c => c.Code + " · " + c.Name).Concat(p.DriverUnits.Select(u => u.Code + " · " + u.Dimension + " · " + u.Symbol)));
@@ -721,6 +725,9 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         }
 
         ResetNode();
+        diagnostic = null;
+        statusKey = "Model.Ready";
+        Refresh();
     }
 
     private void ResetNode()
@@ -816,6 +823,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         centerCode = "";
         centerName = "";
         loading = false;
+        diagnostic = null;
+        statusKey = "Model.Ready";
         Refresh();
     }
 
