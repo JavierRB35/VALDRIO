@@ -137,13 +137,17 @@ public partial class MainWindow
         {
             var importCountBefore = studies.ConfirmedImportCount;
             new ImportColumnMappingWindow { Owner = this, DataContext = studies.ImportColumns }.ShowDialog();
-            if (studies.ConfirmedImportCount > importCountBefore)
-            {
-                await NavigateWorkflow(4);
-                return;
-            }
+            await ContinueAfterGuidedImport(importCountBefore);
+            return;
         }
         UpdateWorkflow();
+    }
+    internal async Task ContinueAfterGuidedImport(int importCountBefore)
+    {
+        if (viewModel?.Studies is { } studies && studies.ConfirmedImportCount > importCountBefore)
+            await NavigateWorkflow(4);
+        else
+            UpdateWorkflow();
     }
     internal void RevealWorkflowElement(FrameworkElement element)
     {
