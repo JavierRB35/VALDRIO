@@ -65,10 +65,17 @@ public sealed partial class ImportColumnMappingViewModel
         Refresh();
     }
     public IReadOnlyList<ImportMappingOption> AmountModes => amountModes;
+    public bool IsCumulativeMode => amountMode == "cumulative";
     public string AmountMode
     {
         get => amountMode;
-        set { if (SetProperty(ref amountMode, value)) { InvalidatePreparation(true); Refresh(); } }
+        set
+        {
+            if (!SetProperty(ref amountMode, value)) return;
+            OnPropertyChanged(nameof(IsCumulativeMode));
+            InvalidatePreparation(true);
+            Refresh();
+        }
     }
     public string AmountBasis => amountMode == "cumulative" ? this["CumulativeBasis"] : amountMode == "closing-full"
         ? string.Format(Ui, this["ClosingBasis"], targetStudy?.PeriodEnd.ToString() ?? "—")
