@@ -60,9 +60,9 @@ public partial class MainWindow
         Check(GuidedUi.Contains(ModelPanel.NodeUnitsCreationHost, CompanyPanel.UnitCreationPanel),
             "activity-unit creation is available where the node needs the unit");
 
-        Text(CompanyPanel.UnitCodeBox, ""); await Click(CompanyPanel.AddUnitButton);
-        Audit(CompanyPanel.UnitActionStatus.IsVisible && CompanyPanel.UnitActionStatus.Text == company.Status && models.Units.Count == 0,
-            "invalid inline unit reports its error without leaving the node");
+        Text(CompanyPanel.UnitCodeBox, "");
+        Audit(!CompanyPanel.AddUnitButton.IsEnabled && models.Units.Count == 0,
+            "inline unit save stays disabled until the required unit code is entered");
 
         Text(CompanyPanel.UnitCodeBox, "HORAS"); Text(CompanyPanel.DimensionBox, "time"); Text(CompanyPanel.SymbolBox, "h");
         Select(CompanyPanel.ScaleBox, 2); CompanyPanel.DiscreteBox.IsChecked = false; await Click(CompanyPanel.AddUnitButton);
