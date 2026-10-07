@@ -372,7 +372,7 @@ Completa: {5}</value></data>
   <data name="ImportMapping.ConfirmedSummary" xml:space="preserve"><value>Importación guardada · {1} recursos incorporados.</value></data>
   <data name="ImportMapping.CommittedRefreshPending" xml:space="preserve"><value>Los datos están guardados, pero la pantalla no se ha podido actualizar. Cierra esta ventana y actualiza el análisis; no vuelvas a importar el archivo.</value></data>
   <data name="ImportMapping.NoImports" xml:space="preserve"><value>Este análisis todavía no tiene importaciones guardadas.</value></data>
-  <data name="ImportMapping.ImportHistory" xml:space="preserve"><value>Importación {0} · {1} · {2} recursos · {3} {4} · revisión {5}</value></data>
+  <data name="ImportMapping.ImportHistory" xml:space="preserve"><value>{1} · {2} recursos · total {3} {4}</value></data>
   <data name="ImportMapping.AmountLayout" xml:space="preserve"><value>Interpretación del importe</value></data>
   <data name="ImportMapping.SignedLayout" xml:space="preserve"><value>Importe firmado en una columna</value></data>
   <data name="ImportMapping.DebitCreditLayout" xml:space="preserve"><value>Debe menos Haber en dos columnas</value></data>
@@ -435,8 +435,8 @@ Completa: {5}</value></data>
   <data name="ImportMapping.ReplaceBatch" xml:space="preserve"><value>Corregir una importación anterior</value></data>
   <data name="ImportMapping.ComparisonEmpty" xml:space="preserve"><value>No hay acumulado anterior conservado.</value></data>
   <data name="ImportMapping.CumulativeMode" xml:space="preserve"><value>Diferencia entre dos saldos acumulados</value></data>
-<data name="ImportMapping.BatchActive" xml:space="preserve"><value>Vigente</value></data>
-<data name="ImportMapping.BatchReplaced" xml:space="preserve"><value>Sustituido: solo historial</value></data>
+<data name="ImportMapping.BatchActive" xml:space="preserve"><value>Activa</value></data>
+<data name="ImportMapping.BatchReplaced" xml:space="preserve"><value>Sustituida · solo historial</value></data>
 <data name="ImportMapping.CurrentAmount" xml:space="preserve"><value>Acumulado actual</value></data>
 <data name="ImportMapping.DifferenceAmount" xml:space="preserve"><value>Diferencia del periodo</value></data>
 <data name="ImportMapping.EarlierRecords" xml:space="preserve"><value>Filas del anterior</value></data>
