@@ -176,13 +176,13 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.Title" xml:space="preserve"><value>Configurar modelo de costes</value></data>
   <data name="Model.Notes" xml:space="preserve"><value>Configure un centro físico, nodos y un pool homogéneo por nodo. Función y papel son independientes. Aplique el nodo al borrador y después Guarde. La publicación congela solo la estructura; las políticas económicas siguen pendientes y el cálculo no está disponible.</value></data>
   <data name="Model.Centers" xml:space="preserve"><value>Centros físicos</value></data>
-  <data name="Model.CenterCode" xml:space="preserve"><value>Código del centro físico (texto)</value></data>
-  <data name="Model.CenterName" xml:space="preserve"><value>Nombre del centro físico</value></data>
+  <data name="Model.CenterCode" xml:space="preserve"><value>Código del centro</value></data>
+  <data name="Model.CenterName" xml:space="preserve"><value>Nombre del centro</value></data>
   <data name="Model.CreateCenter" xml:space="preserve"><value>Crear centro</value></data>
   <data name="Model.SaveCenter" xml:space="preserve"><value>Guardar cambios del centro</value></data>
   <data name="Model.ToggleCenter" xml:space="preserve"><value>Activar / desactivar centro</value></data>
-  <data name="Model.Models" xml:space="preserve"><value>Versiones de modelo</value></data>
-  <data name="Model.Description" xml:space="preserve"><value>Descripción del modelo / nombre del nuevo borrador</value></data>
+  <data name="Model.Models" xml:space="preserve"><value>Modelos disponibles</value></data>
+  <data name="Model.Description" xml:space="preserve"><value>Nombre o descripción del modelo</value></data>
   <data name="Model.NewDraft" xml:space="preserve"><value>Crear modelo nuevo</value></data>
   <data name="Model.Load" xml:space="preserve"><value>Cargar selección</value></data>
   <data name="Model.Save" xml:space="preserve"><value>Guardar borrador</value></data>
@@ -193,11 +193,11 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.Nodes" xml:space="preserve"><value>Nodos de cálculo</value></data>
   <data name="Model.NodeCode" xml:space="preserve"><value>Código del nodo</value></data>
   <data name="Model.Physical" xml:space="preserve"><value>Centro físico</value></data>
-  <data name="Model.Role" xml:space="preserve"><value>Papel en reparto</value></data>
-  <data name="Model.FunctionTags" xml:space="preserve"><value>Funciones (etiquetas independientes, separadas por comas)</value></data>
-  <data name="Model.DriverUnit" xml:space="preserve"><value>Unidades de driver</value></data>
-  <data name="Model.CostLayer" xml:space="preserve"><value>Clasificación del coste (sin política de cálculo)</value></data>
-  <data name="Model.PoolDescription" xml:space="preserve"><value>Descripción del pool</value></data>
+  <data name="Model.Role" xml:space="preserve"><value>Tipo de nodo</value></data>
+  <data name="Model.FunctionTags" xml:space="preserve"><value>Funciones (opcional)</value></data>
+  <data name="Model.DriverUnit" xml:space="preserve"><value>Unidad de actividad</value></data>
+  <data name="Model.CostLayer" xml:space="preserve"><value>Clasificación del coste</value></data>
+  <data name="Model.PoolDescription" xml:space="preserve"><value>Descripción del grupo de costes</value></data>
   <data name="Model.ApplyNode" xml:space="preserve"><value>Guardar nodo</value></data>
   <data name="Model.NewNode" xml:space="preserve"><value>Nuevo nodo</value></data>
   <data name="Model.RemoveNode" xml:space="preserve"><value>Eliminar nodo</value></data>
@@ -903,4 +903,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.ColumnLayer" xml:space="preserve"><value>Capa</value></data>
   <data name="Model.ColumnPool" xml:space="preserve"><value>Descripción del pool</value></data>
   <data name="Model.ColumnFunctions" xml:space="preserve"><value>Funciones</value></data>
+  <data name="Model.RoleHelp" xml:space="preserve"><value>Principal: recibe costes como destino del reparto. Auxiliar: presta servicios a otros nodos.</value></data>
+  <data name="Model.UnitHelp" xml:space="preserve"><value>Indica cómo se mide la actividad de este nodo, por ejemplo horas, lotes o unidades.</value></data>
+  <data name="Model.LayerHelp" xml:space="preserve"><value>Clasifica el tipo de coste. Esta elección no define por sí sola una política de cálculo.</value></data>
+  <data name="Model.PoolHelp" xml:space="preserve"><value>Nombre o explicación breve del grupo de costes asociado al nodo. Es opcional.</value></data>
 </root>
