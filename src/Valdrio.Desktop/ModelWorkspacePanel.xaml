@@ -145,7 +145,7 @@
            <Button x:Name="CreateCenterButton" Content="{Binding NewCenterLabel}"
                    Command="{Binding NewCenterCommand}" TabIndex="28" />
           </WrapPanel>
-          <TextBlock Text="{Binding Status}" Style="{StaticResource InlineStatus}" AutomationProperties.LiveSetting="Assertive" />
+          <TextBlock Text="{Binding CenterFeedback}" Style="{StaticResource InlineStatus}" AutomationProperties.LiveSetting="Assertive" />
 
           <Separator Margin="0,8,0,6" />
           <TextBlock Text="{Binding CenterStateHelp}" Style="{StaticResource SectionHelp}" />
@@ -278,7 +278,7 @@
          <Button x:Name="RemoveNodeButton" Content="{Binding RemoveLabel}" Command="{Binding DeleteNodeCommand}"
                  TabIndex="50" Foreground="DarkRed" />
         </WrapPanel>
-        <TextBlock Text="{Binding Status}" Style="{StaticResource InlineStatus}" AutomationProperties.LiveSetting="Assertive" />
+        <TextBlock Text="{Binding NodeFeedback}" Style="{StaticResource InlineStatus}" AutomationProperties.LiveSetting="Assertive" />
        </StackPanel>
       </GroupBox>
      </StackPanel>
