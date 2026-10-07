@@ -135,8 +135,9 @@ public partial class MainWindow
         if (!studies.HasImportDestination) { await NavigateWorkflow(2); return; }
         if (await studies.AttachImportTarget())
         {
+            var importCountBefore = studies.ConfirmedImportCount;
             new ImportColumnMappingWindow { Owner = this, DataContext = studies.ImportColumns }.ShowDialog();
-            if (studies.ImportColumns?.ConfirmedImport is not null)
+            if (studies.ConfirmedImportCount > importCountBefore)
             {
                 await NavigateWorkflow(4);
                 return;
