@@ -44,6 +44,35 @@ public sealed class WorkspaceAuditClosureTests
     }
 
     [TestMethod]
+    public async Task ImportPreviewPreservesUnsavedStudyAndCannotConfirmWithoutTarget()
+    {
+        var preferences = new PresentationPreferencesService(new LanguageCatalog(), UserPresentationPreferences.Default);
+        var formatter = new PresentationFormatter(new DisplayTimeZoneResolver());
+        var texts = new UiTextCatalog();
+        var dialogs = new Dialogs();
+        using var company = new CompanyFileViewModel(Service(), dialogs, Catalog, texts, preferences, formatter);
+        using var imports = new ImportColumnMappingViewModel(new ImportSourceSessionFactory(), new PreviewDialogs(), texts, preferences);
+        using var studies = new StudyWorkspaceViewModel(company, Catalog, texts, preferences, formatter, new NoPromptDialogs()) { ImportColumns = imports };
+        await company.OpenPath(Baseline());
+        studies.Name = "Pending study";
+        studies.PeriodStart = new DateTime(2026, 1, 1);
+        Assert.IsTrue(await studies.AttachImportTarget());
+        Assert.AreEqual("Pending study", studies.Name);
+        Assert.IsTrue(studies.IsDirty);
+        Assert.IsNull(studies.Current);
+        Assert.IsFalse(imports.PrepareCommand.CanExecute(null));
+        Assert.IsFalse(imports.ConfirmCommand.CanExecute(null));
+        Assert.IsTrue(imports.OpenCommand.CanExecute(null));
+        Assert.IsFalse(studies.HasStudies);
+        Assert.IsTrue(studies.HasPublishedModels);
+    }
+    private sealed class PreviewDialogs : IImportSourceDialogs { public string? SelectSource() => null; }
+    private sealed class NoPromptDialogs : IModelEditorDialogs
+    {
+        public PendingEditChoice ResolvePending(string title, string body) => throw new AssertFailedException("Preview must not ask to save or discard the study.");
+    }
+
+    [TestMethod]
     [DataRow("CreateCenter")]
     [DataRow("ChangeCenter")]
     [DataRow("ToggleCenter")]

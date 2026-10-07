@@ -2,6 +2,21 @@
 
 Fecha de revisión 2026-10-07. Repositorio `JavierRB35/VALDRIO`.
 
+## Continuidad — acceso a importación y guardado del estudio, 2026-10-07
+
+Se aclaran las acciones: «Limpiar formulario / preparar otro estudio» y «Guardar este estudio».
+Los listados vacíos explican la ausencia de estudios/modelos y hay acceso directo al editor de modelos.
+El resultado de crear se muestra junto a los botones y se lleva a la vista al terminar.
+Abrir la revisión del origen con un estudio nuevo sin guardar conserva el formulario sin pedir
+que se guarde o descarte. Preparar/confirmar sigue requiriendo un estudio guardado; no se crean
+modelos ni estructuras contables implícitos. Tras publicar, Actualizar estudios/modelos carga las opciones.
+
+Validación: 408 pruebas Release correctas (`study-ux.trx`), compilación WPF sin advertencias,
+flujo nativo completo con salida 0 en `artifacts/study-ux-verified-2026-10-07` y revisión visual.
+Después de esa captura se quitó un mensaje de estado duplicado y se unificó su color; recompilado.
+Dos intentos previos de captura fallaron por usar rutas relativas o separadores `/` en el comprobador
+de igualdad de rutas del smoke; la ejecución con ruta absoluta Windows pasó.
+
 ## Continuidad — selección de registros y agrupación, 2026-10-07
 
 La elección pasa de cuentas a registros individuales: todos, ninguno, algunos o todos

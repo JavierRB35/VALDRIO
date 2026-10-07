@@ -8,14 +8,17 @@
  <GroupBox Header="{Binding Title}" Padding="14">
   <StackPanel>
    <TextBlock Text="{Binding Notes}"/>
-   <TextBlock Text="{Binding Status}" Foreground="DarkSlateBlue" AutomationProperties.LiveSetting="Polite"/>
+   <TextBlock Text="{Binding WorkflowHelp}" FontWeight="SemiBold"/>
+   <TextBlock Text="{Binding StudyListHelp}"/>
    <DockPanel><WrapPanel DockPanel.Dock="Right"><Button x:Name="RefreshStudyButton" Content="{Binding RefreshLabel}" Command="{Binding RefreshCommand}" TabIndex="60"/>
     <Button x:Name="LoadStudyButton" Content="{Binding LoadLabel}" Command="{Binding LoadCommand}" TabIndex="62"/></WrapPanel>
-    <ComboBox x:Name="StudyBox" ItemsSource="{Binding Studies}" SelectedItem="{Binding StudyChoice}" IsEnabled="{Binding Ready}" TabIndex="61" AutomationProperties.Name="{Binding Title}"/></DockPanel>
+    <ComboBox x:Name="StudyBox" ItemsSource="{Binding Studies}" SelectedItem="{Binding StudyChoice}" IsEnabled="{Binding HasStudies}" TabIndex="61" AutomationProperties.Name="{Binding Title}"/></DockPanel>
+   <TextBlock Text="{Binding ModelHelp}" Foreground="DarkSlateBlue"/>
+   <Button Content="{Binding GoToModelsLabel}" Click="GoToModels" HorizontalAlignment="Left"/>
    <Grid IsEnabled="{Binding CanEdit}"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
     <StackPanel><TextBlock Text="{Binding NameLabel}"/><TextBox x:Name="StudyNameBox" Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}" Margin="0,3,8,3" TabIndex="63" AutomationProperties.Name="{Binding NameLabel}"/></StackPanel>
-    <StackPanel Grid.Column="1"><TextBlock Text="{Binding ModelLabel}"/><ComboBox x:Name="StudyModelBox" ItemsSource="{Binding PublishedModels}" SelectedItem="{Binding ModelChoice}" TabIndex="64" AutomationProperties.Name="{Binding ModelLabel}"/></StackPanel>
+    <StackPanel Grid.Column="1"><TextBlock Text="{Binding ModelLabel}"/><ComboBox x:Name="StudyModelBox" ItemsSource="{Binding PublishedModels}" IsEnabled="{Binding HasPublishedModels}" SelectedItem="{Binding ModelChoice}" TabIndex="64" AutomationProperties.Name="{Binding ModelLabel}"/></StackPanel>
     <StackPanel Grid.Row="1"><TextBlock Text="{Binding StartLabel}"/><local:CalendarDatePicker x:Name="StartPicker" SelectedDate="{Binding PeriodStart,Mode=TwoWay}" Language="{Binding DateLanguage}" TabIndex="65" AutomationProperties.Name="{Binding StartLabel}" Margin="0,3,8,3"/></StackPanel>
     <StackPanel Grid.Row="1" Grid.Column="1"><TextBlock Text="{Binding EndLabel}"/><local:CalendarDatePicker x:Name="EndPicker" SelectedDate="{Binding PeriodEnd,Mode=TwoWay}" Language="{Binding DateLanguage}" TabIndex="66" AutomationProperties.Name="{Binding EndLabel}" Margin="0,3,8,3"/></StackPanel>
     <StackPanel Grid.Row="2"><TextBlock Text="{Binding CurrencyLabel}"/><ComboBox x:Name="StudyCurrencyBox" DisplayMemberPath="" ItemsSource="{Binding CurrencyOptions}" SelectedItem="{Binding Currency}" TabIndex="67" AutomationProperties.Name="{Binding CurrencyLabel}"/></StackPanel>
@@ -29,6 +32,8 @@
     <Button x:Name="DiscardStudyButton" Content="{Binding DiscardLabel}" Command="{Binding DiscardCommand}" TabIndex="74"/>
     <Button Content="{Binding CancelLabel}" Command="{Binding CancelCommand}" TabIndex="75"/></WrapPanel>
    <TextBlock Text="{Binding Details}"/>
+   <TextBlock x:Name="ActionStatus" Text="{Binding Status}" Foreground="DarkSlateBlue" FontWeight="SemiBold" AutomationProperties.LiveSetting="Assertive"/>
+   <TextBlock Text="{Binding ImportHelp}"/>
    <Button x:Name="ImportColumnsButton" Content="{Binding ImportColumnsLabel}" Click="OpenImportColumns"
    IsEnabled="{Binding ImportColumns.IsIdle}" HorizontalAlignment="Left" TabIndex="77"/>
    <TextBlock x:Name="ImportHistoryText" Text="{Binding ImportedAmounts}"/>

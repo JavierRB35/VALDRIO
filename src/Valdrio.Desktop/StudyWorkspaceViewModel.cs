@@ -69,7 +69,10 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     private void ImportStateChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e) => Refresh();
     public async Task<bool> AttachImportTarget()
     {
-        if (!await CanLeaveAsync() || ImportColumns is null) return false;
+        if (busy || ImportColumns is null) return false;
+        // Reading a source does not abandon the unsaved study form. Only a saved,
+        // unchanged study can be used as a destination for confirmation.
+        if (Current is not null && !await CanLeaveAsync()) return false;
         ImportColumns.BindTarget(company.ActiveImports, Current, company.CanWrite, async batch =>
         {
             await ApplyConfirmedThenReload(batch.ConfirmedStudy, ApplyConfirmedStudy);
@@ -78,6 +81,13 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         return true;
     }
     public string ImportColumnsLabel => Text("ImportMapping.OpenMapping");
+    public bool HasStudies => Studies.Count > 0;
+    public bool HasPublishedModels => PublishedModels.Count > 0;
+    public string StudyListHelp => Text(HasStudies ? "Study.ChooseExisting" : "Study.NoStudiesYet");
+    public string ModelHelp => Text(HasPublishedModels ? "Study.ChooseModelHelp" : "Study.NoModelsHelp");
+    public string GoToModelsLabel => Text("Study.GoToModels");
+    public string WorkflowHelp => Text(Current is null ? "Study.CreationHelp" : "Study.SavedHelp");
+    public string ImportHelp => Text(Current is null ? "Study.PreviewHelp" : "Study.ImportHelp");
     public bool IsDirty => dirty;
     public bool Ready => !busy && company.WorkspaceIdle && company.ActiveStudies is not null;
     public bool CanEdit => Ready && Current?.State != StudyState.Closed;

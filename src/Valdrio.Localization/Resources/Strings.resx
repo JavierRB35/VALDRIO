@@ -240,8 +240,8 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Study.Currency" xml:space="preserve"><value>Functional currency</value></data>
   <data name="Study.Model" xml:space="preserve"><value>Published model</value></data>
   <data name="Study.Scenario" xml:space="preserve"><value>Scenario</value></data>
-  <data name="Study.New" xml:space="preserve"><value>New study</value></data>
-  <data name="Study.Create" xml:space="preserve"><value>Create study</value></data>
+  <data name="Study.New" xml:space="preserve"><value>Clear form / start another study</value></data>
+  <data name="Study.Create" xml:space="preserve"><value>Save this study</value></data>
   <data name="Study.Save" xml:space="preserve"><value>Save context</value></data>
   <data name="Study.Load" xml:space="preserve"><value>Load study</value></data>
   <data name="Study.Refresh" xml:space="preserve"><value>Refresh studies/models</value></data>
@@ -360,7 +360,7 @@ Full: {5}</value></data>
   <data name="Study.PartitionsPending" xml:space="preserve"><value>Imported resources are available. Assign their partitions before calculating costs.</value></data>
   <data name="Study.ImportedCaptured" xml:space="preserve"><value>The snapshot includes confirmed import resources and their source evidence. Calculation still requires the remaining inputs.</value></data>
   <data name="ImportMapping.Scope" xml:space="preserve"><value>Confirmation appends a complete batch using the selected mode in the study functional currency. Differences between closing balances and currency conversion remain pending.</value></data>
-  <data name="ImportMapping.NoStudy" xml:space="preserve"><value>Open a saved study to prepare and confirm this import.</value></data>
+  <data name="ImportMapping.NoStudy" xml:space="preserve"><value>File preview: you can choose columns and records. To save the import, close this window, save or load a study and reopen it; your selection is preserved.</value></data>
   <data name="ImportMapping.Target" xml:space="preserve"><value>Destination study {0} · period {1} to {2} · functional currency {3} · revision {4}</value></data>
   <data name="ImportMapping.SourceCurrency" xml:space="preserve"><value>Source currency, ISO code such as EUR</value></data>
   <data name="ImportMapping.ApprovalReference" xml:space="preserve"><value>Representative example you have checked, with its account and expected amount</value></data>
@@ -405,4 +405,13 @@ Full: {5}</value></data>
   <data name="ImportMapping.SelectAllRecords" xml:space="preserve"><value>Select all</value></data>
   <data name="ImportMapping.SourceCode" xml:space="preserve"><value>Code</value></data>
   <data name="ImportMapping.SourceRecords" xml:space="preserve"><value>Source rows</value></data>
+  <data name="Study.ChooseExisting" xml:space="preserve"><value>Saved studies: select one and click Load study.</value></data>
+  <data name="Study.ChooseModelHelp" xml:space="preserve"><value>Select the published model for this study. If you just published it, click Refresh studies/models.</value></data>
+  <data name="Study.GoToModels" xml:space="preserve"><value>Go to models to create or publish the structure</value></data>
+  <data name="Study.CreationHelp" xml:space="preserve"><value>To save: enter a name, dates, currency and published model, then click Save this study. It is saved in the open company file.</value></data>
+  <data name="Study.PreviewHelp" xml:space="preserve"><value>You can open Excel or CSV, choose columns and select records before saving a study. Confirming the import requires a saved study. Reviewing the file preserves this form.</value></data>
+  <data name="Study.NoStudiesYet" xml:space="preserve"><value>No studies saved yet. Complete the form below to save the first one.</value></data>
+  <data name="Study.NoModelsHelp" xml:space="preserve"><value>No published models are available. Go to Models, create and save the structure, then click Publish structure. Return here and click Refresh studies/models. You can review the Excel or CSV meanwhile.</value></data>
+  <data name="Study.ImportHelp" xml:space="preserve"><value>Next: select the Excel or CSV columns and records, prepare the totals and confirm the import.</value></data>
+  <data name="Study.SavedHelp" xml:space="preserve"><value>Study saved. Use Save context to save changes or Select import columns to import data.</value></data>
 </root>

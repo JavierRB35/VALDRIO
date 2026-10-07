@@ -240,8 +240,8 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Study.Currency" xml:space="preserve"><value>Moneda funcional</value></data>
   <data name="Study.Model" xml:space="preserve"><value>Modelo publicado</value></data>
   <data name="Study.Scenario" xml:space="preserve"><value>Escenario</value></data>
-  <data name="Study.New" xml:space="preserve"><value>Nuevo estudio</value></data>
-  <data name="Study.Create" xml:space="preserve"><value>Crear estudio</value></data>
+  <data name="Study.New" xml:space="preserve"><value>Limpiar formulario / preparar otro estudio</value></data>
+  <data name="Study.Create" xml:space="preserve"><value>Guardar este estudio</value></data>
   <data name="Study.Save" xml:space="preserve"><value>Guardar contexto</value></data>
   <data name="Study.Load" xml:space="preserve"><value>Cargar estudio</value></data>
   <data name="Study.Refresh" xml:space="preserve"><value>Actualizar estudios/modelos</value></data>
@@ -360,7 +360,7 @@ Completa: {5}</value></data>
   <data name="Study.PartitionsPending" xml:space="preserve"><value>Los recursos importados están disponibles. Asigna sus particiones antes de calcular costes.</value></data>
   <data name="Study.ImportedCaptured" xml:space="preserve"><value>La captura incluye recursos importados confirmados y su procedencia. El cálculo necesita las entradas restantes.</value></data>
   <data name="ImportMapping.Scope" xml:space="preserve"><value>La confirmación añade un lote completo según la modalidad elegida y en la moneda funcional del estudio. Las diferencias entre cierres y la conversión de divisas están pendientes.</value></data>
-  <data name="ImportMapping.NoStudy" xml:space="preserve"><value>Abre un estudio guardado para preparar y confirmar esta importación.</value></data>
+  <data name="ImportMapping.NoStudy" xml:space="preserve"><value>Revisión del archivo: puedes elegir columnas y registros. Para guardar la importación, cierra esta ventana, guarda o carga un estudio y vuelve a abrirla; se conservará tu selección.</value></data>
   <data name="ImportMapping.Target" xml:space="preserve"><value>Estudio de destino {0} · periodo {1} a {2} · moneda funcional {3} · revisión {4}</value></data>
   <data name="ImportMapping.SourceCurrency" xml:space="preserve"><value>Moneda de origen, código ISO como EUR</value></data>
   <data name="ImportMapping.ApprovalReference" xml:space="preserve"><value>Ejemplo representativo que has comprobado, con su cuenta e importe esperado</value></data>
@@ -405,4 +405,13 @@ Completa: {5}</value></data>
   <data name="ImportMapping.SelectAllRecords" xml:space="preserve"><value>Seleccionar todos</value></data>
   <data name="ImportMapping.SourceCode" xml:space="preserve"><value>Código</value></data>
   <data name="ImportMapping.SourceRecords" xml:space="preserve"><value>Filas de origen</value></data>
+  <data name="Study.ChooseExisting" xml:space="preserve"><value>Estudios guardados: selecciona uno y pulsa Cargar estudio.</value></data>
+  <data name="Study.ChooseModelHelp" xml:space="preserve"><value>Selecciona el modelo publicado que utilizará este estudio. Si acabas de publicarlo, pulsa Actualizar estudios/modelos.</value></data>
+  <data name="Study.GoToModels" xml:space="preserve"><value>Ir a modelos para crear o publicar la estructura</value></data>
+  <data name="Study.CreationHelp" xml:space="preserve"><value>Para guardar: indica nombre, fechas, moneda y modelo publicado; después pulsa Guardar este estudio. Se guarda dentro del archivo de empresa abierto.</value></data>
+  <data name="Study.PreviewHelp" xml:space="preserve"><value>Puedes abrir el Excel o CSV, elegir columnas y seleccionar registros sin guardar el estudio. Para confirmar la importación necesitarás un estudio guardado. El formulario se conserva al revisar el archivo.</value></data>
+  <data name="Study.NoStudiesYet" xml:space="preserve"><value>Todavía no hay estudios guardados. Completa el formulario inferior para guardar el primero.</value></data>
+  <data name="Study.NoModelsHelp" xml:space="preserve"><value>No hay modelos publicados disponibles. Ve a Modelos, crea y guarda su estructura y pulsa Publicar estructura. Después vuelve aquí y pulsa Actualizar estudios/modelos. Puedes revisar el Excel o CSV mientras tanto.</value></data>
+  <data name="Study.ImportHelp" xml:space="preserve"><value>Siguiente paso: selecciona las columnas y los registros del Excel o CSV; prepara los totales y confirma la importación.</value></data>
+  <data name="Study.SavedHelp" xml:space="preserve"><value>Estudio guardado. Usa Guardar contexto para conservar cambios o Seleccionar columnas de importación para incorporar datos.</value></data>
 </root>
