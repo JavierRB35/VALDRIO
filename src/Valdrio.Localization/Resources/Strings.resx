@@ -893,7 +893,7 @@ Difference to distribute: {7}</value></data>
   <data name="Model.NodeRemoved" xml:space="preserve"><value>Node removed from the draft and changes saved successfully.</value></data>
   <data name="Model.NodePersistenceHelp" xml:space="preserve"><value>Saving a node immediately updates the model draft in the file. You do not need a second save to preserve that node.</value></data>
   <data name="Model.OptionalNodeData" xml:space="preserve"><value>Additional data</value></data>
-  <data name="Model.FunctionHelp" xml:space="preserve"><value>Function tags describe what the node is used for. Separate them with commas, for example: production, maintenance.</value></data>
+  <data name="Model.FunctionHelp" xml:space="preserve"><value>Functions are required and describe what the node is used for. Enter at least one and separate multiple values with commas, for example: production, maintenance.</value></data>
   <data name="Model.ColumnCode" xml:space="preserve"><value>Code</value></data>
   <data name="Model.ColumnName" xml:space="preserve"><value>Name</value></data>
   <data name="Model.ColumnStatus" xml:space="preserve"><value>Status</value></data>
