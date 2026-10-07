@@ -132,50 +132,82 @@
    <TabItem x:Name="ImportTab1">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
      <StackPanel Margin="4,8,4,8">
+      <TextBlock Text="{Binding [ColumnsStepTitle]}" Style="{StaticResource StepTitle}" />
+      <TextBlock Text="{Binding [ColumnsStepHelp]}" Style="{StaticResource StepHelp}" />
+
       <StackPanel IsEnabled="{Binding HasColumns}">
        <TextBlock Text="{Binding [AmountLayout]}" />
-       <ComboBox x:Name="AmountLayoutBox" ItemsSource="{Binding AmountLayouts}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding AmountLayout}" AutomationProperties.Name="{Binding [AmountLayout]}" HorizontalAlignment="Left" MinWidth="280" local:FieldHelp.Key="AmountLayout" />
+       <ComboBox x:Name="AmountLayoutBox" ItemsSource="{Binding AmountLayouts}" DisplayMemberPath="Label"
+                 SelectedValuePath="Value" SelectedValue="{Binding AmountLayout}"
+                 AutomationProperties.Name="{Binding [AmountLayout]}" HorizontalAlignment="Left"
+                 MinWidth="300" local:FieldHelp.Key="AmountLayout" />
       </StackPanel>
+
       <WrapPanel IsEnabled="{Binding HasColumns}">
        <StackPanel Width="360">
         <TextBlock Text="{Binding [AccountColumn]}" />
-        <ComboBox x:Name="AccountColumnBox" ItemsSource="{Binding Columns}" DisplayMemberPath="Label" SelectedValuePath="Index" SelectedValue="{Binding AccountColumn}" AutomationProperties.Name="{Binding [AccountColumn]}" local:FieldHelp.Key="AccountColumn" />
+        <ComboBox x:Name="AccountColumnBox" ItemsSource="{Binding Columns}" DisplayMemberPath="Label"
+                  SelectedValuePath="Index" SelectedValue="{Binding AccountColumn}"
+                  AutomationProperties.Name="{Binding [AccountColumn]}" local:FieldHelp.Key="AccountColumn" />
        </StackPanel>
        <StackPanel Width="360" Visibility="{Binding IsSignedAmount,Converter={StaticResource Visible}}">
         <TextBlock Text="{Binding [AmountColumn]}" />
-        <ComboBox x:Name="AmountColumnBox" ItemsSource="{Binding Columns}" DisplayMemberPath="Label" SelectedValuePath="Index" SelectedValue="{Binding AmountColumn}" AutomationProperties.Name="{Binding [AmountColumn]}" local:FieldHelp.Key="AmountColumn" />
+        <ComboBox x:Name="AmountColumnBox" ItemsSource="{Binding Columns}" DisplayMemberPath="Label"
+                  SelectedValuePath="Index" SelectedValue="{Binding AmountColumn}"
+                  AutomationProperties.Name="{Binding [AmountColumn]}" local:FieldHelp.Key="AmountColumn" />
        </StackPanel>
        <StackPanel Width="290" Visibility="{Binding IsDebitCredit,Converter={StaticResource Visible}}">
         <TextBlock Text="{Binding [DebitColumn]}" />
-        <ComboBox x:Name="DebitColumnBox" ItemsSource="{Binding Columns}" DisplayMemberPath="Label" SelectedValuePath="Index" SelectedValue="{Binding DebitColumn}" AutomationProperties.Name="{Binding [DebitColumn]}" local:FieldHelp.Key="DebitColumn" />
+        <ComboBox x:Name="DebitColumnBox" ItemsSource="{Binding Columns}" DisplayMemberPath="Label"
+                  SelectedValuePath="Index" SelectedValue="{Binding DebitColumn}"
+                  AutomationProperties.Name="{Binding [DebitColumn]}" local:FieldHelp.Key="DebitColumn" />
        </StackPanel>
        <StackPanel Width="290" Visibility="{Binding IsDebitCredit,Converter={StaticResource Visible}}">
         <TextBlock Text="{Binding [CreditColumn]}" />
-        <ComboBox x:Name="CreditColumnBox" ItemsSource="{Binding Columns}" DisplayMemberPath="Label" SelectedValuePath="Index" SelectedValue="{Binding CreditColumn}" AutomationProperties.Name="{Binding [CreditColumn]}" local:FieldHelp.Key="CreditColumn" />
+        <ComboBox x:Name="CreditColumnBox" ItemsSource="{Binding Columns}" DisplayMemberPath="Label"
+                  SelectedValuePath="Index" SelectedValue="{Binding CreditColumn}"
+                  AutomationProperties.Name="{Binding [CreditColumn]}" local:FieldHelp.Key="CreditColumn" />
        </StackPanel>
       </WrapPanel>
       <TextBlock Text="{Binding [DebitCreditHelp]}" Visibility="{Binding IsDebitCredit,Converter={StaticResource Visible}}" />
-      <WrapPanel IsEnabled="{Binding HasColumns}">
-       <StackPanel>
-        <TextBlock Text="{Binding [Decimal]}" />
-        <ComboBox ItemsSource="{Binding DecimalSeparators}" SelectedItem="{Binding DecimalSeparator}" AutomationProperties.Name="{Binding [Decimal]}" local:FieldHelp.Key="DecimalSeparator" />
+
+      <Expander Header="{Binding [NumberAdvanced]}" IsEnabled="{Binding HasColumns}" Margin="0,6,0,4">
+       <StackPanel Margin="8,4,0,0">
+        <TextBlock Text="{Binding [NumberAdvancedHelp]}" Style="{StaticResource StepHelp}" />
+        <WrapPanel>
+         <StackPanel>
+          <TextBlock Text="{Binding [Decimal]}" />
+          <ComboBox ItemsSource="{Binding DecimalSeparators}" SelectedItem="{Binding DecimalSeparator}"
+                    AutomationProperties.Name="{Binding [Decimal]}" local:FieldHelp.Key="DecimalSeparator" />
+         </StackPanel>
+         <StackPanel>
+          <TextBlock Text="{Binding [Grouping]}" />
+          <ComboBox ItemsSource="{Binding GroupSeparators}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                    SelectedValue="{Binding GroupSeparator}" AutomationProperties.Name="{Binding [Grouping]}"
+                    local:FieldHelp.Key="GroupSeparator" />
+         </StackPanel>
+         <StackPanel>
+          <TextBlock Text="{Binding [Negative]}" />
+          <ComboBox ItemsSource="{Binding NegativeSyntaxes}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                    SelectedValue="{Binding NegativeSyntax}" AutomationProperties.Name="{Binding [Negative]}"
+                    local:FieldHelp.Key="NegativeSyntax" />
+         </StackPanel>
+        </WrapPanel>
+        <TextBlock Text="{Binding [NumberHelp]}" />
+        <CheckBox x:Name="NumericAccountsBox" Content="{Binding [NumericAccounts]}"
+                  IsChecked="{Binding AllowNumericAccounts}" Visibility="{Binding IsXlsx,Converter={StaticResource Visible}}"
+                  Margin="0,6,0,6" local:FieldHelp.Key="AllowNumericAccounts" />
+        <TextBlock Text="{Binding [NumericWarning]}" Visibility="{Binding IsXlsx,Converter={StaticResource Visible}}" />
        </StackPanel>
-       <StackPanel>
-        <TextBlock Text="{Binding [Grouping]}" />
-        <ComboBox ItemsSource="{Binding GroupSeparators}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding GroupSeparator}" AutomationProperties.Name="{Binding [Grouping]}" local:FieldHelp.Key="GroupSeparator" />
-       </StackPanel>
-       <StackPanel>
-        <TextBlock Text="{Binding [Negative]}" />
-        <ComboBox ItemsSource="{Binding NegativeSyntaxes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding NegativeSyntax}" AutomationProperties.Name="{Binding [Negative]}" local:FieldHelp.Key="NegativeSyntax" />
-       </StackPanel>
-      </WrapPanel>
-      <TextBlock Text="{Binding [NumberHelp]}" />
-      <CheckBox x:Name="NumericAccountsBox" Content="{Binding [NumericAccounts]}" IsChecked="{Binding AllowNumericAccounts}" Visibility="{Binding IsXlsx,Converter={StaticResource Visible}}" Margin="0,6,0,6" local:FieldHelp.Key="AllowNumericAccounts" />
-      <TextBlock Text="{Binding [NumericWarning]}" Visibility="{Binding IsXlsx,Converter={StaticResource Visible}}" />
-      <Button x:Name="ValidateMappingButton" Content="{Binding [Validate]}" Command="{Binding ValidateCommand}" HorizontalAlignment="Left" />
-      <TextBlock Text="{Binding Summary}" FontWeight="SemiBold" />
+      </Expander>
+
+      <TextBlock Text="{Binding ColumnStepRequirement}" Style="{StaticResource Requirement}" AutomationProperties.LiveSetting="Polite" />
+      <Button x:Name="ValidateMappingButton" Content="{Binding [Validate]}" Command="{Binding ValidateCommand}" Visibility="Collapsed" />
+
+      <TextBlock Text="{Binding FriendlySummary}" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite" />
       <TextBlock Text="{Binding [PreviewHelp]}" />
-      <DataGrid x:Name="PreviewGrid" ItemsSource="{Binding Preview}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="210" FlowDirection="LeftToRight" EnableRowVirtualization="True">
+      <DataGrid x:Name="PreviewGrid" ItemsSource="{Binding Preview}" AutoGenerateColumns="False" IsReadOnly="True"
+                CanUserAddRows="False" Height="230" FlowDirection="LeftToRight" EnableRowVirtualization="True">
        <DataGrid.ColumnHeaderStyle>
         <Style TargetType="DataGridColumnHeader">
          <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -198,7 +230,7 @@
         <DataGridTextColumn Binding="{Binding Issues}" Width="*" />
        </DataGrid.Columns>
       </DataGrid>
-      <TextBlock Text="{Binding GlobalIssues}" Foreground="DarkRed" />
+      <TextBlock Text="{Binding FriendlyGlobalIssues}" Foreground="DarkRed" FontWeight="SemiBold" />
      </StackPanel>
     </ScrollViewer>
    </TabItem>
