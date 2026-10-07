@@ -60,7 +60,7 @@ public sealed partial class T06ImportConfirmationTests
         var photos = Query(source, "SELECT group_concat(CanonicalJson) FROM StudySnapshots ORDER BY Id");
         Assert.AreEqual("FILE_UPGRADE_REQUIRED", Assert.ThrowsExactly<CompanyFileException>(() => Service().Open(source)).Diagnostic.Code);
         using var file = Service().Upgrade(source, FileOf("v6.valdrio"), "test");
-        Assert.AreEqual(hash, Hash(source)); Assert.AreEqual(7, file.Read().SchemaVersion);
+        Assert.AreEqual(hash, Hash(source)); Assert.AreEqual(8, file.Read().SchemaVersion);
         Assert.AreEqual(batches, Query(file.Path, "SELECT group_concat(CanonicalJson) FROM ImportBatches ORDER BY Id"));
         Assert.AreEqual(photos, Query(file.Path, "SELECT group_concat(CanonicalJson) FROM StudySnapshots ORDER BY Id"));
         using var connection = new SqliteConnection("Data Source=" + file.Path + ";Pooling=False"); connection.Open();

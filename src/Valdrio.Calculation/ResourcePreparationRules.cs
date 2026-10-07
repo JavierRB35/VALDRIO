@@ -27,7 +27,7 @@ public static class ResourcePreparationRules
             new Money(-conversion.OriginalMoney.Amount, conversion.OriginalMoney.Currency,
                 conversion.OriginalMoney.PrecisionPolicy),
             conversion.ConvertedOriginalMoney.Currency, Rate(conversion), original.Type, reason, auditEventId);
-        return reversed with { ReversalOfId = original.Id };
+        return reversed with { ReversalOfId = original.Id, CurrencyMetadata = original.CurrencyMetadata };
     }
 
     public static ResourcePreparation Prepare(IEnumerable<ResourceDraft> resources,
@@ -127,6 +127,9 @@ public static class ResourcePreparationRules
                 }
             }
 
+            if (resource.Parts.Count == 0)
+                diagnostics.Add(new("RES_PARTS_REQUIRED", "Resource.PartsRequired",
+                    [new("resourceId", DiagnosticArgumentType.Identifier, resource.Id.ToString())]));
             var difference = effective - direct - pools - excluded - pending;
             coverage.Add(new(resource.Id, converted, adjustmentTotal, effective,
                 direct, pools, excluded, pending, difference, hasPending));
@@ -179,6 +182,12 @@ public static class ResourcePreparationRules
         adjustment.ReversalOfId?.EnsureValid();
         RequireReason(adjustment.Type, adjustment.Reason);
         ValidateConversion(adjustment.Conversion);
+        if (adjustment.CurrencyMetadata is { } metadata)
+        {
+            metadata.EnsureValid();
+            if (metadata.AlphaCode != adjustment.Conversion.OriginalMoney.Currency || !metadata.IsMonetary)
+                throw Error("RES_ADJUSTMENT_CURRENCY_INVALID", "Resource.AdjustmentCurrencyInvalid");
+        }
     }
 
     private static void RequireReason(string type, string reason)

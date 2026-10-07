@@ -18,8 +18,9 @@ public static class FieldHelp
         CompanyFileViewModel vm => vm.Guide("Help." + GetKey(element)),
         ModelWorkspaceViewModel vm => vm.Guide("Help." + GetKey(element)),
         StudyWorkspaceViewModel vm => vm.Guide("Help." + GetKey(element)),
+        ResourceWorkspaceViewModel vm => vm.Guide("Help." + GetKey(element)),
         ImportColumnMappingViewModel vm => vm.Guide("Help." + GetKey(element)),
-        _ => ""
+        _ => (Window.GetWindow(element)?.DataContext as MainWindowViewModel)?.Guide("Help." + GetKey(element)) ?? ""
     };
     private static void Attach(DependencyObject target, DependencyPropertyChangedEventArgs args)
     {

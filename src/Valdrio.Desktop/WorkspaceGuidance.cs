@@ -4,11 +4,13 @@ namespace Valdrio.Desktop;
 
 public sealed partial class MainWindowViewModel
 {
+    public string AnotherImportLabel => Guide("AnotherImport");
     public string Guide(string key) => Text("Guide." + key);
 }
 
 public sealed partial class CompanyFileViewModel
 {
+    public string AnotherImportLabel => Guide("AnotherImport");
     public string Guide(string key) => Text("Guide." + key);
 }
 

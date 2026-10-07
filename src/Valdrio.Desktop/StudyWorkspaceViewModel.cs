@@ -174,7 +174,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         selected.Value.Id, selected.Value.InputRevision, Current is not null && selected.Value.IsCurrentFor(Current) ? Text("Study.CurrentRevision") : Text("Study.HistoricalRevision"),
         formatter.FormatInstant(selected.Value.CapturedAtUtc.Value, preferences.Current.DisplayTimeZoneId, Format), selected.Value.EconomicInputHash, selected.Value.FullSnapshotHash);
     public string Preparation => SnapshotChoice is not { } selected ? Text("Study.PrepareFirst") :
-        Text(selected.Value.Input is ImportedStudySnapshotInput ? "Study.ImportedCaptured" : "Study.ContextCaptured") + Environment.NewLine +
+        Text(selected.Value.Input is ImportedStudySnapshotInput or ResourceStudySnapshotInput ? "Study.ImportedCaptured" : "Study.ContextCaptured") + Environment.NewLine +
         string.Join(Environment.NewLine, StudyPreparationService.Evaluate(selected.Value.Input).Diagnostics.Select(DiagnosticText));
     public string HistoricalDefinitions => SnapshotChoice is not { } selected ? "" : string.Join(Environment.NewLine,
         selected.Value.Input.Model.PhysicalCenters.Select(c => c.Code + " · " + c.Name).Concat(selected.Value.Input.Model.DriverUnits.Select(u => u.Code + " · " + u.Dimension + " · " + u.Symbol)));
@@ -286,9 +286,13 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         scenario = Scenarios.Single(s => s.Value == (value?.ScenarioKind ?? StudyScenario.Actual));
         studyChoice = Studies.SingleOrDefault(s => s.Value.Id == value?.Id); loading = false; Refresh();
     }
+    public Func<Task<bool>>? BeforeChangeAsync { get; set; }
+    public bool HasConfirmedImports => importValues.Count > 0;
+    public Task ApplyResourceReceiptAsync(StudyDefinition confirmed) => ApplyConfirmedThenReload(confirmed, ApplyConfirmedStudy);
     public async Task<bool> CanLeaveAsync()
     {
         if (busy) return false;
+        if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return false;
         if (!IsDirty) return true;
         switch (dialogs.ResolvePending(Text("Study.PendingTitle"), Text("Study.PendingBody")))
         {

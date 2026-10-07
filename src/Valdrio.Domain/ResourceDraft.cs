@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Valdrio.Domain;
 
 public enum ResourceRoutingKind { Pending, DirectObject, AllocationPool, Excluded }
@@ -6,11 +8,19 @@ public enum ResourceRoutingKind { Pending, DirectObject, AllocationPool, Exclude
 public sealed record ResourceSourceValue(EntityId SourceRowId, FxRateApplication Conversion);
 public sealed record ResourceAdjustment(
     EntityId Id, FxRateApplication Conversion, string Type, string Reason,
-    EntityId AuditEventId, EntityId? ReversalOfId = null);
+    EntityId AuditEventId, EntityId? ReversalOfId = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] CurrencyMetadataSnapshot? CurrencyMetadata = null);
 public sealed record DirectResourceAssignment(EntityId ObjectId, Money Amount);
 
 public sealed class ResourcePartDraft
 {
+    [JsonConstructor]
+    public ResourcePartDraft(EntityId id, Money amount, ResourceRoutingKind routing,
+        IReadOnlyList<DirectResourceAssignment> directAssignments, EntityId? poolId,
+        string? exclusionReason, ResourceClassification classification)
+        : this(id, amount, routing, (IEnumerable<DirectResourceAssignment>)directAssignments,
+            poolId, exclusionReason, classification) { }
+
     public ResourcePartDraft(EntityId id, Money amount, ResourceRoutingKind routing,
         IEnumerable<DirectResourceAssignment>? directAssignments = null,
         EntityId? poolId = null, string? exclusionReason = null,
@@ -44,6 +54,11 @@ public sealed class ResourcePartDraft
 
 public sealed class ResourceDraft
 {
+    [JsonConstructor]
+    public ResourceDraft(EntityId id, IReadOnlyList<ResourceSourceValue> sources,
+        IReadOnlyList<ResourceAdjustment> adjustments, IReadOnlyList<ResourcePartDraft> parts)
+        : this(id, (IEnumerable<ResourceSourceValue>)sources, adjustments, parts) { }
+
     public ResourceDraft(EntityId id, IEnumerable<ResourceSourceValue> sources,
         IEnumerable<ResourceAdjustment> adjustments, IEnumerable<ResourcePartDraft> parts)
     {

@@ -12,6 +12,7 @@
     <Button Click="ChooseModel" Padding="12,7" Margin="0,0,8,6" x:Name="ModelStep" />
     <Button Click="ChooseStudy" Padding="12,7" Margin="0,0,8,6" x:Name="StudyStep" />
     <Button Click="ChooseImport" Padding="12,7" Margin="0,0,8,6" x:Name="ImportStep" />
+    <Button Click="ChooseResources" Padding="12,7" Margin="0,0,8,6" x:Name="ResourcesStep" />
     <Button Click="ChooseSettings" Padding="12,7" Margin="0,0,8,6" x:Name="SettingsStep" />
    </WrapPanel>
    <TextBlock FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" x:Name="WorkflowTitle" />
@@ -53,6 +54,7 @@
     <local:CompanyFilePanel x:Name="CompanyPanel" Grid.Row="4" DataContext="{Binding Company}" />
     <local:ModelWorkspacePanel x:Name="ModelPanel" Grid.Row="6" DataContext="{Binding Models}" />
     <local:StudyWorkspacePanel x:Name="StudyPanel" Grid.Row="8" DataContext="{Binding Studies}" />
+    <local:ResourceWorkspacePanel x:Name="ResourcePanel" Grid.Row="8" DataContext="{Binding Resources}" />
     <GroupBox Grid.Row="10" Header="{Binding PreferencesTitle}" Padding="16" x:Name="PreferencesPanel">
      <Grid>
       <Grid.ColumnDefinitions>
@@ -303,6 +305,7 @@
     <StackPanel Visibility="Collapsed" Grid.Row="8" x:Name="ImportHome">
      <TextBlock Text="{Binding Studies.Details}" TextWrapping="Wrap" />
      <TextBlock Text="{Binding Studies.ImportedAmounts}" TextWrapping="Wrap" Margin="0,8,0,8" />
+     <Button Click="OpenAnotherImport" Content="{Binding AnotherImportLabel}" HorizontalAlignment="Left" Padding="12,7" Margin="0,6,0,8" />
     </StackPanel>
    </Grid>
   </ScrollViewer>

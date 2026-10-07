@@ -1,5 +1,18 @@
 # Decisiones de producto y negocio
 
+## Autorización vigente T07 — 2026-10-07
+
+El propietario solicita «Desarrolla completo el T07 teniendo en cuenta que ya hay
+una rama abierta en local para esa tarea. Desecha lo que no necesites de esa rama».
+Sustituye la espera de conversación anterior. Se reutiliza `codex/t07-resource-rules`
+y sus reglas válidas, integrando T06/T06A y el recorrido guiado actualizado. No se
+descartan datos del usuario ni se mezclan cambios de la rama de estética.
+Las tres subentregas T07 están implementadas; [alcance](../tareas/T07.md) y
+[evidencia](../evidencias/T07_CIERRE_2026-10-07.md). D04/D05/D07/D11 permanecen propuestas.
+La agrupación por cuenta y la prioridad permanente de usabilidad siguen vigentes.
+
+Los registros siguientes conservan la secuencia histórica de decisiones.
+
 ## Adelanto técnico T07 — 2026-10-07
 
 Continuación autorizada en la misma rama: clasificación contextual y operaciones de

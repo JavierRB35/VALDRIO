@@ -30,6 +30,7 @@ public sealed class CompanyFileSnapshot
 
 public interface ICompanyFileSession : IDisposable
 {
+    IResourceWorkspace Resources { get; }
     IImportWorkspace Imports { get; }
     IStudyWorkspace Studies { get; }
     IModelWorkspace Models { get; }

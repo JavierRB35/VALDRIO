@@ -640,4 +640,226 @@ Completa: {5}</value></data>
 <data name="Resource.SplitRequiresParts" xml:space="preserve"><value>Indica al menos dos partes de sustitución.</value></data>
 <data name="Resource.SplitMismatch" xml:space="preserve"><value>Las partes de sustitución deben sumar exactamente el importe de la parte original.</value></data>
 <data name="Resource.PartNotFound" xml:space="preserve"><value>Selecciona una parte existente y única de este recurso.</value></data>
+  <data name="Resources.Title" xml:space="preserve"><value>Recursos</value></data>
+  <data name="Resources.Introduction" xml:space="preserve"><value>Cada cuenta conserva sus registros de origen. Revisa sus ajustes y divide el importe efectivo entre destinos; los importes que aún no hayas decidido permanecen pendientes.</value></data>
+  <data name="Resources.Ready" xml:space="preserve"><value>Selecciona una cuenta y pulsa Editar cuenta para continuar.</value></data>
+  <data name="Resources.NeedStudy" xml:space="preserve"><value>Guarda o carga un estudio en el paso 3 para preparar sus recursos.</value></data>
+  <data name="Resources.NeedImport" xml:space="preserve"><value>Importa y confirma registros en el paso 4. Después podrás preparar sus recursos aquí.</value></data>
+  <data name="Resources.ReadOnly" xml:space="preserve"><value>El archivo está abierto para consulta. Ábrelo en modo edición para guardar cambios.</value></data>
+  <data name="Resources.Closed" xml:space="preserve"><value>El estudio está cerrado. Reábrelo en el paso Estudio para modificar sus recursos.</value></data>
+  <data name="Resources.ChooseAccount" xml:space="preserve"><value>1 de 4 · Elige la cuenta cuyos ajustes y destinos quieres revisar.</value></data>
+  <data name="Resources.SelectAccountFirst" xml:space="preserve"><value>Selecciona una cuenta en la tabla para empezar.</value></data>
+  <data name="Resources.EditAccount" xml:space="preserve"><value>Editar cuenta seleccionada</value></data>
+  <data name="Resources.ContinueParts" xml:space="preserve"><value>Continuar: repartir el importe</value></data>
+  <data name="Resources.ReviewChanges" xml:space="preserve"><value>Continuar: revisar y guardar</value></data>
+  <data name="Resources.SaveAccount" xml:space="preserve"><value>Guardar preparación de esta cuenta</value></data>
+  <data name="Resources.KeepRevalueParts" xml:space="preserve"><value>Aplicar partes a la revisión de divisas</value></data>
+  <data name="Resources.AdjustmentStep" xml:space="preserve"><value>2 de 4 · Ajustes de la cuenta</value></data>
+  <data name="Resources.AdjustmentHelp" xml:space="preserve"><value>Un ajuste aumenta o reduce el importe importado sin alterar el Excel o CSV. Indica un importe con signo, su moneda, tipo y motivo. Si no necesitas ajustes, continúa al reparto.</value></data>
+  <data name="Resources.PartsStep" xml:space="preserve"><value>3 de 4 · Destinos del importe</value></data>
+  <data name="Resources.PartsHelp" xml:space="preserve"><value>Elige una parte y pulsa Editar parte, o crea una nueva. Cada parte tiene un solo destino. La suma debe coincidir exactamente con el efectivo de esta cuenta. Puedes dejar explícitamente importes pendientes.</value></data>
+  <data name="Resources.ReviewStep" xml:space="preserve"><value>4 de 4 · Revisar y guardar</value></data>
+  <data name="Resources.ReviewHelp" xml:space="preserve"><value>Comprueba destinos, ajustes y diferencia. Para guardar, la diferencia de cada cuenta debe ser cero y debes explicar el motivo del cambio. Las partes pendientes siguen visibles para completarlas después.</value></data>
+  <data name="Resources.Coverage" xml:space="preserve"><value>Original convertido: {0} · Ajustes: {1} · Efectivo: {2}
+Directo: {3} · Pools: {4} · Excluido: {5} · Pendiente: {6}
+Diferencia que falta repartir: {7}</value></data>
+  <data name="Resources.Code" xml:space="preserve"><value>Cuenta / código</value></data>
+  <data name="Resources.Originals" xml:space="preserve"><value>Originales por moneda</value></data>
+  <data name="Resources.Converted" xml:space="preserve"><value>Original convertido</value></data>
+  <data name="Resources.Adjustments" xml:space="preserve"><value>Ajustes</value></data>
+  <data name="Resources.Effective" xml:space="preserve"><value>Efectivo</value></data>
+  <data name="Resources.PendingAmount" xml:space="preserve"><value>Importe pendiente</value></data>
+  <data name="Resources.Difference" xml:space="preserve"><value>Diferencia</value></data>
+  <data name="Resources.Amount" xml:space="preserve"><value>Importe funcional</value></data>
+  <data name="Resources.PartAmount" xml:space="preserve"><value>Importe de la parte (moneda del estudio)</value></data>
+  <data name="Resources.Route" xml:space="preserve"><value>Destino de esta parte</value></data>
+  <data name="Resources.Destination" xml:space="preserve"><value>Destino / motivo</value></data>
+  <data name="Resources.Behavior" xml:space="preserve"><value>Comportamiento</value></data>
+  <data name="Resources.Layer" xml:space="preserve"><value>Capa de coste</value></data>
+  <data name="Resources.Original" xml:space="preserve"><value>Importe original</value></data>
+  <data name="Resources.Functional" xml:space="preserve"><value>Importe funcional</value></data>
+  <data name="Resources.Type" xml:space="preserve"><value>Tipo de ajuste</value></data>
+  <data name="Resources.Reason" xml:space="preserve"><value>Motivo del ajuste o reversión</value></data>
+  <data name="Resources.State" xml:space="preserve"><value>Clase de movimiento</value></data>
+  <data name="Resources.SignedAmount" xml:space="preserve"><value>Importe del ajuste con signo</value></data>
+  <data name="Resources.Currency" xml:space="preserve"><value>Moneda del ajuste</value></data>
+  <data name="Resources.Quote" xml:space="preserve"><value>Tipo: moneda del estudio por 1 de origen</value></data>
+  <data name="Resources.QuoteHelp" xml:space="preserve"><value>Introduce cuántas unidades de moneda del estudio equivalen a 1 unidad de la moneda original. Se convierte cada movimiento por separado.</value></data>
+  <data name="Resources.RateDate" xml:space="preserve"><value>Fecha del tipo de cambio</value></data>
+  <data name="Resources.RateDateHelp" xml:space="preserve"><value>Fecha de negocio a la que corresponde este tipo de cambio. No cambia con la zona horaria.</value></data>
+  <data name="Resources.RateSource" xml:space="preserve"><value>Fuente del tipo de cambio</value></data>
+  <data name="Resources.RateSourceHelp" xml:space="preserve"><value>Indica de dónde procede el tipo, por ejemplo el banco o una referencia documental verificable.</value></data>
+  <data name="Resources.AddAdjustment" xml:space="preserve"><value>Añadir ajuste al borrador</value></data>
+  <data name="Resources.ReverseSelected" xml:space="preserve"><value>Revertir el ajuste seleccionado</value></data>
+  <data name="Resources.ClearForm" xml:space="preserve"><value>Limpiar este formulario</value></data>
+  <data name="Resources.SourceRows" xml:space="preserve"><value>Registros de origen conservados</value></data>
+  <data name="Resources.Record" xml:space="preserve"><value>Registro</value></data>
+  <data name="Resources.Earlier" xml:space="preserve"><value>Acumulado anterior, restado</value></data>
+  <data name="Resources.EditPart" xml:space="preserve"><value>Editar parte seleccionada</value></data>
+  <data name="Resources.RemovePart" xml:space="preserve"><value>Quitar parte seleccionada</value></data>
+  <data name="Resources.NewPart" xml:space="preserve"><value>Limpiar formulario / nueva parte</value></data>
+  <data name="Resources.PendingRemainder" xml:space="preserve"><value>Añadir la diferencia como pendiente</value></data>
+  <data name="Resources.Object" xml:space="preserve"><value>Objeto de coste</value></data>
+  <data name="Resources.CreateObject" xml:space="preserve"><value>Crear un objeto de coste</value></data>
+  <data name="Resources.ObjectHelp" xml:space="preserve"><value>Un objeto es aquello cuyo coste quieres conocer: un producto, servicio, orden u otro destino. Su código lo identifica dentro de este estudio. Guárdalo y selecciónalo como destino de la parte.</value></data>
+  <data name="Resources.ObjectCode" xml:space="preserve"><value>Código del objeto</value></data>
+  <data name="Resources.ObjectName" xml:space="preserve"><value>Nombre del objeto</value></data>
+  <data name="Resources.ObjectKind" xml:space="preserve"><value>Clase de objeto</value></data>
+  <data name="Resources.SaveObject" xml:space="preserve"><value>Guardar objeto de coste</value></data>
+  <data name="Resources.Pool" xml:space="preserve"><value>Pool receptor del modelo publicado</value></data>
+  <data name="Resources.ExclusionReason" xml:space="preserve"><value>Motivo obligatorio de la exclusión</value></data>
+  <data name="Resources.ContextHelp" xml:space="preserve"><value>Fijo y variable se definen respecto a una actividad, un intervalo de fechas y un rango. Estos datos explican el criterio; no se deducen del centro ni de la cuenta.</value></data>
+  <data name="Resources.ActivityUnit" xml:space="preserve"><value>Unidad de actividad que explica el comportamiento</value></data>
+  <data name="Resources.HorizonStart" xml:space="preserve"><value>Inicio del horizonte</value></data>
+  <data name="Resources.HorizonEnd" xml:space="preserve"><value>Final del horizonte</value></data>
+  <data name="Resources.Minimum" xml:space="preserve"><value>Actividad mínima del rango</value></data>
+  <data name="Resources.Maximum" xml:space="preserve"><value>Actividad máxima del rango</value></data>
+  <data name="Resources.CapacityTitle" xml:space="preserve"><value>Capacidad: opciones avanzadas</value></data>
+  <data name="Resources.CapacityHelp" xml:space="preserve"><value>Solo el tratamiento Evaluar en el pool declara un propietario de capacidad: el pool elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. La política de cálculo se define en una fase posterior.</value></data>
+  <data name="Resources.Capacity" xml:space="preserve"><value>Tratamiento de capacidad</value></data>
+  <data name="Resources.Theoretical" xml:space="preserve"><value>Capacidad teórica (opcional)</value></data>
+  <data name="Resources.Practical" xml:space="preserve"><value>Capacidad práctica (opcional)</value></data>
+  <data name="Resources.Normal" xml:space="preserve"><value>Capacidad normal (opcional)</value></data>
+  <data name="Resources.Actual" xml:space="preserve"><value>Actividad real (opcional)</value></data>
+  <data name="Resources.ApplyPart" xml:space="preserve"><value>Aplicar parte al borrador</value></data>
+  <data name="Resources.ChangeReason" xml:space="preserve"><value>Motivo de los cambios que se guardarán</value></data>
+  <data name="Resources.Refresh" xml:space="preserve"><value>Actualizar recursos guardados</value></data>
+  <data name="Resources.Advanced" xml:space="preserve"><value>Historial y operaciones avanzadas</value></data>
+  <data name="Resources.History" xml:space="preserve"><value>Historial de cambios guardados</value></data>
+  <data name="Resources.HistoryRow" xml:space="preserve"><value>Revisión {0} · {1} · {2} · {3} · {4}</value></data>
+  <data name="Resources.RevalueTitle" xml:space="preserve"><value>Revalorizar importes con otros tipos de cambio</value></data>
+  <data name="Resources.RevalueHelp" xml:space="preserve"><value>Prepara tipos explícitos para cada original y ajuste en divisa. Revisa después las partes de las cuentas afectadas. Solo se guarda si todas cuadran. Las instantáneas anteriores conservan los tipos e importes que tenían.</value></data>
+  <data name="Resources.StartRevalue" xml:space="preserve"><value>Preparar nuevos tipos de cambio</value></data>
+  <data name="Resources.PreviewRevalue" xml:space="preserve"><value>Previsualizar la revalorización</value></data>
+  <data name="Resources.SaveRevalue" xml:space="preserve"><value>Guardar toda la revalorización</value></data>
+  <data name="Resources.CancelRevalue" xml:space="preserve"><value>Descartar esta revalorización</value></data>
+  <data name="Resources.NoForeignAmounts" xml:space="preserve"><value>Este estudio no contiene originales ni ajustes en otra moneda que necesiten revalorización.</value></data>
+  <data name="Resources.RevalueInstructions" xml:space="preserve"><value>Revisa el tipo, fecha y fuente de cada importe en divisa y pulsa Previsualizar.</value></data>
+  <data name="Resources.RevalueReconcile" xml:space="preserve"><value>Revalorización sin guardar. Elige las cuentas con diferencia y ajusta sus partes; después indica el motivo y guarda toda la revalorización.</value></data>
+  <data name="Resources.RevaluePartsKept" xml:space="preserve"><value>Partes aplicadas a la revisión de divisas. Todavía no se han guardado. Completa las demás cuentas y guarda toda la revalorización.</value></data>
+  <data name="Resources.ResetTitle" xml:space="preserve"><value>Reiniciar la preparación antes de cambiar el origen</value></data>
+  <data name="Resources.ResetHelp" xml:space="preserve"><value>Reiniciar deja todas las cuentas pendientes y retira de la preparación actual sus ajustes y repartos. Conserva el historial y las instantáneas anteriores. Úsalo si necesitas sustituir importaciones que ya has preparado.</value></data>
+  <data name="Resources.ResetReason" xml:space="preserve"><value>Motivo del reinicio</value></data>
+  <data name="Resources.ResetAcknowledged" xml:space="preserve"><value>Entiendo que tendré que preparar de nuevo los ajustes y destinos de todas las cuentas.</value></data>
+  <data name="Resources.Reset" xml:space="preserve"><value>Guardar reinicio de la preparación</value></data>
+  <data name="Resources.ResetRequirements" xml:space="preserve"><value>Escribe el motivo y marca la confirmación del reinicio. El historial anterior se conservará.</value></data>
+  <data name="Resources.ResetSaved" xml:space="preserve"><value>Preparación reiniciada y guardada. Las cuentas vuelven a estar pendientes; el historial se conserva.</value></data>
+  <data name="Resources.Discard" xml:space="preserve"><value>Descartar cambios sin guardar</value></data>
+  <data name="Resources.CancelOperation" xml:space="preserve"><value>Cancelar operación en curso</value></data>
+  <data name="Resources.KeepCulture" xml:space="preserve"><value>Confirmo mantener el formato con el que empecé</value></data>
+  <data name="Resources.CultureChanged" xml:space="preserve"><value>Has cambiado la región durante la edición. Los textos numéricos conservan el formato capturado ({0}). Confírmalo o limpia el formulario y vuelve a escribir los valores.</value></data>
+  <data name="Resources.ConfirmCultureFirst" xml:space="preserve"><value>Confirma el formato numérico capturado antes de aplicar estos valores, o limpia el formulario.</value></data>
+  <data name="Resources.ApplyAdjustmentFirst" xml:space="preserve"><value>Hay un ajuste escrito sin aplicar. Añádelo al borrador o limpia su formulario antes de continuar.</value></data>
+  <data name="Resources.ApplyPartFirst" xml:space="preserve"><value>Hay una parte u objeto escrito sin aplicar. Aplica la parte, guarda el objeto o limpia el formulario antes de continuar.</value></data>
+  <data name="Resources.ApplyFormsFirst" xml:space="preserve"><value>Hay datos escritos que todavía no se han aplicado. Revisa los formularios de ajustes, partes y objetos antes de guardar.</value></data>
+  <data name="Resources.PartApplied" xml:space="preserve"><value>Parte aplicada al borrador. Revisa la diferencia; todavía no se ha guardado.</value></data>
+  <data name="Resources.AdjustmentApplied" xml:space="preserve"><value>Ajuste aplicado al borrador. Revisa el importe efectivo y sus partes antes de guardar.</value></data>
+  <data name="Resources.AlreadyBalanced" xml:space="preserve"><value>La cuenta ya cuadra: no hay diferencia que añadir como pendiente.</value></data>
+  <data name="Resources.Saved" xml:space="preserve"><value>Preparación guardada en el estudio y archivo indicados. Puedes elegir otra cuenta o capturar una instantánea en Estudio.</value></data>
+  <data name="Resources.SavedRefreshPending" xml:space="preserve"><value>Los cambios están guardados. No se pudo actualizar el panel de estudios; pulsa Actualizar. No vuelvas a introducir el cambio.</value></data>
+  <data name="Resources.ObjectSaved" xml:space="preserve"><value>Objeto de coste guardado. Ya puedes seleccionarlo como destino de una parte.</value></data>
+  <data name="Resources.ObjectCreatedReason" xml:space="preserve"><value>Alta explícita de objeto de coste</value></data>
+  <data name="Resources.Cancelled" xml:space="preserve"><value>Operación cancelada. Los cambios del borrador se conservan.</value></data>
+  <data name="Resources.DraftDiscarded" xml:space="preserve"><value>Borrador descartado. Se muestran los datos guardados.</value></data>
+  <data name="Resources.PendingTitle" xml:space="preserve"><value>Preparación de recursos sin guardar</value></data>
+  <data name="Resources.PendingBody" xml:space="preserve"><value>Hay cambios sin guardar. Sí guarda la cuenta; No descarta el borrador; Cancelar permite seguir editando. Si hay formularios sin aplicar o una revalorización, completa su revisión antes de guardar.</value></data>
+  <data name="Resources.Pending" xml:space="preserve"><value>Pendiente de decidir</value></data>
+  <data name="Resources.DirectObject" xml:space="preserve"><value>Imputación directa a objeto</value></data>
+  <data name="Resources.AllocationPool" xml:space="preserve"><value>Enviar a un pool</value></data>
+  <data name="Resources.Excluded" xml:space="preserve"><value>Excluir con motivo</value></data>
+  <data name="Resources.Unclassified" xml:space="preserve"><value>Sin clasificar</value></data>
+  <data name="Resources.Fixed" xml:space="preserve"><value>Fijo en el contexto indicado</value></data>
+  <data name="Resources.Variable" xml:space="preserve"><value>Variable en el contexto indicado</value></data>
+  <data name="Resources.MixedPending" xml:space="preserve"><value>Mixto: pendiente de separar</value></data>
+  <data name="Resources.Production" xml:space="preserve"><value>Producción</value></data>
+  <data name="Resources.Commercial" xml:space="preserve"><value>Comercial</value></data>
+  <data name="Resources.Structure" xml:space="preserve"><value>Estructura</value></data>
+  <data name="Resources.None" xml:space="preserve"><value>Sin tratamiento de capacidad declarado</value></data>
+  <data name="Resources.AssessAtPool" xml:space="preserve"><value>Evaluar capacidad en el pool</value></data>
+  <data name="Resources.PeriodCost" xml:space="preserve"><value>Coste del periodo</value></data>
+  <data name="Resources.Product" xml:space="preserve"><value>Producto</value></data>
+  <data name="Resources.Service" xml:space="preserve"><value>Servicio</value></data>
+  <data name="Resources.Order" xml:space="preserve"><value>Orden</value></data>
+  <data name="Resources.Other" xml:space="preserve"><value>Otro objeto</value></data>
+  <data name="Resources.Adjustment" xml:space="preserve"><value>Ajuste</value></data>
+  <data name="Resources.Reversal" xml:space="preserve"><value>Reversión</value></data>
+  <data name="Resources.EditResource" xml:space="preserve"><value>Preparación de cuenta</value></data>
+  <data name="Resources.PutObject" xml:space="preserve"><value>Objeto de coste</value></data>
+  <data name="Resources.ResetPreparation" xml:space="preserve"><value>Reinicio de preparación</value></data>
+  <data name="Resources.Revalue" xml:space="preserve"><value>Revalorización de divisas</value></data>
+  <data name="Resource.ScopeInvalid" xml:space="preserve"><value>El recurso debe pertenecer al estudio y a su modelo publicado. Actualiza el estudio y vuelve a seleccionar la cuenta.</value></data>
+  <data name="Resource.SourceChanged" xml:space="preserve"><value>La importación cambiaría cuentas que ya tienen ajustes o partes guardadas. Ve a Recursos, revisa su historial y usa Reiniciar preparación con un motivo antes de cambiar el origen.</value></data>
+  <data name="Resource.ObjectInvalid" xml:space="preserve"><value>Indica código y nombre del objeto, una clase válida y un código único en este estudio.</value></data>
+  <data name="Resource.ObjectScope" xml:space="preserve"><value>Selecciona un objeto de coste guardado en este estudio. Puedes crearlo desde las opciones de imputación directa.</value></data>
+  <data name="Resource.PoolScope" xml:space="preserve"><value>Selecciona un pool de un nodo activo del modelo publicado de este estudio.</value></data>
+  <data name="Resource.UnitScope" xml:space="preserve"><value>Selecciona una unidad de actividad del modelo publicado.</value></data>
+  <data name="Resource.CommandInvalid" xml:space="preserve"><value>Completa el motivo del cambio y revisa los campos obligatorios antes de guardar.</value></data>
+  <data name="Resource.NotFound" xml:space="preserve"><value>La cuenta ya no está en los recursos actuales. Actualiza la lista y vuelve a seleccionarla.</value></data>
+  <data name="Resource.RevalueRateRequired" xml:space="preserve"><value>Falta elegir un tipo de cambio explícito para algún original o ajuste en divisa.</value></data>
+  <data name="Resource.HistoryInvalid" xml:space="preserve"><value>El historial de recursos no coincide con sus datos guardados. Abre una copia de seguridad válida.</value></data>
+  <data name="Resource.RequestReused" xml:space="preserve"><value>Esta solicitud ya se guardó con otros datos. Actualiza los recursos antes de volver a guardar.</value></data>
+  <data name="Resource.AdjustmentCurrencyInvalid" xml:space="preserve"><value>La moneda o su definición no es válida para el ajuste. Selecciona una moneda admitida.</value></data>
+  <data name="Resource.ReloadPending" xml:space="preserve"><value>El estudio ha cambiado y hay un borrador local. Guárdalo si la revisión sigue vigente, o descártalo y actualiza antes de continuar.</value></data>
+  <data name="Resource.InputInvalid" xml:space="preserve"><value>Revisa los campos y los límites numéricos. Completa importes, fechas, destinos y motivos válidos; se conserva el borrador.</value></data>
+  <data name="Resource.NumberRequired" xml:space="preserve"><value>Escribe un número válido con el formato regional capturado al empezar el formulario. Un campo vacío no se convierte en cero.</value></data>
+  <data name="Resource.DateRequired" xml:space="preserve"><value>Selecciona una fecha válida en el calendario.</value></data>
+  <data name="Resource.RevalueUnbalanced" xml:space="preserve"><value>La cuenta todavía tiene una diferencia tras la revalorización. Ajusta las partes o deja expresamente la diferencia pendiente.</value></data>
+  <data name="Guide.Resources" xml:space="preserve"><value>5. Recursos</value></data>
+  <data name="Guide.ContinueResources" xml:space="preserve"><value>Continuar: preparar recursos</value></data>
+  <data name="Guide.AnotherImport" xml:space="preserve"><value>Importar otro archivo / sustituir un lote</value></data>
+  <data name="Resources.LayerHelp" xml:space="preserve"><value>Indica si esta parte pertenece a producción, comercial o estructura. Es independiente de que sea fija o variable y de su destino. Puedes dejarla sin clasificar.</value></data>
+  <data name="Resources.PoolHelp" xml:space="preserve"><value>El pool reúne costes que se repartirán después. Elige uno de tu modelo publicado; el papel principal o auxiliar de su nodo no determina el comportamiento del coste.</value></data>
+  <data name="Resources.ExclusionHelp" xml:space="preserve"><value>Explica por qué este importe queda fuera del estudio. La exclusión conserva el importe y su origen para poder revisarla.</value></data>
+  <data name="Guide.Help.Resource.Rows" xml:space="preserve"><value>1 de 4 · Elige la cuenta cuyos ajustes y destinos quieres revisar.</value></data>
+  <data name="Guide.Help.Resource.RemovePart" xml:space="preserve"><value>Quitar parte seleccionada</value></data>
+  <data name="Guide.Help.Resource.Normal" xml:space="preserve"><value>Solo el tratamiento Evaluar en el pool declara un propietario de capacidad: el pool elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. La política de cálculo se define en una fase posterior.</value></data>
+  <data name="Guide.Help.Resource.CancelOperation" xml:space="preserve"><value>Cancelar operación en curso</value></data>
+  <data name="Guide.Help.Resource.Capacity" xml:space="preserve"><value>Solo el tratamiento Evaluar en el pool declara un propietario de capacidad: el pool elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. La política de cálculo se define en una fase posterior.</value></data>
+  <data name="Guide.Help.Resource.EditPart" xml:space="preserve"><value>Editar parte seleccionada</value></data>
+  <data name="Guide.Help.Resource.Discard" xml:space="preserve"><value>Descartar cambios sin guardar</value></data>
+  <data name="Guide.Help.Resource.PendingRemainder" xml:space="preserve"><value>Añadir la diferencia como pendiente</value></data>
+  <data name="Guide.Help.Resource.Refresh" xml:space="preserve"><value>Actualizar recursos guardados</value></data>
+  <data name="Guide.Help.Resource.ObjectKind" xml:space="preserve"><value>Un objeto es aquello cuyo coste quieres conocer: un producto, servicio, orden u otro destino. Su código lo identifica dentro de este estudio. Guárdalo y selecciónalo como destino de la parte.</value></data>
+  <data name="Guide.Help.Resource.Pool" xml:space="preserve"><value>El pool reúne costes que se repartirán después. Elige uno de tu modelo publicado; el papel principal o auxiliar de su nodo no determina el comportamiento del coste.</value></data>
+  <data name="Guide.Help.Resource.Object" xml:space="preserve"><value>Un objeto es aquello cuyo coste quieres conocer: un producto, servicio, orden u otro destino. Su código lo identifica dentro de este estudio. Guárdalo y selecciónalo como destino de la parte.</value></data>
+  <data name="Guide.Help.Resource.Maximum" xml:space="preserve"><value>Fijo y variable se definen respecto a una actividad, un intervalo de fechas y un rango. Estos datos explican el criterio; no se deducen del centro ni de la cuenta.</value></data>
+  <data name="Guide.Help.Resource.SaveRevalue" xml:space="preserve"><value>Guardar toda la revalorización</value></data>
+  <data name="Guide.Help.Resource.Layer" xml:space="preserve"><value>Indica si esta parte pertenece a producción, comercial o estructura. Es independiente de que sea fija o variable y de su destino. Puedes dejarla sin clasificar.</value></data>
+  <data name="Guide.Help.Resource.ChangeReason" xml:space="preserve"><value>Comprueba destinos, ajustes y diferencia. Para guardar, la diferencia de cada cuenta debe ser cero y debes explicar el motivo del cambio. Las partes pendientes siguen visibles para completarlas después.</value></data>
+  <data name="Guide.Help.Resource.StartRevalue" xml:space="preserve"><value>Preparar nuevos tipos de cambio</value></data>
+  <data name="Guide.Help.Resource.HorizonStart" xml:space="preserve"><value>Fijo y variable se definen respecto a una actividad, un intervalo de fechas y un rango. Estos datos explican el criterio; no se deducen del centro ni de la cuenta.</value></data>
+  <data name="Guide.Help.Resource.Reason" xml:space="preserve"><value>Un ajuste aumenta o reduce el importe importado sin alterar el Excel o CSV. Indica un importe con signo, su moneda, tipo y motivo. Si no necesitas ajustes, continúa al reparto.</value></data>
+  <data name="Guide.Help.Resource.Quote" xml:space="preserve"><value>Introduce cuántas unidades de moneda del estudio equivalen a 1 unidad de la moneda original. Se convierte cada movimiento por separado.</value></data>
+  <data name="Guide.Help.Resource.Type" xml:space="preserve"><value>Un ajuste aumenta o reduce el importe importado sin alterar el Excel o CSV. Indica un importe con signo, su moneda, tipo y motivo. Si no necesitas ajustes, continúa al reparto.</value></data>
+  <data name="Guide.Help.Resource.Route" xml:space="preserve"><value>Elige una parte y pulsa Editar parte, o crea una nueva. Cada parte tiene un solo destino. La suma debe coincidir exactamente con el efectivo de esta cuenta. Puedes dejar explícitamente importes pendientes.</value></data>
+  <data name="Guide.Help.Resource.HorizonEnd" xml:space="preserve"><value>Fijo y variable se definen respecto a una actividad, un intervalo de fechas y un rango. Estos datos explican el criterio; no se deducen del centro ni de la cuenta.</value></data>
+  <data name="Guide.Help.Resource.ApplyPart" xml:space="preserve"><value>Aplicar parte al borrador</value></data>
+  <data name="Guide.Help.Resource.Theoretical" xml:space="preserve"><value>Solo el tratamiento Evaluar en el pool declara un propietario de capacidad: el pool elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. La política de cálculo se define en una fase posterior.</value></data>
+  <data name="Guide.Help.Resource.Practical" xml:space="preserve"><value>Solo el tratamiento Evaluar en el pool declara un propietario de capacidad: el pool elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. La política de cálculo se define en una fase posterior.</value></data>
+  <data name="Guide.Help.Resource.Behavior" xml:space="preserve"><value>Fijo y variable se definen respecto a una actividad, un intervalo de fechas y un rango. Estos datos explican el criterio; no se deducen del centro ni de la cuenta.</value></data>
+  <data name="Guide.Help.Resource.ActivityUnit" xml:space="preserve"><value>Fijo y variable se definen respecto a una actividad, un intervalo de fechas y un rango. Estos datos explican el criterio; no se deducen del centro ni de la cuenta.</value></data>
+  <data name="Guide.Help.Resource.ObjectName" xml:space="preserve"><value>Un objeto es aquello cuyo coste quieres conocer: un producto, servicio, orden u otro destino. Su código lo identifica dentro de este estudio. Guárdalo y selecciónalo como destino de la parte.</value></data>
+  <data name="Guide.Help.Resource.ObjectCode" xml:space="preserve"><value>Un objeto es aquello cuyo coste quieres conocer: un producto, servicio, orden u otro destino. Su código lo identifica dentro de este estudio. Guárdalo y selecciónalo como destino de la parte.</value></data>
+  <data name="Guide.Help.Resource.SignedAmount" xml:space="preserve"><value>Un ajuste aumenta o reduce el importe importado sin alterar el Excel o CSV. Indica un importe con signo, su moneda, tipo y motivo. Si no necesitas ajustes, continúa al reparto.</value></data>
+  <data name="Guide.Help.Resource.Reset" xml:space="preserve"><value>Guardar reinicio de la preparación</value></data>
+  <data name="Guide.Help.Resource.PreviewRevalue" xml:space="preserve"><value>Previsualizar la revalorización</value></data>
+  <data name="Guide.Help.Resource.SaveObject" xml:space="preserve"><value>Guardar objeto de coste</value></data>
+  <data name="Guide.Help.Resource.Minimum" xml:space="preserve"><value>Fijo y variable se definen respecto a una actividad, un intervalo de fechas y un rango. Estos datos explican el criterio; no se deducen del centro ni de la cuenta.</value></data>
+  <data name="Guide.Help.Resource.RateDate" xml:space="preserve"><value>Fecha de negocio a la que corresponde este tipo de cambio. No cambia con la zona horaria.</value></data>
+  <data name="Guide.Help.Resource.Adjustments" xml:space="preserve"><value>Un ajuste aumenta o reduce el importe importado sin alterar el Excel o CSV. Indica un importe con signo, su moneda, tipo y motivo. Si no necesitas ajustes, continúa al reparto.</value></data>
+  <data name="Guide.Help.Resource.ResetReason" xml:space="preserve"><value>Reiniciar deja todas las cuentas pendientes y retira de la preparación actual sus ajustes y repartos. Conserva el historial y las instantáneas anteriores. Úsalo si necesitas sustituir importaciones que ya has preparado.</value></data>
+  <data name="Guide.Help.Resource.Actual" xml:space="preserve"><value>Solo el tratamiento Evaluar en el pool declara un propietario de capacidad: el pool elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. La política de cálculo se define en una fase posterior.</value></data>
+  <data name="Guide.Help.Resource.AddAdjustment" xml:space="preserve"><value>Añadir ajuste al borrador</value></data>
+  <data name="Guide.Help.Resource.NewPart" xml:space="preserve"><value>Limpiar formulario / nueva parte</value></data>
+  <data name="Guide.Help.Resource.ClearForm" xml:space="preserve"><value>Limpiar este formulario</value></data>
+  <data name="Guide.Help.Resource.Currency" xml:space="preserve"><value>Un ajuste aumenta o reduce el importe importado sin alterar el Excel o CSV. Indica un importe con signo, su moneda, tipo y motivo. Si no necesitas ajustes, continúa al reparto.</value></data>
+  <data name="Guide.Help.Resource.RateSource" xml:space="preserve"><value>Indica de dónde procede el tipo, por ejemplo el banco o una referencia documental verificable.</value></data>
+  <data name="Guide.Help.Resource.ExclusionReason" xml:space="preserve"><value>Explica por qué este importe queda fuera del estudio. La exclusión conserva el importe y su origen para poder revisarla.</value></data>
+  <data name="Guide.Help.Resource.PartAmount" xml:space="preserve"><value>Elige una parte y pulsa Editar parte, o crea una nueva. Cada parte tiene un solo destino. La suma debe coincidir exactamente con el efectivo de esta cuenta. Puedes dejar explícitamente importes pendientes.</value></data>
+  <data name="Guide.Help.Resource.CancelRevalue" xml:space="preserve"><value>Descartar esta revalorización</value></data>
+  <data name="Guide.Help.Resource.Parts" xml:space="preserve"><value>Elige una parte y pulsa Editar parte, o crea una nueva. Cada parte tiene un solo destino. La suma debe coincidir exactamente con el efectivo de esta cuenta. Puedes dejar explícitamente importes pendientes.</value></data>
+  <data name="Guide.Help.Resource.ReverseSelected" xml:space="preserve"><value>Revertir el ajuste seleccionado</value></data>
+  <data name="Guide.Help.Resource.KeepCulture" xml:space="preserve"><value>Confirmo mantener el formato con el que empecé</value></data>
+  <data name="Guide.Help.Resource.ResetAcknowledged" xml:space="preserve"><value>Reiniciar deja todas las cuentas pendientes y retira de la preparación actual sus ajustes y repartos. Conserva el historial y las instantáneas anteriores. Úsalo si necesitas sustituir importaciones que ya has preparado.</value></data>
+  <data name="Resource.PartsRequired" xml:space="preserve"><value>Indica al menos una parte para esta cuenta, aunque su importe sea cero. Si falta decidir su destino, elige Pendiente.</value></data>
 </root>

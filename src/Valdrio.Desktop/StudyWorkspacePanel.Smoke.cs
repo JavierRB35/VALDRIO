@@ -371,6 +371,7 @@ public partial class StudyWorkspacePanel
         PostCommitReadFailureState state)
         : ICompanyFileSession
     {
+        public IResourceWorkspace Resources => inner.Resources;
         public IImportWorkspace Imports => inner.Imports;
         public IStudyWorkspace Studies { get; } =
             new PostCommitReadFailureStudyWorkspace(inner.Studies, state);

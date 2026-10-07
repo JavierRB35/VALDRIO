@@ -640,4 +640,226 @@ Full: {5}</value></data>
 <data name="Resource.SplitRequiresParts" xml:space="preserve"><value>Choose at least two replacement parts.</value></data>
 <data name="Resource.SplitMismatch" xml:space="preserve"><value>Replacement parts must sum exactly to the original part amount.</value></data>
 <data name="Resource.PartNotFound" xml:space="preserve"><value>Select one existing part of this resource.</value></data>
+  <data name="Resources.Title" xml:space="preserve"><value>Resources</value></data>
+  <data name="Resources.Introduction" xml:space="preserve"><value>Each account retains its source records. Review adjustments and divide the effective amount among destinations; undecided amounts remain pending.</value></data>
+  <data name="Resources.Ready" xml:space="preserve"><value>Select an account and press Edit account to continue.</value></data>
+  <data name="Resources.NeedStudy" xml:space="preserve"><value>Save or load a study in step 3 to prepare its resources.</value></data>
+  <data name="Resources.NeedImport" xml:space="preserve"><value>Import and confirm records in step 4. Then prepare their resources here.</value></data>
+  <data name="Resources.ReadOnly" xml:space="preserve"><value>The file is open for viewing. Open it for editing to save changes.</value></data>
+  <data name="Resources.Closed" xml:space="preserve"><value>The study is closed. Reopen it in the Study step to change its resources.</value></data>
+  <data name="Resources.ChooseAccount" xml:space="preserve"><value>1 of 4 · Choose the account whose adjustments and destinations you want to review.</value></data>
+  <data name="Resources.SelectAccountFirst" xml:space="preserve"><value>Select an account in the table to begin.</value></data>
+  <data name="Resources.EditAccount" xml:space="preserve"><value>Edit selected account</value></data>
+  <data name="Resources.ContinueParts" xml:space="preserve"><value>Continue: distribute the amount</value></data>
+  <data name="Resources.ReviewChanges" xml:space="preserve"><value>Continue: review and save</value></data>
+  <data name="Resources.SaveAccount" xml:space="preserve"><value>Save preparation for this account</value></data>
+  <data name="Resources.KeepRevalueParts" xml:space="preserve"><value>Apply parts to currency review</value></data>
+  <data name="Resources.AdjustmentStep" xml:space="preserve"><value>2 of 4 · Account adjustments</value></data>
+  <data name="Resources.AdjustmentHelp" xml:space="preserve"><value>An adjustment increases or decreases the imported amount while preserving the Excel or CSV data. Enter a signed amount, currency, type and reason. If no adjustments are needed, continue to distribution.</value></data>
+  <data name="Resources.PartsStep" xml:space="preserve"><value>3 of 4 · Amount destinations</value></data>
+  <data name="Resources.PartsHelp" xml:space="preserve"><value>Choose a part and press Edit part, or create a new one. Each part has one route. The sum must equal this account’s effective amount exactly. You can explicitly leave amounts pending.</value></data>
+  <data name="Resources.ReviewStep" xml:space="preserve"><value>4 of 4 · Review and save</value></data>
+  <data name="Resources.ReviewHelp" xml:space="preserve"><value>Check destinations, adjustments and differences. Every account must have zero difference and a reason for the change before saving. Pending parts remain visible for later completion.</value></data>
+  <data name="Resources.Coverage" xml:space="preserve"><value>Converted original: {0} · Adjustments: {1} · Effective: {2}
+Direct: {3} · Pools: {4} · Excluded: {5} · Pending: {6}
+Difference to distribute: {7}</value></data>
+  <data name="Resources.Code" xml:space="preserve"><value>Account / code</value></data>
+  <data name="Resources.Originals" xml:space="preserve"><value>Originals by currency</value></data>
+  <data name="Resources.Converted" xml:space="preserve"><value>Converted original</value></data>
+  <data name="Resources.Adjustments" xml:space="preserve"><value>Adjustments</value></data>
+  <data name="Resources.Effective" xml:space="preserve"><value>Effective</value></data>
+  <data name="Resources.PendingAmount" xml:space="preserve"><value>Pending amount</value></data>
+  <data name="Resources.Difference" xml:space="preserve"><value>Difference</value></data>
+  <data name="Resources.Amount" xml:space="preserve"><value>Functional amount</value></data>
+  <data name="Resources.PartAmount" xml:space="preserve"><value>Part amount (study currency)</value></data>
+  <data name="Resources.Route" xml:space="preserve"><value>Route for this part</value></data>
+  <data name="Resources.Destination" xml:space="preserve"><value>Destination / reason</value></data>
+  <data name="Resources.Behavior" xml:space="preserve"><value>Behavior</value></data>
+  <data name="Resources.Layer" xml:space="preserve"><value>Cost layer</value></data>
+  <data name="Resources.Original" xml:space="preserve"><value>Original amount</value></data>
+  <data name="Resources.Functional" xml:space="preserve"><value>Functional amount</value></data>
+  <data name="Resources.Type" xml:space="preserve"><value>Adjustment type</value></data>
+  <data name="Resources.Reason" xml:space="preserve"><value>Adjustment or reversal reason</value></data>
+  <data name="Resources.State" xml:space="preserve"><value>Movement kind</value></data>
+  <data name="Resources.SignedAmount" xml:space="preserve"><value>Signed adjustment amount</value></data>
+  <data name="Resources.Currency" xml:space="preserve"><value>Adjustment currency</value></data>
+  <data name="Resources.Quote" xml:space="preserve"><value>Rate: study currency per 1 source unit</value></data>
+  <data name="Resources.QuoteHelp" xml:space="preserve"><value>Enter how many units of study currency equal 1 unit of original currency. Each movement is converted separately.</value></data>
+  <data name="Resources.RateDate" xml:space="preserve"><value>Exchange rate date</value></data>
+  <data name="Resources.RateDateHelp" xml:space="preserve"><value>Business date to which this rate applies. It does not change with the time zone.</value></data>
+  <data name="Resources.RateSource" xml:space="preserve"><value>Exchange rate source</value></data>
+  <data name="Resources.RateSourceHelp" xml:space="preserve"><value>Record where the rate comes from, such as the bank or a verifiable document reference.</value></data>
+  <data name="Resources.AddAdjustment" xml:space="preserve"><value>Add adjustment to draft</value></data>
+  <data name="Resources.ReverseSelected" xml:space="preserve"><value>Reverse selected adjustment</value></data>
+  <data name="Resources.ClearForm" xml:space="preserve"><value>Clear this form</value></data>
+  <data name="Resources.SourceRows" xml:space="preserve"><value>Retained source records</value></data>
+  <data name="Resources.Record" xml:space="preserve"><value>Record</value></data>
+  <data name="Resources.Earlier" xml:space="preserve"><value>Earlier cumulative balance, subtracted</value></data>
+  <data name="Resources.EditPart" xml:space="preserve"><value>Edit selected part</value></data>
+  <data name="Resources.RemovePart" xml:space="preserve"><value>Remove selected part</value></data>
+  <data name="Resources.NewPart" xml:space="preserve"><value>Clear form / new part</value></data>
+  <data name="Resources.PendingRemainder" xml:space="preserve"><value>Add difference as pending</value></data>
+  <data name="Resources.Object" xml:space="preserve"><value>Cost object</value></data>
+  <data name="Resources.CreateObject" xml:space="preserve"><value>Create a cost object</value></data>
+  <data name="Resources.ObjectHelp" xml:space="preserve"><value>An object is what you want to measure costs for: a product, service, order or another destination. Its code identifies it within this study. Save it and select it as the part’s destination.</value></data>
+  <data name="Resources.ObjectCode" xml:space="preserve"><value>Object code</value></data>
+  <data name="Resources.ObjectName" xml:space="preserve"><value>Object name</value></data>
+  <data name="Resources.ObjectKind" xml:space="preserve"><value>Object kind</value></data>
+  <data name="Resources.SaveObject" xml:space="preserve"><value>Save cost object</value></data>
+  <data name="Resources.Pool" xml:space="preserve"><value>Receiving pool in published model</value></data>
+  <data name="Resources.ExclusionReason" xml:space="preserve"><value>Required exclusion reason</value></data>
+  <data name="Resources.ContextHelp" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
+  <data name="Resources.ActivityUnit" xml:space="preserve"><value>Activity unit explaining behavior</value></data>
+  <data name="Resources.HorizonStart" xml:space="preserve"><value>Horizon start</value></data>
+  <data name="Resources.HorizonEnd" xml:space="preserve"><value>Horizon end</value></data>
+  <data name="Resources.Minimum" xml:space="preserve"><value>Minimum activity in range</value></data>
+  <data name="Resources.Maximum" xml:space="preserve"><value>Maximum activity in range</value></data>
+  <data name="Resources.CapacityTitle" xml:space="preserve"><value>Capacity: advanced options</value></data>
+  <data name="Resources.CapacityHelp" xml:space="preserve"><value>Only Assess at pool declares a capacity owner: the selected pool, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Resources.Capacity" xml:space="preserve"><value>Capacity treatment</value></data>
+  <data name="Resources.Theoretical" xml:space="preserve"><value>Theoretical capacity (optional)</value></data>
+  <data name="Resources.Practical" xml:space="preserve"><value>Practical capacity (optional)</value></data>
+  <data name="Resources.Normal" xml:space="preserve"><value>Normal capacity (optional)</value></data>
+  <data name="Resources.Actual" xml:space="preserve"><value>Actual activity (optional)</value></data>
+  <data name="Resources.ApplyPart" xml:space="preserve"><value>Apply part to draft</value></data>
+  <data name="Resources.ChangeReason" xml:space="preserve"><value>Reason for the changes to be saved</value></data>
+  <data name="Resources.Refresh" xml:space="preserve"><value>Refresh saved resources</value></data>
+  <data name="Resources.Advanced" xml:space="preserve"><value>History and advanced operations</value></data>
+  <data name="Resources.History" xml:space="preserve"><value>Saved change history</value></data>
+  <data name="Resources.HistoryRow" xml:space="preserve"><value>Revision {0} · {1} · {2} · {3} · {4}</value></data>
+  <data name="Resources.RevalueTitle" xml:space="preserve"><value>Revalue amounts with different exchange rates</value></data>
+  <data name="Resources.RevalueHelp" xml:space="preserve"><value>Prepare explicit rates for every foreign original and adjustment. Then review the affected accounts’ parts. Saving requires all accounts to balance. Earlier snapshots retain their previous rates and amounts.</value></data>
+  <data name="Resources.StartRevalue" xml:space="preserve"><value>Prepare new exchange rates</value></data>
+  <data name="Resources.PreviewRevalue" xml:space="preserve"><value>Preview revaluation</value></data>
+  <data name="Resources.SaveRevalue" xml:space="preserve"><value>Save complete revaluation</value></data>
+  <data name="Resources.CancelRevalue" xml:space="preserve"><value>Discard this revaluation</value></data>
+  <data name="Resources.NoForeignAmounts" xml:space="preserve"><value>This study has no originals or adjustments in another currency requiring revaluation.</value></data>
+  <data name="Resources.RevalueInstructions" xml:space="preserve"><value>Review each foreign amount’s rate, date and source, then press Preview.</value></data>
+  <data name="Resources.RevalueReconcile" xml:space="preserve"><value>Unsaved revaluation. Choose accounts with a difference and adjust their parts; then enter a reason and save the complete revaluation.</value></data>
+  <data name="Resources.RevaluePartsKept" xml:space="preserve"><value>Parts applied to currency review. They are not saved yet. Complete the other accounts and save the complete revaluation.</value></data>
+  <data name="Resources.ResetTitle" xml:space="preserve"><value>Reset preparation before changing the source</value></data>
+  <data name="Resources.ResetHelp" xml:space="preserve"><value>Reset leaves every account pending and removes its adjustments and routes from the current preparation. History and earlier snapshots are retained. Use this when replacing imports you have already prepared.</value></data>
+  <data name="Resources.ResetReason" xml:space="preserve"><value>Reset reason</value></data>
+  <data name="Resources.ResetAcknowledged" xml:space="preserve"><value>I understand that I will need to prepare all accounts’ adjustments and destinations again.</value></data>
+  <data name="Resources.Reset" xml:space="preserve"><value>Save preparation reset</value></data>
+  <data name="Resources.ResetRequirements" xml:space="preserve"><value>Enter a reason and acknowledge the reset. Previous history will be retained.</value></data>
+  <data name="Resources.ResetSaved" xml:space="preserve"><value>Preparation reset and saved. Accounts are pending again; history is retained.</value></data>
+  <data name="Resources.Discard" xml:space="preserve"><value>Discard unsaved changes</value></data>
+  <data name="Resources.CancelOperation" xml:space="preserve"><value>Cancel running operation</value></data>
+  <data name="Resources.KeepCulture" xml:space="preserve"><value>Confirm keeping the format I started with</value></data>
+  <data name="Resources.CultureChanged" xml:space="preserve"><value>The region changed during editing. Numeric text retains its captured format ({0}). Confirm it or clear the form and enter the values again.</value></data>
+  <data name="Resources.ConfirmCultureFirst" xml:space="preserve"><value>Confirm the captured number format before applying these values, or clear the form.</value></data>
+  <data name="Resources.ApplyAdjustmentFirst" xml:space="preserve"><value>An adjustment is entered but not applied. Add it to the draft or clear its form before continuing.</value></data>
+  <data name="Resources.ApplyPartFirst" xml:space="preserve"><value>A part or object is entered but not applied. Apply the part, save the object or clear the form before continuing.</value></data>
+  <data name="Resources.ApplyFormsFirst" xml:space="preserve"><value>Some entered data has not been applied yet. Review adjustment, part and object forms before saving.</value></data>
+  <data name="Resources.PartApplied" xml:space="preserve"><value>Part applied to draft. Review the difference; it has not been saved yet.</value></data>
+  <data name="Resources.AdjustmentApplied" xml:space="preserve"><value>Adjustment applied to draft. Review the effective amount and its parts before saving.</value></data>
+  <data name="Resources.AlreadyBalanced" xml:space="preserve"><value>The account already balances: there is no difference to add as pending.</value></data>
+  <data name="Resources.Saved" xml:space="preserve"><value>Preparation saved in the displayed study and file. You can choose another account or capture a snapshot in Study.</value></data>
+  <data name="Resources.SavedRefreshPending" xml:space="preserve"><value>The changes are saved. The study panel could not be refreshed; press Refresh. Do not enter the change again.</value></data>
+  <data name="Resources.ObjectSaved" xml:space="preserve"><value>Cost object saved. You can now select it as a part’s destination.</value></data>
+  <data name="Resources.ObjectCreatedReason" xml:space="preserve"><value>Explicit cost object creation</value></data>
+  <data name="Resources.Cancelled" xml:space="preserve"><value>Operation cancelled. Draft changes are retained.</value></data>
+  <data name="Resources.DraftDiscarded" xml:space="preserve"><value>Draft discarded. Saved data is displayed.</value></data>
+  <data name="Resources.PendingTitle" xml:space="preserve"><value>Unsaved resource preparation</value></data>
+  <data name="Resources.PendingBody" xml:space="preserve"><value>There are unsaved changes. Yes saves the account; No discards the draft; Cancel keeps editing. If forms are unapplied or a revaluation is pending, complete that review before saving.</value></data>
+  <data name="Resources.Pending" xml:space="preserve"><value>Pending decision</value></data>
+  <data name="Resources.DirectObject" xml:space="preserve"><value>Direct assignment to object</value></data>
+  <data name="Resources.AllocationPool" xml:space="preserve"><value>Send to a pool</value></data>
+  <data name="Resources.Excluded" xml:space="preserve"><value>Exclude with reason</value></data>
+  <data name="Resources.Unclassified" xml:space="preserve"><value>Unclassified</value></data>
+  <data name="Resources.Fixed" xml:space="preserve"><value>Fixed in stated context</value></data>
+  <data name="Resources.Variable" xml:space="preserve"><value>Variable in stated context</value></data>
+  <data name="Resources.MixedPending" xml:space="preserve"><value>Mixed: pending split</value></data>
+  <data name="Resources.Production" xml:space="preserve"><value>Production</value></data>
+  <data name="Resources.Commercial" xml:space="preserve"><value>Commercial</value></data>
+  <data name="Resources.Structure" xml:space="preserve"><value>Structure</value></data>
+  <data name="Resources.None" xml:space="preserve"><value>No capacity treatment declared</value></data>
+  <data name="Resources.AssessAtPool" xml:space="preserve"><value>Assess capacity at pool</value></data>
+  <data name="Resources.PeriodCost" xml:space="preserve"><value>Period cost</value></data>
+  <data name="Resources.Product" xml:space="preserve"><value>Product</value></data>
+  <data name="Resources.Service" xml:space="preserve"><value>Service</value></data>
+  <data name="Resources.Order" xml:space="preserve"><value>Order</value></data>
+  <data name="Resources.Other" xml:space="preserve"><value>Other object</value></data>
+  <data name="Resources.Adjustment" xml:space="preserve"><value>Adjustment</value></data>
+  <data name="Resources.Reversal" xml:space="preserve"><value>Reversal</value></data>
+  <data name="Resources.EditResource" xml:space="preserve"><value>Account preparation</value></data>
+  <data name="Resources.PutObject" xml:space="preserve"><value>Cost object</value></data>
+  <data name="Resources.ResetPreparation" xml:space="preserve"><value>Preparation reset</value></data>
+  <data name="Resources.Revalue" xml:space="preserve"><value>Currency revaluation</value></data>
+  <data name="Resource.ScopeInvalid" xml:space="preserve"><value>The resource must belong to the study and its published model. Refresh the study and select the account again.</value></data>
+  <data name="Resource.SourceChanged" xml:space="preserve"><value>The import would change accounts with saved adjustments or parts. Go to Resources, review history and use Reset preparation with a reason before changing the source.</value></data>
+  <data name="Resource.ObjectInvalid" xml:space="preserve"><value>Enter an object code and name, a valid kind and a code unique within this study.</value></data>
+  <data name="Resource.ObjectScope" xml:space="preserve"><value>Select a cost object saved in this study. You can create it in the direct assignment options.</value></data>
+  <data name="Resource.PoolScope" xml:space="preserve"><value>Select a pool belonging to an active node in this study’s published model.</value></data>
+  <data name="Resource.UnitScope" xml:space="preserve"><value>Select an activity unit from the published model.</value></data>
+  <data name="Resource.CommandInvalid" xml:space="preserve"><value>Complete the reason for the change and review the required fields before saving.</value></data>
+  <data name="Resource.NotFound" xml:space="preserve"><value>The account is no longer among the current resources. Refresh the list and select it again.</value></data>
+  <data name="Resource.RevalueRateRequired" xml:space="preserve"><value>An original or adjustment in foreign currency still needs an explicit exchange rate.</value></data>
+  <data name="Resource.HistoryInvalid" xml:space="preserve"><value>Resource history does not match its saved data. Open a valid backup.</value></data>
+  <data name="Resource.RequestReused" xml:space="preserve"><value>This request was already saved with different data. Refresh resources before saving again.</value></data>
+  <data name="Resource.AdjustmentCurrencyInvalid" xml:space="preserve"><value>The currency or its definition is invalid for the adjustment. Select a supported currency.</value></data>
+  <data name="Resource.ReloadPending" xml:space="preserve"><value>The study changed while a local draft is pending. Save it if its revision is still current, or discard it and refresh before continuing.</value></data>
+  <data name="Resource.InputInvalid" xml:space="preserve"><value>Review the fields and numeric limits. Complete valid amounts, dates, destinations and reasons; the draft is retained.</value></data>
+  <data name="Resource.NumberRequired" xml:space="preserve"><value>Enter a valid number using the regional format captured when the form started. An empty field is not converted to zero.</value></data>
+  <data name="Resource.DateRequired" xml:space="preserve"><value>Select a valid date in the calendar.</value></data>
+  <data name="Resource.RevalueUnbalanced" xml:space="preserve"><value>The account still has a difference after revaluation. Adjust its parts or explicitly leave the difference pending.</value></data>
+  <data name="Guide.Resources" xml:space="preserve"><value>5. Resources</value></data>
+  <data name="Guide.ContinueResources" xml:space="preserve"><value>Continue: prepare resources</value></data>
+  <data name="Guide.AnotherImport" xml:space="preserve"><value>Import another file / replace a batch</value></data>
+  <data name="Resources.LayerHelp" xml:space="preserve"><value>State whether this part belongs to production, commercial or structure. This is independent of fixed or variable behavior and its destination. You may leave it unclassified.</value></data>
+  <data name="Resources.PoolHelp" xml:space="preserve"><value>A pool groups costs for later distribution. Choose one from your published model; its node’s principal or auxiliary role does not determine cost behavior.</value></data>
+  <data name="Resources.ExclusionHelp" xml:space="preserve"><value>Explain why this amount is outside the study. Exclusion retains the amount and its source for review.</value></data>
+  <data name="Guide.Help.Resource.Rows" xml:space="preserve"><value>1 of 4 · Choose the account whose adjustments and destinations you want to review.</value></data>
+  <data name="Guide.Help.Resource.RemovePart" xml:space="preserve"><value>Remove selected part</value></data>
+  <data name="Guide.Help.Resource.Normal" xml:space="preserve"><value>Only Assess at pool declares a capacity owner: the selected pool, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Guide.Help.Resource.CancelOperation" xml:space="preserve"><value>Cancel running operation</value></data>
+  <data name="Guide.Help.Resource.Capacity" xml:space="preserve"><value>Only Assess at pool declares a capacity owner: the selected pool, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Guide.Help.Resource.EditPart" xml:space="preserve"><value>Edit selected part</value></data>
+  <data name="Guide.Help.Resource.Discard" xml:space="preserve"><value>Discard unsaved changes</value></data>
+  <data name="Guide.Help.Resource.PendingRemainder" xml:space="preserve"><value>Add difference as pending</value></data>
+  <data name="Guide.Help.Resource.Refresh" xml:space="preserve"><value>Refresh saved resources</value></data>
+  <data name="Guide.Help.Resource.ObjectKind" xml:space="preserve"><value>An object is what you want to measure costs for: a product, service, order or another destination. Its code identifies it within this study. Save it and select it as the part’s destination.</value></data>
+  <data name="Guide.Help.Resource.Pool" xml:space="preserve"><value>A pool groups costs for later distribution. Choose one from your published model; its node’s principal or auxiliary role does not determine cost behavior.</value></data>
+  <data name="Guide.Help.Resource.Object" xml:space="preserve"><value>An object is what you want to measure costs for: a product, service, order or another destination. Its code identifies it within this study. Save it and select it as the part’s destination.</value></data>
+  <data name="Guide.Help.Resource.Maximum" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
+  <data name="Guide.Help.Resource.SaveRevalue" xml:space="preserve"><value>Save complete revaluation</value></data>
+  <data name="Guide.Help.Resource.Layer" xml:space="preserve"><value>State whether this part belongs to production, commercial or structure. This is independent of fixed or variable behavior and its destination. You may leave it unclassified.</value></data>
+  <data name="Guide.Help.Resource.ChangeReason" xml:space="preserve"><value>Check destinations, adjustments and differences. Every account must have zero difference and a reason for the change before saving. Pending parts remain visible for later completion.</value></data>
+  <data name="Guide.Help.Resource.StartRevalue" xml:space="preserve"><value>Prepare new exchange rates</value></data>
+  <data name="Guide.Help.Resource.HorizonStart" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
+  <data name="Guide.Help.Resource.Reason" xml:space="preserve"><value>An adjustment increases or decreases the imported amount while preserving the Excel or CSV data. Enter a signed amount, currency, type and reason. If no adjustments are needed, continue to distribution.</value></data>
+  <data name="Guide.Help.Resource.Quote" xml:space="preserve"><value>Enter how many units of study currency equal 1 unit of original currency. Each movement is converted separately.</value></data>
+  <data name="Guide.Help.Resource.Type" xml:space="preserve"><value>An adjustment increases or decreases the imported amount while preserving the Excel or CSV data. Enter a signed amount, currency, type and reason. If no adjustments are needed, continue to distribution.</value></data>
+  <data name="Guide.Help.Resource.Route" xml:space="preserve"><value>Choose a part and press Edit part, or create a new one. Each part has one route. The sum must equal this account’s effective amount exactly. You can explicitly leave amounts pending.</value></data>
+  <data name="Guide.Help.Resource.HorizonEnd" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
+  <data name="Guide.Help.Resource.ApplyPart" xml:space="preserve"><value>Apply part to draft</value></data>
+  <data name="Guide.Help.Resource.Theoretical" xml:space="preserve"><value>Only Assess at pool declares a capacity owner: the selected pool, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Guide.Help.Resource.Practical" xml:space="preserve"><value>Only Assess at pool declares a capacity owner: the selected pool, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Guide.Help.Resource.Behavior" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
+  <data name="Guide.Help.Resource.ActivityUnit" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
+  <data name="Guide.Help.Resource.ObjectName" xml:space="preserve"><value>An object is what you want to measure costs for: a product, service, order or another destination. Its code identifies it within this study. Save it and select it as the part’s destination.</value></data>
+  <data name="Guide.Help.Resource.ObjectCode" xml:space="preserve"><value>An object is what you want to measure costs for: a product, service, order or another destination. Its code identifies it within this study. Save it and select it as the part’s destination.</value></data>
+  <data name="Guide.Help.Resource.SignedAmount" xml:space="preserve"><value>An adjustment increases or decreases the imported amount while preserving the Excel or CSV data. Enter a signed amount, currency, type and reason. If no adjustments are needed, continue to distribution.</value></data>
+  <data name="Guide.Help.Resource.Reset" xml:space="preserve"><value>Save preparation reset</value></data>
+  <data name="Guide.Help.Resource.PreviewRevalue" xml:space="preserve"><value>Preview revaluation</value></data>
+  <data name="Guide.Help.Resource.SaveObject" xml:space="preserve"><value>Save cost object</value></data>
+  <data name="Guide.Help.Resource.Minimum" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
+  <data name="Guide.Help.Resource.RateDate" xml:space="preserve"><value>Business date to which this rate applies. It does not change with the time zone.</value></data>
+  <data name="Guide.Help.Resource.Adjustments" xml:space="preserve"><value>An adjustment increases or decreases the imported amount while preserving the Excel or CSV data. Enter a signed amount, currency, type and reason. If no adjustments are needed, continue to distribution.</value></data>
+  <data name="Guide.Help.Resource.ResetReason" xml:space="preserve"><value>Reset leaves every account pending and removes its adjustments and routes from the current preparation. History and earlier snapshots are retained. Use this when replacing imports you have already prepared.</value></data>
+  <data name="Guide.Help.Resource.Actual" xml:space="preserve"><value>Only Assess at pool declares a capacity owner: the selected pool, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Guide.Help.Resource.AddAdjustment" xml:space="preserve"><value>Add adjustment to draft</value></data>
+  <data name="Guide.Help.Resource.NewPart" xml:space="preserve"><value>Clear form / new part</value></data>
+  <data name="Guide.Help.Resource.ClearForm" xml:space="preserve"><value>Clear this form</value></data>
+  <data name="Guide.Help.Resource.Currency" xml:space="preserve"><value>An adjustment increases or decreases the imported amount while preserving the Excel or CSV data. Enter a signed amount, currency, type and reason. If no adjustments are needed, continue to distribution.</value></data>
+  <data name="Guide.Help.Resource.RateSource" xml:space="preserve"><value>Record where the rate comes from, such as the bank or a verifiable document reference.</value></data>
+  <data name="Guide.Help.Resource.ExclusionReason" xml:space="preserve"><value>Explain why this amount is outside the study. Exclusion retains the amount and its source for review.</value></data>
+  <data name="Guide.Help.Resource.PartAmount" xml:space="preserve"><value>Choose a part and press Edit part, or create a new one. Each part has one route. The sum must equal this account’s effective amount exactly. You can explicitly leave amounts pending.</value></data>
+  <data name="Guide.Help.Resource.CancelRevalue" xml:space="preserve"><value>Discard this revaluation</value></data>
+  <data name="Guide.Help.Resource.Parts" xml:space="preserve"><value>Choose a part and press Edit part, or create a new one. Each part has one route. The sum must equal this account’s effective amount exactly. You can explicitly leave amounts pending.</value></data>
+  <data name="Guide.Help.Resource.ReverseSelected" xml:space="preserve"><value>Reverse selected adjustment</value></data>
+  <data name="Guide.Help.Resource.KeepCulture" xml:space="preserve"><value>Confirm keeping the format I started with</value></data>
+  <data name="Guide.Help.Resource.ResetAcknowledged" xml:space="preserve"><value>Reset leaves every account pending and removes its adjustments and routes from the current preparation. History and earlier snapshots are retained. Use this when replacing imports you have already prepared.</value></data>
+  <data name="Resource.PartsRequired" xml:space="preserve"><value>Specify at least one part for this account, even if its amount is zero. If its destination is undecided, choose Pending.</value></data>
 </root>

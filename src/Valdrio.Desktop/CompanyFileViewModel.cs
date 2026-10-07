@@ -68,6 +68,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public IModelWorkspace? ActiveModels => active?.Models;
     public IStudyWorkspace? ActiveStudies => active?.Studies;
     public IImportWorkspace? ActiveImports => active?.Imports;
+    public IResourceWorkspace? ActiveResources => active?.Resources;
     public bool CanWrite => active?.Mode == CompanyFileOpenMode.Edit;
     public bool WorkspaceIdle => !busy && WorkspaceBusy?.Invoke() != true;
     private bool Available => !busy && WorkspaceBusy?.Invoke() != true;

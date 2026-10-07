@@ -1,33 +1,27 @@
-# Prioridad actual: usabilidad (2026-10-07)
-
-El propietario solicita un recorrido explícito e intuitivo, sin perder funciones ni
-entrar en estética. Implementado el recorrido guiado Empresa → Estructura → Estudio
-→ Importación, ayuda contextual ES/EN y guardado con destino visible. Directriz
-permanente: `docs/directrices/USABILIDAD.md`; evidencia: `docs/evidencias/USABILIDAD_RECORRIDO_GUIADO_2026-10-07.md`.
-El cierre depende del recibo Windows y CI del commit final. T07 no se inicia.
-
 # ESTADO_PROYECTO
 
-## Continuación T07: clasificación y edición de borradores — 2026-10-07
+## T07 — implementación completa (2026-10-07)
 
-Sobre `05856b6`, la misma rama incorpora comportamiento contextual fijo/variable/mixto,
-capas económicas independientes, propietario y observaciones de capacidad, avisos y
-bloqueos de clasificación. `ResourceDraftEditor` permite clasificar y dividir partes
-en memoria conservando los originales y rechazando candidatos incoherentes.
-La entrega aún no añade pantalla ni guardado. Continúan pendientes ámbito/revisión,
-auditoría persistida, snapshots e integración T06/T06A. No se cierra T07 ni se aceptan
-políticas económicas pendientes. Ver [alcance vigente](docs/tareas/T07.md).
+Las tres subentregas están implementadas e integradas en la rama existente
+`codex/t07-resource-rules`: ajustes firmados y reversión con Money/FX propios;
+clasificación contextual y partes; asignación directa/pool/exclusión/pendiente
+con conservación por cuenta, auditoría, transacción y reapertura. Empresa v8,
+snapshots v6 y actualización a copia desde v1–v7. Se preservan lectores históricos.
 
-## Rama paralela T07 — 2026-10-07
+El recorrido guiado ahora es Empresa → Estructura → Estudio → Importación → Recursos.
+Recursos guía cuenta → ajustes → partes → revisión y guardado explícito. Incluye
+ayuda ES/EN con ratón/teclado, borradores conservados, historial y revaloración
+manual con conciliación. La usabilidad sigue siendo prioridad; no es una revisión estética.
 
-El propietario autoriza adelantar reglas y pruebas de T07 en una rama independiente.
-`codex/t07-resource-rules`, basada en `d1ff159`, incorpora preparación pura de ajustes
-y particiones, reversión conservando FX y validación por recurso/origen. No contiene
-los cambios en curso de agrupación de T06. T06/T06A siguen siendo dependencias para
-integrar T07; clasificación contextual, persistencia y editor permanecen pendientes.
-Ver [alcance de T07](docs/tareas/T07.md) y su evidencia. Este avance no cierra T07.
+Contrato y límites: [T07](docs/tareas/T07.md). Arquitectura:
+[ADR-0012](docs/adr/ADR-0012-recursos-y-particiones.md). Aceptación reproducible:
+[evidencia T07](docs/evidencias/T07_CIERRE_2026-10-07.md). El recibo Windows del commit
+y los checks del PR acreditan los resultados; la integración en main es posterior.
+Las decisiones económicas propuestas mantienen su estado. Próxima fase funcional:
+T08, sin adelantar repartos, tarifas ni políticas de capacidad.
 
-Fecha de revisión 2026-10-07. Repositorio `JavierRB35/VALDRIO`.
+La autorización completa T07 sustituye los registros anteriores que pedían esperar
+una conversación. Se conserva debajo el historial de T06/T06A y entregas precedentes.
 
 ## T06A — puente internacional implementado (2026-10-07)
 
@@ -38,8 +32,8 @@ Actualización siempre a copia desde v1–v6. Ver docs/adr/ADR-0011-importacion-
  y docs/evidencias/T06A_CIERRE_2026-10-07.md. El recibo Windows y CI verdes del HEAD
 acreditan el cierre final. El catálogo instalado conserva las cuatro monedas de ejemplo.
 
-Siguiente conversación: T07, ajustes/clasificación/particiones. El propietario pide
-comentarlo antes de implementar; T07 no está iniciada. El problema de guardado de
+Registro histórico anterior a la autorización completa de T07: se había solicitado
+comentar ajustes/clasificación/particiones antes de su implementación. El problema de guardado de
 centro/modelo se revisará más adelante por petición expresa; no se declara solucionado.
 
 ## T06 — implementación completa y aceptación del commit final (2026-10-07)
