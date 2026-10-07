@@ -112,7 +112,7 @@
   <data name="CompanyScaleLabel" xml:space="preserve"><value>Decimales permitidos (0–12)</value></data>
   <data name="CompanyDiscreteLabel" xml:space="preserve"><value>Solo admite unidades enteras</value></data>
   <data name="CompanyAddUnit" xml:space="preserve"><value>Guardar unidad de actividad</value></data>
-  <data name="CompanyNotes" xml:space="preserve"><value>Archivo local, un editor. La moneda sugiere la de un futuro estudio; no la fija. Copias y restauración usan rutas nuevas. El catálogo contiene por ahora EUR, USD, JPY y KWD. El cifrado y el cálculo económico están pendientes.</value></data>
+  <data name="CompanyNotes" xml:space="preserve"><value>Archivo local, un editor. La moneda sugiere la de un futuro análisis de costes; no la fija. Copias y restauración usan rutas nuevas. El catálogo contiene por ahora EUR, USD, JPY y KWD. El cifrado y el cálculo económico están pendientes.</value></data>
   <data name="CompanyNoFile" xml:space="preserve"><value>No hay archivo de empresa abierto.</value></data>
   <data name="CompanyWorking" xml:space="preserve"><value>Operación en curso. Cancelar tiene efecto antes de la confirmación.</value></data>
   <data name="CompanyCompleted" xml:space="preserve"><value>Operación completada.</value></data>
@@ -149,23 +149,23 @@ Archivo: {8}</value></data>
   <data name="Model.CenterInvalid" xml:space="preserve"><value>Indique código y nombre del centro; la revisión debe ser válida.</value></data>
   <data name="Model.NodeInvalid" xml:space="preserve"><value>El nodo requiere código y un papel válido. Si indicas funciones, cada una debe tener texto y no puede repetirse.</value></data>
   <data name="Model.PoolInvalid" xml:space="preserve"><value>El pool requiere unidad válida, clasificación y política de capacidad pendiente.</value></data>
-  <data name="Model.StructureInvalid" xml:space="preserve"><value>La identidad, descripción o referencia de política del modelo está incompleta.</value></data>
-  <data name="Model.ScopeInvalid" xml:space="preserve"><value>La referencia pertenece a otra empresa o versión de modelo.</value></data>
+  <data name="Model.StructureInvalid" xml:space="preserve"><value>La identidad, descripción o referencia de política de la estructura está incompleta.</value></data>
+  <data name="Model.ScopeInvalid" xml:space="preserve"><value>La referencia pertenece a otra empresa o versión de estructura.</value></data>
   <data name="Model.Duplicate" xml:space="preserve"><value>Ya existe un código, identificador o pool para ese nodo en este ámbito.</value></data>
-  <data name="Model.PrincipalRequired" xml:space="preserve"><value>Añada al menos un nodo principal activo antes de publicar.</value></data>
+  <data name="Model.PrincipalRequired" xml:space="preserve"><value>Añade al menos un nodo principal activo antes de finalizar la estructura.</value></data>
   <data name="Model.CenterUnavailable" xml:space="preserve"><value>El centro físico no existe, pertenece a otro ámbito o está inactivo.</value></data>
   <data name="Model.PoolRequired" xml:space="preserve"><value>Cada nodo activo requiere exactamente un pool homogéneo.</value></data>
   <data name="Model.DriverUnavailable" xml:space="preserve"><value>La unidad de actividad no existe, pertenece a otro ámbito o está inactiva.</value></data>
   <data name="Model.SnapshotInvalid" xml:space="preserve"><value>La estructura congelada no contiene las definiciones necesarias.</value></data>
   <data name="Model.RevisionChanged" xml:space="preserve"><value>Los datos han cambiado desde su lectura. Recargue antes de guardar.</value></data>
   <data name="Model.PublishedImmutable" xml:space="preserve"><value>Una estructura finalizada no se modifica, para que los análisis históricos sigan siendo reproducibles. Crea una nueva versión editable si necesitas cambiarla.</value></data>
-  <data name="Model.NotFound" xml:space="preserve"><value>No se encontró el modelo en esta empresa.</value></data>
+  <data name="Model.NotFound" xml:space="preserve"><value>No se encontró la estructura de costes en esta empresa.</value></data>
   <data name="Model.ActorRequired" xml:space="preserve"><value>Se necesita identificar al autor del cambio.</value></data>
-  <data name="Model.ParentNotPublished" xml:space="preserve"><value>Solo se puede duplicar un modelo publicado.</value></data>
+  <data name="Model.ParentNotPublished" xml:space="preserve"><value>Solo se puede crear una nueva versión desde una estructura ya finalizada.</value></data>
   <data name="Model.RequestConflict" xml:space="preserve"><value>El identificador de esta solicitud de duplicación ya se utilizó para otra operación.</value></data>
   <data name="Model.InputInvalid" xml:space="preserve"><value>Completa código, centro, tipo de nodo y unidad de actividad. Revisa la operación indicada.</value></data>
-  <data name="Model.NoFile" xml:space="preserve"><value>Abra un archivo de empresa para configurar centros y modelos.</value></data>
-  <data name="Model.NoneSelected" xml:space="preserve"><value>No hay un modelo cargado. Seleccione uno y pulse Cargar, o escriba una descripción y cree un borrador.</value></data>
+  <data name="Model.NoFile" xml:space="preserve"><value>Abre un archivo de empresa para configurar centros y estructuras de costes.</value></data>
+  <data name="Model.NoneSelected" xml:space="preserve"><value>No hay una estructura cargada. Selecciona una existente y pulsa Abrir, o escribe un nombre y crea una estructura nueva.</value></data>
   <data name="Model.Details" xml:space="preserve"><value>{0} · {1} · versión {2} · revisión {3}
 Origen: {4} · publicado: {5}
 SHA-256 estructural: {6} · {7}</value></data>
@@ -213,21 +213,21 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.Working" xml:space="preserve"><value>Procesando…</value></data>
   <data name="Model.Completed" xml:space="preserve"><value>Operación completada.</value></data>
   <data name="Model.ValidStructure" xml:space="preserve"><value>Estructura válida. La preparación económica sigue pendiente.</value></data>
-  <data name="Model.PendingTitle" xml:space="preserve"><value>Cambios del modelo sin guardar</value></data>
-  <data name="Model.PendingBody" xml:space="preserve"><value>Hay cambios pendientes en el centro, nodo o modelo. Sí = Guardar; No = Descartar; Cancelar = permanecer aquí.</value></data>
-  <data name="Study.NameRequired" xml:space="preserve"><value>Introduce un nombre para el estudio.</value></data>
+  <data name="Model.PendingTitle" xml:space="preserve"><value>Cambios de la estructura sin guardar</value></data>
+  <data name="Model.PendingBody" xml:space="preserve"><value>Hay cambios pendientes en el centro, nodo o estructura. Sí = Guardar; No = Descartar; Cancelar = permanecer aquí.</value></data>
+  <data name="Study.NameRequired" xml:space="preserve"><value>Introduce un nombre para el análisis.</value></data>
   <data name="Study.PeriodInvalid" xml:space="preserve"><value>El inicio del periodo no puede ser posterior al final.</value></data>
   <data name="Study.PurposeUnsupported" xml:space="preserve"><value>Esta edición admite costes de gestión. La valoración de existencias requiere su propia política.</value></data>
   <data name="Study.CurrencyInvalid" xml:space="preserve"><value>Selecciona una moneda válida para todo el periodo.</value></data>
-  <data name="Study.ContextInvalid" xml:space="preserve"><value>El contexto o el estado del estudio no es válido.</value></data>
+  <data name="Study.ContextInvalid" xml:space="preserve"><value>El contexto o el estado del análisis no es válido.</value></data>
   <data name="Study.ModuleNotAvailable" xml:space="preserve"><value>Los recursos, el cambio aplicado, la duplicación de escenarios y el cálculo se entregan en fases posteriores.</value></data>
-  <data name="Study.RevisionChanged" xml:space="preserve"><value>El estudio ha cambiado. Vuelve a cargarlo antes de guardar o capturar.</value></data>
+  <data name="Study.RevisionChanged" xml:space="preserve"><value>El análisis ha cambiado. Vuelve a cargarlo antes de guardar o capturar.</value></data>
   <data name="Study.SnapshotSchemaUnsupported" xml:space="preserve"><value>El formato de la instantánea no es compatible.</value></data>
   <data name="Study.SnapshotInvalid" xml:space="preserve"><value>La instantánea está incompleta o es incoherente.</value></data>
-  <data name="Study.NotFound" xml:space="preserve"><value>El estudio no pertenece al archivo de empresa activo.</value></data>
-  <data name="Study.ModelNotPublished" xml:space="preserve"><value>Selecciona un modelo publicado de esta empresa.</value></data>
+  <data name="Study.NotFound" xml:space="preserve"><value>El análisis no pertenece al archivo de empresa activo.</value></data>
+  <data name="Study.ModelNotPublished" xml:space="preserve"><value>Selecciona una estructura de costes finalizada de esta empresa.</value></data>
   <data name="Study.RequestReused" xml:space="preserve"><value>Este identificador de solicitud ya se usó con otros datos.</value></data>
-  <data name="Study.ClosedDiagnostic" xml:space="preserve"><value>El estudio está cerrado. Ábrelo para cambiar su contexto.</value></data>
+  <data name="Study.ClosedDiagnostic" xml:space="preserve"><value>El análisis está cerrado. Reábrelo para cambiar su contexto.</value></data>
   <data name="Study.PolicyPending" xml:space="preserve"><value>Las políticas de reparto y capacidad requieren aprobación e implementación.</value></data>
   <data name="Study.ResourcesPending" xml:space="preserve"><value>Los recursos contables aún no se han importado.</value></data>
   <data name="Study.ActivityPending" xml:space="preserve"><value>Aún faltan las observaciones de actividad y capacidad.</value></data>
@@ -254,15 +254,14 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Study.Actual" xml:space="preserve"><value>Real</value></data>
   <data name="Study.Budget" xml:space="preserve"><value>Presupuesto</value></data>
   <data name="Study.WhatIf" xml:space="preserve"><value>Simulación</value></data>
-  <data name="Study.NoFile" xml:space="preserve"><value>Abre un archivo de empresa para trabajar con estudios.</value></data>
-  <data name="Study.NoneSelected" xml:space="preserve"><value>No hay un estudio seleccionado. Crea o carga uno.</value></data>
+  <data name="Study.NoFile" xml:space="preserve"><value>Abre un archivo de empresa para trabajar con análisis de costes.</value></data>
+  <data name="Study.NoneSelected" xml:space="preserve"><value>No hay un análisis seleccionado. Crea o abre uno.</value></data>
   <data name="Study.NoSnapshot" xml:space="preserve"><value>No hay una instantánea seleccionada.</value></data>
   <data name="Study.Working" xml:space="preserve"><value>Procesando…</value></data>
   <data name="Study.Completed" xml:space="preserve"><value>Operación completada.</value></data>
   <data name="Study.RunHistoryEmpty" xml:space="preserve"><value>Ejecuciones: ninguna. El cálculo de costes se entrega en una fase posterior.</value></data>
   <data name="Study.Details" xml:space="preserve"><value>{0} · {1}–{2} · {3} · {4}
-Revisión {5} · {6} · modelo {7}
-{8}</value></data>
+Revisión {5} · {6} · estructura {7}</value></data>
   <data name="Study.SnapshotDetails" xml:space="preserve"><value>Instantánea {0} · revisión de entrada {1} · {2}
 Capturada {3}
 Económica: {4}
@@ -270,8 +269,8 @@ Completa: {5}</value></data>
   <data name="Study.CurrentRevision" xml:space="preserve"><value>Revisión de entrada vigente</value></data>
   <data name="Study.HistoricalRevision" xml:space="preserve"><value>Revisión de entrada histórica</value></data>
   <data name="Study.ContextCaptured" xml:space="preserve"><value>Contexto capturado; la preparación sigue pendiente.</value></data>
-  <data name="Study.PrepareFirst" xml:space="preserve"><value>Guarda el estudio y captura sus datos para ver los diagnósticos de preparación.</value></data>
-  <data name="Study.PendingTitle" xml:space="preserve"><value>Contexto del estudio sin guardar</value></data>
+  <data name="Study.PrepareFirst" xml:space="preserve"><value>Guarda el análisis y captura sus datos para ver los diagnósticos de preparación.</value></data>
+  <data name="Study.PendingTitle" xml:space="preserve"><value>Cambios del análisis sin guardar</value></data>
   <data name="Study.PendingBody" xml:space="preserve"><value>¿Guardar los cambios antes de continuar? Sí guarda, No descarta y Cancelar permite seguir editando.</value></data>
   <data name="Study.DatesRequired" xml:space="preserve"><value>Selecciona las dos fechas del periodo en el calendario.</value></data>
   <data name="Import.AmbiguousFormat" xml:space="preserve"><value>El formato de origen es ambiguo. Selecciona un perfil de importación explícito.</value></data>
@@ -409,10 +408,10 @@ Completa: {5}</value></data>
   <data name="Study.ChooseModelHelp" xml:space="preserve"><value>Elige la estructura de costes finalizada que se aplicará a este análisis. Esa versión quedará vinculada al análisis para conservar la trazabilidad.</value></data>
   <data name="Study.GoToModels" xml:space="preserve"><value>Ir a Estructura de costes</value></data>
   <data name="Study.CreationHelp" xml:space="preserve"><value>Pon un nombre reconocible al análisis, elige la estructura de costes, el periodo y la moneda. Después guarda el análisis para importar los datos de ese periodo.</value></data>
-  <data name="Study.PreviewHelp" xml:space="preserve"><value>El recorrido guiado guarda primero el estudio. La revisión sin estudio es opcional y no permite guardar importaciones.</value></data>
-  <data name="Study.NoStudiesYet" xml:space="preserve"><value>Todavía no hay estudios guardados. Completa el formulario inferior para guardar el primero.</value></data>
+  <data name="Study.PreviewHelp" xml:space="preserve"><value>El recorrido guiado guarda primero el análisis. Revisar un archivo sin análisis es opcional y no permite guardar importaciones.</value></data>
+  <data name="Study.NoStudiesYet" xml:space="preserve"><value>Todavía no hay análisis guardados. Completa el formulario para guardar el primero.</value></data>
   <data name="Study.NoModelsHelp" xml:space="preserve"><value>No hay ninguna estructura de costes finalizada disponible. Ve a Estructura de costes, completa una versión y pulsa «Finalizar estructura para usarla». Después vuelve aquí y actualiza la lista.</value></data>
-  <data name="Study.ImportHelp" xml:space="preserve"><value>Continúa a Importación para elegir el archivo, revisar los registros y guardarlos en este estudio.</value></data>
+  <data name="Study.ImportHelp" xml:space="preserve"><value>Continúa a Importación para elegir un archivo, revisar registros y guardarlos dentro de este análisis.</value></data>
   <data name="Study.SavedHelp" xml:space="preserve"><value>El análisis se guarda dentro del archivo de empresa. Reúne el periodo, la estructura elegida y los datos que importes o prepares para calcular costes.</value></data>
   <data name="ImportMapping.SelectionOverflow" xml:space="preserve"><value>No se pueden representar los totales de esta selección: se ha superado el límite numérico. Revisa los importes del origen.</value></data>
   <data name="ImportMapping.SelectionPreviewHelp" xml:space="preserve"><value>Sumas por código, actualizadas al marcar registros. Importes del origen, sin conversión de moneda. Esta revisión no guarda datos; Preparar importación comprobará también el periodo, la moneda y los límites del estudio.</value></data>
@@ -469,7 +468,7 @@ Completa: {5}</value></data>
   <data name="ImportMapping.CurrencyTotals" xml:space="preserve"><value>Original {0}: positivos {1}; negativos {2}; neto {3}</value></data>
   <data name="ImportMapping.FunctionalTotal" xml:space="preserve"><value>Total funcional: {0} {1}. Ajuste de redondeo de conversión: {2} {1}.</value></data>
   <data name="Guide.Company" xml:space="preserve"><value>1. Empresa</value></data>
-  <data name="Guide.Model" xml:space="preserve"><value>2. Estructura</value></data>
+  <data name="Guide.Model" xml:space="preserve"><value>2. Estructura de costes</value></data>
   <data name="Guide.Study" xml:space="preserve"><value>3. Análisis de costes</value></data>
   <data name="Guide.Import" xml:space="preserve"><value>4. Importación</value></data>
   <data name="Guide.Settings" xml:space="preserve"><value>Preferencias y herramientas</value></data>
@@ -478,19 +477,19 @@ Completa: {5}</value></data>
   <data name="Guide.SaveAndImport" xml:space="preserve"><value>Guardar análisis y continuar a la importación</value></data>
   <data name="Guide.OpenImport" xml:space="preserve"><value>Importar Excel o CSV en este estudio</value></data>
   <data name="Guide.Preview" xml:space="preserve"><value>Solo revisar un archivo (sin guardarlo en un estudio)</value></data>
-  <data name="Guide.NeedCompany" xml:space="preserve"><value>Primero crea o abre un archivo de empresa. Todos los modelos, estudios e importaciones se guardarán dentro de ese archivo.</value></data>
-  <data name="Guide.CompanyReady" xml:space="preserve"><value>Empresa abierta. Continúa a Estructura para crear o elegir el modelo que utilizará el estudio.</value></data>
-  <data name="Guide.NeedDraft" xml:space="preserve"><value>Escribe el nombre de la estructura y pulsa Crear modelo nuevo, o selecciona una versión existente y cárgala.</value></data>
+  <data name="Guide.NeedCompany" xml:space="preserve"><value>Primero crea o abre un archivo de empresa. Las estructuras de costes, los análisis y las importaciones se guardarán dentro de ese archivo.</value></data>
+  <data name="Guide.CompanyReady" xml:space="preserve"><value>Empresa abierta. Continúa a Estructura de costes para definir cómo se repartirán los costes.</value></data>
+  <data name="Guide.NeedDraft" xml:space="preserve"><value>Pon un nombre a la estructura y crea una nueva, o selecciona y abre una versión existente.</value></data>
   <data name="Guide.NeedCenter" xml:space="preserve"><value>Crea o activa al menos un centro físico en Centros. Identifica el lugar o departamento donde se realiza la actividad.</value></data>
   <data name="Guide.NeedUnit" xml:space="preserve"><value>Aún no hay una unidad de actividad disponible. Puedes crearla aquí o continuar a Nodos y crearla allí mismo cuando el nodo la necesite.</value></data>
-  <data name="Guide.NeedNodeCode" xml:space="preserve"><value>Completa el código del nodo que estás editando. Es su identificador dentro de este modelo.</value></data>
+  <data name="Guide.NeedNodeCode" xml:space="preserve"><value>Introduce el código del nodo que estás editando. Lo identifica dentro de esta estructura.</value></data>
   <data name="Guide.NeedNodeCenter" xml:space="preserve"><value>Selecciona el centro físico al que pertenece este nodo. Puedes crear centros en el paso Centros.</value></data>
   <data name="Guide.NeedNodeUnit" xml:space="preserve"><value>Selecciona la unidad de actividad del nodo. Si no existe la que necesitas, créala aquí mismo con «Crear una aquí».</value></data>
   <data name="Guide.ApplyNode" xml:space="preserve"><value>Completa los datos del nodo y pulsa Guardar nodo. VALDRIO guardará el borrador y limpiará el formulario para que puedas añadir el siguiente.</value></data>
-  <data name="Guide.NeedPrincipal" xml:space="preserve"><value>El modelo necesita al menos un nodo activo con papel Principal. Los auxiliares pueden coexistir. Elige el papel según tu metodología, no solo para superar este paso.</value></data>
-  <data name="Guide.SaveModel" xml:space="preserve"><value>Hay cambios pendientes. Guarda el borrador antes de comprobar y publicar el modelo.</value></data>
-  <data name="Guide.PublishModel" xml:space="preserve"><value>Borrador guardado. Comprueba y publica el modelo para que esté disponible al crear el estudio. Publicar fija esta versión; no calcula costes.</value></data>
-  <data name="Guide.ModelComplete" xml:space="preserve"><value>Estructura publicada. Ya puedes continuar al estudio. Para modificarla, crea una copia como borrador.</value></data>
+  <data name="Guide.NeedPrincipal" xml:space="preserve"><value>La estructura necesita al menos un nodo Principal activo. Los nodos auxiliares pueden coexistir. Elige el tipo según tu metodología.</value></data>
+  <data name="Guide.SaveModel" xml:space="preserve"><value>Hay cambios pendientes. Guarda la estructura antes de comprobarla y finalizarla.</value></data>
+  <data name="Guide.PublishModel" xml:space="preserve"><value>La estructura está guardada. Compruébala y finaliza esta versión para dejarla disponible en los análisis. Finalizar no calcula costes ni publica nada fuera de VALDRIO.</value></data>
+  <data name="Guide.ModelComplete" xml:space="preserve"><value>Estructura finalizada y lista para usar. Puedes continuar al análisis de costes. Si necesitas modificarla, crea una nueva versión editable.</value></data>
   <data name="Guide.NeedPublished" xml:space="preserve"><value>Falta una estructura de costes lista para usar. Vuelve al paso 2, completa la estructura y finaliza esa versión. Al volver aquí se actualizará la lista.</value></data>
   <data name="Guide.NeedStudyName" xml:space="preserve"><value>Escribe un nombre para reconocer este análisis, por ejemplo «Costes octubre 2026».</value></data>
   <data name="Guide.NeedStudyModel" xml:space="preserve"><value>Selecciona la estructura de costes finalizada que quieres aplicar a este análisis.</value></data>
@@ -499,7 +498,7 @@ Completa: {5}</value></data>
   <data name="Guide.ClosedStudy" xml:space="preserve"><value>Este análisis está cerrado. Reábrelo para importar nuevos datos o crea otro análisis.</value></data>
   <data name="Guide.SaveStudy" xml:space="preserve"><value>Pulsa Guardar análisis y continuar. Se guardará dentro del archivo de empresa abierto y pasarás a importar los datos del periodo.</value></data>
   <data name="Guide.StudyComplete" xml:space="preserve"><value>Análisis guardado. Ya puedes importar el Excel o CSV del periodo. El último paso de la importación guardará los registros seleccionados dentro de este análisis.</value></data>
-  <data name="Guide.PreviewOnly" xml:space="preserve"><value>Modo de revisión: puedes leer y seleccionar registros, pero no guardar una importación. Para guardar, utiliza el recorrido Empresa → Estructura → Estudio → Importación. Tu selección se conserva al cerrar esta ventana.</value></data>
+  <data name="Guide.PreviewOnly" xml:space="preserve"><value>Modo de revisión: puedes leer y seleccionar registros, pero no guardar una importación. Para guardar, sigue Empresa → Estructura de costes → Análisis de costes → Importación.</value></data>
   <data name="Guide.NeedMapping" xml:space="preserve"><value>Selecciona las columnas y comprueba la interpretación de los números antes de continuar.</value></data>
   <data name="Guide.NeedRecords" xml:space="preserve"><value>Selecciona al menos un registro. Puedes marcar todos y desmarcar los que quieras excluir.</value></data>
   <data name="Guide.NeedMeaning" xml:space="preserve"><value>Elige explícitamente qué representan los importes: movimientos del periodo, saldo íntegro al cierre o diferencia entre acumulados.</value></data>
@@ -527,7 +526,7 @@ Completa: {5}</value></data>
   <data name="Guide.MastersTab" xml:space="preserve"><value>2. Centros</value></data>
   <data name="Guide.NodesTab" xml:space="preserve"><value>3. Nodos de cálculo</value></data>
   <data name="Guide.PublishTab" xml:space="preserve"><value>4. Revisar y finalizar</value></data>
-  <data name="Guide.PublishNext" xml:space="preserve"><value>Guardar, validar y publicar estructura</value></data>
+  <data name="Guide.PublishNext" xml:space="preserve"><value>Guardar, comprobar y finalizar estructura</value></data>
   <data name="Guide.MasterHelp" xml:space="preserve"><value>Define primero los centros físicos u organizativos. Las unidades de actividad no tienes que decidirlas por adelantado: puedes crearlas aquí si ya las conoces o directamente dentro del nodo cuando las necesites.</value></data>
   <data name="Guide.NodesHelp" xml:space="preserve"><value>Un nodo es una unidad de cálculo dentro de un centro. Selecciona el centro, su papel y la unidad de actividad. Al pulsar Guardar nodo, VALDRIO guarda inmediatamente el borrador y el nodo aparece en la tabla.</value></data>
   <data name="Guide.HelpHint" xml:space="preserve"><value>Ayuda: sitúa el cursor sobre un campo o selecciónalo con Tab para ver su explicación aquí.</value></data>
@@ -542,10 +541,10 @@ Completa: {5}</value></data>
   <data name="Guide.Help.CenterCode" xml:space="preserve"><value>Código único del centro físico u organizativo, por ejemplo ADM01.</value></data>
   <data name="Guide.Help.CenterName" xml:space="preserve"><value>Nombre comprensible del centro, por ejemplo Administración. No determina automáticamente su papel en el reparto.</value></data>
   <data name="Guide.Help.Master" xml:space="preserve"><value>Selecciona un centro existente para consultar o modificar sus datos. Crear centro utiliza el código y nombre escritos.</value></data>
-  <data name="Guide.Help.ModelChoice" xml:space="preserve"><value>Versión del modelo. Cargar selección abre esa versión; publicar fija su estructura para utilizarla en estudios.</value></data>
-  <data name="Guide.Help.Description" xml:space="preserve"><value>Nombre de la estructura de costes. Crear modelo nuevo inicia un borrador; no crea un estudio.</value></data>
+  <data name="Guide.Help.ModelChoice" xml:space="preserve"><value>Versión de la estructura de costes. Abrir selección carga esa versión; finalizarla la deja fija y disponible para análisis.</value></data>
+  <data name="Guide.Help.Description" xml:space="preserve"><value>Nombre de la estructura de costes. Crear estructura nueva inicia una versión editable; todavía no crea un análisis.</value></data>
   <data name="Guide.Help.SelectedNode" xml:space="preserve"><value>Selecciona un nodo ya añadido para editarlo. Para otro nodo usa Limpiar formulario / nuevo nodo.</value></data>
-  <data name="Guide.Help.NodeCode" xml:space="preserve"><value>Código único del nodo dentro de este modelo. Puede pertenecer a un centro que tenga otros nodos.</value></data>
+  <data name="Guide.Help.NodeCode" xml:space="preserve"><value>Código único del nodo dentro de esta estructura. Un centro puede contener varios nodos.</value></data>
   <data name="Guide.Help.Physical" xml:space="preserve"><value>Centro al que pertenece el nodo. Si no existe, créalo en el paso Centros.</value></data>
   <data name="Guide.Help.Role" xml:space="preserve"><value>Principal o Auxiliar según la metodología del modelo. Es independiente de las funciones y de la clasificación del coste. Se exige al menos un Principal activo.</value></data>
   <data name="Guide.Help.FunctionTags" xml:space="preserve"><value>Etiquetas opcionales para describir las funciones del nodo, separadas por comas. No asignan reglas de cálculo.</value></data>
@@ -553,11 +552,11 @@ Completa: {5}</value></data>
   <data name="Guide.Help.Layer" xml:space="preserve"><value>Clasificación del coste para este pool. No establece todavía una política de cálculo. No se deduce de la cuenta.</value></data>
   <data name="Guide.Help.PoolDescription" xml:space="preserve"><value>Descripción opcional del conjunto de costes asociado a este nodo.</value></data>
   <data name="Guide.Help.UnitMaster" xml:space="preserve"><value>Selecciona la unidad cuyo estado quieres activar o desactivar. Esto no crea una unidad nueva.</value></data>
-  <data name="Guide.Help.Name" xml:space="preserve"><value>Nombre con el que identificarás el estudio al volver a abrir la empresa.</value></data>
+  <data name="Guide.Help.Name" xml:space="preserve"><value>Nombre que identifica este análisis cuando vuelvas a abrir la empresa.</value></data>
   <data name="Guide.Help.PeriodStart" xml:space="preserve"><value>Primer día incluido en el periodo del estudio. Selecciónalo en el calendario.</value></data>
   <data name="Guide.Help.PeriodEnd" xml:space="preserve"><value>Último día incluido. Para saldos al cierre, es la fecha que representan los saldos importados.</value></data>
   <data name="Guide.Help.Scenario" xml:space="preserve"><value>Distingue datos reales, presupuesto o simulación. No cambia por sí solo los importes importados.</value></data>
-  <data name="Guide.Help.StudyChoice" xml:space="preserve"><value>Elige un estudio guardado y pulsa Cargar estudio para trabajar en él.</value></data>
+  <data name="Guide.Help.StudyChoice" xml:space="preserve"><value>Elige un análisis guardado y pulsa Abrir análisis para trabajar con él.</value></data>
   <data name="Guide.Help.SnapshotChoice" xml:space="preserve"><value>Una instantánea conserva los datos y el contexto de un momento. No es el botón para guardar una importación.</value></data>
   <data name="Guide.Help.Worksheet" xml:space="preserve"><value>Hoja del Excel que contiene las cuentas y los importes.</value></data>
   <data name="Guide.Help.HeaderRow" xml:space="preserve"><value>Número de fila con los títulos de las columnas, por ejemplo 1.</value></data>
@@ -596,8 +595,8 @@ Completa: {5}</value></data>
   <data name="Guide.Help.Records" xml:space="preserve"><value>Marca o desmarca las filas que incorporarás. Puedes seleccionar todas, ninguna o excluir solo algunas.</value></data>
   <data name="Guide.Help.RateSelections" xml:space="preserve"><value>Escribe el identificador del tipo elegido para cada registro incluido que requiera conversión.</value></data>
   <data name="Guide.MeaningChosen" xml:space="preserve"><value>He elegido el significado de los importes indicado arriba.</value></data>
-  <data name="Guide.OtherStudy" xml:space="preserve"><value>Otras operaciones: nuevo estudio, cierre e instantáneas</value></data>
-  <data name="Guide.OtherModel" xml:space="preserve"><value>Operaciones individuales y mantenimiento del modelo</value></data>
+  <data name="Guide.OtherStudy" xml:space="preserve"><value>Otras operaciones: nuevo análisis, cierre y puntos de control</value></data>
+  <data name="Guide.OtherModel" xml:space="preserve"><value>Otras operaciones de la estructura de costes</value></data>
   <data name="Guide.OtherFile" xml:space="preserve"><value>Copias, restauración y actualización de archivos</value></data>
   <data name="Guide.Help.SelectedUiLanguageTag" xml:space="preserve"><value>Idioma de los textos de la aplicación. No cambia los datos guardados.</value></data>
   <data name="Guide.Help.SelectedFormatCultureTag" xml:space="preserve"><value>Región utilizada para mostrar números y fechas. El formato del archivo importado se elige por separado.</value></data>
@@ -615,7 +614,7 @@ Completa: {5}</value></data>
   <data name="Guide.PublishContinue" xml:space="preserve"><value>Guardar, finalizar estructura y continuar al análisis</value></data>
   <data name="Guide.ContinueStudy" xml:space="preserve"><value>Continuar al análisis</value></data>
   <data name="Guide.ContinueImport" xml:space="preserve"><value>Continuar a la importación</value></data>
-  <data name="Guide.Help.StudyModelChoice" xml:space="preserve"><value>Selecciona la estructura publicada que utilizará este estudio. Se vincula al guardar el estudio; no necesitas pulsar otro botón para cargarla.</value></data>
+  <data name="Guide.Help.StudyModelChoice" xml:space="preserve"><value>Elige la estructura finalizada que utilizará este análisis. Queda vinculada al guardar el análisis; no necesitas cargarla por separado.</value></data>
   <data name="ImportMapping.ReviewChanged" xml:space="preserve"><value>La revisión actual ha cambiado. Vuelve a prepararla y comprobarla antes de guardar; los lotes ya guardados permanecen en el estudio.</value></data>
   <data name="Guide.ReadOnlyAction" xml:space="preserve"><value>Archivo de empresa de solo lectura</value></data>
 <data name="Resource.PartitionMismatch" xml:space="preserve"><value>El recurso {0} tiene una diferencia de partición de {1}.</value></data>
@@ -864,8 +863,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resource.PartsRequired" xml:space="preserve"><value>Indica al menos una parte para esta cuenta, aunque su importe sea cero. Si falta decidir su destino, elige Pendiente.</value></data>
   <data name="Resources.RevalueFinishAccount" xml:space="preserve"><value>Conservamos la cuenta que estabas editando. Completa sus partes y pulsa Conservar partes antes de revisar otra cuenta de esta revaloración.</value></data>
   <data name="Model.ModelStepHelp" xml:space="preserve"><value>La estructura de costes define cómo se organiza el reparto: centros, nodos, unidades y reglas. Puedes reutilizar la misma estructura en muchos análisis. Cuando esté terminada, finalízala para dejar esa versión disponible y protegida frente a cambios.</value></data>
-  <data name="Model.ExistingModelHelp" xml:space="preserve"><value>Abrir un modelo existente</value></data>
-  <data name="Model.NewModelHelp" xml:space="preserve"><value>Crear un modelo nuevo</value></data>
+  <data name="Model.ExistingModelHelp" xml:space="preserve"><value>Abrir una estructura existente</value></data>
+  <data name="Model.NewModelHelp" xml:space="preserve"><value>Crear una estructura nueva</value></data>
   <data name="Model.UnitSectionHelp" xml:space="preserve"><value>Las unidades de actividad indican cómo se medirá el trabajo de los nodos, por ejemplo horas, lotes o unidades. Puedes crearlas aquí como catálogo reutilizable, pero no es obligatorio hacerlo por adelantado: también podrás crear una nueva directamente al configurar un nodo.</value></data>
   <data name="Model.ReviewModelHelp" xml:space="preserve"><value>Revisa la estructura. Guardar conserva el trabajo en preparación; Comprobar detecta incoherencias; Finalizar crea una versión fija y lista para usar en análisis. No se envía ni publica nada fuera de VALDRIO.</value></data>
   <data name="Model.CenterSectionHelp" xml:space="preserve"><value>Un centro físico representa un área reconocible de la empresa, como Prensa, Mantenimiento o Administración. Añade los centros uno a uno; los ya guardados permanecen visibles en la tabla.</value></data>
@@ -883,7 +882,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.CenterSaved" xml:space="preserve"><value>Cambios del centro guardados correctamente.</value></data>
   <data name="Model.CenterStateChanged" xml:space="preserve"><value>Estado del centro actualizado correctamente.</value></data>
   <data name="Model.NodeSectionHelp" xml:space="preserve"><value>Cada nodo pertenece a un centro y representa una unidad de cálculo. Indica primero los datos esenciales; los datos menos habituales quedan agrupados aparte.</value></data>
-  <data name="Model.NodeListTitle" xml:space="preserve"><value>Nodos del modelo</value></data>
+  <data name="Model.NodeListTitle" xml:space="preserve"><value>Nodos de la estructura</value></data>
   <data name="Model.NodeListHelp" xml:space="preserve"><value>La tabla muestra todos los nodos ya guardados en este borrador. Selecciona una fila para editarla o eliminarla. Mientras tengas cambios en el formulario, guárdalos o pulsa Nuevo nodo antes de seleccionar otra fila.</value></data>
   <data name="Model.NodeFormNew" xml:space="preserve"><value>Añadir nodo</value></data>
   <data name="Model.NodeFormEdit" xml:space="preserve"><value>Editar nodo seleccionado</value></data>
@@ -891,7 +890,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.NodeSaveEdit" xml:space="preserve"><value>Guardar cambios</value></data>
   <data name="Model.NodeSaved" xml:space="preserve"><value>Nodo guardado correctamente. El formulario está listo para añadir el siguiente.</value></data>
   <data name="Model.NodeRemoved" xml:space="preserve"><value>Nodo eliminado del borrador y cambios guardados correctamente.</value></data>
-  <data name="Model.NodePersistenceHelp" xml:space="preserve"><value>Guardar nodo actualiza inmediatamente el borrador del modelo en el archivo. No necesitas realizar un segundo guardado para conservar ese nodo.</value></data>
+  <data name="Model.NodePersistenceHelp" xml:space="preserve"><value>Guardar un nodo actualiza inmediatamente la estructura en preparación dentro del archivo. No necesitas un segundo guardado para conservar ese nodo.</value></data>
   <data name="Model.OptionalNodeData" xml:space="preserve"><value>Datos adicionales</value></data>
   <data name="Model.FunctionHelp" xml:space="preserve"><value>Las funciones son opcionales y describen para qué se utiliza el nodo. Si añades varias, sepáralas con comas y no repitas nombres, por ejemplo: producción, mantenimiento.</value></data>
   <data name="Model.ColumnCode" xml:space="preserve"><value>Código</value></data>
