@@ -878,13 +878,13 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.CenterSaveEdit" xml:space="preserve"><value>Guardar cambios</value></data>
   <data name="Model.CenterDeactivate" xml:space="preserve"><value>Desactivar centro</value></data>
   <data name="Model.CenterReactivate" xml:space="preserve"><value>Reactivar centro</value></data>
-  <data name="Model.CenterStateHelp" xml:space="preserve"><value>Los centros usados históricamente no se borran físicamente. Puedes desactivarlos para que dejen de estar disponibles y reactivarlos cuando sea necesario.</value></data>
+  <data name="Model.CenterStateHelp" xml:space="preserve"><value>Los centros usados históricamente no se borran físicamente. Puedes desactivarlos para que dejen de estar disponibles y reactivarlos cuando sea necesario. Si has editado código o nombre, guarda primero esos cambios.</value></data>
   <data name="Model.CenterCreated" xml:space="preserve"><value>Centro guardado correctamente. El formulario está listo para añadir el siguiente.</value></data>
   <data name="Model.CenterSaved" xml:space="preserve"><value>Cambios del centro guardados correctamente.</value></data>
   <data name="Model.CenterStateChanged" xml:space="preserve"><value>Estado del centro actualizado correctamente.</value></data>
   <data name="Model.NodeSectionHelp" xml:space="preserve"><value>Cada nodo pertenece a un centro y representa una unidad de cálculo. Indica primero los datos esenciales; los datos menos habituales quedan agrupados aparte.</value></data>
   <data name="Model.NodeListTitle" xml:space="preserve"><value>Nodos del modelo</value></data>
-  <data name="Model.NodeListHelp" xml:space="preserve"><value>La tabla muestra todos los nodos ya guardados en este borrador. Selecciona una fila para editarla o eliminarla.</value></data>
+  <data name="Model.NodeListHelp" xml:space="preserve"><value>La tabla muestra todos los nodos ya guardados en este borrador. Selecciona una fila para editarla o eliminarla. Mientras tengas cambios en el formulario, guárdalos o pulsa Nuevo nodo antes de seleccionar otra fila.</value></data>
   <data name="Model.NodeFormNew" xml:space="preserve"><value>Añadir nodo</value></data>
   <data name="Model.NodeFormEdit" xml:space="preserve"><value>Editar nodo seleccionado</value></data>
   <data name="Model.NodeSaveCreate" xml:space="preserve"><value>Guardar nodo</value></data>
