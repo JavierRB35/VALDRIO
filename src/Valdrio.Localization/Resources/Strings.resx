@@ -481,11 +481,11 @@ Full: {5}</value></data>
   <data name="Guide.NeedCompany" xml:space="preserve"><value>First create or open a company file. Models, studies and imports will be saved inside that file.</value></data>
   <data name="Guide.CompanyReady" xml:space="preserve"><value>Company open. Continue to Structure to create or choose the model for the study.</value></data>
   <data name="Guide.NeedDraft" xml:space="preserve"><value>Name the structure and create a new model, or select and load an existing version.</value></data>
-  <data name="Guide.NeedCenter" xml:space="preserve"><value>Create or activate at least one physical centre in Centres and units. It identifies the place or department where work takes place.</value></data>
+  <data name="Guide.NeedCenter" xml:space="preserve"><value>Create or activate at least one physical centre in Centres. It identifies the place or department where work takes place.</value></data>
   <data name="Guide.NeedUnit" xml:space="preserve"><value>There is no activity unit available yet. Create one here, or continue to Nodes and create it there when the node needs it.</value></data>
   <data name="Guide.NeedNodeCode" xml:space="preserve"><value>Enter the code of the node being edited. This identifies it within the model.</value></data>
-  <data name="Guide.NeedNodeCenter" xml:space="preserve"><value>Select the physical centre for this node. You can create centres in the Centres and units step.</value></data>
-  <data name="Guide.NeedNodeUnit" xml:space="preserve"><value>Select the node activity unit. If the list is empty, create it in Centres and units.</value></data>
+  <data name="Guide.NeedNodeCenter" xml:space="preserve"><value>Select the physical centre for this node. You can create centres in the Centres step.</value></data>
+  <data name="Guide.NeedNodeUnit" xml:space="preserve"><value>Select the node activity unit. If the unit you need does not exist, create it here with “Create one here”.</value></data>
   <data name="Guide.ApplyNode" xml:space="preserve"><value>Complete the node and press Save node. VALDRIO saves the draft and clears the form so you can add the next one.</value></data>
   <data name="Guide.NeedPrincipal" xml:space="preserve"><value>The model needs at least one active Principal node. Auxiliary nodes can coexist. Choose the role according to your methodology, not just to pass this step.</value></data>
   <data name="Guide.SaveModel" xml:space="preserve"><value>There are pending changes. Save the draft before checking and publishing the model.</value></data>
