@@ -908,4 +908,6 @@ Difference to distribute: {7}</value></data>
   <data name="Model.LayerHelp" xml:space="preserve"><value>Classifies the type of cost. This choice does not define a calculation policy by itself.</value></data>
   <data name="Model.PoolHelp" xml:space="preserve"><value>A short name or explanation for the cost group associated with the node. This is optional.</value></data>
   <data name="Model.Ready" xml:space="preserve"><value>Ready to continue.</value></data>
+  <data name="Model.CenterRequiredHelp" xml:space="preserve"><value>Required: code and name. The code identifies the centre within the company.</value></data>
+  <data name="Model.NodeRequiredHelp" xml:space="preserve"><value>Required: code, centre, node type and activity unit. Cost group description and functions are optional.</value></data>
 </root>
