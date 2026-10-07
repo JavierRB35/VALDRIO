@@ -47,6 +47,10 @@ public sealed partial class T06ImportConfirmationTests
             Assert.AreEqual(101m, prepared.Reconciliation.NetAmount);
             Assert.AreEqual(101m, prepared.Groups!.Single().Amount.Amount);
             Assert.AreEqual(90m, prepared.ConversionBridge!.OriginalTotals.Single(t => t.Currency.Value == "USD").Net);
+            Assert.AreEqual(100m, prepared.ConversionBridge.OriginalTotals.Single(t => t.Currency.Value == "USD").Positive);
+            Assert.AreEqual(-10m, prepared.ConversionBridge.OriginalTotals.Single(t => t.Currency.Value == "USD").Negative);
+            Assert.AreEqual(110m, prepared.Reconciliation.PositiveAmount);
+            Assert.AreEqual(-9m, prepared.Reconciliation.NegativeAmount);
             Assert.AreEqual(20m, prepared.ConversionBridge.OriginalTotals.Single(t => t.Currency.Value == "EUR").Net);
             var command = Command(prepared); var batch = file.Imports.ConfirmImport(command);
             Assert.AreEqual(batch.Id, file.Imports.ConfirmImport(command).Id);
@@ -231,6 +235,7 @@ public sealed partial class T06ImportConfirmationTests
         Assert.AreEqual(-.000000005m, prepared.ConversionBridge.Rows[0].Application.ConversionRoundingAdjustment.Amount);
         Assert.IsTrue(prepared.Diagnostics.Any(d => d.Severity == ImportDiagnosticSeverity.Warning && d.Diagnostic.Code == "FX_AMOUNT_BELOW_QUANTUM"));
         Assert.AreEqual(3, prepared.Rows.Count(r => r.Selected));
+        Assert.AreEqual(1, prepared.Reconciliation.ZeroRows);
     }
 
     [TestMethod]

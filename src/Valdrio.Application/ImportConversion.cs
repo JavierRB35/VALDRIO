@@ -191,9 +191,12 @@ internal static class ImportConversion
         IReadOnlyList<ImportCurrencyTotal> totals = []; decimal functional = 0, adjustment = 0;
         try
         {
-            totals = FrozenList.Copy(groups.GroupBy(g => g.Original.Currency).OrderBy(g => g.Key.Value, StringComparer.Ordinal)
-                .Select(g => new ImportCurrencyTotal(g.Key, g.Where(x => x.Original.Amount > 0).Sum(x => x.Original.Amount),
-                    g.Where(x => x.Original.Amount < 0).Sum(x => x.Original.Amount), g.Sum(x => x.Original.Amount))));
+            // Period totals reconcile the selected records, before account aggregation can cancel signs.
+            // Comparative totals reconcile the resulting differences, as in the historical T06 contract.
+            var contributions = profile.Comparison is null ? converted.Select(r => r.Application.OriginalMoney) : groups.Select(g => g.Original);
+            totals = FrozenList.Copy(contributions.GroupBy(m => m.Currency).OrderBy(g => g.Key.Value, StringComparer.Ordinal)
+                .Select(g => new ImportCurrencyTotal(g.Key, g.Where(m => m.Amount > 0).Sum(m => m.Amount),
+                    g.Where(m => m.Amount < 0).Sum(m => m.Amount), g.Sum(m => m.Amount))));
             functional = groups.Sum(g => g.Functional.Amount);
             adjustment = converted.Sum(r => r.Application.ConversionRoundingAdjustment.Amount) - earlierRows.Sum(r => r.Application.ConversionRoundingAdjustment.Amount);
         }

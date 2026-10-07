@@ -98,7 +98,7 @@ public partial class ImportColumnMappingWindow
         Check(studies.Current?.Revision == 2 && studies.ImportedAmounts.Contains(first.Id.ToString(), StringComparison.Ordinal) &&
             studies.ImportedAmounts.Contains(replacement.Id.ToString(), StringComparison.Ordinal), "reopen shows both historical and active batches");
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }));
-        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = 6,
+        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = SqliteCompanyFileService.SchemaVersion,
             Files = new[] { path, backup, restored, snapshot, earlier, current, corrected }.Select(p => new { Name = Path.GetFileName(p),
                 Sha256 = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(p))).ToLowerInvariant() }) }));
     }

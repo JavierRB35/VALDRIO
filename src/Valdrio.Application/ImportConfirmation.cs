@@ -77,14 +77,15 @@ public sealed class PreparedImport
             decimal positiveTotal = 0m, negativeTotal = 0m;
             try
             {
-                positiveTotal = ConversionBridge.Groups.Where(g => g.Functional.Amount > 0).Sum(g => g.Functional.Amount);
-                negativeTotal = ConversionBridge.Groups.Where(g => g.Functional.Amount < 0).Sum(g => g.Functional.Amount);
+                var contributions = profile.Comparison is null ? ConversionBridge.Rows.Select(r => r.Application.ConvertedOriginalMoney) : ConversionBridge.Groups.Select(g => g.Functional);
+                positiveTotal = contributions.Where(m => m.Amount > 0).Sum(m => m.Amount);
+                negativeTotal = contributions.Where(m => m.Amount < 0).Sum(m => m.Amount);
             }
             catch (OverflowException) { Block("IMP_TOTAL_OVERFLOW", "Import.TotalOverflow"); }
             Diagnostics = FrozenList.Copy(diagnostics);
             Reconciliation = new(source.Rows.Count, invalidRows, Rows.Count(r => !r.Selected && r.Original.HasValue),
                 Rows.Count(r => r.Selected), studyContext.Currency.FunctionalCurrencyCode, positiveTotal, negativeTotal,
-                ConversionBridge.Groups.Count(g => g.Functional.Amount == 0), ConversionBridge.FunctionalTotal);
+                profile.Comparison is null ? Rows.Count(r => r.Selected && r.Original?.Amount == 0) : ConversionBridge.Groups.Count(g => g.Functional.Amount == 0), ConversionBridge.FunctionalTotal);
             return;
         }
         var selectedAccounts = profile.AccountSelection.Accounts.ToHashSet(StringComparer.Ordinal);
