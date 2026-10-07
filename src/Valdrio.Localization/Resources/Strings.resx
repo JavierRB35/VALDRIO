@@ -176,13 +176,13 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Title" xml:space="preserve"><value>Configure cost model</value></data>
   <data name="Model.Notes" xml:space="preserve"><value>Configure a physical center, nodes and one homogeneous pool per node. Function and role are independent. Apply a node to the draft, then Save. Publication freezes structure only; economic policies remain pending and calculation is unavailable.</value></data>
   <data name="Model.Centers" xml:space="preserve"><value>Physical centres</value></data>
-  <data name="Model.CenterCode" xml:space="preserve"><value>Physical center code (text)</value></data>
-  <data name="Model.CenterName" xml:space="preserve"><value>Physical center name</value></data>
+  <data name="Model.CenterCode" xml:space="preserve"><value>Centre code</value></data>
+  <data name="Model.CenterName" xml:space="preserve"><value>Centre name</value></data>
   <data name="Model.CreateCenter" xml:space="preserve"><value>Create center</value></data>
   <data name="Model.SaveCenter" xml:space="preserve"><value>Save center changes</value></data>
   <data name="Model.ToggleCenter" xml:space="preserve"><value>Activate / deactivate center</value></data>
-  <data name="Model.Models" xml:space="preserve"><value>Model versions</value></data>
-  <data name="Model.Description" xml:space="preserve"><value>Model description / new draft name</value></data>
+  <data name="Model.Models" xml:space="preserve"><value>Available models</value></data>
+  <data name="Model.Description" xml:space="preserve"><value>Model name or description</value></data>
   <data name="Model.NewDraft" xml:space="preserve"><value>Create new model</value></data>
   <data name="Model.Load" xml:space="preserve"><value>Load selection</value></data>
   <data name="Model.Save" xml:space="preserve"><value>Save draft</value></data>
@@ -193,11 +193,11 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Nodes" xml:space="preserve"><value>Calculation nodes</value></data>
   <data name="Model.NodeCode" xml:space="preserve"><value>Node code</value></data>
   <data name="Model.Physical" xml:space="preserve"><value>Physical center</value></data>
-  <data name="Model.Role" xml:space="preserve"><value>Allocation role</value></data>
-  <data name="Model.FunctionTags" xml:space="preserve"><value>Functions (independent tags, separated by commas)</value></data>
-  <data name="Model.DriverUnit" xml:space="preserve"><value>Driver units</value></data>
-  <data name="Model.CostLayer" xml:space="preserve"><value>Cost classification (no calculation policy)</value></data>
-  <data name="Model.PoolDescription" xml:space="preserve"><value>Pool description</value></data>
+  <data name="Model.Role" xml:space="preserve"><value>Node type</value></data>
+  <data name="Model.FunctionTags" xml:space="preserve"><value>Functions (optional)</value></data>
+  <data name="Model.DriverUnit" xml:space="preserve"><value>Activity unit</value></data>
+  <data name="Model.CostLayer" xml:space="preserve"><value>Cost classification</value></data>
+  <data name="Model.PoolDescription" xml:space="preserve"><value>Cost group description</value></data>
   <data name="Model.ApplyNode" xml:space="preserve"><value>Save node</value></data>
   <data name="Model.NewNode" xml:space="preserve"><value>New node</value></data>
   <data name="Model.RemoveNode" xml:space="preserve"><value>Delete node</value></data>
@@ -903,4 +903,8 @@ Difference to distribute: {7}</value></data>
   <data name="Model.ColumnLayer" xml:space="preserve"><value>Layer</value></data>
   <data name="Model.ColumnPool" xml:space="preserve"><value>Pool description</value></data>
   <data name="Model.ColumnFunctions" xml:space="preserve"><value>Functions</value></data>
+  <data name="Model.RoleHelp" xml:space="preserve"><value>Principal: receives costs as an allocation destination. Auxiliary: provides services to other nodes.</value></data>
+  <data name="Model.UnitHelp" xml:space="preserve"><value>Choose how this node's activity is measured, for example hours, batches or items.</value></data>
+  <data name="Model.LayerHelp" xml:space="preserve"><value>Classifies the type of cost. This choice does not define a calculation policy by itself.</value></data>
+  <data name="Model.PoolHelp" xml:space="preserve"><value>A short name or explanation for the cost group associated with the node. This is optional.</value></data>
 </root>
