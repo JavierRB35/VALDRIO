@@ -125,7 +125,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     {
         var parsed = validation?.Rows.FirstOrDefault(r => r.RecordNumber == row.RecordNumber);
         var issues = validation?.Diagnostics.Where(d => d.Location.RecordNumber == row.RecordNumber)
-            .Select(d => FormatDiagnostic(d.Diagnostic)) ?? [];
+            .Select(d => FormatDiagnosticMessage(d.Diagnostic)) ?? [];
         return new ImportPreviewRow(row.RecordNumber,
             Display(accountColumn is { } a ? row.GetCell(a).TextValue : null),
             Display(amountColumn is { } b ? row.GetCell(b).TextValue : null),
