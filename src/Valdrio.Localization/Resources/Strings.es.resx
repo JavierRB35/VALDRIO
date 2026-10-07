@@ -475,7 +475,7 @@ Completa: {5}</value></data>
   <data name="Guide.Back" xml:space="preserve"><value>Anterior</value></data>
   <data name="Guide.Next" xml:space="preserve"><value>Continuar</value></data>
   <data name="Guide.SaveAndImport" xml:space="preserve"><value>Guardar análisis y continuar a la importación</value></data>
-  <data name="Guide.OpenImport" xml:space="preserve"><value>Importar Excel o CSV en este estudio</value></data>
+  <data name="Guide.OpenImport" xml:space="preserve"><value>Importar Excel o CSV en este análisis</value></data>
   <data name="Guide.Preview" xml:space="preserve"><value>Solo revisar un archivo (sin guardarlo en un estudio)</value></data>
   <data name="Guide.NeedCompany" xml:space="preserve"><value>Primero crea o abre un archivo de empresa. Las estructuras de costes, los análisis y las importaciones se guardarán dentro de ese archivo.</value></data>
   <data name="Guide.CompanyReady" xml:space="preserve"><value>Empresa abierta. Continúa a Estructura de costes para definir cómo se repartirán los costes.</value></data>
@@ -499,13 +499,13 @@ Completa: {5}</value></data>
   <data name="Guide.SaveStudy" xml:space="preserve"><value>Pulsa Guardar análisis y continuar. Se guardará dentro del archivo de empresa abierto y pasarás a importar los datos del periodo.</value></data>
   <data name="Guide.StudyComplete" xml:space="preserve"><value>Análisis guardado. Ya puedes importar el Excel o CSV del periodo. El último paso de la importación guardará los registros seleccionados dentro de este análisis.</value></data>
   <data name="Guide.PreviewOnly" xml:space="preserve"><value>Modo de revisión: puedes leer y seleccionar registros, pero no guardar una importación. Para guardar, sigue Empresa → Estructura de costes → Análisis de costes → Importación.</value></data>
-  <data name="Guide.NeedMapping" xml:space="preserve"><value>Selecciona las columnas y comprueba la interpretación de los números antes de continuar.</value></data>
-  <data name="Guide.NeedRecords" xml:space="preserve"><value>Selecciona al menos un registro. Puedes marcar todos y desmarcar los que quieras excluir.</value></data>
-  <data name="Guide.NeedMeaning" xml:space="preserve"><value>Elige explícitamente qué representan los importes: movimientos del periodo, saldo íntegro al cierre o diferencia entre acumulados.</value></data>
-  <data name="Guide.NeedCurrency" xml:space="preserve"><value>Indica la moneda de los importes, por ejemplo EUR. No se deduce de la configuración regional.</value></data>
-  <data name="Guide.NeedExample" xml:space="preserve"><value>Anota una cuenta y su importe esperado tras agrupar los registros seleccionados; por ejemplo 6005 = 358,35 EUR.</value></data>
-  <data name="Guide.NeedApproval" xml:space="preserve"><value>Comprueba la explicación de los importes y marca la casilla de confirmación para preparar la revisión final.</value></data>
-  <data name="Guide.ReadyReview" xml:space="preserve"><value>Ya puedes preparar la revisión final. Todavía no se guardará nada; revisarás los totales antes de guardar.</value></data>
+  <data name="Guide.NeedMapping" xml:space="preserve"><value>Indica dónde están la cuenta y el importe. Después pulsa Comprobar y continuar.</value></data>
+  <data name="Guide.NeedRecords" xml:space="preserve"><value>Selecciona al menos una fila para importar. Puedes dejar todas marcadas y excluir solo las que no correspondan.</value></data>
+  <data name="Guide.NeedMeaning" xml:space="preserve"><value>Elige qué representan los importes: movimientos del periodo, saldo completo al cierre o diferencia entre acumulados.</value></data>
+  <data name="Guide.NeedCurrency" xml:space="preserve"><value>Comprueba la moneda de los importes. Se propone la moneda del análisis, pero puedes cambiarla.</value></data>
+  <data name="Guide.NeedExample" xml:space="preserve"><value>Escribe un ejemplo que hayas comprobado, por ejemplo «Cuenta 6005 = 358,35 EUR».</value></data>
+  <data name="Guide.NeedApproval" xml:space="preserve"><value>Marca la confirmación indicando que la opción elegida describe correctamente los importes del archivo.</value></data>
+  <data name="Guide.ReadyReview" xml:space="preserve"><value>Todo lo necesario está indicado. Pulsa Revisar importación para comprobar los totales antes de guardar.</value></data>
   <data name="Guide.ImportFile" xml:space="preserve"><value>1. Elegir archivo</value></data>
   <data name="Guide.ImportColumns" xml:space="preserve"><value>2. Indicar columnas</value></data>
   <data name="Guide.ImportRecords" xml:space="preserve"><value>3. Elegir registros</value></data>
@@ -514,10 +514,10 @@ Completa: {5}</value></data>
   <data name="Guide.ReadNext" xml:space="preserve"><value>Continuar con este archivo</value></data>
   <data name="Guide.ValidateNext" xml:space="preserve"><value>Comprobar y continuar</value></data>
   <data name="Guide.ReviewNext" xml:space="preserve"><value>Revisar importación</value></data>
-  <data name="Guide.SaveImport" xml:space="preserve"><value>Guardar importación en el estudio</value></data>
-  <data name="Guide.SavedImport" xml:space="preserve"><value>Importación guardada. Puedes cerrar esta ventana y consultar el resultado en el estudio.</value></data>
+  <data name="Guide.SaveImport" xml:space="preserve"><value>Guardar datos en el análisis</value></data>
+  <data name="Guide.SavedImport" xml:space="preserve"><value>Datos guardados. Puedes cerrar esta ventana y continuar con la preparación de recursos.</value></data>
   <data name="Guide.ReviewHelp" xml:space="preserve"><value>Comprueba el análisis de destino, el número de registros y los totales. Solo al pulsar Guardar datos se incorporarán al análisis.</value></data>
-  <data name="Guide.EditReview" xml:space="preserve"><value>La preparación ha cambiado o contiene errores. Vuelve al paso correspondiente, corrige los datos y prepara otra vez.</value></data>
+  <data name="Guide.EditReview" xml:space="preserve"><value>Has cambiado algún dato o hay algo que corregir. Revisa el paso indicado antes de guardar.</value></data>
   <data name="Guide.FileHelp" xml:space="preserve"><value>Elige el archivo. VALDRIO no modifica el original. Si es Excel, selecciona la hoja que contiene los datos.</value></data>
   <data name="Guide.ColumnsHelp" xml:space="preserve"><value>Indica dónde están la cuenta y el importe. VALDRIO comprobará todas las filas al continuar y te señalará exactamente las que necesiten corrección.</value></data>
   <data name="Guide.RecordsHelp" xml:space="preserve"><value>Elige qué filas quieres incorporar. Por defecto están seleccionadas todas. Si una cuenta aparece varias veces, se sumará sin perder el detalle de las filas originales.</value></data>
@@ -594,7 +594,7 @@ Completa: {5}</value></data>
   <data name="Guide.Help.Rates" xml:space="preserve"><value>Por fila: identificador, moneda original, tipo hacia la funcional (punto decimal), fecha ISO yyyy-MM-dd y fuente. No se buscan ni invierten tipos automáticamente.</value></data>
   <data name="Guide.Help.Records" xml:space="preserve"><value>Marca o desmarca las filas que incorporarás. Puedes seleccionar todas, ninguna o excluir solo algunas.</value></data>
   <data name="Guide.Help.RateSelections" xml:space="preserve"><value>Escribe el identificador del tipo elegido para cada registro incluido que requiera conversión.</value></data>
-  <data name="Guide.MeaningChosen" xml:space="preserve"><value>He elegido el significado de los importes indicado arriba.</value></data>
+  <data name="Guide.MeaningChosen" xml:space="preserve"><value>Confirmo que esta opción describe lo que representa el archivo.</value></data>
   <data name="Guide.OtherStudy" xml:space="preserve"><value>Otras operaciones: nuevo análisis, cierre y puntos de control</value></data>
   <data name="Guide.OtherModel" xml:space="preserve"><value>Otras operaciones de la estructura de costes</value></data>
   <data name="Guide.OtherFile" xml:space="preserve"><value>Copias, restauración y actualización de archivos</value></data>
