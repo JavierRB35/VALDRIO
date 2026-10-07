@@ -174,7 +174,7 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Unsaved" xml:space="preserve"><value>Unsaved changes</value></data>
   <data name="Model.Saved" xml:space="preserve"><value>Saved</value></data>
   <data name="Model.Title" xml:space="preserve"><value>Configure cost model</value></data>
-  <data name="Model.Notes" xml:space="preserve"><value>Configure a physical center, nodes and one homogeneous pool per node. Function and role are independent. Apply a node to the draft, then Save. Publication freezes structure only; economic policies remain pending and calculation is unavailable.</value></data>
+  <data name="Model.Notes" xml:space="preserve"><value>Configure the model step by step: model, centres and units, nodes, then final review. Every saved centre and node remains visible in its table. Publishing locks this version so studies can use it.</value></data>
   <data name="Model.Centers" xml:space="preserve"><value>Physical centres</value></data>
   <data name="Model.CenterCode" xml:space="preserve"><value>Centre code</value></data>
   <data name="Model.CenterName" xml:space="preserve"><value>Centre name</value></data>
@@ -186,10 +186,10 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.NewDraft" xml:space="preserve"><value>Create new model</value></data>
   <data name="Model.Load" xml:space="preserve"><value>Load selection</value></data>
   <data name="Model.Save" xml:space="preserve"><value>Save draft</value></data>
-  <data name="Model.Validate" xml:space="preserve"><value>Validate structure</value></data>
-  <data name="Model.Publish" xml:space="preserve"><value>Publish saved structure</value></data>
-  <data name="Model.Clone" xml:space="preserve"><value>Duplicate as draft</value></data>
-  <data name="Model.Discard" xml:space="preserve"><value>Discard draft changes</value></data>
+  <data name="Model.Validate" xml:space="preserve"><value>Check model</value></data>
+  <data name="Model.Publish" xml:space="preserve"><value>Publish model</value></data>
+  <data name="Model.Clone" xml:space="preserve"><value>Create editable copy</value></data>
+  <data name="Model.Discard" xml:space="preserve"><value>Discard unsaved changes</value></data>
   <data name="Model.Nodes" xml:space="preserve"><value>Calculation nodes</value></data>
   <data name="Model.NodeCode" xml:space="preserve"><value>Node code</value></data>
   <data name="Model.Physical" xml:space="preserve"><value>Physical center</value></data>
@@ -214,7 +214,7 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Completed" xml:space="preserve"><value>Operation completed.</value></data>
   <data name="Model.ValidStructure" xml:space="preserve"><value>Structure valid. Economic readiness is still pending.</value></data>
   <data name="Model.PendingTitle" xml:space="preserve"><value>Unsaved model changes</value></data>
-  <data name="Model.PendingBody" xml:space="preserve"><value>Save center or model changes before leaving? Yes = Save; No = Discard; Cancel = stay.</value></data>
+  <data name="Model.PendingBody" xml:space="preserve"><value>There are pending centre, node or model changes. Yes = Save; No = Discard; Cancel = stay here.</value></data>
   <data name="Study.NameRequired" xml:space="preserve"><value>Enter a study name.</value></data>
   <data name="Study.PeriodInvalid" xml:space="preserve"><value>The period start must not be after its end.</value></data>
   <data name="Study.PurposeUnsupported" xml:space="preserve"><value>This edition supports management costing. Inventory valuation needs its own policy.</value></data>
