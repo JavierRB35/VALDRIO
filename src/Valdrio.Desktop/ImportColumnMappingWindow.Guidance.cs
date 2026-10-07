@@ -36,7 +36,7 @@ public partial class ImportColumnMappingWindow
             0 => "ReadNext", 1 => "ValidateNext", 3 => "ReviewNext",
             4 => vm.ConfirmedImport is not null ? "Back" : "SaveImport", _ => "Next"
         });
-        if (step == 4 && vm.ConfirmedImport is not null) ImportNext.Content = vm["Close"];
+        if (step == 4 && vm.ConfirmedImport is not null) ImportNext.Content = vm.Guide("ContinueResources");
         if (step == 4 && vm.ConfirmedImport is null && vm.Preparation?.CanConfirm != true) ImportNext.Content = vm.Guide("CorrectImport");
         ConfirmImportButton.Visibility = step == 4 && vm.ConfirmedImport is null && vm.Preparation?.CanConfirm == true
             ? Visibility.Visible : Visibility.Collapsed;
