@@ -36,7 +36,8 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
         CreateCommand = new AsyncRelayCommand(Create, () => Available);
         OpenCommand = new AsyncRelayCommand(Open, () => Available);
         CloseCommand = new AsyncRelayCommand(Close, () => Available && active is not null);
-        AddUnitCommand = new AsyncRelayCommand(AddUnit, () => Available && active is not null);
+        AddUnitCommand = new AsyncRelayCommand(AddUnit, () => Available && active is not null &&
+            !string.IsNullOrWhiteSpace(UnitCode) && !string.IsNullOrWhiteSpace(UnitDimension));
         BackupCommand = new AsyncRelayCommand(Backup, () => Available && active is not null);
         RestoreCommand = new AsyncRelayCommand(Restore, () => Available);
         UpgradeCommand = new AsyncRelayCommand(Upgrade, () => Available);
@@ -56,8 +57,24 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public IReadOnlyList<int> ScaleOptions { get; } = Enumerable.Range(0,13).ToArray();
     public string CompanyName { get => companyName; set => SetProperty(ref companyName, value); }
     public string Currency { get => currency; set => SetProperty(ref currency, value); }
-    public string UnitCode { get => unitCode; set => SetProperty(ref unitCode, value); }
-    public string UnitDimension { get => unitDimension; set => SetProperty(ref unitDimension, value); }
+    public string UnitCode
+    {
+        get => unitCode;
+        set
+        {
+            if (SetProperty(ref unitCode, value))
+                AddUnitCommand.NotifyCanExecuteChanged();
+        }
+    }
+    public string UnitDimension
+    {
+        get => unitDimension;
+        set
+        {
+            if (SetProperty(ref unitDimension, value))
+                AddUnitCommand.NotifyCanExecuteChanged();
+        }
+    }
     public string UnitSymbol { get => unitSymbol; set => SetProperty(ref unitSymbol, value); }
     public int UnitScale { get => unitScale; set => SetProperty(ref unitScale, value); }
     public bool UnitDiscrete { get => unitDiscrete; set => SetProperty(ref unitDiscrete, value); }
@@ -88,6 +105,9 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public string RestoreLabel => Text("CompanyRestore");
     public string CancelLabel => Text("CompanyCancel");
     public string UnitLabel => Text("CompanyUnitLabel");
+    public string UnitCreationHelp => Text("CompanyUnitCreationHelp");
+    public string UnitRequiredHelp => Text("CompanyUnitRequiredHelp");
+    public string UnitAdvancedLabel => Text("CompanyUnitAdvanced");
     public string DimensionLabel => Text("CompanyDimensionLabel");
     public string SymbolLabel => Text("CompanySymbolLabel");
     public string ScaleLabel => Text("CompanyScaleLabel");
