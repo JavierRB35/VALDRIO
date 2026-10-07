@@ -66,9 +66,9 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         ToggleUnitCommand = new AsyncRelayCommand(ToggleUnit, () => Ready && company.CanWrite && UnitMaster is not null);
         NewDraftCommand = new AsyncRelayCommand(NewDraft, () => Ready && company.CanWrite);
         LoadCommand = new AsyncRelayCommand(LoadChosen, () => Ready && ModelChoice is not null);
-        SaveCommand = new AsyncRelayCommand(Save, () => Ready && IsEditable && (dirty || nodeFormEdited));
+        SaveCommand = new AsyncRelayCommand(Save, () => CanEdit && (dirty || nodeFormEdited));
         ValidateCommand = new AsyncRelayCommand(Validate, () => Ready && Current is not null && !dirty && !nodeFormEdited);
-        PublishCommand = new AsyncRelayCommand(Publish, () => Ready && IsEditable && !dirty && !nodeFormEdited);
+        PublishCommand = new AsyncRelayCommand(Publish, () => CanEdit && !dirty && !nodeFormEdited);
         CloneCommand = new AsyncRelayCommand(Clone, () => Ready && company.CanWrite && Current?.Status == ModelStatus.Published);
         ApplyNodeCommand = new RelayCommand(ApplyNode, () => CanEdit);
         SaveNodeCommand = new AsyncRelayCommand(SaveNode, () => CanEdit && nodeFormEdited);
@@ -100,6 +100,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     private bool Ready => !busy && company.WorkspaceIdle && company.ActiveModels is not null;
     public bool IsEditable => Current?.Status == ModelStatus.Draft;
     public bool CanEdit => Ready && IsEditable && company.CanWrite;
+    public bool CanEditMasters => Ready && company.CanWrite;
+    public bool DescriptionReadOnly => IsPublished || !company.CanWrite;
     public bool InputsEnabled => Ready;
     public bool HasError => diagnostic is not null;
     public bool IsEditingCenter => Master is not null;
@@ -270,7 +272,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         get => description;
         set
         {
-            if (SetProperty(ref description, value) && !loading && IsEditable)
+            if (SetProperty(ref description, value) && !loading && IsEditable && company.CanWrite)
             {
                 dirty = true;
                 Refresh();
@@ -533,6 +535,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     {
         RefreshCommands();
         OnPropertyChanged(nameof(CanEdit));
+        OnPropertyChanged(nameof(CanEditMasters));
+        OnPropertyChanged(nameof(DescriptionReadOnly));
         OnPropertyChanged(nameof(InputsEnabled));
     }
 
