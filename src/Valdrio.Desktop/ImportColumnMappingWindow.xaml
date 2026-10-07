@@ -114,6 +114,19 @@
      </DataGrid.Columns>
     </DataGrid>
     <TextBlock Text="{Binding AccountSelectionSummary}" FontWeight="SemiBold"/>
+    <TextBlock Text="{Binding [SelectionPreviewTitle]}" FontWeight="SemiBold"/>
+    <TextBlock Text="{Binding [SelectionPreviewHelp]}"/>
+    <TextBlock x:Name="SelectionReconciliationText" Text="{Binding SelectionReconciliation}" FontWeight="SemiBold"
+     AutomationProperties.LiveSetting="Polite"/>
+    <DataGrid x:Name="SelectionPreviewGrid" ItemsSource="{Binding SelectionPreview}" AutoGenerateColumns="False"
+     IsReadOnly="True" CanUserAddRows="False" Height="170" FlowDirection="LeftToRight" EnableRowVirtualization="True"
+     AutomationProperties.Name="{Binding [SelectionPreviewTitle]}">
+     <DataGrid.Columns>
+      <DataGridTextColumn Binding="{Binding Code}" Width="*"/>
+      <DataGridTextColumn Binding="{Binding Records}" Width="*"/>
+      <DataGridTextColumn Binding="{Binding Amount}" Width="*"/>
+     </DataGrid.Columns>
+    </DataGrid>
    </StackPanel>
    <TextBlock Text="{Binding Target}" FontWeight="SemiBold"/>
    <TextBlock Text="{Binding [AmountMode]}"/>

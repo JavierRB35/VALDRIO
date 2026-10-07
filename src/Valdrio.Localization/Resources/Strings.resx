@@ -414,4 +414,8 @@ Full: {5}</value></data>
   <data name="Study.NoModelsHelp" xml:space="preserve"><value>No published models are available. Go to Models, create and save the structure, then click Publish structure. Return here and click Refresh studies/models. You can review the Excel or CSV meanwhile.</value></data>
   <data name="Study.ImportHelp" xml:space="preserve"><value>Next: select the Excel or CSV columns and records, prepare the totals and confirm the import.</value></data>
   <data name="Study.SavedHelp" xml:space="preserve"><value>Study saved. Use Save context to save changes or Select import columns to import data.</value></data>
+  <data name="ImportMapping.SelectionOverflow" xml:space="preserve"><value>The totals for this selection exceed the numeric limit. Review the source amounts.</value></data>
+  <data name="ImportMapping.SelectionPreviewHelp" xml:space="preserve"><value>Totals by code, updated as you select records. Source amounts, without currency conversion. This preview saves no data; Prepare import also checks the study period, currency and limits.</value></data>
+  <data name="ImportMapping.SelectionReconciliation" xml:space="preserve"><value>Included: {0} records → {2} codes. Excluded: {1} records. Included positive: {3}; included negative: {4}; included net: {5}; excluded net: {6}.</value></data>
+  <data name="ImportMapping.SelectionPreviewTitle" xml:space="preserve"><value>Selected records result</value></data>
 </root>

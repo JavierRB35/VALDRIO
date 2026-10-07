@@ -414,4 +414,8 @@ Completa: {5}</value></data>
   <data name="Study.NoModelsHelp" xml:space="preserve"><value>No hay modelos publicados disponibles. Ve a Modelos, crea y guarda su estructura y pulsa Publicar estructura. Después vuelve aquí y pulsa Actualizar estudios/modelos. Puedes revisar el Excel o CSV mientras tanto.</value></data>
   <data name="Study.ImportHelp" xml:space="preserve"><value>Siguiente paso: selecciona las columnas y los registros del Excel o CSV; prepara los totales y confirma la importación.</value></data>
   <data name="Study.SavedHelp" xml:space="preserve"><value>Estudio guardado. Usa Guardar contexto para conservar cambios o Seleccionar columnas de importación para incorporar datos.</value></data>
+  <data name="ImportMapping.SelectionOverflow" xml:space="preserve"><value>No se pueden representar los totales de esta selección: se ha superado el límite numérico. Revisa los importes del origen.</value></data>
+  <data name="ImportMapping.SelectionPreviewHelp" xml:space="preserve"><value>Sumas por código, actualizadas al marcar registros. Importes del origen, sin conversión de moneda. Esta revisión no guarda datos; Preparar importación comprobará también el periodo, la moneda y los límites del estudio.</value></data>
+  <data name="ImportMapping.SelectionReconciliation" xml:space="preserve"><value>Incluidos: {0} registros → {2} códigos. Excluidos: {1} registros. Positivos incluidos: {3}; negativos incluidos: {4}; neto incluido: {5}; neto excluido: {6}.</value></data>
+  <data name="ImportMapping.SelectionPreviewTitle" xml:space="preserve"><value>Resultado de los registros seleccionados</value></data>
 </root>

@@ -35,6 +35,9 @@ public partial class ImportColumnMappingWindow : Window
         GroupedPreviewGrid.Columns[0].Header = viewModel["SourceCode"];
         GroupedPreviewGrid.Columns[1].Header = viewModel["SourceRecords"];
         GroupedPreviewGrid.Columns[2].Header = viewModel["Parsed"];
+        SelectionPreviewGrid.Columns[0].Header = viewModel["SourceCode"];
+        SelectionPreviewGrid.Columns[1].Header = viewModel["SourceRecords"];
+        SelectionPreviewGrid.Columns[2].Header = viewModel["Parsed"];
         var keys = new[] { "Row", "AccountColumn", "Original", "OriginalDebit", "OriginalCredit", "Parsed", "Issues" };
         for (var i = 0; i < keys.Length; i++) PreviewGrid.Columns[i].Header = viewModel[keys[i]];
         PreviewGrid.Columns[2].Visibility = viewModel.IsSignedAmount ? Visibility.Visible : Visibility.Collapsed;

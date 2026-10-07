@@ -108,6 +108,57 @@ public sealed partial class T06ImportConfirmationTests
     }
 
     [TestMethod]
+    public async Task LiveSelectionReconcilesWithoutSavedStudyAndKeepsSourceEvidence()
+    {
+        using var file = Baseline(); var study = Study(file); var before = Hash(file.Path);
+        using var vm = await Vm(file, study, csv: "Amount;Description;Code\n280;First;6005\n78,35;Different;6005\n0;Zero;Z\n-5;Credit;GASTO");
+        vm.BindTarget(null, null, false, null);
+        Assert.AreEqual(358.35m, vm.SelectionGroups.Single(g => g.Code == "6005").Amount);
+        CollectionAssert.AreEqual(new[] { 2, 3 }, vm.SelectionGroups.Single(g => g.Code == "6005").Records.ToArray());
+        Assert.AreEqual(new Valdrio.Desktop.ImportSelectionTotals(4, 0, 3, 358.35m, -5m, 353.35m, 0m), vm.SelectionTotals);
+        vm.AccountChoices.Single(r => r.RecordNumber == 2).Included = false;
+        Assert.AreEqual(new Valdrio.Desktop.ImportSelectionTotals(3, 1, 3, 78.35m, -5m, 73.35m, 280m), vm.SelectionTotals);
+        Assert.IsNull(vm.Preparation); Assert.IsFalse(vm.ConfirmCommand.CanExecute(null));
+        vm.DeselectAllRecordsCommand.Execute(null);
+        Assert.AreEqual(0, vm.SelectionGroups.Count);
+        Assert.AreEqual(new Valdrio.Desktop.ImportSelectionTotals(0, 4, 0, 0m, 0m, 0m, 353.35m), vm.SelectionTotals);
+        vm.SelectAllRecordsCommand.Execute(null);
+        vm.BindTarget(file.Imports, study, true, null);
+        vm.SourceCurrency = "EUR"; vm.ApprovalReference = "Synthetic reconciliation"; vm.InterpretationApproved = true;
+        await vm.PrepareCommand.ExecuteAsync(null);
+        Assert.AreEqual(vm.SelectionTotals!.Net, vm.Preparation!.Reconciliation.NetAmount);
+        Assert.AreEqual(vm.SelectionTotals.Groups, vm.Preparation.Groups!.Count);
+        Assert.AreEqual(before, Hash(file.Path));
+        vm.AmountColumn = 2;
+        Assert.IsNull(vm.SelectionTotals); Assert.AreEqual(0, vm.SelectionGroups.Count);
+    }
+
+    [TestMethod]
+    public async Task LiveSelectionIncludesRowsBeyondPreviewAndKeepsOrdinalCodesAndZeroGroups()
+    {
+        using var file = Baseline(); var study = Study(file);
+        var csv = "Amount;Description;Code\n" + string.Join("\n", Enumerable.Repeat("1;x;00123", 60)) + "\n-60;y;00123\n5;z;123\n-2;q;a\n2;q;A";
+        using var vm = await Vm(file, study, csv: csv);
+        Assert.AreEqual(64, vm.SelectionTotals!.SelectedRows);
+        Assert.AreEqual(4, vm.SelectionGroups.Count);
+        Assert.AreEqual(0m, vm.SelectionGroups.Single(g => g.Code == "00123").Amount);
+        Assert.AreEqual(61, vm.SelectionGroups.Single(g => g.Code == "00123").Records.Count);
+        Assert.AreEqual(5m, vm.SelectionTotals.Net);
+    }
+
+    [TestMethod]
+    public async Task LiveSelectionOverflowIsVisibleAndRecoversAfterExclusion()
+    {
+        using var file = Baseline(); var study = Study(file);
+        var maximum = decimal.MaxValue.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        using var vm = await Vm(file, study, csv: $"Amount;Description;Code\n{maximum};x;A\n{maximum};y;A");
+        Assert.IsTrue(vm.SelectionOverflow); Assert.IsNull(vm.SelectionTotals);
+        Assert.AreEqual(0, vm.SelectionGroups.Count);
+        vm.AccountChoices[1].Included = false;
+        Assert.IsFalse(vm.SelectionOverflow); Assert.AreEqual(decimal.MaxValue, vm.SelectionTotals!.Net);
+    }
+
+    [TestMethod]
     public async Task RowSelectionSupportsAllNoneSomeAndAllExceptOneDuplicate()
     {
         using var file = Baseline(); var study = Study(file);

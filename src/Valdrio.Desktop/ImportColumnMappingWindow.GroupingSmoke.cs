@@ -74,9 +74,16 @@ public partial class ImportColumnMappingWindow
         Select(AmountLayoutBox, "amount"); Select(AccountColumnBox, 1); Select(AmountColumnBox, 3);
         vm.DecimalSeparator = ","; vm.GroupSeparator = ""; vm.ImportAllAccounts = true;
         await Click(ValidateMappingButton);
-        Check(vm.IsReady && vm.AccountChoices.Count == 3 && vm.AccountChoices.All(r => r.Included), "duplicate codes validate and every row starts selected");
+        vm.BindTarget(null, null, false, null);
+        Check(vm.IsReady && vm.AccountChoices.Count == 3 && vm.AccountChoices.All(r => r.Included) &&
+            vm.SelectionGroups.Single(g => g.Code == "6005").Amount == 358.35m && vm.SelectionTotals?.Net == 353.35m &&
+            !PrepareImportButton.IsEnabled && SelectionPreviewGrid.Items.Count == 2,
+            "duplicate codes validate and live grouped totals work without a saved study target");
+        await studies.AttachImportTarget();
         await Click(DeselectAllRecordsButton);
-        Check(!vm.AccountChoices.Any(r => r.Included) && !PrepareImportButton.IsEnabled, "deselect all blocks empty import");
+        Check(!vm.AccountChoices.Any(r => r.Included) && !PrepareImportButton.IsEnabled &&
+            vm.SelectionTotals?.Net == 0m && vm.SelectionTotals.ExcludedNet == 353.35m && SelectionPreviewGrid.Items.Count == 0,
+            "deselect all blocks empty import and reconciles all excluded amounts");
         await Toggle(3); SetText(SourceCurrencyBox, "EUR"); Select(AmountModeBox, "closing-full"); Approve(); await Click(PrepareImportButton);
         Check(vm.Preparation is { CanConfirm: true } && vm.Preparation.Groups!.Single().Amount.Amount == 78.35m,
             "only one of the duplicate records can be selected");
@@ -84,12 +91,13 @@ public partial class ImportColumnMappingWindow
         Check(vm.AccountChoices.All(r => r.Included) && vm.Preparation is null && !vm.InterpretationApproved,
             "select all restores every row and revokes prior approval");
         await Toggle(2); Approve(); await Click(PrepareImportButton);
-        Check(vm.Preparation!.Reconciliation.SelectedRows == 2 && vm.Preparation.Reconciliation.NetAmount == 73.35m,
+        Check(vm.Preparation!.Reconciliation.SelectedRows == 2 && vm.Preparation.Reconciliation.NetAmount == 73.35m &&
+            vm.SelectionTotals?.Net == 73.35m && vm.SelectionTotals.ExcludedNet == 280m,
             "all except one imports only the remaining contributions");
         await Toggle(2); Approve(); await Click(PrepareImportButton);
         Check(vm.Preparation!.Groups!.Count == 2 && vm.Preparation.Groups.Single(g => g.Code == "6005").Amount.Amount == 358.35m &&
             vm.PreparedGroups.Single(g => g.Code == "6005").Amount == "358,35", "same code totals 358.35 despite differing source descriptions");
-        AccountSelectionGrid.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
+        SelectionPreviewGrid.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "records-es.png"));
         GroupedPreviewGrid.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "groups-es.png"));

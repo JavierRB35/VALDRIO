@@ -2,6 +2,20 @@
 
 Fecha de revisión 2026-10-07. Repositorio `JavierRB35/VALDRIO`.
 
+## Continuidad — conciliación inmediata de registros, 2026-10-07
+
+Se añade un resultado calculado al seleccionar registros: agrupación ordinal por código,
+filas de procedencia, positivos/negativos/neto incluidos y neto excluido. Funciona sin estudio
+asociado, conserva ceros y códigos distintos como 00123/123 y a/A, e incluye todas las filas.
+Releer o cambiar columnas elimina el resultado anterior. Los desbordamientos muestran un error
+sin totales parciales; cambiar la selección permite recuperarse. Es una revisión del origen:
+la preparación sigue comprobando precisión, periodo, moneda y aprobación antes de confirmar.
+No cambia persistencia, esquema v5 ni contratos de snapshots.
+
+Pruebas locales: 411/411 Release (`live-reconciliation.trx`); compilación WPF sin advertencias. Flujo nativo completo con salida 0 en `artifacts/live-reconciliation-2026-10-07`, 11 comprobaciones de agrupación y captura del resultado inmediato revisada visualmente. No se ha ejecutado CI remota.
+El siguiente bloque pendiente de persistencia sigue siendo sustituir un lote identificado
+sin duplicar importes ni perder el historial. No se declara T06 cerrada.
+
 ## Continuidad — acceso a importación y guardado del estudio, 2026-10-07
 
 Se aclaran las acciones: «Limpiar formulario / preparar otro estudio» y «Guardar este estudio».
