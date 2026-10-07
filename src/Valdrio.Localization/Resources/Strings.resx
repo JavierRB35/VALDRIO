@@ -372,7 +372,7 @@ Full: {5}</value></data>
   <data name="ImportMapping.ConfirmedSummary" xml:space="preserve"><value>Import saved · {1} resources added.</value></data>
   <data name="ImportMapping.CommittedRefreshPending" xml:space="preserve"><value>The data is saved, but the screen could not refresh. Close this window and refresh the analysis; do not import the file again.</value></data>
   <data name="ImportMapping.NoImports" xml:space="preserve"><value>This analysis has no saved imports yet.</value></data>
-  <data name="ImportMapping.ImportHistory" xml:space="preserve"><value>Import {0} · {1} · {2} resources · {3} {4} · revision {5}</value></data>
+  <data name="ImportMapping.ImportHistory" xml:space="preserve"><value>{1} · {2} resources · total {3} {4}</value></data>
   <data name="ImportMapping.AmountLayout" xml:space="preserve"><value>Amount interpretation</value></data>
   <data name="ImportMapping.SignedLayout" xml:space="preserve"><value>Signed amount in one column</value></data>
   <data name="ImportMapping.DebitCreditLayout" xml:space="preserve"><value>Debit minus credit in two columns</value></data>
@@ -436,7 +436,7 @@ Full: {5}</value></data>
   <data name="ImportMapping.ComparisonEmpty" xml:space="preserve"><value>No earlier cumulative source retained.</value></data>
   <data name="ImportMapping.CumulativeMode" xml:space="preserve"><value>Difference between two cumulative balances</value></data>
 <data name="ImportMapping.BatchActive" xml:space="preserve"><value>Active</value></data>
-<data name="ImportMapping.BatchReplaced" xml:space="preserve"><value>Replaced: history only</value></data>
+<data name="ImportMapping.BatchReplaced" xml:space="preserve"><value>Replaced · history only</value></data>
 <data name="ImportMapping.CurrentAmount" xml:space="preserve"><value>Current cumulative</value></data>
 <data name="ImportMapping.DifferenceAmount" xml:space="preserve"><value>Period difference</value></data>
 <data name="ImportMapping.EarlierRecords" xml:space="preserve"><value>Earlier source rows</value></data>
