@@ -3,10 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Valdrio.Desktop"
         Title="{Binding WindowTitle}"
-        Height="760"
-        Width="940"
-        MinHeight="620"
-        MinWidth="760"
+        Height="860"
+        Width="1280"
+        MinHeight="700"
+        MinWidth="1000"
+        Background="{StaticResource AppBackgroundBrush}"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanVisibility" />
@@ -15,7 +16,7 @@
     <ScrollViewer x:Name="RootScrollViewer"
                   VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled">
-        <Grid Margin="28">
+        <Grid Margin="24">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -40,20 +41,40 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0"
-                       Text="{Binding AppTitle}"
-                       FontSize="34"
-                       FontWeight="SemiBold" />
-
-            <TextBlock Grid.Row="1"
-                       Margin="0,5,0,0"
-                       Text="{Binding HeaderSubtitle}"
-                       TextWrapping="Wrap"
-                       FontSize="17" />
-
-            <TextBlock Grid.Row="2"
-                       Margin="0,3,0,0"
-                       Text="{Binding SpecificationVersion}" />
+            <Border Grid.Row="0"
+                    Grid.RowSpan="3"
+                    Margin="0,0,0,4"
+                    Padding="24,20"
+                    Background="#164A76"
+                    CornerRadius="14">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="{Binding AppTitle}"
+                                   Foreground="White"
+                                   FontSize="32"
+                                   FontWeight="SemiBold" />
+                        <TextBlock Margin="0,5,0,0"
+                                   Text="{Binding HeaderSubtitle}"
+                                   Foreground="#DCEEFF"
+                                   TextWrapping="Wrap"
+                                   FontSize="16" />
+                    </StackPanel>
+                    <Border Grid.Column="1"
+                            Margin="24,0,0,0"
+                            Padding="12,7"
+                            Background="#245E8E"
+                            CornerRadius="8"
+                            VerticalAlignment="Top">
+                        <TextBlock Text="{Binding SpecificationVersion}"
+                                   Foreground="White"
+                                   FontWeight="SemiBold" />
+                    </Border>
+                </Grid>
+            </Border>
 
             <local:CompanyFilePanel x:Name="CompanyPanel" Grid.Row="4" DataContext="{Binding Company}" />
 
@@ -548,10 +569,11 @@
             </GroupBox>
 
             <Border Grid.Row="20"
-                    BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+                    Background="{StaticResource AccentSoftBrush}"
+                    BorderBrush="#C8DCF4"
                     BorderThickness="1"
-                    CornerRadius="6"
-                    Padding="14">
+                    CornerRadius="10"
+                    Padding="16">
                 <StackPanel>
                     <TextBlock Text="{Binding FooterDevelopmentOnly}"
                                TextWrapping="Wrap"
