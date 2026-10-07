@@ -13,7 +13,8 @@ public sealed class ResourcePartDraft
 {
     public ResourcePartDraft(EntityId id, Money amount, ResourceRoutingKind routing,
         IEnumerable<DirectResourceAssignment>? directAssignments = null,
-        EntityId? poolId = null, string? exclusionReason = null)
+        EntityId? poolId = null, string? exclusionReason = null,
+        ResourceClassification? classification = null)
     {
         Id = id;
         Amount = amount;
@@ -21,6 +22,7 @@ public sealed class ResourcePartDraft
         DirectAssignments = FrozenList.Copy(directAssignments ?? []);
         PoolId = poolId;
         ExclusionReason = exclusionReason;
+        Classification = classification ?? ResourceClassification.Unclassified;
     }
 
     public EntityId Id { get; }
@@ -29,6 +31,15 @@ public sealed class ResourcePartDraft
     public IReadOnlyList<DirectResourceAssignment> DirectAssignments { get; }
     public EntityId? PoolId { get; }
     public string? ExclusionReason { get; }
+    public ResourceClassification Classification { get; }
+
+    public ResourcePartDraft WithClassification(ResourceClassification classification)
+    {
+        ArgumentNullException.ThrowIfNull(classification);
+        var changed = new ResourcePartDraft(Id, Amount, Routing, DirectAssignments, PoolId, ExclusionReason, classification);
+        classification.EnsureValid(changed);
+        return changed;
+    }
 }
 
 public sealed class ResourceDraft
@@ -55,14 +66,17 @@ public sealed record ResourceCoverage(
 
 public sealed class ResourcePreparation
 {
-    public ResourcePreparation(IEnumerable<ResourceCoverage> coverage, IEnumerable<DomainDiagnostic> diagnostics)
+    public ResourcePreparation(IEnumerable<ResourceCoverage> coverage, IEnumerable<DomainDiagnostic> diagnostics,
+        IEnumerable<DomainDiagnostic>? warnings = null)
     {
         Coverage = FrozenList.Copy(coverage);
         Diagnostics = FrozenList.Copy(diagnostics);
+        Warnings = FrozenList.Copy(warnings ?? []);
     }
 
     public IReadOnlyList<ResourceCoverage> Coverage { get; }
     public IReadOnlyList<DomainDiagnostic> Diagnostics { get; }
+    public IReadOnlyList<DomainDiagnostic> Warnings { get; }
     public bool IsValid => Diagnostics.Count == 0;
     // A valid draft may still have explicitly pending routes, even with a zero net amount.
     public bool HasPendingParts => Coverage.Any(value => value.HasPendingParts);

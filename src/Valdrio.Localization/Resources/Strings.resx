@@ -410,4 +410,15 @@ Full: {5}</value></data>
   <data name="Resource.ExclusionReasonRequired" xml:space="preserve"><value>Enter a reason for excluding this part.</value></data>
   <data name="Resource.AdjustmentReasonRequired" xml:space="preserve"><value>Enter the adjustment type and reason.</value></data>
   <data name="Resource.ConversionInvalid" xml:space="preserve"><value>The stored conversion does not match the original amount and its selected exchange rate.</value></data>
+  <data name="Resource.ClassificationInvalid" xml:space="preserve"><value>The resource classification contains an unsupported value.</value></data>
+  <data name="Resource.BehaviorContextRequired" xml:space="preserve"><value>Fixed and variable behavior require a driver, horizon and activity range.</value></data>
+  <data name="Resource.BehaviorHorizonInvalid" xml:space="preserve"><value>The behavior horizon must end on or after its start.</value></data>
+  <data name="Resource.BehaviorRangeInvalid" xml:space="preserve"><value>Activity quantities must be nonnegative and the range must be ordered.</value></data>
+  <data name="Resource.CapacityOwnerInvalid" xml:space="preserve"><value>Capacity assessment requires one owner pool and node matching the part route; other treatments cannot carry an owner.</value></data>
+  <data name="Resource.ActivityUnitMismatch" xml:space="preserve"><value>The activity quantity does not use its declared unit.</value></data>
+  <data name="Resource.BehaviorUnclassified" xml:space="preserve"><value>Part {0} is not classified as fixed or variable.</value></data>
+  <data name="Resource.BehaviorMixedPending" xml:space="preserve"><value>Part {0} is mixed and must be split before definitive absorption.</value></data>
+  <data name="Resource.SplitRequiresParts" xml:space="preserve"><value>Choose at least two replacement parts.</value></data>
+  <data name="Resource.SplitMismatch" xml:space="preserve"><value>Replacement parts must sum exactly to the original part amount.</value></data>
+  <data name="Resource.PartNotFound" xml:space="preserve"><value>Select one existing part of this resource.</value></data>
 </root>

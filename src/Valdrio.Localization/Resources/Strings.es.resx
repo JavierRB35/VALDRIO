@@ -410,4 +410,15 @@ Completa: {5}</value></data>
   <data name="Resource.ExclusionReasonRequired" xml:space="preserve"><value>Indica el motivo de exclusión de esta parte.</value></data>
   <data name="Resource.AdjustmentReasonRequired" xml:space="preserve"><value>Indica el tipo y el motivo del ajuste.</value></data>
   <data name="Resource.ConversionInvalid" xml:space="preserve"><value>La conversión guardada no coincide con el importe original y el tipo de cambio elegido.</value></data>
+  <data name="Resource.ClassificationInvalid" xml:space="preserve"><value>La clasificación del recurso contiene un valor no admitido.</value></data>
+  <data name="Resource.BehaviorContextRequired" xml:space="preserve"><value>El comportamiento fijo o variable requiere driver, horizonte y rango de actividad.</value></data>
+  <data name="Resource.BehaviorHorizonInvalid" xml:space="preserve"><value>El horizonte del comportamiento debe terminar en su fecha inicial o después.</value></data>
+  <data name="Resource.BehaviorRangeInvalid" xml:space="preserve"><value>Las cantidades de actividad deben ser no negativas y el rango debe estar ordenado.</value></data>
+  <data name="Resource.CapacityOwnerInvalid" xml:space="preserve"><value>La evaluación de capacidad requiere un pool y nodo propietarios que coincidan con la ruta; los demás tratamientos no admiten propietario.</value></data>
+  <data name="Resource.ActivityUnitMismatch" xml:space="preserve"><value>La cantidad de actividad no utiliza su unidad declarada.</value></data>
+  <data name="Resource.BehaviorUnclassified" xml:space="preserve"><value>La parte {0} no está clasificada como fija o variable.</value></data>
+  <data name="Resource.BehaviorMixedPending" xml:space="preserve"><value>La parte {0} es mixta y debe dividirse antes de la absorción definitiva.</value></data>
+  <data name="Resource.SplitRequiresParts" xml:space="preserve"><value>Indica al menos dos partes de sustitución.</value></data>
+  <data name="Resource.SplitMismatch" xml:space="preserve"><value>Las partes de sustitución deben sumar exactamente el importe de la parte original.</value></data>
+  <data name="Resource.PartNotFound" xml:space="preserve"><value>Selecciona una parte existente y única de este recurso.</value></data>
 </root>

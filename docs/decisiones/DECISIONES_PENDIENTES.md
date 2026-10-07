@@ -2,6 +2,13 @@
 
 ## Adelanto técnico T07 — 2026-10-07
 
+Continuación autorizada en la misma rama: clasificación contextual y operaciones de
+borrador. Producción/comercial/estructura se almacenan como categorías explícitas,
+sin decidir el perímetro de un informe o aprobar D07. None/AssessAtPool/PeriodCost
+son metadatos; no eligen denominador, política de capacidad ni aceptan D04/D05.
+Una cantidad ausente no se convierte en cero. El comportamiento no se infiere de
+la capa, la ruta o el rol del centro.
+
 El propietario acepta comenzar las reglas y pruebas independientes de T07 mientras
 T06 continúa, en una rama y copia de trabajo separadas. Se conserva la dependencia
 T06/T06A para la integración. No supone aceptar D04/D05/D07/D11 ni cambiar los

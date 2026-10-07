@@ -31,7 +31,8 @@ public static class ResourcePreparationRules
     }
 
     public static ResourcePreparation Prepare(IEnumerable<ResourceDraft> resources,
-        CurrencyCode functionalCurrency, PrecisionPolicy precisionPolicy)
+        CurrencyCode functionalCurrency, PrecisionPolicy precisionPolicy,
+        bool requireDefinitiveAbsorption = false, bool capacityRequiresBehavior = false)
     {
         ArgumentNullException.ThrowIfNull(resources);
         ArgumentNullException.ThrowIfNull(precisionPolicy);
@@ -39,6 +40,7 @@ public static class ResourcePreparationRules
         var zero = new Money(0m, functionalCurrency, precisionPolicy);
         var coverage = new List<ResourceCoverage>();
         var diagnostics = new List<DomainDiagnostic>();
+        var warnings = new List<DomainDiagnostic>();
         var resourceIds = new HashSet<EntityId>();
         var sourceIds = new HashSet<EntityId>();
         var partIds = new HashSet<EntityId>();
@@ -96,6 +98,26 @@ public static class ResourcePreparationRules
                 if (!partIds.Add(part.Id)) throw Error("RES_DUPLICATE_ID", "Resource.DuplicateId");
                 _ = zero + part.Amount; // Currency and precision-policy compatibility, even for zero.
                 ValidateRoute(part, zero);
+                part.Classification.EnsureValid(part);
+                if (part.Routing is ResourceRoutingKind.DirectObject or ResourceRoutingKind.AllocationPool)
+                {
+                    var classification = part.Classification;
+                    if (classification.Behavior == ResourceBehavior.Unclassified)
+                    {
+                        var unclassified = PartDiagnostic(part, "RES_BEHAVIOR_UNCLASSIFIED", "Resource.BehaviorUnclassified");
+                        if (capacityRequiresBehavior && classification.CapacityTreatment == ResourceCapacityTreatment.AssessAtPool)
+                            diagnostics.Add(unclassified);
+                        else warnings.Add(unclassified);
+                    }
+                    if (classification.Behavior == ResourceBehavior.MixedPending)
+                    {
+                        var mixed = PartDiagnostic(part, "RES_BEHAVIOR_MIXED_PENDING", "Resource.BehaviorMixedPending");
+                        if (requireDefinitiveAbsorption ||
+                            (capacityRequiresBehavior && classification.CapacityTreatment == ResourceCapacityTreatment.AssessAtPool))
+                            diagnostics.Add(mixed);
+                        else warnings.Add(mixed);
+                    }
+                }
                 switch (part.Routing)
                 {
                     case ResourceRoutingKind.DirectObject: direct += part.Amount; break;
@@ -113,7 +135,7 @@ public static class ResourcePreparationRules
                     [new("resourceId", DiagnosticArgumentType.Identifier, resource.Id.ToString()),
                      new("difference", DiagnosticArgumentType.Decimal, CanonicalDecimal.Format(difference.Amount))]));
         }
-        return new(coverage, diagnostics);
+        return new(coverage, diagnostics, warnings);
     }
 
     private static void ValidateRoute(ResourcePartDraft part, Money zero)
@@ -180,4 +202,7 @@ public static class ResourcePreparationRules
             conversion.Source, conversion.RateSetVersionId!);
 
     private static DomainRuleException Error(string code, string key) => new(new(code, key, []));
+
+    private static DomainDiagnostic PartDiagnostic(ResourcePartDraft part, string code, string key) =>
+        new(code, key, [new("partId", DiagnosticArgumentType.Identifier, part.Id.ToString())]);
 }

@@ -1,5 +1,15 @@
 # ESTADO_PROYECTO
 
+## Continuación T07: clasificación y edición de borradores — 2026-10-07
+
+Sobre `05856b6`, la misma rama incorpora comportamiento contextual fijo/variable/mixto,
+capas económicas independientes, propietario y observaciones de capacidad, avisos y
+bloqueos de clasificación. `ResourceDraftEditor` permite clasificar y dividir partes
+en memoria conservando los originales y rechazando candidatos incoherentes.
+La entrega aún no añade pantalla ni guardado. Continúan pendientes ámbito/revisión,
+auditoría persistida, snapshots e integración T06/T06A. No se cierra T07 ni se aceptan
+políticas económicas pendientes. Ver [alcance vigente](docs/tareas/T07.md).
+
 ## Rama paralela T07 — 2026-10-07
 
 El propietario autoriza adelantar reglas y pruebas de T07 en una rama independiente.
