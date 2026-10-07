@@ -23,7 +23,17 @@ Antes de modificar una pantalla existente:
 5. Conservar estados habilitado/deshabilitado, permisos de edición, confirmaciones, cancelación, diagnósticos, trazabilidad, internacionalización y navegación por teclado.
 6. Verificar el resultado contra la aplicación real, no únicamente contra especificaciones, capturas o maquetas.
 
-## 3. Dirección estética aprobada
+## 3. Principio de interfaz orientada al usuario
+
+La interfaz de VALDRIO debe ser simple, entendible e intuitiva para una persona usuaria del producto.
+
+- La interfaz debe mostrar únicamente la información, conceptos y acciones que resulten útiles para configurar, implementar, comprender y aplicar la metodología de un modelo de cálculo de costes.
+- No debe exponer la arquitectura interna de la aplicación, sus capas técnicas, estructuras de persistencia, nombres de implementación, identificadores internos ni estados técnicos salvo que esa información sea necesaria para una decisión del usuario o para comprender correctamente la metodología.
+- Los detalles técnicos necesarios para soporte, diagnóstico, auditoría o desarrollo deben quedar fuera del flujo normal de negocio y presentarse en superficies específicas cuando proceda.
+- Los nombres, textos, navegación y jerarquía visual deben hablar en términos del dominio y del trabajo del usuario, no en términos de la implementación.
+- Si existe conflicto entre reflejar literalmente la arquitectura interna y ofrecer un flujo comprensible, debe prevalecer el modelo mental del usuario siempre que se preserve la funcionalidad, la trazabilidad y la corrección metodológica.
+
+## 4. Dirección estética aprobada
 
 La estética futura debe seguir la línea de la referencia visual aprobada por el propietario en el proyecto/conversación de VALDRIO: interfaz limpia, clara, profesional y didáctica, con jerarquía visual fuerte, superficies luminosas, bloques bien separados, uso moderado de azules y tonos suaves/pastel para distinguir áreas o estados, acciones principales visibles, espaciado consistente y composición ordenada.
 
@@ -43,7 +53,7 @@ La prioridad es:
 
 Nunca al revés.
 
-## 4. Validación de un cambio visual
+## 5. Validación de un cambio visual
 
 Un cambio visual no se considera terminado solo porque el XAML compile o se vea mejor.
 
@@ -56,7 +66,7 @@ Como mínimo debe comprobarse:
 - que la pantalla se prueba contra el ViewModel y servicios reales;
 - que cualquier diferencia funcional se documenta y requiere aprobación del propietario.
 
-## 5. GitHub Actions y coste
+## 6. GitHub Actions y coste
 
 Objetivo habitual: 0 USD de GitHub Actions.
 
