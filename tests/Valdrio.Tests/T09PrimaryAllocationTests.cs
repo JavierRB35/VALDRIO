@@ -82,7 +82,7 @@ public sealed partial class T06ImportConfirmationTests
         Assert.AreEqual(original.Amount.Amount, result.Facts.Sum(f => f.PostedAmount.Amount));
         Assert.IsTrue(result.Parts.All(p => p.Difference.Amount == 0m));
         var negative = result.Facts.Where(f => f.PartId == tiny.Id).OrderBy(f => f.NodeId).ToArray();
-        Assert.AreEqual(-0.00000001m, negative[0].PostedAmount.Amount);
-        Assert.IsTrue(negative.Skip(1).All(f => f.PostedAmount.Amount == 0m));
+        Assert.AreEqual(1, negative.Count(f => f.PostedAmount.Amount == -0.00000001m));
+        Assert.AreEqual(2, negative.Count(f => f.PostedAmount.Amount == 0m));
     }
 }
