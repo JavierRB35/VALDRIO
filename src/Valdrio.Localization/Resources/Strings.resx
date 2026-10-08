@@ -8,7 +8,7 @@
   <data name="WindowTitle" xml:space="preserve"><value>VALDRIO - workspace</value></data>
   <data name="SpecificationVersion" xml:space="preserve"><value>Specification v0.4 · T02A complete</value></data>
   <data name="HeaderSubtitle" xml:space="preserve"><value>Companies, cost structures, analyses and imports</value></data>
-  <data name="PreferencesTitle" xml:space="preserve"><value>Presentation preferences</value></data>
+  <data name="PreferencesTitle" xml:space="preserve"><value>Preferences</value></data>
   <data name="LabelUiLanguage" xml:space="preserve"><value>Interface language</value></data>
   <data name="LabelFormatCulture" xml:space="preserve"><value>Regional format</value></data>
   <data name="LabelTimeZone" xml:space="preserve"><value>Display time zone</value></data>
@@ -97,14 +97,14 @@
   <data name="Fx.DateInvalid" xml:space="preserve"><value>The rate date must use ISO yyyy-MM-dd.</value></data>
   <data name="Fx.SourceRequired" xml:space="preserve"><value>Enter the source of the explicit FX rate.</value></data>
   <data name="FxEditorUnexpected" xml:space="preserve"><value>An unexpected error prevented conversion. See the technical log.</value></data>
-  <data name="CompanyTitle" xml:space="preserve"><value>Company file</value></data>
-  <data name="CompanyNameLabel" xml:space="preserve"><value>Name for a new company</value></data>
-  <data name="CompanyCurrencyLabel" xml:space="preserve"><value>Suggested currency (catalog fixture)</value></data>
-  <data name="CompanyCreate" xml:space="preserve"><value>Create file…</value></data>
-  <data name="CompanyOpen" xml:space="preserve"><value>Open…</value></data>
-  <data name="CompanyClose" xml:space="preserve"><value>Close file</value></data>
+  <data name="CompanyTitle" xml:space="preserve"><value>Cost project</value></data>
+  <data name="CompanyNameLabel" xml:space="preserve"><value>Project / company name</value></data>
+  <data name="CompanyCurrencyLabel" xml:space="preserve"><value>Usual project currency</value></data>
+  <data name="CompanyCreate" xml:space="preserve"><value>Create project…</value></data>
+  <data name="CompanyOpen" xml:space="preserve"><value>Open existing project…</value></data>
+  <data name="CompanyClose" xml:space="preserve"><value>Close project</value></data>
   <data name="CompanyBackup" xml:space="preserve"><value>Create backup…</value></data>
-  <data name="CompanyRestore" xml:space="preserve"><value>Restore to new file…</value></data>
+  <data name="CompanyRestore" xml:space="preserve"><value>Restore a backup…</value></data>
   <data name="CompanyCancel" xml:space="preserve"><value>Cancel operation</value></data>
   <data name="CompanyUnitLabel" xml:space="preserve"><value>Unit code</value></data>
   <data name="CompanyDimensionLabel" xml:space="preserve"><value>Measurement type (dimension)</value></data>
@@ -112,8 +112,8 @@
   <data name="CompanyScaleLabel" xml:space="preserve"><value>Allowed decimal places (0–12)</value></data>
   <data name="CompanyDiscreteLabel" xml:space="preserve"><value>Whole units only</value></data>
   <data name="CompanyAddUnit" xml:space="preserve"><value>Save activity unit</value></data>
-  <data name="CompanyNotes" xml:space="preserve"><value>Local file, one editor. The company currency suggests the currency for a future cost analysis; it does not lock it. Backups and restore use new paths. The catalogue currently contains EUR, USD, JPY and KWD. Encryption and economic calculation are pending.</value></data>
-  <data name="CompanyNoFile" xml:space="preserve"><value>No company file open.</value></data>
+  <data name="CompanyNotes" xml:space="preserve"><value>The project is stored in one local file containing the cost structure, period analyses, imports and account preparation. The currency entered here is only a starting value and can be changed in each analysis.</value></data>
+  <data name="CompanyNoFile" xml:space="preserve"><value>No cost project is open.</value></data>
   <data name="CompanyWorking" xml:space="preserve"><value>Operation in progress. Cancel takes effect before confirmation.</value></data>
   <data name="CompanyCompleted" xml:space="preserve"><value>Operation completed.</value></data>
   <data name="CompanyCancelled" xml:space="preserve"><value>Operation cancelled before confirmation. The previous file data remains intact.</value></data>
@@ -140,7 +140,7 @@ File: {8}</value></data>
   <data name="File.RevisionChanged" xml:space="preserve"><value>The revision changed. Reload the current company before saving.</value></data>
   <data name="File.DuplicateUnit" xml:space="preserve"><value>The unit ID or code already exists. Use a unique code. No change was confirmed.</value></data>
   <data name="File.InputInvalid" xml:space="preserve"><value>Review the entered name, currency and unit. No change was confirmed.</value></data>
-  <data name="CompanyUpgrade" xml:space="preserve"><value>Upgrade an older file to a new copy</value></data>
+  <data name="CompanyUpgrade" xml:space="preserve"><value>Open and upgrade an older file into a new copy</value></data>
   <data name="File.UpgradeRequired" xml:space="preserve"><value>This older file needs an explicit upgrade to a new file. Select Upgrade; keep the original.</value></data>
   <data name="File.UpgradeNotRequired" xml:space="preserve"><value>The file is already current; no upgrade was performed.</value></data>
   <data name="File.MigrationLocked" xml:space="preserve"><value>The source contains an active or stale migration lock. Keep it and inspect its origin before recovery.</value></data>
@@ -232,8 +232,8 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Study.ResourcesPending" xml:space="preserve"><value>Accounting resources have not been imported.</value></data>
   <data name="Study.ActivityPending" xml:space="preserve"><value>Activity and capacity observations have not been supplied.</value></data>
   <data name="Study.ConsumptionPending" xml:space="preserve"><value>Cost object consumptions have not been supplied.</value></data>
-  <data name="Study.Title" xml:space="preserve"><value>Cost analyses</value></data>
-  <data name="Study.Notes" xml:space="preserve"><value>A cost analysis applies a finalized cost structure to a specific period and scenario. Choose the structure, dates and currency here; then import the economic data for that period.</value></data>
+  <data name="Study.Title" xml:space="preserve"><value>Cost periods and analyses</value></data>
+  <data name="Study.Notes" xml:space="preserve"><value>Each analysis represents a specific period or scenario to which a cost structure is applied. For another month or period, create a new analysis and reuse the same structure when it is still valid.</value></data>
   <data name="Study.Name" xml:space="preserve"><value>Analysis name</value></data>
   <data name="Study.PeriodStart" xml:space="preserve"><value>Period start (inclusive)</value></data>
   <data name="Study.PeriodEnd" xml:space="preserve"><value>Period end (inclusive)</value></data>
@@ -244,8 +244,8 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Study.Create" xml:space="preserve"><value>Save analysis</value></data>
   <data name="Study.Save" xml:space="preserve"><value>Save analysis changes</value></data>
   <data name="Study.Load" xml:space="preserve"><value>Open analysis</value></data>
-  <data name="Study.Refresh" xml:space="preserve"><value>Refresh analyses and structures</value></data>
-  <data name="Study.Capture" xml:space="preserve"><value>Capture input snapshot</value></data>
+  <data name="Study.Refresh" xml:space="preserve"><value>Refresh list</value></data>
+  <data name="Study.Capture" xml:space="preserve"><value>Create technical checkpoint</value></data>
   <data name="Study.Close" xml:space="preserve"><value>Close analysis</value></data>
   <data name="Study.Reopen" xml:space="preserve"><value>Reopen analysis</value></data>
   <data name="Study.Snapshots" xml:space="preserve"><value>Captured snapshots</value></data>
@@ -260,8 +260,7 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Study.Working" xml:space="preserve"><value>Working…</value></data>
   <data name="Study.Completed" xml:space="preserve"><value>Operation completed.</value></data>
   <data name="Study.RunHistoryEmpty" xml:space="preserve"><value>Executions: none. Cost calculation is delivered in a later phase.</value></data>
-  <data name="Study.Details" xml:space="preserve"><value>{0} · {1}–{2} · {3} · {4}
-Revision {5} · {6} · structure {7}</value></data>
+  <data name="Study.Details" xml:space="preserve"><value>{0} · {1}–{2} · {3} · {4} · {8}</value></data>
   <data name="Study.SnapshotDetails" xml:space="preserve"><value>Snapshot {0} · input revision {1} · {2}
 Captured {3}
 Economic: {4}
@@ -383,9 +382,9 @@ Full: {5}</value></data>
   <data name="ImportMapping.DebitCreditHelp" xml:space="preserve"><value>Period amount = debit minus credit. Both columns require explicit numbers, including zero. Empty or missing fields are errors; source negatives retain their declared meaning.</value></data>
   <data name="ImportMapping.ApproveDebitCredit" xml:space="preserve"><value>I have checked the example and confirm debit minus credit as the signed amount for the displayed period, in the stated source currency. Both originals, negatives and zeros retain their meaning.</value></data>
   <data name="Import.AmountOverflow" xml:space="preserve"><value>Debit minus credit exceeds the supported decimal range. Correct the source amounts.</value></data>
-  <data name="CompanyActiveLabel" xml:space="preserve"><value>Open company</value></data>
-  <data name="CompanyTechnicalDetails" xml:space="preserve"><value>File technical details</value></data>
-  <data name="DevelopmentToolsTitle" xml:space="preserve"><value>Development tools and examples</value></data>
+  <data name="CompanyActiveLabel" xml:space="preserve"><value>Open project</value></data>
+  <data name="CompanyTechnicalDetails" xml:space="preserve"><value>Technical details (support)</value></data>
+  <data name="DevelopmentToolsTitle" xml:space="preserve"><value>Technical tools (support)</value></data>
   <data name="ImportMapping.AmountMode" xml:space="preserve"><value>What do these amounts represent?</value></data>
   <data name="ImportMapping.ApproveClosing" xml:space="preserve"><value>I checked the closing date and example. I confirm that the full balance of the selected accounts should be used for this analysis, preserving signs and zeros.</value></data>
   <data name="ImportMapping.ApproveClosingDebitCredit" xml:space="preserve"><value>I checked that Debit and Credit represent the stated closing balances. I confirm that Debit minus Credit is the full balance to use in this analysis.</value></data>
@@ -404,12 +403,12 @@ Full: {5}</value></data>
   <data name="ImportMapping.SelectAllRecords" xml:space="preserve"><value>Select all</value></data>
   <data name="ImportMapping.SourceCode" xml:space="preserve"><value>Code</value></data>
   <data name="ImportMapping.SourceRecords" xml:space="preserve"><value>Source rows</value></data>
-  <data name="Study.ChooseExisting" xml:space="preserve"><value>Saved analyses: select one and click Open analysis.</value></data>
+  <data name="Study.ChooseExisting" xml:space="preserve"><value>Select a saved analysis to resume exactly where you left it.</value></data>
   <data name="Study.ChooseModelHelp" xml:space="preserve"><value>Choose the finalized cost structure to apply to this analysis. That exact version stays linked to the analysis for traceability.</value></data>
   <data name="Study.GoToModels" xml:space="preserve"><value>Go to Cost structure</value></data>
   <data name="Study.CreationHelp" xml:space="preserve"><value>Give the analysis a recognisable name, choose the cost structure, period and currency, then save it to import that period's data.</value></data>
   <data name="Study.PreviewHelp" xml:space="preserve"><value>The guided workflow saves the analysis first. Reviewing a file without an analysis is optional and cannot save imports.</value></data>
-  <data name="Study.NoStudiesYet" xml:space="preserve"><value>No analyses have been saved yet. Complete the form to save the first one.</value></data>
+  <data name="Study.NoStudiesYet" xml:space="preserve"><value>There are no saved analyses in this project yet.</value></data>
   <data name="Study.NoModelsHelp" xml:space="preserve"><value>No finalized cost structure is available. Go to Cost structure, complete a version and click “Finalize structure for use”. Then return here and refresh the list.</value></data>
   <data name="Study.ImportHelp" xml:space="preserve"><value>Continue to Import to choose a file, review records and save them inside this analysis.</value></data>
   <data name="Study.SavedHelp" xml:space="preserve"><value>The analysis is stored inside the company file. It brings together the period, selected structure and the data you import or prepare for costing.</value></data>
@@ -467,18 +466,18 @@ Full: {5}</value></data>
   <data name="ImportMapping.RoundingAdjustment" xml:space="preserve"><value>Conversion rounding adjustment</value></data>
   <data name="ImportMapping.CurrencyTotals" xml:space="preserve"><value>Original {0}: positive {1}; negative {2}; net {3}</value></data>
   <data name="ImportMapping.FunctionalTotal" xml:space="preserve"><value>Functional total: {0} {1}. Conversion rounding adjustment: {2} {1}.</value></data>
-  <data name="Guide.Company" xml:space="preserve"><value>1. Company</value></data>
-  <data name="Guide.Model" xml:space="preserve"><value>2. Cost structure</value></data>
-  <data name="Guide.Study" xml:space="preserve"><value>3. Cost analysis</value></data>
-  <data name="Guide.Import" xml:space="preserve"><value>4. Import</value></data>
-  <data name="Guide.Settings" xml:space="preserve"><value>Preferences and tools</value></data>
+  <data name="Guide.Company" xml:space="preserve"><value>1. Project</value></data>
+  <data name="Guide.Model" xml:space="preserve"><value>2. Design structure</value></data>
+  <data name="Guide.Study" xml:space="preserve"><value>3. Period / analysis</value></data>
+  <data name="Guide.Import" xml:space="preserve"><value>4. Import balances</value></data>
+  <data name="Guide.Settings" xml:space="preserve"><value>Preferences</value></data>
   <data name="Guide.Back" xml:space="preserve"><value>Back</value></data>
   <data name="Guide.Next" xml:space="preserve"><value>Continue</value></data>
   <data name="Guide.SaveAndImport" xml:space="preserve"><value>Save analysis and continue to import</value></data>
   <data name="Guide.OpenImport" xml:space="preserve"><value>Import Excel or CSV into this analysis</value></data>
-  <data name="Guide.Preview" xml:space="preserve"><value>Only review a file (without saving it to an analysis)</value></data>
-  <data name="Guide.NeedCompany" xml:space="preserve"><value>First create or open a company file. Cost structures, analyses and imports are stored inside that file.</value></data>
-  <data name="Guide.CompanyReady" xml:space="preserve"><value>Company open. Continue to Cost structure to define how costs will be allocated.</value></data>
+  <data name="Guide.Preview" xml:space="preserve"><value>Review a file without saving it (optional)</value></data>
+  <data name="Guide.NeedCompany" xml:space="preserve"><value>First create or open a cost project. The structure, periods, imports and account preparation are all stored inside that project.</value></data>
+  <data name="Guide.CompanyReady" xml:space="preserve"><value>Project open. Choose what you want to do below or continue to the cost structure.</value></data>
   <data name="Guide.NeedDraft" xml:space="preserve"><value>Name the cost structure and create a new one, or select and open an existing version.</value></data>
   <data name="Guide.NeedCenter" xml:space="preserve"><value>Create or activate at least one physical centre in Centres. It identifies the place or department where work takes place.</value></data>
   <data name="Guide.NeedUnit" xml:space="preserve"><value>There is no activity unit available yet. Create one here, or continue to Nodes and create it there when the node needs it.</value></data>
@@ -595,7 +594,7 @@ Full: {5}</value></data>
   <data name="Guide.Help.Records" xml:space="preserve"><value>Check or uncheck rows to import. Select all, none or exclude just some.</value></data>
   <data name="Guide.Help.RateSelections" xml:space="preserve"><value>Enter the selected rate identifier for each included record requiring conversion.</value></data>
   <data name="Guide.MeaningChosen" xml:space="preserve"><value>I confirm that this option describes what the file represents.</value></data>
-  <data name="Guide.OtherStudy" xml:space="preserve"><value>Other operations: new analysis, closure and data checkpoints</value></data>
+  <data name="Guide.OtherStudy" xml:space="preserve"><value>Advanced analysis options</value></data>
   <data name="Guide.OtherModel" xml:space="preserve"><value>Other cost-structure operations</value></data>
   <data name="Guide.OtherFile" xml:space="preserve"><value>Backups, restore and file upgrades</value></data>
   <data name="Guide.Help.SelectedUiLanguageTag" xml:space="preserve"><value>Language of application text. Does not change stored data.</value></data>
@@ -607,7 +606,7 @@ Full: {5}</value></data>
   <data name="Guide.PendingCenter" xml:space="preserve"><value>The physical centre has unsaved changes. Review them in Centres, then save the centre before continuing.</value></data>
   <data name="Guide.ReviewCenter" xml:space="preserve"><value>Review pending centre</value></data>
   <data name="Guide.SaveCenterNext" xml:space="preserve"><value>Save centre and continue</value></data>
-  <data name="Guide.CreateCompanyNext" xml:space="preserve"><value>Create company file and continue</value></data>
+  <data name="Guide.CreateCompanyNext" xml:space="preserve"><value>Create project and continue</value></data>
   <data name="Guide.CreateModelNext" xml:space="preserve"><value>Create structure and continue</value></data>
   <data name="Guide.LoadModelNext" xml:space="preserve"><value>Open selected structure and continue</value></data>
   <data name="Guide.ApplyNodeNext" xml:space="preserve"><value>Save node and continue</value></data>
@@ -803,7 +802,7 @@ Difference to distribute: {7}</value></data>
   <data name="Resource.NumberRequired" xml:space="preserve"><value>Enter a valid number using the regional format captured when the form started. An empty field is not converted to zero.</value></data>
   <data name="Resource.DateRequired" xml:space="preserve"><value>Select a valid date in the calendar.</value></data>
   <data name="Resource.RevalueUnbalanced" xml:space="preserve"><value>The account still has a difference after revaluation. Adjust its parts or explicitly leave the difference pending.</value></data>
-  <data name="Guide.Resources" xml:space="preserve"><value>5. Review and adjust accounts</value></data>
+  <data name="Guide.Resources" xml:space="preserve"><value>5. Prepare accounts</value></data>
   <data name="Guide.ContinueResources" xml:space="preserve"><value>Continue: review and adjust accounts</value></data>
   <data name="Guide.AnotherImport" xml:space="preserve"><value>Import another file / correct a previous import</value></data>
   <data name="Resources.LayerHelp" xml:space="preserve"><value>State whether this part belongs to production, commercial or structure. This is independent of fixed or variable behavior and its destination. You may leave it unclassified.</value></data>
@@ -949,4 +948,36 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.ListTitle" xml:space="preserve"><value>Imported accounts</value></data>
   <data name="Resources.ListHelp" xml:space="preserve"><value>This table is your starting point. Select an account to review its original amount, correct it with adjustments, and decide how it is distributed or excluded.</value></data>
   <data name="Resources.OpenSelected" xml:space="preserve"><value>Review / adjust selected account</value></data>
+  <data name="CompanyProjectIntro" xml:space="preserve"><value>A cost project stores the company, its cost structure and all period analyses in one file. Open an existing project or create a new one.</value></data>
+  <data name="CompanyOpenProjectTitle" xml:space="preserve"><value>Resume an existing project</value></data>
+  <data name="CompanyOpenProjectHelp" xml:space="preserve"><value>Open the file you were already working with. Then choose whether to modify the structure, open another period, or continue preparing accounts.</value></data>
+  <data name="CompanyNewProjectTitle" xml:space="preserve"><value>Start a new project</value></data>
+  <data name="CompanyNewProjectHelp" xml:space="preserve"><value>Enter a recognisable name and usual currency. You will define the cost structure next; you do not need to configure everything before starting.</value></data>
+  <data name="CompanyProjectReadyHelp" xml:space="preserve"><value>The project is ready. Use the task centre above to go directly to the work you need to do.</value></data>
+  <data name="CompanyFileOperations" xml:space="preserve"><value>File, backup and recovery (optional)</value></data>
+  <data name="CompanyFileOperationsHelp" xml:space="preserve"><value>These operations manage the project file itself. They are not part of everyday cost-analysis work.</value></data>
+  <data name="Study.OpenSectionTitle" xml:space="preserve"><value>Resume a saved analysis</value></data>
+  <data name="Study.OpenSectionHelp" xml:space="preserve"><value>Use this list to return to a period already started, review its imports, or continue preparing its accounts.</value></data>
+  <data name="Study.NewFormTitle" xml:space="preserve"><value>Prepare a new period</value></data>
+  <data name="Study.EditFormTitle" xml:space="preserve"><value>Current analysis</value></data>
+  <data name="Study.NewFormHelp" xml:space="preserve"><value>Give it a recognisable name, choose the cost structure and define the period. You can then import that period's balances.</value></data>
+  <data name="Study.EditFormHelp" xml:space="preserve"><value>This is the currently open period. Save context changes before importing new data.</value></data>
+  <data name="Study.ImportHistoryTitle" xml:space="preserve"><value>Data imported into this analysis</value></data>
+  <data name="Study.ImportHistoryHelp" xml:space="preserve"><value>Previously added files appear here. Create a new analysis for another period; to correct an import in this same period, use replacement during import.</value></data>
+  <data name="Study.AdvancedHelp" xml:space="preserve"><value>These options support historical review, closing and support work. They are not required for the usual analyst workflow.</value></data>
+  <data name="Study.NewBlank" xml:space="preserve"><value>Prepare new analysis</value></data>
+  <data name="Study.NewPeriod" xml:space="preserve"><value>New period with this structure</value></data>
+  <data name="Guide.ContinueStructure" xml:space="preserve"><value>Continue: design structure</value></data>
+  <data name="Guide.NeedProjectShort" xml:space="preserve"><value>Open or create a cost project first.</value></data>
+  <data name="Guide.NeedAnalysisForImportShort" xml:space="preserve"><value>Save or open a period analysis before importing balances.</value></data>
+  <data name="Guide.NeedImportForResourcesShort" xml:space="preserve"><value>Save at least one import before preparing accounts.</value></data>
+  <data name="Guide.NeedPublishedShort" xml:space="preserve"><value>Finalize a cost structure before creating an analysis.</value></data>
+  <data name="Guide.Context" xml:space="preserve"><value>Project: {0}   ·   Structure: {1}   ·   Analysis: {2}</value></data>
+  <data name="Guide.ProjectTasksTitle" xml:space="preserve"><value>What do you want to do in this project?</value></data>
+  <data name="Guide.ProjectTasksHelp" xml:space="preserve"><value>You do not need to follow every step each time. Choose the task that matches today's work.</value></data>
+  <data name="Guide.TaskStructure" xml:space="preserve"><value>Design or modify the structure</value></data>
+  <data name="Guide.TaskAnalysis" xml:space="preserve"><value>Open or create an analysis period</value></data>
+  <data name="Guide.TaskContinueAnalysis" xml:space="preserve"><value>Continue the current analysis</value></data>
+  <data name="Guide.TaskContinueImport" xml:space="preserve"><value>Continue with balances for the current analysis</value></data>
+  <data name="Guide.TaskContinueResources" xml:space="preserve"><value>Continue preparing imported accounts</value></data>
 </root>
