@@ -18,6 +18,20 @@
    <TextBlock FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" x:Name="WorkflowTitle" />
    <TextBlock TextWrapping="Wrap" Margin="0,6,0,0" AutomationProperties.LiveSetting="Polite" x:Name="WorkflowRequirement" />
    <TextBlock TextWrapping="Wrap" Margin="0,4,0,0" x:Name="SaveLocation" />
+   <TextBlock TextWrapping="Wrap" Margin="0,4,0,0" FontWeight="SemiBold" x:Name="ProjectContextText" />
+
+   <Border x:Name="ProjectTaskPanel" BorderBrush="#D6DEE8" BorderThickness="1" CornerRadius="6"
+           Padding="12" Margin="0,10,0,0" Visibility="Collapsed">
+    <StackPanel>
+     <TextBlock x:Name="ProjectTaskTitle" FontSize="17" FontWeight="SemiBold" />
+     <TextBlock x:Name="ProjectTaskHelp" Margin="0,4,0,8" Foreground="#506176" />
+     <WrapPanel>
+      <Button x:Name="TaskStructureButton" Click="ChooseProjectStructure" Padding="12,7" Margin="0,4,8,4" />
+      <Button x:Name="TaskAnalysisButton" Click="ChooseProjectAnalysis" Padding="12,7" Margin="0,4,8,4" />
+      <Button x:Name="TaskContinueButton" Click="ContinueProjectWork" Padding="12,7" Margin="0,4,8,4" FontWeight="SemiBold" />
+     </WrapPanel>
+    </StackPanel>
+   </Border>
   </StackPanel>
   <StackPanel Margin="18,6,18,12" DockPanel.Dock="Bottom">
    <TextBlock TextWrapping="Wrap" MinHeight="38" AutomationProperties.LiveSetting="Polite" x:Name="FieldHelpText" />
