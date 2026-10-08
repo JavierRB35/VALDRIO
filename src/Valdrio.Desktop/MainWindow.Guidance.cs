@@ -31,6 +31,7 @@ public partial class MainWindow
     {
         if (viewModel is not { } vm) return;
         if (workflowStep == 4 && lastResourceStage != vm.Resources?.Stage) { lastHelpKey = null; lastResourceStage = vm.Resources?.Stage ?? -1; }
+        NavigationGroupLabel.Text = vm.Guide("WorkspaceNavigation");
         var keys = new[] { "Company", "Model", "Study", "Import", "Resources", "Settings" };
         Button[] buttons = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, SettingsStep];
         for (var i = 0; i < buttons.Length; i++)

@@ -1005,4 +1005,5 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.PoolWithoutDescription" xml:space="preserve"><value>No pool description</value></data>
   <data name="Resources.PoolChoice" xml:space="preserve"><value>Centre {0} | Node {1} ({2}) | {3} | Activity unit {4} | Functions: {5}</value></data>
   <data name="Guide.Help.Resource.BackToCorrections" xml:space="preserve"><value>Closes this optional account editor and returns to the correction table. If destinations have unsaved changes, choose save, discard or cancel; your saved corrections are preserved.</value></data>
+  <data name="Guide.WorkspaceNavigation" xml:space="preserve"><value>WORKSPACE</value></data>
 </root>

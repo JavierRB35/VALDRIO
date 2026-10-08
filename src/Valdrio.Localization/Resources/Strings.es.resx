@@ -1005,4 +1005,5 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.PoolWithoutDescription" xml:space="preserve"><value>Pool sin descripción</value></data>
   <data name="Resources.PoolChoice" xml:space="preserve"><value>Centro {0} | Nodo {1} ({2}) | {3} | Unidad de actividad {4} | Funciones: {5}</value></data>
   <data name="Guide.Help.Resource.BackToCorrections" xml:space="preserve"><value>Cierra este editor opcional de la cuenta y vuelve a la tabla de correcciones. Si hay cambios de destinos sin guardar, elige guardar, descartar o cancelar; las correcciones guardadas se conservan.</value></data>
+  <data name="Guide.WorkspaceNavigation" xml:space="preserve"><value>ESPACIO DE TRABAJO</value></data>
 </root>

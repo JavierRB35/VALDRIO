@@ -212,6 +212,7 @@ public partial class App : System.Windows.Application
                         importWindow.Close();
                         await window.RunGuidedWorkflowChecks(captureDirectory, (QueuedCompanyFileDialogs)companyDialogs, (QueuedImportSourceDialogs)importDialogs);
                         await window.RunResourceChecks(captureDirectory);
+                        await window.RunVisualShellChecks(captureDirectory);
                         CaptureVisualEvidence(
                             window,
                             viewModel,

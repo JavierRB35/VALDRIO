@@ -1,30 +1,78 @@
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:Valdrio.Desktop" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Valdrio.Desktop.MainWindow" Title="{Binding WindowTitle}" Height="760" Width="940" MinHeight="620" MinWidth="760" WindowStartupLocation="CenterScreen">
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:Valdrio.Desktop" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Valdrio.Desktop.MainWindow" Style="{StaticResource {x:Type Window}}" Title="{Binding WindowTitle}" Height="860" Width="1280" MinHeight="620" MinWidth="760" WindowStartupLocation="CenterScreen">
  <Window.Resources>
   <BooleanToVisibilityConverter x:Key="BooleanVisibility" />
-  <Style TargetType="TextBlock">
+  <Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
    <Setter Property="TextWrapping" Value="Wrap" />
   </Style>
  </Window.Resources>
- <DockPanel LastChildFill="True">
-  <StackPanel Margin="18,12,18,6" DockPanel.Dock="Top">
+ <Grid x:Name="ShellLayout">
+  <Grid.ColumnDefinitions><ColumnDefinition Width="{StaticResource Sidebar.Width}" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+  <Border x:Name="Sidebar" Background="{DynamicResource Brand.DeepGreen}">
+   <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel>
+     <StackPanel Margin="24,24,16,24">
+      <TextBlock Text="{Binding AppTitle}" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource Brand.White}" />
+      <TextBlock Text="{Binding HeaderSubtitle}" Margin="0,8,0,0" Foreground="{DynamicResource Brand.White}" FontSize="12" />
+     </StackPanel>
+     <TextBlock x:Name="NavigationGroupLabel" Margin="24,0,16,8" Foreground="{DynamicResource Brand.White}" FontSize="12" FontWeight="SemiBold" />
+      <Button x:Name="CompanyStep" Click="ChooseCompany" Style="{StaticResource Sidebar.Button}" />
+      <Button x:Name="ModelStep" Click="ChooseModel" Style="{StaticResource Sidebar.Button}" />
+      <Button x:Name="StudyStep" Click="ChooseStudy" Style="{StaticResource Sidebar.Button}" />
+      <Button x:Name="ImportStep" Click="ChooseImport" Style="{StaticResource Sidebar.Button}" />
+      <Button x:Name="ResourcesStep" Click="ChooseResources" Style="{StaticResource Sidebar.Button}" />
+     <Border BorderBrush="{DynamicResource Accent.ActiveGreen}" BorderThickness="0,1,0,0" Margin="16,16,16,8" />
+     <Button x:Name="SettingsStep" Click="ChooseSettings" Style="{StaticResource Sidebar.Button}" />
+    </StackPanel>
+   </ScrollViewer>
+  </Border>
+  <DockPanel Grid.Column="1" LastChildFill="True">
+   <Border DockPanel.Dock="Top" Background="{DynamicResource Brand.White}" BorderBrush="{DynamicResource Border.Soft}" BorderThickness="0,0,0,1" Padding="{StaticResource Space.Page}">
+    <StackPanel>
+     <TextBlock x:Name="ProjectContextText" FontWeight="SemiBold" />
+     <TextBlock x:Name="SaveLocation" Margin="0,4,0,0" FontSize="12" />
+    </StackPanel>
+   </Border>
+  <StackPanel x:Name="ActionFooter" Margin="{StaticResource Space.Page}" DockPanel.Dock="Bottom">
+   <TextBlock TextWrapping="Wrap" MinHeight="32" AutomationProperties.LiveSetting="Polite" x:Name="FieldHelpText" />
    <WrapPanel>
-    <Button Click="ChooseCompany" Padding="12,7" Margin="0,0,8,6" x:Name="CompanyStep" />
-    <Button Click="ChooseModel" Padding="12,7" Margin="0,0,8,6" x:Name="ModelStep" />
-    <Button Click="ChooseStudy" Padding="12,7" Margin="0,0,8,6" x:Name="StudyStep" />
-    <Button Click="ChooseImport" Padding="12,7" Margin="0,0,8,6" x:Name="ImportStep" />
-    <Button Click="ChooseResources" Padding="12,7" Margin="0,0,8,6" x:Name="ResourcesStep" />
-    <Button Click="ChooseSettings" Padding="12,7" Margin="0,0,8,6" x:Name="SettingsStep" />
+    <Button Click="PreviousStep" Padding="14,7" Margin="0,4,8,0" ContentTemplate="{StaticResource Button.WrappedText}" MaxWidth="{Binding ActualWidth, ElementName=ActionFooter}" x:Name="WorkflowBack" />
+    <Button Style="{StaticResource Button.Primary}" Click="ContinueWorkflow" Padding="14,7" Margin="0,4,8,0" ContentTemplate="{StaticResource Button.WrappedText}" MaxWidth="{Binding ActualWidth, ElementName=ActionFooter}" x:Name="WorkflowNext" />
    </WrapPanel>
-   <TextBlock FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" x:Name="WorkflowTitle" />
-   <TextBlock TextWrapping="Wrap" Margin="0,6,0,0" AutomationProperties.LiveSetting="Polite" x:Name="WorkflowRequirement" />
-   <TextBlock TextWrapping="Wrap" Margin="0,4,0,0" x:Name="SaveLocation" />
-   <TextBlock TextWrapping="Wrap" Margin="0,4,0,0" FontWeight="SemiBold" x:Name="ProjectContextText" />
-
-   <Border x:Name="ProjectTaskPanel" BorderBrush="#D6DEE8" BorderThickness="1" CornerRadius="6"
-           Padding="12" Margin="0,10,0,0" Visibility="Collapsed">
+  </StackPanel>
+  <ScrollViewer x:Name="RootScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+   <Border Width="{Binding ViewportWidth, ElementName=RootScrollViewer}" MinWidth="648" Padding="{StaticResource Space.Page}">
+   <Grid x:Name="MainContent">
+    <Grid.RowDefinitions>
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+     <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <StackPanel Grid.Row="0" Margin="0,0,0,16">
+     <TextBlock x:Name="WorkflowTitle" Style="{StaticResource Text.Title}" />
+     <TextBlock x:Name="WorkflowRequirement" Margin="0,8,0,0" AutomationProperties.LiveSetting="Polite" />
+    </StackPanel>
+   <Border x:Name="ProjectTaskPanel" Grid.Row="2" Style="{StaticResource Card}" Margin="0,0,0,16" Visibility="Collapsed">
     <StackPanel>
      <TextBlock x:Name="ProjectTaskTitle" FontSize="17" FontWeight="SemiBold" />
-     <TextBlock x:Name="ProjectTaskHelp" Margin="0,4,0,8" Foreground="#506176" />
+     <TextBlock x:Name="ProjectTaskHelp" Margin="0,4,0,8" Foreground="{DynamicResource Text.Primary}" />
      <WrapPanel>
       <Button x:Name="TaskStructureButton" Click="ChooseProjectStructure" Padding="12,7" Margin="0,4,8,4" />
       <Button x:Name="TaskAnalysisButton" Click="ChooseProjectAnalysis" Padding="12,7" Margin="0,4,8,4" />
@@ -32,39 +80,6 @@
      </WrapPanel>
     </StackPanel>
    </Border>
-  </StackPanel>
-  <StackPanel Margin="18,6,18,12" DockPanel.Dock="Bottom">
-   <TextBlock TextWrapping="Wrap" MinHeight="38" AutomationProperties.LiveSetting="Polite" x:Name="FieldHelpText" />
-   <WrapPanel>
-    <Button Click="PreviousStep" Padding="14,7" Margin="0,4,8,0" x:Name="WorkflowBack" />
-    <Button Click="ContinueWorkflow" Padding="14,7" Margin="0,4,8,0" x:Name="WorkflowNext" />
-   </WrapPanel>
-  </StackPanel>
-  <ScrollViewer x:Name="RootScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-   <Grid Margin="18,6,18,12">
-    <Grid.RowDefinitions>
-     <RowDefinition Height="Auto" />
-     <RowDefinition Height="Auto" />
-     <RowDefinition Height="Auto" />
-     <RowDefinition Height="18" />
-     <RowDefinition Height="Auto" />
-     <RowDefinition Height="14" />
-     <RowDefinition Height="Auto" />
-     <RowDefinition Height="14" />
-     <RowDefinition Height="Auto" />
-     <RowDefinition Height="14" />
-     <RowDefinition Height="Auto" />
-     <RowDefinition Height="14" />
-     <RowDefinition Height="Auto" />
-     <RowDefinition Height="14" />
-     <RowDefinition Height="Auto" />
-     <RowDefinition Height="14" />
-     <RowDefinition Height="Auto" />
-     <RowDefinition Height="14" />
-     <RowDefinition Height="Auto" />
-     <RowDefinition Height="14" />
-     <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
     <local:CompanyFilePanel x:Name="CompanyPanel" Grid.Row="4" DataContext="{Binding Company}" />
     <local:ModelWorkspacePanel x:Name="ModelPanel" Grid.Row="6" DataContext="{Binding Models}" />
     <local:StudyWorkspacePanel x:Name="StudyPanel" Grid.Row="8" DataContext="{Binding Studies}" />
@@ -91,7 +106,7 @@
       <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelTimeZone}" TextWrapping="Wrap" />
       <ComboBox local:FieldHelp.Key="SelectedTimeZoneId" x:Name="TimeZoneSelector" Grid.Row="4" Grid.Column="1" MinWidth="280" ItemsSource="{Binding TimeZoneOptions}" SelectedItem="{Binding SelectedTimeZoneId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TabIndex="2" AutomationProperties.Name="{Binding LabelTimeZone}" />
       <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Visibility="{Binding ShowPreferencesSaveWarning, Converter={StaticResource BooleanVisibility}}">
-       <TextBlock Text="{Binding PreferencesSaveWarning}" Foreground="DarkRed" AutomationProperties.LiveSetting="Polite" />
+       <TextBlock Text="{Binding PreferencesSaveWarning}" Foreground="{DynamicResource Brand.Red}" AutomationProperties.LiveSetting="Polite" />
        <Button Content="{Binding RetrySavePreferencesLabel}" Command="{Binding RetrySavePreferencesCommand}" HorizontalAlignment="Left" Margin="0,8,0,0" />
       </StackPanel>
      </Grid>
@@ -307,7 +322,7 @@
         </WrapPanel>
        </Grid>
       </GroupBox>
-      <Border Grid.Row="8" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" BorderThickness="1" CornerRadius="6" Padding="14">
+      <Border Grid.Row="8" BorderBrush="{DynamicResource Border.Soft}" BorderThickness="1" CornerRadius="6" Padding="14">
        <StackPanel>
         <TextBlock Text="{Binding FooterDevelopmentOnly}" TextWrapping="Wrap" FontStyle="Italic" />
         <TextBlock Margin="0,8,0,0" Text="{Binding Status}" TextWrapping="Wrap" />
@@ -322,6 +337,8 @@
      <Button Click="OpenAnotherImport" Content="{Binding AnotherImportLabel}" HorizontalAlignment="Left" Padding="12,7" Margin="0,6,0,8" />
     </StackPanel>
    </Grid>
+   </Border>
   </ScrollViewer>
- </DockPanel>
+  </DockPanel>
+ </Grid>
 </Window>

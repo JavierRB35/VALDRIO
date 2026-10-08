@@ -3,7 +3,8 @@
 «Una aplicación de este tipo ya es lo suficientemente compleja en su metodología
 como para complicarla en su uso y funcionamiento».
 
-Prioridad actual: usabilidad, no estética. Conservar todas las funcionalidades y
+Usabilidad y sistema visual aprobado se aplican conjuntamente. La presentación sigue
+[el sistema visual V1](../diseno/SISTEMA_VISUAL_VALDRIO_V1.md), sin reducir la claridad del flujo. Conservar todas las funcionalidades y
 reglas económicas, sin obligar a conocer la arquitectura interna para trabajar.
 
 - La aplicación proporciona el orden de trabajo y explica el siguiente paso.

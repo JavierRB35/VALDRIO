@@ -1,0 +1,159 @@
+{
+  "functionalBase": "5cf45b45484294129de9846ed7e7d1c8cc0a08d3",
+  "designSource": "2a3c4b9a2c282c6e0b655e7ce31ee10f508cb637",
+  "nativeChecks": 419,
+  "nativeResults": [
+    {
+      "file": "fx-editor-interaction.json",
+      "status": "passed",
+      "checks": 12
+    },
+    {
+      "file": "company-file/interaction.json",
+      "status": "passed",
+      "checks": 28
+    },
+    {
+      "file": "guided-workflow/audit.json",
+      "status": "passed",
+      "checks": 27
+    },
+    {
+      "file": "guided-workflow/interaction.json",
+      "status": "passed",
+      "checks": 20
+    },
+    {
+      "file": "import-columns/interaction.json",
+      "status": "passed",
+      "checks": 16
+    },
+    {
+      "file": "import-completion/interaction.json",
+      "status": "passed",
+      "checks": 9
+    },
+    {
+      "file": "import-confirmation/interaction.json",
+      "status": "passed",
+      "checks": 26
+    },
+    {
+      "file": "import-debit-credit/interaction.json",
+      "status": "passed",
+      "checks": 22
+    },
+    {
+      "file": "import-grouping/interaction.json",
+      "status": "passed",
+      "checks": 11
+    },
+    {
+      "file": "import-international/interaction.json",
+      "status": "passed",
+      "checks": 10
+    },
+    {
+      "file": "models/interaction.json",
+      "status": "passed",
+      "checks": 57
+    },
+    {
+      "file": "studies/interaction.json",
+      "status": "passed",
+      "checks": 74
+    },
+    {
+      "file": "studies/recovery.json",
+      "status": "passed",
+      "checks": 10
+    },
+    {
+      "file": "t07-resources/interaction.json",
+      "status": "passed",
+      "checks": 44
+    },
+    {
+      "file": "visual-shell/interaction.json",
+      "status": "passed",
+      "checks": 53
+    }
+  ],
+  "unitTests": {
+    "passed": 534,
+    "failed": 0,
+    "skipped": 0
+  },
+  "preservedUiContract": [
+    {
+      "file": "App.xaml",
+      "namedControls": 0,
+      "bindings": 0,
+      "events": 0,
+      "lostControls": {},
+      "lostBindings": [],
+      "lostEvents": []
+    },
+    {
+      "file": "CompanyFilePanel.xaml",
+      "namedControls": 17,
+      "bindings": 63,
+      "events": 0,
+      "lostControls": {},
+      "lostBindings": [],
+      "lostEvents": []
+    },
+    {
+      "file": "ImportColumnMappingWindow.xaml",
+      "namedControls": 51,
+      "bindings": 255,
+      "events": 5,
+      "lostControls": {},
+      "lostBindings": [],
+      "lostEvents": []
+    },
+    {
+      "file": "MainWindow.xaml",
+      "namedControls": 38,
+      "bindings": 108,
+      "events": 13,
+      "lostControls": {},
+      "lostBindings": [],
+      "lostEvents": []
+    },
+    {
+      "file": "ModelWorkspacePanel.xaml",
+      "namedControls": 42,
+      "bindings": 149,
+      "events": 1,
+      "lostControls": {},
+      "lostBindings": [],
+      "lostEvents": []
+    },
+    {
+      "file": "ResourceWorkspacePanel.xaml",
+      "namedControls": 47,
+      "bindings": 229,
+      "events": 5,
+      "lostControls": {},
+      "lostBindings": [],
+      "lostEvents": []
+    },
+    {
+      "file": "StudyWorkspacePanel.xaml",
+      "namedControls": 20,
+      "bindings": 76,
+      "events": 2,
+      "lostControls": {},
+      "lostBindings": [],
+      "lostEvents": []
+    }
+  ],
+  "nativeExitCode": 0,
+  "monitorDpi": 96,
+  "scaleProbe": "WPF LayoutTransform 125/150/200%; real multi-monitor DPI transfer not exercised",
+  "binaries": {
+    "src/Valdrio.Desktop/bin/Release/net10.0-windows/Valdrio.Desktop.dll": "28d25fa341e54e1a507a4a14515458da3957d3864c4cafa84f5e669b2d2a53ff",
+    "tests/Valdrio.Tests/bin/Release/net10.0/Valdrio.Tests.dll": "277e0c73356f5e9b3c7421de6a7808e48eaa47fdbfaca1964bc41f7fd0b6af67"
+  }
+}
