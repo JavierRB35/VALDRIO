@@ -74,7 +74,6 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     public ObservableCollection<ResourceGridRow> Rows { get; } = [];
     public ObservableCollection<ResourcePartRow> Parts { get; } = [];
     public ObservableCollection<ResourceAdjustmentRow> Adjustments { get; } = [];
-    public IReadOnlyList<string> CurrencyOptions => catalog.GetAll().Where(c => c.IsMonetary).Select(c => c.AlphaCode.ToString()).ToArray();
     public IReadOnlyList<ResourceChoice<ResourceRoutingKind>> Routes => Choices<ResourceRoutingKind>();
     public IReadOnlyList<ResourceChoice<ResourceBehavior>> Behaviors => Choices<ResourceBehavior>();
     public IReadOnlyList<ResourceChoice<ResourceCostLayer>> Layers => Choices<ResourceCostLayer>();
@@ -133,7 +132,8 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
             var reconciled = coverage.Count(c => c.Difference.Amount == 0m);
             var pending = coverage.Count(c => c.Pending.Amount != 0m);
             var unexplained = coverage.Count(c => c.Difference.Amount != 0m);
-            return string.Format(Format, this["ProgressSummary"], reconciled, coverage.Count, pending, unexplained);
+            var pendingRoutes = coverage.Count(c => c.HasPendingParts);
+            return string.Format(Format, this["ProgressSummary"], reconciled, coverage.Count, pending, unexplained, pendingRoutes);
         }
     }
     public string CurrentAccount => workspace is null || editing is null ? "" : AccountLabel(workspace.Origins.Single(o => o.Id == editing.Id));
@@ -302,7 +302,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     private string AccountLabel(ResourceOrigin origin)
     {
         var chosen = accountDescriptions.SingleOrDefault(d => d.Account == origin.Code)?.Description;
-        return origin.Code + " — " + (chosen is not null && origin.Descriptions.Contains(chosen, StringComparer.Ordinal) ? chosen : origin.Descriptions.Count == 0
+        return origin.Code + " â€” " + (chosen is not null && origin.Descriptions.Contains(chosen, StringComparer.Ordinal) ? chosen : origin.Descriptions.Count == 0
             ? this["DescriptionMissing"] : origin.HasDescriptionConflict
             ? this["DescriptionConflict"] + ": " + string.Join(" / ", origin.Descriptions) : origin.Descriptions[0]);
     }
@@ -315,7 +315,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
             var originals = string.Join(" + ", ResourceWorkspaceRules.OriginalTotals(resource, w.Precision).Select(MoneyText));
             Rows.Add(new(resource.Id, w.Origins.Single(o => o.Id == resource.Id).Code, originals, MoneyText(c.ConvertedOriginal),
                 MoneyText(c.AdjustmentTotal), MoneyText(c.Effective), MoneyText(c.Pending), MoneyText(c.Difference))
-                { DisplayName = AccountLabel(w.Origins.Single(o => o.Id == resource.Id)), Revision = w.Study.Revision, CorrectionNumber = c.AdjustmentTotal.Amount.ToString("0.########", Format), FormatCulture = Format.Name });
+                { DisplayName = AccountLabel(w.Origins.Single(o => o.Id == resource.Id)), Revision = w.Study.Revision, CorrectionNumber = c.AdjustmentTotal.Amount.ToString("0.########", Format), FormatCulture = Format.Name, AssignmentStatus = this[c.HasPendingParts ? "AssignmentPending" : "AssignmentComplete"] });
         }
         ResourceChoice = Rows.FirstOrDefault(r => r.Id == id) ?? Rows.FirstOrDefault();
         var oldPart = PartChoice?.Value.Id; Parts.Clear();

@@ -207,7 +207,7 @@
         <TextBlock Margin="0,6,0,0" Text="{Binding FxEditorExplanation}" TextWrapping="Wrap" />
        </StackPanel>
       </GroupBox>
-      <GroupBox x:Name="T02RoundingGroup" Grid.Row="16" Header="{Binding RoundingTitle}" Padding="16">
+      <GroupBox x:Name="T02RoundingGroup" Grid.Row="4" Header="{Binding RoundingTitle}" Padding="16">
        <StackPanel>
         <Grid Margin="0,0,0,12">
          <Grid.ColumnDefinitions>

@@ -49,16 +49,22 @@ public sealed partial class ResourceWorkspaceViewModel
     {
         if (workspace is null || RevalueRows.Count == 0) { statusKey = "NoForeignAmounts"; return; }
         var version = "manual-revalue-" + Guid.NewGuid().ToString("N"); var rates = new List<FxRate>();
-        revalueChoices.Clear(); revalueParts.Clear();
+        var choices = new List<ResourceRateChoice>();
         foreach (var row in RevalueRows)
         {
             var rate = new FxRate(new(Guid.NewGuid().ToString("N")), row.Previous.OriginalMoney.Currency, workspace.Study.Currency.FunctionalCurrencyCode,
                 Number(row.Form, "Quote"), Date(row.Form.RateDate), row.Form["Source"], version);
-            rates.Add(rate); revalueChoices.Add(new(row.ValueId, rate.Id));
+            rates.Add(rate); choices.Add(new(row.ValueId, rate.Id));
         }
-        revalueRates = new(version, workspace.Study.PeriodEnd, "manual", rates); preparingRevalue = false; dirty = false;
-        editing = null; stage = 0;
-        preview = ResourceWorkspaceRules.Preview(workspace, RevalueCommand("Preview"));
+        var candidateRates = new FxRateSetVersion(version, workspace.Study.PeriodEnd, "manual", rates);
+        var candidateCommand = new ResourceMutation(ResourceMutationKind.Revalue, workspace.Study.CompanyId, workspace.Study.Id,
+            workspace.Study.Revision, new(Guid.NewGuid()), "local-user", "Preview", null, [], [], null, candidateRates,
+            choices, []);
+        var candidatePreview = ResourceWorkspaceRules.Preview(workspace, candidateCommand);
+        // Publish review state only after every conversion and partition has validated.
+        revalueChoices.Clear(); revalueChoices.AddRange(choices); revalueParts.Clear();
+        revalueRates = candidateRates; preparingRevalue = false; dirty = false;
+        editing = null; stage = 0; preview = candidatePreview;
         statusKey = "RevalueReconcile"; RebuildRows(); Refresh();
     }
     private ResourceMutation RevalueCommand(string explanation) => new(ResourceMutationKind.Revalue, workspace!.Study.CompanyId, workspace.Study.Id,

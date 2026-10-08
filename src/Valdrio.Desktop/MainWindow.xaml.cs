@@ -86,6 +86,18 @@ public partial class MainWindow : Window
         return sections.Zip(sections.Skip(1),(first,next)=>first.Bottom<=next.Top+0.1).All(x=>x);
     }
 
+    internal bool RunDevelopmentToolsLayoutSmoke()
+    {
+        UpdateLayout();
+        if (!DevelopmentTools.IsExpanded || DevelopmentTools.Content is not Grid root) return false;
+        var sections = root.Children.OfType<FrameworkElement>()
+            .Where(e => e.Visibility == Visibility.Visible && e.ActualHeight > 0).ToArray();
+        if (sections.Any(e => Grid.GetRow(e) >= root.RowDefinitions.Count)) return false;
+        var bounds = sections.Select(e => e.TransformToAncestor(root)
+            .TransformBounds(new Rect(0, 0, e.ActualWidth, e.ActualHeight))).OrderBy(r => r.Top).ToArray();
+        return bounds.Zip(bounds.Skip(1), (first, next) => first.Bottom <= next.Top + 0.1).All(x => x);
+    }
+
     internal void ScrollToElement(FrameworkElement element)
     {
         RevealWorkflowElement(element);

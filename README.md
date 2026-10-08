@@ -2,9 +2,11 @@
 
 Aplicación Windows local para cálculo y gestión de costes, en construcción guiada por especificación v0.4 y evidencia verificable.
 
-## Diseño de interfaz aprobado
+## Diseño de interfaz aprobado (obligatorio)
 
-La interfaz sigue el [sistema visual V1 y referencia T08](docs/diseno/SISTEMA_VISUAL_VALDRIO_V1.md), con el [plan de migración](docs/diseno/PLAN_MIGRACION_FRONTEND.md). Esta rama implementa la primera entrega: tema global y navegación lateral sobre la integración funcional `5cf45b4`. [Implementación y evidencia local de V1](docs/evidencias/VISUAL_V1_2026-10-08.md). La adaptación específica de los módulos continúa en las fases V2–V6; no se considera completada por incorporar el tema.
+Todas las pantallas futuras y los rediseños deben seguir el [sistema visual V1 y referencia T08](docs/diseno/SISTEMA_VISUAL_VALDRIO_V1.md), aprobado el 08/10/2026, y el [plan de migración de todas las pantallas](docs/diseno/PLAN_MIGRACION_FRONTEND.md). Las reglas también figuran en [AGENTS.md](AGENTS.md) para quien edite XAML/XML.
+
+V1 está implementada: tema global y navegación lateral sobre la integración funcional `5cf45b4`. [Implementación y evidencia local de V1](docs/evidencias/VISUAL_V1_2026-10-08.md). La adaptación específica de los módulos continúa en las fases V2–V6; no se considera completada por incorporar el tema.
 
 ## Estado actual
 

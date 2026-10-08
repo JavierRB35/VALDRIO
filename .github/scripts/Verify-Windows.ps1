@@ -241,18 +241,8 @@ try {
         dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=valdrio-tests.trx"
 
         # Guard diagnostic resource coverage
-        $sourceFiles = Get-ChildItem src/Valdrio.Domain,src/Valdrio.Calculation,src/Valdrio.Application,src/Valdrio.Infrastructure,src/Valdrio.Desktop -Recurse -Filter *.cs |
-          Where-Object { $_.FullName -notmatch '[\\\\/](obj|bin)[\\\\/]' -and $_.Name -ne 'AssemblyInfo.cs' }
-        # AssemblyInfo only declares assembly attributes, including the test friend assembly.
-        $pattern = '"(?<key>[A-Z][A-Za-z0-9]*(?:\.[A-Z][A-Za-z0-9]*)+)"'
-
-        $keys = @(
-          foreach ($file in $sourceFiles) {
-            foreach ($match in (Select-String -Path $file.FullName -Pattern $pattern -AllMatches -CaseSensitive).Matches) {
-              $match.Groups['key'].Value
-            }
-          }
-        ) | Sort-Object -Unique
+        & "./.github/scripts/Test-ProductionMessageKeys.ps1"
+        $keys = @(& "./.github/scripts/Get-ProductionMessageKeys.ps1")
 
         [xml]$englishXml = Get-Content src/Valdrio.Localization/Resources/Strings.resx -Raw
         [xml]$spanishXml = Get-Content src/Valdrio.Localization/Resources/Strings.es.resx -Raw
@@ -317,7 +307,7 @@ try {
         # WPF launch smoke
         $exe = (Resolve-Path "artifacts/desktop/Valdrio.Desktop.exe").Path
         $sample = (Resolve-Path "samples/t01-smoke.valdrio-dev.json").Path
-        $process = Start-Process -FilePath $exe -ArgumentList @($sample) -PassThru
+        $process = Start-Process -WindowStyle Hidden -FilePath $exe -ArgumentList @($sample) -PassThru
 
         try {
           Start-Sleep -Seconds 6
@@ -346,7 +336,7 @@ try {
           NumberDisplayOptions = $null
         } | ConvertTo-Json | Set-Content -Path $invalidPreferences -Encoding utf8NoBOM
 
-        $process = Start-Process -FilePath $exe -ArgumentList @(
+        $process = Start-Process -WindowStyle Hidden -FilePath $exe -ArgumentList @(
           $sample,
           "--preferences-path=$invalidPreferences"
         ) -PassThru
@@ -376,7 +366,7 @@ try {
     $captureDir = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($EvidenceDirectory)
     New-Item -ItemType Directory -Force -Path $captureDir | Out-Null
 
-    $process = Start-Process -FilePath $exe -ArgumentList @(
+    $process = Start-Process -WindowStyle Hidden -FilePath $exe -ArgumentList @(
       $sample,
       "--capture-dir=$captureDir"
     ) -PassThru -Wait
@@ -400,10 +390,10 @@ try {
     Write-Host "Company WPF checks passed: $($companyChecks.PassedChecks.Count)."
 
     $modelChecks = Get-Content -LiteralPath (Join-Path $captureDir "models/interaction.json") -Raw | ConvertFrom-Json
-    if ($modelChecks.Status -ne "passed" -or $modelChecks.PassedChecks.Count -ne 53) { throw "Model WPF interaction evidence is incomplete." }
+    if ($modelChecks.Status -ne "passed" -or $modelChecks.PassedChecks.Count -ne 57) { throw "Model WPF interaction evidence is incomplete." }
     Write-Host "Model WPF checks passed: $($modelChecks.PassedChecks.Count)."
     $importChecks = Get-Content -LiteralPath (Join-Path $captureDir "import-columns/interaction.json") -Raw | ConvertFrom-Json
-    if ($importChecks.Status -ne "passed" -or $importChecks.PassedChecks.Count -ne 13) {
+    if ($importChecks.Status -ne "passed" -or $importChecks.PassedChecks.Count -ne 16) {
       throw "Import column selection WPF interaction evidence is incomplete."
     }
     $importImages = @(Get-ChildItem -LiteralPath (Join-Path $captureDir "import-columns") -Filter *.png)
@@ -491,8 +481,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Runner could not verify comparison/replacement snapshot." }
     $resourceFolder = Join-Path $captureDir "t07-resources"
     $resourceChecks = Get-Content -LiteralPath (Join-Path $resourceFolder "interaction.json") -Raw | ConvertFrom-Json
-    if ($resourceChecks.Status -ne "passed" -or $resourceChecks.SchemaVersion -ne 8 -or $resourceChecks.PassedChecks.Count -ne 25) {
-        throw "Expected all 25 T07 resource WPF checks."
+    if ($resourceChecks.Status -ne "passed" -or $resourceChecks.SchemaVersion -ne 8 -or $resourceChecks.PassedChecks.Count -ne 44) {
+        throw "Expected all 44 T07 resource WPF checks."
     }
     foreach ($imageName in @("review-es.png", "review-pseudo-rtl.png", "saved-en.png")) {
         if (-not (Test-Path -LiteralPath (Join-Path $resourceFolder $imageName))) { throw "Missing T07 screenshot: $imageName" }
@@ -505,12 +495,12 @@ try {
     $internationalFolder = Join-Path $captureDir "import-international"
     $guidedFolder = Join-Path $captureDir "guided-workflow"
     $guidedChecks = Get-Content -LiteralPath (Join-Path $guidedFolder "interaction.json") -Raw | ConvertFrom-Json
-    if ($guidedChecks.Status -ne "passed" -or $guidedChecks.PassedChecks.Count -ne 19) { throw "Expected all 19 guided workflow checks." }
+    if ($guidedChecks.Status -ne "passed" -or $guidedChecks.PassedChecks.Count -ne 20) { throw "Expected all 20 guided workflow checks." }
     foreach ($imageName in @("structure-es.png", "destination-es.png", "review-es.png", "review-pseudo-rtl.png")) {
         if (-not (Test-Path -LiteralPath (Join-Path $guidedFolder $imageName))) { throw "Missing guided workflow screenshot: $imageName" }
     }
     $usabilityAudit = Get-Content -LiteralPath (Join-Path $guidedFolder "audit.json") -Raw | ConvertFrom-Json
-    if ($usabilityAudit.Status -ne "passed" -or $usabilityAudit.PassedChecks.Count -ne 20) { throw "Expected all 20 usability audit regression checks." }
+    if ($usabilityAudit.Status -ne "passed" -or $usabilityAudit.PassedChecks.Count -ne 27) { throw "Expected all 27 usability audit regression checks." }
     $internationalChecks = Get-Content -LiteralPath (Join-Path $internationalFolder "interaction.json") -Raw | ConvertFrom-Json
     if ($internationalChecks.Status -ne "passed" -or $internationalChecks.PassedChecks.Count -ne 10) { throw "Expected all 10 T06A WPF checks." }
     $internationalImages = @(Get-ChildItem -LiteralPath $internationalFolder -Filter *.png)
@@ -525,7 +515,7 @@ try {
     dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $internationalFolder "snapshot.json")
     if ($LASTEXITCODE -ne 0) { throw "Runner could not verify international import snapshot." }
     $studyChecks = Get-Content -LiteralPath (Join-Path $captureDir "studies/interaction.json") -Raw | ConvertFrom-Json
-    if ($studyChecks.Status -ne "passed" -or $studyChecks.PassedChecks.Count -ne 73) { throw "Expected all 73 final study WPF checks." }
+    if ($studyChecks.Status -ne "passed" -or $studyChecks.PassedChecks.Count -ne 74) { throw "Expected all 74 final study WPF checks." }
     foreach ($region in @("es-ES", "en-US", "de-DE", "en-GB")) {
       if ("visible calendar text follows region without input mutation: $region" -notin $studyChecks.PassedChecks) {
         throw "Missing visible calendar date verification: $region."
