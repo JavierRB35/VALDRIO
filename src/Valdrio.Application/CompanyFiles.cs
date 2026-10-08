@@ -31,6 +31,7 @@ public sealed class CompanyFileSnapshot
 public interface ICompanyFileSession : IDisposable
 {
     IResourceWorkspace Resources { get; }
+    IAllocationWorkspace Allocations => throw new NotSupportedException();
     IImportWorkspace Imports { get; }
     IStudyWorkspace Studies { get; }
     IModelWorkspace Models { get; }

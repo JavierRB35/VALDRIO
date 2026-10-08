@@ -20,6 +20,7 @@
       <Button x:Name="StudyStep" Click="ChooseStudy" Style="{StaticResource Sidebar.Button}" />
       <Button x:Name="ImportStep" Click="ChooseImport" Style="{StaticResource Sidebar.Button}" />
       <Button x:Name="ResourcesStep" Click="ChooseResources" Style="{StaticResource Sidebar.Button}" />
+      <Button x:Name="AllocationsStep" Click="ChooseAllocations" Style="{StaticResource Sidebar.Button}" />
      <Border BorderBrush="{DynamicResource Accent.ActiveGreen}" BorderThickness="0,1,0,0" Margin="16,16,16,8" />
      <Button x:Name="SettingsStep" Click="ChooseSettings" Style="{StaticResource Sidebar.Button}" />
     </StackPanel>
@@ -84,6 +85,7 @@
     <local:ModelWorkspacePanel x:Name="ModelPanel" Grid.Row="6" DataContext="{Binding Models}" />
     <local:StudyWorkspacePanel x:Name="StudyPanel" Grid.Row="8" DataContext="{Binding Studies}" />
     <local:ResourceWorkspacePanel x:Name="ResourcePanel" Grid.Row="8" DataContext="{Binding Resources}" />
+    <local:AllocationWorkspacePanel x:Name="AllocationPanel" Grid.Row="8" DataContext="{Binding Allocations}" />
     <GroupBox Grid.Row="10" Header="{Binding PreferencesTitle}" Padding="16" x:Name="PreferencesPanel">
      <Grid>
       <Grid.ColumnDefinitions>

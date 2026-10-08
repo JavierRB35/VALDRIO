@@ -28,7 +28,7 @@ public partial class MainWindow
             return bounds.Left >= -1 && bounds.Top >= -1 && bounds.Right <= ActualWidth + 1 && bounds.Bottom <= ActualHeight + 1;
         }
         async Task Idle() => await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
-        Button[] navigation = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, SettingsStep];
+        Button[] navigation = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, AllocationsStep, SettingsStep];
         var main = viewModel!;
         var originalWidth = Width;
         var originalHeight = Height;
@@ -42,12 +42,17 @@ public partial class MainWindow
                     var button = navigation[index];
                     Check(button.IsEnabled, language + " navigation enabled with saved study: " + index);
                     ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
-                    await Idle(); UpdateLayout();
+                    await Idle();
+                    // The real handler refreshes studies asynchronously before navigation finishes.
+                    var timer = System.Diagnostics.Stopwatch.StartNew();
+                    while ((main.Company?.WorkspaceIdle == false || workflowStep != index) && timer.Elapsed < TimeSpan.FromSeconds(15))
+                    { await Task.Delay(25); await Idle(); }
+                    UpdateLayout();
                     Check(workflowStep == index && button.FontWeight == FontWeights.Bold,
                         language + " sidebar invokes the original handler and marks selected step: " + index);
                     Check(button.Focus() && button.IsKeyboardFocusWithin, language + " sidebar keyboard focus: " + index);
                     Check(RootScrollViewer.ViewportHeight > 80 && Inside(WorkflowBack), language + " content and back action remain accessible: " + index);
-                    if (index == 5)
+                    if (index == 6)
                     {
                         DevelopmentTools.IsExpanded = true;
                         await Idle(); UpdateLayout();
@@ -74,7 +79,7 @@ public partial class MainWindow
                 VisualEvidenceCapture.Capture(this, Path.Combine(output, $"layout-scale-{scale * 100:0}.png"));
             }
             ShellLayout.LayoutTransform = Transform.Identity;
-            await NavigateWorkflow(5); DevelopmentTools.IsExpanded = true;
+            await NavigateWorkflow(6); DevelopmentTools.IsExpanded = true;
             foreach (var scale in new[] { 1.0, 1.25, 1.5, 2.0 })
             {
                 ShellLayout.LayoutTransform = new ScaleTransform(scale, scale);
@@ -83,7 +88,7 @@ public partial class MainWindow
             }
             ShellLayout.LayoutTransform = Transform.Identity;
             main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", true, true);
-            await NavigateWorkflow(5); await Idle();
+            await NavigateWorkflow(6); await Idle();
             Check(Inside(Sidebar) && Inside(WorkflowBack) && RootScrollViewer.ViewportHeight > 80,
                 "pseudo RTL retains sidebar, footer and work area");
             VisualEvidenceCapture.Capture(this, Path.Combine(output, "pseudo-rtl.png"));

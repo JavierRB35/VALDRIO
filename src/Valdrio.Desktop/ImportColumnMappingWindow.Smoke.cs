@@ -51,11 +51,12 @@ public partial class ImportColumnMappingWindow
         await ContinueVisible();
         Check(ImportSteps.SelectedIndex == 1 && vm.Columns.Count == 3 && vm.AccountColumn is null && vm.AmountColumn is null,
             "visible continue reads the file and advances to column selection");
-        Select(AccountColumnBox, 3); Select(AmountColumnBox, 1); vm.GroupSeparator = ".";
+        Select(AccountColumnBox, 3); Select(DescriptionColumnBox, 2); Select(AmountColumnBox, 1); vm.GroupSeparator = ".";
         await ContinueVisible();
         Check(ImportSteps.SelectedIndex == 2 && vm.IsReady && vm.ValidatedSelection!.Rows.Count == 2 &&
             vm.ValidatedSelection.Rows[0].Amount == 1250.50m, "visible check-and-continue validates columns and advances");
         Check(vm.Preview[0].Account == "00123" && vm.ValidatedSelection!.Rows[1].Amount == 0m, "leading zeros and explicit zero preserved");
+        Check(vm.DescriptionColumn == 2 && vm.Preview[0].Description == "not an amount" && vm.ValidatedSelection!.Rows[0].Description == "not an amount", "CSV description is explicitly selected and associated with the textual account");
         ImportSteps.SelectedIndex = 1;
         Select(AmountColumnBox, 3); await ContinueVisible();
         Check(ImportSteps.SelectedIndex == 1 && !vm.IsReady && vm.Status.StartsWith("IMP_COLUMN_SELECTION", StringComparison.Ordinal),
@@ -66,7 +67,7 @@ public partial class ImportColumnMappingWindow
         await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle); UpdateLayout();
         Check(vm.IsReady && ReferenceEquals(selection, vm.ValidatedSelection) && vm.AccountColumn == 3 && vm.AmountColumn == 1,
             "language and region preserve validated mapping");
-        Check(AccountColumnBox.SelectedValue is 3 && AmountColumnBox.SelectedValue is 1, "visible selections survive reformat");
+        Check(AccountColumnBox.SelectedValue is 3 && DescriptionColumnBox.SelectedValue is 2 && AmountColumnBox.SelectedValue is 1, "visible selections survive reformat");
         Check(PreviewGrid.Columns[1].Header?.ToString() == vm["AccountColumn"], "localized preview headers");
         RevealImportElement(PreviewGrid); PreviewGrid.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "csv-es-enUS.png"));
@@ -99,9 +100,10 @@ public partial class ImportColumnMappingWindow
         WorksheetBox.GetBindingExpression(ComboBox.SelectedItemProperty)!.UpdateSource();
         await ContinueVisible();
         Check(ImportSteps.SelectedIndex == 1, "continue reads the selected worksheet and advances");
-        Select(AccountColumnBox, 3); Select(AmountColumnBox, 1); await ContinueVisible();
+        Select(AccountColumnBox, 3); Select(DescriptionColumnBox, 2); Select(AmountColumnBox, 1); await ContinueVisible();
         Check(ImportSteps.SelectedIndex == 2 && vm.IsReady && vm.ValidatedSelection!.Source.SheetName == "Selected" &&
             vm.ValidatedSelection.Rows[0].Amount == 1250.5m, "Excel second sheet and stored amount checked by visible flow");
+        Check(vm.ValidatedSelection!.Rows[0].Description == "unused" && DescriptionColumnBox.SelectedValue is 2, "XLSX description uses the chosen column of the chosen worksheet");
         main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", true, true);
         FlowDirection = FlowDirection.RightToLeft;
         await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle); UpdateLayout();

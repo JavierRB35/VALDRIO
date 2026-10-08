@@ -134,7 +134,7 @@ public sealed partial class T06ImportConfirmationTests
         vm.PartChoice = vm.Parts.Single(); vm.LoadPartCommand.Execute(null); vm.PartForm["Amount"] = "850";
         Assert.IsTrue(vm.PreviousStep());
         vm.ResourceChoice = vm.Rows.Single(r => r.Code == "6001"); await vm.AdvanceAsync();
-        Assert.AreEqual("6000", vm.CurrentAccount); Assert.AreEqual("850", vm.PartForm["Amount"]);
+        Assert.AreEqual("6000 — " + vm["DescriptionMissing"], vm.CurrentAccount); Assert.AreEqual("850", vm.PartForm["Amount"]);
         Assert.AreEqual(vm["RevalueFinishAccount"], vm.Status);
         await vm.AdvanceAsync(); vm.ApplyPartCommand.Execute(null);
         await vm.AdvanceAsync();

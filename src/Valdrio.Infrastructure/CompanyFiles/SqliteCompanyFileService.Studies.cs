@@ -143,6 +143,10 @@ public sealed partial class SqliteCompanyFileService
             if (history.Count > 0)
                 input = new ResourceStudySnapshotInput(study, file.PrecisionPolicy, model,
                     new(command.RequestId, command.RequestId, instant, command.Actor), imports, history);
+            var allocations = AllocationChanges((AllocationDbContext)db, file.Id, study.Id);
+            if (allocations.Count > 0)
+                input = new AllocationStudySnapshotInput(study, file.PrecisionPolicy, model,
+                    new(command.RequestId, command.RequestId, instant, command.Actor), imports, history, allocations);
             var json = StudySnapshotJson.Serialize(input);
             var result = new StudySnapshotReceipt(command.RequestId, file.Id, study.Id, study.Revision, instant, input.SnapshotSchemaVersion,
                 StudySnapshotJson.EconomicHash(input), PublishedModelStructure.Hash(json), json);

@@ -112,6 +112,13 @@ public static class StudyPreparationService
             input.Model.Structure.Pools.Any(p => p.CapacityPolicy.Resolution == PolicyResolution.Pending))
             Add("STUDY_POLICY_PENDING", "Study.PolicyPending");
         if (input.Resources.Count == 0) Add("STUDY_RESOURCES_PENDING", "Study.ResourcesPending");
+        else if (input is AllocationStudySnapshotInput allocated)
+        {
+            diagnostics.AddRange(allocated.Workspace.Preparation.Diagnostics);
+            if (allocated.Workspace.Preparation.HasPendingParts) Add("STUDY_PARTITIONS_PENDING", "Study.PartitionsPending");
+            diagnostics.AddRange(allocated.Workspace.Preparation.Warnings);
+            diagnostics.AddRange(allocated.Allocations.Coverage.Where(c => c.Diagnostic is not null).Select(c => c.Diagnostic!));
+        }
         else if (input is ResourceStudySnapshotInput prepared)
         {
             diagnostics.AddRange(prepared.Workspace.Preparation.Diagnostics);

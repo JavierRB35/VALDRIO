@@ -20,7 +20,7 @@ public sealed partial class T06ImportConfirmationTests
         var snapshotJson = Query(source, "SELECT group_concat(CanonicalJson) FROM StudySnapshots ORDER BY Id");
         Assert.AreEqual("FILE_UPGRADE_REQUIRED", Assert.ThrowsExactly<CompanyFileException>(() => Service().Open(source)).Diagnostic.Code);
         using var file = Service().Upgrade(source, FileOf("upgraded.valdrio"), "test");
-        Assert.AreEqual(hash, Hash(source)); Assert.AreEqual(8, file.Read().SchemaVersion);
+        Assert.AreEqual(hash, Hash(source)); Assert.AreEqual(9, file.Read().SchemaVersion);
         Assert.AreEqual(importJson, Query(file.Path, "SELECT group_concat(CanonicalJson) FROM ImportBatches ORDER BY Id"));
         Assert.AreEqual(snapshotJson, Query(file.Path, "SELECT group_concat(CanonicalJson) FROM StudySnapshots ORDER BY Id"));
         var study = file.Studies.ReadStudies().Single();
@@ -28,7 +28,7 @@ public sealed partial class T06ImportConfirmationTests
         using var connection = new SqliteConnection("Data Source=" + file.Path + ";Pooling=False"); connection.Open();
         using var v7 = new InternationalImportDbContext(connection); using var v8 = new ResourceDbContext(connection);
         Assert.IsFalse(v7.Database.HasPendingModelChanges()); Assert.IsFalse(v8.Database.HasPendingModelChanges());
-        Assert.AreEqual(8, v8.Database.GetAppliedMigrations().Count());
+        Assert.AreEqual(9, v8.Database.GetAppliedMigrations().Count());
     }
     [TestMethod]
     public async Task T07_ZeroAccountMustRetainAnExplicitRoute()

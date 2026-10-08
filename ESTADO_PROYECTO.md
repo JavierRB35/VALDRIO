@@ -1,5 +1,15 @@
 # ESTADO_PROYECTO
 
+## Estado vigente T08 — 2026-10-08
+
+T08 revisada y completada para integración en `codex/local-tests-and-workspace`.
+561/561 pruebas locales y 567 comprobaciones WPF superadas en la revisión.
+Archivo v9, snapshots v7, claves publicadas versionadas, reglas y cobertura,
+código + descripción con procedencia y selección trazable.
+Main vigente `79087a5` ya incorpora PR #22, visual V1 y auditoría; T08 se mantiene
+fuera de main hasta autorización expresa. Los estados siguientes son históricos.
+[Evidencia de T08](docs/evidencias/T08_CIERRE_2026-10-08.md).
+
 ## Estado vigente y correcciones de auditoría — 2026-10-08
 
 | Línea | Estado comprobado |

@@ -10,6 +10,14 @@ V1 está implementada: tema global y navegación lateral sobre la integración f
 
 ## Estado actual
 
+**T08 completada para workspace:** biblioteca de claves, versiones publicadas, reglas
+primarias/secundarias, cobertura y nombres de cuentas conservados desde CSV/XLSX.
+Acceso: **6. Claves y reglas**, o continuar desde **5. Preparar cuentas**.
+Formato actual v9 y snapshots v7; históricos legibles y actualización a copia.
+[T08 y validación](docs/tareas/T08.md). Promoción a main requiere autorización.
+
+Los párrafos siguientes documentan el alcance previo T07.
+
 T00–T06A y el recorrido guiado previo están integrados en la base de esta rama.
 **T07 implementada completa:** recursos por cuenta, ajustes firmados, clasificación
 contextual, partes y destinos, conservación por recurso, auditoría y guardado SQLite.

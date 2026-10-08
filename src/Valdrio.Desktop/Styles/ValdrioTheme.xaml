@@ -66,6 +66,14 @@
     <Setter Property="Typography.NumeralAlignment" Value="Tabular"/>
     <Setter Property="Padding" Value="8,4"/>
   </Style>
+  <Style x:Key="Text.Section" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+    <Setter Property="FontSize" Value="17"/><Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,0,0,12"/>
+  </Style>
+  <Style x:Key="Text.TableNumber" TargetType="TextBlock" BasedOn="{StaticResource Text.Number}">
+    <Setter Property="TextAlignment" Value="Right"/><Setter Property="TextWrapping" Value="Wrap"/>
+    <Setter Property="Margin" Value="4,2"/>
+  </Style>
   <Style x:Key="Card" TargetType="Border">
     <Setter Property="Background" Value="{DynamicResource Brand.White}"/>
     <Setter Property="BorderBrush" Value="{DynamicResource Border.Soft}"/>
@@ -362,11 +370,11 @@
       <Setter.Value>
         <ControlTemplate TargetType="TabItem">
           <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{DynamicResource Border.Soft}" BorderThickness="0,0,0,2" Padding="{TemplateBinding Padding}">
-            <ContentPresenter ContentSource="Header" RecognizesAccessKey="True"/>
+            <ContentPresenter x:Name="TabHeader" ContentSource="Header" RecognizesAccessKey="True"/>
           </Border>
           <ControlTemplate.Triggers>
             <Trigger Property="IsSelected" Value="True">
-              <Setter Property="FontWeight" Value="SemiBold"/>
+              <Setter TargetName="TabHeader" Property="TextElement.FontWeight" Value="SemiBold"/>
               <Setter Property="Background" Value="{DynamicResource Brand.White}"/>
               <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Brand.Yellow}"/>
             </Trigger>
