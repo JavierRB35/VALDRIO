@@ -136,6 +136,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public string Status => diagnostic is null ? Text(statusKey)
         : new DomainDiagnosticFormatter(texts).Format(diagnostic, UiCulture,
             CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)).Message;
+    public string? DiagnosticCode => diagnostic?.Code;
     public string Details => Snapshot is null ? "—" : string.Format(UiCulture, Text("CompanyDetails"),
         Snapshot.Name, Snapshot.Id, Snapshot.DefaultCurrency,
         Snapshot.Revision.ToString("N0", CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)),
