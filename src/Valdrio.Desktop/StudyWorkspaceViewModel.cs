@@ -174,6 +174,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         }
     }
     public string Status => diagnostic is null ? Text(statusKey) : DiagnosticText(diagnostic);
+    public string? DiagnosticCode => diagnostic?.Code;
     public string Details => Current is null ? Text("Study.NoneSelected") : string.Format(Format, Text("Study.Details"), Current.Name,
         formatter.FormatDate(Current.PeriodStart.Value, Format, DateDisplayPreset.Short), formatter.FormatDate(Current.PeriodEnd.Value, Format, DateDisplayPreset.Short),
         Current.Currency.FunctionalCurrencyCode, ScenarioText(Current.ScenarioKind), Current.Revision, StateText(Current.State), Current.SelectedModelVersionId,
