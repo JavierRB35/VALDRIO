@@ -7,7 +7,10 @@ Seguimiento: [issue #28](https://github.com/JavierRB35/VALDRIO/issues/28). Fecha
 
 Al importar cuentas contables se debe poder capturar su nombre/descripción mediante selección explícita de la columna de origen. T08 debe mostrar **código + descripción** en las superficies donde el analista identifica o selecciona cuentas para las reglas de asignación. Ejemplo de aceptación: `00123 — Material de oficina`. El código conserva identidad textual y ceros iniciales.
 
-**Estado: pendiente de implementación/verificación funcional.** Este pedido solo registra documentación y seguimiento; no autoriza implementar lógica/UI ahora.
+**Estado actual: implementado y verificado localmente en la entrega T08 para workspace.**
+La autorización posterior del propietario permitió completar T08 y dependencias.
+[Evidencia](../evidencias/T08_CIERRE_2026-10-08.md), 561 pruebas y recorrido WPF real.
+La inspección siguiente conserva el diagnóstico histórico previo, no el estado actual.
 
 ## Verificación previa realizada (2026-10-08)
 
@@ -28,17 +31,24 @@ Conclusión acotada: existe soporte parcial en el contrato y conservación de or
 3. Documentar comportamiento para fuentes sin descripción, valores vacíos, nombres distintos para un mismo código, agrupación, sustitución y fuentes históricas. No inventar nombres ni modificar identidad/agrupación económica por descripción; la política de conflictos requiere decisión explícita y trazabilidad.
 4. Mantener dependencias canónicas T08 → T04/T07 y T07 → T06A, añadiendo esta dependencia de datos hacia T06/T06A. T08-CUENTA-01 no puede cerrarse mientras una dependencia necesaria siga pendiente.
 
-## Criterios de aceptación (pendientes)
+## Criterios de aceptación verificados localmente
 
-- [ ] Antes de implementar, evidencia por SHA de selección, persistencia y exposición existentes; ninguna afirmación de implementación basada solo en contrato, JSON original o texto de PR.
-- [ ] CSV/XLSX permiten seleccionar explícitamente columna de nombre/descripción cuando exista, con vista previa asociada al código correcto; no inferir mapeo por encabezados.
-- [ ] Confirmar, guardar, cerrar y reabrir conserva código y descripción y su vínculo/procedencia; T07 los expone a T08 sin depender del archivo de origen ni de estado temporal de UI.
-- [ ] T08 muestra código + descripción en listado/selección de cuentas y asignación de reglas; el analista identifica `00123 — Material de oficina`, con teclado y textos ES/EN utilizables.
-- [ ] Fuente sin columna, vacío y datos históricos mantienen código visible y ausencia explícita de descripción; política aprobada sin inventar datos.
-- [ ] Descripciones contradictorias del mismo código, agregación y sustitución tienen política explícita, reproducible y con procedencia; no mezclan cuentas distintas ni cambian reglas económicas por el nombre.
-- [ ] Pruebas pertinentes locales de importación → reapertura → exposición y revisión de la UI real; registrar resultados y límites del HEAD validado antes de marcar cumplido.
+- [x] Antes de implementar, evidencia por SHA de selección, persistencia y exposición existentes; ninguna afirmación de implementación basada solo en contrato, JSON original o texto de PR.
+- [x] CSV/XLSX permiten seleccionar explícitamente columna de nombre/descripción cuando exista, con vista previa asociada al código correcto; no inferir mapeo por encabezados.
+- [x] Confirmar, guardar, cerrar y reabrir conserva código y descripción y su vínculo/procedencia; T07 los expone a T08 sin depender del archivo de origen ni de estado temporal de UI.
+- [x] T08 muestra código + descripción en listado/selección de cuentas y asignación de reglas; el analista identifica `00123 — Material de oficina`, con teclado y textos ES/EN utilizables.
+- [x] Fuente sin columna, vacío y datos históricos mantienen código visible y ausencia explícita de descripción; política aprobada sin inventar datos.
+- [x] Descripciones contradictorias del mismo código, agregación y sustitución tienen política explícita, reproducible y con procedencia; no mezclan cuentas distintas ni cambian reglas económicas por el nombre.
+- [x] Pruebas pertinentes locales de importación → reapertura → exposición y revisión de la UI real; registrar resultados y límites del HEAD validado antes de marcar cumplido.
 
 ## Coordinación y coste
+
+La restricción documental del pedido inicial que se describe abajo quedó ampliada
+por la autorización expresa posterior de implementación y validación local de T08.
+CSV/XLSX, agrupación, fuentes ausentes, ceros y caracteres internacionales se prueban
+en T08ClosureTests y T08AllocationTests; el recorrido WPF reabre sin archivo fuente.
+La promoción a main y el cierre del seguimiento remoto requieren revisión posterior.
+
 
 Dar visibilidad a PR #22 y futuros desarrollos T07/T08 mediante enlaces; no sobrescribir, rebasar ni forzar ramas activas. Leer AGENTS.md de main y el requisito vigente aunque se trabaje en otra rama. Este issue no exige ampliar el alcance de una PR sin coordinación.
 

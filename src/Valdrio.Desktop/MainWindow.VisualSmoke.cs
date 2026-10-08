@@ -42,12 +42,17 @@ public partial class MainWindow
                     var button = navigation[index];
                     Check(button.IsEnabled, language + " navigation enabled with saved study: " + index);
                     ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
-                    await Idle(); UpdateLayout();
+                    await Idle();
+                    // The real handler refreshes studies asynchronously before navigation finishes.
+                    var timer = System.Diagnostics.Stopwatch.StartNew();
+                    while ((main.Company?.WorkspaceIdle == false || workflowStep != index) && timer.Elapsed < TimeSpan.FromSeconds(15))
+                    { await Task.Delay(25); await Idle(); }
+                    UpdateLayout();
                     Check(workflowStep == index && button.FontWeight == FontWeights.Bold,
                         language + " sidebar invokes the original handler and marks selected step: " + index);
                     Check(button.Focus() && button.IsKeyboardFocusWithin, language + " sidebar keyboard focus: " + index);
                     Check(RootScrollViewer.ViewportHeight > 80 && Inside(WorkflowBack), language + " content and back action remain accessible: " + index);
-                    if (index == 5)
+                    if (index == 6)
                     {
                         DevelopmentTools.IsExpanded = true;
                         await Idle(); UpdateLayout();
@@ -74,7 +79,7 @@ public partial class MainWindow
                 VisualEvidenceCapture.Capture(this, Path.Combine(output, $"layout-scale-{scale * 100:0}.png"));
             }
             ShellLayout.LayoutTransform = Transform.Identity;
-            await NavigateWorkflow(5); DevelopmentTools.IsExpanded = true;
+            await NavigateWorkflow(6); DevelopmentTools.IsExpanded = true;
             foreach (var scale in new[] { 1.0, 1.25, 1.5, 2.0 })
             {
                 ShellLayout.LayoutTransform = new ScaleTransform(scale, scale);

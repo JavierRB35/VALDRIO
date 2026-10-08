@@ -172,35 +172,35 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public string ChosenDescription { get => chosenDescription; set { if (SetProperty(ref chosenDescription, value)) Commands(); } }
     public IReadOnlyList<string> DescriptionOptions => workspace?.Resources.Origins.SingleOrDefault(o => o.Code == Account)?.Descriptions ?? [];
     public string DescriptionProvenance => string.Join(Environment.NewLine, workspace?.Resources.Origins.SingleOrDefault(o => o.Code == Account)?.Rows
-        .Select(r => (string.IsNullOrWhiteSpace(r.Description) ? this["NoDescription"] : r.Description) + " · " + r.FileName + " · " + this["Row"] + " " + r.RecordNumber.ToString(Format)) ?? []);
+        .Select(r => (string.IsNullOrWhiteSpace(r.Description) ? this["NoDescription"] : r.Description) + " Â· " + r.FileName + " Â· " + this["Row"] + " " + r.RecordNumber.ToString(Format)) ?? []);
     public IReadOnlyList<ResourceChoice<AllocationStage>> Stages => Enum.GetValues<AllocationStage>().Select(v => new ResourceChoice<AllocationStage>(v, this[v.ToString()])).ToArray();
     public IReadOnlyList<ResourceChoice<AllocationKeyMode>> Modes => Enum.GetValues<AllocationKeyMode>().Select(v => new ResourceChoice<AllocationKeyMode>(v, this[v.ToString()])).ToArray();
     public IReadOnlyList<ResourceChoice<AccountSelectorKind>> Selectors => Enum.GetValues<AccountSelectorKind>().Select(v => new ResourceChoice<AccountSelectorKind>(v, this[v.ToString()])).ToArray();
-    public IReadOnlyList<ResourceChoice<UnitId>> Units => workspace?.Resources.Model.DriverUnits.Select(u => new ResourceChoice<UnitId>(u.Id, u.Code + " · " + u.Symbol)).ToArray() ?? [];
+    public IReadOnlyList<ResourceChoice<UnitId>> Units => workspace?.Resources.Model.DriverUnits.Select(u => new ResourceChoice<UnitId>(u.Id, u.Code + " Â· " + u.Symbol)).ToArray() ?? [];
     public IReadOnlyList<ResourceChoice<EntityId>> PublishedPrimary => Published(AllocationStage.Primary);
     public IReadOnlyList<ResourceChoice<EntityId>> PublishedSecondary => Published(AllocationStage.Secondary);
     private IReadOnlyList<ResourceChoice<EntityId>> Published(AllocationStage type) => workspace?.Keys.Where(k => k.Stage == type && k.Status == ModelStatus.Published).Select(k => new ResourceChoice<EntityId>(k.Id, KeyLabel(k))).ToArray() ?? [];
     public IReadOnlyList<ResourceChoice<string>> Accounts => workspace?.Resources.Origins.Select(o => new ResourceChoice<string>(o.Code, AccountLabel(o))).ToArray() ?? [];
     public IReadOnlyList<ResourceChoice<EntityId>> Auxiliaries => workspace?.Resources.Model.Structure.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary).Select(n => new ResourceChoice<EntityId>(n.Id, NodeLabel(n))).ToArray() ?? [];
     public IReadOnlyList<AllocationPartChoice> Parts => workspace?.Resources.Resources.SelectMany(r => r.Parts.Where(p => p.Routing == ResourceRoutingKind.AllocationPool)
-        .Select((p, i) => new AllocationPartChoice(p.Id, AccountLabel(workspace.Resources.Origins.Single(o => o.Id == r.Id)) + " · " + this["Part"] + " " + (i + 1).ToString(Format) + " · " + MoneyText(p.Amount), p))).ToArray() ?? [];
-    private string KeyLabel(AllocationKeyVersion key) => key.Name + " · " + this["Version"] + " " + key.VersionNumber.ToString(Format);
+        .Select((p, i) => new AllocationPartChoice(p.Id, AccountLabel(workspace.Resources.Origins.Single(o => o.Id == r.Id)) + " Â· " + this["Part"] + " " + (i + 1).ToString(Format) + " Â· " + MoneyText(p.Amount), p))).ToArray() ?? [];
+    private string KeyLabel(AllocationKeyVersion key) => key.Name + " Â· " + this["Version"] + " " + key.VersionNumber.ToString(Format);
     private string AccountLabel(ResourceOrigin origin)
     {
         var chosen = workspace?.Configuration.Descriptions.SingleOrDefault(d => d.Account == origin.Code)?.Description;
         var description = chosen is not null && origin.Descriptions.Contains(chosen, StringComparer.Ordinal) ? chosen : origin.HasDescriptionConflict
             ? this["NameConflict"] + ": " + string.Join(" / ", origin.Descriptions) : origin.Descriptions.FirstOrDefault() ?? this["NoDescription"];
-        return origin.Code + " — " + description;
+        return origin.Code + " â€” " + description;
     }
     private string NodeLabel(CalculationNodeDefinition node)
     {
         var model = workspace!.Resources.Model; var center = model.PhysicalCenters.Single(c => c.Id == node.PhysicalCenterId);
-        return center.Code + " · " + center.Name + " / " + node.Code + " · " + Text(node.Role == NodeRole.Principal ? "Model.Principal" : "Model.Auxiliary");
+        return center.Code + " Â· " + center.Name + " / " + node.Code + " Â· " + Text(node.Role == NodeRole.Principal ? "Model.Principal" : "Model.Auxiliary");
     }
     private string NodeUnit(CalculationNodeDefinition node)
     {
         var model = workspace!.Resources.Model; var pool = model.Structure.Pools.Single(p => p.NodeId == node.Id);
-        var u = model.DriverUnits.Single(u => u.Id == pool.DriverUnitId); return u.Code + " · " + u.Symbol;
+        var u = model.DriverUnits.Single(u => u.Id == pool.DriverUnitId); return u.Code + " Â· " + u.Symbol;
     }
     private decimal Parse(string value) => numbers.TryCommit(value, out var parsed) ? parsed : throw AllocationDiagnostics.Error("KEY_NUMBER_INVALID", "Allocation.NumberInvalid");
     private void KeyEdited() { if (!loading) keyDirty = true; Refresh(); }
@@ -345,7 +345,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
                 var source = item?.Label ?? (c.ComponentGroup.Length > 0 ? Auxiliaries.FirstOrDefault(a => a.Value == c.SourceId)?.Label : origin is null ? c.Account : AccountLabel(origin)) ?? c.Account;
                 if (string.IsNullOrWhiteSpace(source)) source = this["ChangedPart"];
                 var status = c.Diagnostic is null ? this["Covered"] : new DomainDiagnosticFormatter(texts).Format(c.Diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message;
-                Coverage.Add(new(c.SourceId, source, item is null ? "" : MoneyText(item.Part.Amount), c.KeyId is { } id ? KeyLabel(workspace.Keys.Single(k => k.Id == id)) : c.Diagnostic is null ? this["Absolute"] : "—", status));
+                Coverage.Add(new(c.SourceId, source, item is null ? "" : MoneyText(item.Part.Amount), c.KeyId is { } id ? KeyLabel(workspace.Keys.Single(k => k.Id == id)) : c.Diagnostic is null ? this["Absolute"] : "â€”", status));
             }
         }
         SelectedKey = Keys.FirstOrDefault(k => k.Value.Id == keyId); Refresh();

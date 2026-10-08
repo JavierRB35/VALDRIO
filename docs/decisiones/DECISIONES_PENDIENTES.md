@@ -195,3 +195,15 @@ una interpretación universal de cualquier balance ni de todas sus cuentas.
 
 Esta decisión explícita complementa CM01 y las directrices T06 para esta modalidad;
 no cambia los resultados históricos ni las 39 referencias matemáticas originales.
+
+
+## Decisiones operativas T08 — 2026-10-08
+
+El propietario autorizó completar T08 y acordó conservar todas las descripciones
+contradictorias con procedencia, permitiendo elegir el nombre visible sin cambiar
+identidad ni agrupación económica. Las asignaciones manuales preceden a reglas de
+cuenta exacta y después al prefijo más largo; la prioridad decide dentro de igual
+especificidad y los empates se diagnostican. Publicados requieren nueva versión;
+importe absoluto queda vinculado a parte/revisión. Autoasignación secundaria
+prohibida por defecto; configurar su política no aprueba las decisiones económicas
+pendientes. No modifica D01–D12 ni referencias canónicas.

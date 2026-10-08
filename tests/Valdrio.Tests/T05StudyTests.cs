@@ -74,7 +74,8 @@ public sealed class T05StudyTests
         using var v3 = new StudyDbContext(c); using var v2 = new ModelDbContext(c); using var v1 = new CompanyDbContext(c);
         Assert.IsFalse(v3.Database.HasPendingModelChanges()); Assert.IsFalse(v2.Database.HasPendingModelChanges()); Assert.IsFalse(v1.Database.HasPendingModelChanges());
         using var v4 = new ImportDbContext(c); Assert.IsFalse(v4.Database.HasPendingModelChanges());
-        Assert.AreEqual(8, v4.Database.GetAppliedMigrations().Count());
+        Assert.AreEqual(9, v4.Database.GetAppliedMigrations().Count());
+        CollectionAssert.Contains(v4.Database.GetAppliedMigrations().ToArray(), SqliteCompanyFileService.AllocationMigrationId);
     }
 
     [TestMethod]
