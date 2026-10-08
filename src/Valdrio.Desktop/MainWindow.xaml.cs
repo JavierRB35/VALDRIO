@@ -78,9 +78,9 @@ public partial class MainWindow : Window
     internal bool RunSectionLayoutSmoke()
     {
         UpdateLayout();
-        var root=(Grid)RootScrollViewer.Content;
+        var root=MainContent;
         var sections=root.Children.OfType<FrameworkElement>()
-            .Where(e=>e is GroupBox or UserControl or Border or Expander)
+            .Where(e=>e.Visibility == Visibility.Visible && e.ActualHeight > 0)
             .Select(e=>e.TransformToAncestor(root).TransformBounds(new Rect(0,0,e.ActualWidth,e.ActualHeight)))
             .OrderBy(r=>r.Top).ToArray();
         return sections.Zip(sections.Skip(1),(first,next)=>first.Bottom<=next.Top+0.1).All(x=>x);

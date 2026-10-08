@@ -3,56 +3,56 @@
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  x:Class="Valdrio.Desktop.ModelWorkspacePanel">
  <UserControl.Resources>
-  <Style TargetType="Button">
+  <Style TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
    <Setter Property="Margin" Value="0,4,8,4" />
    <Setter Property="Padding" Value="12,7" />
    <Setter Property="MinHeight" Value="34" />
   </Style>
-  <Style TargetType="TextBlock">
+  <Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
    <Setter Property="TextWrapping" Value="Wrap" />
    <Setter Property="Margin" Value="0,4,8,3" />
   </Style>
-  <Style TargetType="TextBox">
+  <Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}">
    <Setter Property="IsEnabled" Value="{Binding InputsEnabled}" />
    <Setter Property="MinWidth" Value="140" />
    <Setter Property="MinHeight" Value="32" />
    <Setter Property="Margin" Value="0,3,8,3" />
   </Style>
-  <Style TargetType="ComboBox">
+  <Style TargetType="ComboBox" BasedOn="{StaticResource Input.Combo}">
    <Setter Property="IsEnabled" Value="{Binding InputsEnabled}" />
    <Setter Property="MinWidth" Value="160" />
    <Setter Property="MinHeight" Value="32" />
    <Setter Property="Margin" Value="0,3,8,3" />
    <Setter Property="DisplayMemberPath" Value="Label" />
   </Style>
-  <Style x:Key="SectionTitle" TargetType="TextBlock">
+  <Style x:Key="SectionTitle" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
    <Setter Property="TextWrapping" Value="Wrap" />
    <Setter Property="FontSize" Value="17" />
    <Setter Property="FontWeight" Value="SemiBold" />
    <Setter Property="Margin" Value="0,2,0,4" />
   </Style>
-  <Style x:Key="SectionHelp" TargetType="TextBlock">
+  <Style x:Key="SectionHelp" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
    <Setter Property="TextWrapping" Value="Wrap" />
-   <Setter Property="Foreground" Value="#4F6072" />
+   <Setter Property="Foreground" Value="{DynamicResource Text.Primary}" />
    <Setter Property="Margin" Value="0,0,0,12" />
   </Style>
-  <Style x:Key="CellText" TargetType="TextBlock">
+  <Style x:Key="CellText" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
    <Setter Property="TextWrapping" Value="Wrap" />
    <Setter Property="Margin" Value="4,2" />
   </Style>
-  <Style x:Key="FieldHint" TargetType="TextBlock">
+  <Style x:Key="FieldHint" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
    <Setter Property="TextWrapping" Value="Wrap" />
-   <Setter Property="Foreground" Value="#617286" />
+   <Setter Property="Foreground" Value="{DynamicResource Text.Primary}" />
    <Setter Property="FontSize" Value="11" />
    <Setter Property="Margin" Value="0,0,8,6" />
   </Style>
-  <Style x:Key="InlineStatus" TargetType="TextBlock">
+  <Style x:Key="InlineStatus" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
    <Setter Property="TextWrapping" Value="Wrap" />
-   <Setter Property="Foreground" Value="DarkSlateBlue" />
+   <Setter Property="Foreground" Value="{DynamicResource Accent.ActiveGreen}" />
    <Setter Property="Margin" Value="0,6,0,4" />
    <Style.Triggers>
     <DataTrigger Binding="{Binding HasError}" Value="True">
-     <Setter Property="Foreground" Value="DarkRed" />
+     <Setter Property="Foreground" Value="{DynamicResource Brand.Red}" />
      <Setter Property="FontWeight" Value="SemiBold" />
     </DataTrigger>
    </Style.Triggers>
@@ -63,16 +63,16 @@
   <StackPanel>
    <TextBlock Text="{Binding Notes}" Style="{StaticResource SectionHelp}" />
 
-   <Border Background="#EEF5FF" BorderBrush="#BDD4F0" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,8">
+   <Border Background="{DynamicResource Surface.Subtle}" BorderBrush="{DynamicResource Border.Soft}" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,8">
     <StackPanel>
      <TextBlock Text="{Binding NextRequirement}" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite" />
      <TextBlock Text="{Binding Status}" AutomationProperties.LiveSetting="Assertive">
       <TextBlock.Style>
-       <Style TargetType="TextBlock">
-        <Setter Property="Foreground" Value="DarkSlateBlue" />
+       <Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+        <Setter Property="Foreground" Value="{DynamicResource Accent.ActiveGreen}" />
         <Style.Triggers>
          <DataTrigger Binding="{Binding HasError}" Value="True">
-          <Setter Property="Foreground" Value="DarkRed" />
+          <Setter Property="Foreground" Value="{DynamicResource Brand.Red}" />
           <Setter Property="FontWeight" Value="SemiBold" />
          </DataTrigger>
         </Style.Triggers>
@@ -95,7 +95,7 @@
                  AutomationProperties.Name="{Binding ModelLabel}" local:FieldHelp.Key="ModelChoice" />
       </DockPanel>
 
-      <Border BorderBrush="#D8DEE7" BorderThickness="1" CornerRadius="6" Padding="12">
+      <Border BorderBrush="{DynamicResource Border.Soft}" BorderThickness="1" CornerRadius="6" Padding="12">
        <StackPanel>
         <TextBlock Text="{Binding NewModelHelp}" FontWeight="SemiBold" />
         <TextBlock Text="{Binding DescriptionLabel}" />
@@ -131,7 +131,7 @@
 
         <TextBlock Grid.ColumnSpan="3" Text="{Binding CenterSectionHelp}" Style="{StaticResource SectionHelp}" />
 
-        <Border Grid.Row="1" Grid.Column="0" BorderBrush="#D8DEE7" BorderThickness="1" CornerRadius="6" Padding="12" IsEnabled="{Binding CanEditMasters}">
+        <Border Grid.Row="1" Grid.Column="0" BorderBrush="{DynamicResource Border.Soft}" BorderThickness="1" CornerRadius="6" Padding="12" IsEnabled="{Binding CanEditMasters}">
          <StackPanel>
           <TextBlock Text="{Binding CenterFormTitle}" Style="{StaticResource SectionTitle}" />
           <TextBlock Text="{Binding CenterRequiredHelp}" Style="{StaticResource FieldHint}" />
@@ -290,7 +290,7 @@
                  Command="{Binding SaveNodeCommand}" TabIndex="48" FontWeight="SemiBold" />
          <Button x:Name="NewNodeButton" Content="{Binding NewNodeLabel}" Command="{Binding NewNodeCommand}" TabIndex="49" />
          <Button x:Name="RemoveNodeButton" Content="{Binding RemoveLabel}" Command="{Binding DeleteNodeCommand}"
-                 TabIndex="50" Foreground="DarkRed" />
+                 TabIndex="50" Foreground="{DynamicResource Brand.Red}" />
         </WrapPanel>
         <TextBlock Text="{Binding NodeFeedback}" Style="{StaticResource InlineStatus}" AutomationProperties.LiveSetting="Assertive" />
        </StackPanel>
@@ -327,7 +327,7 @@
        </TreeView.Resources>
       </TreeView>
       <Expander Header="{Binding TechnicalDetailsLabel}"><TextBlock Text="{Binding TechnicalDetails}" /></Expander>
-      <TextBlock Text="{Binding ValidationText}" Foreground="DarkRed" FontWeight="SemiBold"
+      <TextBlock Text="{Binding ValidationText}" Foreground="{DynamicResource Brand.Red}" FontWeight="SemiBold"
                  AutomationProperties.LiveSetting="Assertive" />
 
       <Expander Header="{Binding OtherOperationsLabel}" Margin="0,10,0,0">

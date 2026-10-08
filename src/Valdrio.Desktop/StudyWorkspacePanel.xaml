@@ -3,15 +3,15 @@
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  x:Class="Valdrio.Desktop.StudyWorkspacePanel">
  <UserControl.Resources>
-  <Style TargetType="Button">
+  <Style TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
    <Setter Property="Padding" Value="11,7" />
    <Setter Property="Margin" Value="0,4,8,4" />
   </Style>
-  <Style TargetType="TextBlock">
+  <Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
    <Setter Property="TextWrapping" Value="Wrap" />
    <Setter Property="Margin" Value="0,4,8,3" />
   </Style>
-  <Style TargetType="ComboBox">
+  <Style TargetType="ComboBox" BasedOn="{StaticResource Input.Combo}">
    <Setter Property="MinWidth" Value="160" />
    <Setter Property="Margin" Value="0,3,8,3" />
    <Setter Property="DisplayMemberPath" Value="Label" />
@@ -24,7 +24,7 @@
 
    <GroupBox Header="{Binding OpenSectionTitle}" Padding="12" Margin="0,0,0,12">
     <StackPanel>
-     <TextBlock Text="{Binding OpenSectionHelp}" Foreground="#506176" />
+     <TextBlock Text="{Binding OpenSectionHelp}" Foreground="{DynamicResource Text.Primary}" />
      <TextBlock Text="{Binding StudyListHelp}" />
      <DockPanel>
       <WrapPanel DockPanel.Dock="Right">
@@ -43,7 +43,7 @@
 
    <GroupBox Header="{Binding FormTitle}" Padding="12" Margin="0,0,0,12">
     <StackPanel>
-     <TextBlock Text="{Binding FormHelp}" Foreground="#506176" Margin="0,0,0,8" />
+     <TextBlock Text="{Binding FormHelp}" Foreground="{DynamicResource Text.Primary}" Margin="0,0,0,8" />
      <Grid IsEnabled="{Binding CanEdit}">
       <Grid.ColumnDefinitions>
        <ColumnDefinition Width="*" />
@@ -102,14 +102,14 @@
       <Button x:Name="NewStudyButton" Content="{Binding NewLabel}" Command="{Binding NewCommand}" TabIndex="69" />
      </WrapPanel>
      <TextBlock Text="{Binding Details}" FontWeight="SemiBold" />
-     <TextBlock x:Name="ActionStatus" Text="{Binding Status}" Foreground="DarkSlateBlue" FontWeight="SemiBold"
+     <TextBlock x:Name="ActionStatus" Text="{Binding Status}" Foreground="{DynamicResource Accent.ActiveGreen}" FontWeight="SemiBold"
                 AutomationProperties.LiveSetting="Assertive" />
     </StackPanel>
    </GroupBox>
 
    <GroupBox Header="{Binding ImportHistoryTitle}" Padding="12">
     <StackPanel>
-     <TextBlock Text="{Binding ImportHistoryHelp}" Foreground="#506176" />
+     <TextBlock Text="{Binding ImportHistoryHelp}" Foreground="{DynamicResource Text.Primary}" />
      <TextBlock Text="{Binding ImportHelp}" />
      <TextBlock x:Name="ImportHistoryText" Text="{Binding ImportedAmounts}" Margin="0,6,0,0" />
     </StackPanel>
@@ -117,7 +117,7 @@
 
    <Expander Header="{Binding OtherOperationsLabel}" Margin="0,10,0,0">
     <StackPanel Margin="8,6,0,0">
-     <TextBlock Text="{Binding AdvancedHelp}" Foreground="#506176" />
+     <TextBlock Text="{Binding AdvancedHelp}" Foreground="{DynamicResource Text.Primary}" />
      <Button Content="{Binding InspectFileLabel}" Click="OpenImportColumns" HorizontalAlignment="Left"
              x:Name="InspectFileButton" />
      <Button x:Name="CaptureStudyButton" Content="{Binding CaptureLabel}" Command="{Binding CaptureCommand}" TabIndex="72" />
@@ -130,7 +130,7 @@
                IsEnabled="{Binding Ready}" TabIndex="76" AutomationProperties.Name="{Binding SnapshotLabel}"
                local:FieldHelp.Key="SnapshotChoice" />
      <TextBlock Text="{Binding SnapshotDetails}" FlowDirection="LeftToRight" />
-     <TextBlock Text="{Binding Preparation}" Foreground="DarkRed" AutomationProperties.LiveSetting="Polite" />
+     <TextBlock Text="{Binding Preparation}" Foreground="{DynamicResource Brand.Red}" AutomationProperties.LiveSetting="Polite" />
      <TextBlock Text="{Binding HistoricalDefinitions}" />
     </StackPanel>
    </Expander>

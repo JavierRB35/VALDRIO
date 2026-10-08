@@ -4,11 +4,11 @@
  x:Class="Valdrio.Desktop.CompanyFilePanel">
  <UserControl.Resources>
   <BooleanToVisibilityConverter x:Key="BoolVis" />
-  <Style TargetType="Button">
+  <Style TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
    <Setter Property="Padding" Value="12,7" />
    <Setter Property="Margin" Value="0,4,8,4" />
   </Style>
-  <Style TargetType="TextBlock">
+  <Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
    <Setter Property="TextWrapping" Value="Wrap" />
   </Style>
  </UserControl.Resources>
@@ -18,19 +18,19 @@
    <TextBlock Text="{Binding ProjectIntro}" Margin="0,0,0,14" />
 
    <StackPanel Visibility="{Binding NoProject,Converter={StaticResource BoolVis}}">
-    <Border BorderBrush="#D6DEE8" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,12">
+    <Border BorderBrush="{DynamicResource Border.Soft}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,12">
      <StackPanel>
       <TextBlock Text="{Binding OpenProjectTitle}" FontSize="18" FontWeight="SemiBold" />
-      <TextBlock Text="{Binding OpenProjectHelp}" Margin="0,4,0,8" Foreground="#506176" />
+      <TextBlock Text="{Binding OpenProjectHelp}" Margin="0,4,0,8" Foreground="{DynamicResource Text.Primary}" />
       <Button x:Name="OpenButton" Content="{Binding OpenLabel}" Command="{Binding OpenCommand}"
               HorizontalAlignment="Left" FontWeight="SemiBold" TabIndex="13" />
      </StackPanel>
     </Border>
 
-    <Border BorderBrush="#D6DEE8" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,10">
+    <Border BorderBrush="{DynamicResource Border.Soft}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,10">
      <StackPanel>
       <TextBlock Text="{Binding NewProjectTitle}" FontSize="18" FontWeight="SemiBold" />
-      <TextBlock Text="{Binding NewProjectHelp}" Margin="0,4,0,10" Foreground="#506176" />
+      <TextBlock Text="{Binding NewProjectHelp}" Margin="0,4,0,10" Foreground="{DynamicResource Text.Primary}" />
       <Grid IsEnabled="{Binding IsIdle}">
        <Grid.ColumnDefinitions>
         <ColumnDefinition Width="220" />
@@ -68,7 +68,7 @@
 
    <Expander Header="{Binding FileOperationsLabel}" Margin="0,6,0,10">
     <StackPanel Margin="8,6,0,0">
-     <TextBlock Text="{Binding FileOperationsHelp}" Margin="0,0,0,8" Foreground="#506176" />
+     <TextBlock Text="{Binding FileOperationsHelp}" Margin="0,0,0,8" Foreground="{DynamicResource Text.Primary}" />
      <WrapPanel>
       <Button x:Name="CloseButton" Content="{Binding CloseLabel}" Command="{Binding CloseCommand}" TabIndex="14" />
       <Button x:Name="BackupButton" Content="{Binding BackupLabel}" Command="{Binding BackupCommand}" TabIndex="15" />
@@ -83,11 +83,11 @@
     </StackPanel>
    </Expander>
 
-   <TextBlock Text="{Binding Notes}" Margin="0,8,0,0" Foreground="#506176" />
+   <TextBlock Text="{Binding Notes}" Margin="0,8,0,0" Foreground="{DynamicResource Text.Primary}" />
 
    <StackPanel x:Name="UnitCreationPanel">
     <TextBlock Text="{Binding UnitCreationHelp}" Margin="0,4,0,4" />
-    <TextBlock Text="{Binding UnitRequiredHelp}" Foreground="#617286" FontSize="11" Margin="0,0,0,8" />
+    <TextBlock Text="{Binding UnitRequiredHelp}" Foreground="{DynamicResource Text.Primary}" FontSize="11" Margin="0,0,0,8" />
     <Grid IsEnabled="{Binding IsIdle}">
      <Grid.ColumnDefinitions>
       <ColumnDefinition Width="220" />
