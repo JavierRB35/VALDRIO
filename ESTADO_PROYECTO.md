@@ -2,8 +2,9 @@
 
 ## Estado vigente T08 — 2026-10-08
 
-T08 revisada y completada para integración en `codex/local-tests-and-workspace`.
-561/561 pruebas locales y 567 comprobaciones WPF superadas en la revisión.
+T08 fusionada mediante PR #31 en `codex/local-tests-and-workspace` (`c1e6877`).
+Aceptación completa del commit fusionado superada localmente; recibo en evidencia.
+561/561 pruebas locales y 467 comprobaciones WPF superadas en la revisión.
 Archivo v9, snapshots v7, claves publicadas versionadas, reglas y cobertura,
 código + descripción con procedencia y selección trazable.
 Main vigente `79087a5` ya incorpora PR #22, visual V1 y auditoría; T08 se mantiene
