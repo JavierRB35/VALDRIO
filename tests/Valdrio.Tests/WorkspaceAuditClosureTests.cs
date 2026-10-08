@@ -14,7 +14,7 @@ using Valdrio.Localization;
 namespace Valdrio.Tests;
 
 [TestClass]
-public sealed class WorkspaceAuditClosureTests
+public sealed partial class WorkspaceAuditClosureTests
 {
     private string directory = null!;
     private ICurrencyCatalog Catalog => new JsonCurrencyCatalog(Path.Combine(

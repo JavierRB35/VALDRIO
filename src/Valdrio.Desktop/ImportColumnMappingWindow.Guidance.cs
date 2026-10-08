@@ -37,21 +37,23 @@ public partial class ImportColumnMappingWindow
             4 => vm.ConfirmedImport is not null ? "Back" : "SaveImport", _ => "Next"
         });
         if (step == 4 && vm.ConfirmedImport is not null) ImportNext.Content = vm.Guide("ContinueResources");
-        if (step == 4 && vm.ConfirmedImport is null && vm.Preparation?.CanConfirm != true) ImportNext.Content = vm.Guide("CorrectImport");
-        ConfirmImportButton.Visibility = step == 4 && vm.ConfirmedImport is null && vm.Preparation?.CanConfirm == true
+        if (step == 4 && vm.ConfirmedImport is null && !vm.HasConfirmableReview) ImportNext.Content = vm.Guide("CorrectImport");
+        ConfirmImportButton.Visibility = step == 4 && vm.ConfirmedImport is null && vm.HasConfirmableReview
             ? Visibility.Visible : Visibility.Collapsed;
         ImportNext.Visibility =
             step == 0 && !vm.HasFile ? Visibility.Collapsed :
-            step == 4 && vm.Preparation?.CanConfirm == true && vm.ConfirmedImport is null ? Visibility.Collapsed :
+            step == 4 && vm.HasConfirmableReview && vm.ConfirmedImport is null ? Visibility.Collapsed :
             Visibility.Visible;
         // The visible primary action always remains clickable; if a requirement is missing,
         // the click explains exactly what the user needs to do instead of silently doing nothing.
         ImportNext.IsEnabled = vm.IsIdle;
         ImportFieldHelp.Text = vm.Guide(lastHelpKey is null ? "HelpHint" : "Help." + lastHelpKey);
     }
-    private void ImportStepChanged(object sender, SelectionChangedEventArgs e)
+    private async void ImportStepChanged(object sender, SelectionChangedEventArgs e)
     {
         if (e.Source != ImportSteps) return;
+        if (ImportSteps.SelectedIndex == 4 && viewModel is { IsIdle: true, CanReviewInGuide: true, Preparation: null } vm)
+            await vm.PrepareCommand.ExecuteAsync(null);
         lastHelpKey = null;
         RefreshGuidance();
     }

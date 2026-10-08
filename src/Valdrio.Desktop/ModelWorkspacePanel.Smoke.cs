@@ -99,6 +99,7 @@ public partial class ModelWorkspacePanel
         Text(DescriptionBox, "Industrial setup and process");
         await Click(NewDraftButton);
         Check(vm.Current?.Status == ModelStatus.Draft, "draft created");
+        Check(vm.Status == vm.Text("Model.StructureCreated"), "new structure has explicit saved feedback");
         async Task AddNode(string code, string physical, string unit, NodeRole role, string functions)
         {
             Text(NodeCodeBox, code);
@@ -120,6 +121,12 @@ public partial class ModelWorkspacePanel
         await Click(PublishModelButton);
         Check(vm.Current!.Status == ModelStatus.Published && !SaveModelButton.IsEnabled && !NodeEditor.IsEnabled && DescriptionBox.IsReadOnly, "published UI rejects edits");
         Check(NodeSummary.Items.Count == 3, "published nodes visibly listed");
+        Check(NodeSummary.Columns[0].Header.ToString() == vm.Text("Model.ColumnCenter") &&
+            vm.Nodes.Select(n => n.Node.Code).SequenceEqual(new[] { "MANT", "PROCESO", "SETUP" }), "physical centre first with deterministic centre and node ordering");
+        ModelSteps.SelectedIndex = 3; UpdateLayout();
+        Check(StructureReviewTree.Items.Count == 2 && vm.ReviewTree.Sum(c => c.Children.Count) == 3 &&
+            !vm.Details.Contains(vm.Current!.StructuralHash!, StringComparison.Ordinal), "review tree shows centres and all nodes without technical hash");
+        VisualEvidenceCapture.Capture(window, Path.Combine(output, "review-tree.png"));
         Check(window.RunSectionLayoutSmoke(), "main sections do not overlap");
         var original = vm.Current;
         var originalJson = original.PublishedCanonicalJson;

@@ -54,7 +54,7 @@ public sealed partial class ImportColumnMappingViewModel
                 selected.Columns.Debit.HasValue ? ImportSignConvention.DebitMinusCredit : ImportSignConvention.SignedAmount,
                 new(DateOnly.FromDateTime(fiscalStart!.Value)), new(DateOnly.FromDateTime(previousEnd!.Value)), international && currencyFromColumn ? null : new CurrencyCode(sourceCurrency), international && currencyFromColumn ? currencyColumn : null,
                 ImportDuplicatePolicy.AggregateWithProvenance, ImportZeroPolicy.Keep, ImportAccountSelection.All,
-                new(ImportProfileApprovalState.ApprovedBusiness, approvalReference), true,
+                new(ImportProfileApprovalState.ApprovedBusiness, "Earlier source retained explicitly: " + comparisonScope), true,
                 xlsxNumericAccountPolicy: selected.NumericAccountPolicy, grouping: SelectedRecords(), conversion: international ? BuildConversion() : null);
             comparison = new(selected.Source, prior, new(DateOnly.FromDateTime(fiscalStart.Value)),
                 new(DateOnly.FromDateTime(fiscalEnd!.Value)), comparisonScope);
@@ -93,6 +93,11 @@ public sealed partial class ImportColumnMappingViewModel
     public IAsyncRelayCommand ConfirmCommand { get; }
     public PreparedImport? Preparation => preparedImport;
     public ImportedBatch? ConfirmedImport => confirmedImport;
+    public bool HasConfirmableReview => preparedImport is { } p && p.Rows.Any(r => r.Selected) &&
+        !p.Diagnostics.Any(d => d.Severity == ImportDiagnosticSeverity.Blocking && d.Diagnostic.Code != "IMP_APPROVAL_REQUIRED");
+    public bool CanSaveReviewedImport => writable && confirmedImport is null && HasConfirmableReview && interpretationApproved;
+    public string ReviewSaveRequirement => confirmedImport is not null ? Guide("SavedImport") : !HasConfirmableReview ? Guide("EditReview") : !interpretationApproved ? Guide("ApproveReview") : Guide("SaveReady");
+    public bool ShowReviewApproval => HasConfirmableReview && confirmedImport is null;
     public bool HasPreparedReview => preparedImport is not null || confirmedImport is not null;
     public bool HasPreparedGroups => preparedImport?.Groups is { Count: > 0 };
     public IReadOnlyList<ImportGroupPreview> PreparedGroups => preparedImport?.Groups?.Select(g => new ImportGroupPreview(
@@ -106,12 +111,14 @@ public sealed partial class ImportColumnMappingViewModel
     public string ApprovalReference
     {
         get => approvalReference;
-        set { if (SetProperty(ref approvalReference, value)) { InvalidatePreparation(false); Refresh(); } }
+        set { if (SetProperty(ref approvalReference, value)) { if (confirmedImport is not null) InvalidatePreparation(false); Refresh(); } }
     }
+    private string EffectiveApprovalReference => !string.IsNullOrWhiteSpace(approvalReference) ? approvalReference :
+        "Reviewed in VALDRIO: " + amountMode + "; " + validation?.Source.FileHash + "; " + targetStudy?.PeriodStart + "/" + targetStudy?.PeriodEnd;
     public bool InterpretationApproved
     {
         get => interpretationApproved;
-        set { if (SetProperty(ref interpretationApproved, value)) { InvalidatePreparation(false); Refresh(); } }
+        set { if (SetProperty(ref interpretationApproved, value)) Refresh(); }
     }
     public string Target => targetStudy is null ? this["NoStudy"] : string.Format(Ui, this["Target"],
         targetStudy.Name, targetStudy.PeriodStart, targetStudy.PeriodEnd, targetStudy.Currency.FunctionalCurrencyCode, targetStudy.Revision);
@@ -127,7 +134,7 @@ public sealed partial class ImportColumnMappingViewModel
                 r.PositiveAmount.ToString(culture), r.NegativeAmount.ToString(culture), r.NetAmount.ToString(culture), r.Currency);
         }
     }
-    public string PreparationIssues => preparedImport is null ? "" : string.Join("\n", preparedImport.Diagnostics.Take(100).Select(d =>
+    public string PreparationIssues => preparedImport is null ? "" : string.Join("\n", preparedImport.Diagnostics.Where(d => d.Diagnostic.Code != "IMP_APPROVAL_REQUIRED").Take(100).Select(d =>
         string.Format(Ui, this["FriendlyIssueLine"],
             d.Location.RecordNumber?.ToString(CultureInfo.InvariantCulture) ?? "—",
             FormatDiagnosticMessage(d.Diagnostic))));
@@ -147,7 +154,11 @@ public sealed partial class ImportColumnMappingViewModel
     {
         if (preparedImport is not null || confirmedImport is not null) statusKey = "ReviewChanged";
         preparedImport = null; confirmedImport = null; requestId = new(Guid.NewGuid());
-        if (resetApproval) interpretationApproved = false;
+        if (resetApproval)
+        {
+            interpretationApproved = false;
+
+        }
     }
     private async Task Prepare()
     {
@@ -155,7 +166,7 @@ public sealed partial class ImportColumnMappingViewModel
         await Run(async token =>
         {
             var selected = validation!; var study = targetStudy!; CurrencyCode? currency = international && currencyFromColumn ? null : new CurrencyCode(sourceCurrency);
-            var approved = interpretationApproved && !string.IsNullOrWhiteSpace(approvalReference);
+            var approved = interpretationApproved;
             if (amountMode == "cumulative" && comparison is null) throw ImportRules.Error("IMP_COMPARISON_INVALID", "Import.ComparisonInvalid");
             if (replaceBatch && replacement is null) throw ImportRules.Error("IMP_REPLACEMENT_INVALID", "Import.ReplacementInvalid");
             var profile = new SourceParseProfileVersion(international ? SourceParseProfileVersion.InternationalSchema : amountMode == "cumulative" ? SourceParseProfileVersion.ComparisonSchema : SourceParseProfileVersion.GroupingSchema, new(Guid.NewGuid()), 1,
@@ -171,16 +182,25 @@ public sealed partial class ImportColumnMappingViewModel
                 selected.Columns.Debit.HasValue ? ImportSignConvention.DebitMinusCredit : ImportSignConvention.SignedAmount,
                 study.PeriodStart, study.PeriodEnd, currency, international && currencyFromColumn ? currencyColumn : null, ImportDuplicatePolicy.AggregateWithProvenance, ImportZeroPolicy.Keep,
                 ImportAccountSelection.All, new(approved ? ImportProfileApprovalState.ApprovedBusiness : ImportProfileApprovalState.PendingBusinessApproval,
-                    string.IsNullOrWhiteSpace(approvalReference) ? "pending" : approvalReference), approved,
+                    approved ? EffectiveApprovalReference : "pending"), approved,
                 xlsxNumericAccountPolicy: selected.NumericAccountPolicy, grouping: SelectedRecords(), comparison: amountMode == "cumulative" ? comparison : null, conversion: international ? BuildConversion() : null);
             var port = importPort!;
             var prepared = await Task.Run(() => port.PrepareImport(study.CompanyId, study.Id, study.Revision,
                 new(Guid.NewGuid()), selected.Source, profile, token), token);
             token.ThrowIfCancellationRequested(); preparedImport = prepared; requestId = new(Guid.NewGuid());
-            statusKey = prepared.CanConfirm ? "PreparedReady" : "HasErrors";
+            statusKey = HasConfirmableReview ? "PreparedReady" : "HasErrors";
         }, keepSelection: true);
     }
-    private async Task Confirm() => await Run(async token =>
+    private async Task Confirm()
+    {
+        if (!CanSaveReviewedImport) return;
+        // Apply review approval to the immutable profile at the explicit save action.
+        if (preparedImport?.CanConfirm != true || preparedImport.Profile.Approval.Reference != EffectiveApprovalReference)
+            await Prepare();
+        if (preparedImport?.CanConfirm != true) return;
+        await CommitPreparedImport();
+    }
+    private async Task CommitPreparedImport() => await Run(async token =>
     {
         var prepared = preparedImport!; var port = importPort!;
         // Recheck the chosen path; the preview is an immutable capture, but a changed file requires a new preview.

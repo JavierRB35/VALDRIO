@@ -26,11 +26,13 @@
    <Setter Property="DisplayMemberPath" Value="Label" />
   </Style>
   <Style x:Key="SectionTitle" TargetType="TextBlock">
+   <Setter Property="TextWrapping" Value="Wrap" />
    <Setter Property="FontSize" Value="17" />
    <Setter Property="FontWeight" Value="SemiBold" />
    <Setter Property="Margin" Value="0,2,0,4" />
   </Style>
   <Style x:Key="SectionHelp" TargetType="TextBlock">
+   <Setter Property="TextWrapping" Value="Wrap" />
    <Setter Property="Foreground" Value="#4F6072" />
    <Setter Property="Margin" Value="0,0,0,12" />
   </Style>
@@ -39,11 +41,13 @@
    <Setter Property="Margin" Value="4,2" />
   </Style>
   <Style x:Key="FieldHint" TargetType="TextBlock">
+   <Setter Property="TextWrapping" Value="Wrap" />
    <Setter Property="Foreground" Value="#617286" />
    <Setter Property="FontSize" Value="11" />
    <Setter Property="Margin" Value="0,0,8,6" />
   </Style>
   <Style x:Key="InlineStatus" TargetType="TextBlock">
+   <Setter Property="TextWrapping" Value="Wrap" />
    <Setter Property="Foreground" Value="DarkSlateBlue" />
    <Setter Property="Margin" Value="0,6,0,4" />
    <Style.Triggers>
@@ -101,8 +105,9 @@
         <WrapPanel>
          <Button x:Name="NewDraftButton" Content="{Binding NewDraftLabel}" Command="{Binding NewDraftCommand}" TabIndex="33" />
          <Button x:Name="CloneModelButton" Content="{Binding CloneLabel}" Command="{Binding CloneCommand}" TabIndex="37" />
-         <Button x:Name="RefreshModelButton" Content="{Binding RefreshLabel}" Command="{Binding RefreshCommand}" TabIndex="39" />
+         <Button ToolTip="{Binding RefreshHelp}" local:FieldHelp.Key="RefreshModel" x:Name="RefreshModelButton" Content="{Binding RefreshLabel}" Command="{Binding RefreshCommand}" TabIndex="39" />
         </WrapPanel>
+        <TextBlock Text="{Binding RefreshHelp}" Style="{StaticResource FieldHint}" />
        </StackPanel>
       </Border>
      </StackPanel>
@@ -143,7 +148,7 @@
           <WrapPanel Margin="0,6,0,0">
            <Button x:Name="SaveCenterButton" Content="{Binding CenterPrimaryActionLabel}"
                    Command="{Binding SaveCenterFormCommand}" TabIndex="27" FontWeight="SemiBold" />
-           <Button x:Name="CreateCenterButton" Content="{Binding NewCenterLabel}"
+           <Button x:Name="CreateCenterButton" Visibility="{Binding NewCenterVisibility}" Content="{Binding NewCenterLabel}"
                    Command="{Binding NewCenterCommand}" TabIndex="28" />
           </WrapPanel>
           <TextBlock Text="{Binding CenterFeedback}" Style="{StaticResource InlineStatus}" AutomationProperties.LiveSetting="Assertive" />
@@ -199,8 +204,8 @@
                 CanUserAddRows="False" MinHeight="180" MaxHeight="330" IsEnabled="{Binding CanSelectNode}"
                 local:FieldHelp.Key="SelectedNode">
        <DataGrid.Columns>
+        <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding CenterLabel}" Width="220" />
         <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding Node.Code}" Width="110" />
-        <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding CenterLabel}" Width="120" />
         <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding RoleLabel}" Width="115" />
         <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding UnitLabel}" Width="90" />
         <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding LayerLabel}" Width="110" />
@@ -304,7 +309,24 @@
       </WrapPanel>
 
       <TextBlock Text="{Binding Details}" />
-      <TextBlock Text="{Binding HistoricalDefinitions}" />
+      <TextBlock Text="{Binding ReviewTreeLabel}" FontWeight="SemiBold" />
+      <TreeView x:Name="StructureReviewTree" ItemsSource="{Binding ReviewTree}" AutomationProperties.Name="{Binding ReviewTreeLabel}">
+       <TreeView.Resources>
+        <HierarchicalDataTemplate DataType="{x:Type local:CenterTreeRow}" ItemsSource="{Binding Children}">
+         <TextBlock Text="{Binding Label}" FontWeight="SemiBold" />
+        </HierarchicalDataTemplate>
+        <DataTemplate DataType="{x:Type local:NodeOption}">
+         <StackPanel Orientation="Horizontal">
+          <TextBlock Text="{Binding Node.Code}" Margin="0,3,12,3" />
+          <TextBlock Text="{Binding RoleLabel}" Margin="0,3,12,3" />
+          <TextBlock Text="{Binding UnitLabel}" Margin="0,3,12,3" />
+          <TextBlock Text="{Binding FunctionsLabel}" />
+         </StackPanel>
+        </DataTemplate>
+        <Style TargetType="TreeViewItem"><Setter Property="IsExpanded" Value="True" /></Style>
+       </TreeView.Resources>
+      </TreeView>
+      <Expander Header="{Binding TechnicalDetailsLabel}"><TextBlock Text="{Binding TechnicalDetails}" /></Expander>
       <TextBlock Text="{Binding ValidationText}" Foreground="DarkRed" FontWeight="SemiBold"
                  AutomationProperties.LiveSetting="Assertive" />
 

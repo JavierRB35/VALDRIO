@@ -293,7 +293,7 @@ Full: {5}</value></data>
   <data name="Preferences.SaveFailed" xml:space="preserve"><value>The presentation change was applied, but the preference file could not be saved. The next start may use the previous preference.</value></data>
   <data name="Study.CommittedRefreshPending" xml:space="preserve"><value>The write was committed, but refreshing the screen failed. Refresh again to reconcile the displayed lists.</value></data>
   <data name="Model.CommittedRefreshPending" xml:space="preserve"><value>The write was committed, but the screen could not be refreshed. Refresh to reconcile the lists. Pending edits will be preserved.</value></data>
-  <data name="Model.Refresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="Model.Refresh" xml:space="preserve"><value>Reload saved data</value></data>
   <data name="Import.XlsxDateAccount" xml:space="preserve"><value>A date cell cannot be used as an account identity.</value></data>
   <data name="Import.XlsxFormatUnsupported" xml:space="preserve"><value>The XLSX number format cannot be interpreted unambiguously. Use an explicit supported format.</value></data>
   <data name="Import.SourceLimit" xml:space="preserve"><value>The source exceeds the configured technical reading limit.</value></data>
@@ -361,11 +361,11 @@ Full: {5}</value></data>
   <data name="ImportMapping.NoStudy" xml:space="preserve"><value>File preview. To save these data you first need to open or create a cost analysis.</value></data>
   <data name="ImportMapping.Target" xml:space="preserve"><value>Destination analysis: {0} · period {1} to {2} · currency {3}</value></data>
   <data name="ImportMapping.SourceCurrency" xml:space="preserve"><value>Currency of the amounts (for example EUR)</value></data>
-  <data name="ImportMapping.ApprovalReference" xml:space="preserve"><value>Check example</value></data>
-  <data name="ImportMapping.ApproveInterpretation" xml:space="preserve"><value>I have verified that these are signed amounts for the displayed period, in the stated source currency. Negative amounts and zeros retain their original meaning.</value></data>
+  <data name="ImportMapping.ApprovalReference" xml:space="preserve"><value>Optional review note</value></data>
+  <data name="ImportMapping.ApproveInterpretation" xml:space="preserve"><value>I approve the period movements shown in this review. Original amounts, signs and provenance will be retained.</value></data>
   <data name="ImportMapping.PrepareImport" xml:space="preserve"><value>Prepare review</value></data>
   <data name="ImportMapping.ConfirmImport" xml:space="preserve"><value>Save data into analysis</value></data>
-  <data name="ImportMapping.PreparedReady" xml:space="preserve"><value>Everything is ready. Review the totals before saving the data.</value></data>
+  <data name="ImportMapping.PreparedReady" xml:space="preserve"><value>Preview prepared. Review the amounts and approve their meaning before saving.</value></data>
   <data name="ImportMapping.Totals" xml:space="preserve"><value>Read {0} · selected {1} · ignored {2} · invalid {3}. Positive {4} · negative {5} · net {6} {7}.</value></data>
   <data name="ImportMapping.Confirmed" xml:space="preserve"><value>Data imported and saved successfully.</value></data>
   <data name="ImportMapping.ConfirmedSummary" xml:space="preserve"><value>Import saved · {1} resources added.</value></data>
@@ -380,14 +380,14 @@ Full: {5}</value></data>
   <data name="ImportMapping.OriginalDebit" xml:space="preserve"><value>Original debit</value></data>
   <data name="ImportMapping.OriginalCredit" xml:space="preserve"><value>Original credit</value></data>
   <data name="ImportMapping.DebitCreditHelp" xml:space="preserve"><value>Period amount = debit minus credit. Both columns require explicit numbers, including zero. Empty or missing fields are errors; source negatives retain their declared meaning.</value></data>
-  <data name="ImportMapping.ApproveDebitCredit" xml:space="preserve"><value>I have checked the example and confirm debit minus credit as the signed amount for the displayed period, in the stated source currency. Both originals, negatives and zeros retain their meaning.</value></data>
+  <data name="ImportMapping.ApproveDebitCredit" xml:space="preserve"><value>I approve Debit minus Credit as the period movements shown in this review. Both original amounts and provenance will be retained.</value></data>
   <data name="Import.AmountOverflow" xml:space="preserve"><value>Debit minus credit exceeds the supported decimal range. Correct the source amounts.</value></data>
   <data name="CompanyActiveLabel" xml:space="preserve"><value>Open project</value></data>
   <data name="CompanyTechnicalDetails" xml:space="preserve"><value>Technical details (support)</value></data>
   <data name="DevelopmentToolsTitle" xml:space="preserve"><value>Technical tools (support)</value></data>
   <data name="ImportMapping.AmountMode" xml:space="preserve"><value>What do these amounts represent?</value></data>
-  <data name="ImportMapping.ApproveClosing" xml:space="preserve"><value>I checked the closing date and example. I confirm that the full balance of the selected accounts should be used for this analysis, preserving signs and zeros.</value></data>
-  <data name="ImportMapping.ApproveClosingDebitCredit" xml:space="preserve"><value>I checked that Debit and Credit represent the stated closing balances. I confirm that Debit minus Credit is the full balance to use in this analysis.</value></data>
+  <data name="ImportMapping.ApproveClosing" xml:space="preserve"><value>I approve using the full closing balance shown as the study amount.</value></data>
+  <data name="ImportMapping.ApproveClosingDebitCredit" xml:space="preserve"><value>I approve using the full closing balance, calculated as Debit minus Credit, as the study amount.</value></data>
   <data name="ImportMapping.ClosingBasis" xml:space="preserve"><value>Closing date: {0}. The full displayed balance is used; no earlier closing balance is subtracted automatically.</value></data>
   <data name="ImportMapping.ClosingMode" xml:space="preserve"><value>Full balance at the closing date</value></data>
   <data name="ImportMapping.PeriodBasis" xml:space="preserve"><value>Movements belonging to the analysis period are used.</value></data>
@@ -420,7 +420,7 @@ Full: {5}</value></data>
   <data name="ImportMapping.ComparisonHelp" xml:space="preserve"><value>To obtain a cumulative difference you need two comparable closings with the same fiscal year, scope, currency and sign convention. Enter the earlier closing and keep the current one as the analysis period end.</value></data>
   <data name="ImportMapping.ClearComparison" xml:space="preserve"><value>Clear earlier cumulative source</value></data>
   <data name="Import.ComparisonInvalid" xml:space="preserve"><value>The two cumulative balances are not comparable. Check fiscal year, scope, currency, signs, and that the earlier closing is the day before the analysis starts.</value></data>
-  <data name="ImportMapping.ApproveComparison" xml:space="preserve"><value>I checked both closing dates, fiscal year, currency, selected codes and shared scope. I approve the difference example, including signs and zeros.</value></data>
+  <data name="ImportMapping.ApproveComparison" xml:space="preserve"><value>I approve the differences shown between current and earlier cumulative amounts for the same accounting scope.</value></data>
   <data name="Import.ReplacementInvalid" xml:space="preserve"><value>Select an active previous import from this analysis to replace.</value></data>
   <data name="ImportMapping.ComparisonScope" xml:space="preserve"><value>Verified shared scope (company, accounts and accounting basis)</value></data>
   <data name="ImportMapping.PreviousEnd" xml:space="preserve"><value>Earlier cumulative closing date</value></data>
@@ -504,7 +504,7 @@ Full: {5}</value></data>
   <data name="Guide.NeedCurrency" xml:space="preserve"><value>Check the currency of the amounts. The analysis currency is suggested, but you can change it.</value></data>
   <data name="Guide.NeedExample" xml:space="preserve"><value>Enter an example you checked, for example “Account 6005 = 358.35 EUR”.</value></data>
   <data name="Guide.NeedApproval" xml:space="preserve"><value>Tick the confirmation stating that the selected option correctly describes the file amounts.</value></data>
-  <data name="Guide.ReadyReview" xml:space="preserve"><value>Everything required is set. Click Review import to check totals before saving.</value></data>
+  <data name="Guide.ReadyReview" xml:space="preserve"><value>You can review the amounts. Approve them once in Review and save.</value></data>
   <data name="Guide.ImportFile" xml:space="preserve"><value>1. Choose file</value></data>
   <data name="Guide.ImportColumns" xml:space="preserve"><value>2. Identify columns</value></data>
   <data name="Guide.ImportRecords" xml:space="preserve"><value>3. Choose records</value></data>
@@ -575,8 +575,8 @@ Full: {5}</value></data>
   <data name="Guide.Help.Replacement" xml:space="preserve"><value>Specific import to replace in full. Review the selection before saving.</value></data>
   <data name="Guide.Help.AmountMode" xml:space="preserve"><value>Period: movements between dates. Full balance: incorporates the entire closing balance. Cumulative: subtracts an explicitly prepared earlier closing.</value></data>
   <data name="Guide.Help.SourceCurrency" xml:space="preserve"><value>Currency code for source amounts, for example EUR. Not inferred from symbol or region.</value></data>
-  <data name="Guide.Help.ApprovalReference" xml:space="preserve"><value>Example checked against the source: account and expected total of selected rows. Records your interpretation check.</value></data>
-  <data name="Guide.Help.InterpretationApproved" xml:space="preserve"><value>Confirms that period, meaning, currency and example are correct. Relevant edits require another review.</value></data>
+  <data name="Guide.Help.ApprovalReference" xml:space="preserve"><value>Optional note about a checked account and amount. If left empty, an internal approval reference is retained.</value></data>
+  <data name="Guide.Help.InterpretationApproved" xml:space="preserve"><value>Approve the meaning and sign convention of the amounts shown in this review. Changing mode, currency, rows, rates or format requires a new review.</value></data>
   <data name="Guide.Help.International" xml:space="preserve"><value>Options for currency per row, document dates and conversion. Rates are entered explicitly and preserved with the import.</value></data>
   <data name="Guide.Help.CurrencyFromColumn" xml:space="preserve"><value>Enable if each row supplies its own currency, then choose the column.</value></data>
   <data name="Guide.Help.CurrencyColumn" xml:space="preserve"><value>Column containing currency codes such as EUR or USD.</value></data>
@@ -871,7 +871,7 @@ Difference to distribute: {7}</value></data>
   <data name="Model.CenterListHelp" xml:space="preserve"><value>Select a row to edit it. After a successful save, the form is cleared automatically and the table refreshes.</value></data>
   <data name="Model.CenterFormNew" xml:space="preserve"><value>Add centre</value></data>
   <data name="Model.CenterFormEdit" xml:space="preserve"><value>Edit selected centre</value></data>
-  <data name="Model.NewCenter" xml:space="preserve"><value>New centre</value></data>
+  <data name="Model.NewCenter" xml:space="preserve"><value>Stop editing / clear form</value></data>
   <data name="Model.CenterSaveCreate" xml:space="preserve"><value>Save centre</value></data>
   <data name="Model.CenterSaveEdit" xml:space="preserve"><value>Save changes</value></data>
   <data name="Model.CenterDeactivate" xml:space="preserve"><value>Deactivate centre</value></data>
@@ -895,7 +895,7 @@ Difference to distribute: {7}</value></data>
   <data name="Model.ColumnCode" xml:space="preserve"><value>Code</value></data>
   <data name="Model.ColumnName" xml:space="preserve"><value>Name</value></data>
   <data name="Model.ColumnStatus" xml:space="preserve"><value>Status</value></data>
-  <data name="Model.ColumnCenter" xml:space="preserve"><value>Centre</value></data>
+  <data name="Model.ColumnCenter" xml:space="preserve"><value>Physical centre</value></data>
   <data name="Model.ColumnRole" xml:space="preserve"><value>Role</value></data>
   <data name="Model.ColumnUnit" xml:space="preserve"><value>Unit</value></data>
   <data name="Model.ColumnLayer" xml:space="preserve"><value>Layer</value></data>
@@ -921,17 +921,17 @@ Difference to distribute: {7}</value></data>
   <data name="ImportMapping.FileAdvancedHelp" xml:space="preserve"><value>Change these only if headers or data do not start on the usual rows, or if a CSV uses a different delimiter or encoding.</value></data>
   <data name="ImportMapping.ColumnsStepTitle" xml:space="preserve"><value>Identify the account and amount columns</value></data>
   <data name="ImportMapping.ColumnsStepHelp" xml:space="preserve"><value>You do not need technical terminology: choose the column identifying the account and the column or columns containing its amount.</value></data>
-  <data name="ImportMapping.NumberAdvanced" xml:space="preserve"><value>Number format (only if the preview does not match)</value></data>
-  <data name="ImportMapping.NumberAdvancedHelp" xml:space="preserve"><value>The defaults work for most files. Adjust separators or negative syntax only if the preview shows incorrect amounts.</value></data>
+  <data name="ImportMapping.NumberAdvanced" xml:space="preserve"><value>Number format in the source file</value></data>
+  <data name="ImportMapping.NumberAdvancedHelp" xml:space="preserve"><value>Select the source file decimal and thousands separators. The preview shows the parsed amount; separators are not detected automatically.</value></data>
   <data name="ImportMapping.RecordsStepTitle" xml:space="preserve"><value>Choose the records to import</value></data>
   <data name="ImportMapping.RecordsStepHelp" xml:space="preserve"><value>All valid rows are included initially. Uncheck only the rows that should not be part of this analysis.</value></data>
   <data name="ImportMapping.MeaningStepTitle" xml:space="preserve"><value>Explain what the amounts represent</value></data>
-  <data name="ImportMapping.MeaningStepHelp" xml:space="preserve"><value>This is an important accounting decision. Choose the option that truly describes the file; VALDRIO does not guess, to avoid duplicating or subtracting amounts incorrectly.</value></data>
+  <data name="ImportMapping.MeaningStepHelp" xml:space="preserve"><value>This step defines whether amounts are period movements, a full closing balance or a cumulative difference. Choose an option and continue to review. Account adjustments are made after saving the import.</value></data>
   <data name="ImportMapping.ReplaceAdvancedTitle" xml:space="preserve"><value>Correct a previous import (optional)</value></data>
   <data name="ImportMapping.SourceCurrencyHelp" xml:space="preserve"><value>The analysis currency is suggested. Change it only when the file amounts use another currency.</value></data>
-  <data name="ImportMapping.ApprovalReferenceHelp" xml:space="preserve"><value>Enter an example you checked, for example “Account 600000 = 1,250.50”. This records how you interpreted the file.</value></data>
+  <data name="ImportMapping.ApprovalReferenceHelp" xml:space="preserve"><value>You may record a checked account and amount. Without a note, VALDRIO records approval with the source file, selected meaning and period.</value></data>
   <data name="ImportMapping.ReviewStepTitle" xml:space="preserve"><value>Check before saving</value></data>
-  <data name="ImportMapping.ReviewStepHelp" xml:space="preserve"><value>This screen summarizes what will be added. The source file is not modified and nothing enters the analysis until you confirm the save.</value></data>
+  <data name="ImportMapping.ReviewStepHelp" xml:space="preserve"><value>Check totals and accounts, approve their meaning and save. Then continue to Prepare and adjust accounts (T07), where you can add adjustments with reasons and classify parts while preserving originals.</value></data>
   <data name="ImportMapping.FriendlyValidSummary" xml:space="preserve"><value>{0} rows read · everything looks correct</value></data>
   <data name="ImportMapping.FriendlyInvalidSummary" xml:space="preserve"><value>{0} rows read · {1} need correction</value></data>
   <data name="ImportMapping.FriendlyIssueLine" xml:space="preserve"><value>Row {0}: {1}</value></data>
@@ -981,4 +981,16 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.TaskContinueImport" xml:space="preserve"><value>Continue with balances for the current analysis</value></data>
   <data name="Guide.TaskContinueResources" xml:space="preserve"><value>Continue preparing imported accounts</value></data>
   <data name="Resources.ProgressSummary" xml:space="preserve"><value>{0} of {1} accounts reconciled · {2} with amount pending assignment · {3} with unexplained difference</value></data>
+  <data name="Model.ReviewSummary" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
+  <data name="Model.TechnicalDetails" xml:space="preserve"><value>Technical traceability details</value></data>
+  <data name="Model.ReviewTree" xml:space="preserve"><value>Physical centres and cost nodes · role · activity unit · function</value></data>
+  <data name="Model.RefreshHelp" xml:space="preserve"><value>Reads saved data from the company file again. Pending form changes are preserved.</value></data>
+  <data name="Model.Refreshed" xml:space="preserve"><value>Saved data reloaded. Pending changes remain unsaved.</value></data>
+  <data name="Model.StructureCreated" xml:space="preserve"><value>New structure saved in the company file. Continue with centres and nodes.</value></data>
+  <data name="Model.StructureSaved" xml:space="preserve"><value>Structure saved in the company file. You can review and finalise it.</value></data>
+  <data name="Model.StructurePublished" xml:space="preserve"><value>Structure finalised and saved. You can now use it in an analysis.</value></data>
+  <data name="Guide.NeedComparison" xml:space="preserve"><value>To calculate cumulative differences, first retain the earlier file with its dates and accounting scope.</value></data>
+<data name="Guide.ApproveReview" xml:space="preserve"><value>Review totals and approve their meaning before saving.</value></data>
+<data name="Guide.SaveReady" xml:space="preserve"><value>Review approved. Save the import to continue to account adjustments.</value></data>
+  <data name="Guide.Help.RefreshModel" xml:space="preserve"><value>Reads saved data again. Does not save or discard pending form changes.</value></data>
 </root>

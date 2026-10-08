@@ -8,6 +8,7 @@ using Valdrio.Domain;
 using Valdrio.Localization;
 
 namespace Valdrio.Desktop;
+public sealed record CenterTreeRow(string Label, IReadOnlyList<NodeOption> Children);
 public sealed record CenterOption(PhysicalCenter Value, string Label, string StatusLabel);
 public sealed record UnitOption(DriverUnitState Value, string Label);
 public sealed record ModelOption(ModelVersionSnapshot Value, string Label);
@@ -59,7 +60,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         this.formatter = formatter;
         CreateCenterCommand = new AsyncRelayCommand(CreateCenter, () => Ready && company.CanWrite);
         SaveCenterCommand = new AsyncRelayCommand(SaveCenter, () => Ready && company.CanWrite && Master is not null);
-        NewCenterCommand = new AsyncRelayCommand(NewCenter, () => Ready && company.CanWrite);
+        NewCenterCommand = new AsyncRelayCommand(NewCenter, () => Ready && company.CanWrite && (IsEditingCenter || CenterFormEdited));
         SaveCenterFormCommand = new AsyncRelayCommand(SaveCenterForm, () => Ready && company.CanWrite &&
             !string.IsNullOrWhiteSpace(CenterCode) && !string.IsNullOrWhiteSpace(CenterName) &&
             (Master is null || MasterEdited));
@@ -82,7 +83,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
                 SetCurrent(Current);
         }, () => !busy && (dirty || nodeFormEdited));
         CancelCommand = new RelayCommand(() => cancellation?.Cancel(), () => busy);
-        RefreshCommand = new AsyncRelayCommand(() => Run(Reload), () => Ready);
+        RefreshCommand = new AsyncRelayCommand(RefreshWorkspace, () => Ready);
         preferences.Changed += PreferencesChanged;
         company.PropertyChanged += CompanyStateChanged;
         company.WorkspaceBusy = () => busy;
@@ -373,7 +374,14 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string NodeFeedback => diagnostic is not null && (nodeFormEdited || SelectedNode is not null || dirty) ||
         statusKey.StartsWith("Model.Node", StringComparison.Ordinal) ? Status : "";
     public string ValidationText => string.Join(Environment.NewLine, validation.Select(DiagnosticText));
-    public string Details => Current is null ? Text("Model.NoneSelected") : string.Format(Format, Text("Model.Details"), Current.Structure.Description, Text(Current.Status == ModelStatus.Draft ? "Model.Draft" : "Model.Published"), Current.Structure.VersionNumber, Current.Revision, Current.Structure.ParentVersionId?.ToString() ?? "—", Current.PublishedAtUtc is null ? "—" : formatter.FormatInstant(Current.PublishedAtUtc.Value.Value, preferences.Current.DisplayTimeZoneId, Format), Current.StructuralHash ?? "—", IsDirty ? Text("Model.Unsaved") : Text("Model.Saved"));
+    public string TechnicalDetails => Current is null ? Text("Model.NoneSelected") : string.Format(Format, Text("Model.Details"), Current.Structure.Description, Text(Current.Status == ModelStatus.Draft ? "Model.Draft" : "Model.Published"), Current.Structure.VersionNumber, Current.Revision, Current.Structure.ParentVersionId?.ToString() ?? "—", Current.PublishedAtUtc is null ? "—" : formatter.FormatInstant(Current.PublishedAtUtc.Value.Value, preferences.Current.DisplayTimeZoneId, Format), Current.StructuralHash ?? "—", IsDirty ? Text("Model.Unsaved") : Text("Model.Saved"));
+    public string Details => Current is null ? Text("Model.NoneSelected") : string.Format(Format, Text("Model.ReviewSummary"), Current.Structure.Description, Text(IsPublished ? "Model.Published" : "Model.Draft"), IsDirty ? Text("Model.Unsaved") : Text("Model.Saved"));
+    public string TechnicalDetailsLabel => Text("Model.TechnicalDetails");
+    public string ReviewTreeLabel => Text("Model.ReviewTree");
+    public string RefreshHelp => Text("Model.RefreshHelp");
+    public string NewCenterVisibility => IsEditingCenter || CenterFormEdited ? "Visible" : "Collapsed";
+    public IReadOnlyList<CenterTreeRow> ReviewTree => Nodes.GroupBy(n => n.Node.PhysicalCenterId)
+        .Select(g => new CenterTreeRow(g.First().CenterLabel, g.ToArray())).ToArray();
     public string HistoricalDefinitions => Current?.Publication is not { } p ? "" : string.Join(Environment.NewLine, p.PhysicalCenters.Select(c => c.Code + " · " + c.Name).Concat(p.DriverUnits.Select(u => u.Code + " · " + u.Dimension + " · " + u.Symbol)));
     public string Title => Text("Model.Title");
     public string Notes => Text("Model.Notes");
@@ -508,11 +516,13 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             CostLayer.Mixed => "Model.LayerMixed",
             _ => "Model.LayerUnclassified"
         }))));
-        Replace(Nodes, draftNodes.Select(n =>
+        Replace(Nodes, draftNodes.OrderBy(n => Current?.Publication?.PhysicalCenters.SingleOrDefault(c => c.Id == n.PhysicalCenterId)?.Code ?? centerValues.SingleOrDefault(c => c.Id == n.PhysicalCenterId)?.Code, StringComparer.Ordinal).ThenBy(n => n.Code, StringComparer.Ordinal).ThenBy(n => n.Role == NodeRole.Principal ? 0 : 1).Select(n =>
         {
             var p = draftPools.SingleOrDefault(p => p.NodeId == n.Id);
-            var unitName = unitValues.SingleOrDefault(u => u.Definition.Id == p?.DriverUnitId)?.Definition.Code ?? "—";
-            var centerName = centerValues.SingleOrDefault(c => c.Id == n.PhysicalCenterId)?.Code ?? "—";
+            var unitName = Current?.Publication?.DriverUnits.SingleOrDefault(u => u.Id == p?.DriverUnitId)?.Code ?? unitValues.SingleOrDefault(u => u.Definition.Id == p?.DriverUnitId)?.Definition.Code ?? "—";
+            var frozenCenter = Current?.Publication?.PhysicalCenters.SingleOrDefault(c => c.Id == n.PhysicalCenterId);
+            var liveCenter = centerValues.SingleOrDefault(c => c.Id == n.PhysicalCenterId);
+            var centerName = frozenCenter is not null ? frozenCenter.Code + " · " + frozenCenter.Name : liveCenter is not null ? liveCenter.Code + " · " + liveCenter.Name : "—";
             var roleName = Text(n.Role == NodeRole.Principal ? "Model.Principal" : "Model.Auxiliary");
             var layerName = Text((p?.CostLayer ?? CostLayer.Unclassified) switch
             {
@@ -605,6 +615,12 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             Refresh();
         }
     }
+
+    private async Task RefreshWorkspace() => await Run(async token =>
+    {
+        await Reload(token);
+        statusKey = "Model.Refreshed";
+    });
 
     private async Task Reload(CancellationToken token)
     {
@@ -854,6 +870,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         {
             var value = await Task.Run(() => company.ActiveModels!.CreateDraft(new(company.Snapshot!.Id, Description, "local-user"), t));
             await ApplyConfirmedThenReload(value, ApplyConfirmedModel);
+            if (!committedRefreshPending) statusKey = "Model.StructureCreated";
         });
     }
 
@@ -881,6 +898,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             var current = Current!;
             var saved = await Task.Run(() => port.SaveDraft(new(value, current.Revision, "local-user"), t));
             await ApplyConfirmedThenReload(saved, ApplyConfirmedModel);
+            if (!committedRefreshPending) statusKey = "Model.StructureSaved";
         });
     }
 
@@ -895,6 +913,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         var current = Current!;
         var result = await Task.Run(() => company.ActiveModels!.Publish(new(company.Snapshot!.Id, current.Structure.Id, current.Revision, "local-user"), t));
         await ApplyConfirmedThenReload(result, ApplyConfirmedModel);
+        if (!committedRefreshPending) statusKey = "Model.StructurePublished";
     });
     private async Task Clone() => await Run(async t =>
     {

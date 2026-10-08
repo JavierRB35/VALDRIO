@@ -1,5 +1,16 @@
 # ESTADO_PROYECTO
 
+## Revisión de los seis problemas de usabilidad — 2026-10-08
+
+Cambios aplicados sobre la integración `770c640` en `codex/usability-six-issues`:
+feedback específico de estructura, recarga explicada, vaciado contextual de centros,
+centro físico visible y orden estable, árbol de finalización con trazabilidad avanzada,
+separadores manuales visibles y revisión accesible con aprobación única al guardar.
+T07 permanece después de confirmar la importación. Se preservan dominio, origen,
+FX, revisiones, hashes y reglas de conservación. Compilación y validación locales,
+sin GitHub Actions ni cambios en main. [Evidencia](docs/evidencias/USABILIDAD_SEIS_PROBLEMAS_2026-10-08.md).
+
+
 ## T07 — implementación completa (2026-10-07)
 
 Las tres subentregas están implementadas e integradas en la rama existente

@@ -68,13 +68,18 @@ public sealed partial class ImportColumnMappingViewModel
         get => hasAmountMeaning;
         set { if (SetProperty(ref hasAmountMeaning, value)) { InvalidatePreparation(false); Refresh(); } }
     }
+    public string? AmountMeaningSelection
+    {
+        get => HasAmountMeaning ? amountMode : null;
+        set { if (value is "period" or "closing-full" or "cumulative") { AmountMode = value; AcknowledgeAmountMeaning(); OnPropertyChanged(nameof(AmountMeaningSelection)); } }
+    }
     public void AcknowledgeAmountMeaning() => HasAmountMeaning = true;
     public string ReviewRequirement => Guide(!HasImportDestination ? "PreviewOnly" : !IsReady ? "NeedMapping" :
         !IsAccountSelectionReady ? "NeedRecords" : !HasAmountMeaning ? "NeedMeaning" :
         !(international && currencyFromColumn) && string.IsNullOrWhiteSpace(sourceCurrency) ? "NeedCurrency" :
-        string.IsNullOrWhiteSpace(approvalReference) ? "NeedExample" :
-        !interpretationApproved ? "NeedApproval" : "ReadyReview");
+        amountMode == "cumulative" && comparison is null ? "NeedComparison" : "ReadyReview");
+    public bool CanOpenReview => HasPreparedReview || CanReviewInGuide;
     public bool CanReviewInGuide => HasImportDestination && IsReady && IsAccountSelectionReady && HasAmountMeaning &&
         (international && currencyFromColumn || !string.IsNullOrWhiteSpace(sourceCurrency)) &&
-        !string.IsNullOrWhiteSpace(approvalReference) && interpretationApproved;
+        (amountMode != "cumulative" || comparison is not null);
 }

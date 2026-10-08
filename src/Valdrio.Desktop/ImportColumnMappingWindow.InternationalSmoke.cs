@@ -79,7 +79,7 @@ public partial class ImportColumnMappingWindow
                 "backup restore preserves frozen conversion hash");
         await Click(((MainWindow)Owner).CompanyPanel.CloseButton); await company.OpenPath(path);
         studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == study.Id); await Click(panel.LoadStudyButton);
-        Check(studies.Current?.Revision == 2 && studies.ImportedAmounts.Contains(first.Id.ToString(), StringComparison.Ordinal) &&
+        Check(studies.Current?.Revision == 2 && studies.ImportedAmounts.Contains(first.Prepared.Source.FileName, StringComparison.Ordinal) &&
             studies.ImportedAmounts.Contains("USD", StringComparison.Ordinal), "reopen retains conversion replacement history");
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }));
         File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = 1,
