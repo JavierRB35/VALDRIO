@@ -60,7 +60,7 @@ public sealed partial class SqliteCompanyFileService
         foreach (var a in audit)
         {
             Invalid(a.Row.CompanyId != file.Id.ToString() || EntityId.Parse(a.Row.Id).ToString() != a.Row.Id || EntityId.Parse(a.AggregateId).ToString() != a.AggregateId || EntityId.Parse(a.TransactionId).ToString() != a.TransactionId || string.IsNullOrWhiteSpace(a.Row.Actor) || UtcInstant.ParseIso(a.Row.AtUtc).ToCanonicalString() != a.Row.AtUtc || a.Schema != CanonicalSnapshotJson.SchemaVersion, "Audit envelope invalid");
-            Invalid(a.Type is not ("Company" or "CompanyFile" or "PhysicalCenter" or "ModelVersion" or "UnitState" or "Study" or "StudySnapshot" or "ImportBatch"), "Unknown audit aggregate");
+            Invalid(a.Type is not ("Company" or "CompanyFile" or "PhysicalCenter" or "ModelVersion" or "UnitState" or "Study" or "StudySnapshot" or "ImportBatch" or "ResourceChange" or "ResourceAdjustment"), "Unknown audit aggregate");
             if (a.Type == "Company")
                 Invalid(a.AggregateId != file.Id.ToString(), "Company audit scope invalid");
         }
@@ -121,7 +121,8 @@ public sealed partial class SqliteCompanyFileService
         Invalid(file.SchemaVersion < 3 && audit.Any(a => a.Type is "Study" or "StudySnapshot"), "Study audit in old schema");
         var upgrades = audit.Where(a => a.Type == "CompanyFile").OrderBy(a => a.Row.Revision).ToArray();
         Invalid(file.SchemaVersion < 4 && audit.Any(a => a.Type == "ImportBatch"), "Import audit in old schema");
-        Invalid(upgrades.Length > 3, "Too many format upgrades");
+        Invalid(file.SchemaVersion < 8 && audit.Any(a => a.Type is "ResourceChange" or "ResourceAdjustment"), "Resource audit in old schema");
+        Invalid(upgrades.Length > 7, "Too many format upgrades");
         int? previousSchema = null;
         for (var i = 0; i < upgrades.Length; i++)
         {
@@ -129,10 +130,10 @@ public sealed partial class SqliteCompanyFileService
             var before = CanonicalSnapshotJson.Deserialize<FormatUpgrade>(a.Row.BeforeJson);
             var after = CanonicalSnapshotJson.Deserialize<FormatUpgrade>(a.Row.AfterJson);
             Invalid(a.AggregateId != file.Id.ToString() || a.Row.Revision != i || a.Row.Operation != "UpgradeFormat" ||
-                before.FromSchema is not (1 or 2 or 3) || before.FromSchema != before.ToSchema || after.FromSchema != before.FromSchema ||
+                before.FromSchema is not (1 or 2 or 3 or 4 or 5 or 6 or 7) || before.FromSchema != before.ToSchema || after.FromSchema != before.FromSchema ||
                 after.ToSchema != before.FromSchema + 1 || (previousSchema.HasValue && before.FromSchema != previousSchema) ||
-                before.MigrationId != (before.FromSchema switch { 1 => MigrationId, 2 => UpgradeMigrationId, _ => StudyMigrationId }) ||
-                after.MigrationId != (after.ToSchema switch { 2 => UpgradeMigrationId, 3 => StudyMigrationId, _ => ImportMigrationId }), "Format upgrade audit invalid");
+                before.MigrationId != (before.FromSchema switch { 1 => MigrationId, 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, 5 => GroupedImportMigrationId, 6 => ImportLedgerMigrationId, _ => InternationalImportMigrationId }) ||
+                after.MigrationId != (after.ToSchema switch { 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, 5 => GroupedImportMigrationId, 6 => ImportLedgerMigrationId, 7 => InternationalImportMigrationId, _ => ResourceMigrationId }), "Format upgrade audit invalid");
             previousSchema = after.ToSchema;
         }
         Invalid(previousSchema.HasValue && previousSchema.Value != file.SchemaVersion, "Format upgrade history incomplete");

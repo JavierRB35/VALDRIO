@@ -1,8 +1,72 @@
 # Decisiones de producto y negocio
 
+## Correcciones directamente en tabla — 2026-10-08
+
+El propietario solicita una única pantalla para Preparar cuentas: solamente la
+columna Correcciones se edita; cambiarla confirma y guarda automáticamente el total
+en la moneda del análisis. Se elimina el formulario adicional de moneda/tipo/motivo.
+El tipo y motivo del delta se generan como descripción auditable del cambio, sin
+pretender certificar su justificación contable. Los originales, conversiones previas,
+revisiones, auditoría, rutas y conservación siguen vigentes. Los destinos se consultan
+y editan debajo de la tabla, con protección de borradores. [Evidencia](../evidencias/T07_CORRECCIONES_EN_TABLA_2026-10-08.md).
+
+
+## Revisión de usabilidad vigente — 2026-10-08
+
+El propietario solicita eliminar confirmaciones redundantes y desbloquear revisión
+antes de T07. La UI deja una aprobación del significado en Revisar y guardar;
+una nota manual de comprobación es opcional. Cuando falta, el perfil conserva una
+referencia de aprobación al archivo, modalidad y periodo. Esto sustituye el requisito
+de escribir un ejemplo en el formulario, no certifica ninguna fuente real ni elimina
+la aprobación explícita, el perfil de origen, FX o controles transaccionales.
+Los hashes se conservan y se presentan como información técnica desplegable.
+[Evidencia y límites](../evidencias/USABILIDAD_SEIS_PROBLEMAS_2026-10-08.md).
+
+
+## Autorización vigente T07 — 2026-10-07
+
+El propietario solicita «Desarrolla completo el T07 teniendo en cuenta que ya hay
+una rama abierta en local para esa tarea. Desecha lo que no necesites de esa rama».
+Sustituye la espera de conversación anterior. Se reutiliza `codex/t07-resource-rules`
+y sus reglas válidas, integrando T06/T06A y el recorrido guiado actualizado. No se
+descartan datos del usuario ni se mezclan cambios de la rama de estética.
+Las tres subentregas T07 están implementadas; [alcance](../tareas/T07.md) y
+[evidencia](../evidencias/T07_CIERRE_2026-10-07.md). D04/D05/D07/D11 permanecen propuestas.
+La agrupación por cuenta y la prioridad permanente de usabilidad siguen vigentes.
+
+Los registros siguientes conservan la secuencia histórica de decisiones.
+
+## Adelanto técnico T07 — 2026-10-07
+
+Continuación autorizada en la misma rama: clasificación contextual y operaciones de
+borrador. Producción/comercial/estructura se almacenan como categorías explícitas,
+sin decidir el perímetro de un informe o aprobar D07. None/AssessAtPool/PeriodCost
+son metadatos; no eligen denominador, política de capacidad ni aceptan D04/D05.
+Una cantidad ausente no se convierte en cero. El comportamiento no se infiere de
+la capa, la ruta o el rol del centro.
+
+El propietario acepta comenzar las reglas y pruebas independientes de T07 mientras
+T06 continúa, en una rama y copia de trabajo separadas. Se conserva la dependencia
+T06/T06A para la integración. No supone aceptar D04/D05/D07/D11 ni cambiar los
+contratos canónicos. Alcance y pendientes: [T07](../tareas/T07.md).
+
 Fecha de actualización: 2026-10-04  
 Fuente base: `especificacion/03_Decisiones_y_Diccionario.md` del paquete VALDRIO v0.4.  
 Aceptación del propietario registrada el 2026-10-04.
+
+## Aclaración D03 — 2026-10-07
+
+El propietario confirma que el XLSX es solo un ejemplo y que el cierre se declara en el formulario: 31/10/2026. Se acepta el ensayo técnico y el ejemplo 6005=358,35 EUR; no se certifica una fuente productiva. Cada origen real requiere seleccionar registros, declarar periodo/moneda/modalidad y aprobar su ejemplo. T06 se cierra técnicamente con este alcance de prueba y aceptación del commit; el puente FX pertenece a T06A.
+
+## Continuidad T06A/T07 — 2026-10-07
+
+El propietario autoriza completar T06A y pide comentar T07 antes de implementarla.
+T06A aplica selecciones manuales explícitas y congeladas por registro; no utiliza
+cotizaciones de demostración sin aprobación ni consulta tipos actuales. El catálogo
+instalado sigue siendo el subconjunto de ejemplo. Véase ADR-0011 para comparativos,
+agrupación funcional por cuenta y conservación de originales separados por moneda.
+La dificultad de guardado de centro/modelo queda para revisión posterior a petición
+expresa. No se deduce una aprobación productiva de su Excel de prueba.
 
 ## Registro D01-D12
 
@@ -20,6 +84,29 @@ Aceptación del propietario registrada el 2026-10-04.
 | D10 Autorreparto | **PROPUESTA** | Autorreparto prohibido por defecto; habilitable por versión con diagnóstico. | Revisar si aparecen servicios a sí mismo. |
 | D11 Cobertura definitiva | **PROPUESTA** | Ejecución definitiva exige cobertura completa; borrador/provisional conserva pendientes visibles. | Revisar antes de publicación definitiva. |
 | D12 Módulos avanzados | **PENDIENTE AVANZADO** | Estándares, TDABC y simulación requieren datos/supuestos propios. | T28-T31; no bloquea R0/R1 actual. |
+
+## Precisión de alcance de la fuente — 2026-10-07
+
+### Registros y códigos (confirmación posterior del mismo día)
+
+El propietario confirma 6005: 280 + 78,35 = 358,35 EUR. La selección debe ofrecer
+todos, ninguno, algunos o todos menos algunos registros, incluidas filas individuales
+que compartan código. La agrupación se realiza por la columna de código elegida,
+que puede contener cuentas, agrupaciones o códigos de gasto. Las descripciones
+se ignoran para agrupar y se conservan como procedencia. Esta instrucción sustituye
+la exigencia previa de resolver descripciones diferentes. Ver ADR-0009.
+
+El ejemplo XLSX aportado se ha validado para lectura, selección, agrupación y guardado
+local. Sus etiquetas incluyen todavía conceptos patrimoniales. La validación técnica
+y el ejemplo aprobado no certifican automáticamente su clasificación como costes ni
+el intervalo productivo del estudio. La decisión de pérdidas y ganancias sigue vigente.
+
+El propietario indicó en el chat «Guiar instalación de Visual Studio» que para
+calcular costes solo son necesarias cuentas de pérdidas y ganancias; las cuentas
+de balance quedan fuera. La muestra de patrimonio personal aportada solo sirve
+para ensayar lectura, no para aceptar D03 en producción. La selección de cuentas
+es explícita y no se deriva de prefijos de un plan contable nacional. El asistente
+materializa esta elección mediante todas las cuentas o una lista marcada por el usuario.
 
 ## Separación monetaria aceptada como requisito de producto
 
@@ -91,3 +178,20 @@ Cambiar estos parámetros en el futuro requiere una nueva versión de política,
 ## T05 — Decisiones técnicas de contexto
 
 [ADR-0004](../adr/ADR-0004-estudios-y-snapshots-v3.md) define v3, revisiones propias, dos perímetros de hash y captura contextual. No cambia D01–D12. D03 sigue necesitando muestra y resultado esperado antes de confirmar fuentes reales en T06; las restantes propuestas mantienen sus puertas.
+
+## D03 — Fuente de cierre e importe completo, 2026-10-06
+
+El propietario declara «Saldos de cierre» y, ante enero 100 / febrero 160,
+elige «160: saldo completo». Se acepta esa interpretación para su estudio,
+sin deducir una diferencia de 60. Sigue pendiente contrastar una muestra real,
+sus cuentas seleccionadas, fecha, signos y moneda antes de aceptar el perfil productivo.
+
+La implementación distingue ClosingBalanceAsStudyAmount de ClosingBalance
+(evidencia sin interpretación) y CumulativeExpenseDifference. Las dos últimas
+mantienen su bloqueo anterior. La opción de saldo íntegro exige aprobación y
+referencia de ejemplo en cada preparación. La fecha de cierre debe coincidir
+con el final del estudio y se muestra antes de aprobar. No se declara aceptada
+una interpretación universal de cualquier balance ni de todas sus cuentas.
+
+Esta decisión explícita complementa CM01 y las directrices T06 para esta modalidad;
+no cambia los resultados históricos ni las 39 referencias matemáticas originales.

@@ -194,10 +194,10 @@ public sealed class ImportColumnMappingTests
     [TestMethod]
     public async Task ValidationChecksRowsBeyondTheFiftyRowPreview()
     {
-        var csv = "value;ignored;code\n" + string.Join("\n", Enumerable.Range(1, 60).Select(i => $"1,50;x;{i}")) + "\n1,50;x;1";
+        var csv = "value;ignored;code\n" + string.Join("\n", Enumerable.Range(1, 60).Select(i => $"1,50;x;{i}")) + "\ninvalid;x;61";
         var dialogs = new Dialogs(); dialogs.Paths.Enqueue(WriteCsv(csv)); using var vm = Vm(dialogs); await Ready(vm);
         Assert.AreEqual(50, vm.Preview.Count); Assert.IsFalse(vm.IsReady);
-        StringAssert.Contains(vm.GlobalIssues, "IMP_DUPLICATE_ACCOUNT");
+        StringAssert.Contains(vm.GlobalIssues, "IMP_INVALID_AMOUNT");
     }
 
     [TestMethod]

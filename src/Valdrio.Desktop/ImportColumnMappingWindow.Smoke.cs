@@ -23,11 +23,20 @@ public partial class ImportColumnMappingWindow
         void Check(bool value, string label) { if (!value) throw new InvalidOperationException("Import mapping WPF: " + label); passed.Add(label); }
         async Task Click(Button button)
         {
+            GuidedUi.Reveal(button);
             if (!button.IsEnabled) throw new InvalidOperationException("Disabled import button " + button.Name);
             ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
             if (button.Command is IAsyncRelayCommand command && command.ExecutionTask is { } task) await task.WaitAsync(TimeSpan.FromSeconds(45));
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle); UpdateLayout();
+        }
+        async Task ContinueVisible()
+        {
+            if (ImportNext.Visibility != Visibility.Visible || !ImportNext.IsEnabled)
+                throw new InvalidOperationException("Visible import continue action is unavailable.");
+            await AdvanceImport();
+            await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+            UpdateLayout();
         }
         void Select(ComboBox box, object value)
         { box.SetCurrentValue(ComboBox.SelectedValueProperty, value); box.GetBindingExpression(ComboBox.SelectedValueProperty)!.UpdateSource(); }
@@ -37,16 +46,21 @@ public partial class ImportColumnMappingWindow
         var csv = Path.Combine(output, "manual-columns.csv");
         File.WriteAllText(csv, "Amount;Unused;Account\n1.250,50;not an amount;00123\n0;unused;00456");
         var sourceHash = Hash(csv);
-        files.Paths.Enqueue(csv); await Click(OpenSourceButton); await Click(ReadSourceButton);
-        Check(vm.Columns.Count == 3 && vm.AccountColumn is null && vm.AmountColumn is null, "no automatic column assignment");
+        files.Paths.Enqueue(csv); await Click(OpenSourceButton);
+        Check(ImportNext.Visibility == Visibility.Visible, "continue appears after choosing a file");
+        await ContinueVisible();
+        Check(ImportSteps.SelectedIndex == 1 && vm.Columns.Count == 3 && vm.AccountColumn is null && vm.AmountColumn is null,
+            "visible continue reads the file and advances to column selection");
         Select(AccountColumnBox, 3); Select(AmountColumnBox, 1); vm.GroupSeparator = ".";
-        await Click(ValidateMappingButton);
-        Check(vm.IsReady && vm.ValidatedSelection!.Rows.Count == 2 && vm.ValidatedSelection.Rows[0].Amount == 1250.50m,
-            "CSV arbitrary columns validated by controls");
+        await ContinueVisible();
+        Check(ImportSteps.SelectedIndex == 2 && vm.IsReady && vm.ValidatedSelection!.Rows.Count == 2 &&
+            vm.ValidatedSelection.Rows[0].Amount == 1250.50m, "visible check-and-continue validates columns and advances");
         Check(vm.Preview[0].Account == "00123" && vm.ValidatedSelection!.Rows[1].Amount == 0m, "leading zeros and explicit zero preserved");
-        Select(AmountColumnBox, 3); await Click(ValidateMappingButton);
-        Check(!vm.IsReady && vm.Status.StartsWith("IMP_COLUMN_SELECTION", StringComparison.Ordinal), "same column blocked by controls");
-        Select(AmountColumnBox, 1); await Click(ValidateMappingButton);
+        ImportSteps.SelectedIndex = 1;
+        Select(AmountColumnBox, 3); await ContinueVisible();
+        Check(ImportSteps.SelectedIndex == 1 && !vm.IsReady && vm.Status.StartsWith("IMP_COLUMN_SELECTION", StringComparison.Ordinal),
+            "invalid mapping stays on columns and reports the correction");
+        Select(AmountColumnBox, 1); await ContinueVisible();
         var selection = vm.ValidatedSelection;
         main.ApplyPresentationPreset("es", "en-US", "UTC", false, false);
         await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle); UpdateLayout();
@@ -54,7 +68,7 @@ public partial class ImportColumnMappingWindow
             "language and region preserve validated mapping");
         Check(AccountColumnBox.SelectedValue is 3 && AmountColumnBox.SelectedValue is 1, "visible selections survive reformat");
         Check(PreviewGrid.Columns[1].Header?.ToString() == vm["AccountColumn"], "localized preview headers");
-        PreviewGrid.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
+        RevealImportElement(PreviewGrid); PreviewGrid.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "csv-es-enUS.png"));
         vm.Delimiter = ",";
         Check(!vm.HasColumns && !vm.IsReady && vm.AccountColumn is null, "dialect change invalidates source and mapping");
@@ -75,20 +89,27 @@ public partial class ImportColumnMappingWindow
                 book.Workbook.GetFirstChild<Sheets>()!.Append(new Sheet { Name = name, SheetId = (uint)(name == "Other" ? 1 : 2), Id = book.GetIdOfPart(part) });
             }
         }
+        ImportSteps.SelectedIndex = 0;
         files.Paths.Enqueue(xlsx); await Click(OpenSourceButton);
-        Check(!ReadSourceButton.IsEnabled && vm.Worksheets.Count == 2, "Excel requires explicit sheet selection");
+        Check(!vm.ReadCommand.CanExecute(null) && vm.Worksheets.Count == 2, "Excel requires explicit sheet selection");
+        await ContinueVisible();
+        Check(ImportSteps.SelectedIndex == 0 && ImportStepHelp.Text == vm.FileStepRequirement,
+            "continue explains that an Excel worksheet must be selected instead of appearing dead");
         WorksheetBox.SetCurrentValue(ComboBox.SelectedItemProperty, "Selected");
         WorksheetBox.GetBindingExpression(ComboBox.SelectedItemProperty)!.UpdateSource();
-        await Click(ReadSourceButton); Select(AccountColumnBox, 3); Select(AmountColumnBox, 1); await Click(ValidateMappingButton);
-        Check(vm.IsReady && vm.ValidatedSelection!.Source.SheetName == "Selected" && vm.ValidatedSelection.Rows[0].Amount == 1250.5m,
-            "Excel second sheet and stored amount validated by controls");
+        await ContinueVisible();
+        Check(ImportSteps.SelectedIndex == 1, "continue reads the selected worksheet and advances");
+        Select(AccountColumnBox, 3); Select(AmountColumnBox, 1); await ContinueVisible();
+        Check(ImportSteps.SelectedIndex == 2 && vm.IsReady && vm.ValidatedSelection!.Source.SheetName == "Selected" &&
+            vm.ValidatedSelection.Rows[0].Amount == 1250.5m, "Excel second sheet and stored amount checked by visible flow");
         main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", true, true);
         FlowDirection = FlowDirection.RightToLeft;
         await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle); UpdateLayout();
         Check(vm.IsReady && vm.AccountColumn == 3 && vm.AmountColumn == 1, "pseudo and RTL preserve mapping");
-        PreviewGrid.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
+        RevealImportElement(PreviewGrid); PreviewGrid.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "xlsx-pseudo.png"));
         Check(Hash(csv) == sourceHash && Hash(companyPath) == companyHash, "source and company bytes unchanged");
+        ImportSteps.SelectedIndex = 0;
         files.Paths.Enqueue(Path.Combine(output, "missing.csv")); await Click(OpenSourceButton);
         Check(!vm.IsReady && !vm.HasColumns && !vm.HasFile, "failed replacement clears stale ready state");
         main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", false, false);

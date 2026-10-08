@@ -29,6 +29,7 @@ public partial class ImportColumnMappingWindow
         { if (!value) throw new InvalidOperationException("Debit/credit WPF: " + label); checks.Add(label); }
         async Task Click(Button button)
         {
+            GuidedUi.Reveal(button);
             if (!button.IsEnabled) throw new InvalidOperationException("Disabled debit/credit button " + button.Name);
             ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
@@ -48,7 +49,7 @@ public partial class ImportColumnMappingWindow
         }
         async Task Capture(string name)
         {
-            ConfirmImportButton.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
+            RevealImportElement(ConfirmImportButton); ConfirmImportButton.BringIntoView(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render); UpdateLayout();
             VisualEvidenceCapture.Capture(this, Path.Combine(output, name));
         }
         static string Hash(string path) => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))).ToLowerInvariant();
@@ -63,24 +64,24 @@ public partial class ImportColumnMappingWindow
         await Click(panel.CaptureStudyButton); var originalPhoto = studies.SnapshotChoice!.Value; await studies.AttachImportTarget();
         var csv = Path.Combine(output, "debit-credit.csv");
         File.WriteAllText(csv, "Credit;Ignored;Account;Debit\n20;not money;00123;180\n7,50;x;CREDIT;0\n0;x;ZERO;0"); var csvHash = Hash(csv);
-        files.Paths.Enqueue(csv); await Click(OpenSourceButton); await Click(ReadSourceButton); Select(AmountLayoutBox, "debit-credit");
-        Check(vm.IsDebitCredit && vm.DebitColumn is null && vm.CreditColumn is null && !ValidateMappingButton.IsEnabled,
+        files.Paths.Enqueue(csv); await Click(OpenSourceButton); await vm.ReadCommand.ExecuteAsync(null); Select(AmountLayoutBox, "debit-credit");
+        Check(vm.IsDebitCredit && vm.DebitColumn is null && vm.CreditColumn is null && !vm.ValidateCommand.CanExecute(null),
             "debit and credit require explicit column selection");
         Check(PreviewGrid.Columns[2].Visibility == Visibility.Collapsed && PreviewGrid.Columns[3].Visibility == Visibility.Visible &&
             PreviewGrid.Columns[4].Visibility == Visibility.Visible, "both original preview columns visible");
         Select(AccountColumnBox, 3); Select(DebitColumnBox, 4); Select(CreditColumnBox, 1); vm.GroupSeparator = "";
-        await Click(ValidateMappingButton);
+        await vm.ValidateCommand.ExecuteAsync(null);
         Check(vm.IsReady && vm.ValidatedSelection!.Rows[0].Amount == 160m && vm.ValidatedSelection.Rows[1].Amount == -7.5m &&
             vm.ValidatedSelection.Rows[2].Amount == 0m && vm.Preview[0].OriginalDebit == "180" && vm.Preview[0].OriginalCredit == "20",
             "CSV arbitrary debit credit columns preserve originals and signed differences");
-        Select(CreditColumnBox, 4); await Click(ValidateMappingButton);
+        Select(CreditColumnBox, 4); await vm.ValidateCommand.ExecuteAsync(null);
         Check(!vm.IsReady && vm.Status.StartsWith("IMP_COLUMN_SELECTION", StringComparison.Ordinal), "same debit and credit column blocked");
-        Select(CreditColumnBox, 1); await Click(ValidateMappingButton); SetText(SourceCurrencyBox, "EUR");
-        var before = Hash(path); await Click(PrepareImportButton);
+        Select(CreditColumnBox, 1); await vm.ValidateCommand.ExecuteAsync(null); SetText(SourceCurrencyBox, "EUR");
+        var before = Hash(path); await PrepareForSmoke();
         Check(vm.Preparation is { CanConfirm: false } && !ConfirmImportButton.IsEnabled && Hash(path) == before,
             "debit credit approval required before company mutation");
         Check(vm.InterpretationPrompt.Contains("Debe menos Haber", StringComparison.Ordinal), "visible consent states debit minus credit");
-        Approve(); await Click(PrepareImportButton);
+        Approve(); await PrepareForSmoke();
         var prepared = vm.Preparation ?? throw new InvalidOperationException(vm.Status);
         Check(prepared.CanConfirm && prepared.Profile.SignConvention == ImportSignConvention.DebitMinusCredit &&
             prepared.Reconciliation.NetAmount == 152.5m && prepared.Reconciliation.PositiveAmount == 160m &&
@@ -124,17 +125,17 @@ public partial class ImportColumnMappingWindow
             }
         }
         var xlsxHash = Hash(xlsx); files.Paths.Enqueue(xlsx); await Click(OpenSourceButton);
-        Check(!ReadSourceButton.IsEnabled && vm.Worksheets.Count == 2, "Excel debit credit requires explicit worksheet");
+        Check(!vm.ReadCommand.CanExecute(null) && vm.Worksheets.Count == 2, "Excel debit credit requires explicit worksheet");
         WorksheetBox.SetCurrentValue(ComboBox.SelectedItemProperty, "Selected"); WorksheetBox.GetBindingExpression(ComboBox.SelectedItemProperty)!.UpdateSource();
-        await Click(ReadSourceButton); Select(AccountColumnBox, 3); Select(DebitColumnBox, 4); Select(CreditColumnBox, 1); await Click(ValidateMappingButton);
+        await vm.ReadCommand.ExecuteAsync(null); Select(AccountColumnBox, 3); Select(DebitColumnBox, 4); Select(CreditColumnBox, 1); await vm.ValidateCommand.ExecuteAsync(null);
         Check(vm.IsReady && vm.ValidatedSelection!.Rows[0].Amount == 160m && vm.ValidatedSelection.Source.SheetName == "Selected" &&
             vm.ValidatedSelection.Source.Rows[0].GetCell(4).RawLexical == "180.00", "Excel selected worksheet uses exact stored debit and cached credit");
-        SetText(SourceCurrencyBox, "EUR"); Approve(); await Click(PrepareImportButton); await Capture("xlsx-prepared-es.png");
+        SetText(SourceCurrencyBox, "EUR"); Approve(); await PrepareForSmoke(); await Capture("xlsx-prepared-es.png");
         await Click(ConfirmImportButton); var xlsxBatch = vm.ConfirmedImport ?? throw new InvalidOperationException(vm.Status);
         Check(xlsxBatch.Resources.Count == 1 && xlsxBatch.Resources[0].Functional.Amount == 160m && studies.Current?.Revision == 2 && Hash(xlsx) == xlsxHash,
             "native Excel confirmation appends identified batch and revision");
-        Check(panel.ImportHistoryText.Text.Contains(csvBatch.Id.ToString(), StringComparison.Ordinal) &&
-            panel.ImportHistoryText.Text.Contains(xlsxBatch.Id.ToString(), StringComparison.Ordinal), "both debit credit batches visible in study history");
+        Check(panel.ImportHistoryText.Text.Contains(csvBatch.Prepared.Source.FileName, StringComparison.Ordinal) &&
+            panel.ImportHistoryText.Text.Contains(xlsxBatch.Prepared.Source.FileName, StringComparison.Ordinal), "both debit credit batches visible in study history");
         await Click(panel.CaptureStudyButton); var photo = studies.SnapshotChoice!.Value;
         Check(photo.Input is ImportedStudySnapshotInput imported && imported.Resources.Count == 4 &&
             imported.Imports.SelectMany(b => b.Resources).Sum(r => r.Functional.Amount) == 312.5m,
@@ -148,20 +149,20 @@ public partial class ImportColumnMappingWindow
         }
         await Click(window.CompanyPanel.CloseButton); companyFiles.Paths.Enqueue(path); await Click(window.CompanyPanel.OpenButton);
         studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == study.Id); await Click(panel.LoadStudyButton);
-        Check(studies.Current?.Revision == 2 && studies.ImportedAmounts.Contains(xlsxBatch.Id.ToString(), StringComparison.Ordinal),
+        Check(studies.Current?.Revision == 2 && studies.ImportedAmounts.Contains(xlsxBatch.Prepared.Source.FileName, StringComparison.Ordinal),
             "close and reopen retain debit credit batches and revision");
         var backup = Path.Combine(output, "import.valdrio-backup"); var restored = Path.Combine(output, "restored.valdrio");
         companyFiles.Paths.Enqueue(backup); await Click(window.CompanyPanel.BackupButton);
         companyFiles.Paths.Enqueue(backup); companyFiles.Paths.Enqueue(restored); await Click(window.CompanyPanel.RestoreButton);
         studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == study.Id); await Click(panel.LoadStudyButton);
-        Check(studies.Snapshots.Count == 3 && studies.ImportedAmounts.Contains(csvBatch.Id.ToString(), StringComparison.Ordinal) &&
-            studies.ImportedAmounts.Contains(xlsxBatch.Id.ToString(), StringComparison.Ordinal), "backup restore retain both debit credit imports and snapshots");
+        Check(studies.Snapshots.Count == 3 && studies.ImportedAmounts.Contains(csvBatch.Prepared.Source.FileName, StringComparison.Ordinal) &&
+            studies.ImportedAmounts.Contains(xlsxBatch.Prepared.Source.FileName, StringComparison.Ordinal), "backup restore retain both debit credit imports and snapshots");
         Select(AmountLayoutBox, "amount");
         Check(vm.Preparation is null && !vm.InterpretationApproved && vm.DebitColumn is null && vm.CreditColumn is null && vm.AmountColumn is null,
             "changing interpretation clears preparation columns and approval");
         var snapshot = Path.Combine(output, "snapshot.json"); File.WriteAllText(snapshot, CanonicalSnapshotJson.Serialize(photo));
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }));
-        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = 4,
+        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = SqliteCompanyFileService.SchemaVersion,
             Source = "synthetic native WPF debit minus credit import", StudyId = study.Id.ToString(),
             BatchIds = new[] { csvBatch.Id.ToString(), xlsxBatch.Id.ToString() },
             Files = new[] { path, backup, restored, snapshot, csv, xlsx }.Select(p => new { Name = Path.GetFileName(p), Sha256 = Hash(p) }) }));

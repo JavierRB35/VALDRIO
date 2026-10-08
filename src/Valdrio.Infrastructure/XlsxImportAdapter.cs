@@ -258,10 +258,10 @@ public sealed class XlsxImportAdapter : IImportAdapter
 
         if (type == CellValues.Date)
         {
-            if (cell.CellValue is null ||
-                !(cell.CellValue.TryGetDateTime(out _) || cell.CellValue.TryGetDateTimeOffset(out _)))
-                throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid");
-            return new SourceCell(column, SourceValueKind.DateIso, raw, raw, false);
+            var dateCell = new SourceCell(column, SourceValueKind.DateIso, raw, raw, false);
+            try { _ = SourceBusinessDateParser.Parse(dateCell, "yyyy-MM-dd"); }
+            catch (DomainRuleException) { throw ImportRules.Error("IMP_XLSX_INVALID", "Import.XlsxInvalid"); }
+            return dateCell;
         }
 
         if (type == CellValues.String)

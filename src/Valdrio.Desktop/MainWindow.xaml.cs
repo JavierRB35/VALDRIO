@@ -11,11 +11,14 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        InitializeGuidance();
         DataContextChanged += OnDataContextChanged;
     }
 
     public bool RunKeyboardNavigationSmoke()
     {
+        workflowStep = 5; UpdateWorkflow();
+        DevelopmentTools.IsExpanded = true;
         UpdateLayout();
 
         Control[] sequence =
@@ -75,16 +78,29 @@ public partial class MainWindow : Window
     internal bool RunSectionLayoutSmoke()
     {
         UpdateLayout();
-        var root=(Grid)RootScrollViewer.Content;
+        var root=MainContent;
         var sections=root.Children.OfType<FrameworkElement>()
-            .Where(e=>e is GroupBox or UserControl or Border)
+            .Where(e=>e.Visibility == Visibility.Visible && e.ActualHeight > 0)
             .Select(e=>e.TransformToAncestor(root).TransformBounds(new Rect(0,0,e.ActualWidth,e.ActualHeight)))
             .OrderBy(r=>r.Top).ToArray();
         return sections.Zip(sections.Skip(1),(first,next)=>first.Bottom<=next.Top+0.1).All(x=>x);
     }
 
+    internal bool RunDevelopmentToolsLayoutSmoke()
+    {
+        UpdateLayout();
+        if (!DevelopmentTools.IsExpanded || DevelopmentTools.Content is not Grid root) return false;
+        var sections = root.Children.OfType<FrameworkElement>()
+            .Where(e => e.Visibility == Visibility.Visible && e.ActualHeight > 0).ToArray();
+        if (sections.Any(e => Grid.GetRow(e) >= root.RowDefinitions.Count)) return false;
+        var bounds = sections.Select(e => e.TransformToAncestor(root)
+            .TransformBounds(new Rect(0, 0, e.ActualWidth, e.ActualHeight))).OrderBy(r => r.Top).ToArray();
+        return bounds.Zip(bounds.Skip(1), (first, next) => first.Bottom <= next.Top + 0.1).All(x => x);
+    }
+
     internal void ScrollToElement(FrameworkElement element)
     {
+        RevealWorkflowElement(element);
         Keyboard.ClearFocus(); UpdateLayout();
         var offset=RootScrollViewer.VerticalOffset + element.TranslatePoint(new Point(0,0),RootScrollViewer).Y;
         RootScrollViewer.ScrollToVerticalOffset(offset); UpdateLayout();
@@ -106,6 +122,7 @@ public partial class MainWindow : Window
         {
             viewModel.PresentationChanged += OnPresentationChanged;
             ApplyPresentation();
+            BindGuidance();
         }
     }
 

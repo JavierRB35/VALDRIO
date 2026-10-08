@@ -1,6 +1,55 @@
+using System.ComponentModel;
 using System.Windows.Controls;
+
 namespace Valdrio.Desktop;
+
 public partial class ModelWorkspacePanel : UserControl
 {
-    public ModelWorkspacePanel() => InitializeComponent();
+    private ModelWorkspaceViewModel? tableViewModel;
+
+    public ModelWorkspacePanel()
+    {
+        InitializeComponent();
+        InitializeGuidance();
+        DataContextChanged += (_, _) => BindTableHeaders();
+        Loaded += (_, _) => BindTableHeaders();
+        Unloaded += (_, _) =>
+        {
+            if (tableViewModel is not null)
+                tableViewModel.PropertyChanged -= TableViewModelChanged;
+        };
+    }
+
+    private void BindTableHeaders()
+    {
+        if (tableViewModel is not null)
+            tableViewModel.PropertyChanged -= TableViewModelChanged;
+
+        tableViewModel = DataContext as ModelWorkspaceViewModel;
+        if (tableViewModel is not null)
+            tableViewModel.PropertyChanged += TableViewModelChanged;
+
+        RefreshTableHeaders();
+    }
+
+    private void TableViewModelChanged(object? sender, PropertyChangedEventArgs e) =>
+        RefreshTableHeaders();
+
+    private void RefreshTableHeaders()
+    {
+        if (tableViewModel is null)
+            return;
+
+        CenterGrid.Columns[0].Header = tableViewModel.Text("Model.ColumnCode");
+        CenterGrid.Columns[1].Header = tableViewModel.Text("Model.ColumnName");
+        CenterGrid.Columns[2].Header = tableViewModel.Text("Model.ColumnStatus");
+
+        NodeSummary.Columns[0].Header = tableViewModel.Text("Model.ColumnCenter");
+        NodeSummary.Columns[1].Header = tableViewModel.Text("Model.ColumnCode");
+        NodeSummary.Columns[2].Header = tableViewModel.Text("Model.ColumnRole");
+        NodeSummary.Columns[3].Header = tableViewModel.Text("Model.ColumnUnit");
+        NodeSummary.Columns[4].Header = tableViewModel.Text("Model.ColumnLayer");
+        NodeSummary.Columns[5].Header = tableViewModel.Text("Model.ColumnPool");
+        NodeSummary.Columns[6].Header = tableViewModel.Text("Model.ColumnFunctions");
+    }
 }

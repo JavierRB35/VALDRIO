@@ -67,21 +67,41 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         init { importColumns = value; if (value is not null) value.PropertyChanged += ImportStateChanged; }
     }
     private void ImportStateChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e) => Refresh();
-    public async Task<bool> AttachImportTarget()
+    public async Task<bool> AttachImportTarget(bool previewOnly = false)
     {
-        if (!await CanLeaveAsync() || ImportColumns is null) return false;
+        if (busy || ImportColumns is null || ImportColumns.IsBusy) return false;
+        if (previewOnly)
+        {
+            // Inspection never writes or resolves pending study edits, even for a saved study.
+            ImportColumns.BindTarget(null, null, false, null);
+            ImportColumns.SetExistingBatches([]);
+            return true;
+        }
+        // Reading a source does not abandon the unsaved study form. Only a saved,
+        // unchanged study can be used as a destination for confirmation.
+        if (Current is not null && !await CanLeaveAsync()) return false;
         ImportColumns.BindTarget(company.ActiveImports, Current, company.CanWrite, async batch =>
         {
             await ApplyConfirmedThenReload(batch.ConfirmedStudy, ApplyConfirmedStudy);
             if (committedRefreshPending) throw new InvalidOperationException("Committed import refresh pending.");
         });
+        ImportColumns.SetExistingBatches(importValues);
         return true;
     }
     public string ImportColumnsLabel => Text("ImportMapping.OpenMapping");
+    public bool HasStudies => Studies.Count > 0;
+    public bool HasPublishedModels => PublishedModels.Count > 0;
+    public string StudyListHelp => Text(HasStudies ? "Study.ChooseExisting" : "Study.NoStudiesYet");
+    public string ModelHelp => Text(HasPublishedModels ? "Study.ChooseModelHelp" : "Study.NoModelsHelp");
+    public string GoToModelsLabel => Text("Study.GoToModels");
+    public string WorkflowHelp => Text(Current is null ? "Study.CreationHelp" : "Study.SavedHelp");
+    public string ImportHelp => Text(Current is null ? "Study.PreviewHelp" : "Study.ImportHelp");
     public bool IsDirty => dirty;
     public bool Ready => !busy && company.WorkspaceIdle && company.ActiveStudies is not null;
     public bool CanEdit => Ready && Current?.State != StudyState.Closed;
     public StudyDefinition? Current { get; private set; }
+    public string CurrentModelDescription => Current is null ? "—" :
+        modelValues.SingleOrDefault(m => m.Structure.Id == Current.SelectedModelVersionId)?.Structure.Description ?? "—";
     public ObservableCollection<ModelOption> PublishedModels { get; } = [];
     public ObservableCollection<StudyOption> Studies { get; } = [];
     public ObservableCollection<ScenarioOption> Scenarios { get; } = [];
@@ -108,18 +128,26 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     private CultureInfo Ui => CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag);
     private CultureInfo Format => CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
     private string Text(string key) { var value = texts.Get(key, Ui); return pseudo ? PseudoLocalization.Expand(value) : value; }
-    private string DiagnosticText(DomainDiagnostic value) => value.Code + ": " + new DomainDiagnosticFormatter(texts).Format(value, Ui, Format).Message;
+    private string DiagnosticText(DomainDiagnostic value) => new DomainDiagnosticFormatter(texts).Format(value, Ui, Format).Message;
     private string StateText(StudyState state) => Text(state == StudyState.Open ? "Study.Open" : "Study.Closed");
     private string ScenarioText(StudyScenario value) => Text(value switch { StudyScenario.Actual => "Study.Actual", StudyScenario.Budget => "Study.Budget", _ => "Study.WhatIf" });
     public string Title => Text("Study.Title");
     public string Notes => Text("Study.Notes");
+    public string OpenSectionTitle => Text("Study.OpenSectionTitle");
+    public string OpenSectionHelp => Text("Study.OpenSectionHelp");
+    public string FormTitle => Text(Current is null ? "Study.NewFormTitle" : "Study.EditFormTitle");
+    public string FormHelp => Text(Current is null ? "Study.NewFormHelp" : "Study.EditFormHelp");
+    public string ImportHistoryTitle => Text("Study.ImportHistoryTitle");
+    public string ImportHistoryHelp => Text("Study.ImportHistoryHelp");
+    public string AdvancedHelp => Text("Study.AdvancedHelp");
+    public string ModelRemedyVisibility => HasPublishedModels ? "Collapsed" : "Visible";
     public string NameLabel => Text("Study.Name");
     public string StartLabel => Text("Study.PeriodStart");
     public string EndLabel => Text("Study.PeriodEnd");
     public string CurrencyLabel => Text("Study.Currency");
     public string ModelLabel => Text("Study.Model");
     public string ScenarioLabel => Text("Study.Scenario");
-    public string NewLabel => Text("Study.New");
+    public string NewLabel => Text(Current is null ? "Study.NewBlank" : "Study.NewPeriod");
     public string CreateLabel => Text("Study.Create");
     public string SaveLabel => Text("Study.Save");
     public string LoadLabel => Text("Study.Load");
@@ -130,10 +158,25 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public string CancelLabel => Text("CompanyCancel");
     public string SnapshotLabel => Text("Study.Snapshots");
     public string RunHistory => Text("Study.RunHistoryEmpty");
-    public string ImportedAmounts => importValues.Count == 0 ? Text("ImportMapping.NoImports") : string.Join(Environment.NewLine,
-        importValues.Select(b => string.Format(Format, Text("ImportMapping.ImportHistory"), b.Id, b.Prepared.Source.FileName,
-            b.Resources.Count, b.Prepared.Reconciliation.NetAmount, b.Prepared.Reconciliation.Currency, b.ConfirmedStudy.Revision)));
+    public string ImportedAmounts
+    {
+        get
+        {
+            if (importValues.Count == 0) return Text("ImportMapping.NoImports");
+            var active = ImportConfirmationRules.ActiveBatches(importValues).Select(b => b.Id).ToHashSet();
+            return string.Join(Environment.NewLine, importValues.Select(b =>
+                Text(active.Contains(b.Id) ? "ImportMapping.BatchActive" : "ImportMapping.BatchReplaced") + " · " +
+                string.Format(Format, Text("ImportMapping.ImportHistory"), b.Id, b.Prepared.Source.FileName,
+                      b.Resources.Count, b.Prepared.Reconciliation.NetAmount, b.Prepared.Reconciliation.Currency, b.ConfirmedStudy.Revision) +
+                  (b.Prepared.ConversionBridge is not { } bridge ? "" : Environment.NewLine +
+                      string.Join(Environment.NewLine, bridge.OriginalTotals.Select(t => string.Format(Format, Text("ImportMapping.CurrencyTotals"),
+                          t.Currency, t.Positive, t.Negative, t.Net))) + Environment.NewLine +
+                      string.Format(Format, Text("ImportMapping.FunctionalTotal"), bridge.FunctionalTotal,
+                          b.Prepared.Reconciliation.Currency, bridge.RoundingAdjustment))));
+        }
+    }
     public string Status => diagnostic is null ? Text(statusKey) : DiagnosticText(diagnostic);
+    public string? DiagnosticCode => diagnostic?.Code;
     public string Details => Current is null ? Text("Study.NoneSelected") : string.Format(Format, Text("Study.Details"), Current.Name,
         formatter.FormatDate(Current.PeriodStart.Value, Format, DateDisplayPreset.Short), formatter.FormatDate(Current.PeriodEnd.Value, Format, DateDisplayPreset.Short),
         Current.Currency.FunctionalCurrencyCode, ScenarioText(Current.ScenarioKind), Current.Revision, StateText(Current.State), Current.SelectedModelVersionId,
@@ -142,7 +185,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         selected.Value.Id, selected.Value.InputRevision, Current is not null && selected.Value.IsCurrentFor(Current) ? Text("Study.CurrentRevision") : Text("Study.HistoricalRevision"),
         formatter.FormatInstant(selected.Value.CapturedAtUtc.Value, preferences.Current.DisplayTimeZoneId, Format), selected.Value.EconomicInputHash, selected.Value.FullSnapshotHash);
     public string Preparation => SnapshotChoice is not { } selected ? Text("Study.PrepareFirst") :
-        Text(selected.Value.Input is ImportedStudySnapshotInput ? "Study.ImportedCaptured" : "Study.ContextCaptured") + Environment.NewLine +
+        Text(selected.Value.Input is ImportedStudySnapshotInput or ResourceStudySnapshotInput ? "Study.ImportedCaptured" : "Study.ContextCaptured") + Environment.NewLine +
         string.Join(Environment.NewLine, StudyPreparationService.Evaluate(selected.Value.Input).Diagnostics.Select(DiagnosticText));
     public string HistoricalDefinitions => SnapshotChoice is not { } selected ? "" : string.Join(Environment.NewLine,
         selected.Value.Input.Model.PhysicalCenters.Select(c => c.Code + " · " + c.Name).Concat(selected.Value.Input.Model.DriverUnits.Select(u => u.Code + " · " + u.Dimension + " · " + u.Symbol)));
@@ -254,9 +297,14 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         scenario = Scenarios.Single(s => s.Value == (value?.ScenarioKind ?? StudyScenario.Actual));
         studyChoice = Studies.SingleOrDefault(s => s.Value.Id == value?.Id); loading = false; Refresh();
     }
+    public Func<Task<bool>>? BeforeChangeAsync { get; set; }
+    public bool HasConfirmedImports => importValues.Count > 0;
+    public int ConfirmedImportCount => importValues.Count;
+    public Task ApplyResourceReceiptAsync(StudyDefinition confirmed) => ApplyConfirmedThenReload(confirmed, ApplyConfirmedStudy);
     public async Task<bool> CanLeaveAsync()
     {
         if (busy) return false;
+        if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return false;
         if (!IsDirty) return true;
         switch (dialogs.ResolvePending(Text("Study.PendingTitle"), Text("Study.PendingBody")))
         {
@@ -268,7 +316,29 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     private async Task New()
     {
         if (!await CanLeaveAsync()) return;
-        snapshotValues = []; importValues = []; snapshotChoice = null; createId = new(Guid.NewGuid()); SetCurrent(null); Reformat();
+
+        // Reusing the current cost structure, currency and scenario is the common analyst workflow
+        // for a new accounting period. Dates and name remain intentionally blank so the new
+        // analysis cannot accidentally inherit the previous period.
+        var previousModelId = Current?.SelectedModelVersionId ?? ModelChoice?.Value.Structure.Id;
+        var previousCurrency = Current?.Currency.FunctionalCurrencyCode.ToString() ?? Currency;
+        var previousScenario = Current?.ScenarioKind ?? Scenario?.Value ?? StudyScenario.Actual;
+
+        snapshotValues = [];
+        importValues = [];
+        snapshotChoice = null;
+        createId = new(Guid.NewGuid());
+        SetCurrent(null);
+
+        loading = true;
+        modelChoice = previousModelId is null
+            ? modelChoice
+            : PublishedModels.SingleOrDefault(m => m.Value.Structure.Id == previousModelId);
+        currency = previousCurrency;
+        scenario = Scenarios.Single(s => s.Value == previousScenario);
+        loading = false;
+        Reformat();
+        Refresh();
     }
     private async Task Load()
     {

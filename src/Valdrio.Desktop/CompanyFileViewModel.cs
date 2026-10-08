@@ -8,7 +8,7 @@ using Valdrio.Localization;
 
 namespace Valdrio.Desktop;
 
-public sealed class CompanyFileViewModel : ObservableObject, IDisposable
+public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
 {
     private readonly ICompanyFileService files;
     private readonly ICompanyFileDialogs dialogs;
@@ -33,10 +33,11 @@ public sealed class CompanyFileViewModel : ObservableObject, IDisposable
     {
         this.files = files; this.dialogs = dialogs; this.texts = texts; this.preferences = preferences; this.formatter = formatter;
         CurrencyOptions = catalog.GetAll().Where(x => x.IsMonetary).Select(x => x.AlphaCode.ToString()).ToArray();
-        CreateCommand = new AsyncRelayCommand(Create, () => Available);
+        CreateCommand = new AsyncRelayCommand(Create, () => Available && !string.IsNullOrWhiteSpace(CompanyName));
         OpenCommand = new AsyncRelayCommand(Open, () => Available);
         CloseCommand = new AsyncRelayCommand(Close, () => Available && active is not null);
-        AddUnitCommand = new AsyncRelayCommand(AddUnit, () => Available && active is not null);
+        AddUnitCommand = new AsyncRelayCommand(AddUnit, () => Available && active is not null &&
+            !string.IsNullOrWhiteSpace(UnitCode) && !string.IsNullOrWhiteSpace(UnitDimension));
         BackupCommand = new AsyncRelayCommand(Backup, () => Available && active is not null);
         RestoreCommand = new AsyncRelayCommand(Restore, () => Available);
         UpgradeCommand = new AsyncRelayCommand(Upgrade, () => Available);
@@ -54,10 +55,34 @@ public sealed class CompanyFileViewModel : ObservableObject, IDisposable
     public IRelayCommand CancelCommand { get; }
     public IReadOnlyList<string> CurrencyOptions { get; }
     public IReadOnlyList<int> ScaleOptions { get; } = Enumerable.Range(0,13).ToArray();
-    public string CompanyName { get => companyName; set => SetProperty(ref companyName, value); }
+    public string CompanyName
+    {
+        get => companyName;
+        set
+        {
+            if (SetProperty(ref companyName, value))
+                CreateCommand.NotifyCanExecuteChanged();
+        }
+    }
     public string Currency { get => currency; set => SetProperty(ref currency, value); }
-    public string UnitCode { get => unitCode; set => SetProperty(ref unitCode, value); }
-    public string UnitDimension { get => unitDimension; set => SetProperty(ref unitDimension, value); }
+    public string UnitCode
+    {
+        get => unitCode;
+        set
+        {
+            if (SetProperty(ref unitCode, value))
+                AddUnitCommand.NotifyCanExecuteChanged();
+        }
+    }
+    public string UnitDimension
+    {
+        get => unitDimension;
+        set
+        {
+            if (SetProperty(ref unitDimension, value))
+                AddUnitCommand.NotifyCanExecuteChanged();
+        }
+    }
     public string UnitSymbol { get => unitSymbol; set => SetProperty(ref unitSymbol, value); }
     public int UnitScale { get => unitScale; set => SetProperty(ref unitScale, value); }
     public bool UnitDiscrete { get => unitDiscrete; set => SetProperty(ref unitDiscrete, value); }
@@ -68,13 +93,27 @@ public sealed class CompanyFileViewModel : ObservableObject, IDisposable
     public IModelWorkspace? ActiveModels => active?.Models;
     public IStudyWorkspace? ActiveStudies => active?.Studies;
     public IImportWorkspace? ActiveImports => active?.Imports;
+    public IResourceWorkspace? ActiveResources => active?.Resources;
     public bool CanWrite => active?.Mode == CompanyFileOpenMode.Edit;
     public bool WorkspaceIdle => !busy && WorkspaceBusy?.Invoke() != true;
     private bool Available => !busy && WorkspaceBusy?.Invoke() != true;
     public void NotifyWorkspaceStateChanged() => Refresh();
     public CompanyFileSnapshot? Snapshot { get; private set; }
+    public bool HasProject => Snapshot is not null;
+    public bool NoProject => Snapshot is null;
     public string? ActivePath => active?.Path;
     public string Title => Text("CompanyTitle");
+    public string ProjectIntro => Text("CompanyProjectIntro");
+    public string OpenProjectTitle => Text("CompanyOpenProjectTitle");
+    public string OpenProjectHelp => Text("CompanyOpenProjectHelp");
+    public string NewProjectTitle => Text("CompanyNewProjectTitle");
+    public string NewProjectHelp => Text("CompanyNewProjectHelp");
+    public string ProjectReadyHelp => Text("CompanyProjectReadyHelp");
+    public string FileOperationsLabel => Text("CompanyFileOperations");
+    public string FileOperationsHelp => Text("CompanyFileOperationsHelp");
+    public string ActiveCompanyLabel => Text("CompanyActiveLabel");
+    public string ActiveCompanyName => Snapshot?.Name ?? Text("CompanyNoFile");
+    public string TechnicalDetailsLabel => Text("CompanyTechnicalDetails");
     public string NameLabel => Text("CompanyNameLabel");
     public string CurrencyLabel => Text("CompanyCurrencyLabel");
     public string CreateLabel => Text("CompanyCreate");
@@ -84,6 +123,9 @@ public sealed class CompanyFileViewModel : ObservableObject, IDisposable
     public string RestoreLabel => Text("CompanyRestore");
     public string CancelLabel => Text("CompanyCancel");
     public string UnitLabel => Text("CompanyUnitLabel");
+    public string UnitCreationHelp => Text("CompanyUnitCreationHelp");
+    public string UnitRequiredHelp => Text("CompanyUnitRequiredHelp");
+    public string UnitAdvancedLabel => Text("CompanyUnitAdvanced");
     public string DimensionLabel => Text("CompanyDimensionLabel");
     public string SymbolLabel => Text("CompanySymbolLabel");
     public string ScaleLabel => Text("CompanyScaleLabel");
@@ -92,8 +134,9 @@ public sealed class CompanyFileViewModel : ObservableObject, IDisposable
     public string Notes => Text("CompanyNotes");
     private CultureInfo UiCulture => CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag);
     public string Status => diagnostic is null ? Text(statusKey)
-        : diagnostic.Code + ": " + new DomainDiagnosticFormatter(texts).Format(diagnostic, UiCulture,
+        : new DomainDiagnosticFormatter(texts).Format(diagnostic, UiCulture,
             CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)).Message;
+    public string? DiagnosticCode => diagnostic?.Code;
     public string Details => Snapshot is null ? "—" : string.Format(UiCulture, Text("CompanyDetails"),
         Snapshot.Name, Snapshot.Id, Snapshot.DefaultCurrency,
         Snapshot.Revision.ToString("N0", CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)),
@@ -157,6 +200,17 @@ public sealed class CompanyFileViewModel : ObservableObject, IDisposable
             Snapshot = await Task.Run(() => active!.AddUnits([unit], Snapshot!.Revision, "local-user", token));
             if (AfterChangeAsync is not null) await AfterChangeAsync();
         });
+
+        if (diagnostic is null && statusKey == "CompanyCompleted")
+        {
+            statusKey = "CompanyUnitSaved";
+            UnitCode = "";
+            UnitDimension = "time";
+            UnitSymbol = "h";
+            UnitScale = 12;
+            UnitDiscrete = false;
+            Refresh();
+        }
     }
     private async Task Backup()
     {

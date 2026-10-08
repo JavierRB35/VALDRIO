@@ -33,6 +33,7 @@ public partial class StudyWorkspacePanel
         void Date(DatePicker picker, DateTime value) { picker.SetCurrentValue(DatePicker.SelectedDateProperty, value); picker.GetBindingExpression(DatePicker.SelectedDateProperty)!.UpdateSource(); }
         async Task Click(Button button)
         {
+            GuidedUi.Reveal(button);
             Check(button.IsEnabled, "enabled: " + button.Name);
             ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
@@ -63,7 +64,7 @@ public partial class StudyWorkspacePanel
         Select(ScenarioBox, vm.Scenarios.Single(s => s.Value == StudyScenario.Actual));
         Date(StartPicker, new(2026, 10, 1)); Date(EndPicker, new(2026, 9, 30));
         await Click(CreateStudyButton);
-        Check(vm.Status.StartsWith("STUDY_PERIOD_INVALID", StringComparison.Ordinal) && vm.Current is null && vm.IsDirty, "inverted period rejected without losing edits");
+        Check(vm.DiagnosticCode == "STUDY_PERIOD_INVALID" && vm.Current is null && vm.IsDirty, "inverted period rejected without losing edits");
         Date(EndPicker, new(2026, 10, 31)); await Click(CreateStudyButton);
         Check(vm.Current?.Revision == 0 && vm.Current.Currency.FunctionalCurrencyCode.ToString() == "EUR", "EUR context created by button");
         Check(vm.Current?.PeriodStart.ToString() == "2026-10-01" && vm.Current.PeriodEnd.ToString() == "2026-10-31", "period persisted as business dates");
@@ -117,8 +118,14 @@ public partial class StudyWorkspacePanel
         main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", false, false);
         Text(StudyNameBox, "unconfirmed name"); pending.Choices.Enqueue(PendingEditChoice.Cancel); await Click(companyPanel.CloseButton);
         Check(company.ActivePath == path && vm.IsDirty && vm.Name == "unconfirmed name", "cancel protects pending study and active file");
+        var previousModelId = vm.Current!.SelectedModelVersionId;
+        var previousCurrency = vm.Current.Currency.FunctionalCurrencyCode.ToString();
+        var previousScenario = vm.Current.ScenarioKind;
         pending.Choices.Enqueue(PendingEditChoice.Discard); await Click(NewStudyButton);
         Check(vm.Current is null && !vm.IsDirty, "discard opens clean new context");
+        Check(vm.ModelChoice?.Value.Structure.Id == previousModelId && vm.Currency == previousCurrency &&
+            vm.Scenario?.Value == previousScenario && vm.PeriodStart is null && vm.PeriodEnd is null && vm.Name == "",
+            "new period reuses structure currency and scenario without copying the previous dates or name");
         Select(StudyBox, vm.Studies.Single(s => s.Value.Id == studyId)); await Click(LoadStudyButton);
         Check(vm.Current?.Revision == 2 && vm.Snapshots.Count == 3, "load restores context and snapshot history");
         Text(StudyNameBox, "saved before closing"); pending.Choices.Enqueue(PendingEditChoice.Save); await Click(companyPanel.CloseButton);
@@ -154,11 +161,11 @@ public partial class StudyWorkspacePanel
         using (var target = File.Create(source)) gzip.CopyTo(target);
         var before = Hash(source); Check(before == fixture.RootElement.GetProperty("Sha256").GetString(), "real T04 fixture hash verified");
         var upgraded = Path.Combine(output, "upgraded-v4.valdrio"); files.Paths.Enqueue(source); files.Paths.Enqueue(upgraded); await Click(companyPanel.UpgradeButton);
-        Check(company.Snapshot?.SchemaVersion == 4 && Hash(source) == before && vm.PublishedModels.Count == 1, "v2 upgrade button preserves original publication and bytes");
+        Check(company.Snapshot?.SchemaVersion == SqliteCompanyFileService.SchemaVersion && Hash(source) == before && vm.PublishedModels.Count == 1, "v2 upgrade button preserves original publication and bytes");
         Check(Hash(modelSource) == modelSourceHash, "study workflow preserves the model-stage artifact and manifest");
         await RunPostCommitRecoveryRegression(output, modelSource);
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = passed }, new JsonSerializerOptions { WriteIndented = true }));
-        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { Format = SqliteCompanyFileService.FormatId, SchemaVersion = 4,
+        File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { Format = SqliteCompanyFileService.FormatId, SchemaVersion = SqliteCompanyFileService.SchemaVersion,
             CompanyId = companyId.ToString(), StudyId = studyId.ToString(), latest.EconomicInputHash, latest.FullSnapshotHash,
             Scope = "Context-only T05; no calculation", Files = new[] { path, backup, restored, source, upgraded, snapshotPath }.Select(p => new { Name = Path.GetFileName(p), Sha256 = Hash(p) }) }, new JsonSerializerOptions { WriteIndented = true }));
     }
@@ -370,6 +377,7 @@ public partial class StudyWorkspacePanel
         PostCommitReadFailureState state)
         : ICompanyFileSession
     {
+        public IResourceWorkspace Resources => inner.Resources;
         public IImportWorkspace Imports => inner.Imports;
         public IStudyWorkspace Studies { get; } =
             new PostCommitReadFailureStudyWorkspace(inner.Studies, state);

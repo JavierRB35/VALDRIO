@@ -301,9 +301,9 @@ public sealed class T06DebitCreditImportTests
     {
         var path = Fixture("t06-period-v4.json"); var sha = Hash(path);
         var oldBatch = Query(path, "SELECT CanonicalJson FROM ImportBatches"); var oldPhotos = Query(path, "SELECT group_concat(CanonicalJson) FROM StudySnapshots ORDER BY Id");
-        using (var file = Service().Open(path, CompanyFileOpenMode.ReadOnly))
+        using (var file = Service().Upgrade(path, Path.Combine(directory, "upgraded-period.valdrio"), "test"))
         {
-            Assert.AreEqual(4, file.Read().SchemaVersion); var batches = file.Studies.ReadStudies().SelectMany(s => file.Imports.ReadImports(s.CompanyId, s.Id)).ToArray();
+            Assert.AreEqual(8, file.Read().SchemaVersion); var batches = file.Studies.ReadStudies().SelectMany(s => file.Imports.ReadImports(s.CompanyId, s.Id)).ToArray();
             Assert.AreEqual(1, batches.Length); Assert.AreEqual(ImportSignConvention.SignedAmount, batches[0].Prepared.Profile.SignConvention);
             Assert.AreEqual(oldBatch, CanonicalSnapshotJson.Serialize(batches[0])); Assert.AreEqual(2, batches[0].Resources.Count);
             var snapshots = file.Studies.ReadStudies().SelectMany(s => file.Studies.ReadSnapshots(s.CompanyId, s.Id)).ToArray();
@@ -374,9 +374,8 @@ public sealed class T06DebitCreditImportTests
     private async Task VerifyRunner(StudySnapshotReceipt photo, string net)
     {
         var path = PathOf("snapshot.json"); File.WriteAllText(path, CanonicalSnapshotJson.Serialize(photo));
-        var root = new DirectoryInfo(AppContext.BaseDirectory); while (!File.Exists(Path.Combine(root.FullName, "Valdrio.slnx"))) root = root.Parent!;
         var start = new ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet") { RedirectStandardOutput = true, RedirectStandardError = true };
-        start.ArgumentList.Add(Path.Combine(root.FullName, "src/Valdrio.Runner/bin/Release/net10.0/Valdrio.Runner.dll"));
+        start.ArgumentList.Add(Path.Combine(AppContext.BaseDirectory, "runner", "Valdrio.Runner.dll"));
         start.ArgumentList.Add("--study-snapshot"); start.ArgumentList.Add(path);
         using var process = Process.Start(start)!; var text = await process.StandardOutput.ReadToEndAsync(); var error = await process.StandardError.ReadToEndAsync();
         await process.WaitForExitAsync(); Assert.AreEqual(0, process.ExitCode, error);

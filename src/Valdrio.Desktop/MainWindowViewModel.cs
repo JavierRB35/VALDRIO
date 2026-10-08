@@ -10,7 +10,7 @@ using Valdrio.Localization;
 
 namespace Valdrio.Desktop;
 
-public sealed class MainWindowViewModel : ObservableObject
+public sealed partial class MainWindowViewModel : ObservableObject
 {
     private const string ExpectedKind = "valdrio-development-smoke-v1";
 
@@ -90,6 +90,7 @@ public sealed class MainWindowViewModel : ObservableObject
     public CompanyFileViewModel? Company { get; init; }
     public ModelWorkspaceViewModel? Models { get; init; }
     public StudyWorkspaceViewModel? Studies { get; init; }
+    public ResourceWorkspaceViewModel? Resources { get; init; }
 
     public IReadOnlyList<string> UiLanguageOptions { get; }
     public IReadOnlyList<string> FormatCultureOptions { get; }
@@ -206,6 +207,7 @@ public sealed class MainWindowViewModel : ObservableObject
     }
 
     public string AppTitle => Text("AppTitle");
+    public string DevelopmentToolsTitle => Text("DevelopmentToolsTitle");
     public string WindowTitle => Text("WindowTitle");
     public string SpecificationVersion => Text("SpecificationVersion");
     public string HeaderSubtitle => Text("HeaderSubtitle");
@@ -529,6 +531,7 @@ public sealed class MainWindowViewModel : ObservableObject
         Company?.RefreshPresentation(pseudoLocalizationEnabled);
         Models?.RefreshPresentation(pseudoLocalizationEnabled);
         Studies?.RefreshPresentation(pseudoLocalizationEnabled);
+        Resources?.RefreshPresentation(pseudoLocalizationEnabled);
         Studies?.ImportColumns?.RefreshPresentation(pseudoLocalizationEnabled);
         // Dirty edits retain their captured grammar; clean fields follow the selected region.
         if (fxEditSession is null)
@@ -543,6 +546,7 @@ public sealed class MainWindowViewModel : ObservableObject
             nameof(SelectedTimeZoneId),
             nameof(AppTitle),
             nameof(WindowTitle),
+            nameof(DevelopmentToolsTitle),
             nameof(SpecificationVersion),
             nameof(HeaderSubtitle),
             nameof(PreferencesTitle),

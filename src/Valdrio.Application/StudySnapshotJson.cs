@@ -14,19 +14,22 @@ public static class StudySnapshotJson
         return schema.GetString() switch
         {
             StudySnapshotInput.Schema => Deserialize(json),
-            ImportedStudySnapshotInput.Schema => ImportedStudySnapshotJson.Deserialize(json),
+            ResourceStudySnapshotInput.Schema => ResourceStudySnapshotJson.Deserialize(json),
+            ImportedStudySnapshotInput.Schema or ImportedStudySnapshotInput.GroupedSchema or ImportedStudySnapshotInput.LedgerSchema or ImportedStudySnapshotInput.InternationalSchema => ImportedStudySnapshotJson.Deserialize(json),
             _ => throw new JsonException("Unsupported study snapshot schema.")
         };
     }
     public static string Serialize(IStudySnapshotInput input) => input switch
     {
         StudySnapshotInput v1 => Serialize(v1),
+        ResourceStudySnapshotInput v6 => ResourceStudySnapshotJson.Serialize(v6),
         ImportedStudySnapshotInput v2 => ImportedStudySnapshotJson.Serialize(v2),
         _ => throw new JsonException("Unsupported study snapshot input.")
     };
     public static string EconomicJson(IStudySnapshotInput input) => input switch
     {
         StudySnapshotInput v1 => EconomicJson(v1),
+        ResourceStudySnapshotInput v6 => ResourceStudySnapshotJson.EconomicJson(v6),
         ImportedStudySnapshotInput v2 => ImportedStudySnapshotJson.EconomicJson(v2),
         _ => throw new JsonException("Unsupported study snapshot input.")
     };

@@ -75,7 +75,7 @@ public static class ImportColumnSelection
 
     public static ImportColumnSelectionResult Validate(ImportSourceDocument source, ImportSourceReadSettings settings,
         ImportColumnMap columns, SourceNumberFormat numberFormat, XlsxNumericAccountPolicy numericAccountPolicy,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default, ImportDuplicatePolicy duplicatePolicy = ImportDuplicatePolicy.Reject)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(settings);
@@ -84,7 +84,7 @@ public static class ImportColumnSelection
         var signed = columns.Amount.HasValue && columns.Debit is null && columns.Credit is null;
         var debitCredit = columns.Amount is null && columns.Debit.HasValue && columns.Credit.HasValue;
         if (source.SourceKind != settings.SourceKind || source.SheetName != settings.WorksheetName ||
-            !signed && !debitCredit || !Enum.IsDefined(numericAccountPolicy))
+            !signed && !debitCredit || !Enum.IsDefined(numericAccountPolicy) || !Enum.IsDefined(duplicatePolicy))
             throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile");
         var available = GetColumns(source).Select(c => c.Index).ToHashSet();
         var valueColumns = signed ? new[] { columns.Amount!.Value } : new[] { columns.Debit!.Value, columns.Credit!.Value };
@@ -93,7 +93,7 @@ public static class ImportColumnSelection
             throw ImportRules.Error("IMP_COLUMN_SELECTION", "Import.ColumnsRequired");
 
         var diagnostics = ImportSourceInspector.ValidateBasic(source, columns, numericAccountPolicy,
-            ImportDuplicatePolicy.Reject, cancellationToken: cancellationToken).ToList();
+            duplicatePolicy, cancellationToken: cancellationToken).ToList();
         var rows = new List<ImportMappedRow>();
         foreach (var row in source.Rows)
         {

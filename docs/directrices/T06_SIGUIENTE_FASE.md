@@ -1,5 +1,11 @@
 # VALDRIO — Directrices ejecutables para T06: sumas y saldos verificables
 
+Actualización 2026-10-07: estas directrices conservan el plan original. ADR-0009
+materializa la selección de registros y agrupación por código con formato v5.
+El propietario ha indicado explícitamente que no se debe usar la descripción para
+agrupar. Esa decisión sustituye la exigencia de resolver descripciones distintas
+que figura en el plan histórico. No modificar las fuentes canónicas v0.4.
+
 Fecha: 2026-10-05. Destinatarios: equipo y LLM ejecutor. T06 no está implementada. Leer T05 y su evidencia antes de empezar; este documento no aprueba D03 ni las propuestas D04–D07.
 
 ## 1. Resultado y puerta D03

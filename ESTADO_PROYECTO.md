@@ -1,8 +1,199 @@
 # ESTADO_PROYECTO
 
-Fecha de revisión 2026-10-06. Repositorio `JavierRB35/VALDRIO`.
+## Estado vigente y correcciones de auditoría — 2026-10-08
 
-## Estado vigente
+| Línea | Estado comprobado |
+|---|---|
+| `main@82770779478a71c6ed7edc89a86be02fbb0188a7` | Línea principal consultada; incorpora las directrices visuales y T08-CUENTA-01 |
+| `codex/local-tests-and-workspace@dc53b55aa5806f45e14c2fb64d6b7b5c43e9a7d2` | Desarrollo activo de la PR #22: T06/T06A/T07 y tema V1; aún no integrado en main |
+| `fix/auditoria-20261008` | Correcciones sobre el desarrollo activo; suite portátil 544/544 y compilación Desktop con destino Windows, sin aceptación nativa de este candidato |
+| T08-CUENTA-01 | Dependencia obligatoria pendiente de captura semántica, persistencia, reapertura y consumo de código + descripción; issue #28 |
+| Visual V2–V6 | Migración y aceptación completas pendientes; esta corrección solo mejora la tabla de Recursos y el contenedor de herramientas |
+
+Se bloquea la reutilización de filas/celdas de origen entre lotes activos, manteniendo
+selecciones disjuntas y sustitución identificada. La corrección acumulada se prepara
+en Application/Calculation; el guardado automático permanece. Se corrigen pendientes
+con neto cero, recuperación tras fallar una previsualización de revaloración, contexto
+del modelo del estudio, fila de herramientas y cobertura de mensajes ES/EN.
+
+El alcance, las pruebas, los hashes y los pendientes de aceptación están en
+[CORRECCIONES_AUDITORIA_2026-10-08.md](docs/evidencias/CORRECCIONES_AUDITORIA_2026-10-08.md).
+La compilación cruzada y las pruebas portátiles no sustituyen el recorrido WPF real.
+GitHub Actions continúa exclusivamente manual. Los registros siguientes describen
+las entregas y sus evidencias históricas; sus cifras no validan este candidato.
+
+## T07: volver a Correcciones y seleccionar el importe — 2026-10-08
+
+Destinos se abre con su botón explícito; la barra fija y el editor permiten cerrar
+los destinos y volver a Correcciones, resolviendo los borradores sin ocultarlos.
+Un clic selecciona todo el importe para sustituirlo al escribir. Se explica la
+fila pendiente inicial y el combo identifica centro, nodo, papel, pool, unidad y
+funciones. [Evidencia](docs/evidencias/T07_RETORNO_Y_EDICION_2026-10-08.md).
+
+
+## T07: correcciones en tabla y guardado automático — 2026-10-08
+
+La columna Correcciones es la única editable, siempre en moneda del análisis. El
+cambio confirmado en la celda se guarda y recalcula efectivo/pendiente. Se elimina
+la pantalla adicional de ajustes. Tabla, clasificación y destinos permanecen en
+una pantalla; originales, conversiones históricas, revisiones y auditoría se conservan.
+Cambio en `codex/usability-six-issues`, PR #27; no está fusionado automáticamente.
+[Evidencia](docs/evidencias/T07_CORRECCIONES_EN_TABLA_2026-10-08.md).
+
+
+## Revisión de los seis problemas de usabilidad — 2026-10-08
+
+Cambios aplicados sobre la integración `770c640` en `codex/usability-six-issues`:
+feedback específico de estructura, recarga explicada, vaciado contextual de centros,
+centro físico visible y orden estable, árbol de finalización con trazabilidad avanzada,
+separadores manuales visibles y revisión accesible con aprobación única al guardar.
+T07 permanece después de confirmar la importación. Se preservan dominio, origen,
+FX, revisiones, hashes y reglas de conservación. Compilación y validación locales,
+sin GitHub Actions ni cambios en main. [Evidencia](docs/evidencias/USABILIDAD_SEIS_PROBLEMAS_2026-10-08.md).
+
+
+## T07 — implementación completa (2026-10-07)
+
+Las tres subentregas están implementadas e integradas en la rama existente
+`codex/t07-resource-rules`: ajustes firmados y reversión con Money/FX propios;
+clasificación contextual y partes; asignación directa/pool/exclusión/pendiente
+con conservación por cuenta, auditoría, transacción y reapertura. Empresa v8,
+snapshots v6 y actualización a copia desde v1–v7. Se preservan lectores históricos.
+
+El recorrido guiado ahora es Empresa → Estructura → Estudio → Importación → Recursos.
+Recursos guía cuenta → ajustes → partes → revisión y guardado explícito. Incluye
+ayuda ES/EN con ratón/teclado, borradores conservados, historial y revaloración
+manual con conciliación. La usabilidad sigue siendo prioridad; no es una revisión estética.
+
+Contrato y límites: [T07](docs/tareas/T07.md). Arquitectura:
+[ADR-0012](docs/adr/ADR-0012-recursos-y-particiones.md). Aceptación reproducible:
+[evidencia T07](docs/evidencias/T07_CIERRE_2026-10-07.md). La validación local y el recibo Windows del commit
+acreditan los resultados; la integración en main es posterior. GitHub Actions queda
+reservado a una petición expresa del propietario (AGENTS.md, todas las fases).
+Las decisiones económicas propuestas mantienen su estado. Próxima fase funcional:
+T08, sin adelantar repartos, tarifas ni políticas de capacidad.
+
+La autorización completa T07 sustituye los registros anteriores que pedían esperar
+una conversación. Se conserva debajo el historial de T06/T06A y entregas precedentes.
+
+## T06A — puente internacional implementado (2026-10-07)
+
+Las tres subentregas están implementadas: perfil internacional, originales/fechas y
+selección explícita de tipos por registro, conversión y conciliación, confirmación
+atómica, historia, snapshots y runner. Empresa v7; perfil/preparado v4; snapshot v5.
+Actualización siempre a copia desde v1–v6. Ver docs/adr/ADR-0011-importacion-internacional.md
+ y docs/evidencias/T06A_CIERRE_2026-10-07.md. El recibo Windows y CI verdes del HEAD
+acreditan el cierre final. El catálogo instalado conserva las cuatro monedas de ejemplo.
+
+Registro histórico anterior a la autorización completa de T07: se había solicitado
+comentar ajustes/clasificación/particiones antes de su implementación. El problema de guardado de
+centro/modelo se revisará más adelante por petición expresa; no se declara solucionado.
+
+## T06 — implementación completa y aceptación del commit final (2026-10-07)
+
+T06.0–T06.6 implementadas: CSV/XLSX, perfil explícito, selección de registros, agrupación
+por código, periodo/cierre íntegro/diferencia de acumulados comparables, preparación sin
+escritura, confirmación atómica, sustitución identificada, historial, snapshots y runner.
+Formato de empresa v6 con actualización a copia desde v1–v5; inputs históricos intactos.
+La reapertura y el hash económico usan solo los lotes vigentes y conservan los retirados.
+
+433/433 pruebas Release; recorrido WPF completo con nueve comprobaciones adicionales.
+El cierre formal se acredita por el recibo Windows y CI verdes del HEAD asociado al PR;
+no basta con compilar. Ver [matriz F01–F24](docs/evidencias/T06_CIERRE_2026-10-07.md) y
+[ADR-0010](docs/adr/ADR-0010-comparativos-y-sustitucion.md).
+
+El propietario confirma que su Excel es un ejemplo y que declara 31/10/2026 en el formulario.
+D03 se acepta para este ensayo (6005=358,35 EUR), no para una fuente de producción.
+Moneda distinta de la funcional sigue bloqueada en T06: el siguiente trabajo es
+[T06A](docs/directrices/T06A_SIGUIENTE_FASE.md). Cálculo, particiones y consumos no se adelantan.
+Esta sección sustituye los pendientes históricos de comparativos y sustitución descritos abajo.
+
+## Continuidad — conciliación inmediata de registros, 2026-10-07
+
+Se añade un resultado calculado al seleccionar registros: agrupación ordinal por código,
+filas de procedencia, positivos/negativos/neto incluidos y neto excluido. Funciona sin estudio
+asociado, conserva ceros y códigos distintos como 00123/123 y a/A, e incluye todas las filas.
+Releer o cambiar columnas elimina el resultado anterior. Los desbordamientos muestran un error
+sin totales parciales; cambiar la selección permite recuperarse. Es una revisión del origen:
+la preparación sigue comprobando precisión, periodo, moneda y aprobación antes de confirmar.
+No cambia persistencia, esquema v5 ni contratos de snapshots.
+
+Pruebas locales: 411/411 Release (`live-reconciliation.trx`); compilación WPF sin advertencias. Flujo nativo completo con salida 0 en `artifacts/live-reconciliation-2026-10-07`, 11 comprobaciones de agrupación y captura del resultado inmediato revisada visualmente. No se ha ejecutado CI remota.
+El siguiente bloque pendiente de persistencia sigue siendo sustituir un lote identificado
+sin duplicar importes ni perder el historial. No se declara T06 cerrada.
+
+## Continuidad — acceso a importación y guardado del estudio, 2026-10-07
+
+Se aclaran las acciones: «Limpiar formulario / preparar otro estudio» y «Guardar este estudio».
+Los listados vacíos explican la ausencia de estudios/modelos y hay acceso directo al editor de modelos.
+El resultado de crear se muestra junto a los botones y se lleva a la vista al terminar.
+Abrir la revisión del origen con un estudio nuevo sin guardar conserva el formulario sin pedir
+que se guarde o descarte. Preparar/confirmar sigue requiriendo un estudio guardado; no se crean
+modelos ni estructuras contables implícitos. Tras publicar, Actualizar estudios/modelos carga las opciones.
+
+Validación: 408 pruebas Release correctas (`study-ux.trx`), compilación WPF sin advertencias,
+flujo nativo completo con salida 0 en `artifacts/study-ux-verified-2026-10-07` y revisión visual.
+Después de esa captura se quitó un mensaje de estado duplicado y se unificó su color; recompilado.
+Dos intentos previos de captura fallaron por usar rutas relativas o separadores `/` en el comprobador
+de igualdad de rutas del smoke; la ejecución con ruta absoluta Windows pasó.
+
+## Continuidad — selección de registros y agrupación, 2026-10-07
+
+La elección pasa de cuentas a registros individuales: todos, ninguno, algunos o todos
+menos algunos. Los registros seleccionados se suman por el código de la columna elegida
+(cuenta, agrupación o gasto). Las descripciones no intervienen, por instrucción expresa
+del propietario. Ejemplo confirmado: las filas 7 y 8 de 6005 producen 358,35 EUR;
+seleccionar solo la fila 8 produce 78,35 EUR.
+
+Archivo de empresa v5, perfil/preparado v2 para agrupaciones y snapshots v3. Los formatos
+históricos conservan sus lectores; los archivos anteriores se actualizan a una copia.
+Ver [ADR-0009](docs/adr/ADR-0009-registros-y-agrupacion-por-codigo.md) y
+[evidencia](docs/evidencias/AGRUPACION_REGISTROS_2026-10-07.md).
+Esta sección sustituye las restricciones de agrupación/una fila por recurso anteriores.
+T06 no está cerrada: siguen sustitución de lotes, diferencias comparables, aceptación
+global y definición productiva del alcance/periodo de la fuente. T06A/T07 después.
+
+## Continuidad — 2026-10-07: selección explícita de cuentas
+
+Sobre `8909e88`, el asistente permite importar todas las cuentas del archivo o marcar
+una lista explícita después de validar las columnas. El propietario ha precisado que
+el estudio de costes utiliza cuentas de pérdidas y ganancias, no cuentas de balance.
+La elección no se deduce de la numeración, país o idioma. No se considera aceptada
+una muestra productiva por añadir esta pantalla.
+
+Cambiar una cuenta invalida la preparación y la aprobación. Una lista vacía bloquea
+preparar; releer o cambiar el mapeo borra las marcas anteriores. La selección incluye
+todas las cuentas validadas, no solo las primeras 50 filas de la vista previa.
+El perfil v1 ya contemplaba `ExplicitList`: se reutiliza con formato de empresa v4,
+conservando todas las filas originales y generando recursos solo para las seleccionadas.
+
+Evidencia: [selección de cuentas](docs/evidencias/SELECCION_CUENTAS_2026-10-07.md).
+Esta subentrega no cierra T06. Siguen pendientes muestra real de pérdidas y ganancias,
+agrupación con resolución de descripciones/procedencia, sustitución de lotes,
+diferencias comparables y aceptación global; después T06A y T07.
+
+## Continuidad local — 2026-10-06
+
+Rama `codex/local-tests-and-workspace`, sobre `5b66e3c` (PR #21 integrada).
+Pruebas de procesos usan el Runner copiado junto a los tests según Configuration;
+se elimina la dependencia de Release al ejecutar Debug. La interfaz destaca la empresa
+abierta, separa detalles técnicos y agrupa ejemplos en un desplegable; título de espacio
+de trabajo y recursos ES/EN actualizados.
+
+Se añade selección explícita de saldo íntegro al cierre para el estudio según la elección
+del propietario 100→160 produce 160, con aprobación renovada y fecha de cierre visible.
+Ver [ADR-0008](docs/adr/ADR-0008-saldo-integro-cierre.md). D03 está concretada en esa
+interpretación; la muestra real permanece pendiente. T06 no está cerrada y la autodetección
+numérica aún no está implementada. El siguiente bloque es validar la fuente real y completar
+agrupación/sustitución de lotes antes de T06A y T07.
+
+La validación de esta entrega es local; no se han ejecutado Actions ni publicado una PR.
+La evidencia se registra en `docs/evidencias/CONTINUIDAD_LOCAL_2026-10-06.md`.
+Esta sección prevalece sobre los pendientes anteriores que resuelve expresamente.
+## Estado histórico de integración — 2026-10-06
+
+La tabla siguiente se conserva como historial. El estado actual se recoge en el
+encabezado del documento y en los contratos vigentes de T06/T06A/T07.
 
 | Entrega | Estado |
 |---|---|

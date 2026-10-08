@@ -65,16 +65,16 @@ public sealed class T05StudyTests
         var publications = schema == 2 ? Query(source, "SELECT group_concat(CanonicalJson) FROM ModelPublications ORDER BY ModelVersionId") : "";
         Assert.AreEqual("FILE_UPGRADE_REQUIRED", Assert.ThrowsExactly<CompanyFileException>(() => Service().Open(source)).Diagnostic.Code);
         using var file = Service().Upgrade(source, FileOf(), "test");
-        Assert.AreEqual(4, file.Read().SchemaVersion); Assert.AreEqual(sha, Hash(source));
+        Assert.AreEqual(8, file.Read().SchemaVersion); Assert.AreEqual(sha, Hash(source));
         Assert.AreEqual(companyId, file.Read().Id.ToString()); Assert.AreEqual(units, Query(file.Path, "SELECT group_concat(Id||Code) FROM Units ORDER BY Id"));
         Assert.AreEqual(companyAudit, Query(file.Path, "SELECT group_concat(AfterJson) FROM AuditEvents WHERE AggregateType='Company' ORDER BY Revision"));
         if (schema == 2) Assert.AreEqual(publications, Query(file.Path, "SELECT group_concat(CanonicalJson) FROM ModelPublications ORDER BY ModelVersionId"));
-        Assert.AreEqual((4 - schema).ToString(CultureInfo.InvariantCulture), Query(file.Path, "SELECT count(*) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
+        Assert.AreEqual((8 - schema).ToString(CultureInfo.InvariantCulture), Query(file.Path, "SELECT count(*) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
         using var c = new SqliteConnection("Data Source=" + file.Path + ";Pooling=False"); c.Open();
         using var v3 = new StudyDbContext(c); using var v2 = new ModelDbContext(c); using var v1 = new CompanyDbContext(c);
         Assert.IsFalse(v3.Database.HasPendingModelChanges()); Assert.IsFalse(v2.Database.HasPendingModelChanges()); Assert.IsFalse(v1.Database.HasPendingModelChanges());
         using var v4 = new ImportDbContext(c); Assert.IsFalse(v4.Database.HasPendingModelChanges());
-        Assert.AreEqual(4, v4.Database.GetAppliedMigrations().Count());
+        Assert.AreEqual(8, v4.Database.GetAppliedMigrations().Count());
     }
 
     [TestMethod]
@@ -101,8 +101,8 @@ public sealed class T05StudyTests
         using var file = Service().Upgrade(source, FileOf(), "test");
         Assert.AreEqual(sha, Hash(source));
         Assert.AreEqual(old, Query(file.Path, "SELECT AfterJson FROM AuditEvents WHERE AggregateType='CompanyFile' AND Revision=0"));
-        Assert.AreEqual("3", Query(file.Path, "SELECT count(*) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
-        Assert.AreEqual("2", Query(file.Path, "SELECT max(Revision) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
+        Assert.AreEqual("7", Query(file.Path, "SELECT count(*) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
+        Assert.AreEqual("6", Query(file.Path, "SELECT max(Revision) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
     }
 
     [TestMethod]
@@ -110,9 +110,7 @@ public sealed class T05StudyTests
     {
         using var file = Baseline(); var study = file.Studies.Create(CreateCommand(file)); var receipt = file.Studies.Capture(CaptureCommand(study));
         var path = FileOf("snapshot.json"); File.WriteAllText(path, CanonicalSnapshotJson.Serialize(receipt));
-        var root = new DirectoryInfo(AppContext.BaseDirectory);
-        while (!File.Exists(Path.Combine(root.FullName, "Valdrio.slnx"))) root = root.Parent!;
-        var dll = Path.Combine(root.FullName, "src", "Valdrio.Runner", "bin", "Release", "net10.0", "Valdrio.Runner.dll");
+        var dll = Path.Combine(AppContext.BaseDirectory, "runner", "Valdrio.Runner.dll");
         (int Code, string Output) Run()
         {
             var info = new System.Diagnostics.ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet")

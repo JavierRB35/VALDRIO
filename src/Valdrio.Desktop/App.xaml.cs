@@ -16,7 +16,8 @@ public partial class App : System.Windows.Application
     private StudyWorkspaceViewModel? studies;
     private ModelWorkspaceViewModel? models;
     private ImportColumnMappingViewModel? importColumns;
-    protected override void OnExit(ExitEventArgs e) { importColumns?.Dispose(); studies?.Dispose(); models?.Dispose(); company?.Dispose(); base.OnExit(e); }
+    private ResourceWorkspaceViewModel? resources;
+    protected override void OnExit(ExitEventArgs e) { resources?.Dispose(); importColumns?.Dispose(); studies?.Dispose(); models?.Dispose(); company?.Dispose(); base.OnExit(e); }
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -120,9 +121,10 @@ public partial class App : System.Windows.Application
         var modelDialogs = captureDirectory is null ? (IModelEditorDialogs)new ModelEditorDialogs() : new QueuedModelEditorDialogs();
         models = new ModelWorkspaceViewModel(company, texts, preferences, modelDialogs, formatter);
         var importDialogs = captureDirectory is null ? (IImportSourceDialogs)new ImportSourceDialogs() : new QueuedImportSourceDialogs();
-        importColumns = new ImportColumnMappingViewModel(new ImportSourceSessionFactory(), importDialogs, texts, preferences);
+        importColumns = new ImportColumnMappingViewModel(new ImportSourceSessionFactory(), importDialogs, texts, preferences, currencyCatalog);
         studies = new StudyWorkspaceViewModel(company, currencyCatalog, texts, preferences, formatter, modelDialogs)
             { ImportColumns = importColumns };
+        resources = new ResourceWorkspaceViewModel(company, studies, currencyCatalog, texts, preferences, modelDialogs);
         var viewModel =
             new MainWindowViewModel(
                 texts,
@@ -133,7 +135,7 @@ public partial class App : System.Windows.Application
                 currencyMetadataExampleService,
                 temporalContractExampleService,
                 fxConversionExampleService,
-                preferencesPersistence) { Company = company, Models = models, Studies = studies };
+                preferencesPersistence) { Company = company, Models = models, Studies = studies, Resources = resources };
 
         if (!viewModel.TryLoadDevelopmentSample(
                 samplePath,
@@ -169,11 +171,11 @@ public partial class App : System.Windows.Application
         bool allowClose = false;
         window.Closing += async (_, args) =>
         {
-            if (!company.IsIdle || models.IsBusy || studies.IsBusy)
+            if (!company.IsIdle || models.IsBusy || studies.IsBusy || resources.IsBusy)
             {
-                args.Cancel = true; company.CancelCommand.Execute(null); models.CancelCommand.Execute(null); studies.CancelCommand.Execute(null); return;
+                args.Cancel = true; company.CancelCommand.Execute(null); models.CancelCommand.Execute(null); studies.CancelCommand.Execute(null); resources.CancelCommand.Execute(null); return;
             }
-            if (!allowClose && (models.IsDirty || studies.IsDirty))
+            if (!allowClose && (models.IsDirty || studies.IsDirty || resources.IsDirty))
             {
                 args.Cancel = true; if (await company.BeforeChangeAsync!()) { allowClose = true; window.Close(); }
             }
@@ -204,7 +206,13 @@ public partial class App : System.Windows.Application
                             (QueuedCompanyFileDialogs)companyDialogs, viewModel);
                         await importWindow.RunDebitCreditChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs,
                             (QueuedCompanyFileDialogs)companyDialogs, viewModel);
+                        await importWindow.RunImportGroupingChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs, viewModel);
+                        await importWindow.RunImportCompletionChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs, viewModel);
+                        await importWindow.RunInternationalImportChecks(captureDirectory, (QueuedImportSourceDialogs)importDialogs, viewModel);
                         importWindow.Close();
+                        await window.RunGuidedWorkflowChecks(captureDirectory, (QueuedCompanyFileDialogs)companyDialogs, (QueuedImportSourceDialogs)importDialogs);
+                        await window.RunResourceChecks(captureDirectory);
+                        await window.RunVisualShellChecks(captureDirectory);
                         CaptureVisualEvidence(
                             window,
                             viewModel,

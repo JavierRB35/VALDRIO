@@ -5,6 +5,7 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../../src/Valdrio.Desktop/WorkspaceGuidance.cs" Link="Desktop/WorkspaceGuidance.cs" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="MSTest.TestAdapter" />
     <PackageReference Include="MSTest.TestFramework" />
@@ -17,6 +18,10 @@
     <Compile Include="../../src/Valdrio.Desktop/MainWindowViewModel.cs" Link="Desktop/MainWindowViewModel.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ImportColumnMappingViewModel.cs" Link="Desktop/ImportColumnMappingViewModel.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ImportColumnMappingViewModel.Confirmation.cs" Link="Desktop/ImportColumnMappingViewModel.Confirmation.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/ImportColumnMappingViewModel.Conversion.cs" Link="Desktop/ImportColumnMappingViewModel.Conversion.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/ImportColumnMappingViewModel.Accounts.cs" Link="Desktop/ImportColumnMappingViewModel.Accounts.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/ResourceEditorForm.cs" Link="Desktop/ResourceEditorForm.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/ResourceWorkspaceViewModel*.cs" Link="Desktop/%(Filename)%(Extension)" />
     <Compile Include="../../src/Valdrio.Desktop/WorkspaceDialogContracts.cs" Link="Desktop/WorkspaceDialogContracts.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -43,9 +48,20 @@
     <None Update="Fixtures/t04-v2.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t05-v3.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t06-period-v4.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Fixtures/t06a-v7.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Fixtures/t06a-v6.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Fixtures/t06-v5.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Fixtures/t06-v4.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t03-v1.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t06-csv-es-v1.csv" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t06-xlsx-1900-v1.xlsx" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/t06-xlsx-1904-v1.xlsx" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+  <!-- Keep subprocess tests on the same build configuration, including Visual Studio Debug. -->
+  <Target Name="CopyRunnerForTests" AfterTargets="Build">
+    <ItemGroup>
+      <RunnerOutput Include="../../src/Valdrio.Runner/bin/$(Configuration)/$(TargetFramework)/**/*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(RunnerOutput)" DestinationFiles="@(RunnerOutput->'$(OutDir)runner/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

@@ -1,10 +1,11 @@
 using System.Numerics;
+using System.Text.Json.Serialization;
 using Valdrio.Domain;
 
 namespace Valdrio.Application;
 
 public enum ImportSourceKind { Csv = 0, Xlsx = 1 }
-public enum ImportAmountMode { PeriodAmount = 0, ClosingBalance = 1, CumulativeExpenseDifference = 2 }
+public enum ImportAmountMode { PeriodAmount = 0, ClosingBalance = 1, CumulativeExpenseDifference = 2, ClosingBalanceAsStudyAmount = 3 }
 public enum ImportSignConvention { SignedAmount = 0, DebitMinusCredit = 1 }
 public enum ImportDuplicatePolicy { Reject = 0, AggregateWithProvenance = 1 }
 public enum ImportZeroPolicy { Keep = 0, Exclude = 1 }
@@ -170,6 +171,9 @@ public sealed record ImportProfileApproval
 public sealed record SourceParseProfileVersion
 {
     public const string CurrentSchema = "valdrio-source-parse-profile-v1";
+    public const string GroupingSchema = "valdrio-source-parse-profile-v2";
+    public const string ComparisonSchema = "valdrio-source-parse-profile-v3";
+    public const string InternationalSchema = "valdrio-source-parse-profile-v4";
 
     public SourceParseProfileVersion(
         string schemaVersion,
@@ -196,10 +200,13 @@ public sealed record SourceParseProfileVersion
         ImportProfileApproval approval,
         bool signConventionConfirmed,
         string? cultureTag = null,
-        XlsxNumericAccountPolicy xlsxNumericAccountPolicy = XlsxNumericAccountPolicy.Reject)
+        XlsxNumericAccountPolicy xlsxNumericAccountPolicy = XlsxNumericAccountPolicy.Reject,
+        ImportGroupingPlan? grouping = null,
+        ImportComparison? comparison = null,
+        ImportConversionPolicy? conversion = null)
     {
         id.EnsureValid();
-        if (schemaVersion != CurrentSchema || version < 1 || string.IsNullOrWhiteSpace(name) ||
+        if (schemaVersion is not (CurrentSchema or GroupingSchema or ComparisonSchema or InternationalSchema) || version < 1 || string.IsNullOrWhiteSpace(name) ||
             !Enum.IsDefined(sourceKind) || !Enum.IsDefined(amountMode) || !Enum.IsDefined(signConvention) ||
             !Enum.IsDefined(duplicatePolicy) || !Enum.IsDefined(zeroPolicy) ||
             !Enum.IsDefined(xlsxNumericAccountPolicy) ||
@@ -216,6 +223,18 @@ public sealed record SourceParseProfileVersion
         ArgumentNullException.ThrowIfNull(numberFormat);
         ArgumentNullException.ThrowIfNull(accountSelection);
         ArgumentNullException.ThrowIfNull(approval);
+        if ((schemaVersion is GroupingSchema or ComparisonSchema or InternationalSchema) != (grouping is not null) ||
+            grouping is not null && (duplicatePolicy != ImportDuplicatePolicy.AggregateWithProvenance ||
+                accountSelection.Kind != ImportAccountSelectionKind.All || zeroPolicy != ImportZeroPolicy.Keep))
+            throw ImportRules.Error("IMP_GROUPING_INVALID", "Import.GroupingInvalid");
+        Grouping = grouping;
+        if (schemaVersion != InternationalSchema && (schemaVersion == ComparisonSchema) != (comparison is not null) ||
+            comparison is not null && amountMode != ImportAmountMode.CumulativeExpenseDifference)
+            throw ImportRules.Error("IMP_COMPARISON_INVALID", "Import.ComparisonInvalid");
+        Comparison = comparison;
+        if ((schemaVersion == InternationalSchema) != (conversion is not null))
+            throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile");
+        Conversion = conversion;
 
         if (signConvention == ImportSignConvention.SignedAmount &&
             (columns.Amount is null || columns.Debit is not null || columns.Credit is not null) ||
@@ -223,7 +242,7 @@ public sealed record SourceParseProfileVersion
             (columns.Amount is not null || columns.Debit is null || columns.Credit is null))
             throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile");
 
-        var occupied = new[] { columns.Account, columns.Description ?? 0, columns.Amount ?? 0, columns.Debit ?? 0, columns.Credit ?? 0, currencyColumn ?? 0 }
+        var occupied = new[] { columns.Account, columns.Description ?? 0, columns.Amount ?? 0, columns.Debit ?? 0, columns.Credit ?? 0, currencyColumn ?? 0, conversion?.DateColumn ?? 0 }
             .Where(value => value != 0)
             .ToArray();
         if (occupied.Distinct().Count() != occupied.Length)
@@ -257,6 +276,9 @@ public sealed record SourceParseProfileVersion
     }
 
     public string SchemaVersion { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public ImportGroupingPlan? Grouping { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public ImportComparison? Comparison { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public ImportConversionPolicy? Conversion { get; }
     public EntityId Id { get; }
     public int Version { get; }
     public string Name { get; }

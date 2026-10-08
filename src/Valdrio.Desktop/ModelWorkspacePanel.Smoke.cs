@@ -46,6 +46,7 @@ public partial class ModelWorkspacePanel
 
         async Task Click(Button button)
         {
+            GuidedUi.Reveal(button);
             Check(button.IsEnabled, "enabled: " + button.Name);
             ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
             await Dispatcher.InvokeAsync(() =>
@@ -83,19 +84,22 @@ public partial class ModelWorkspacePanel
         Check(vm.Units.Count == 2, "unit selections loaded through port");
         Text(CenterCodeBox, "PRENSA-001");
         Text(CenterNameBox, "Prensa 日本");
-        await Click(CreateCenterButton);
+        await Click(SaveCenterButton);
         Text(CenterCodeBox, "MANT-001");
         Text(CenterNameBox, "Mantenimiento");
-        await Click(CreateCenterButton);
-        Check(vm.Centers.Count == 2, "physical masters saved");
+        await Click(SaveCenterButton);
+        Check(vm.Centers.Count == 2 && CenterGrid.Items.Count == 2, "physical masters saved and visibly listed");
+        Check(vm.Master is null && string.IsNullOrEmpty(vm.CenterCode) && string.IsNullOrEmpty(vm.CenterName), "center form clears after save");
         Text(CenterCodeBox, "MANT-001");
         Text(CenterNameBox, "Duplicate");
-        await Click(CreateCenterButton);
+        await Click(SaveCenterButton);
         Check(vm.Status.StartsWith("MODEL_DUPLICATE", StringComparison.Ordinal) && vm.Centers.Count == 2, "duplicate diagnostic shown without extra master");
-        Text(CenterNameBox, "Mantenimiento");
+        Text(CenterCodeBox, "");
+        Text(CenterNameBox, "");
         Text(DescriptionBox, "Industrial setup and process");
         await Click(NewDraftButton);
         Check(vm.Current?.Status == ModelStatus.Draft, "draft created");
+        Check(vm.Status == vm.Text("Model.StructureCreated"), "new structure has explicit saved feedback");
         async Task AddNode(string code, string physical, string unit, NodeRole role, string functions)
         {
             Text(NodeCodeBox, code);
@@ -110,14 +114,19 @@ public partial class ModelWorkspacePanel
         await AddNode("SETUP", "PRENSA-001", "lot", NodeRole.Principal, "production");
         await AddNode("PROCESO", "PRENSA-001", "h", NodeRole.Principal, "production");
         await AddNode("MANT", "MANT-001", "h", NodeRole.Auxiliary, "maintenance, production");
-        Check(vm.IsDirty && vm.Nodes.Count == 3, "three local nodes and homogeneous pools staged");
-        await Click(SaveModelButton);
-        Check(!vm.IsDirty && vm.Current!.Revision == 1, "draft committed with revision");
+        Check(!vm.IsDirty && vm.Nodes.Count == 3 && NodeSummary.Items.Count == 3, "three nodes saved immediately and visibly listed");
+        Check(string.IsNullOrEmpty(vm.NodeCode) && vm.SelectedNode is null, "node form clears after save");
         await Click(ValidateModelButton);
         Check(string.IsNullOrEmpty(vm.ValidationText), "structure validates through persistence");
         await Click(PublishModelButton);
         Check(vm.Current!.Status == ModelStatus.Published && !SaveModelButton.IsEnabled && !NodeEditor.IsEnabled && DescriptionBox.IsReadOnly, "published UI rejects edits");
         Check(NodeSummary.Items.Count == 3, "published nodes visibly listed");
+        Check(NodeSummary.Columns[0].Header.ToString() == vm.Text("Model.ColumnCenter") &&
+            vm.Nodes.Select(n => n.Node.Code).SequenceEqual(new[] { "MANT", "PROCESO", "SETUP" }), "physical centre first with deterministic centre and node ordering");
+        ModelSteps.SelectedIndex = 3; UpdateLayout();
+        Check(StructureReviewTree.Items.Count == 2 && vm.ReviewTree.Sum(c => c.Children.Count) == 3 &&
+            !vm.Details.Contains(vm.Current!.StructuralHash!, StringComparison.Ordinal), "review tree shows centres and all nodes without technical hash");
+        VisualEvidenceCapture.Capture(window, Path.Combine(output, "review-tree.png"));
         Check(window.RunSectionLayoutSmoke(), "main sections do not overlap");
         var original = vm.Current;
         var originalJson = original.PublishedCanonicalJson;
@@ -127,12 +136,15 @@ public partial class ModelWorkspacePanel
         Select(MasterBox, vm.Centers.Single(x => x.Value.Code == "PRENSA-001"));
         Text(CenterNameBox, "Renamed live master");
         await Click(SaveCenterButton);
+        Check(vm.Master is null && string.IsNullOrEmpty(vm.CenterCode), "edited center form clears after save");
+        Select(MasterBox, vm.Centers.Single(x => x.Value.Code == "PRENSA-001"));
         await Click(ToggleCenterButton);
         Check(vm.Current.PublishedCanonicalJson == originalJson && vm.HistoricalDefinitions.Contains("Prensa 日本", StringComparison.Ordinal), "master rename and deactivation preserve historical names");
         await Click(CloneModelButton);
         Check(vm.Current!.Status == ModelStatus.Draft && vm.Current.Structure.ParentVersionId == original.Structure.Id, "duplicate is editable with lineage");
         Check(!vm.Current.Structure.Nodes.Any(n => original.Structure.Nodes.Any(old => old.Id == n.Id)) && vm.Current.Structure.Pools.All(p => vm.Current.Structure.Nodes.Any(n => n.Id == p.NodeId)), "clone node IDs remapped");
         // Reactivate the master; its current name remains distinct from frozen publication.
+        Select(MasterBox, vm.Centers.Single(x => x.Value.Code == "PRENSA-001"));
         await Click(ToggleCenterButton);
         Text(DescriptionBox, "Clone editable");
         pending.Choices.Enqueue(PendingEditChoice.Cancel);
