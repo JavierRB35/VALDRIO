@@ -21,7 +21,8 @@ public sealed partial class SqliteCompanyFileService
         ResourceChanges(db, companyId, studyId).LastOrDefault(r => r.ConfirmedStudy.Revision <= revision)?.Ledger ?? ResourceLedger.Empty;
     private static ResourceWorkspaceSnapshot ResourceWorkspace(ResourceDbContext db, CompanyFileSnapshot file, StudyDefinition study) =>
         new(study, file.PrecisionPolicy, RequiredPublication(db, file.Id, study.SelectedModelVersionId),
-            ResourceOrigins.FromImports(study, Batches(db, file.Id, study.Id)), LedgerAt(db, file.Id, study.Id, study.Revision));
+            ResourceOrigins.FromImports(study, Batches(db, file.Id, study.Id)), LedgerAt(db, file.Id, study.Id, study.Revision),
+            ResourceHistory.EconomicRevision(study, Batches(db, file.Id, study.Id), ResourceChanges(db, file.Id, study.Id)));
 
     private sealed partial class Session
     {

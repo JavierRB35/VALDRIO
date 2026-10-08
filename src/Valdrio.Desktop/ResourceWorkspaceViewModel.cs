@@ -30,6 +30,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     private int stage;
     private CancellationTokenSource? cancellation;
     private IReadOnlyList<ResourceMutationReceipt> history = [];
+    private IReadOnlyList<AccountDescriptionChoice> accountDescriptions = [];
     private string? path;
     public ResourceWorkspaceViewModel(CompanyFileViewModel company, StudyWorkspaceViewModel studies, ICurrencyCatalog catalog,
         UiTextCatalog texts, PresentationPreferencesService preferences, IModelEditorDialogs dialogs)
@@ -135,7 +136,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
             return string.Format(Format, this["ProgressSummary"], reconciled, coverage.Count, pending, unexplained, pendingRoutes);
         }
     }
-    public string CurrentAccount => workspace is null || editing is null ? "" : workspace.Origins.Single(o => o.Id == editing.Id).Code;
+    public string CurrentAccount => workspace is null || editing is null ? "" : AccountLabel(workspace.Origins.Single(o => o.Id == editing.Id));
     public string SaveDestination => workspace is null ? "" : workspace.Study.Name + " · " + company.ActivePath;
     public string Reason { get => reason; set { if (SetProperty(ref reason, value) && !loading) { dirty = true; Refresh(); } } }
     public bool CultureChanged => !cultureAcknowledged && new[] { PartForm, AdjustmentForm, ObjectForm }.Concat(RevalueRows.Select(r => r.Form))
@@ -178,8 +179,8 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
         await Run(async token =>
         {
             var port = company.ActiveResources!;
-            var data = await Task.Run(() => (port.ReadResources(current.CompanyId, current.Id, token), port.ReadResourceHistory(current.CompanyId, current.Id, token)), token);
-            workspace = data.Item1; history = data.Item2; path = company.ActivePath; preview = workspace; editing = null; stage = 0;
+            var data = await Task.Run(() => (port.ReadResources(current.CompanyId, current.Id, token), port.ReadResourceHistory(current.CompanyId, current.Id, token), company.ActiveAllocations!.ReadAllocations(current.CompanyId, current.Id, token).Configuration.Descriptions), token);
+            workspace = data.Item1; history = data.Item2; accountDescriptions = data.Item3; path = company.ActivePath; preview = workspace; editing = null; stage = 0;
             statusKey = "Ready"; RebuildRows(); Refresh();
         });
     }
@@ -298,6 +299,13 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
         else preview = ResourceWorkspaceRules.Preview(workspace, EditCommand("Preview"));
         RebuildRows(); Refresh();
     }
+    private string AccountLabel(ResourceOrigin origin)
+    {
+        var chosen = accountDescriptions.SingleOrDefault(d => d.Account == origin.Code)?.Description;
+        return origin.Code + " — " + (chosen is not null && origin.Descriptions.Contains(chosen, StringComparer.Ordinal) ? chosen : origin.Descriptions.Count == 0
+            ? this["DescriptionMissing"] : origin.HasDescriptionConflict
+            ? this["DescriptionConflict"] + ": " + string.Join(" / ", origin.Descriptions) : origin.Descriptions[0]);
+    }
     private void RebuildRows()
     {
         var id = ResourceChoice?.Id; Rows.Clear();
@@ -307,8 +315,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
             var originals = string.Join(" + ", ResourceWorkspaceRules.OriginalTotals(resource, w.Precision).Select(MoneyText));
             Rows.Add(new(resource.Id, w.Origins.Single(o => o.Id == resource.Id).Code, originals, MoneyText(c.ConvertedOriginal),
                 MoneyText(c.AdjustmentTotal), MoneyText(c.Effective), MoneyText(c.Pending), MoneyText(c.Difference))
-                { Revision = w.Study.Revision, CorrectionNumber = c.AdjustmentTotal.Amount.ToString("0.########", Format), FormatCulture = Format.Name,
-                    AssignmentStatus = this[c.HasPendingParts ? "AssignmentPending" : "AssignmentComplete"] });
+                { DisplayName = AccountLabel(w.Origins.Single(o => o.Id == resource.Id)), Revision = w.Study.Revision, CorrectionNumber = c.AdjustmentTotal.Amount.ToString("0.########", Format), FormatCulture = Format.Name, AssignmentStatus = this[c.HasPendingParts ? "AssignmentPending" : "AssignmentComplete"] });
         }
         ResourceChoice = Rows.FirstOrDefault(r => r.Id == id) ?? Rows.FirstOrDefault();
         var oldPart = PartChoice?.Value.Id; Parts.Clear();

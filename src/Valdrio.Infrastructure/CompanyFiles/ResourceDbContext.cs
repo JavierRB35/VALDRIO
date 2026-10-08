@@ -2,7 +2,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Valdrio.Infrastructure.CompanyFiles.Migrations;
 namespace Valdrio.Infrastructure.CompanyFiles;
-internal sealed class ResourceDbContext(SqliteConnection connection) : ImportDbContext(connection)
+internal class ResourceDbContext(SqliteConnection connection) : ImportDbContext(connection)
 {
     public DbSet<ResourceChangeRow> ResourceChanges => Set<ResourceChangeRow>();
     protected override void OnModelCreating(ModelBuilder model) => V8Model.Configure(model);

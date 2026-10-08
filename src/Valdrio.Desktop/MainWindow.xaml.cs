@@ -17,7 +17,7 @@ public partial class MainWindow : Window
 
     public bool RunKeyboardNavigationSmoke()
     {
-        workflowStep = 5; UpdateWorkflow();
+        workflowStep = 6; UpdateWorkflow();
         DevelopmentTools.IsExpanded = true;
         UpdateLayout();
 

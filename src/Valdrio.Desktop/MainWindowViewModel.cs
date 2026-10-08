@@ -91,6 +91,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public ModelWorkspaceViewModel? Models { get; init; }
     public StudyWorkspaceViewModel? Studies { get; init; }
     public ResourceWorkspaceViewModel? Resources { get; init; }
+    public AllocationWorkspaceViewModel? Allocations { get; init; }
 
     public IReadOnlyList<string> UiLanguageOptions { get; }
     public IReadOnlyList<string> FormatCultureOptions { get; }
@@ -532,6 +533,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         Models?.RefreshPresentation(pseudoLocalizationEnabled);
         Studies?.RefreshPresentation(pseudoLocalizationEnabled);
         Resources?.RefreshPresentation(pseudoLocalizationEnabled);
+        Allocations?.RefreshPresentation(pseudoLocalizationEnabled);
         Studies?.ImportColumns?.RefreshPresentation(pseudoLocalizationEnabled);
         // Dirty edits retain their captured grammar; clean fields follow the selected region.
         if (fxEditSession is null)
