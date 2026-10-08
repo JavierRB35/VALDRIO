@@ -1140,4 +1140,16 @@ Difference to distribute: {7}</value></data>
   
 <data name="Import.SourceRowsReused" xml:space="preserve"><value>Source records {1} in {0} are already included in an active import. Exclude those records or explicitly replace the identified batch.</value></data>
 
+  <data name="AllocationUI.PrimaryTitle" xml:space="preserve"><value>Primary allocation by resource and node</value></data>
+  <data name="AllocationUI.PrimarySummary" xml:space="preserve"><value>{0} allocation lines · {1} uncovered parts · {2} pool totals ({3})</value></data>
+  <data name="AllocationUI.PrimaryReady" xml:space="preserve"><value>Each source is balanced at the internal ledger precision. Values are a preview, not a published run.</value></data>
+  <data name="AllocationUI.PrimaryIncomplete" xml:space="preserve"><value>Primary allocation is incomplete: resolve the uncovered parts before running a definitive allocation.</value></data>
+  <data name="AllocationUI.PrimarySource" xml:space="preserve"><value>Resource / account</value></data>
+  <data name="AllocationUI.PrimaryDestination" xml:space="preserve"><value>Destination node</value></data>
+  <data name="AllocationUI.PrimaryAmount" xml:space="preserve"><value>Posted amount</value></data>
+  <data name="AllocationUI.PrimaryRule" xml:space="preserve"><value>Applied rule / key</value></data>
+  <data name="AllocationUI.PrimaryAbsolute" xml:space="preserve"><value>Manual amount</value></data>
+  <data name="AllocationUI.PrimaryManual" xml:space="preserve"><value>Manual key</value></data>
+  <data name="AllocationUI.PrimaryRuleSource" xml:space="preserve"><value>Rule</value></data>
+  <data name="AllocationUI.PrimaryNotLoaded" xml:space="preserve"><value>Select an open study to inspect primary allocation.</value></data>
 </root>

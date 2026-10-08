@@ -348,6 +348,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
                 Coverage.Add(new(c.SourceId, source, item is null ? "" : MoneyText(item.Part.Amount), c.KeyId is { } id ? KeyLabel(workspace.Keys.Single(k => k.Id == id)) : c.Diagnostic is null ? this["Absolute"] : "—", status));
             }
         }
+        RebuildPrimary();
         SelectedKey = Keys.FirstOrDefault(k => k.Value.Id == keyId); Refresh();
     }
     private async Task<bool> Run(Func<Task> work)

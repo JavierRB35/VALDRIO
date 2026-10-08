@@ -1140,4 +1140,16 @@ Diferencia que falta repartir: {7}</value></data>
   
 <data name="Import.SourceRowsReused" xml:space="preserve"><value>Los registros {1} de {0} ya están incluidos en una importación vigente. Excluye esos registros o sustituye explícitamente el lote identificado.</value></data>
 
+  <data name="AllocationUI.PrimaryTitle" xml:space="preserve"><value>Reparto primario por recurso y nodo</value></data>
+  <data name="AllocationUI.PrimarySummary" xml:space="preserve"><value>{0} líneas de reparto · {1} partes sin cubrir · {2} totales de pool ({3})</value></data>
+  <data name="AllocationUI.PrimaryReady" xml:space="preserve"><value>Cada origen concilia a la precisión interna. Son resultados de previsualización, no una ejecución publicada.</value></data>
+  <data name="AllocationUI.PrimaryIncomplete" xml:space="preserve"><value>El reparto primario está incompleto: resuelve las partes sin cubrir antes de ejecutar un reparto definitivo.</value></data>
+  <data name="AllocationUI.PrimarySource" xml:space="preserve"><value>Recurso / cuenta</value></data>
+  <data name="AllocationUI.PrimaryDestination" xml:space="preserve"><value>Nodo de destino</value></data>
+  <data name="AllocationUI.PrimaryAmount" xml:space="preserve"><value>Importe adjudicado</value></data>
+  <data name="AllocationUI.PrimaryRule" xml:space="preserve"><value>Regla / clave aplicada</value></data>
+  <data name="AllocationUI.PrimaryAbsolute" xml:space="preserve"><value>Importe manual</value></data>
+  <data name="AllocationUI.PrimaryManual" xml:space="preserve"><value>Clave manual</value></data>
+  <data name="AllocationUI.PrimaryRuleSource" xml:space="preserve"><value>Regla</value></data>
+  <data name="AllocationUI.PrimaryNotLoaded" xml:space="preserve"><value>Selecciona un estudio abierto para consultar el reparto primario.</value></data>
 </root>
