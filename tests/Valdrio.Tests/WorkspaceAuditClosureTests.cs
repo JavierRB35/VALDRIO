@@ -513,6 +513,7 @@ public sealed partial class WorkspaceAuditClosureTests
         public IImportWorkspace Imports => Inner.Imports;
         public ICompanyFileSession Inner { get; }
         public IResourceWorkspace Resources => Inner.Resources;
+        public IAllocationWorkspace Allocations => Inner.Allocations;
         public string? FailAfterMethod { get; set; }
         public bool FailRead { get; set; }
         public int Writes { get; set; }

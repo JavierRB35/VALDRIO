@@ -48,7 +48,10 @@ public static class ResourceOrigins
                 var applied = new FxConverter().Convert(id.ToString(), original,
                     study.Currency.FunctionalCurrencyCode, conversion is null ? null : ResourceWorkspaceRules.Rate(conversion));
                 values.Add((targets?.GetValueOrDefault(row.RecordNumber) ?? row.Account!,
-                    new(id, batch.Id, row.RecordNumber, earlier, prepared.Source.FileName, applied)));
+                    new(id, batch.Id, row.RecordNumber, earlier, prepared.Source.FileName, applied,
+                        prepared.Profile.Columns.Description is { } column
+                            ? prepared.Source.Rows.Single(r => r.RecordNumber == row.RecordNumber).GetCell(column).TextValue : null,
+                        prepared.Profile.Columns.Description, prepared.Source.FileHash)));
             }
         }
     }

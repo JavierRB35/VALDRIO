@@ -32,6 +32,7 @@ public sealed record ResourceChoice<T>(T Value, string Label);
 public sealed record ResourceGridRow(EntityId Id, string Code, string Originals, string Converted, string Adjustments,
     string Effective, string Pending, string Difference)
 {
+    public string DisplayName { get; init; } = Code;
     public long Revision { get; init; }
     public string CorrectionNumber { get; init; } = "";
     public string FormatCulture { get; init; } = "es-ES";

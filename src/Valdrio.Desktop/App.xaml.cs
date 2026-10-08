@@ -17,7 +17,8 @@ public partial class App : System.Windows.Application
     private ModelWorkspaceViewModel? models;
     private ImportColumnMappingViewModel? importColumns;
     private ResourceWorkspaceViewModel? resources;
-    protected override void OnExit(ExitEventArgs e) { resources?.Dispose(); importColumns?.Dispose(); studies?.Dispose(); models?.Dispose(); company?.Dispose(); base.OnExit(e); }
+    private AllocationWorkspaceViewModel? allocations;
+    protected override void OnExit(ExitEventArgs e) { allocations?.Dispose(); resources?.Dispose(); importColumns?.Dispose(); studies?.Dispose(); models?.Dispose(); company?.Dispose(); base.OnExit(e); }
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -125,6 +126,7 @@ public partial class App : System.Windows.Application
         studies = new StudyWorkspaceViewModel(company, currencyCatalog, texts, preferences, formatter, modelDialogs)
             { ImportColumns = importColumns };
         resources = new ResourceWorkspaceViewModel(company, studies, currencyCatalog, texts, preferences, modelDialogs);
+        allocations = new AllocationWorkspaceViewModel(company, studies, texts, preferences, modelDialogs);
         var viewModel =
             new MainWindowViewModel(
                 texts,
@@ -135,7 +137,7 @@ public partial class App : System.Windows.Application
                 currencyMetadataExampleService,
                 temporalContractExampleService,
                 fxConversionExampleService,
-                preferencesPersistence) { Company = company, Models = models, Studies = studies, Resources = resources };
+                preferencesPersistence) { Company = company, Models = models, Studies = studies, Resources = resources, Allocations = allocations };
 
         if (!viewModel.TryLoadDevelopmentSample(
                 samplePath,
@@ -181,7 +183,7 @@ public partial class App : System.Windows.Application
             }
         };
 
-        if (requestedPath?.EndsWith(".valdrio", StringComparison.OrdinalIgnoreCase) == true)
+        if (captureDirectory is null && requestedPath?.EndsWith(".valdrio", StringComparison.OrdinalIgnoreCase) == true)
             Dispatcher.BeginInvoke(new Action(async () => await company.OpenPath(requestedPath)));
 
         if (captureDirectory is not null)
@@ -193,6 +195,13 @@ public partial class App : System.Windows.Application
                     {
                         try
                         {
+                        if (e.Args.Contains("--allocation-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("Allocation capture requires a disposable project copy.");
+                            await company.OpenPath(requestedPath);
+                            await window.RunAllocationChecks(captureDirectory);
+                            Shutdown(0); return;
+                        }
                         await window.CompanyPanel.RunCompanyInteractionChecks(captureDirectory,
                             (QueuedCompanyFileDialogs)companyDialogs, viewModel);
                         await window.ModelPanel.RunModelInteractionChecks(captureDirectory,
@@ -212,6 +221,7 @@ public partial class App : System.Windows.Application
                         importWindow.Close();
                         await window.RunGuidedWorkflowChecks(captureDirectory, (QueuedCompanyFileDialogs)companyDialogs, (QueuedImportSourceDialogs)importDialogs);
                         await window.RunResourceChecks(captureDirectory);
+                        await window.RunAllocationChecks(captureDirectory);
                         await window.RunVisualShellChecks(captureDirectory);
                         CaptureVisualEvidence(
                             window,

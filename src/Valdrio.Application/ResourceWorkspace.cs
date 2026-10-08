@@ -8,8 +8,14 @@ public enum ResourceObjectKind { Product, Service, Order, Other }
 public sealed record ResourceCostObject(EntityId Id, EntityId CompanyId, EntityId StudyId,
     string Code, string Name, ResourceObjectKind Kind);
 public sealed record ResourceOriginRow(EntityId Id, EntityId BatchId, int RecordNumber, bool Earlier,
-    string FileName, FxRateApplication Conversion);
-public sealed record ResourceOrigin(EntityId Id, string Code, IReadOnlyList<ResourceOriginRow> Rows);
+    string FileName, FxRateApplication Conversion, string? Description = null, int? DescriptionColumn = null, string? FileHash = null);
+public sealed record ResourceOrigin(EntityId Id, string Code, IReadOnlyList<ResourceOriginRow> Rows)
+{
+    // Semantic projection uses the explicitly saved column map, never a guessed header.
+    [JsonIgnore] public IReadOnlyList<string> Descriptions => FrozenList.Copy(Rows.Select(r => r.Description)
+        .Where(d => !string.IsNullOrWhiteSpace(d)).Select(d => d!).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal));
+    [JsonIgnore] public bool HasDescriptionConflict => Descriptions.Count > 1;
+}
 public sealed record ResourceAdjustmentRequest(EntityId Id, Money? OriginalDelta, FxRate? Rate,
     string Type, string Reason, EntityId? ReversalOfId, CurrencyMetadataSnapshot? CurrencyMetadata);
 public sealed record ResourceRateChoice(EntityId ValueId, FxRateId RateId);
@@ -75,9 +81,10 @@ public interface IResourceWorkspace
 public sealed class ResourceWorkspaceSnapshot
 {
     public ResourceWorkspaceSnapshot(StudyDefinition study, PrecisionPolicy precision, PublishedModelStructure model,
-        IReadOnlyList<ResourceOrigin> origins, ResourceLedger ledger)
+        IReadOnlyList<ResourceOrigin> origins, ResourceLedger ledger, long economicRevision = -1)
     {
         Study = study; Precision = precision; Model = model; Origins = FrozenList.Copy(origins); Ledger = ledger;
+        EconomicRevision = economicRevision < 0 ? study.Revision : economicRevision;
         if (study.CompanyId != model.Structure.CompanyId || study.SelectedModelVersionId != model.Structure.Id ||
             precision.Version != model.Structure.PrecisionPolicyVersion)
             throw ResourceWorkspaceRules.Error("RES_SCOPE_INVALID", "Resource.ScopeInvalid");
@@ -85,6 +92,7 @@ public sealed class ResourceWorkspaceSnapshot
         Preparation = ResourcePreparationRules.Prepare(Resources, study.Currency.FunctionalCurrencyCode, precision);
         ResourceWorkspaceRules.ValidateScope(this);
     }
+    [JsonIgnore] public long EconomicRevision { get; }
     public StudyDefinition Study { get; }
     public PrecisionPolicy Precision { get; }
     public PublishedModelStructure Model { get; }

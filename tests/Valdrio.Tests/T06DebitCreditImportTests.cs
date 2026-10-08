@@ -303,7 +303,7 @@ public sealed class T06DebitCreditImportTests
         var oldBatch = Query(path, "SELECT CanonicalJson FROM ImportBatches"); var oldPhotos = Query(path, "SELECT group_concat(CanonicalJson) FROM StudySnapshots ORDER BY Id");
         using (var file = Service().Upgrade(path, Path.Combine(directory, "upgraded-period.valdrio"), "test"))
         {
-            Assert.AreEqual(8, file.Read().SchemaVersion); var batches = file.Studies.ReadStudies().SelectMany(s => file.Imports.ReadImports(s.CompanyId, s.Id)).ToArray();
+            Assert.AreEqual(9, file.Read().SchemaVersion); var batches = file.Studies.ReadStudies().SelectMany(s => file.Imports.ReadImports(s.CompanyId, s.Id)).ToArray();
             Assert.AreEqual(1, batches.Length); Assert.AreEqual(ImportSignConvention.SignedAmount, batches[0].Prepared.Profile.SignConvention);
             Assert.AreEqual(oldBatch, CanonicalSnapshotJson.Serialize(batches[0])); Assert.AreEqual(2, batches[0].Resources.Count);
             var snapshots = file.Studies.ReadStudies().SelectMany(s => file.Studies.ReadSnapshots(s.CompanyId, s.Id)).ToArray();
@@ -384,3 +384,4 @@ public sealed class T06DebitCreditImportTests
         Assert.AreEqual(photo.EconomicInputHash, json.RootElement.GetProperty("EconomicInputHash").GetString());
     }
 }
+

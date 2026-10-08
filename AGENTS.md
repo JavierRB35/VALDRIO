@@ -91,3 +91,7 @@ workflows de compilación y validación no deben activarse automáticamente por 
 pull request, calendario, otros workflows ni eventos equivalentes. No reactivar
 estos disparadores ni añadir otros que generen compilaciones remotas automáticas
 sin una nueva instrucción expresa del propietario.
+
+## Requisito obligatorio de cuentas para T08
+
+Antes de modificar importación, recursos o reglas, leer [T08-CUENTA-01](docs/directrices/T08_CUENTAS_DESCRIPCION.md). El propietario autoriza el 2026-10-08 completar T08 y sus dependencias, conservando código textual, ceros iniciales, descripciones y procedencia. No basta con preservar celdas originales: comprobar selección, interpretación, reapertura y consumo real.

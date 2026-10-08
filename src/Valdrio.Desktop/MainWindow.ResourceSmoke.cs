@@ -70,7 +70,10 @@ public partial class MainWindow
         Check(vm.Rows.Count == 1 && vm.Rows.Single().Code == "6000", "account appears with converted original and pending coverage");
         Check(panel.ResourceGrid.Columns.Where(c => c != panel.CorrectionsColumn).All(c => c.IsReadOnly), "only correction column allows editing");
         GuidedUi.Reveal(panel.ResourceGrid);
-        Check(WorkflowNext.Visibility == Visibility.Collapsed, "correction table has no footer advance into optional destinations");
+        Check(WorkflowNext.Visibility == Visibility.Visible && WorkflowNext.Content.ToString() == main.Guide("ContinueAllocations"), "correction table continues explicitly to T08, never into optional destinations");
+        await AdvanceWorkflow();
+        Check(workflowStep == 5 && !vm.ShowParts, "continue opens allocation keys without creating or opening a resource part");
+        await NavigateWorkflow(4);
         panel.ResourceGrid.ScrollIntoView(vm.Rows.Single(), panel.CorrectionsColumn);
         await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         var cellContent = panel.CorrectionsColumn.GetCellContent(vm.Rows.Single());

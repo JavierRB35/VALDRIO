@@ -28,7 +28,7 @@ public partial class MainWindow
             return bounds.Left >= -1 && bounds.Top >= -1 && bounds.Right <= ActualWidth + 1 && bounds.Bottom <= ActualHeight + 1;
         }
         async Task Idle() => await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
-        Button[] navigation = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, SettingsStep];
+        Button[] navigation = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, AllocationsStep, SettingsStep];
         var main = viewModel!;
         var originalWidth = Width;
         var originalHeight = Height;
@@ -69,7 +69,7 @@ public partial class MainWindow
             }
             ShellLayout.LayoutTransform = Transform.Identity;
             main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", true, true);
-            await NavigateWorkflow(5); await Idle();
+            await NavigateWorkflow(6); await Idle();
             Check(Inside(Sidebar) && Inside(WorkflowBack) && RootScrollViewer.ViewportHeight > 80,
                 "pseudo RTL retains sidebar, footer and work area");
             VisualEvidenceCapture.Capture(this, Path.Combine(output, "pseudo-rtl.png"));
