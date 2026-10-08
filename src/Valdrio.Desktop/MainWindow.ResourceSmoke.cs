@@ -70,13 +70,19 @@ public partial class MainWindow
         Check(vm.Rows.Count == 1 && vm.Rows.Single().Code == "6000", "account appears with converted original and pending coverage");
         Check(panel.ResourceGrid.Columns.Where(c => c != panel.CorrectionsColumn).All(c => c.IsReadOnly), "only correction column allows editing");
         GuidedUi.Reveal(panel.ResourceGrid);
-        panel.ResourceGrid.CurrentCell = new DataGridCellInfo(vm.Rows.Single(), panel.CorrectionsColumn);
-        Check(panel.ResourceGrid.BeginEdit(), "correction cell enters native edit mode");
+        Check(WorkflowNext.Visibility == Visibility.Collapsed, "correction table has no footer advance into optional destinations");
+        panel.ResourceGrid.ScrollIntoView(vm.Rows.Single(), panel.CorrectionsColumn);
         await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         var cellContent = panel.CorrectionsColumn.GetCellContent(vm.Rows.Single());
-        var correctionBox = CorrectionEditor(cellContent!);
-        Check(correctionBox is not null, "correction editor is a keyboard-accessible text box");
-        correctionBox!.Text = "-100";
+        cellContent!.RaiseEvent(new System.Windows.Input.MouseButtonEventArgs(System.Windows.Input.Mouse.PrimaryDevice, 0, System.Windows.Input.MouseButton.Left)
+            { RoutedEvent = System.Windows.Input.Mouse.PreviewMouseDownEvent });
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+        var correctionBox = CorrectionEditor(panel.CorrectionsColumn.GetCellContent(vm.Rows.Single())!);
+        Check(correctionBox is not null, "one click opens keyboard-accessible correction editor");
+        Check(correctionBox!.Text == "0" && correctionBox.SelectionLength == correctionBox.Text.Length,
+            "one click selects the full zero value for replacement");
+        correctionBox.SelectedText = "-100";
+        Check(correctionBox.Text == "-100", "typing replaces the selected zero rather than appending");
         panel.ResourceGrid.CommitEdit(DataGridEditingUnit.Cell, true);
         await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         if (panel.CorrectionSaveTask is { } save) Check(await save, "leaving the cell saves correction automatically");
@@ -104,6 +110,16 @@ public partial class MainWindow
         ResetScrollForCapture(); VisualEvidenceCapture.Capture(this, Path.Combine(output, "inline-corrections-es.png"));
         await Click(panel.OpenSelectedResourceButton);
         Check(vm.Stage == 2 && panel.ResourceGrid.IsVisible, "destinations open below the same account table without adjustment screen");
+        Check(panel.BackToCorrectionsButton.IsVisible, "destinations provide explicit return to Corrections");
+        Check(WorkflowBack.IsVisible && (string)WorkflowBack.Content == vm["BackToCorrectionsButton"],
+            "fixed navigation always names return to Corrections while editing destinations");
+        await Click(panel.BackToCorrectionsButton);
+        Check(vm.Stage == 0 && vm.CanEditCorrections, "return closes destinations and restores editable corrections");
+        await Click(panel.OpenSelectedResourceButton);
+        Check(vm.Parts.Count == 1 && vm.Parts.Single().Value.Routing == ResourceRoutingKind.Pending,
+            "opening optional destinations shows initial pending part without adding a new cost");
+        Check(vm.Pools.All(p => p.Label.Contains("Centro") && p.Label.Contains("Nodo") && p.Label.Contains("Unidad de actividad")),
+            "pool popup choices identify centre node role and activity unit");
         vm.PartChoice = vm.Parts.Single(); await Click(panel.LoadPartButton);
         Text(panel.PartForm_AmountBox, "300"); Select(panel.PartForm_RouteBox, ResourceRoutingKind.DirectObject);
         Text(panel.ObjectForm_CodeBox, "PROD"); Text(panel.ObjectForm_NameBox, "Producto de prueba"); Select(panel.ObjectKindBox, ResourceObjectKind.Product);
@@ -114,6 +130,13 @@ public partial class MainWindow
         Text(panel.PartForm_MinimumBox, "0"); Text(panel.PartForm_MaximumBox, "100"); Select(panel.PartForm_LayerBox, ResourceCostLayer.Production);
         await Click(panel.ApplyPartButton);
         Text(panel.PartForm_AmountBox, "500"); Select(panel.PartForm_RouteBox, ResourceRoutingKind.AllocationPool); Select(panel.PartForm_PoolIdBox, vm.Pools.First().Value);
+        GuidedUi.Reveal(panel.PartForm_PoolIdBox);
+        panel.PartForm_PoolIdBox.IsDropDownOpen = true;
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+        var poolPopup = panel.PartForm_PoolIdBox.Template.FindName("PART_Popup", panel.PartForm_PoolIdBox) as System.Windows.Controls.Primitives.Popup;
+        Check(poolPopup is { IsOpen: true, Child: FrameworkElement }, "pool choices render in the actual dropdown");
+        VisualEvidenceCapture.Capture((FrameworkElement)poolPopup!.Child, Path.Combine(output, "pool-choices-es.png"));
+        panel.PartForm_PoolIdBox.IsDropDownOpen = false;
         Select(panel.PartForm_BehaviorBox, ResourceBehavior.Variable); Select(panel.PartForm_UnitIdBox, vm.Units.Single().Value);
         Text(panel.PartForm_MinimumBox, "0"); Text(panel.PartForm_MaximumBox, "100"); Select(panel.PartForm_LayerBox, ResourceCostLayer.Production);
         Select(panel.PartForm_CapacityBox, ResourceCapacityTreatment.AssessAtPool); Text(panel.PartForm_NormalBox, "100"); Text(panel.PartForm_ActualBox, "90");

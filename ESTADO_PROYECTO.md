@@ -1,5 +1,14 @@
 # ESTADO_PROYECTO
 
+## T07: volver a Correcciones y seleccionar el importe — 2026-10-08
+
+Destinos se abre con su botón explícito; la barra fija y el editor permiten cerrar
+los destinos y volver a Correcciones, resolviendo los borradores sin ocultarlos.
+Un clic selecciona todo el importe para sustituirlo al escribir. Se explica la
+fila pendiente inicial y el combo identifica centro, nodo, papel, pool, unidad y
+funciones. [Evidencia](docs/evidencias/T07_RETORNO_Y_EDICION_2026-10-08.md).
+
+
 ## T07: correcciones en tabla y guardado automático — 2026-10-08
 
 La columna Correcciones es la única editable, siempre en moneda del análisis. El

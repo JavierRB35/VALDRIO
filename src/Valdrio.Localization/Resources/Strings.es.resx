@@ -640,7 +640,7 @@ Completa: {5}</value></data>
 <data name="Resource.PartNotFound" xml:space="preserve"><value>Selecciona una parte existente y única de este recurso.</value></data>
   <data name="Resources.Title" xml:space="preserve"><value>Recursos</value></data>
   <data name="Resources.Introduction" xml:space="preserve"><value>Modifica Correcciones directamente en la tabla. El saldo importado se conserva y cada cambio confirmado en la celda se guarda automáticamente. La clasificación y los destinos están disponibles debajo de la tabla.</value></data>
-  <data name="Resources.Ready" xml:space="preserve"><value>Selecciona una cuenta de la tabla y pulsa «Revisar / ajustar cuenta».</value></data>
+  <data name="Resources.Ready" xml:space="preserve"><value>Edita Correcciones en la tabla. La clasificación y los destinos son opcionales y se abren únicamente con su botón.</value></data>
   <data name="Resources.NeedStudy" xml:space="preserve"><value>Guarda o carga un estudio en el paso 3 para preparar sus recursos.</value></data>
   <data name="Resources.NeedImport" xml:space="preserve"><value>Primero importa y guarda datos contables en el análisis. Al terminar la importación, VALDRIO te traerá directamente aquí.</value></data>
   <data name="Resources.ReadOnly" xml:space="preserve"><value>El archivo está abierto para consulta. Ábrelo en modo edición para guardar cambios.</value></data>
@@ -655,7 +655,7 @@ Completa: {5}</value></data>
   <data name="Resources.AdjustmentStep" xml:space="preserve"><value>Correcciones del importe</value></data>
   <data name="Resources.AdjustmentHelp" xml:space="preserve"><value>Si el importe importado necesita una corrección, añade aquí la diferencia: un valor positivo aumenta el importe y uno negativo lo reduce. El saldo original no se modifica ni se borra; la corrección queda registrada con su motivo. Para deshacer una corrección anterior, selecciónala y pulsa Revertir.</value></data>
   <data name="Resources.PartsStep" xml:space="preserve"><value>Distribuir o excluir el importe</value></data>
-  <data name="Resources.PartsHelp" xml:space="preserve"><value>Decide qué hacer con el importe efectivo de esta cuenta. Puedes asignarlo directamente, enviarlo a un grupo de costes, excluir una parte del análisis o dejarla pendiente. Si divides la cuenta, la suma de todas las partes debe coincidir exactamente con el importe efectivo.</value></data>
+  <data name="Resources.PartsHelp" xml:space="preserve"><value>Destinos opcionales de la cuenta indicada abajo. Estos cambios se guardan por separado de las correcciones. Usa Cerrar destinos y volver a Correcciones para volver a editar saldos.</value></data>
   <data name="Resources.ReviewStep" xml:space="preserve"><value>Comprobar destinos</value></data>
   <data name="Resources.ReviewHelp" xml:space="preserve"><value>Comprueba que el importe efectivo queda completamente explicado entre asignaciones, exclusiones y pendientes. La diferencia debe ser cero antes de guardar.</value></data>
   <data name="Resources.Coverage" xml:space="preserve"><value>Original convertido: {0} · Ajustes: {1} · Efectivo: {2}
@@ -818,7 +818,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.Help.Resource.PendingRemainder" xml:space="preserve"><value>Añadir la diferencia como pendiente</value></data>
   <data name="Guide.Help.Resource.Refresh" xml:space="preserve"><value>Actualizar recursos guardados</value></data>
   <data name="Guide.Help.Resource.ObjectKind" xml:space="preserve"><value>Un objeto es aquello cuyo coste quieres conocer: un producto, servicio, orden u otro destino. Su código lo identifica dentro de este estudio. Guárdalo y selecciónalo como destino de la parte.</value></data>
-  <data name="Guide.Help.Resource.Pool" xml:space="preserve"><value>El pool reúne costes que se repartirán después. Elige uno de tu modelo publicado; el papel principal o auxiliar de su nodo no determina el comportamiento del coste.</value></data>
+  <data name="Guide.Help.Resource.Pool" xml:space="preserve"><value>Cada opción identifica el centro físico, nodo, papel, descripción del pool, unidad de actividad y funciones de la estructura publicada. Selecciona el destino que recibe realmente este coste; no se deduce ningún reparto.</value></data>
   <data name="Guide.Help.Resource.Object" xml:space="preserve"><value>Un objeto es aquello cuyo coste quieres conocer: un producto, servicio, orden u otro destino. Su código lo identifica dentro de este estudio. Guárdalo y selecciónalo como destino de la parte.</value></data>
   <data name="Guide.Help.Resource.Maximum" xml:space="preserve"><value>Fijo y variable se definen respecto a una actividad, un intervalo de fechas y un rango. Estos datos explican el criterio; no se deducen del centro ni de la cuenta.</value></data>
   <data name="Guide.Help.Resource.SaveRevalue" xml:space="preserve"><value>Guardar toda la revalorización</value></data>
@@ -994,9 +994,15 @@ Diferencia que falta repartir: {7}</value></data>
 <data name="Guide.SaveReady" xml:space="preserve"><value>Revisión aprobada. Guarda la importación para continuar a los ajustes de cuentas.</value></data>
   <data name="Guide.Help.RefreshModel" xml:space="preserve"><value>Vuelve a leer los datos guardados. No guarda el formulario pendiente ni descarta sus cambios.</value></data>
   <data name="Guide.Help.Resource.Corrections" xml:space="preserve"><value>Escribe la corrección total en la moneda del análisis. No hace falta un botón de guardar. Los originales y las correcciones anteriores se conservan en el historial.</value></data>
-  <data name="Resources.CorrectionHelp" xml:space="preserve"><value>Las correcciones se expresan en {0}. Intro, Tab o salir de la celda guarda el cambio. Para dejar la corrección total a cero, escribe 0. Escape cancela.</value></data>
+  <data name="Resources.CorrectionHelp" xml:space="preserve"><value>Las correcciones se expresan en {0}. Haz clic en la celda: se selecciona todo el importe, incluido el cero. Escribe para sustituirlo. Intro, Tab o salir de la celda guarda; Escape cancela.</value></data>
   <data name="Resources.CorrectionNotSaved" xml:space="preserve"><value>La corrección no se ha guardado. La tabla conserva el importe anterior guardado. Corrige el valor y vuelve a intentarlo.</value></data>
   <data name="Resources.CorrectionSaved" xml:space="preserve"><value>Corrección guardada en el análisis y archivo del proyecto indicados. Importe efectivo y pendiente de asignar actualizados.</value></data>
   <data name="Resources.CorrectionUnchanged" xml:space="preserve"><value>La corrección ya tiene ese valor. No se ha guardado un ajuste adicional.</value></data>
-  <data name="Resources.CorrectionDraftBlocked" xml:space="preserve"><value>Guarda o descarta los cambios pendientes de destinos antes de editar Correcciones. Finaliza o cancela cualquier revaloración.</value></data>
+  <data name="Resources.CorrectionDraftBlocked" xml:space="preserve"><value>Hay cambios de destinos sin guardar. Pulsa Cerrar destinos y volver a Correcciones y elige guardar o descartar. Finaliza o cancela cualquier revaloración.</value></data>
+  <data name="Resources.InitialPendingHelp" xml:space="preserve"><value>VALDRIO deja inicialmente el importe importado como Pendiente de decidir. Esa fila inicial se crea automáticamente; no es un coste nuevo. Cada fila de abajo representa una parte de esta cuenta. Distribuir es opcional: vuelve a Correcciones si solo quieres corregir saldos.</value></data>
+  <data name="Resources.BackToCorrectionsButton" xml:space="preserve"><value>Cerrar destinos y volver a Correcciones</value></data>
+  <data name="Resources.BackToCorrections" xml:space="preserve"><value>Destinos cerrados. Ya puedes editar Correcciones en la tabla.</value></data>
+  <data name="Resources.PoolWithoutDescription" xml:space="preserve"><value>Pool sin descripción</value></data>
+  <data name="Resources.PoolChoice" xml:space="preserve"><value>Centro {0} | Nodo {1} ({2}) | {3} | Unidad de actividad {4} | Funciones: {5}</value></data>
+  <data name="Guide.Help.Resource.BackToCorrections" xml:space="preserve"><value>Cierra este editor opcional de la cuenta y vuelve a la tabla de correcciones. Si hay cambios de destinos sin guardar, elige guardar, descartar o cancelar; las correcciones guardadas se conservan.</value></data>
 </root>

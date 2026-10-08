@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 namespace Valdrio.Desktop;
@@ -23,6 +25,45 @@ public partial class ResourceWorkspacePanel : UserControl
         RefreshHeaders();
     }
     private void Changed(object? sender, PropertyChangedEventArgs e) => RefreshHeaders();
+    private static T? Ancestor<T>(DependencyObject? source) where T : DependencyObject
+    {
+        while (source is not null)
+        {
+            if (source is T found) return found;
+            source = source is System.Windows.Media.Visual or System.Windows.Media.Media3D.Visual3D ?
+                VisualTreeHelper.GetParent(source) : LogicalTreeHelper.GetParent(source);
+        }
+        return null;
+    }
+    private void SelectCorrectionCell(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton != MouseButton.Left) return;
+        var cell = Ancestor<DataGridCell>(e.OriginalSource as DependencyObject);
+        if (cell?.Column != CorrectionsColumn || cell.IsEditing || vm?.CanEditCorrections != true) return;
+        var row = Ancestor<DataGridRow>(cell);
+        if (row is null) return;
+        ResourceGrid.SetCurrentValue(DataGrid.SelectedItemProperty, row.Item);
+        ResourceGrid.CurrentCell = new(row.Item, CorrectionsColumn);
+        cell.Focus(); ResourceGrid.BeginEdit();
+        e.Handled = true;
+    }
+    private void PrepareCorrection(object sender, DataGridPreparingCellForEditEventArgs e)
+    {
+        if (e.Column != CorrectionsColumn) return;
+        var box = FindTextBox(e.EditingElement);
+        if (box is null) return;
+        box.Focus(); box.SelectAll();
+    }
+    private void TypeCorrection(object sender, TextCompositionEventArgs e)
+    {
+        if (ResourceGrid.CurrentColumn != CorrectionsColumn || vm?.CanEditCorrections != true ||
+            e.OriginalSource is TextBox) return;
+        if (!ResourceGrid.BeginEdit()) return;
+        if (ResourceGrid.CurrentItem is not ResourceGridRow row) return;
+        var box = FindTextBox(CorrectionsColumn.GetCellContent(row));
+        if (box is null) return;
+        box.SelectAll(); box.SelectedText = e.Text; box.CaretIndex = box.Text.Length; e.Handled = true;
+    }
     private void BeginCorrection(object sender, DataGridBeginningEditEventArgs e)
     {
         if (e.Column != CorrectionsColumn || vm?.CanEditCorrections != true || e.Row.Item is not ResourceGridRow row)
@@ -45,8 +86,9 @@ public partial class ResourceWorkspacePanel : UserControl
         CorrectionSaveTask = editor.SaveCorrectionAsync(row, text, culture);
         await CorrectionSaveTask;
     }
-    private static TextBox? FindTextBox(System.Windows.DependencyObject element)
+    private static TextBox? FindTextBox(System.Windows.DependencyObject? element)
     {
+        if (element is null) return null;
         if (element is TextBox box) return box;
         for (var i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
             if (FindTextBox(VisualTreeHelper.GetChild(element, i)) is { } child) return child;

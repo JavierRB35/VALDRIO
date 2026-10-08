@@ -640,7 +640,7 @@ Full: {5}</value></data>
 <data name="Resource.PartNotFound" xml:space="preserve"><value>Select one existing part of this resource.</value></data>
   <data name="Resources.Title" xml:space="preserve"><value>Resources</value></data>
   <data name="Resources.Introduction" xml:space="preserve"><value>Edit Corrections directly in the table. The imported balance is preserved and each confirmed cell change is saved automatically. Classification and destinations are available below the table.</value></data>
-  <data name="Resources.Ready" xml:space="preserve"><value>Select an account in the table and click “Review / adjust account”.</value></data>
+  <data name="Resources.Ready" xml:space="preserve"><value>Edit Corrections in the table. Classification and destinations are optional and open only through their button.</value></data>
   <data name="Resources.NeedStudy" xml:space="preserve"><value>Save or load a study in step 3 to prepare its resources.</value></data>
   <data name="Resources.NeedImport" xml:space="preserve"><value>First import and save accounting data in the analysis. When the import finishes, VALDRIO will take you directly here.</value></data>
   <data name="Resources.ReadOnly" xml:space="preserve"><value>The file is open for viewing. Open it for editing to save changes.</value></data>
@@ -655,7 +655,7 @@ Full: {5}</value></data>
   <data name="Resources.AdjustmentStep" xml:space="preserve"><value>Amount corrections</value></data>
   <data name="Resources.AdjustmentHelp" xml:space="preserve"><value>If the imported amount needs correction, enter the difference here: a positive value increases it and a negative value reduces it. The original balance is never edited or deleted; the correction is recorded with its reason. To undo an earlier correction, select it and click Reverse.</value></data>
   <data name="Resources.PartsStep" xml:space="preserve"><value>Distribute or exclude the amount</value></data>
-  <data name="Resources.PartsHelp" xml:space="preserve"><value>Decide what to do with this account’s effective amount. Assign it directly, send it to a cost group, exclude part of it from the analysis, or leave it pending. If you split the account, all parts must add up exactly to the effective amount.</value></data>
+  <data name="Resources.PartsHelp" xml:space="preserve"><value>Optional destinations for the account shown below. These changes are saved separately from corrections. Use Close destinations and return to Corrections to edit balances again.</value></data>
   <data name="Resources.ReviewStep" xml:space="preserve"><value>Check destinations</value></data>
   <data name="Resources.ReviewHelp" xml:space="preserve"><value>Check that the effective amount is fully explained by assignments, exclusions, and pending parts. The difference must be zero before saving.</value></data>
   <data name="Resources.Coverage" xml:space="preserve"><value>Converted original: {0} · Adjustments: {1} · Effective: {2}
@@ -818,7 +818,7 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.Help.Resource.PendingRemainder" xml:space="preserve"><value>Add difference as pending</value></data>
   <data name="Guide.Help.Resource.Refresh" xml:space="preserve"><value>Refresh saved resources</value></data>
   <data name="Guide.Help.Resource.ObjectKind" xml:space="preserve"><value>An object is what you want to measure costs for: a product, service, order or another destination. Its code identifies it within this study. Save it and select it as the part’s destination.</value></data>
-  <data name="Guide.Help.Resource.Pool" xml:space="preserve"><value>A pool groups costs for later distribution. Choose one from your published model; its node’s principal or auxiliary role does not determine cost behavior.</value></data>
+  <data name="Guide.Help.Resource.Pool" xml:space="preserve"><value>Each option identifies the physical centre, node, role, pool description, activity unit and functions from the published structure. Select the destination that actually receives this cost; no allocation is inferred.</value></data>
   <data name="Guide.Help.Resource.Object" xml:space="preserve"><value>An object is what you want to measure costs for: a product, service, order or another destination. Its code identifies it within this study. Save it and select it as the part’s destination.</value></data>
   <data name="Guide.Help.Resource.Maximum" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
   <data name="Guide.Help.Resource.SaveRevalue" xml:space="preserve"><value>Save complete revaluation</value></data>
@@ -994,9 +994,15 @@ Difference to distribute: {7}</value></data>
 <data name="Guide.SaveReady" xml:space="preserve"><value>Review approved. Save the import to continue to account adjustments.</value></data>
   <data name="Guide.Help.RefreshModel" xml:space="preserve"><value>Reads saved data again. Does not save or discard pending form changes.</value></data>
   <data name="Guide.Help.Resource.Corrections" xml:space="preserve"><value>Enter the total correction in the analysis currency. No save button is needed. Original amounts and earlier corrections remain in history.</value></data>
-  <data name="Resources.CorrectionHelp" xml:space="preserve"><value>Corrections are in {0}. Enter, Tab or leaving the cell saves the change. To remove the total correction, enter 0. Escape cancels.</value></data>
+  <data name="Resources.CorrectionHelp" xml:space="preserve"><value>Corrections are in {0}. Click the cell: its full value is selected, including zero. Type to replace it. Enter, Tab or leaving the cell saves; Escape cancels.</value></data>
   <data name="Resources.CorrectionNotSaved" xml:space="preserve"><value>The correction was not saved. The table still shows the previous saved amount. Correct the value and try again.</value></data>
   <data name="Resources.CorrectionSaved" xml:space="preserve"><value>Correction saved in the displayed analysis and project file. Effective amount and pending allocation updated.</value></data>
   <data name="Resources.CorrectionUnchanged" xml:space="preserve"><value>The correction already has this value. No additional adjustment was saved.</value></data>
-  <data name="Resources.CorrectionDraftBlocked" xml:space="preserve"><value>Save or discard pending changes to destinations before editing Corrections. Finish or cancel any revaluation.</value></data>
+  <data name="Resources.CorrectionDraftBlocked" xml:space="preserve"><value>Destinations have unsaved changes. Use Close destinations and return to Corrections, then choose save or discard. Finish or cancel any revaluation.</value></data>
+  <data name="Resources.InitialPendingHelp" xml:space="preserve"><value>VALDRIO initially leaves the imported amount as Pending to decide. This initial row is created automatically; it is not a new cost. Each row below represents a part of this account. Distribution is optional: return to Corrections if you only want to correct balances.</value></data>
+  <data name="Resources.BackToCorrectionsButton" xml:space="preserve"><value>Close destinations and return to Corrections</value></data>
+  <data name="Resources.BackToCorrections" xml:space="preserve"><value>Destinations closed. You can edit Corrections in the table again.</value></data>
+  <data name="Resources.PoolWithoutDescription" xml:space="preserve"><value>No pool description</value></data>
+  <data name="Resources.PoolChoice" xml:space="preserve"><value>Centre {0} | Node {1} ({2}) | {3} | Activity unit {4} | Functions: {5}</value></data>
+  <data name="Guide.Help.Resource.BackToCorrections" xml:space="preserve"><value>Closes this optional account editor and returns to the correction table. If destinations have unsaved changes, choose save, discard or cancel; your saved corrections are preserved.</value></data>
 </root>
