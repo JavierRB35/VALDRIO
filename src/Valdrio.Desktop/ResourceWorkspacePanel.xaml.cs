@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Windows.Controls;
+using System.Windows.Input;
 namespace Valdrio.Desktop;
 public partial class ResourceWorkspacePanel : UserControl
 {
@@ -18,6 +19,11 @@ public partial class ResourceWorkspacePanel : UserControl
         RefreshHeaders();
     }
     private void Changed(object? sender, PropertyChangedEventArgs e) => RefreshHeaders();
+    private async void OpenSelectedResource(object sender, MouseButtonEventArgs e)
+    {
+        if (vm?.OpenSelectedResourceCommand.CanExecute(null) == true)
+            await vm.OpenSelectedResourceCommand.ExecuteAsync(null);
+    }
     private void RefreshHeaders()
     {
         if (vm is null) return;
