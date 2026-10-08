@@ -393,7 +393,7 @@ try {
     if ($modelChecks.Status -ne "passed" -or $modelChecks.PassedChecks.Count -ne 57) { throw "Model WPF interaction evidence is incomplete." }
     Write-Host "Model WPF checks passed: $($modelChecks.PassedChecks.Count)."
     $importChecks = Get-Content -LiteralPath (Join-Path $captureDir "import-columns/interaction.json") -Raw | ConvertFrom-Json
-    if ($importChecks.Status -ne "passed" -or $importChecks.PassedChecks.Count -ne 16) {
+    if ($importChecks.Status -ne "passed" -or $importChecks.PassedChecks.Count -ne 18) {
       throw "Import column selection WPF interaction evidence is incomplete."
     }
     $importImages = @(Get-ChildItem -LiteralPath (Join-Path $captureDir "import-columns") -Filter *.png)
@@ -411,7 +411,7 @@ try {
     }
     $confirmationManifest = Get-Content -LiteralPath (Join-Path $confirmationFolder "manifest.json") -Raw | ConvertFrom-Json
     $confirmationNames = @("import.valdrio", "import.valdrio-backup", "restored.valdrio", "snapshot.json", "period-amounts.csv")
-    if ($confirmationManifest.SchemaVersion -ne 8 -or $confirmationManifest.Files.Count -ne $confirmationNames.Count -or
+    if ($confirmationManifest.SchemaVersion -ne 9 -or $confirmationManifest.Files.Count -ne $confirmationNames.Count -or
         @(Compare-Object ($confirmationNames | Sort-Object) (@($confirmationManifest.Files.Name) | Sort-Object)).Count -ne 0) {
       throw "Import confirmation manifest is incomplete."
     }
@@ -432,7 +432,7 @@ try {
     if ($debitImages.Count -ne 3) { throw "Expected CSV prepared/confirmed and Excel debit/credit screenshots." }
     $debitManifest = Get-Content -LiteralPath (Join-Path $debitFolder "manifest.json") -Raw | ConvertFrom-Json
     $debitNames = @("import.valdrio", "import.valdrio-backup", "restored.valdrio", "snapshot.json", "debit-credit.csv", "debit-credit.xlsx")
-    if ($debitManifest.SchemaVersion -ne 8 -or $debitManifest.BatchIds.Count -ne 2 -or $debitManifest.Files.Count -ne $debitNames.Count -or
+    if ($debitManifest.SchemaVersion -ne 9 -or $debitManifest.BatchIds.Count -ne 2 -or $debitManifest.Files.Count -ne $debitNames.Count -or
         @(Compare-Object ($debitNames | Sort-Object) (@($debitManifest.Files.Name) | Sort-Object)).Count -ne 0) {
       throw "Debit/credit import manifest is incomplete."
     }
@@ -453,7 +453,7 @@ try {
     if (@(Compare-Object (@("records-es.png", "groups-es.png", "groups-pseudo.png") | Sort-Object) (@($groupingImages.Name) | Sort-Object)).Count -ne 0) { throw "Missing grouped import screenshots." }
     $groupingManifest = Get-Content -LiteralPath (Join-Path $groupingFolder "manifest.json") -Raw | ConvertFrom-Json
     $groupingNames = @("grouping.valdrio", "grouping.valdrio-backup", "restored.valdrio", "snapshot.json", "grouping.csv")
-    if ($groupingManifest.SchemaVersion -ne 8 -or $groupingManifest.Files.Count -ne $groupingNames.Count -or
+    if ($groupingManifest.SchemaVersion -ne 9 -or $groupingManifest.Files.Count -ne $groupingNames.Count -or
         @(Compare-Object ($groupingNames | Sort-Object) (@($groupingManifest.Files.Name) | Sort-Object)).Count -ne 0) {
       throw "Grouped import manifest is incomplete."
     }
@@ -472,7 +472,7 @@ try {
     if (@(Compare-Object (@("comparison-es.png", "comparison-pseudo.png") | Sort-Object) (@($completionImages.Name) | Sort-Object)).Count -ne 0) { throw "Missing comparison screenshots." }
     $completionManifest = Get-Content -LiteralPath (Join-Path $completionFolder "manifest.json") -Raw | ConvertFrom-Json
     $completionNames = @("completion.valdrio", "completion.valdrio-backup", "restored.valdrio", "snapshot.json", "earlier.csv", "current.csv", "corrected.csv")
-    if ($completionManifest.SchemaVersion -ne 8 -or $completionManifest.Files.Count -ne $completionNames.Count -or
+    if ($completionManifest.SchemaVersion -ne 9 -or $completionManifest.Files.Count -ne $completionNames.Count -or
         @(Compare-Object ($completionNames | Sort-Object) (@($completionManifest.Files.Name) | Sort-Object)).Count -ne 0) { throw "Invalid T06 completion manifest." }
     foreach ($entry in $completionManifest.Files) {
       if ((Get-FileHash -LiteralPath (Join-Path $completionFolder $entry.Name) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $entry.Sha256) { throw "T06 completion artifact hash differs." }
@@ -481,8 +481,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Runner could not verify comparison/replacement snapshot." }
     $resourceFolder = Join-Path $captureDir "t07-resources"
     $resourceChecks = Get-Content -LiteralPath (Join-Path $resourceFolder "interaction.json") -Raw | ConvertFrom-Json
-    if ($resourceChecks.Status -ne "passed" -or $resourceChecks.SchemaVersion -ne 8 -or $resourceChecks.PassedChecks.Count -ne 44) {
-        throw "Expected all 44 T07 resource WPF checks."
+    if ($resourceChecks.Status -ne "passed" -or $resourceChecks.SchemaVersion -ne 9 -or $resourceChecks.PassedChecks.Count -ne 45) {
+        throw "Expected all 45 T07 resource WPF checks."
     }
     foreach ($imageName in @("review-es.png", "review-pseudo-rtl.png", "saved-en.png")) {
         if (-not (Test-Path -LiteralPath (Join-Path $resourceFolder $imageName))) { throw "Missing T07 screenshot: $imageName" }
@@ -493,6 +493,16 @@ try {
     dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $resourceFolder "snapshot-receipt.json")
     if ($LASTEXITCODE -ne 0) { throw "Runner could not verify T07 resource snapshot." }
     $internationalFolder = Join-Path $captureDir "import-international"
+    $allocationFolder = Join-Path $captureDir "t08-allocations"
+    $allocationChecks = Get-Content -LiteralPath (Join-Path $allocationFolder "interaction.json") -Raw | ConvertFrom-Json
+    if ($allocationChecks.Status -ne "passed" -or $allocationChecks.PassedChecks.Count -ne 31) { throw "Expected all 31 T08 allocation checks." }
+    foreach ($imageName in @("es-keys.png", "es-rules.png", "en-keys.png", "en-rules.png", "pseudo-rtl.png")) {
+        $null = Get-RequiredSha256 (Join-Path $allocationFolder $imageName)
+    }
+    dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $allocationFolder "snapshot-receipt.json")
+    if ($LASTEXITCODE -ne 0) { throw "Runner could not verify the frozen T08 snapshot." }
+    $visualChecks = Get-Content -LiteralPath (Join-Path $captureDir "visual-shell/interaction.json") -Raw | ConvertFrom-Json
+    if ($visualChecks.Status -ne "passed" -or $visualChecks.PassedChecks.Count -ne 67) { throw "Expected all 67 seven-step visual shell checks." }
     $guidedFolder = Join-Path $captureDir "guided-workflow"
     $guidedChecks = Get-Content -LiteralPath (Join-Path $guidedFolder "interaction.json") -Raw | ConvertFrom-Json
     if ($guidedChecks.Status -ne "passed" -or $guidedChecks.PassedChecks.Count -ne 20) { throw "Expected all 20 guided workflow checks." }
@@ -616,6 +626,9 @@ try {
         GuidedWorkflowChecks = $guidedChecks.PassedChecks.Count
         UsabilityAuditChecks = $usabilityAudit.PassedChecks.Count
         ResourcePreparationChecks = $resourceChecks.PassedChecks.Count
+        AllocationChecks = $allocationChecks.PassedChecks.Count
+        AllocationSnapshot = "verified"
+        VisualShellChecks = $visualChecks.PassedChecks.Count
         ResourceSnapshotManifest = "verified"
         ImportConfirmationImages = $confirmationImages.Count
         ImportConfirmationManifest = "verified"

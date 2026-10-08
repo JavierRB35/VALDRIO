@@ -1,5 +1,25 @@
 # ESTADO_PROYECTO
 
+## Consolidación autorizada en main — 2026-10-08
+
+El propietario autoriza promocionar workspace `3cf853a` a main después de comprobar
+las 33 ramas remotas y PR: no queda ninguna entrega desarrollada pendiente.
+T00–T08, usabilidad, diseño V1 y auditoría forman la base para continuar trabajando.
+561/561 pruebas y 467 comprobaciones WPF sobre el mismo código ejecutable.
+[Revisión de ramas y promoción](docs/evidencias/PROMOCION_T08_MAIN_2026-10-08.md).
+Los estados de espera de autorización siguientes quedan como registro histórico.
+
+## Estado vigente T08 — 2026-10-08
+
+T08 fusionada mediante PR #31 en `codex/local-tests-and-workspace` (`c1e6877`).
+Aceptación completa del commit fusionado superada localmente; recibo en evidencia.
+561/561 pruebas locales y 467 comprobaciones WPF superadas en la revisión.
+Archivo v9, snapshots v7, claves publicadas versionadas, reglas y cobertura,
+código + descripción con procedencia y selección trazable.
+Main vigente `79087a5` ya incorpora PR #22, visual V1 y auditoría; T08 se mantiene
+fuera de main hasta autorización expresa. Los estados siguientes son históricos.
+[Evidencia de T08](docs/evidencias/T08_CIERRE_2026-10-08.md).
+
 ## Estado vigente y correcciones de auditoría — 2026-10-08
 
 | Línea | Estado comprobado |

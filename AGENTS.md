@@ -103,3 +103,25 @@ workflows de compilación y validación no deben activarse automáticamente por 
 pull request, calendario, otros workflows ni eventos equivalentes. No reactivar
 estos disparadores ni añadir otros que generen compilaciones remotas automáticas
 sin una nueva instrucción expresa del propietario.
+
+## Requisito obligatorio de cuentas para T08
+
+Antes de modificar importación, recursos o reglas, leer [T08-CUENTA-01](docs/directrices/T08_CUENTAS_DESCRIPCION.md). El propietario autoriza el 2026-10-08 completar T08 y sus dependencias, conservando código textual, ceros iniciales, descripciones y procedencia. No basta con preservar celdas originales: comprobar selección, interpretación, reapertura y consumo real.
+
+
+## Entrega T08 para comprobaciones en workspace — 2026-10-08
+
+La autorización posterior permite completar y fusionar T08 en
+`codex/local-tests-and-workspace`, verificando allí localmente. No promocionar a
+main sin autorización expresa posterior del propietario. El requisito de nombres
+se implementa y valida con evidencia; mantener la directriz transversal, procedencia
+y lectura de AGENTS de main. Las limitaciones documentales iniciales no revocan
+esta autorización de implementación. Ver `docs/tareas/T08.md` y evidencia de cierre.
+
+
+## Base consolidada autorizada — 2026-10-08
+
+El propietario autoriza ahora promocionar T08 y workspace a main tras revisar las
+ramas. Esta autorización sustituye la espera de promoción indicada en la entrega
+anterior. Continuar las nuevas tareas desde el main consolidado; conservar siempre
+validación local, diseño, requisitos y política de workflows exclusivamente manuales.

@@ -38,7 +38,7 @@ public interface IImportSourceSessionFactory
 
 public sealed record ImportSourceColumn(int Index, string Header);
 public sealed record ImportMappedRow(int RecordNumber, int PhysicalLine, string? Account,
-    string? AmountLexical, decimal? Amount, decimal? Debit = null, decimal? Credit = null);
+    string? AmountLexical, decimal? Amount, decimal? Debit = null, decimal? Credit = null, string? Description = null);
 
 public sealed class ImportColumnSelectionResult
 {
@@ -130,7 +130,7 @@ public static class ImportColumnSelection
                 }
             }
             rows.Add(new ImportMappedRow(row.RecordNumber, row.PhysicalStartLine, account.TextValue,
-                signed ? row.GetCell(columns.Amount!.Value).RawLexical : null, amount, debit, credit));
+                signed ? row.GetCell(columns.Amount!.Value).RawLexical : null, amount, debit, credit, columns.Description is { } descriptionColumn ? row.GetCell(descriptionColumn).TextValue : null));
         }
         if (rows.Count == 0)
             diagnostics.Add(new ImportDiagnostic(new DomainDiagnostic("IMP_NO_DATA", "Import.NoData", []),

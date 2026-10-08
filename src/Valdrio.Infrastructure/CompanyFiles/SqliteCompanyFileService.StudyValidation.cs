@@ -25,7 +25,7 @@ public sealed partial class SqliteCompanyFileService
                 var row = rows[i].Row; var after = CanonicalSnapshotJson.Deserialize<StudyDefinition>(row.AfterJson);
                 Invalid(after.Id != study.Id || after.CompanyId != file.Id || after.Revision != i || row.Revision != i || row.BeforeJson != previous ||
                     after.CreatedAtUtc != study.CreatedAtUtc || (prior is not null && prior.State == StudyState.Closed && row.Operation != "ChangeStudyState"), "Study audit chain invalid");
-                Invalid(i == 0 ? row.Operation != "CreateStudy" : row.Operation is not ("UpdateStudyContext" or "ChangeStudyState" or "ConfirmImport" or "ChangeResources"), "Study operation invalid");
+                Invalid(i == 0 ? row.Operation != "CreateStudy" : row.Operation is not ("UpdateStudyContext" or "ChangeStudyState" or "ConfirmImport" or "ChangeResources" or "ChangeAllocations"), "Study operation invalid");
                 Invalid(i == 0 && after.State != StudyState.Open, "Study must be created open");
                 if (prior is not null && row.Operation == "UpdateStudyContext")
                 {
@@ -51,6 +51,14 @@ public sealed partial class SqliteCompanyFileService
                     Invalid(Json(matching[0].PreviousStudy) != Json(prior) || Json(matching[0].ConfirmedStudy) != Json(after) || matching[0].Request.Actor != row.Actor,
                         "Resource revision differs from change");
                 }
+                if (prior is not null && row.Operation == "ChangeAllocations")
+                {
+                    Invalid(db is not AllocationDbContext, "Allocation transition in old schema");
+                    var matching = AllocationChanges((AllocationDbContext)db, file.Id, study.Id).Where(c => c.ConfirmedStudy.Revision == after.Revision).ToArray();
+                    Invalid(matching.Length != 1 || !ImportConfirmationRules.IsImportRevision(prior, after), "Allocation revision has no matching change");
+                    Invalid(Json(matching[0].PreviousStudy) != Json(prior) || Json(matching[0].ConfirmedStudy) != Json(after) || matching[0].Request.Actor != row.Actor,
+                        "Allocation revision differs from change");
+                }
                 _ = RequiredPublication(db, file.Id, after.SelectedModelVersionId);
                 if (prior is not null && row.Operation == "ChangeStudyState")
                     Invalid(Json(Changed(prior, prior.Name, prior.PeriodStart, prior.PeriodEnd, prior.Purpose, prior.ScenarioKind,
@@ -72,6 +80,16 @@ public sealed partial class SqliteCompanyFileService
                 .OrderBy(b => b.ConfirmedStudy.Revision).ToArray();
             if (input is ImportedStudySnapshotInput imported)
                 Invalid(Json(imported.Imports) != Json(atCapture), "Snapshot import ledger differs");
+            else if (input is AllocationStudySnapshotInput allocated)
+            {
+                Invalid(db is not AllocationDbContext, "Allocation snapshot in old schema");
+                var history = ResourceChanges((ResourceDbContext)db, file.Id, snapshot.StudyId)
+                    .Where(c => c.ConfirmedStudy.Revision <= snapshot.InputRevision).ToArray();
+                var allocations = AllocationChanges((AllocationDbContext)db, file.Id, snapshot.StudyId)
+                    .Where(c => c.ConfirmedStudy.Revision <= snapshot.InputRevision).ToArray();
+                Invalid(Json(allocated.Imports) != Json(atCapture) || Json(allocated.History) != Json(history) ||
+                    Json(allocated.AllocationHistory) != Json(allocations), "Allocation snapshot ledger differs");
+            }
             else if (input is ResourceStudySnapshotInput prepared)
             {
                 Invalid(db is not ResourceDbContext, "Resource snapshot in old schema");
@@ -80,9 +98,12 @@ public sealed partial class SqliteCompanyFileService
                 Invalid(Json(prepared.Imports) != Json(atCapture) || Json(prepared.History) != Json(history), "Resource snapshot ledger differs");
             }
             else Invalid(atCapture.Length != 0, "Context-only snapshot omits confirmed imports");
-            if (db is ResourceDbContext resourceDb && input is not ResourceStudySnapshotInput)
+            if (db is ResourceDbContext resourceDb && input is not (ResourceStudySnapshotInput or AllocationStudySnapshotInput))
                 Invalid(ResourceChanges(resourceDb, file.Id, snapshot.StudyId).Any(c => c.ConfirmedStudy.Revision <= snapshot.InputRevision),
                     "Snapshot omits saved resource preparation");
+            if (db is AllocationDbContext allocationDb && input is not AllocationStudySnapshotInput)
+                Invalid(AllocationChanges(allocationDb, file.Id, snapshot.StudyId).Any(c => c.ConfirmedStudy.Revision <= snapshot.InputRevision),
+                    "Snapshot omits saved allocation configuration");
             var rows = audit.Where(a => a.Type == "StudySnapshot" && a.Id == snapshot.Id.ToString()).ToArray();
             Invalid(rows.Length != 1, "Snapshot audit count invalid");
             var row = rows[0].Row;
