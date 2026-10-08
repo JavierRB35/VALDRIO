@@ -109,6 +109,19 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
         workspace.Study.State == StudyState.Closed ? "Closed" : stage switch { 0 => "ChooseAccount", 1 => "AdjustmentHelp", 2 => "PartsHelp", _ => "ReviewHelp" }];
     public string Status => diagnostic is null ? this[statusKey] : new DomainDiagnosticFormatter(texts)
         .Format(diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message;
+    public string ProgressSummary
+    {
+        get
+        {
+            var current = preview ?? workspace;
+            if (current is null || current.Preparation.Coverage.Count == 0) return "";
+            var coverage = current.Preparation.Coverage;
+            var reconciled = coverage.Count(c => c.Difference.Amount == 0m);
+            var pending = coverage.Count(c => c.Pending.Amount != 0m);
+            var unexplained = coverage.Count(c => c.Difference.Amount != 0m);
+            return string.Format(Format, this["ProgressSummary"], reconciled, coverage.Count, pending, unexplained);
+        }
+    }
     public string CurrentAccount => workspace is null || editing is null ? "" : workspace.Origins.Single(o => o.Id == editing.Id).Code;
     public string SaveDestination => workspace is null ? "" : workspace.Study.Name + " · " + company.ActivePath;
     public string Reason { get => reason; set { if (SetProperty(ref reason, value) && !loading) { dirty = true; Refresh(); } } }
