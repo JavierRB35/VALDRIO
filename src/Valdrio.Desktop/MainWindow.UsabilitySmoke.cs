@@ -188,7 +188,7 @@ public partial class MainWindow
         Audit(TaskContinueButton.Visibility == Visibility.Visible &&
             TaskContinueButton.Content.ToString() == main.Guide("TaskContinueResources"),
             "project hub points directly to account preparation when the current analysis already has imports");
-        await ContinueProjectWork(null!, new RoutedEventArgs());
+        await ContinueProjectWorkAsync();
         Audit(workflowStep == 4 && ResourcePanel.IsVisible,
             "continue-current task resumes at account preparation without revisiting completed screens");
 
