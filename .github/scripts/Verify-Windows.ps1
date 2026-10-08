@@ -390,10 +390,10 @@ try {
     Write-Host "Company WPF checks passed: $($companyChecks.PassedChecks.Count)."
 
     $modelChecks = Get-Content -LiteralPath (Join-Path $captureDir "models/interaction.json") -Raw | ConvertFrom-Json
-    if ($modelChecks.Status -ne "passed" -or $modelChecks.PassedChecks.Count -ne 53) { throw "Model WPF interaction evidence is incomplete." }
+    if ($modelChecks.Status -ne "passed" -or $modelChecks.PassedChecks.Count -ne 57) { throw "Model WPF interaction evidence is incomplete." }
     Write-Host "Model WPF checks passed: $($modelChecks.PassedChecks.Count)."
     $importChecks = Get-Content -LiteralPath (Join-Path $captureDir "import-columns/interaction.json") -Raw | ConvertFrom-Json
-    if ($importChecks.Status -ne "passed" -or $importChecks.PassedChecks.Count -ne 13) {
+    if ($importChecks.Status -ne "passed" -or $importChecks.PassedChecks.Count -ne 16) {
       throw "Import column selection WPF interaction evidence is incomplete."
     }
     $importImages = @(Get-ChildItem -LiteralPath (Join-Path $captureDir "import-columns") -Filter *.png)
@@ -481,8 +481,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Runner could not verify comparison/replacement snapshot." }
     $resourceFolder = Join-Path $captureDir "t07-resources"
     $resourceChecks = Get-Content -LiteralPath (Join-Path $resourceFolder "interaction.json") -Raw | ConvertFrom-Json
-    if ($resourceChecks.Status -ne "passed" -or $resourceChecks.SchemaVersion -ne 8 -or $resourceChecks.PassedChecks.Count -ne 25) {
-        throw "Expected all 25 T07 resource WPF checks."
+    if ($resourceChecks.Status -ne "passed" -or $resourceChecks.SchemaVersion -ne 8 -or $resourceChecks.PassedChecks.Count -ne 44) {
+        throw "Expected all 44 T07 resource WPF checks."
     }
     foreach ($imageName in @("review-es.png", "review-pseudo-rtl.png", "saved-en.png")) {
         if (-not (Test-Path -LiteralPath (Join-Path $resourceFolder $imageName))) { throw "Missing T07 screenshot: $imageName" }
@@ -495,12 +495,12 @@ try {
     $internationalFolder = Join-Path $captureDir "import-international"
     $guidedFolder = Join-Path $captureDir "guided-workflow"
     $guidedChecks = Get-Content -LiteralPath (Join-Path $guidedFolder "interaction.json") -Raw | ConvertFrom-Json
-    if ($guidedChecks.Status -ne "passed" -or $guidedChecks.PassedChecks.Count -ne 19) { throw "Expected all 19 guided workflow checks." }
+    if ($guidedChecks.Status -ne "passed" -or $guidedChecks.PassedChecks.Count -ne 20) { throw "Expected all 20 guided workflow checks." }
     foreach ($imageName in @("structure-es.png", "destination-es.png", "review-es.png", "review-pseudo-rtl.png")) {
         if (-not (Test-Path -LiteralPath (Join-Path $guidedFolder $imageName))) { throw "Missing guided workflow screenshot: $imageName" }
     }
     $usabilityAudit = Get-Content -LiteralPath (Join-Path $guidedFolder "audit.json") -Raw | ConvertFrom-Json
-    if ($usabilityAudit.Status -ne "passed" -or $usabilityAudit.PassedChecks.Count -ne 20) { throw "Expected all 20 usability audit regression checks." }
+    if ($usabilityAudit.Status -ne "passed" -or $usabilityAudit.PassedChecks.Count -ne 27) { throw "Expected all 27 usability audit regression checks." }
     $internationalChecks = Get-Content -LiteralPath (Join-Path $internationalFolder "interaction.json") -Raw | ConvertFrom-Json
     if ($internationalChecks.Status -ne "passed" -or $internationalChecks.PassedChecks.Count -ne 10) { throw "Expected all 10 T06A WPF checks." }
     $internationalImages = @(Get-ChildItem -LiteralPath $internationalFolder -Filter *.png)
@@ -515,7 +515,7 @@ try {
     dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $internationalFolder "snapshot.json")
     if ($LASTEXITCODE -ne 0) { throw "Runner could not verify international import snapshot." }
     $studyChecks = Get-Content -LiteralPath (Join-Path $captureDir "studies/interaction.json") -Raw | ConvertFrom-Json
-    if ($studyChecks.Status -ne "passed" -or $studyChecks.PassedChecks.Count -ne 73) { throw "Expected all 73 final study WPF checks." }
+    if ($studyChecks.Status -ne "passed" -or $studyChecks.PassedChecks.Count -ne 74) { throw "Expected all 74 final study WPF checks." }
     foreach ($region in @("es-ES", "en-US", "de-DE", "en-GB")) {
       if ("visible calendar text follows region without input mutation: $region" -notin $studyChecks.PassedChecks) {
         throw "Missing visible calendar date verification: $region."
