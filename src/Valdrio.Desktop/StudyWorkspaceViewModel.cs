@@ -126,18 +126,26 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     private CultureInfo Ui => CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag);
     private CultureInfo Format => CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
     private string Text(string key) { var value = texts.Get(key, Ui); return pseudo ? PseudoLocalization.Expand(value) : value; }
-    private string DiagnosticText(DomainDiagnostic value) => value.Code + ": " + new DomainDiagnosticFormatter(texts).Format(value, Ui, Format).Message;
+    private string DiagnosticText(DomainDiagnostic value) => new DomainDiagnosticFormatter(texts).Format(value, Ui, Format).Message;
     private string StateText(StudyState state) => Text(state == StudyState.Open ? "Study.Open" : "Study.Closed");
     private string ScenarioText(StudyScenario value) => Text(value switch { StudyScenario.Actual => "Study.Actual", StudyScenario.Budget => "Study.Budget", _ => "Study.WhatIf" });
     public string Title => Text("Study.Title");
     public string Notes => Text("Study.Notes");
+    public string OpenSectionTitle => Text("Study.OpenSectionTitle");
+    public string OpenSectionHelp => Text("Study.OpenSectionHelp");
+    public string FormTitle => Text(Current is null ? "Study.NewFormTitle" : "Study.EditFormTitle");
+    public string FormHelp => Text(Current is null ? "Study.NewFormHelp" : "Study.EditFormHelp");
+    public string ImportHistoryTitle => Text("Study.ImportHistoryTitle");
+    public string ImportHistoryHelp => Text("Study.ImportHistoryHelp");
+    public string AdvancedHelp => Text("Study.AdvancedHelp");
+    public string ModelRemedyVisibility => HasPublishedModels ? "Collapsed" : "Visible";
     public string NameLabel => Text("Study.Name");
     public string StartLabel => Text("Study.PeriodStart");
     public string EndLabel => Text("Study.PeriodEnd");
     public string CurrencyLabel => Text("Study.Currency");
     public string ModelLabel => Text("Study.Model");
     public string ScenarioLabel => Text("Study.Scenario");
-    public string NewLabel => Text("Study.New");
+    public string NewLabel => Text(Current is null ? "Study.NewBlank" : "Study.NewPeriod");
     public string CreateLabel => Text("Study.Create");
     public string SaveLabel => Text("Study.Save");
     public string LoadLabel => Text("Study.Load");
@@ -166,6 +174,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         }
     }
     public string Status => diagnostic is null ? Text(statusKey) : DiagnosticText(diagnostic);
+    public string? DiagnosticCode => diagnostic?.Code;
     public string Details => Current is null ? Text("Study.NoneSelected") : string.Format(Format, Text("Study.Details"), Current.Name,
         formatter.FormatDate(Current.PeriodStart.Value, Format, DateDisplayPreset.Short), formatter.FormatDate(Current.PeriodEnd.Value, Format, DateDisplayPreset.Short),
         Current.Currency.FunctionalCurrencyCode, ScenarioText(Current.ScenarioKind), Current.Revision, StateText(Current.State), Current.SelectedModelVersionId,
@@ -305,7 +314,29 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     private async Task New()
     {
         if (!await CanLeaveAsync()) return;
-        snapshotValues = []; importValues = []; snapshotChoice = null; createId = new(Guid.NewGuid()); SetCurrent(null); Reformat();
+
+        // Reusing the current cost structure, currency and scenario is the common analyst workflow
+        // for a new accounting period. Dates and name remain intentionally blank so the new
+        // analysis cannot accidentally inherit the previous period.
+        var previousModelId = Current?.SelectedModelVersionId ?? ModelChoice?.Value.Structure.Id;
+        var previousCurrency = Current?.Currency.FunctionalCurrencyCode.ToString() ?? Currency;
+        var previousScenario = Current?.ScenarioKind ?? Scenario?.Value ?? StudyScenario.Actual;
+
+        snapshotValues = [];
+        importValues = [];
+        snapshotChoice = null;
+        createId = new(Guid.NewGuid());
+        SetCurrent(null);
+
+        loading = true;
+        modelChoice = previousModelId is null
+            ? modelChoice
+            : PublishedModels.SingleOrDefault(m => m.Value.Structure.Id == previousModelId);
+        currency = previousCurrency;
+        scenario = Scenarios.Single(s => s.Value == previousScenario);
+        loading = false;
+        Reformat();
+        Refresh();
     }
     private async Task Load()
     {
