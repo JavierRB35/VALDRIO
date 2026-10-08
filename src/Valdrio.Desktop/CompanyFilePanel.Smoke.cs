@@ -54,7 +54,7 @@ public partial class CompanyFilePanel
         var hash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)));
         var bad = Path.Combine(output, "bad.fixture"); File.WriteAllText(bad, "corrupt");
         dialogs.Paths.Enqueue(bad); await Click(OpenButton);
-        Check(vm.Snapshot?.Id == id && vm.Status.StartsWith("FILE_", StringComparison.Ordinal), "failed open preserves active company");
+        Check(vm.Snapshot?.Id == id && vm.DiagnosticCode?.StartsWith("FILE_", StringComparison.Ordinal) == true, "failed open preserves active company");
         dialogs.Paths.Enqueue(path); await Click(CreateButton);
         Check(vm.Snapshot?.Id == id && Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))) == hash,
             "failed creation never overwrites");
