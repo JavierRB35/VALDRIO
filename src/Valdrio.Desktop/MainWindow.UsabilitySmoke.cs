@@ -181,6 +181,17 @@ public partial class MainWindow
         studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == studyId); await studies.LoadCommand.ExecuteAsync(null);
         Check(company.ActiveImports!.ReadImports(company.Snapshot!.Id, studyId).Single().Resources.Single().Functional.Amount == 358.35m,
             "reopened company contains the saved selected import");
+
+        await NavigateWorkflow(0); UpdateLayout();
+        Audit(ProjectTaskPanel.Visibility == Visibility.Visible && TaskStructureButton.IsEnabled && TaskAnalysisButton.IsEnabled,
+            "reopened project exposes analyst task choices instead of forcing a linear restart");
+        Audit(TaskContinueButton.Visibility == Visibility.Visible &&
+            TaskContinueButton.Content.ToString() == main.Guide("TaskContinueResources"),
+            "project hub points directly to account preparation when the current analysis already has imports");
+        await ContinueProjectWork(null!, new RoutedEventArgs());
+        Audit(workflowStep == 4 && ResourcePanel.IsVisible,
+            "continue-current task resumes at account preparation without revisiting completed screens");
+
         File.WriteAllText(Path.Combine(output, "audit.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = audit }, new JsonSerializerOptions { WriteIndented = true }));
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }, new JsonSerializerOptions { WriteIndented = true }));
     }
