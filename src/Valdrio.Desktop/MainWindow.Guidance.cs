@@ -129,7 +129,8 @@ public partial class MainWindow
     private async void ChooseSettings(object sender, RoutedEventArgs e) => await NavigateWorkflow(5);
     private async void ChooseProjectStructure(object sender, RoutedEventArgs e) => await NavigateWorkflow(1);
     private async void ChooseProjectAnalysis(object sender, RoutedEventArgs e) => await NavigateWorkflow(2);
-    private async void ContinueProjectWork(object sender, RoutedEventArgs e)
+    private async void ContinueProjectWork(object sender, RoutedEventArgs e) => await ContinueProjectWorkAsync();
+    internal async Task ContinueProjectWorkAsync()
     {
         if (viewModel?.Studies?.Current is null) return;
         if (viewModel.Studies.HasConfirmedImports) await NavigateWorkflow(4);
