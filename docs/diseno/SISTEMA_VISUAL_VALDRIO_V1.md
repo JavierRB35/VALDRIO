@@ -4,6 +4,8 @@
 
 > **Regla prioritaria:** La pantalla de **«T08 / Claves y reglas de asignación»** suministrada por el propietario el 08/10/2026 define la **estética y estructura visual objetivo** de toda VALDRIO. Se replica su lenguaje de diseño, no sus datos ficticios ni la funcionalidad específica de T08. No es una captura de funcionalidad implementada. Se conserva la funcionalidad real de cada módulo.
 
+**Plan de adaptación del software existente:** [migración integral del frontend WPF por fases](PLAN_MIGRACION_FRONTEND.md).
+
 ## 1. Referencia visual principal
 
 ![Referencia visual aprobada de VALDRIO — T08 Claves y reglas](referencias/VALDRIO_T08_REFERENCIA.svg)
