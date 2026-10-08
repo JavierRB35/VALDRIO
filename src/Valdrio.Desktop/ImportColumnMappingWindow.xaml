@@ -27,15 +27,18 @@
    <Setter Property="Margin" Value="0,3,12,3" />
   </Style>
   <Style x:Key="StepTitle" TargetType="TextBlock">
+   <Setter Property="TextWrapping" Value="Wrap" />
    <Setter Property="FontSize" Value="18" />
    <Setter Property="FontWeight" Value="SemiBold" />
    <Setter Property="Margin" Value="0,2,0,4" />
   </Style>
   <Style x:Key="StepHelp" TargetType="TextBlock">
+   <Setter Property="TextWrapping" Value="Wrap" />
    <Setter Property="Foreground" Value="#506176" />
    <Setter Property="Margin" Value="0,0,0,10" />
   </Style>
   <Style x:Key="Requirement" TargetType="TextBlock">
+   <Setter Property="TextWrapping" Value="Wrap" />
    <Setter Property="Background" Value="#EEF5FF" />
    <Setter Property="Padding" Value="9" />
    <Setter Property="Margin" Value="0,4,0,10" />
@@ -171,7 +174,7 @@
       </WrapPanel>
       <TextBlock Text="{Binding [DebitCreditHelp]}" Visibility="{Binding IsDebitCredit,Converter={StaticResource Visible}}" />
 
-      <Expander Header="{Binding [NumberAdvanced]}" IsEnabled="{Binding HasColumns}" Margin="0,6,0,4">
+      <Expander x:Name="NumberFormatPanel" IsExpanded="True" Header="{Binding [NumberAdvanced]}" IsEnabled="{Binding HasColumns}" Margin="0,6,0,4">
        <StackPanel Margin="8,4,0,0">
         <TextBlock Text="{Binding [NumberAdvancedHelp]}" Style="{StaticResource StepHelp}" />
         <WrapPanel>
@@ -294,8 +297,8 @@
       </Expander>
 
       <TextBlock Text="{Binding [AmountMode]}" FontWeight="SemiBold" />
-      <ComboBox x:Name="AmountModeBox" ItemsSource="{Binding AmountModes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding AmountMode,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [AmountMode]}" local:FieldHelp.Key="AmountMode" SelectionChanged="AmountMeaningChanged" />
-      <CheckBox Content="{Binding MeaningChosenLabel}" IsChecked="{Binding HasAmountMeaning,UpdateSourceTrigger=PropertyChanged}" Margin="0,8,0,8" x:Name="MeaningChoiceConfirmed" />
+      <ComboBox x:Name="AmountModeBox" ItemsSource="{Binding AmountModes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding AmountMeaningSelection,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [AmountMode]}" local:FieldHelp.Key="AmountMode" SelectionChanged="AmountMeaningChanged" />
+
       <TextBlock Text="{Binding AmountBasis}" TextWrapping="Wrap" FontWeight="SemiBold" />
       <TextBlock Text="{Binding [SourceCurrency]}" FontWeight="SemiBold" />
       <TextBox x:Name="SourceCurrencyBox" Text="{Binding SourceCurrency,UpdateSourceTrigger=PropertyChanged}" Width="100"
@@ -338,14 +341,6 @@
         </DataGrid.Columns>
        </DataGrid>
       </StackPanel>
-      <TextBlock Text="{Binding [ApprovalReference]}" FontWeight="SemiBold" />
-      <TextBlock Text="{Binding [ApprovalReferenceHelp]}" Style="{StaticResource StepHelp}" />
-      <TextBox x:Name="ApprovalReferenceBox" Text="{Binding ApprovalReference,UpdateSourceTrigger=PropertyChanged}"
-               MaxLength="1000" AutomationProperties.Name="{Binding [ApprovalReference]}" local:FieldHelp.Key="ApprovalReference" />
-      <CheckBox x:Name="ApproveInterpretationBox" IsChecked="{Binding InterpretationApproved}" Margin="0,8,0,8"
-                local:FieldHelp.Key="InterpretationApproved">
-       <TextBlock Text="{Binding InterpretationPrompt}" TextWrapping="Wrap" />
-      </CheckBox>
       <Expander x:Name="ComparisonPanel" Header="{Binding [ComparisonTitle]}"
                 Visibility="{Binding IsCumulativeMode,Converter={StaticResource Visible}}">
        <StackPanel>
@@ -368,11 +363,12 @@
      </StackPanel>
     </ScrollViewer>
    </TabItem>
-   <TabItem x:Name="ImportTab4" IsEnabled="{Binding HasPreparedReview}">
+   <TabItem x:Name="ImportTab4" IsEnabled="{Binding CanOpenReview}">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
      <StackPanel Margin="4,8,4,8">
       <TextBlock Text="{Binding [ReviewStepTitle]}" Style="{StaticResource StepTitle}" />
       <TextBlock Text="{Binding [ReviewStepHelp]}" Style="{StaticResource StepHelp}" />
+      <TextBlock Text="{Binding ReviewSaveRequirement}" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite" />
       <StackPanel x:Name="ConversionPreviewPanel" Visibility="{Binding HasConversion,Converter={StaticResource Visible}}">
        <TextBlock Text="{Binding [ConversionPreview]}" FontWeight="SemiBold" />
        <DataGrid x:Name="ConversionGrid" ItemsSource="{Binding ConversionRows}" AutoGenerateColumns="False" ColumnHeaderStyle="{StaticResource WrappedHeader}" IsReadOnly="True" CanUserAddRows="False" Height="220" FlowDirection="LeftToRight">
@@ -410,6 +406,15 @@
         </DataGrid.Columns>
        </DataGrid>
       </StackPanel>
+
+            <Expander Header="{Binding [ApprovalReference]}"><StackPanel><TextBlock Text="{Binding [ApprovalReference]}" FontWeight="SemiBold" />
+      <TextBlock Text="{Binding [ApprovalReferenceHelp]}" Style="{StaticResource StepHelp}" />
+      <TextBox x:Name="ApprovalReferenceBox" Text="{Binding ApprovalReference,UpdateSourceTrigger=PropertyChanged}"
+               MaxLength="1000" AutomationProperties.Name="{Binding [ApprovalReference]}" local:FieldHelp.Key="ApprovalReference" />
+      </StackPanel></Expander><CheckBox Visibility="{Binding ShowReviewApproval,Converter={StaticResource Visible}}" x:Name="ApproveInterpretationBox" IsChecked="{Binding InterpretationApproved}" Margin="0,8,0,8"
+                local:FieldHelp.Key="InterpretationApproved">
+       <TextBlock Text="{Binding InterpretationPrompt}" TextWrapping="Wrap" />
+      </CheckBox>
 
      </StackPanel>
     </ScrollViewer>

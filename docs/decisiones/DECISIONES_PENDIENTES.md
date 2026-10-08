@@ -1,5 +1,28 @@
 # Decisiones de producto y negocio
 
+## Correcciones directamente en tabla — 2026-10-08
+
+El propietario solicita una única pantalla para Preparar cuentas: solamente la
+columna Correcciones se edita; cambiarla confirma y guarda automáticamente el total
+en la moneda del análisis. Se elimina el formulario adicional de moneda/tipo/motivo.
+El tipo y motivo del delta se generan como descripción auditable del cambio, sin
+pretender certificar su justificación contable. Los originales, conversiones previas,
+revisiones, auditoría, rutas y conservación siguen vigentes. Los destinos se consultan
+y editan debajo de la tabla, con protección de borradores. [Evidencia](../evidencias/T07_CORRECCIONES_EN_TABLA_2026-10-08.md).
+
+
+## Revisión de usabilidad vigente — 2026-10-08
+
+El propietario solicita eliminar confirmaciones redundantes y desbloquear revisión
+antes de T07. La UI deja una aprobación del significado en Revisar y guardar;
+una nota manual de comprobación es opcional. Cuando falta, el perfil conserva una
+referencia de aprobación al archivo, modalidad y periodo. Esto sustituye el requisito
+de escribir un ejemplo en el formulario, no certifica ninguna fuente real ni elimina
+la aprobación explícita, el perfil de origen, FX o controles transaccionales.
+Los hashes se conservan y se presentan como información técnica desplegable.
+[Evidencia y límites](../evidencias/USABILIDAD_SEIS_PROBLEMAS_2026-10-08.md).
+
+
 ## Autorización vigente T07 — 2026-10-07
 
 El propietario solicita «Desarrolla completo el T07 teniendo en cuenta que ya hay

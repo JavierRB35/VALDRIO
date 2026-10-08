@@ -59,13 +59,13 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         ValidateCommand = new AsyncRelayCommand(Validate, () => !busy && document is not null && AccountColumn.HasValue &&
             (IsSignedAmount && AmountColumn.HasValue || IsDebitCredit && DebitColumn.HasValue && CreditColumn.HasValue));
         PrepareCommand = new AsyncRelayCommand(Prepare, () => !busy && IsReady && IsAccountSelectionReady && targetStudy?.State == StudyState.Open && importPort is not null);
-        ConfirmCommand = new AsyncRelayCommand(Confirm, () => !busy && writable && preparedImport?.CanConfirm == true && confirmedImport is null);
+        ConfirmCommand = new AsyncRelayCommand(Confirm, () => !busy && CanSaveReviewedImport);
         CancelCommand = new RelayCommand(() => cancellation?.Cancel(), () => busy);
         SelectAllRecordsCommand = new RelayCommand(() => ImportAllAccounts = true, () => !busy && HasAccountChoices);
         DeselectAllRecordsCommand = new RelayCommand(() => ImportAllAccounts = false, () => !busy && HasAccountChoices);
         FreezeComparisonCommand = new RelayCommand(FreezeComparison, () => !busy && IsReady && IsAccountSelectionReady &&
             fiscalStart.HasValue && fiscalEnd.HasValue && previousEnd.HasValue && !string.IsNullOrWhiteSpace(comparisonScope) &&
-            (international && currencyFromColumn || !string.IsNullOrWhiteSpace(sourceCurrency)) && interpretationApproved && !string.IsNullOrWhiteSpace(approvalReference));
+            (international && currencyFromColumn || !string.IsNullOrWhiteSpace(sourceCurrency)));
         ClearComparisonCommand = new RelayCommand(ClearComparison, () => !busy && comparison is not null);
         InitializeConversion();
         preferences.Changed += PreferencesChanged;

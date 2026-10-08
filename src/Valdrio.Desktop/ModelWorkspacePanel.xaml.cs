@@ -44,8 +44,8 @@ public partial class ModelWorkspacePanel : UserControl
         CenterGrid.Columns[1].Header = tableViewModel.Text("Model.ColumnName");
         CenterGrid.Columns[2].Header = tableViewModel.Text("Model.ColumnStatus");
 
-        NodeSummary.Columns[0].Header = tableViewModel.Text("Model.ColumnCode");
-        NodeSummary.Columns[1].Header = tableViewModel.Text("Model.ColumnCenter");
+        NodeSummary.Columns[0].Header = tableViewModel.Text("Model.ColumnCenter");
+        NodeSummary.Columns[1].Header = tableViewModel.Text("Model.ColumnCode");
         NodeSummary.Columns[2].Header = tableViewModel.Text("Model.ColumnRole");
         NodeSummary.Columns[3].Header = tableViewModel.Text("Model.ColumnUnit");
         NodeSummary.Columns[4].Header = tableViewModel.Text("Model.ColumnLayer");

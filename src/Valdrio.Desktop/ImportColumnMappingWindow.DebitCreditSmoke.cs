@@ -134,8 +134,8 @@ public partial class ImportColumnMappingWindow
         await Click(ConfirmImportButton); var xlsxBatch = vm.ConfirmedImport ?? throw new InvalidOperationException(vm.Status);
         Check(xlsxBatch.Resources.Count == 1 && xlsxBatch.Resources[0].Functional.Amount == 160m && studies.Current?.Revision == 2 && Hash(xlsx) == xlsxHash,
             "native Excel confirmation appends identified batch and revision");
-        Check(panel.ImportHistoryText.Text.Contains(csvBatch.Id.ToString(), StringComparison.Ordinal) &&
-            panel.ImportHistoryText.Text.Contains(xlsxBatch.Id.ToString(), StringComparison.Ordinal), "both debit credit batches visible in study history");
+        Check(panel.ImportHistoryText.Text.Contains(csvBatch.Prepared.Source.FileName, StringComparison.Ordinal) &&
+            panel.ImportHistoryText.Text.Contains(xlsxBatch.Prepared.Source.FileName, StringComparison.Ordinal), "both debit credit batches visible in study history");
         await Click(panel.CaptureStudyButton); var photo = studies.SnapshotChoice!.Value;
         Check(photo.Input is ImportedStudySnapshotInput imported && imported.Resources.Count == 4 &&
             imported.Imports.SelectMany(b => b.Resources).Sum(r => r.Functional.Amount) == 312.5m,
@@ -149,14 +149,14 @@ public partial class ImportColumnMappingWindow
         }
         await Click(window.CompanyPanel.CloseButton); companyFiles.Paths.Enqueue(path); await Click(window.CompanyPanel.OpenButton);
         studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == study.Id); await Click(panel.LoadStudyButton);
-        Check(studies.Current?.Revision == 2 && studies.ImportedAmounts.Contains(xlsxBatch.Id.ToString(), StringComparison.Ordinal),
+        Check(studies.Current?.Revision == 2 && studies.ImportedAmounts.Contains(xlsxBatch.Prepared.Source.FileName, StringComparison.Ordinal),
             "close and reopen retain debit credit batches and revision");
         var backup = Path.Combine(output, "import.valdrio-backup"); var restored = Path.Combine(output, "restored.valdrio");
         companyFiles.Paths.Enqueue(backup); await Click(window.CompanyPanel.BackupButton);
         companyFiles.Paths.Enqueue(backup); companyFiles.Paths.Enqueue(restored); await Click(window.CompanyPanel.RestoreButton);
         studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == study.Id); await Click(panel.LoadStudyButton);
-        Check(studies.Snapshots.Count == 3 && studies.ImportedAmounts.Contains(csvBatch.Id.ToString(), StringComparison.Ordinal) &&
-            studies.ImportedAmounts.Contains(xlsxBatch.Id.ToString(), StringComparison.Ordinal), "backup restore retain both debit credit imports and snapshots");
+        Check(studies.Snapshots.Count == 3 && studies.ImportedAmounts.Contains(csvBatch.Prepared.Source.FileName, StringComparison.Ordinal) &&
+            studies.ImportedAmounts.Contains(xlsxBatch.Prepared.Source.FileName, StringComparison.Ordinal), "backup restore retain both debit credit imports and snapshots");
         Select(AmountLayoutBox, "amount");
         Check(vm.Preparation is null && !vm.InterpretationApproved && vm.DebitColumn is null && vm.CreditColumn is null && vm.AmountColumn is null,
             "changing interpretation clears preparation columns and approval");

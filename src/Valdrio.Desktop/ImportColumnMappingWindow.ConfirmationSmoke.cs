@@ -138,7 +138,8 @@ public partial class ImportColumnMappingWindow
             "native snapshot includes actual imported resources");
         Check(studies.Snapshots.Single(s => s.Value.Id == originalPhoto.Id).Value.CanonicalJson == originalPhoto.CanonicalJson,
             "context-only snapshot remains identical");
-        Check(panel.ImportHistoryText.Text.Contains(batch.Id.ToString(), StringComparison.Ordinal), "saved import history visible in study panel");
+        Check(panel.ImportHistoryText.Text.Contains(batch.Prepared.Source.FileName, StringComparison.Ordinal) && studies.HasConfirmedImports,
+            "saved source file and totals are visible in study history; technical IDs remain in persisted audit" );
         Check(StudyPreparationService.Evaluate(photo.Input).Diagnostics.Any(d => d.Code == "STUDY_PARTITIONS_PENDING") &&
             !StudyPreparationService.Evaluate(photo.Input).ReadyForCalculation, "import does not fabricate a completed cost calculation");
         using (var read = service.Open(path, CompanyFileOpenMode.ReadOnly))
@@ -150,19 +151,19 @@ public partial class ImportColumnMappingWindow
         FlowDirection = FlowDirection.LeftToRight; main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", false, false);
         await Click(window.CompanyPanel.CloseButton); companyFiles.Paths.Enqueue(path); await Click(window.CompanyPanel.OpenButton);
         studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == study.Id); await Click(panel.LoadStudyButton);
-        Check(studies.ImportedAmounts.Contains(batch.Id.ToString(), StringComparison.Ordinal) && studies.Current?.Revision == 1,
+        Check(studies.ImportedAmounts.Contains(batch.Prepared.Source.FileName, StringComparison.Ordinal) && studies.Current?.Revision == 1,
             "close and reopen retain imported resources and revision");
         var backup = Path.Combine(output, "import.valdrio-backup"); var restored = Path.Combine(output, "restored.valdrio");
         companyFiles.Paths.Enqueue(backup); await Click(window.CompanyPanel.BackupButton);
         companyFiles.Paths.Enqueue(backup); companyFiles.Paths.Enqueue(restored); await Click(window.CompanyPanel.RestoreButton);
         studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == study.Id); await Click(panel.LoadStudyButton);
-        Check(studies.ImportedAmounts.Contains(batch.Id.ToString(), StringComparison.Ordinal) && studies.Snapshots.Count == 2,
+        Check(studies.ImportedAmounts.Contains(batch.Prepared.Source.FileName, StringComparison.Ordinal) && studies.Snapshots.Count == 2,
             "backup and restore retain imports and both snapshot schemas");
         studies.Currency = "USD"; await Click(panel.SaveStudyButton);
         Check(studies.IsDirty && studies.DiagnosticCode == "IMP_CONTEXT_LOCKED", "functional currency cannot change under imported amounts");
         await Click(panel.DiscardStudyButton);
         files.Paths.Enqueue(Path.Combine(output, "missing.csv")); await Click(OpenSourceButton);
-        Check(!vm.IsReady && vm.AccountChoices.Count == 0 && studies.ImportedAmounts.Contains(batch.Id.ToString(), StringComparison.Ordinal), "failed next source preserves confirmed history");
+        Check(!vm.IsReady && vm.AccountChoices.Count == 0 && studies.ImportedAmounts.Contains(batch.Prepared.Source.FileName, StringComparison.Ordinal), "failed next source preserves confirmed history");
         vm.ImportAllAccounts = true;
         var snapshot = Path.Combine(output, "snapshot.json"); File.WriteAllText(snapshot, CanonicalSnapshotJson.Serialize(photo));
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }));

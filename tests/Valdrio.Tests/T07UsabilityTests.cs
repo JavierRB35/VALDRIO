@@ -48,15 +48,15 @@ public sealed partial class T06ImportConfirmationTests
     {
         using var ui = await ResourceUiReady(); var vm = ui.Resources;
         Assert.AreEqual(0, vm.Stage); Assert.AreEqual(1, vm.Rows.Count);
-        await vm.AdvanceAsync(); Assert.AreEqual(1, vm.Stage);
+        await vm.AdvanceAsync(); Assert.AreEqual(2, vm.Stage);
         vm.AdjustmentForm["Amount"] = "-100"; vm.AdjustmentForm["Type"] = "Correction"; vm.AdjustmentForm["Reason"] = "Non-cost item";
-        await vm.AdvanceAsync(); Assert.AreEqual(1, vm.Stage);
+        await vm.AdvanceAsync(); Assert.AreEqual(2, vm.Stage);
         vm.AddAdjustmentCommand.Execute(null); Assert.AreEqual(1, vm.Adjustments.Count, vm.Status);
         await vm.AdvanceAsync(); Assert.AreEqual(2, vm.Stage);
         vm.PartChoice = vm.Parts.Single(); vm.LoadPartCommand.Execute(null);
         vm.PartForm["Amount"] = "900"; vm.PartForm.Route = ResourceRoutingKind.Excluded; vm.PartForm["Exclusion"] = "Outside the perimeter";
         vm.ApplyPartCommand.Execute(null); Assert.AreEqual(900m, vm.Parts.Single().Value.Amount.Amount, vm.Status);
-        await vm.AdvanceAsync(); Assert.AreEqual(3, vm.Stage);
+        await vm.AdvanceAsync(); Assert.AreEqual(2, vm.Stage);
         var before = Hash(ui.Company.ActivePath!); Assert.IsFalse(await vm.SaveAsync()); Assert.AreEqual(before, Hash(ui.Company.ActivePath!));
         vm.Reason = "Reviewed imported account"; Assert.IsTrue(await vm.SaveAsync(), vm.Status);
         Assert.IsFalse(vm.IsDirty); Assert.AreEqual(0, vm.Stage); Assert.AreEqual(vm["Saved"], vm.Status);
@@ -109,7 +109,7 @@ public sealed partial class T06ImportConfirmationTests
         using var ui = await ResourceUiReady(); var vm = ui.Resources;
         await vm.AdvanceAsync(); vm.AdjustmentForm["Amount"] = "-12";
         Assert.IsTrue(vm.PreviousStep()); await vm.AdvanceAsync();
-        Assert.AreEqual(1, vm.Stage); Assert.AreEqual("-12", vm.AdjustmentForm["Amount"]);
+        Assert.AreEqual(2, vm.Stage); Assert.AreEqual("-12", vm.AdjustmentForm["Amount"]);
         Assert.AreEqual(0, ui.Dialogs.Prompts); Assert.IsTrue(vm.IsDirty);
     }
 
@@ -132,12 +132,12 @@ public sealed partial class T06ImportConfirmationTests
         Assert.AreEqual(before, Hash(ui.Company.ActivePath!)); Assert.IsTrue(vm.IsRevaluing);
         await vm.AdvanceAsync(); await vm.AdvanceAsync();
         vm.PartChoice = vm.Parts.Single(); vm.LoadPartCommand.Execute(null); vm.PartForm["Amount"] = "850";
-        Assert.IsTrue(vm.PreviousStep()); Assert.IsTrue(vm.PreviousStep());
+        Assert.IsTrue(vm.PreviousStep());
         vm.ResourceChoice = vm.Rows.Single(r => r.Code == "6001"); await vm.AdvanceAsync();
         Assert.AreEqual("6000", vm.CurrentAccount); Assert.AreEqual("850", vm.PartForm["Amount"]);
         Assert.AreEqual(vm["RevalueFinishAccount"], vm.Status);
         await vm.AdvanceAsync(); vm.ApplyPartCommand.Execute(null);
-        await vm.AdvanceAsync(); await vm.AdvanceAsync();
+        await vm.AdvanceAsync();
         Assert.AreEqual(0, vm.Stage, vm.Status); Assert.IsTrue(vm.IsRevaluing);
         await vm.CommitRevalueCommand.ExecuteAsync(null); Assert.IsFalse(vm.IsRevaluing, vm.Status); Assert.IsFalse(vm.IsDirty);
         var saved = ui.Company.ActiveResources!.ReadResources(ui.Company.Snapshot!.Id, ui.Studies.Current!.Id);

@@ -85,7 +85,7 @@ public partial class MainWindow
         Check(!models.IsPublished && models.NodeCode == "NODO", "incomplete node cannot publish and its form is retained");
         Select(ModelPanel.UnitBox, models.Units.Single()); await Click(ModelPanel.ApplyNodeButton);
         ModelPanel.ModelSteps.SelectedIndex = 3;
-        Select(ModelPanel.MasterBox, models.Centers.Single());
+        models.Master = models.Centers.Single(); // Keep review visible to exercise redirection to the pending centre.
         models.CenterName = "Centro revisado";
         await AdvanceWorkflow();
         Audit(ModelPanel.ModelSteps.SelectedIndex == 1 && models.HasPendingCenter && !models.IsPublished &&
@@ -140,8 +140,9 @@ public partial class MainWindow
         selectedRows[0].RateId = "";
         await wizard.AdvanceImport();
         Check(wizard.ImportSteps.SelectedIndex == 3 && vm.SelectionGroups.Single().Amount == 358.35m, "all except one retains grouping by code independent of descriptions");
-        vm.SourceCurrency = "EUR"; vm.AmountMode = "closing-full";
-        vm.AcknowledgeAmountMeaning(); vm.ApprovalReference = "6005 = 358,35 EUR"; vm.InterpretationApproved = true;
+        vm.SourceCurrency = "EUR"; vm.AmountMeaningSelection = "closing-full";
+        vm.ApprovalReference = ""; vm.InterpretationApproved = false;
+        Audit(wizard.NumberFormatPanel.IsExpanded, "manual decimal and thousands separators are visible by default");
         wizard.Activate(); wizard.UpdateLayout(); wizard.SourceCurrencyBox.BringIntoView();
         await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         System.Windows.Input.Keyboard.Focus(wizard.SourceCurrencyBox);
@@ -158,7 +159,12 @@ public partial class MainWindow
         await wizard.AdvanceImport();
         vm.PropertyChanged -= ObserveBusy;
         Audit(busyLocked && wizard.ImportSteps.IsEnabled, "source and meaning fields are locked during preparation and enabled afterwards");
-        Check(wizard.ImportSteps.SelectedIndex == 4 && vm.Preparation?.CanConfirm == true && vm.ConfirmedImport is null, "review shows prepared totals without writing the import");
+        Check(wizard.ImportSteps.SelectedIndex == 4 && vm.HasConfirmableReview && vm.Preparation?.CanConfirm == false && vm.ConfirmedImport is null, "review is accessible without earlier-step approval or example");
+        Audit(GuidedUi.Contains(wizard.ImportTab4, wizard.ApproveInterpretationBox) && !wizard.ConfirmImportButton.IsEnabled,
+            "single approval belongs to the final review and guards saving");
+        wizard.ApproveInterpretationBox.SetCurrentValue(CheckBox.IsCheckedProperty, true);
+        wizard.ApproveInterpretationBox.GetBindingExpression(CheckBox.IsCheckedProperty)!.UpdateSource();
+        Audit(wizard.ConfirmImportButton.IsEnabled && vm.Preparation is not null, "approval enables saving while retaining reviewed totals");
         var reviewed = vm.Preparation;
         wizard.ImportSteps.SelectedIndex = 0; await wizard.AdvanceImport(); await wizard.AdvanceImport();
         Audit(ReferenceEquals(reviewed, vm.Preparation) && vm.InterpretationApproved && vm.SelectionTotals?.SelectedRows == 2,

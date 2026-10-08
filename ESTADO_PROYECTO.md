@@ -1,5 +1,35 @@
 # ESTADO_PROYECTO
 
+## T07: volver a Correcciones y seleccionar el importe — 2026-10-08
+
+Destinos se abre con su botón explícito; la barra fija y el editor permiten cerrar
+los destinos y volver a Correcciones, resolviendo los borradores sin ocultarlos.
+Un clic selecciona todo el importe para sustituirlo al escribir. Se explica la
+fila pendiente inicial y el combo identifica centro, nodo, papel, pool, unidad y
+funciones. [Evidencia](docs/evidencias/T07_RETORNO_Y_EDICION_2026-10-08.md).
+
+
+## T07: correcciones en tabla y guardado automático — 2026-10-08
+
+La columna Correcciones es la única editable, siempre en moneda del análisis. El
+cambio confirmado en la celda se guarda y recalcula efectivo/pendiente. Se elimina
+la pantalla adicional de ajustes. Tabla, clasificación y destinos permanecen en
+una pantalla; originales, conversiones históricas, revisiones y auditoría se conservan.
+Cambio en `codex/usability-six-issues`, PR #27; no está fusionado automáticamente.
+[Evidencia](docs/evidencias/T07_CORRECCIONES_EN_TABLA_2026-10-08.md).
+
+
+## Revisión de los seis problemas de usabilidad — 2026-10-08
+
+Cambios aplicados sobre la integración `770c640` en `codex/usability-six-issues`:
+feedback específico de estructura, recarga explicada, vaciado contextual de centros,
+centro físico visible y orden estable, árbol de finalización con trazabilidad avanzada,
+separadores manuales visibles y revisión accesible con aprobación única al guardar.
+T07 permanece después de confirmar la importación. Se preservan dominio, origen,
+FX, revisiones, hashes y reglas de conservación. Compilación y validación locales,
+sin GitHub Actions ni cambios en main. [Evidencia](docs/evidencias/USABILIDAD_SEIS_PROBLEMAS_2026-10-08.md).
+
+
 ## T07 — implementación completa (2026-10-07)
 
 Las tres subentregas están implementadas e integradas en la rama existente

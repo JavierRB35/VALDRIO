@@ -293,7 +293,7 @@ Completa: {5}</value></data>
   <data name="Preferences.SaveFailed" xml:space="preserve"><value>El cambio de presentación se ha aplicado, pero no se pudo guardar el archivo de preferencias. El próximo inicio puede usar la preferencia anterior.</value></data>
   <data name="Study.CommittedRefreshPending" xml:space="preserve"><value>La escritura quedó confirmada, pero falló la actualización de la pantalla. Actualiza de nuevo para reconciliar las listas mostradas.</value></data>
   <data name="Model.CommittedRefreshPending" xml:space="preserve"><value>La escritura quedó confirmada, pero no se pudo actualizar la pantalla. Actualiza para reconciliar las listas. Se conservarán las ediciones pendientes.</value></data>
-  <data name="Model.Refresh" xml:space="preserve"><value>Actualizar</value></data>
+  <data name="Model.Refresh" xml:space="preserve"><value>Recargar datos guardados</value></data>
   <data name="Import.XlsxDateAccount" xml:space="preserve"><value>Una celda de fecha no puede usarse como identidad de cuenta.</value></data>
   <data name="Import.XlsxFormatUnsupported" xml:space="preserve"><value>El formato numérico XLSX no puede interpretarse sin ambigüedad. Usa un formato explícito soportado.</value></data>
   <data name="Import.SourceLimit" xml:space="preserve"><value>El origen supera el límite técnico de lectura configurado.</value></data>
@@ -361,11 +361,11 @@ Completa: {5}</value></data>
   <data name="ImportMapping.NoStudy" xml:space="preserve"><value>Vista previa del archivo. Para guardar estos datos necesitas abrir o crear antes un análisis de costes.</value></data>
   <data name="ImportMapping.Target" xml:space="preserve"><value>Análisis de destino: {0} · periodo {1} a {2} · moneda {3}</value></data>
   <data name="ImportMapping.SourceCurrency" xml:space="preserve"><value>Moneda de los importes (por ejemplo EUR)</value></data>
-  <data name="ImportMapping.ApprovalReference" xml:space="preserve"><value>Ejemplo de comprobación</value></data>
-  <data name="ImportMapping.ApproveInterpretation" xml:space="preserve"><value>He comprobado que son importes firmados del periodo indicado, en la moneda de origen declarada. Los negativos y ceros conservan su significado original.</value></data>
+  <data name="ImportMapping.ApprovalReference" xml:space="preserve"><value>Nota opcional de la revisión</value></data>
+  <data name="ImportMapping.ApproveInterpretation" xml:space="preserve"><value>Confirmo los movimientos del periodo mostrados en esta revisión. Se conservarán los originales, sus signos y su origen.</value></data>
   <data name="ImportMapping.PrepareImport" xml:space="preserve"><value>Preparar revisión</value></data>
   <data name="ImportMapping.ConfirmImport" xml:space="preserve"><value>Guardar datos en el análisis</value></data>
-  <data name="ImportMapping.PreparedReady" xml:space="preserve"><value>Todo está listo. Revisa los totales antes de guardar los datos.</value></data>
+  <data name="ImportMapping.PreparedReady" xml:space="preserve"><value>Vista previa preparada. Revisa los importes y aprueba su significado antes de guardar.</value></data>
   <data name="ImportMapping.Totals" xml:space="preserve"><value>Leídas {0} · seleccionadas {1} · ignoradas {2} · inválidas {3}. Positivos {4} · negativos {5} · neto {6} {7}.</value></data>
   <data name="ImportMapping.Confirmed" xml:space="preserve"><value>Datos importados y guardados correctamente.</value></data>
   <data name="ImportMapping.ConfirmedSummary" xml:space="preserve"><value>Importación guardada · {1} recursos incorporados.</value></data>
@@ -380,14 +380,14 @@ Completa: {5}</value></data>
   <data name="ImportMapping.OriginalDebit" xml:space="preserve"><value>Debe original</value></data>
   <data name="ImportMapping.OriginalCredit" xml:space="preserve"><value>Haber original</value></data>
   <data name="ImportMapping.DebitCreditHelp" xml:space="preserve"><value>Importe de periodo = Debe menos Haber. Ambas columnas necesitan números explícitos, incluido el cero. Los campos vacíos o ausentes son errores; los negativos conservan su significado declarado.</value></data>
-  <data name="ImportMapping.ApproveDebitCredit" xml:space="preserve"><value>He comprobado el ejemplo y confirmo Debe menos Haber como importe firmado del periodo indicado, en la moneda de origen declarada. Ambos originales, negativos y ceros conservan su significado.</value></data>
+  <data name="ImportMapping.ApproveDebitCredit" xml:space="preserve"><value>Confirmo Debe menos Haber como movimientos del periodo mostrados en esta revisión. Se conservarán ambos originales y su origen.</value></data>
   <data name="Import.AmountOverflow" xml:space="preserve"><value>Debe menos Haber supera el rango decimal admitido. Corrige los importes del origen.</value></data>
   <data name="CompanyActiveLabel" xml:space="preserve"><value>Proyecto abierto</value></data>
   <data name="CompanyTechnicalDetails" xml:space="preserve"><value>Detalles técnicos (soporte)</value></data>
   <data name="DevelopmentToolsTitle" xml:space="preserve"><value>Herramientas técnicas (soporte)</value></data>
   <data name="ImportMapping.AmountMode" xml:space="preserve"><value>¿Qué representan estos importes?</value></data>
-  <data name="ImportMapping.ApproveClosing" xml:space="preserve"><value>He comprobado la fecha de cierre y el ejemplo. Confirmo que quiero utilizar el saldo completo de las cuentas seleccionadas para este análisis, conservando signos y ceros.</value></data>
-  <data name="ImportMapping.ApproveClosingDebitCredit" xml:space="preserve"><value>He comprobado que Debe y Haber representan los saldos de cierre indicados. Confirmo que Debe menos Haber es el saldo completo que debe utilizarse en este análisis.</value></data>
+  <data name="ImportMapping.ApproveClosing" xml:space="preserve"><value>Confirmo que el saldo completo al cierre mostrado se usará como importe del análisis.</value></data>
+  <data name="ImportMapping.ApproveClosingDebitCredit" xml:space="preserve"><value>Confirmo que el saldo completo al cierre, calculado como Debe menos Haber, se usará como importe del análisis.</value></data>
   <data name="ImportMapping.ClosingBasis" xml:space="preserve"><value>Fecha de cierre: {0}. Se utiliza el saldo completo mostrado; no se resta automáticamente otro cierre anterior.</value></data>
   <data name="ImportMapping.ClosingMode" xml:space="preserve"><value>Saldo completo a la fecha de cierre</value></data>
   <data name="ImportMapping.PeriodBasis" xml:space="preserve"><value>Se utilizan los movimientos correspondientes al periodo del análisis.</value></data>
@@ -420,7 +420,7 @@ Completa: {5}</value></data>
   <data name="ImportMapping.ComparisonHelp" xml:space="preserve"><value>Para obtener una diferencia entre acumulados necesitas dos cierres comparables del mismo ejercicio, ámbito, moneda y criterio de signos. Indica el cierre anterior y conserva el actual como final del periodo del análisis.</value></data>
   <data name="ImportMapping.ClearComparison" xml:space="preserve"><value>Quitar acumulado anterior</value></data>
   <data name="Import.ComparisonInvalid" xml:space="preserve"><value>Los dos saldos acumulados no son comparables. Comprueba ejercicio, ámbito, moneda, signos y que el cierre anterior sea el día previo al inicio del análisis.</value></data>
-  <data name="ImportMapping.ApproveComparison" xml:space="preserve"><value>He comprobado ambos cierres, el ejercicio, la moneda, los códigos seleccionados y el ámbito común. Apruebo el ejemplo de diferencia, incluidos signos y ceros.</value></data>
+  <data name="ImportMapping.ApproveComparison" xml:space="preserve"><value>Confirmo las diferencias mostradas entre los acumulados actual y anterior del mismo ámbito contable.</value></data>
   <data name="Import.ReplacementInvalid" xml:space="preserve"><value>Selecciona una importación anterior activa de este análisis para sustituirla.</value></data>
   <data name="ImportMapping.ComparisonScope" xml:space="preserve"><value>Ámbito común comprobado (empresa, cuentas y criterio contable)</value></data>
   <data name="ImportMapping.PreviousEnd" xml:space="preserve"><value>Fecha de cierre del acumulado anterior</value></data>
@@ -504,7 +504,7 @@ Completa: {5}</value></data>
   <data name="Guide.NeedCurrency" xml:space="preserve"><value>Comprueba la moneda de los importes. Se propone la moneda del análisis, pero puedes cambiarla.</value></data>
   <data name="Guide.NeedExample" xml:space="preserve"><value>Escribe un ejemplo que hayas comprobado, por ejemplo «Cuenta 6005 = 358,35 EUR».</value></data>
   <data name="Guide.NeedApproval" xml:space="preserve"><value>Marca la confirmación indicando que la opción elegida describe correctamente los importes del archivo.</value></data>
-  <data name="Guide.ReadyReview" xml:space="preserve"><value>Todo lo necesario está indicado. Pulsa Revisar importación para comprobar los totales antes de guardar.</value></data>
+  <data name="Guide.ReadyReview" xml:space="preserve"><value>Puedes revisar los importes. La aprobación se realiza una sola vez en Revisar y guardar.</value></data>
   <data name="Guide.ImportFile" xml:space="preserve"><value>1. Elegir archivo</value></data>
   <data name="Guide.ImportColumns" xml:space="preserve"><value>2. Indicar columnas</value></data>
   <data name="Guide.ImportRecords" xml:space="preserve"><value>3. Elegir registros</value></data>
@@ -575,8 +575,8 @@ Completa: {5}</value></data>
   <data name="Guide.Help.Replacement" xml:space="preserve"><value>Importación concreta que se sustituirá íntegramente. Revisa la selección antes de guardar.</value></data>
   <data name="Guide.Help.AmountMode" xml:space="preserve"><value>Periodo: movimientos entre las fechas. Saldo íntegro: incorpora el saldo completo al cierre. Acumulados: resta un cierre anterior preparado explícitamente.</value></data>
   <data name="Guide.Help.SourceCurrency" xml:space="preserve"><value>Código de moneda de los importes del archivo, por ejemplo EUR. No se deduce del símbolo o de la región.</value></data>
-  <data name="Guide.Help.ApprovalReference" xml:space="preserve"><value>Ejemplo que has contrastado con el origen: cuenta y total esperado de las filas seleccionadas. Sirve para dejar constancia de tu comprobación.</value></data>
-  <data name="Guide.Help.InterpretationApproved" xml:space="preserve"><value>Confirma que el periodo, el significado, la moneda y el ejemplo son correctos. Cambiar datos relevantes exige revisar de nuevo.</value></data>
+  <data name="Guide.Help.ApprovalReference" xml:space="preserve"><value>Nota opcional sobre una cuenta y su importe comprobado. Si queda vacía, se conserva una referencia interna de la aprobación.</value></data>
+  <data name="Guide.Help.InterpretationApproved" xml:space="preserve"><value>Aprueba el significado y la convención de signos de los importes que ves en esta revisión. Cambiar modalidad, moneda, filas, tipos o formato exige una nueva revisión.</value></data>
   <data name="Guide.Help.International" xml:space="preserve"><value>Opciones para moneda por fila, fecha de documento y conversiones. Los tipos se introducen explícitamente y se conservan con la importación.</value></data>
   <data name="Guide.Help.CurrencyFromColumn" xml:space="preserve"><value>Activa si cada fila indica su propia moneda y elige la columna correspondiente.</value></data>
   <data name="Guide.Help.CurrencyColumn" xml:space="preserve"><value>Columna con códigos de moneda como EUR o USD.</value></data>
@@ -639,24 +639,24 @@ Completa: {5}</value></data>
 <data name="Resource.SplitMismatch" xml:space="preserve"><value>Las partes de sustitución deben sumar exactamente el importe de la parte original.</value></data>
 <data name="Resource.PartNotFound" xml:space="preserve"><value>Selecciona una parte existente y única de este recurso.</value></data>
   <data name="Resources.Title" xml:space="preserve"><value>Recursos</value></data>
-  <data name="Resources.Introduction" xml:space="preserve"><value>Aquí revisas las cuentas importadas antes del cálculo. El importe original siempre se conserva: cualquier corrección se registra como un ajuste con motivo, y después puedes dividir el importe efectivo entre destinos, excluirlo o dejar una parte pendiente.</value></data>
-  <data name="Resources.Ready" xml:space="preserve"><value>Selecciona una cuenta de la tabla y pulsa «Revisar / ajustar cuenta».</value></data>
+  <data name="Resources.Introduction" xml:space="preserve"><value>Modifica Correcciones directamente en la tabla. El saldo importado se conserva y cada cambio confirmado en la celda se guarda automáticamente. La clasificación y los destinos están disponibles debajo de la tabla.</value></data>
+  <data name="Resources.Ready" xml:space="preserve"><value>Edita Correcciones en la tabla. La clasificación y los destinos son opcionales y se abren únicamente con su botón.</value></data>
   <data name="Resources.NeedStudy" xml:space="preserve"><value>Guarda o carga un estudio en el paso 3 para preparar sus recursos.</value></data>
   <data name="Resources.NeedImport" xml:space="preserve"><value>Primero importa y guarda datos contables en el análisis. Al terminar la importación, VALDRIO te traerá directamente aquí.</value></data>
   <data name="Resources.ReadOnly" xml:space="preserve"><value>El archivo está abierto para consulta. Ábrelo en modo edición para guardar cambios.</value></data>
   <data name="Resources.Closed" xml:space="preserve"><value>El estudio está cerrado. Reábrelo en el paso Estudio para modificar sus recursos.</value></data>
-  <data name="Resources.ChooseAccount" xml:space="preserve"><value>Selecciona la cuenta que quieres revisar. Verás el importe importado, los ajustes ya realizados, el importe efectivo y lo que todavía queda pendiente de clasificar o asignar.</value></data>
+  <data name="Resources.ChooseAccount" xml:space="preserve"><value>Edita Correcciones en la tabla o selecciona una cuenta para clasificar y distribuir su importe debajo.</value></data>
   <data name="Resources.SelectAccountFirst" xml:space="preserve"><value>Selecciona una cuenta de la tabla para revisar sus importes.</value></data>
-  <data name="Resources.EditAccount" xml:space="preserve"><value>Revisar / ajustar cuenta seleccionada</value></data>
+  <data name="Resources.EditAccount" xml:space="preserve"><value>Clasificación / destinos de la cuenta seleccionada</value></data>
   <data name="Resources.ContinueParts" xml:space="preserve"><value>Continuar: repartir el importe</value></data>
   <data name="Resources.ReviewChanges" xml:space="preserve"><value>Continuar: revisar y guardar</value></data>
-  <data name="Resources.SaveAccount" xml:space="preserve"><value>Guardar cambios de esta cuenta</value></data>
+  <data name="Resources.SaveAccount" xml:space="preserve"><value>Guardar destinos</value></data>
   <data name="Resources.KeepRevalueParts" xml:space="preserve"><value>Aplicar partes a la revisión de divisas</value></data>
   <data name="Resources.AdjustmentStep" xml:space="preserve"><value>Correcciones del importe</value></data>
   <data name="Resources.AdjustmentHelp" xml:space="preserve"><value>Si el importe importado necesita una corrección, añade aquí la diferencia: un valor positivo aumenta el importe y uno negativo lo reduce. El saldo original no se modifica ni se borra; la corrección queda registrada con su motivo. Para deshacer una corrección anterior, selecciónala y pulsa Revertir.</value></data>
   <data name="Resources.PartsStep" xml:space="preserve"><value>Distribuir o excluir el importe</value></data>
-  <data name="Resources.PartsHelp" xml:space="preserve"><value>Decide qué hacer con el importe efectivo de esta cuenta. Puedes asignarlo directamente, enviarlo a un grupo de costes, excluir una parte del análisis o dejarla pendiente. Si divides la cuenta, la suma de todas las partes debe coincidir exactamente con el importe efectivo.</value></data>
-  <data name="Resources.ReviewStep" xml:space="preserve"><value>Comprobar y guardar esta cuenta</value></data>
+  <data name="Resources.PartsHelp" xml:space="preserve"><value>Destinos opcionales de la cuenta indicada abajo. Estos cambios se guardan por separado de las correcciones. Usa Cerrar destinos y volver a Correcciones para volver a editar saldos.</value></data>
+  <data name="Resources.ReviewStep" xml:space="preserve"><value>Comprobar destinos</value></data>
   <data name="Resources.ReviewHelp" xml:space="preserve"><value>Comprueba que el importe efectivo queda completamente explicado entre asignaciones, exclusiones y pendientes. La diferencia debe ser cero antes de guardar.</value></data>
   <data name="Resources.Coverage" xml:space="preserve"><value>Original convertido: {0} · Ajustes: {1} · Efectivo: {2}
 Directo: {3} · Pools: {4} · Excluido: {5} · Pendiente: {6}
@@ -808,7 +808,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.LayerHelp" xml:space="preserve"><value>Indica si esta parte pertenece a producción, comercial o estructura. Es independiente de que sea fija o variable y de su destino. Puedes dejarla sin clasificar.</value></data>
   <data name="Resources.PoolHelp" xml:space="preserve"><value>El pool reúne costes que se repartirán después. Elige uno de tu modelo publicado; el papel principal o auxiliar de su nodo no determina el comportamiento del coste.</value></data>
   <data name="Resources.ExclusionHelp" xml:space="preserve"><value>Explica por qué este importe queda fuera del estudio. La exclusión conserva el importe y su origen para poder revisarla.</value></data>
-  <data name="Guide.Help.Resource.Rows" xml:space="preserve"><value>1 de 4 · Elige la cuenta cuyos ajustes y destinos quieres revisar.</value></data>
+  <data name="Guide.Help.Resource.Rows" xml:space="preserve"><value>Edita la corrección total directamente. Intro, Tab o salir de la celda la guarda; Escape cancela la edición de la celda.</value></data>
   <data name="Guide.Help.Resource.RemovePart" xml:space="preserve"><value>Quitar parte seleccionada</value></data>
   <data name="Guide.Help.Resource.Normal" xml:space="preserve"><value>Solo el tratamiento Evaluar en el pool declara un propietario de capacidad: el pool elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. La política de cálculo se define en una fase posterior.</value></data>
   <data name="Guide.Help.Resource.CancelOperation" xml:space="preserve"><value>Cancelar operación en curso</value></data>
@@ -818,7 +818,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.Help.Resource.PendingRemainder" xml:space="preserve"><value>Añadir la diferencia como pendiente</value></data>
   <data name="Guide.Help.Resource.Refresh" xml:space="preserve"><value>Actualizar recursos guardados</value></data>
   <data name="Guide.Help.Resource.ObjectKind" xml:space="preserve"><value>Un objeto es aquello cuyo coste quieres conocer: un producto, servicio, orden u otro destino. Su código lo identifica dentro de este estudio. Guárdalo y selecciónalo como destino de la parte.</value></data>
-  <data name="Guide.Help.Resource.Pool" xml:space="preserve"><value>El pool reúne costes que se repartirán después. Elige uno de tu modelo publicado; el papel principal o auxiliar de su nodo no determina el comportamiento del coste.</value></data>
+  <data name="Guide.Help.Resource.Pool" xml:space="preserve"><value>Cada opción identifica el centro físico, nodo, papel, descripción del pool, unidad de actividad y funciones de la estructura publicada. Selecciona el destino que recibe realmente este coste; no se deduce ningún reparto.</value></data>
   <data name="Guide.Help.Resource.Object" xml:space="preserve"><value>Un objeto es aquello cuyo coste quieres conocer: un producto, servicio, orden u otro destino. Su código lo identifica dentro de este estudio. Guárdalo y selecciónalo como destino de la parte.</value></data>
   <data name="Guide.Help.Resource.Maximum" xml:space="preserve"><value>Fijo y variable se definen respecto a una actividad, un intervalo de fechas y un rango. Estos datos explican el criterio; no se deducen del centro ni de la cuenta.</value></data>
   <data name="Guide.Help.Resource.SaveRevalue" xml:space="preserve"><value>Guardar toda la revalorización</value></data>
@@ -871,7 +871,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.CenterListHelp" xml:space="preserve"><value>Selecciona una fila para editarla. Al guardar, el formulario se limpia automáticamente y la tabla se actualiza.</value></data>
   <data name="Model.CenterFormNew" xml:space="preserve"><value>Añadir centro</value></data>
   <data name="Model.CenterFormEdit" xml:space="preserve"><value>Editar centro seleccionado</value></data>
-  <data name="Model.NewCenter" xml:space="preserve"><value>Nuevo centro</value></data>
+  <data name="Model.NewCenter" xml:space="preserve"><value>Dejar de editar / vaciar formulario</value></data>
   <data name="Model.CenterSaveCreate" xml:space="preserve"><value>Guardar centro</value></data>
   <data name="Model.CenterSaveEdit" xml:space="preserve"><value>Guardar cambios</value></data>
   <data name="Model.CenterDeactivate" xml:space="preserve"><value>Desactivar centro</value></data>
@@ -895,7 +895,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.ColumnCode" xml:space="preserve"><value>Código</value></data>
   <data name="Model.ColumnName" xml:space="preserve"><value>Nombre</value></data>
   <data name="Model.ColumnStatus" xml:space="preserve"><value>Estado</value></data>
-  <data name="Model.ColumnCenter" xml:space="preserve"><value>Centro</value></data>
+  <data name="Model.ColumnCenter" xml:space="preserve"><value>Centro físico</value></data>
   <data name="Model.ColumnRole" xml:space="preserve"><value>Papel</value></data>
   <data name="Model.ColumnUnit" xml:space="preserve"><value>Unidad</value></data>
   <data name="Model.ColumnLayer" xml:space="preserve"><value>Capa</value></data>
@@ -921,17 +921,17 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="ImportMapping.FileAdvancedHelp" xml:space="preserve"><value>Cambia estas opciones únicamente si los títulos o los datos no empiezan en las filas habituales, o si un CSV utiliza otro separador o codificación.</value></data>
   <data name="ImportMapping.ColumnsStepTitle" xml:space="preserve"><value>Indica dónde están la cuenta y el importe</value></data>
   <data name="ImportMapping.ColumnsStepHelp" xml:space="preserve"><value>No necesitas conocer nombres técnicos: selecciona la columna que identifica la cuenta y la columna o columnas que contienen su importe.</value></data>
-  <data name="ImportMapping.NumberAdvanced" xml:space="preserve"><value>Formato de números (solo si la vista previa no coincide)</value></data>
-  <data name="ImportMapping.NumberAdvancedHelp" xml:space="preserve"><value>Los valores por defecto sirven para la mayoría de archivos. Ajusta separadores o negativos únicamente si la vista previa muestra importes incorrectos.</value></data>
+  <data name="ImportMapping.NumberAdvanced" xml:space="preserve"><value>Formato de los números del archivo</value></data>
+  <data name="ImportMapping.NumberAdvancedHelp" xml:space="preserve"><value>Selecciona los separadores decimal y de miles del archivo. La vista previa muestra el importe leído; no se detectan automáticamente.</value></data>
   <data name="ImportMapping.RecordsStepTitle" xml:space="preserve"><value>Elige qué registros quieres importar</value></data>
   <data name="ImportMapping.RecordsStepHelp" xml:space="preserve"><value>Todas las filas válidas están incluidas inicialmente. Desmarca únicamente las que no deban formar parte de este análisis.</value></data>
   <data name="ImportMapping.MeaningStepTitle" xml:space="preserve"><value>Explica qué representan los importes</value></data>
-  <data name="ImportMapping.MeaningStepHelp" xml:space="preserve"><value>Esta es una decisión contable importante. Elige la opción que describa realmente el archivo; VALDRIO no la adivina para evitar duplicar o restar importes incorrectamente.</value></data>
+  <data name="ImportMapping.MeaningStepHelp" xml:space="preserve"><value>Este paso solo define qué representan los importes: movimientos del periodo, saldo completo al cierre o diferencia entre acumulados. Elige una opción y continúa a revisar. Los ajustes de cuentas se hacen después de guardar la importación.</value></data>
   <data name="ImportMapping.ReplaceAdvancedTitle" xml:space="preserve"><value>Corregir una importación anterior (opcional)</value></data>
   <data name="ImportMapping.SourceCurrencyHelp" xml:space="preserve"><value>Se propone la moneda del análisis. Cámbiala solo si los importes del archivo están expresados en otra moneda.</value></data>
-  <data name="ImportMapping.ApprovalReferenceHelp" xml:space="preserve"><value>Escribe un ejemplo que hayas comprobado, por ejemplo «Cuenta 600000 = 1.250,50». Sirve para dejar constancia de cómo interpretaste el archivo.</value></data>
+  <data name="ImportMapping.ApprovalReferenceHelp" xml:space="preserve"><value>Puedes anotar una cuenta y su importe contrastado. Si no escribes una nota, VALDRIO registra la aprobación con el archivo, el significado elegido y el periodo.</value></data>
   <data name="ImportMapping.ReviewStepTitle" xml:space="preserve"><value>Comprueba antes de guardar</value></data>
-  <data name="ImportMapping.ReviewStepHelp" xml:space="preserve"><value>Esta pantalla resume lo que se incorporará. El archivo original no se modifica y nada entra en el análisis hasta que confirmes el guardado.</value></data>
+  <data name="ImportMapping.ReviewStepHelp" xml:space="preserve"><value>Comprueba los totales y las cuentas, aprueba el significado y guarda. Después continúa a Preparar y ajustar cuentas (T07), donde puedes añadir ajustes con motivo y clasificar partes sin alterar el original.</value></data>
   <data name="ImportMapping.FriendlyValidSummary" xml:space="preserve"><value>{0} filas leídas · todo correcto</value></data>
   <data name="ImportMapping.FriendlyInvalidSummary" xml:space="preserve"><value>{0} filas leídas · {1} necesitan corrección</value></data>
   <data name="ImportMapping.FriendlyIssueLine" xml:space="preserve"><value>Fila {0}: {1}</value></data>
@@ -946,8 +946,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="ImportMapping.NeedFixRows" xml:space="preserve"><value>Hay filas con errores. Revisa la tabla y corrige el archivo o la interpretación antes de continuar.</value></data>
   <data name="ImportMapping.ColumnsContinueHint" xml:space="preserve"><value>Cuenta e importe están identificados. Pulsa Comprobar y continuar.</value></data>
   <data name="Resources.ListTitle" xml:space="preserve"><value>Cuentas importadas</value></data>
-  <data name="Resources.ListHelp" xml:space="preserve"><value>Esta tabla es tu punto de partida. Selecciona una cuenta para revisar su importe original, corregirlo mediante ajustes y decidir cómo se distribuye o excluye.</value></data>
-  <data name="Resources.OpenSelected" xml:space="preserve"><value>Revisar / ajustar cuenta seleccionada</value></data>
+  <data name="Resources.ListHelp" xml:space="preserve"><value>Solo Correcciones es editable. Escribe la corrección total, positiva o negativa. El importe efectivo y el pendiente de asignar se recalculan automáticamente.</value></data>
+  <data name="Resources.OpenSelected" xml:space="preserve"><value>Clasificación / destinos de la cuenta seleccionada</value></data>
   <data name="CompanyProjectIntro" xml:space="preserve"><value>Un proyecto de costes reúne en un solo archivo la empresa, su estructura de costes y todos los análisis por periodo. Puedes abrir uno existente o crear uno nuevo.</value></data>
   <data name="CompanyOpenProjectTitle" xml:space="preserve"><value>Retomar un proyecto existente</value></data>
   <data name="CompanyOpenProjectHelp" xml:space="preserve"><value>Abre el archivo con el que ya estabas trabajando. Después podrás elegir si modificas la estructura, abres otro periodo o continúas preparando cuentas.</value></data>
@@ -981,4 +981,28 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.TaskContinueImport" xml:space="preserve"><value>Continuar con los saldos del análisis actual</value></data>
   <data name="Guide.TaskContinueResources" xml:space="preserve"><value>Continuar preparando las cuentas importadas</value></data>
   <data name="Resources.ProgressSummary" xml:space="preserve"><value>{0} de {1} cuentas conciliadas · {2} con importe pendiente de asignar · {3} con diferencia sin explicar</value></data>
+  <data name="Model.ReviewSummary" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
+  <data name="Model.TechnicalDetails" xml:space="preserve"><value>Detalles técnicos de trazabilidad</value></data>
+  <data name="Model.ReviewTree" xml:space="preserve"><value>Centros físicos y nodos de costes · papel · unidad de actividad · función</value></data>
+  <data name="Model.RefreshHelp" xml:space="preserve"><value>Vuelve a leer los datos guardados en el archivo de empresa. No guarda cambios: los formularios pendientes se conservan.</value></data>
+  <data name="Model.Refreshed" xml:space="preserve"><value>Datos guardados recargados. Los cambios pendientes siguen sin guardar.</value></data>
+  <data name="Model.StructureCreated" xml:space="preserve"><value>Estructura nueva guardada en el archivo de empresa. Continúa con los centros y nodos.</value></data>
+  <data name="Model.StructureSaved" xml:space="preserve"><value>Estructura guardada en el archivo de empresa. Puedes revisarla y finalizarla.</value></data>
+  <data name="Model.StructurePublished" xml:space="preserve"><value>Estructura finalizada y guardada. Ya puedes usarla en un análisis.</value></data>
+  <data name="Guide.NeedComparison" xml:space="preserve"><value>Para calcular diferencias entre acumulados, conserva primero el archivo anterior con sus fechas y ámbito contable.</value></data>
+<data name="Guide.ApproveReview" xml:space="preserve"><value>Revisa los totales y marca la aprobación del significado antes de guardar.</value></data>
+<data name="Guide.SaveReady" xml:space="preserve"><value>Revisión aprobada. Guarda la importación para continuar a los ajustes de cuentas.</value></data>
+  <data name="Guide.Help.RefreshModel" xml:space="preserve"><value>Vuelve a leer los datos guardados. No guarda el formulario pendiente ni descarta sus cambios.</value></data>
+  <data name="Guide.Help.Resource.Corrections" xml:space="preserve"><value>Escribe la corrección total en la moneda del análisis. No hace falta un botón de guardar. Los originales y las correcciones anteriores se conservan en el historial.</value></data>
+  <data name="Resources.CorrectionHelp" xml:space="preserve"><value>Las correcciones se expresan en {0}. Haz clic en la celda: se selecciona todo el importe, incluido el cero. Escribe para sustituirlo. Intro, Tab o salir de la celda guarda; Escape cancela.</value></data>
+  <data name="Resources.CorrectionNotSaved" xml:space="preserve"><value>La corrección no se ha guardado. La tabla conserva el importe anterior guardado. Corrige el valor y vuelve a intentarlo.</value></data>
+  <data name="Resources.CorrectionSaved" xml:space="preserve"><value>Corrección guardada en el análisis y archivo del proyecto indicados. Importe efectivo y pendiente de asignar actualizados.</value></data>
+  <data name="Resources.CorrectionUnchanged" xml:space="preserve"><value>La corrección ya tiene ese valor. No se ha guardado un ajuste adicional.</value></data>
+  <data name="Resources.CorrectionDraftBlocked" xml:space="preserve"><value>Hay cambios de destinos sin guardar. Pulsa Cerrar destinos y volver a Correcciones y elige guardar o descartar. Finaliza o cancela cualquier revaloración.</value></data>
+  <data name="Resources.InitialPendingHelp" xml:space="preserve"><value>VALDRIO deja inicialmente el importe importado como Pendiente de decidir. Esa fila inicial se crea automáticamente; no es un coste nuevo. Cada fila de abajo representa una parte de esta cuenta. Distribuir es opcional: vuelve a Correcciones si solo quieres corregir saldos.</value></data>
+  <data name="Resources.BackToCorrectionsButton" xml:space="preserve"><value>Cerrar destinos y volver a Correcciones</value></data>
+  <data name="Resources.BackToCorrections" xml:space="preserve"><value>Destinos cerrados. Ya puedes editar Correcciones en la tabla.</value></data>
+  <data name="Resources.PoolWithoutDescription" xml:space="preserve"><value>Pool sin descripción</value></data>
+  <data name="Resources.PoolChoice" xml:space="preserve"><value>Centro {0} | Nodo {1} ({2}) | {3} | Unidad de actividad {4} | Funciones: {5}</value></data>
+  <data name="Guide.Help.Resource.BackToCorrections" xml:space="preserve"><value>Cierra este editor opcional de la cuenta y vuelve a la tabla de correcciones. Si hay cambios de destinos sin guardar, elige guardar, descartar o cancelar; las correcciones guardadas se conservan.</value></data>
 </root>

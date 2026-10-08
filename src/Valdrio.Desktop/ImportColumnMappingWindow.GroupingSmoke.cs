@@ -120,7 +120,7 @@ public partial class ImportColumnMappingWindow
                 "backup and restored file preserve the grouped evidence");
         await Click(((MainWindow)Owner).CompanyPanel.CloseButton); await company.OpenPath(path);
         studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == study.Id); await Click(panel.LoadStudyButton);
-        Check(studies.Current?.Revision == 1 && studies.ImportedAmounts.Contains(batch.Id.ToString(), StringComparison.Ordinal), "grouped import survives UI close and reopen");
+        Check(studies.Current?.Revision == 1 && studies.ImportedAmounts.Contains(batch.Prepared.Source.FileName, StringComparison.Ordinal), "grouped import survives UI close and reopen");
         var snapshot = Path.Combine(output, "snapshot.json"); File.WriteAllText(snapshot, CanonicalSnapshotJson.Serialize(photo));
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }));
         File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { SchemaVersion = SqliteCompanyFileService.SchemaVersion,

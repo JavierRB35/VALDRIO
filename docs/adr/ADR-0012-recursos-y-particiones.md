@@ -66,12 +66,25 @@ importaciones, snapshots e historial. No se cambian las fuentes canónicas.
 
 ## Interfaz y alcance
 
-Empresa → Estructura → Estudio → Importación → Recursos. Recursos tiene cuatro pasos
-internos: cuenta, ajustes, partes y revisión/guardado, con un único avance principal.
-Los campos numéricos conservan la región de edición; cambiarla requiere confirmación
-explícita antes de interpretar el texto. Los formularios pendientes bloquean el avance
-con una explicación; volver atrás no los descarta. Las opciones avanzadas no sustituyen
-el recorrido habitual. Ayuda contextual disponible con ratón, teclado y automatización.
+Empresa → Estructura → Estudio → Importación → Recursos. Desde la simplificación
+solicitada por el propietario el 2026-10-08, Recursos conserva una única pantalla:
+tabla con Correcciones editable y guardado automático; clasificación, destinos y
+comprobación debajo de la tabla cuando se necesitan. Se elimina la pantalla manual
+de ajustes y su elección de moneda. La corrección es un total en moneda funcional;
+cada edición confirmada registra el delta respecto al total guardado, con motivo
+interno que identifica la operación, valores, moneda y cuenta. No se modifica el
+saldo de origen ni se fabrica una justificación contable externa.
+
+La operación utiliza EditResource, revisión esperada, metadatos monetarios y auditoría
+existentes. Conserva partes asignadas y aplica el delta a pendiente (o crea una parte
+pendiente firmada). Se valida CM02 antes del guardado transaccional. Repetir un valor
+no crea otro delta. Historial y conversiones previas siguen intactos. Clasificación y
+revaloración mantienen su guardado explícito y protección de borradores.
+
+Los campos numéricos conservan la región de edición. Los formularios pendientes
+bloquean operaciones incompatibles con una explicación; volver atrás no los descarta.
+Las opciones avanzadas no sustituyen el recorrido habitual. Ayuda contextual disponible
+con ratón, teclado y automatización. [Validación de la tabla](../evidencias/T07_CORRECCIONES_EN_TABLA_2026-10-08.md).
 
 Se mantienen los servicios anteriores y la separación Domain/Calculation/Application/
 Infrastructure/Desktop. El catálogo de objetos es el mínimo de T07 para asignación;

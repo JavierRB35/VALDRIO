@@ -89,7 +89,7 @@ public partial class MainWindow
         TaskContinueButton.Visibility = hasAnalysis ? Visibility.Visible : Visibility.Collapsed;
         TaskContinueButton.Content = vm.Guide(hasImports ? "TaskContinueResources" :
             hasImportDestination ? "TaskContinueImport" : "TaskContinueAnalysis");
-        WorkflowBack.Content = vm.Guide("Back"); WorkflowBack.IsEnabled = workflowStep > 0 && vm.Company?.WorkspaceIdle != false;
+        WorkflowBack.Content = workflowStep == 4 && vm.Resources is { ShowParts: true } resourceEditor ? resourceEditor["BackToCorrectionsButton"] : vm.Guide("Back"); WorkflowBack.IsEnabled = workflowStep > 0 && vm.Company?.WorkspaceIdle != false;
         WorkflowNext.Content = vm.Guide(workflowStep switch
         {
             0 when vm.Company?.Snapshot is null => "CreateCompanyNext",
@@ -101,7 +101,7 @@ public partial class MainWindow
             _ => "Next"
         });
         if (workflowStep == 4 && vm.Resources is { } resources) WorkflowNext.Content = resources.NextAction;
-        WorkflowNext.Visibility = workflowStep == 5 ? Visibility.Collapsed : Visibility.Visible;
+        WorkflowNext.Visibility = workflowStep == 5 || workflowStep == 4 && vm.Resources?.ShowParts != true ? Visibility.Collapsed : Visibility.Visible;
         WorkflowNext.IsEnabled = vm.Company?.WorkspaceIdle != false &&
             (workflowStep is not (1 or 2) || vm.Company?.CanWrite == true) &&
             (workflowStep != 4 || vm.Resources?.CanAdvance == true);
@@ -143,7 +143,8 @@ public partial class MainWindow
     {
         if (viewModel?.Company?.WorkspaceIdle == false) return;
         if (workflowStep == 1 && ModelPanel.PreviousModelStep()) { UpdateWorkflow(); return; }
-        if (workflowStep == 4 && viewModel?.Resources?.PreviousStep() == true) { UpdateWorkflow(); return; }
+        if (workflowStep == 4 && viewModel?.Resources is { ShowParts: true } resources)
+        { await resources.CloseDestinationsAsync(); UpdateWorkflow(); RootScrollViewer.ScrollToTop(); return; }
         await NavigateWorkflow(Math.Max(0, workflowStep - 1));
     }
     private async void ContinueWorkflow(object sender, RoutedEventArgs e) => await AdvanceWorkflow();
