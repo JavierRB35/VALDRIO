@@ -19,5 +19,6 @@ reglas económicas, sin obligar a conocer la arquitectura interna para trabajar.
 - Verificar el recorrido desde empresa vacía hasta importación guardada, reapertura,
   retroceso, corrección de errores y opciones avanzadas. Mantener localización y teclado.
 
-T07 queda pendiente de conversación. Esta prioridad no elimina funcionalidades
+T07 fue autorizada para implementación completa el 2026-10-07; el recorrido añade
+Recursos después de Importación. Esta prioridad no elimina funcionalidades
 ni sustituye las validaciones del dominio; reorganiza cómo se presentan y ejecutan.

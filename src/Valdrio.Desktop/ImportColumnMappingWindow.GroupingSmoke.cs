@@ -71,10 +71,10 @@ public partial class ImportColumnMappingWindow
         studies.ModelChoice = studies.PublishedModels.Single(); await Click(panel.CreateStudyButton);
         var study = studies.Current!; await studies.AttachImportTarget();
         var csv = Path.Combine(output, "grouping.csv"); File.WriteAllText(csv, "Code;Description;Amount\n6005;First description;280\n6005;Different description;78,35\nGASTO;Credit;-5");
-        files.Paths.Enqueue(csv); await Click(OpenSourceButton); await Click(ReadSourceButton);
+        files.Paths.Enqueue(csv); await Click(OpenSourceButton); await vm.ReadCommand.ExecuteAsync(null);
         Select(AmountLayoutBox, "amount"); Select(AccountColumnBox, 1); Select(AmountColumnBox, 3);
         vm.DecimalSeparator = ","; vm.GroupSeparator = ""; vm.ImportAllAccounts = true;
-        await Click(ValidateMappingButton);
+        await vm.ValidateCommand.ExecuteAsync(null);
         vm.BindTarget(null, null, false, null);
         Check(vm.IsReady && vm.AccountChoices.Count == 3 && vm.AccountChoices.All(r => r.Included) &&
             vm.SelectionGroups.Single(g => g.Code == "6005").Amount == 358.35m && vm.SelectionTotals?.Net == 353.35m &&

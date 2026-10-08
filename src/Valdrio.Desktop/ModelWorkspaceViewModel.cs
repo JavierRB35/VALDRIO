@@ -8,12 +8,21 @@ using Valdrio.Domain;
 using Valdrio.Localization;
 
 namespace Valdrio.Desktop;
-public sealed record CenterOption(PhysicalCenter Value, string Label);
+public sealed record CenterOption(PhysicalCenter Value, string Label, string StatusLabel);
 public sealed record UnitOption(DriverUnitState Value, string Label);
 public sealed record ModelOption(ModelVersionSnapshot Value, string Label);
 public sealed record RoleOption(NodeRole Value, string Label);
 public sealed record LayerOption(CostLayer Value, string Label);
-public sealed record NodeOption(CalculationNodeDefinition Node, CostPoolDefinition? Pool, string Label);
+public sealed record NodeOption(
+    CalculationNodeDefinition Node,
+    CostPoolDefinition? Pool,
+    string Label,
+    string CenterLabel,
+    string RoleLabel,
+    string UnitLabel,
+    string LayerLabel,
+    string FunctionsLabel,
+    string PoolLabel);
 public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposable
 {
     private readonly CompanyFileViewModel company;
@@ -48,19 +57,25 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         this.preferences = preferences;
         this.dialogs = dialogs;
         this.formatter = formatter;
-        CreateCenterCommand = new AsyncRelayCommand(CreateCenter, () => Ready);
-        SaveCenterCommand = new AsyncRelayCommand(SaveCenter, () => Ready && Master is not null);
-        ToggleCenterCommand = new AsyncRelayCommand(ToggleCenter, () => Ready && Master is not null);
-        ToggleUnitCommand = new AsyncRelayCommand(ToggleUnit, () => Ready && UnitMaster is not null);
-        NewDraftCommand = new AsyncRelayCommand(NewDraft, () => Ready);
+        CreateCenterCommand = new AsyncRelayCommand(CreateCenter, () => Ready && company.CanWrite);
+        SaveCenterCommand = new AsyncRelayCommand(SaveCenter, () => Ready && company.CanWrite && Master is not null);
+        NewCenterCommand = new AsyncRelayCommand(NewCenter, () => Ready && company.CanWrite);
+        SaveCenterFormCommand = new AsyncRelayCommand(SaveCenterForm, () => Ready && company.CanWrite &&
+            !string.IsNullOrWhiteSpace(CenterCode) && !string.IsNullOrWhiteSpace(CenterName) &&
+            (Master is null || MasterEdited));
+        ToggleCenterCommand = new AsyncRelayCommand(ToggleCenter, () => Ready && company.CanWrite && Master is not null && !MasterEdited);
+        ToggleUnitCommand = new AsyncRelayCommand(ToggleUnit, () => Ready && company.CanWrite && UnitMaster is not null);
+        NewDraftCommand = new AsyncRelayCommand(NewDraft, () => Ready && company.CanWrite);
         LoadCommand = new AsyncRelayCommand(LoadChosen, () => Ready && ModelChoice is not null);
-        SaveCommand = new AsyncRelayCommand(Save, () => Ready && IsEditable && (dirty || nodeFormEdited));
+        SaveCommand = new AsyncRelayCommand(Save, () => CanEdit && (dirty || nodeFormEdited));
         ValidateCommand = new AsyncRelayCommand(Validate, () => Ready && Current is not null && !dirty && !nodeFormEdited);
-        PublishCommand = new AsyncRelayCommand(Publish, () => Ready && IsEditable && !dirty && !nodeFormEdited);
-        CloneCommand = new AsyncRelayCommand(Clone, () => Ready && Current?.Status == ModelStatus.Published);
-        ApplyNodeCommand = new RelayCommand(ApplyNode, () => Ready && IsEditable);
-        RemoveNodeCommand = new RelayCommand(RemoveNode, () => Ready && IsEditable && SelectedNode is not null);
-        NewNodeCommand = new RelayCommand(ClearNodeForm, () => Ready && IsEditable);
+        PublishCommand = new AsyncRelayCommand(Publish, () => CanEdit && !dirty && !nodeFormEdited);
+        CloneCommand = new AsyncRelayCommand(Clone, () => Ready && company.CanWrite && Current?.Status == ModelStatus.Published);
+        ApplyNodeCommand = new RelayCommand(ApplyNode, () => CanEdit);
+        SaveNodeCommand = new AsyncRelayCommand(SaveNode, () => CanEdit && nodeFormEdited);
+        RemoveNodeCommand = new RelayCommand(RemoveNode, () => CanEdit && SelectedNode is not null);
+        DeleteNodeCommand = new AsyncRelayCommand(DeleteNode, () => CanEdit && SelectedNode is not null && !nodeFormEdited);
+        NewNodeCommand = new RelayCommand(ClearNodeForm, () => CanEdit);
         DiscardCommand = new RelayCommand(() =>
         {
             if (Current is not null)
@@ -78,12 +93,20 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
 
     public bool IsBusy => busy;
     private bool MasterEdited => master is not null && (centerCode != master.Value.Code || centerName != master.Value.Name);
-    public bool IsDirty => dirty || nodeFormEdited || MasterEdited;
+    private bool CenterFormEdited => master is null
+        ? !string.IsNullOrWhiteSpace(centerCode) || !string.IsNullOrWhiteSpace(centerName)
+        : MasterEdited;
+    public bool IsDirty => dirty || nodeFormEdited || CenterFormEdited;
     public bool IsPublished => Current?.Status == ModelStatus.Published;
     private bool Ready => !busy && company.WorkspaceIdle && company.ActiveModels is not null;
     public bool IsEditable => Current?.Status == ModelStatus.Draft;
-    public bool CanEdit => Ready && IsEditable;
+    public bool CanEdit => Ready && IsEditable && company.CanWrite;
+    public bool CanEditMasters => Ready && company.CanWrite;
+    public bool DescriptionReadOnly => IsPublished || !company.CanWrite;
     public bool InputsEnabled => Ready;
+    public bool HasError => diagnostic is not null;
+    public bool IsEditingCenter => Master is not null;
+    public bool CanSelectNode => !busy && !nodeFormEdited;
     public ModelVersionSnapshot? Current { get; private set; }
     public ObservableCollection<CenterOption> Centers { get; } = [];
     public ObservableCollection<UnitOption> Units { get; } = [];
@@ -97,7 +120,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         get => master;
         set
         {
-            if (!loading && MasterEdited && master != value)
+            if (!loading && CenterFormEdited && master != value)
             {
                 var decision = dialogs.ResolvePending(Text("Model.PendingTitle"), Text("Model.PendingBody"));
                 if (decision == PendingEditChoice.Cancel)
@@ -111,6 +134,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
                     _ = SaveMasterThenSelect(value);
                     return;
                 }
+
+                ClearCenterFormCore();
             }
 
             if (SetProperty(ref master, value) && !loading)
@@ -124,8 +149,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
 
     private async Task SaveMasterThenSelect(CenterOption? selection)
     {
-        await SaveCenter();
-        if (!MasterEdited)
+        await SaveCenterForm();
+        if (!CenterFormEdited)
             Master = Centers.SingleOrDefault(x => x.Value.Id == selection?.Value.Id);
         else
             OnPropertyChanged(nameof(Master));
@@ -250,7 +275,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         get => description;
         set
         {
-            if (SetProperty(ref description, value) && !loading && IsEditable)
+            if (SetProperty(ref description, value) && !loading && IsEditable && company.CanWrite)
             {
                 dirty = true;
                 Refresh();
@@ -299,6 +324,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
 
     public IAsyncRelayCommand CreateCenterCommand { get; }
     public IAsyncRelayCommand SaveCenterCommand { get; }
+    public IAsyncRelayCommand NewCenterCommand { get; }
+    public IAsyncRelayCommand SaveCenterFormCommand { get; }
     public IAsyncRelayCommand ToggleCenterCommand { get; }
     public IAsyncRelayCommand ToggleUnitCommand { get; }
     public IAsyncRelayCommand NewDraftCommand { get; }
@@ -308,7 +335,9 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public IAsyncRelayCommand PublishCommand { get; }
     public IAsyncRelayCommand CloneCommand { get; }
     public IRelayCommand ApplyNodeCommand { get; }
+    public IAsyncRelayCommand SaveNodeCommand { get; }
     public IRelayCommand RemoveNodeCommand { get; }
+    public IAsyncRelayCommand DeleteNodeCommand { get; }
     public IRelayCommand NewNodeCommand { get; }
     public IRelayCommand DiscardCommand { get; }
     public IRelayCommand CancelCommand { get; }
@@ -339,6 +368,10 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     }
 
     public string Status => diagnostic is null ? Text(committedRefreshPending && !busy ? "Model.CommittedRefreshPending" : statusKey) : DiagnosticText(diagnostic);
+    public string CenterFeedback => diagnostic is not null && (CenterFormEdited || Master is not null) ||
+        statusKey.StartsWith("Model.Center", StringComparison.Ordinal) ? Status : "";
+    public string NodeFeedback => diagnostic is not null && (nodeFormEdited || SelectedNode is not null || dirty) ||
+        statusKey.StartsWith("Model.Node", StringComparison.Ordinal) ? Status : "";
     public string ValidationText => string.Join(Environment.NewLine, validation.Select(DiagnosticText));
     public string Details => Current is null ? Text("Model.NoneSelected") : string.Format(Format, Text("Model.Details"), Current.Structure.Description, Text(Current.Status == ModelStatus.Draft ? "Model.Draft" : "Model.Published"), Current.Structure.VersionNumber, Current.Revision, Current.Structure.ParentVersionId?.ToString() ?? "—", Current.PublishedAtUtc is null ? "—" : formatter.FormatInstant(Current.PublishedAtUtc.Value.Value, preferences.Current.DisplayTimeZoneId, Format), Current.StructuralHash ?? "—", IsDirty ? Text("Model.Unsaved") : Text("Model.Saved"));
     public string HistoricalDefinitions => Current?.Publication is not { } p ? "" : string.Join(Environment.NewLine, p.PhysicalCenters.Select(c => c.Code + " · " + c.Name).Concat(p.DriverUnits.Select(u => u.Code + " · " + u.Dimension + " · " + u.Symbol)));
@@ -350,7 +383,24 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string CreateCenterLabel => Text("Model.CreateCenter");
     public string SaveCenterLabel => Text("Model.SaveCenter");
     public string ToggleCenterLabel => Text("Model.ToggleCenter");
+    public string CenterSectionHelp => Text("Model.CenterSectionHelp");
+    public string CenterRequiredHelp => Text("Model.CenterRequiredHelp");
+    public string CenterListTitle => Text("Model.CenterListTitle");
+    public string CenterListHelp => Text("Model.CenterListHelp");
+    public string CenterFormTitle => Text(IsEditingCenter ? "Model.CenterFormEdit" : "Model.CenterFormNew");
+    public string NewCenterLabel => Text("Model.NewCenter");
+    public string CenterPrimaryActionLabel => Text(IsEditingCenter ? "Model.CenterSaveEdit" : "Model.CenterSaveCreate");
+    public string CenterStateActionLabel => Text(Master?.Value.IsActive == false ? "Model.CenterReactivate" : "Model.CenterDeactivate");
+    public string CenterStateHelp => Text("Model.CenterStateHelp");
     public string ModelLabel => Text("Model.Models");
+    public string ModelStepHelp => Text("Model.ModelStepHelp");
+    public string ExistingModelHelp => Text("Model.ExistingModelHelp");
+    public string NewModelHelp => Text("Model.NewModelHelp");
+    public string UnitSectionHelp => Text("Model.UnitSectionHelp");
+    public string UnitCatalogTitle => Text("Model.UnitCatalogTitle");
+    public string CreateUnitHereLabel => Text("Model.CreateUnitHere");
+    public string CreateUnitHereHelp => Text("Model.CreateUnitHereHelp");
+    public string ReviewModelHelp => Text("Model.ReviewModelHelp");
     public string DescriptionLabel => Text("Model.Description");
     public string NewDraftLabel => Text("Model.NewDraft");
     public string LoadLabel => Text("Model.Load");
@@ -360,6 +410,19 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string CloneLabel => Text("Model.Clone");
     public string DiscardLabel => Text("Model.Discard");
     public string NodeLabel => Text("Model.Nodes");
+    public string NodeSectionHelp => Text("Model.NodeSectionHelp");
+    public string NodeRequiredHelp => Text("Model.NodeRequiredHelp");
+    public string NodeListTitle => Text("Model.NodeListTitle");
+    public string NodeListHelp => Text("Model.NodeListHelp");
+    public string NodeFormTitle => Text(SelectedNode is null ? "Model.NodeFormNew" : "Model.NodeFormEdit");
+    public string NodePrimaryActionLabel => Text(SelectedNode is null ? "Model.NodeSaveCreate" : "Model.NodeSaveEdit");
+    public string NodePersistenceHelp => Text("Model.NodePersistenceHelp");
+    public string OptionalNodeDataLabel => Text("Model.OptionalNodeData");
+    public string FunctionHelp => Text("Model.FunctionHelp");
+    public string RoleHelp => Text("Model.RoleHelp");
+    public string UnitHelp => Text("Model.UnitHelp");
+    public string LayerHelp => Text("Model.LayerHelp");
+    public string PoolHelp => Text("Model.PoolHelp");
     public string NodeCodeLabel => Text("Model.NodeCode");
     public string PhysicalLabel => Text("Model.Physical");
     public string RoleLabel => Text("Model.Role");
@@ -380,6 +443,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         {
             CreateCenterCommand,
             SaveCenterCommand,
+            NewCenterCommand,
+            SaveCenterFormCommand,
             ToggleCenterCommand,
             ToggleUnitCommand,
             NewDraftCommand,
@@ -389,7 +454,9 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             PublishCommand,
             CloneCommand,
             ApplyNodeCommand,
+            SaveNodeCommand,
             RemoveNodeCommand,
+            DeleteNodeCommand,
             NewNodeCommand,
             DiscardCommand,
             CancelCommand,
@@ -427,7 +494,10 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         var nodeId = node?.Node.Id;
         var roleValue = role?.Value ?? NodeRole.Principal;
         var layerValue = layer?.Value ?? CostLayer.Unclassified;
-        Replace(Centers, centerValues.Select(c => new CenterOption(c, c.Code + " · " + c.Name + " · " + Text(c.IsActive ? "Model.Active" : "Model.Inactive"))));
+        Replace(Centers, centerValues.Select(c => new CenterOption(
+            c,
+            c.Code + " · " + c.Name + " · " + Text(c.IsActive ? "Model.Active" : "Model.Inactive"),
+            Text(c.IsActive ? "Model.Active" : "Model.Inactive"))));
         Replace(Units, unitValues.Select(u => new UnitOption(u, u.Definition.Code + " · " + u.Definition.Dimension + " · " + Text(u.IsActive ? "Model.Active" : "Model.Inactive"))));
         Replace(Models, modelValues.Select(m => new ModelOption(m, m.Structure.Description + " · " + Text(m.Status == ModelStatus.Draft ? "Model.Draft" : "Model.Published") + " · " + m.Structure.VersionNumber.ToString(Format))));
         Replace(Roles, Enum.GetValues<NodeRole>().Select(r => new RoleOption(r, Text(r == NodeRole.Principal ? "Model.Principal" : "Model.Auxiliary"))));
@@ -442,7 +512,26 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         {
             var p = draftPools.SingleOrDefault(p => p.NodeId == n.Id);
             var unitName = unitValues.SingleOrDefault(u => u.Definition.Id == p?.DriverUnitId)?.Definition.Code ?? "—";
-            return new NodeOption(n, p, n.Code + " · " + Text(n.Role == NodeRole.Principal ? "Model.Principal" : "Model.Auxiliary") + " · " + string.Join(",", n.FunctionTags) + " · " + unitName);
+            var centerName = centerValues.SingleOrDefault(c => c.Id == n.PhysicalCenterId)?.Code ?? "—";
+            var roleName = Text(n.Role == NodeRole.Principal ? "Model.Principal" : "Model.Auxiliary");
+            var layerName = Text((p?.CostLayer ?? CostLayer.Unclassified) switch
+            {
+                CostLayer.Fixed => "Model.LayerFixed",
+                CostLayer.Variable => "Model.LayerVariable",
+                CostLayer.Mixed => "Model.LayerMixed",
+                _ => "Model.LayerUnclassified"
+            });
+            var functions = string.Join(", ", n.FunctionTags);
+            return new NodeOption(
+                n,
+                p,
+                n.Code + " · " + roleName + " · " + functions + " · " + unitName,
+                centerName,
+                roleName,
+                unitName,
+                layerName,
+                functions,
+                p?.Description ?? "");
         }));
         master = Centers.SingleOrDefault(c => c.Value.Id == masterId);
         physical = Centers.SingleOrDefault(c => c.Value.Id == physicalId);
@@ -462,6 +551,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     {
         RefreshCommands();
         OnPropertyChanged(nameof(CanEdit));
+        OnPropertyChanged(nameof(CanEditMasters));
+        OnPropertyChanged(nameof(DescriptionReadOnly));
         OnPropertyChanged(nameof(InputsEnabled));
     }
 
@@ -519,7 +610,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     {
         var port = company.ActiveModels!;
         var editedMaster = MasterEdited ? master?.Value : null;
-        var modelWasClean = !dirty && !nodeFormEdited;
+        var modelWasClean = !dirty && !nodeFormEdited && !CenterFormEdited;
         var data = await Task.Run(() => port.ReadWorkspace(token), token);
         centerValues = editedMaster is null ? data.Centers :
             data.Centers.Select(c => c.Id == editedMaster.Id ? editedMaster : c).ToArray();
@@ -555,11 +646,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     private void ApplyConfirmedCenter(PhysicalCenter value)
     {
         centerValues = centerValues.Where(c => c.Id != value.Id).Append(value).ToArray();
-        // Commit acknowledgment also clears the committed center's pending form.
-        centerCode = value.Code;
-        centerName = value.Name;
         Reformat();
-        SetMaster(value.Id);
+        ClearCenterFormCore();
     }
 
     private void ApplyConfirmedUnit(DriverUnitState value)
@@ -642,6 +730,9 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         }
 
         ResetNode();
+        diagnostic = null;
+        statusKey = "Model.Ready";
+        Refresh();
     }
 
     private void ResetNode()
@@ -670,21 +761,16 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             case PendingEditChoice.Cancel:
                 return false;
             case PendingEditChoice.Discard:
-                if (master is not null)
-                {
-                    centerCode = master.Value.Code;
-                    centerName = master.Value.Name;
-                }
-
+                ClearCenterFormCore();
                 if (Current is not null)
                     SetCurrent(Current);
                 Refresh();
                 return true;
             case PendingEditChoice.Save:
-                if (MasterEdited)
+                if (CenterFormEdited)
                 {
-                    await SaveCenter();
-                    if (MasterEdited)
+                    await SaveCenterForm();
+                    if (CenterFormEdited)
                         return false;
                 }
 
@@ -706,16 +792,53 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
 
     private async Task CreateCenter() => await Run(async t =>
     {
-        var c = await Task.Run(() => company.ActiveModels!.CreateCenter(new(company.Snapshot!.Id, CenterCode, CenterName, "local-user"), t));
-        await ApplyConfirmedThenReload(c, ApplyConfirmedCenter);
+        var created = await Task.Run(() => company.ActiveModels!.CreateCenter(new(company.Snapshot!.Id, CenterCode, CenterName, "local-user"), t));
+        await ApplyConfirmedThenReload(created, ApplyConfirmedCenter);
+        if (!committedRefreshPending) statusKey = "Model.CenterCreated";
     });
-    private async Task SaveCenter() => await ChangeCenter(Master!.Value.IsActive);
-    private async Task ToggleCenter() => await ChangeCenter(!Master!.Value.IsActive);
-    private async Task ChangeCenter(bool active) => await Run(async t =>
+
+    private async Task SaveCenter() => await ChangeCenter(Master!.Value.IsActive, "Model.CenterSaved");
+    private async Task ToggleCenter() => await ChangeCenter(!Master!.Value.IsActive, "Model.CenterStateChanged");
+
+    private async Task SaveCenterForm()
     {
-        var c = Master!.Value;
-        var result = await Task.Run(() => company.ActiveModels!.ChangeCenter(new(company.Snapshot!.Id, c.Id, c.Revision, CenterCode, CenterName, active, "local-user"), t));
+        if (Master is null) await CreateCenter();
+        else await SaveCenter();
+    }
+
+    private async Task NewCenter()
+    {
+        if (CenterFormEdited)
+        {
+            var choice = dialogs.ResolvePending(Text("Model.PendingTitle"), Text("Model.PendingBody"));
+            if (choice == PendingEditChoice.Cancel) return;
+            if (choice == PendingEditChoice.Save)
+            {
+                await SaveCenterForm();
+                if (CenterFormEdited) return;
+            }
+        }
+        ClearCenterFormCore();
+    }
+
+    private void ClearCenterFormCore()
+    {
+        loading = true;
+        master = null;
+        centerCode = "";
+        centerName = "";
+        loading = false;
+        diagnostic = null;
+        statusKey = "Model.Ready";
+        Refresh();
+    }
+
+    private async Task ChangeCenter(bool active, string successKey) => await Run(async t =>
+    {
+        var current = Master!.Value;
+        var result = await Task.Run(() => company.ActiveModels!.ChangeCenter(new(company.Snapshot!.Id, current.Id, current.Revision, CenterCode, CenterName, active, "local-user"), t));
         await ApplyConfirmedThenReload(result, ApplyConfirmedCenter);
+        if (!committedRefreshPending) statusKey = successKey;
     });
     private async Task ToggleUnit() => await Run(async t =>
     {
@@ -812,6 +935,84 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             diagnostic = new("MODEL_INPUT_INVALID", "Model.InputInvalid", []);
             Refresh();
         }
+    }
+
+    private async Task SaveNode()
+    {
+        if (!nodeFormEdited) return;
+
+        var selectedId = SelectedNode?.Node.Id;
+        var code = NodeCode;
+        var functions = FunctionTags;
+        var pool = PoolDescription;
+        var physicalId = Physical?.Value.Id;
+        var unitId = DriverUnit?.Value.Definition.Id;
+        var roleValue = Role?.Value;
+        var layerValue = Layer?.Value;
+        var wasDirty = dirty;
+        var originalNodes = draftNodes.ToArray();
+        var originalPools = draftPools.ToArray();
+
+        ApplyNode();
+        if (nodeFormEdited || diagnostic is not null) return;
+
+        await Save();
+        if (!IsDirty && diagnostic is null)
+        {
+            statusKey = "Model.NodeSaved";
+            Refresh();
+            return;
+        }
+
+        // Persistence failed: restore the saved draft and the user's form so retrying is safe.
+        draftNodes.Clear();
+        draftNodes.AddRange(originalNodes);
+        draftPools.Clear();
+        draftPools.AddRange(originalPools);
+        dirty = wasDirty;
+        Reformat();
+
+        loading = true;
+        node = selectedId is null ? null : Nodes.SingleOrDefault(n => n.Node.Id == selectedId);
+        nodeCode = code;
+        functionTags = functions;
+        poolDescription = pool;
+        physical = Centers.SingleOrDefault(c => c.Value.Id == physicalId);
+        unit = Units.SingleOrDefault(u => u.Value.Definition.Id == unitId);
+        role = roleValue is null ? Roles.FirstOrDefault() : Roles.SingleOrDefault(r => r.Value == roleValue);
+        layer = layerValue is null ? Layers.FirstOrDefault() : Layers.SingleOrDefault(l => l.Value == layerValue);
+        nodeFormEdited = true;
+        loading = false;
+        Refresh();
+    }
+
+    private async Task DeleteNode()
+    {
+        if (SelectedNode is null || nodeFormEdited) return;
+
+        var selectedId = SelectedNode.Node.Id;
+        var wasDirty = dirty;
+        var originalNodes = draftNodes.ToArray();
+        var originalPools = draftPools.ToArray();
+
+        RemoveNode();
+        await Save();
+        if (!IsDirty && diagnostic is null)
+        {
+            statusKey = "Model.NodeRemoved";
+            Refresh();
+            return;
+        }
+
+        // Failed deletion must not make the UI look as if persistence succeeded.
+        draftNodes.Clear();
+        draftNodes.AddRange(originalNodes);
+        draftPools.Clear();
+        draftPools.AddRange(originalPools);
+        dirty = wasDirty;
+        Reformat();
+        SelectedNode = Nodes.SingleOrDefault(n => n.Node.Id == selectedId);
+        Refresh();
     }
 
     private void RemoveNode()

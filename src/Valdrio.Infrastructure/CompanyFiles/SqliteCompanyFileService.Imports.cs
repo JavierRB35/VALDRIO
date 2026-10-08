@@ -64,6 +64,13 @@ public sealed partial class SqliteCompanyFileService
             var after = Changed(before, before.Name, before.PeriodStart, before.PeriodEnd, before.Purpose, before.ScenarioKind,
                 before.SelectedModelVersionId, before.Currency, before.State);
             var result = new ImportedBatch(command.RequestId, checkedPreparation, command.PreparedFingerprint, after, owner.time.GetUtcNow(), command.Actor, command.ReplacesBatchId);
+            if (db is ResourceDbContext resourceDb)
+            {
+                // Imported amounts are immutable; edited routes must be reset explicitly before their sources change.
+                _ = new ResourceWorkspaceSnapshot(after, file.PrecisionPolicy, RequiredPublication(db, file.Id, after.SelectedModelVersionId),
+                    ResourceOrigins.FromImports(after, Batches(db, file.Id, before.Id).Append(result).ToArray()),
+                    LedgerAt(resourceDb, file.Id, before.Id, before.Revision));
+            }
             db.ImportBatches.Add(new() { Id = result.Id.ToString(), CompanyId = file.Id.ToString(), StudyId = before.Id.ToString(),
                 ExpectedRevision = before.Revision, ConfirmedRevision = after.Revision, FileHash = prepared.Source.FileHash,
                 PreparedFingerprint = prepared.Fingerprint, DuplicateFingerprint = prepared.DuplicateFingerprint, CanonicalJson = Json(result) });

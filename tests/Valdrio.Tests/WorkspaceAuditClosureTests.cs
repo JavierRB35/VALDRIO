@@ -184,9 +184,12 @@ public sealed class WorkspaceAuditClosureTests
         Assert.IsFalse(vm.IsDirty, operation);
         if (operation is "CreateCenter" or "ChangeCenter" or "ToggleCenter")
         {
-            Assert.IsNotNull(vm.Master);
-            Assert.AreEqual(persisted.Centers.Single(c => c.Id == vm.Master.Value.Id), vm.Master.Value);
-            Assert.AreEqual(vm.Master.Value.Name, vm.CenterName);
+            Assert.IsNull(vm.Master, "A confirmed centre action must leave the form ready for the next centre.");
+            Assert.AreEqual("", vm.CenterCode);
+            Assert.AreEqual("", vm.CenterName);
+            Assert.AreEqual(persisted.Centers.Count, vm.Centers.Count);
+            foreach (var center in persisted.Centers)
+                Assert.AreEqual(center, vm.Centers.Single(c => c.Value.Id == center.Id).Value);
         }
         else if (operation == "ChangeUnitState")
         {
@@ -278,6 +281,99 @@ public sealed class WorkspaceAuditClosureTests
         Assert.AreEqual(center.Revision + 1, vm.Master!.Value.Revision);
         Assert.AreEqual(changed.Revision, vm.Current!.Revision);
         Assert.IsFalse(vm.IsDirty);
+    }
+
+    [TestMethod]
+    public async Task ModelEditorPrimaryActionsPersistAndClearCentreAndNodeForms()
+    {
+        var preferences = new PresentationPreferencesService(new LanguageCatalog(), UserPresentationPreferences.Default);
+        var formatter = new PresentationFormatter(new DisplayTimeZoneResolver());
+        var texts = new UiTextCatalog();
+        var dialogs = new Dialogs();
+        using var company = new CompanyFileViewModel(Service(), dialogs, Catalog, texts, preferences, formatter);
+        using var vm = new ModelWorkspaceViewModel(company, texts, preferences, dialogs, formatter);
+        await company.OpenPath(Baseline());
+
+        vm.CenterCode = "UX-CENTER";
+        vm.CenterName = "UX centre";
+        Assert.IsTrue(vm.HasPendingCenter);
+        Assert.IsTrue(vm.SaveCenterFormCommand.CanExecute(null));
+        await vm.SaveCenterFormCommand.ExecuteAsync(null);
+
+        Assert.IsFalse(vm.HasPendingCenter);
+        Assert.IsNull(vm.Master);
+        Assert.AreEqual("", vm.CenterCode);
+        Assert.AreEqual("", vm.CenterName);
+        Assert.IsTrue(vm.Centers.Any(c => c.Value.Code == "UX-CENTER"));
+
+        vm.ModelChoice = vm.Models.First(m => m.Value.Status == ModelStatus.Draft);
+        await vm.LoadCommand.ExecuteAsync(null);
+        var revision = vm.Current!.Revision;
+        vm.NodeCode = "UX-NODE";
+        vm.Physical = vm.Centers.First(c => c.Value.IsActive);
+        vm.DriverUnit = vm.Units.First(u => u.Value.IsActive);
+        vm.Role = vm.Roles.First(r => r.Value == NodeRole.Principal);
+        vm.Layer = vm.Layers.First();
+        vm.PoolDescription = "UX cost group";
+
+        Assert.IsTrue(vm.SaveNodeCommand.CanExecute(null));
+        await vm.SaveNodeCommand.ExecuteAsync(null);
+
+        Assert.IsFalse(vm.IsDirty, vm.Status);
+        Assert.IsNull(vm.SelectedNode);
+        Assert.AreEqual("", vm.NodeCode);
+        Assert.IsTrue(vm.Nodes.Any(n => n.Node.Code == "UX-NODE"));
+        Assert.AreEqual(revision + 1, vm.Current!.Revision);
+        Assert.IsTrue(company.ActiveModels!.ReadModels()
+            .Single(m => m.Structure.Id == vm.Current.Structure.Id)
+            .Structure.Nodes.Any(n => n.Code == "UX-NODE"));
+    }
+
+    [TestMethod]
+    public async Task ModelEditorFailedNodeWritesKeepFormAndSavedTableState()
+    {
+        var preferences = new PresentationPreferencesService(new LanguageCatalog(), UserPresentationPreferences.Default);
+        var formatter = new PresentationFormatter(new DisplayTimeZoneResolver());
+        var texts = new UiTextCatalog();
+        var dialogs = new Dialogs();
+        using var company = new CompanyFileViewModel(Service(), dialogs, Catalog, texts, preferences, formatter);
+        using var vm = new ModelWorkspaceViewModel(company, texts, preferences, dialogs, formatter);
+        await company.OpenPath(Baseline());
+
+        vm.ModelChoice = vm.Models.First(m => m.Value.Status == ModelStatus.Draft);
+        await vm.LoadCommand.ExecuteAsync(null);
+        var originalNodeCount = vm.Nodes.Count;
+        var current = vm.Current!;
+        _ = company.ActiveModels!.SaveDraft(new(current.Structure, current.Revision, "external"));
+
+        vm.NodeCode = "RETRY-NODE";
+        vm.Physical = vm.Centers.First(c => c.Value.IsActive);
+        vm.DriverUnit = vm.Units.First(u => u.Value.IsActive);
+        vm.Role = vm.Roles.First(r => r.Value == NodeRole.Principal);
+        vm.Layer = vm.Layers.First();
+        vm.PoolDescription = "Retry cost group";
+        await vm.SaveNodeCommand.ExecuteAsync(null);
+
+        Assert.IsTrue(vm.Status.StartsWith("MODEL_REVISION_CHANGED", StringComparison.Ordinal));
+        Assert.AreEqual("RETRY-NODE", vm.NodeCode, "Failed save must preserve what the user typed.");
+        Assert.IsTrue(vm.HasPendingNode);
+        Assert.AreEqual(originalNodeCount, vm.Nodes.Count, "Failed save must not leave an unsaved node looking persisted.");
+        Assert.IsFalse(vm.Nodes.Any(n => n.Node.Code == "RETRY-NODE"));
+
+        vm.NewNodeCommand.Execute(null); // Dialogs discards the failed form.
+        await vm.RefreshCommand.ExecuteAsync(null);
+        var selected = vm.Nodes.First();
+        vm.SelectedNode = selected;
+        current = vm.Current!;
+        _ = company.ActiveModels!.SaveDraft(new(current.Structure, current.Revision, "external-2"));
+
+        await vm.DeleteNodeCommand.ExecuteAsync(null);
+
+        Assert.IsTrue(vm.Status.StartsWith("MODEL_REVISION_CHANGED", StringComparison.Ordinal));
+        Assert.IsNotNull(vm.SelectedNode);
+        Assert.AreEqual(selected.Node.Id, vm.SelectedNode!.Node.Id);
+        Assert.IsTrue(vm.Nodes.Any(n => n.Node.Id == selected.Node.Id),
+            "Failed delete must restore the row because the persisted model still contains it.");
     }
 
     [TestMethod]
@@ -416,6 +512,7 @@ public sealed class WorkspaceAuditClosureTests
     {
         public IImportWorkspace Imports => Inner.Imports;
         public ICompanyFileSession Inner { get; }
+        public IResourceWorkspace Resources => Inner.Resources;
         public string? FailAfterMethod { get; set; }
         public bool FailRead { get; set; }
         public int Writes { get; set; }

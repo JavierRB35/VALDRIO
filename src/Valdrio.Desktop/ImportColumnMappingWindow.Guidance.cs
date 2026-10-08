@@ -36,11 +36,16 @@ public partial class ImportColumnMappingWindow
             0 => "ReadNext", 1 => "ValidateNext", 3 => "ReviewNext",
             4 => vm.ConfirmedImport is not null ? "Back" : "SaveImport", _ => "Next"
         });
-        if (step == 4 && vm.ConfirmedImport is not null) ImportNext.Content = vm["Close"];
+        if (step == 4 && vm.ConfirmedImport is not null) ImportNext.Content = vm.Guide("ContinueResources");
         if (step == 4 && vm.ConfirmedImport is null && vm.Preparation?.CanConfirm != true) ImportNext.Content = vm.Guide("CorrectImport");
-        ConfirmImportButton.Visibility = step == 4 && vm.ConfirmedImport is null && vm.Preparation?.CanConfirm == true ? Visibility.Visible : Visibility.Collapsed;
-        ImportNext.Visibility = step == 4 && vm.Preparation?.CanConfirm == true && vm.ConfirmedImport is null ? Visibility.Collapsed : Visibility.Visible;
-        // Keep the next action discoverable. Missing requirements are explained on click.
+        ConfirmImportButton.Visibility = step == 4 && vm.ConfirmedImport is null && vm.Preparation?.CanConfirm == true
+            ? Visibility.Visible : Visibility.Collapsed;
+        ImportNext.Visibility =
+            step == 0 && !vm.HasFile ? Visibility.Collapsed :
+            step == 4 && vm.Preparation?.CanConfirm == true && vm.ConfirmedImport is null ? Visibility.Collapsed :
+            Visibility.Visible;
+        // The visible primary action always remains clickable; if a requirement is missing,
+        // the click explains exactly what the user needs to do instead of silently doing nothing.
         ImportNext.IsEnabled = vm.IsIdle;
         ImportFieldHelp.Text = vm.Guide(lastHelpKey is null ? "HelpHint" : "Help." + lastHelpKey);
     }
@@ -62,15 +67,29 @@ public partial class ImportColumnMappingWindow
         switch (ImportSteps.SelectedIndex)
         {
             case 0:
-                if (!vm.HasFile) await vm.OpenCommand.ExecuteAsync(null);
-                if (!vm.ReadCommand.CanExecute(null)) return;
+                if (!vm.HasFile)
+                {
+                    ImportStepHelp.Text = vm.FileStepRequirement;
+                    return;
+                }
+                if (!vm.ReadCommand.CanExecute(null))
+                {
+                    ImportStepHelp.Text = vm.FileStepRequirement;
+                    return;
+                }
                 if (!vm.HasColumns) await vm.ReadCommand.ExecuteAsync(null);
                 if (vm.HasColumns) ImportSteps.SelectedIndex = 1;
+                else ImportStepHelp.Text = vm.UserStatus;
                 break;
             case 1:
-                if (!vm.ValidateCommand.CanExecute(null)) { ImportStepHelp.Text = vm.Guide("NeedMapping"); return; }
+                if (!vm.ValidateCommand.CanExecute(null))
+                {
+                    ImportStepHelp.Text = vm.ColumnStepRequirement;
+                    return;
+                }
                 if (!vm.IsReady) await vm.ValidateCommand.ExecuteAsync(null);
                 if (vm.IsReady) ImportSteps.SelectedIndex = 2;
+                else ImportStepHelp.Text = vm.FriendlySummary.Length > 0 ? vm.FriendlySummary : vm.UserStatus;
                 break;
             case 2:
                 if (!vm.IsAccountSelectionReady) { ImportStepHelp.Text = vm.Guide("NeedRecords"); return; }

@@ -58,8 +58,8 @@ public partial class ImportColumnMappingWindow
         await Click(panel.CaptureStudyButton); var originalPhoto = studies.SnapshotChoice!.Value;
         await studies.AttachImportTarget();
         var csv = Path.Combine(output, "period-amounts.csv"); File.WriteAllText(csv, "Amount;Ignored;Account\n\"1.250,50\";x;00123\n0;y;ZERO\n9000;b;BALANCE"); var csvHash = Hash(csv);
-        files.Paths.Enqueue(csv); await Click(OpenSourceButton); await Click(ReadSourceButton);
-        Select(AccountColumnBox, 3); Select(AmountColumnBox, 1); vm.GroupSeparator = "."; await Click(ValidateMappingButton);
+        files.Paths.Enqueue(csv); await Click(OpenSourceButton); await vm.ReadCommand.ExecuteAsync(null);
+        Select(AccountColumnBox, 3); Select(AmountColumnBox, 1); vm.GroupSeparator = "."; await vm.ValidateCommand.ExecuteAsync(null);
         Check(vm.IsReady && !ConfirmImportButton.IsEnabled, "column validation alone cannot confirm");
         await Click(DeselectAllRecordsButton);
         Check(vm.IsExplicitAccountSelection && !vm.PrepareCommand.CanExecute(null) && vm.AccountChoices.Count == 3,
@@ -159,7 +159,7 @@ public partial class ImportColumnMappingWindow
         Check(studies.ImportedAmounts.Contains(batch.Id.ToString(), StringComparison.Ordinal) && studies.Snapshots.Count == 2,
             "backup and restore retain imports and both snapshot schemas");
         studies.Currency = "USD"; await Click(panel.SaveStudyButton);
-        Check(studies.IsDirty && studies.Status.StartsWith("IMP_CONTEXT_LOCKED", StringComparison.Ordinal), "functional currency cannot change under imported amounts");
+        Check(studies.IsDirty && studies.DiagnosticCode == "IMP_CONTEXT_LOCKED", "functional currency cannot change under imported amounts");
         await Click(panel.DiscardStudyButton);
         files.Paths.Enqueue(Path.Combine(output, "missing.csv")); await Click(OpenSourceButton);
         Check(!vm.IsReady && vm.AccountChoices.Count == 0 && studies.ImportedAmounts.Contains(batch.Id.ToString(), StringComparison.Ordinal), "failed next source preserves confirmed history");

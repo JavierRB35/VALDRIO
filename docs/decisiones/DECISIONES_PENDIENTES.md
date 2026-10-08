@@ -1,5 +1,32 @@
 # Decisiones de producto y negocio
 
+## Autorización vigente T07 — 2026-10-07
+
+El propietario solicita «Desarrolla completo el T07 teniendo en cuenta que ya hay
+una rama abierta en local para esa tarea. Desecha lo que no necesites de esa rama».
+Sustituye la espera de conversación anterior. Se reutiliza `codex/t07-resource-rules`
+y sus reglas válidas, integrando T06/T06A y el recorrido guiado actualizado. No se
+descartan datos del usuario ni se mezclan cambios de la rama de estética.
+Las tres subentregas T07 están implementadas; [alcance](../tareas/T07.md) y
+[evidencia](../evidencias/T07_CIERRE_2026-10-07.md). D04/D05/D07/D11 permanecen propuestas.
+La agrupación por cuenta y la prioridad permanente de usabilidad siguen vigentes.
+
+Los registros siguientes conservan la secuencia histórica de decisiones.
+
+## Adelanto técnico T07 — 2026-10-07
+
+Continuación autorizada en la misma rama: clasificación contextual y operaciones de
+borrador. Producción/comercial/estructura se almacenan como categorías explícitas,
+sin decidir el perímetro de un informe o aprobar D07. None/AssessAtPool/PeriodCost
+son metadatos; no eligen denominador, política de capacidad ni aceptan D04/D05.
+Una cantidad ausente no se convierte en cero. El comportamiento no se infiere de
+la capa, la ruta o el rol del centro.
+
+El propietario acepta comenzar las reglas y pruebas independientes de T07 mientras
+T06 continúa, en una rama y copia de trabajo separadas. Se conserva la dependencia
+T06/T06A para la integración. No supone aceptar D04/D05/D07/D11 ni cambiar los
+contratos canónicos. Alcance y pendientes: [T07](../tareas/T07.md).
+
 Fecha de actualización: 2026-10-04  
 Fuente base: `especificacion/03_Decisiones_y_Diccionario.md` del paquete VALDRIO v0.4.  
 Aceptación del propietario registrada el 2026-10-04.

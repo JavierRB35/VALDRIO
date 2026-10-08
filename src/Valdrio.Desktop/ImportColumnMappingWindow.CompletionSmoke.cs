@@ -41,10 +41,10 @@ public partial class ImportColumnMappingWindow
         }
         async Task Read(string file)
         {
-            files.Paths.Enqueue(file); await Click(OpenSourceButton); await Click(ReadSourceButton);
+            files.Paths.Enqueue(file); await Click(OpenSourceButton); await vm.ReadCommand.ExecuteAsync(null);
             Select(AmountLayoutBox, "amount"); Select(AccountColumnBox, 1); Select(AmountColumnBox, 3);
             vm.DecimalSeparator = ","; vm.GroupSeparator = ""; vm.ImportAllAccounts = true;
-            await Click(ValidateMappingButton);
+            await vm.ValidateCommand.ExecuteAsync(null);
         }
         var service = new SqliteCompanyFileService(new JsonCurrencyCatalog(Path.Combine(AppContext.BaseDirectory, "reference/currency-catalog-example.json")), new SystemClock());
         var path = Path.Combine(output, "completion.valdrio");

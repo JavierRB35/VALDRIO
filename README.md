@@ -4,21 +4,25 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 
 ## Estado actual
 
-- **T00: CERRADA** — alcance confirmado; D01/D02 aceptadas.
-- **T01: CERRADA** — solución .NET 10, CI Windows y shell WPF.
-- **T01A: CERRADA** — interfaz internacional y preferencias independientes.
-- **T02: CERRADA** — decimal canónico, PDEC-1, BalancedRound y proyección conciliada.
-- **T02A: CERRADA** — Money/metadatos, fechas canónicas, RateSet/FX y contrato de orquestación de RevalueStudy verificados; integración SQLite pendiente.
-- **T03: CERRADA** — archivo SQLite real, bloqueo OS, unidades/auditoría, copias/restauración y flujo WPF. **132/132 tests**, 24 checks WPF de archivos; cierre integrado con CI final aprobada.
-- **T04: CERRADA** — formato v2, centros/modelos con publicación y duplicación; 153 pruebas y flujo WPF aprobados. Cierre integrado con CI final aprobada.
-- **T05: IMPLEMENTADA, CIERRE BLOQUEADO** — `64aac29f` fue verificado externamente con build completo 0/0 y 188/188 tests. Después se endurecieron G02 y las regresiones reales B01 en `2a6b5e70`/`fffda702`; esos commits posteriores aún requieren ejecución .NET/Windows. PR #14 sigue draft y Actions no se ha usado.
-- **T06: EN CURSO, RAMA APILADA** — `473a4d15` aplica exactamente los tres ajustes de compilación identificados por la verificación independiente; la copia diagnóstica equivalente pasó 203/203, pero este SHA publicado aún requiere ejecución propia. La rama incorpora T05 endurecido hasta `75aec6d1`; D03 real y T06.2 siguen pendientes.
-- Correcciones A01–A06 completadas: **114/114 tests**, 39/39 referencias, 12 comprobaciones reales del botón FX, publish y WPF smoke.
-- JSON canónico versionado, huellas FX v2, cuantización exacta e inmutabilidad preparados para persistencia.
-- Fecha de negocio, instante UTC y zona de presentación están separados.
-- D04-D07 siguen siendo propuestas económicas.
-- R07 de fuentes canónicas: **CERRADA** mediante PR #9.
+T00–T06A y el recorrido guiado previo están integrados en la base de esta rama.
+**T07 implementada completa:** recursos por cuenta, ajustes firmados, clasificación
+contextual, partes y destinos, conservación por recurso, auditoría y guardado SQLite.
+Se reutiliza `codex/t07-resource-rules` y se conserva toda la funcionalidad T06/T06A.
 
+La aplicación guía Empresa → Estructura → Estudio → Importación → Recursos.
+En Recursos: seleccionar cuenta, aplicar ajustes si hacen falta, editar sus partes,
+revisar y **Guardar cuenta**. La pantalla muestra el archivo donde guarda. Los
+formularios intermedios son borradores; el resultado de guardar aparece explícitamente.
+Ayuda contextual con ratón y teclado, textos EN/ES y región independiente.
+
+Formato de empresa v8; actualizar un archivo anterior crea una copia. Snapshots v6
+con lectura de los históricos v1–v5. Historial, reinicio y revaloración con tipos
+explícitos en Opciones avanzadas. [Alcance T07](docs/tareas/T07.md),
+[aceptación reproducible](docs/evidencias/T07_CIERRE_2026-10-07.md) y
+[estado detallado](ESTADO_PROYECTO.md).
+
+D04/D05/D07/D11 siguen siendo propuestas económicas. El cálculo de repartos,
+tarifas, capacidad y fases posteriores no forma parte de esta entrega.
 
 ## Evidencia
 
@@ -47,8 +51,6 @@ Aplicación Windows local para cálculo y gestión de costes, en construcción g
 Todavía no se declara implementado:
 
 - catálogo monetario completo de producto;
-- importación/cálculo sobre el archivo de empresa SQLite;
-- importación contable;
 - motor económico de repartos posterior.
 
 La internacionalización, precisión decimal, moneda y tiempo permanecen explícitos y desacoplados.

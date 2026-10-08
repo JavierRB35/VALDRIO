@@ -1,31 +1,6 @@
 name: windows-ci
 
 on:
-  push:
-    branches:
-      - main
-    paths: &validation_paths
-      - 'src/**'
-      - 'tests/**'
-      - 'reference/**'
-      - 'samples/**'
-      - 'specification/**'
-      - 'docs/evidencias/**'
-      - 'docs/tareas/**'
-      - 'ESTADO_PROYECTO.md'
-      - '.github/workflows/windows-ci.yml'
-      - '.github/scripts/**'
-      - '*.slnx'
-      - 'Directory.*.props'
-      - 'Directory.*.targets'
-      - 'global.json'
-      - '**/NuGet.Config'
-      - '**/nuget.config'
-      - '**/packages.lock.json'
-  pull_request:
-    branches: [main]
-    types: [opened, synchronize, reopened, ready_for_review]
-    paths: *validation_paths
   workflow_dispatch:
     inputs:
       publish_development:
@@ -44,7 +19,7 @@ concurrency:
 permissions:
   contents: read
 
-# Cost guard: targeted validation only; keep job timeouts bounded.
+# Cost guard: run manually only; local validation is the default. Keep job timeouts bounded.
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: '1'
@@ -242,7 +217,7 @@ jobs:
         run: |
           $exe = (Resolve-Path "artifacts/desktop/Valdrio.Desktop.exe").Path
           $sample = (Resolve-Path "samples/t01-smoke.valdrio-dev.json").Path
-          $process = Start-Process -FilePath $exe -ArgumentList @($sample) -PassThru
+          $process = Start-Process -WindowStyle Hidden -FilePath $exe -ArgumentList @($sample) -PassThru
 
           try {
             Start-Sleep -Seconds 6
@@ -275,7 +250,7 @@ jobs:
           }
           '@ | Set-Content -Path $invalidPreferences -Encoding utf8NoBOM
 
-          $process = Start-Process -FilePath $exe -ArgumentList @(
+          $process = Start-Process -WindowStyle Hidden -FilePath $exe -ArgumentList @(
             $sample,
             "--preferences-path=$invalidPreferences"
           ) -PassThru
@@ -360,5 +335,5 @@ jobs:
           for timezone in UTC Europe/Madrid; do
             TZ="$timezone" dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj \
               --configuration Release --no-build --no-restore \
-              --filter "FullyQualifiedName~RepositoryReviewRegressionTests.R01_|FullyQualifiedName~T03CompanyFileTests|FullyQualifiedName~T04ModelTests|FullyQualifiedName~T05StudyTests|FullyQualifiedName~T06ImportConfirmationTests|FullyQualifiedName~T06DebitCreditImportTests"
+              --filter "FullyQualifiedName~RepositoryReviewRegressionTests.R01_|FullyQualifiedName~T03CompanyFileTests|FullyQualifiedName~T04ModelTests|FullyQualifiedName~T05StudyTests|FullyQualifiedName~T06ImportConfirmationTests|FullyQualifiedName~T06DebitCreditImportTests|FullyQualifiedName~ResourcePreparationTests|FullyQualifiedName~ResourceClassificationTests"
           done
