@@ -33,25 +33,18 @@ La interfaz de VALDRIO debe ser simple, entendible e intuitiva para una persona 
 - Los nombres, textos, navegación y jerarquía visual deben hablar en términos del dominio y del trabajo del usuario, no en términos de la implementación.
 - Si existe conflicto entre reflejar literalmente la arquitectura interna y ofrecer un flujo comprensible, debe prevalecer el modelo mental del usuario siempre que se preserve la funcionalidad, la trazabilidad y la corrección metodológica.
 
-## 4. Dirección estética aprobada
+## 4. Dirección estética aprobada (obligatoria desde 2026-10-08)
 
-La estética futura debe seguir la línea de la referencia visual aprobada por el propietario en el proyecto/conversación de VALDRIO: interfaz limpia, clara, profesional y didáctica, con jerarquía visual fuerte, superficies luminosas, bloques bien separados, uso moderado de azules y tonos suaves/pastel para distinguir áreas o estados, acciones principales visibles, espaciado consistente y composición ordenada.
+**Fuente normativa de cualquier modificación de frontend WPF/XAML/XML:**
+[docs/diseno/SISTEMA_VISUAL_VALDRIO_V1.md](docs/diseno/SISTEMA_VISUAL_VALDRIO_V1.md), incluida la **imagen de T08 aprobada por el propietario** que contiene.
 
-La referencia visual es una dirección estética, no una maqueta literal. VALDRIO es una aplicación WPF de escritorio y el diseño debe adaptarse a ese contexto:
+- El objetivo de **toda** VALDRIO es la referencia T08: **sidebar verde profundo, superficies blancas, fondo neutro claro, verde de marca, acento amarillo, tarjetas, jerarquía y tablas limpias**. No sustituirlo por propuestas genéricas de interfaz azul o pastel.
+- La guía de diseño gobierna shell, paleta, composición, botones, inputs, tablas, feedback y espaciado. Se adapta a WPF y a cada tarea **sin copiar datos ni funciones ficticias de T08**.
+- **Antes de editar cualquier XAML/XML frontend**: leer esta guía, inventariar la pantalla real y conservar funcionalidad 1:1, accesibilidad, i18n y uso con teclado. Usar recursos/estilos globales en vez de colores locales.
+- Antes de dar por válida una pantalla rediseñada: comparar visualmente con la referencia y probar los flujos reales. Ningún agente puede alterar el lenguaje visual por gusto propio sin autorización del propietario.
+- Esta aprobación **no autoriza por sí sola ejecutar una migración de pantallas**; esa ejecución se planificará por separado.
 
-- priorizar productividad, legibilidad y densidad adecuada para escritorio;
-- usar navegación, paneles maestro/detalle, formularios, tablas y diálogos apropiados para WPF;
-- reservar el color para jerarquía, estado y orientación, evitando decoración innecesaria;
-- mantener tablas y formularios cómodos para trabajo prolongado;
-- conservar accesibilidad, foco, teclado, escalado y textos largos/pseudotraducción;
-- no convertir la aplicación en una interfaz web ni copiar literalmente una infografía;
-- mantener coherencia visual entre Empresa, Modelo, Estudios, Importación y las pantallas futuras.
-
-La prioridad es:
-
-**funcionalidad real existente → claridad del flujo → consistencia visual → acabado estético.**
-
-Nunca al revés.
+La prioridad sigue siendo: **funcionalidad real existente → claridad del flujo → conformidad con el sistema visual → acabado estético**. Nunca se elimina funcionalidad para imitar la maqueta.
 
 ## 5. Validación de un cambio visual
 
