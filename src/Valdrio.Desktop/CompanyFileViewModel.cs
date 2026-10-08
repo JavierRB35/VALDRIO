@@ -33,7 +33,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     {
         this.files = files; this.dialogs = dialogs; this.texts = texts; this.preferences = preferences; this.formatter = formatter;
         CurrencyOptions = catalog.GetAll().Where(x => x.IsMonetary).Select(x => x.AlphaCode.ToString()).ToArray();
-        CreateCommand = new AsyncRelayCommand(Create, () => Available);
+        CreateCommand = new AsyncRelayCommand(Create, () => Available && !string.IsNullOrWhiteSpace(CompanyName));
         OpenCommand = new AsyncRelayCommand(Open, () => Available);
         CloseCommand = new AsyncRelayCommand(Close, () => Available && active is not null);
         AddUnitCommand = new AsyncRelayCommand(AddUnit, () => Available && active is not null &&
@@ -55,7 +55,15 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public IRelayCommand CancelCommand { get; }
     public IReadOnlyList<string> CurrencyOptions { get; }
     public IReadOnlyList<int> ScaleOptions { get; } = Enumerable.Range(0,13).ToArray();
-    public string CompanyName { get => companyName; set => SetProperty(ref companyName, value); }
+    public string CompanyName
+    {
+        get => companyName;
+        set
+        {
+            if (SetProperty(ref companyName, value))
+                CreateCommand.NotifyCanExecuteChanged();
+        }
+    }
     public string Currency { get => currency; set => SetProperty(ref currency, value); }
     public string UnitCode
     {
@@ -91,8 +99,18 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     private bool Available => !busy && WorkspaceBusy?.Invoke() != true;
     public void NotifyWorkspaceStateChanged() => Refresh();
     public CompanyFileSnapshot? Snapshot { get; private set; }
+    public bool HasProject => Snapshot is not null;
+    public bool NoProject => Snapshot is null;
     public string? ActivePath => active?.Path;
     public string Title => Text("CompanyTitle");
+    public string ProjectIntro => Text("CompanyProjectIntro");
+    public string OpenProjectTitle => Text("CompanyOpenProjectTitle");
+    public string OpenProjectHelp => Text("CompanyOpenProjectHelp");
+    public string NewProjectTitle => Text("CompanyNewProjectTitle");
+    public string NewProjectHelp => Text("CompanyNewProjectHelp");
+    public string ProjectReadyHelp => Text("CompanyProjectReadyHelp");
+    public string FileOperationsLabel => Text("CompanyFileOperations");
+    public string FileOperationsHelp => Text("CompanyFileOperationsHelp");
     public string ActiveCompanyLabel => Text("CompanyActiveLabel");
     public string ActiveCompanyName => Snapshot?.Name ?? Text("CompanyNoFile");
     public string TechnicalDetailsLabel => Text("CompanyTechnicalDetails");
@@ -116,7 +134,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public string Notes => Text("CompanyNotes");
     private CultureInfo UiCulture => CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag);
     public string Status => diagnostic is null ? Text(statusKey)
-        : diagnostic.Code + ": " + new DomainDiagnosticFormatter(texts).Format(diagnostic, UiCulture,
+        : new DomainDiagnosticFormatter(texts).Format(diagnostic, UiCulture,
             CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)).Message;
     public string Details => Snapshot is null ? "—" : string.Format(UiCulture, Text("CompanyDetails"),
         Snapshot.Name, Snapshot.Id, Snapshot.DefaultCurrency,
