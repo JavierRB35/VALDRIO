@@ -2,6 +2,10 @@
 
 Aplicación Windows local para cálculo y gestión de costes, en construcción guiada por especificación v0.4 y evidencia verificable.
 
+## Diseño de interfaz aprobado (obligatorio)
+
+**Todas las pantallas futuras y los rediseños de VALDRIO deben seguir el sistema visual T08 validado el 08/10/2026:** [guía visual + imagen de referencia](docs/diseno/SISTEMA_VISUAL_VALDRIO_V1.md). Las reglas también figuran en [AGENTS.md](AGENTS.md) para quien edite XAML/XML. El rediseño de pantallas **queda para una fase posterior**; no se ha ejecutado en este cambio documental.
+
 ## Estado actual
 
 - **T00: CERRADA** — alcance confirmado; D01/D02 aceptadas.
