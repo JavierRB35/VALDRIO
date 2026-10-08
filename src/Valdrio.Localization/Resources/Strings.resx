@@ -980,7 +980,7 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.TaskContinueAnalysis" xml:space="preserve"><value>Continue the current analysis</value></data>
   <data name="Guide.TaskContinueImport" xml:space="preserve"><value>Continue with balances for the current analysis</value></data>
   <data name="Guide.TaskContinueResources" xml:space="preserve"><value>Continue preparing imported accounts</value></data>
-  <data name="Resources.ProgressSummary" xml:space="preserve"><value>{0} of {1} accounts reconciled · {2} with amount pending assignment · {3} with unexplained difference</value></data>
+  <data name="Resources.ProgressSummary" xml:space="preserve"><value>{0} of {1} accounts reconciled · {2} with amount pending assignment · {3} with unexplained difference · {4} with pending routes</value></data>
   <data name="Model.ReviewSummary" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
   <data name="Model.TechnicalDetails" xml:space="preserve"><value>Technical traceability details</value></data>
   <data name="Model.ReviewTree" xml:space="preserve"><value>Physical centres and cost nodes · role · activity unit · function</value></data>
@@ -1006,4 +1006,8 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.PoolChoice" xml:space="preserve"><value>Centre {0} | Node {1} ({2}) | {3} | Activity unit {4} | Functions: {5}</value></data>
   <data name="Guide.Help.Resource.BackToCorrections" xml:space="preserve"><value>Closes this optional account editor and returns to the correction table. If destinations have unsaved changes, choose save, discard or cancel; your saved corrections are preserved.</value></data>
   <data name="Guide.WorkspaceNavigation" xml:space="preserve"><value>WORKSPACE</value></data>
+  <data name="Resources.AssignmentStatus" xml:space="preserve"><value>Assignment status</value></data>
+  <data name="Resources.AssignmentPending" xml:space="preserve"><value>Pending routes</value></data>
+  <data name="Resources.AssignmentComplete" xml:space="preserve"><value>No pending routes</value></data>
+  <data name="Import.SourceRowsReused" xml:space="preserve"><value>Source records {1} in {0} are already included in an active import. Exclude those records or explicitly replace the identified batch.</value></data>
 </root>

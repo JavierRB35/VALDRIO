@@ -47,6 +47,12 @@ public partial class MainWindow
                         language + " sidebar invokes the original handler and marks selected step: " + index);
                     Check(button.Focus() && button.IsKeyboardFocusWithin, language + " sidebar keyboard focus: " + index);
                     Check(RootScrollViewer.ViewportHeight > 80 && Inside(WorkflowBack), language + " content and back action remain accessible: " + index);
+                    if (index == 5)
+                    {
+                        DevelopmentTools.IsExpanded = true;
+                        await Idle(); UpdateLayout();
+                        Check(RunDevelopmentToolsLayoutSmoke(), language + " expanded development tools have separate rows");
+                    }
                     ResetScrollForCapture();
                     VisualEvidenceCapture.Capture(this, Path.Combine(output, $"{language}-step-{index + 1}.png"));
                 }
@@ -66,6 +72,14 @@ public partial class MainWindow
                 Check(RootScrollViewer.ViewportHeight > 48 && Inside(WorkflowBack) && Inside(WorkflowNext) && Inside(Sidebar),
                     "scaled WPF layout retains scrollable work area and footer: " + scale);
                 VisualEvidenceCapture.Capture(this, Path.Combine(output, $"layout-scale-{scale * 100:0}.png"));
+            }
+            ShellLayout.LayoutTransform = Transform.Identity;
+            await NavigateWorkflow(5); DevelopmentTools.IsExpanded = true;
+            foreach (var scale in new[] { 1.0, 1.25, 1.5, 2.0 })
+            {
+                ShellLayout.LayoutTransform = new ScaleTransform(scale, scale);
+                await Idle(); UpdateLayout();
+                Check(RunDevelopmentToolsLayoutSmoke(), "expanded development tools layout scale: " + scale);
             }
             ShellLayout.LayoutTransform = Transform.Identity;
             main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", true, true);

@@ -1,5 +1,27 @@
 # ESTADO_PROYECTO
 
+## Estado vigente y correcciones de auditoría — 2026-10-08
+
+| Línea | Estado comprobado |
+|---|---|
+| `main@82770779478a71c6ed7edc89a86be02fbb0188a7` | Línea principal consultada; incorpora las directrices visuales y T08-CUENTA-01 |
+| `codex/local-tests-and-workspace@dc53b55aa5806f45e14c2fb64d6b7b5c43e9a7d2` | Desarrollo activo de la PR #22: T06/T06A/T07 y tema V1; aún no integrado en main |
+| `fix/auditoria-20261008` | Correcciones sobre el desarrollo activo; suite portátil 544/544 y compilación Desktop con destino Windows, sin aceptación nativa de este candidato |
+| T08-CUENTA-01 | Dependencia obligatoria pendiente de captura semántica, persistencia, reapertura y consumo de código + descripción; issue #28 |
+| Visual V2–V6 | Migración y aceptación completas pendientes; esta corrección solo mejora la tabla de Recursos y el contenedor de herramientas |
+
+Se bloquea la reutilización de filas/celdas de origen entre lotes activos, manteniendo
+selecciones disjuntas y sustitución identificada. La corrección acumulada se prepara
+en Application/Calculation; el guardado automático permanece. Se corrigen pendientes
+con neto cero, recuperación tras fallar una previsualización de revaloración, contexto
+del modelo del estudio, fila de herramientas y cobertura de mensajes ES/EN.
+
+El alcance, las pruebas, los hashes y los pendientes de aceptación están en
+[CORRECCIONES_AUDITORIA_2026-10-08.md](docs/evidencias/CORRECCIONES_AUDITORIA_2026-10-08.md).
+La compilación cruzada y las pruebas portátiles no sustituyen el recorrido WPF real.
+GitHub Actions continúa exclusivamente manual. Los registros siguientes describen
+las entregas y sus evidencias históricas; sus cifras no validan este candidato.
+
 ## T07: volver a Correcciones y seleccionar el importe — 2026-10-08
 
 Destinos se abre con su botón explícito; la barra fija y el editor permiten cerrar
@@ -168,7 +190,10 @@ agrupación/sustitución de lotes antes de T06A y T07.
 La validación de esta entrega es local; no se han ejecutado Actions ni publicado una PR.
 La evidencia se registra en `docs/evidencias/CONTINUIDAD_LOCAL_2026-10-06.md`.
 Esta sección prevalece sobre los pendientes anteriores que resuelve expresamente.
-## Estado vigente
+## Estado histórico de integración — 2026-10-06
+
+La tabla siguiente se conserva como historial. El estado actual se recoge en el
+encabezado del documento y en los contratos vigentes de T06/T06A/T07.
 
 | Entrega | Estado |
 |---|---|

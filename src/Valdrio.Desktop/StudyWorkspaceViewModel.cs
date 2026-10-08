@@ -100,6 +100,8 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public bool Ready => !busy && company.WorkspaceIdle && company.ActiveStudies is not null;
     public bool CanEdit => Ready && Current?.State != StudyState.Closed;
     public StudyDefinition? Current { get; private set; }
+    public string CurrentModelDescription => Current is null ? "—" :
+        modelValues.SingleOrDefault(m => m.Structure.Id == Current.SelectedModelVersionId)?.Structure.Description ?? "—";
     public ObservableCollection<ModelOption> PublishedModels { get; } = [];
     public ObservableCollection<StudyOption> Studies { get; } = [];
     public ObservableCollection<ScenarioOption> Scenarios { get; } = [];

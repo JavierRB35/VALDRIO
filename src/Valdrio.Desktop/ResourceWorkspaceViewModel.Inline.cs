@@ -37,29 +37,10 @@ public sealed partial class ResourceWorkspaceViewModel
                 throw ResourceWorkspaceRules.Error("RES_NUMBER_REQUIRED", "Resource.NumberRequired");
             var currency = workspace.Study.Currency.FunctionalCurrencyCode;
             var total = new Money(requested, currency, workspace.Precision);
-            var resource = workspace.Resources.Single(r => r.Id == row.Id);
-            var coverage = workspace.Preparation.Coverage.Single(c => c.ResourceId == row.Id);
-            var delta = total - coverage.AdjustmentTotal;
-            if (delta.Amount == 0m) { statusKey = "CorrectionUnchanged"; return; }
-            var revisedParts = resource.Parts.ToList();
-            var pendingIndex = revisedParts.FindLastIndex(p => p.Routing == ResourceRoutingKind.Pending);
-            if (pendingIndex >= 0)
-            {
-                var pending = revisedParts[pendingIndex];
-                revisedParts[pendingIndex] = new(pending.Id, pending.Amount + delta, ResourceRoutingKind.Pending,
-                    pending.DirectAssignments, pending.PoolId, pending.ExclusionReason, pending.Classification);
-            }
-            else
-                revisedParts.Add(new(new(Guid.NewGuid()), delta, ResourceRoutingKind.Pending));
-            var explanation = "Inline correction: account " + row.Code + "; total " +
-                coverage.AdjustmentTotal.Amount.ToString(CultureInfo.InvariantCulture) + " -> " +
-                requested.ToString(CultureInfo.InvariantCulture) + " " + currency;
-            var adjustment = new ResourceAdjustmentRequest(new(Guid.NewGuid()), delta, null,
-                "Inline correction", explanation, null, catalog.GetRequired(currency).Freeze());
-            var command = new ResourceMutation(ResourceMutationKind.EditResource, workspace.Study.CompanyId, workspace.Study.Id,
-                workspace.Study.Revision, new(Guid.NewGuid()), "local-user", explanation, row.Id, revisedParts.ToArray(),
-                [adjustment], null, null, [], []);
-            _ = ResourceWorkspaceRules.Apply(workspace, command);
+            var command = ResourceCorrectionCommand.Prepare(workspace, row.Id, row.Revision, total,
+                catalog.GetRequired(currency).Freeze(), new(Guid.NewGuid()), new(Guid.NewGuid()),
+                new(Guid.NewGuid()), "local-user");
+            if (command is null) { statusKey = "CorrectionUnchanged"; return; }
             await Commit(command, token);
             if (statusKey != "SavedRefreshPending") statusKey = "CorrectionSaved";
         });

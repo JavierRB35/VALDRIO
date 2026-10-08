@@ -241,18 +241,8 @@ try {
         dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=valdrio-tests.trx"
 
         # Guard diagnostic resource coverage
-        $sourceFiles = Get-ChildItem src/Valdrio.Domain,src/Valdrio.Calculation,src/Valdrio.Application,src/Valdrio.Infrastructure,src/Valdrio.Desktop -Recurse -Filter *.cs |
-          Where-Object { $_.FullName -notmatch '[\\\\/](obj|bin)[\\\\/]' -and $_.Name -ne 'AssemblyInfo.cs' }
-        # AssemblyInfo only declares assembly attributes, including the test friend assembly.
-        $pattern = '"(?<key>[A-Z][A-Za-z0-9]*(?:\.[A-Z][A-Za-z0-9]*)+)"'
-
-        $keys = @(
-          foreach ($file in $sourceFiles) {
-            foreach ($match in (Select-String -Path $file.FullName -Pattern $pattern -AllMatches -CaseSensitive).Matches) {
-              $match.Groups['key'].Value
-            }
-          }
-        ) | Sort-Object -Unique
+        & "./.github/scripts/Test-ProductionMessageKeys.ps1"
+        $keys = @(& "./.github/scripts/Get-ProductionMessageKeys.ps1")
 
         [xml]$englishXml = Get-Content src/Valdrio.Localization/Resources/Strings.resx -Raw
         [xml]$spanishXml = Get-Content src/Valdrio.Localization/Resources/Strings.es.resx -Raw

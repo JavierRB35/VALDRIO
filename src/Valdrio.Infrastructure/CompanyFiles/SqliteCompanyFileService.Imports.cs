@@ -61,6 +61,7 @@ public sealed partial class SqliteCompanyFileService
                 throw ImportRules.Error("IMP_REPLACEMENT_INVALID", "Import.ReplacementInvalid");
             if (active.Any(b => b.Prepared.DuplicateFingerprint == checkedPreparation.DuplicateFingerprint))
                 throw ImportRules.Error("IMP_DUPLICATE_BATCH", "Import.DuplicateBatch");
+            ImportOriginOverlap.EnsureNoOverlap(checkedPreparation, active, command.ReplacesBatchId);
             var after = Changed(before, before.Name, before.PeriodStart, before.PeriodEnd, before.Purpose, before.ScenarioKind,
                 before.SelectedModelVersionId, before.Currency, before.State);
             var result = new ImportedBatch(command.RequestId, checkedPreparation, command.PreparedFingerprint, after, owner.time.GetUtcNow(), command.Actor, command.ReplacesBatchId);
