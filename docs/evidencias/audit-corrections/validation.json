@@ -1,0 +1,267 @@
+{
+  "schema": "valdrio-audit-corrections-local-v1",
+  "createdAtUtc": "2026-10-08T16:52:13.348871+00:00",
+  "sourceCommit": "d32a8ed83bad8a9750aea4efeb3e2ba6a0a691bc",
+  "sourceCommitBinding": "Sources were executed locally before publication; the recorded source SHA-256 and Git blob hashes identify their published contents. Documentation-only follow-up does not change tested sources.",
+  "repository": "JavierRB35/VALDRIO",
+  "mainSha": "82770779478a71c6ed7edc89a86be02fbb0188a7",
+  "baseSha": "dc53b55aa5806f45e14c2fb64d6b7b5c43e9a7d2",
+  "baseTreeSha": "67015697558d40eb4b9026d3834dd1a972d63e29",
+  "branch": "fix/auditoria-20261008",
+  "environment": {
+    "platform": "Linux",
+    "dotnetSdk": "10.0.401",
+    "powerShell": "7.6.6",
+    "nativeWindowsAvailable": false,
+    "msbuildMaxCpuCount": 1,
+    "dotnetProcessorCount": 2
+  },
+  "portableTests": {
+    "command": "dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj -c Release --no-restore -m:1 /p:BuildInParallel=false --logger \"trx;LogFileName=audit-corrections-final.trx\"",
+    "exitCode": 0,
+    "total": 544,
+    "passed": 544,
+    "failed": 0,
+    "skipped": 0,
+    "originalTrx": "tests/Valdrio.Tests/TestResults/audit-corrections-final.trx",
+    "originalTrxSha256": "8646cfc9ee9daae78392fea6e337fe940bf32166d8f4bd259d036bbce4f2f7cb",
+    "extractedResults": "tests.json",
+    "extractedResultsSha256": "0d5da010c4c1605bdf0c1d3ac6ad3b1ef1eb87de474b9e77e34689ad96101be9",
+    "testAssemblySha256": "ea111f692a0f4896418e8063eb2a29cf91de7ce85c7c332f8a7e53720626e0dc",
+    "newRegressions": [
+      {
+        "name": "AppendingAnOverlappingGroupingSelectionCannotCountTheFirstRowTwice",
+        "outcome": "Passed",
+        "duration": "00:00:00.3536956"
+      },
+      {
+        "name": "DifferentFinancialColumnsOnTheSameRowRemainDistinctSources",
+        "outcome": "Passed",
+        "duration": "00:00:00.3579138"
+      },
+      {
+        "name": "DifferentFxQuoteDoesNotMakeTheSameSourceRowsNew",
+        "outcome": "Passed",
+        "duration": "00:00:00.3764367"
+      },
+      {
+        "name": "DisjointSelectionsFromOneFileStillAppendAndReopenAs358Point35",
+        "outcome": "Passed",
+        "duration": "00:00:00.5320620"
+      },
+      {
+        "name": "IdentifiedReplacementCanExpandASelectionWithoutCountingTheRetiredBatch",
+        "outcome": "Passed",
+        "duration": "00:00:00.3970088"
+      },
+      {
+        "name": "StudyContextUsesTheSavedModelInsteadOfTheEditedChoice",
+        "outcome": "Passed",
+        "duration": "00:00:00.5798791"
+      },
+      {
+        "name": "T07_CorrectionCalculationPreservesPendingIdentityAndClassification",
+        "outcome": "Passed",
+        "duration": "00:00:00.2183820"
+      },
+      {
+        "name": "T07_CorrectionCaseUseChanges50To20WithDeltaMinus30AndNoRepeatedWrite",
+        "outcome": "Passed",
+        "duration": "00:00:00.4721821"
+      },
+      {
+        "name": "T07_FailedRevaluePreviewKeepsRateEditingAndFileUnchanged",
+        "outcome": "Passed",
+        "duration": "00:00:00.6392247"
+      },
+      {
+        "name": "T07_PendingZeroAndCompensatedPendingRoutesRemainVisible",
+        "outcome": "Passed",
+        "duration": "00:00:00.9948054"
+      }
+    ]
+  },
+  "desktopCrossBuild": {
+    "command": "dotnet build src/Valdrio.Desktop/Valdrio.Desktop.csproj -c Release --no-restore -m:1 /p:BuildInParallel=false /p:EnableWindowsTargeting=true",
+    "exitCode": 0,
+    "warnings": 0,
+    "errors": 0,
+    "desktopDllSha256": "519ecb478a4bf3e8a232012b011bad18d016cf50a2cfbd6cd5618284be4bc8cb",
+    "nativeAcceptance": "pending"
+  },
+  "powerShell": {
+    "scannerSelfTest": "passed",
+    "productionKeys": 345,
+    "englishResources": 992,
+    "spanishResources": 992,
+    "missingResources": 0,
+    "placeholderParity": "passed",
+    "scriptsParsed": 3
+  },
+  "staticChecks": {
+    "xamlFilesParsed": 8,
+    "removedNamedControls": 0,
+    "outOfRangeExplicitGridRows": 0,
+    "economicBinaryFloatGuard": "passed",
+    "ambientTimeGuard": "passed",
+    "gitDiffCheck": "passed",
+    "unchangedLocalFilesMatchedRemoteBlobs": 325
+  },
+  "originOverlapBeforeFix": {
+    "test": "AppendingAnOverlappingGroupingSelectionCannotCountTheFirstRowTwice",
+    "outcome": "Failed as expected before fix",
+    "observedEffectiveAmount": "638.35",
+    "stdout": "Observed total after overlapping append: 638.35",
+    "originalTrxSha256": "5c908e2464c6689f3ba480c17b9ff4b72e631eddb9efe3a4f6821b3fdda35341",
+    "transactionAndFile": "Actual .NET service and SQLite, synthetic inputs"
+  },
+  "changedFiles": [
+    {
+      "path": ".github/scripts/Get-ProductionMessageKeys.ps1",
+      "sha256": "640fa4678ffdeac76c5a278203dc7a7d3a1452c0b2423664ee41801a33fbc4b1",
+      "gitBlobSha": "259d565583ac40151b644244eb2a8dc68feed1ba"
+    },
+    {
+      "path": ".github/scripts/Test-ProductionMessageKeys.ps1",
+      "sha256": "2347d0f98609739040a923cfe25cb63122e72825a70c5cc1325fefdbe34e0989",
+      "gitBlobSha": "62a0cb60e9a39f026c6643c6916b1506c9ec2cb1"
+    },
+    {
+      "path": ".github/scripts/Verify-Windows.ps1",
+      "sha256": "7a6d3adc0c7a23e6a7f164b2efc30db0efd900190d49cd0e11d8abf89778c2bf",
+      "gitBlobSha": "c19c141d30d4691c7a4cd04d501f01941bdf3bf6"
+    },
+    {
+      "path": ".github/workflows/windows-ci.yml",
+      "sha256": "9ebc7aa7a2736dc3164039d64042588da049738106d886624efb8ead04884183",
+      "gitBlobSha": "08ae63c3d27291f01bc596055b4e76a509ff382d"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "27942f66606cfa2c0cadee4daa49803856d500c3d780eea3f8f6c6202bc8cf4c",
+      "gitBlobSha": "8fd28f4a3e2f5a80302962833ffe3fb0b909a379"
+    },
+    {
+      "path": "ESTADO_PROYECTO.md",
+      "sha256": "6d9c6b5dea46c7d0b802f0064d0b93e84b260c1e8b23cb0d8ff85b07c46d33d9",
+      "gitBlobSha": "007b42b796a17923125314c30297221a8c1e3747"
+    },
+    {
+      "path": "docs/directrices/T08_CUENTAS_DESCRIPCION.md",
+      "sha256": "68b8565d3ef28d66d292390ff30b3666744d44b76a21ef54d6ca248563a3fcce",
+      "gitBlobSha": "b43d42c099025bc5d3231177325d373bc27b7f12"
+    },
+    {
+      "path": "docs/tareas/T06A.md",
+      "sha256": "abb80cad1e639ee0f0346f2deeefd21f86fca0c5b922293ff1c89f8ebb897d50",
+      "gitBlobSha": "53e6b016374639629d51d723411f9f3916303978"
+    },
+    {
+      "path": "src/Valdrio.Application/ImportOriginOverlap.cs",
+      "sha256": "bf9d56424637d4462ecaa5d7f9e2c3c870c4f7264c86c9311deb4e101147d96a",
+      "gitBlobSha": "3dd27b04e239665c47f7077d11e2cd12411bf96a"
+    },
+    {
+      "path": "src/Valdrio.Application/ResourceCorrectionCommand.cs",
+      "sha256": "75287334780f3e273fd1e0980309d0c08197a7a40a452fcd25978ba0bd5e3e27",
+      "gitBlobSha": "618841b4bdc917443ca31e5e8b95df63a4e3fff2"
+    },
+    {
+      "path": "src/Valdrio.Calculation/ResourceCorrectionRules.cs",
+      "sha256": "c57f951ba72d05011fdead996cdc1c05183508f6a10d5ec31f1218befa940a45",
+      "gitBlobSha": "40a37c3965a3f7fbddc76fa91ffec53fd78771cc"
+    },
+    {
+      "path": "src/Valdrio.Desktop/MainWindow.Guidance.cs",
+      "sha256": "eea8f0e98810e8ef5c8243542b0676f73f6192482c9e9edd12f85495c58847a5",
+      "gitBlobSha": "6fb4e7e2fa6bb0be85778a2c2a9c184e9225a3f7"
+    },
+    {
+      "path": "src/Valdrio.Desktop/MainWindow.VisualSmoke.cs",
+      "sha256": "ea4e32b116e041166eebfc8396e7a0ec5fa528fe7f8e995c37f8487a1b743d0a",
+      "gitBlobSha": "fa97042c39a4e2032ef3a640f989a9e00052798d"
+    },
+    {
+      "path": "src/Valdrio.Desktop/MainWindow.xaml",
+      "sha256": "1f5ef0fb8d7e743a633590bf938d14518cd77ca1f22aefa0ef63aa04caa3a16a",
+      "gitBlobSha": "2896db2fafcbd3b0a36eed4708781720c69e6104"
+    },
+    {
+      "path": "src/Valdrio.Desktop/MainWindow.xaml.cs",
+      "sha256": "65765af3ddd12b31e64819a0fccc01c14e2c46feed4243b321241c017aee6130",
+      "gitBlobSha": "899eb350d619a27f28c2799d076a7daf85583d5a"
+    },
+    {
+      "path": "src/Valdrio.Desktop/ResourceEditorForm.cs",
+      "sha256": "715621456fb62df7a0e6c1b37b3eedbc9e86238247e8d1a01f934c895e52445d",
+      "gitBlobSha": "4d68d7b449cc890157d1838df62e053310c8ee80"
+    },
+    {
+      "path": "src/Valdrio.Desktop/ResourceWorkspacePanel.xaml",
+      "sha256": "570f410c31df49cf9a6daa4c4ba049d493651444c09ccb37780d4b2c7c6eb73b",
+      "gitBlobSha": "d710ce5edf7f721f3f0f29f0b59efbe69da2ac8e"
+    },
+    {
+      "path": "src/Valdrio.Desktop/ResourceWorkspacePanel.xaml.cs",
+      "sha256": "d5edf0430a237d6dd21e5eaedf7776569d005d448844c6f4b39eba4aa9858aca",
+      "gitBlobSha": "81e89e7ebb65e58e8a6e467a6913ed3c41f680cb"
+    },
+    {
+      "path": "src/Valdrio.Desktop/ResourceWorkspaceViewModel.Inline.cs",
+      "sha256": "4c1384b8afede72929fc0d0ea4e9c2c692bca67af184baa7db6dbfb0bcfe938d",
+      "gitBlobSha": "eb8ab99e86c444577b3005d6a36ad43f57b65589"
+    },
+    {
+      "path": "src/Valdrio.Desktop/ResourceWorkspaceViewModel.Revalue.cs",
+      "sha256": "0bf3f6df319cbd0bbe13c336e7f3e76c9e9d3ddd04212c64d2c76494a00ef7f1",
+      "gitBlobSha": "ff1d2a218f3fd14bd14e51abea4ba247ac23eb41"
+    },
+    {
+      "path": "src/Valdrio.Desktop/ResourceWorkspaceViewModel.cs",
+      "sha256": "c66ba6bd896c203ae8583445d4217cfbe5bcfe033397a3745836af30138c8693",
+      "gitBlobSha": "e1119fab80a9218ae26c115e9c0a2e78672e23f0"
+    },
+    {
+      "path": "src/Valdrio.Desktop/StudyWorkspaceViewModel.cs",
+      "sha256": "23496dfca4e904eef3e6c6a1ca4daa97e3f21775d09e93d8522d6433c53e372d",
+      "gitBlobSha": "2512b9ddc247b467b4008598035bc71978bface8"
+    },
+    {
+      "path": "src/Valdrio.Infrastructure/CompanyFiles/SqliteCompanyFileService.Imports.cs",
+      "sha256": "21462f7f23810cdb5d985eeccf29f6d3bb8717686e021390efaecb6c53b2aabb",
+      "gitBlobSha": "81005ba11709d08fee9fd0bf545d00541a2b6deb"
+    },
+    {
+      "path": "src/Valdrio.Localization/Resources/Strings.es.resx",
+      "sha256": "543310a9a46473c0d93ae695a2e74b6d455a9c8b704a1ed5486742a45805809f",
+      "gitBlobSha": "a1b73039a7006c9eba38a65c2433c1a909d4c4eb"
+    },
+    {
+      "path": "src/Valdrio.Localization/Resources/Strings.resx",
+      "sha256": "d2b4a7f9c7604f04c0caef6498c38d626b868d2bd1ea48c8fbbe042be0b83d52",
+      "gitBlobSha": "5044130ff90de34e423b3f6f1d21d0a1a4c9c90a"
+    },
+    {
+      "path": "tests/Valdrio.Tests/T06AuditOriginOverlapTests.cs",
+      "sha256": "59f23064ccda3d5b83380ed8a51c0b48d15f9544332ff0f2d53177f1217c02ec",
+      "gitBlobSha": "987056a07d3c579b5d1c6c2afbc4f114e7225381"
+    },
+    {
+      "path": "tests/Valdrio.Tests/T07AuditCorrectionTests.cs",
+      "sha256": "4a0a42710354f3909e53301ce6e18ebe335b9cadd7b2783891cda84e19238844",
+      "gitBlobSha": "e4f021d3fb464bfbd5fe02d9ac6df7a942669b54"
+    }
+  ],
+  "gitHubActions": {
+    "workflowTrigger": "workflow_dispatch only",
+    "runsRequested": 0
+  },
+  "remainingGates": [
+    "Native Windows acceptance and visual inspection of this candidate",
+    "Two-model context and failed/recovered revaluation in native WPF",
+    "T08-CUENTA-01 end-to-end semantics and absence/conflict policy, issue #28",
+    "Official V2-V6 migration and validation",
+    "Remaining historical adjustment consumers",
+    "No automatic repair of historical overlapping imports; byte-different economic duplicates are outside this guard"
+  ]
+}

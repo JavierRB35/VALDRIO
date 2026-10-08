@@ -1,0 +1,2751 @@
+{
+  "schema": "valdrio-trx-result-extract-v1",
+  "sourceCommit": "d32a8ed83bad8a9750aea4efeb3e2ba6a0a691bc",
+  "originalTrxSha256": "8646cfc9ee9daae78392fea6e337fe940bf32166d8f4bd259d036bbce4f2f7cb",
+  "counters": {
+    "total": "544",
+    "executed": "544",
+    "passed": "544",
+    "failed": "0",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "times": {
+    "creation": "2026-10-08T12:40:36.3088200-04:00",
+    "queuing": "2026-10-08T12:40:36.3088201-04:00",
+    "start": "2026-10-08T12:40:35.8667116-04:00",
+    "finish": "2026-10-08T12:42:11.7565889-04:00"
+  },
+  "tests": [
+    {
+      "name": "A01_BusinessDate_RoundTripsWithoutDefaulting",
+      "outcome": "Passed",
+      "duration": "00:00:00.0046031"
+    },
+    {
+      "name": "A01_FxRate_RoundTripsIdentityAndDate",
+      "outcome": "Passed",
+      "duration": "00:00:00.0148276"
+    },
+    {
+      "name": "A01_IncompleteDuplicateUnknownAndFutureSnapshotsAreRejected",
+      "outcome": "Passed",
+      "duration": "00:00:00.0023556"
+    },
+    {
+      "name": "A01_InvalidJsonPrimitivesDoNotBecomeDefaults",
+      "outcome": "Passed",
+      "duration": "00:00:00.0015165"
+    },
+    {
+      "name": "A01_QuantityAndAllIdentifiersRoundTrip",
+      "outcome": "Passed",
+      "duration": "00:00:00.0095594"
+    },
+    {
+      "name": "A01_Quantity_RoundTripsUnitAndPolicy",
+      "outcome": "Passed",
+      "duration": "00:00:00.0135387"
+    },
+    {
+      "name": "A01_RateSetRoundTripsAllRatesInStableOrder",
+      "outcome": "Passed",
+      "duration": "00:00:00.0073659"
+    },
+    {
+      "name": "A01_SnapshotRejectsEconomicallyForgedFxBridge",
+      "outcome": "Passed",
+      "duration": "00:00:00.0087318"
+    },
+    {
+      "name": "A01_UtcInstant_RoundTripsWithoutDefaulting",
+      "outcome": "Passed",
+      "duration": "00:00:00.0036313"
+    },
+    {
+      "name": "A01_VersionedValuesRoundTripAcrossCultures",
+      "outcome": "Passed",
+      "duration": "00:00:00.0370632"
+    },
+    {
+      "name": "A02_DelimitersCannotAliasDifferentFxIdentities",
+      "outcome": "Passed",
+      "duration": "00:00:00.0007982"
+    },
+    {
+      "name": "A02_UnicodeNullAndPolicyChangesAreUnambiguous",
+      "outcome": "Passed",
+      "duration": "00:00:00.0010347"
+    },
+    {
+      "name": "A03_CapturedCultureSurvivesAmbientRegionChange",
+      "outcome": "Passed",
+      "duration": "00:00:00.0005308"
+    },
+    {
+      "name": "A03_MonetaryViewRetainsMinorUnitsFromFrozenMetadata",
+      "outcome": "Passed",
+      "duration": "00:00:00.0013763"
+    },
+    {
+      "name": "A03_RegionalEditsProduceTheSameTypedFxInput",
+      "outcome": "Passed",
+      "duration": "00:00:00.0023968"
+    },
+    {
+      "name": "A04_FxRateRejectsDefaultIdentifier",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002763"
+    },
+    {
+      "name": "A04_InvalidCurrencyAndDefaultLookupAreRejected",
+      "outcome": "Passed",
+      "duration": "00:00:00.0015023"
+    },
+    {
+      "name": "A04_QuantityAdditionRejectsDefaultOperands",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003195"
+    },
+    {
+      "name": "A04_QuantityRejectsDefaultUnit",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002046"
+    },
+    {
+      "name": "A04_RevaluationRejectsDuplicateOriginsAndDefaultSelectedRateBeforePorts",
+      "outcome": "Passed",
+      "duration": "00:00:00.0042563"
+    },
+    {
+      "name": "A04_RoundingRejectsDefaultDestination",
+      "outcome": "Passed",
+      "duration": "00:00:00.0025364"
+    },
+    {
+      "name": "A05_BelowQuantumReportsWarningAndPreservesBridge",
+      "outcome": "Passed",
+      "duration": "00:00:00.0023165"
+    },
+    {
+      "name": "A05_ExactTieAndAdjacentQuotesPreserveBothSigns",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003322"
+    },
+    {
+      "name": "A05_OverflowIsDiagnosedAndApproximateRawBridgeRemainsExact",
+      "outcome": "Passed",
+      "duration": "00:00:00.0007317"
+    },
+    {
+      "name": "A05_QuantizationPreservesNegativeMirrorAtAdmittedMagnitude",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001928"
+    },
+    {
+      "name": "A05_QuantizationUsesExactProductAtAdmittedMagnitude",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002636"
+    },
+    {
+      "name": "A06_BalancedResultCopiesSuppliedCollection",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002815"
+    },
+    {
+      "name": "A06_BalancedResultDoesNotExposeMutableArray",
+      "outcome": "Passed",
+      "duration": "00:00:00.0152247"
+    },
+    {
+      "name": "A06_CurrencyResultCopiesSuppliedCollection",
+      "outcome": "Passed",
+      "duration": "00:00:00.0007080"
+    },
+    {
+      "name": "A06_MoneyProjectionAndDiagnosticsCopyTheirInputs",
+      "outcome": "Passed",
+      "duration": "00:00:00.0018627"
+    },
+    {
+      "name": "A06_RevalueCandidateCopiesSuppliedCollection",
+      "outcome": "Passed",
+      "duration": "00:00:00.0004285"
+    },
+    {
+      "name": "A07_RevisionIsLongAndOverflowDoesNotCallPorts",
+      "outcome": "Passed",
+      "duration": "00:00:00.0049023"
+    },
+    {
+      "name": "ARepeatedCodeCanImportOnlyOneSelectedRecord",
+      "outcome": "Passed",
+      "duration": "00:00:00.2071692"
+    },
+    {
+      "name": "AccountSelectionIncludesRowsBeyondPreviewAndComparesCodesOrdinally",
+      "outcome": "Passed",
+      "duration": "00:00:00.2088314"
+    },
+    {
+      "name": "ActivityUnitsAndPrecisionMustBeCompatible",
+      "outcome": "Passed",
+      "duration": "00:00:00.0016695"
+    },
+    {
+      "name": "ActualWriteFailureAndCancellationRollBackDebitCredit (AfterFirstWrite,False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.2999761"
+    },
+    {
+      "name": "ActualWriteFailureAndCancellationRollBackDebitCredit (AfterFirstWrite,True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.2985311"
+    },
+    {
+      "name": "ActualWriteFailureAndCancellationRollBackDebitCredit (BeforeCommit,False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.3041251"
+    },
+    {
+      "name": "ActualWriteFailureAndCancellationRollBackDebitCredit (BeforeCommit,True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.3163455"
+    },
+    {
+      "name": "AdjustmentRequiresTypeAndReason",
+      "outcome": "Passed",
+      "duration": "00:00:00.0027357"
+    },
+    {
+      "name": "AllMappingResourcesExistWithoutFallback (\"en\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0009429"
+    },
+    {
+      "name": "AllMappingResourcesExistWithoutFallback (\"es\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0007749"
+    },
+    {
+      "name": "AppendingAnOverlappingGroupingSelectionCannotCountTheFirstRowTwice",
+      "outcome": "Passed",
+      "duration": "00:00:00.3536956"
+    },
+    {
+      "name": "ApprovedSignSyntaxAppliesToEachOperandWithoutTakingAbsoluteValues (\"(180)\",\"(20)\",Parentheses)",
+      "outcome": "Passed",
+      "duration": "00:00:00.1919043"
+    },
+    {
+      "name": "ApprovedSignSyntaxAppliesToEachOperandWithoutTakingAbsoluteValues (\"-180\",\"-20\",LeadingMinus)",
+      "outcome": "Passed",
+      "duration": "00:00:00.1496935"
+    },
+    {
+      "name": "ApprovedSignSyntaxAppliesToEachOperandWithoutTakingAbsoluteValues (\"180-\",\"20-\",TrailingMinus)",
+      "outcome": "Passed",
+      "duration": "00:00:00.1639817"
+    },
+    {
+      "name": "AtomicConfirmationReopensWithCanonicalAmountsRawRowsLinksAndHistory",
+      "outcome": "Passed",
+      "duration": "00:00:00.4162683"
+    },
+    {
+      "name": "AtomicSaveReopenSnapshotsBackupAndRunnerRetainBothOriginals",
+      "outcome": "Passed",
+      "duration": "00:00:01.1428239"
+    },
+    {
+      "name": "B01_ConfirmedValueIsAppliedBeforeRefreshFailure",
+      "outcome": "Passed",
+      "duration": "00:00:00.0008089"
+    },
+    {
+      "name": "B01_SuccessfulRefreshKeepsConfirmedValue",
+      "outcome": "Passed",
+      "duration": "00:00:00.0005789"
+    },
+    {
+      "name": "B02_AccessFailurePersistingPreferencesDoesNotInterruptLaterSubscribers",
+      "outcome": "Passed",
+      "duration": "00:00:00.0000505"
+    },
+    {
+      "name": "B02_IoFailurePersistingPreferencesDoesNotInterruptLaterSubscribers",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003814"
+    },
+    {
+      "name": "B02_JsonStoreCleansUniqueTemporaryFileAfterFailedReplacement",
+      "outcome": "Passed",
+      "duration": "00:00:00.0010657"
+    },
+    {
+      "name": "BothOriginalsProduceExactPositiveNegativeAndZeroPeriodAmounts",
+      "outcome": "Passed",
+      "duration": "00:00:00.2046899"
+    },
+    {
+      "name": "BusinessApprovalIsRequiredForDebitCreditToo (PendingBusinessApproval)",
+      "outcome": "Passed",
+      "duration": "00:00:00.1607661"
+    },
+    {
+      "name": "BusinessApprovalIsRequiredForDebitCreditToo (SyntheticFixture)",
+      "outcome": "Passed",
+      "duration": "00:00:00.1633168"
+    },
+    {
+      "name": "BusinessDate_UsesCanonicalIsoAndHasNoTimeZone",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001218"
+    },
+    {
+      "name": "C04_AdjustedResourceHasThreeDisjointRoutes",
+      "outcome": "Passed",
+      "duration": "00:00:00.0009560"
+    },
+    {
+      "name": "C05_ExtraPartBlocksAndReportsSignedDifference",
+      "outcome": "Passed",
+      "duration": "00:00:00.0004560"
+    },
+    {
+      "name": "C07ExampleService_UsesCalculationResultAndStableIds",
+      "outcome": "Passed",
+      "duration": "00:00:00.0006097"
+    },
+    {
+      "name": "C07_PositiveCentInThreeEqualParts_UsesStableIdTieBreak",
+      "outcome": "Passed",
+      "duration": "00:00:00.0011785"
+    },
+    {
+      "name": "C08_NegativeCent_IsSignSymmetric",
+      "outcome": "Passed",
+      "duration": "00:00:00.0006407"
+    },
+    {
+      "name": "C21_SignedVariation_UsesFloorForNegativeContribution",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002822"
+    },
+    {
+      "name": "C30_OppositeDifferencesRemainTwoErrors",
+      "outcome": "Passed",
+      "duration": "00:00:00.0008378"
+    },
+    {
+      "name": "C33_UsdToEur_UsesExplicitDestinationPerSourceQuote",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003975"
+    },
+    {
+      "name": "C34_SameCurrency_IsIdentityWithoutRateSet",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002771"
+    },
+    {
+      "name": "C35_JpyToEur_DoesNotAssumeSourceMinorUnits",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001462"
+    },
+    {
+      "name": "C36_MissingCrossCurrencyRate_Blocks",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002498"
+    },
+    {
+      "name": "C37_NegativeOriginal_PreservesOriginAndSign",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001855"
+    },
+    {
+      "name": "C38AndC39_QuantumIsNotHardcodedToTwoDecimals",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002381"
+    },
+    {
+      "name": "Calculation_DoesNotReferenceUiInfrastructureLocalizationOrEntityFramework",
+      "outcome": "Passed",
+      "duration": "00:00:00.0004631"
+    },
+    {
+      "name": "CancellationImmediatelyAfterActualCommitStillReturnsSavedReceipt",
+      "outcome": "Passed",
+      "duration": "00:00:00.2316370"
+    },
+    {
+      "name": "CancelledReadKeepsNoPartialMapping",
+      "outcome": "Passed",
+      "duration": "00:00:00.0022191"
+    },
+    {
+      "name": "CanonicalDecimal_IsInvariantTextWithoutGroupingExponentOrNegativeZero",
+      "outcome": "Passed",
+      "duration": "00:00:00.0005230"
+    },
+    {
+      "name": "CapacityBelongsToExactDestinationPoolAndNode",
+      "outcome": "Passed",
+      "duration": "00:00:00.0049594"
+    },
+    {
+      "name": "CapacityClassificationGateIsExplicit",
+      "outcome": "Passed",
+      "duration": "00:00:00.0006946"
+    },
+    {
+      "name": "CapacityObservationsKeepOwnUnitsAndCannotBeNegative",
+      "outcome": "Passed",
+      "duration": "00:00:00.0029011"
+    },
+    {
+      "name": "ChangedSeparatorsRevokeApprovalAndRequireValidationBeforeReview",
+      "outcome": "Passed",
+      "duration": "00:00:00.5355055"
+    },
+    {
+      "name": "ChangingAccountsRevokesApprovalAndRereadingNeverReusesOldChoices",
+      "outcome": "Passed",
+      "duration": "00:00:00.1952171"
+    },
+    {
+      "name": "ChangingLayoutOrOperandColumnInvalidatesMappingPreparationAndApproval",
+      "outcome": "Passed",
+      "duration": "00:00:00.1695079"
+    },
+    {
+      "name": "ClassifyingDraftReturnsNewResourceAndPreservesSourcesAndAmounts",
+      "outcome": "Passed",
+      "duration": "00:00:00.0026222"
+    },
+    {
+      "name": "ClosingAndCumulativeSourcesRemainBlockedInsteadOfBecomingPeriodCosts (ClosingBalance)",
+      "outcome": "Passed",
+      "duration": "00:00:00.2074315"
+    },
+    {
+      "name": "ClosingAndCumulativeSourcesRemainBlockedInsteadOfBecomingPeriodCosts (CumulativeExpenseDifference)",
+      "outcome": "Passed",
+      "duration": "00:00:00.2045191"
+    },
+    {
+      "name": "ComparisonUiRechecksBothFilesBeforeConfirming (False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.2147628"
+    },
+    {
+      "name": "ComparisonUiRechecksBothFilesBeforeConfirming (True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.1986912"
+    },
+    {
+      "name": "ConfirmationResourcesAreAvailableInBothLanguages (\"en\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0032883"
+    },
+    {
+      "name": "ConfirmationResourcesAreAvailableInBothLanguages (\"es\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0009917"
+    },
+    {
+      "name": "ConservationDifferenceAboveOneInternalQuantum_IsRejected",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003360"
+    },
+    {
+      "name": "Conversion_RoundsEachAmountToScaleEight_MidpointToEven_AndRecordsBridge",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001978"
+    },
+    {
+      "name": "CostLayerAndPeriodTreatmentDoNotChangeBehaviorOrMoney",
+      "outcome": "Passed",
+      "duration": "00:00:00.0018840"
+    },
+    {
+      "name": "Csv_ManualNonAdjacentColumnsPreserveLeadingZerosAndIgnoreOtherAmounts",
+      "outcome": "Passed",
+      "duration": "00:00:00.0050033"
+    },
+    {
+      "name": "CultureAndInputOrderDoNotChangeCoverageOrCanonicalDiagnostics",
+      "outcome": "Passed",
+      "duration": "00:00:00.0029918"
+    },
+    {
+      "name": "CultureDoesNotChangePreparedOrImportedSnapshotHashes (\"de-DE\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2816800"
+    },
+    {
+      "name": "CultureDoesNotChangePreparedOrImportedSnapshotHashes (\"en-US\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2545010"
+    },
+    {
+      "name": "CultureDoesNotChangePreparedOrImportedSnapshotHashes (\"es-ES\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2545544"
+    },
+    {
+      "name": "CultureDoesNotChangePreparedOrImportedSnapshotHashes (\"tr-TR\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2475233"
+    },
+    {
+      "name": "Cumulative160Minus100Persists60AndBothOriginals (\"de-DE\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.3757072"
+    },
+    {
+      "name": "Cumulative160Minus100Persists60AndBothOriginals (\"en-GB\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.3780171"
+    },
+    {
+      "name": "Cumulative160Minus100Persists60AndBothOriginals (\"en-US\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.3766324"
+    },
+    {
+      "name": "Cumulative160Minus100Persists60AndBothOriginals (\"es-ES\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.4310396"
+    },
+    {
+      "name": "CumulativeDuplicateDoesNotDependOnProfileIdsOrApprovalWording",
+      "outcome": "Passed",
+      "duration": "00:00:00.2863645"
+    },
+    {
+      "name": "CumulativeSignsAndExplicitZeroArePreserved (\"-160\",\"-100\",\"-60\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1825850"
+    },
+    {
+      "name": "CumulativeSignsAndExplicitZeroArePreserved (\"100\",\"160\",\"-60\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1839127"
+    },
+    {
+      "name": "CumulativeSignsAndExplicitZeroArePreserved (\"160\",\"160\",\"0\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1885314"
+    },
+    {
+      "name": "CurrencyProjection_0005Eur_UsesMidpointToEvenAndShowsDifference",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002477"
+    },
+    {
+      "name": "CurrencyProjection_0015Eur_ProjectsToTwoCentsWithoutChangingLedger",
+      "outcome": "Passed",
+      "duration": "00:00:00.0009729"
+    },
+    {
+      "name": "CurrencyProjection_NegativesAreSignSymmetric",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003959"
+    },
+    {
+      "name": "DataColumnBeyondShortHeaderCanStillBeSelected",
+      "outcome": "Passed",
+      "duration": "00:00:00.0014191"
+    },
+    {
+      "name": "DebitCreditLabelsAndOverflowDiagnosticsAreTranslated (\"en\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0012568"
+    },
+    {
+      "name": "DebitCreditLabelsAndOverflowDiagnosticsAreTranslated (\"es\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0009341"
+    },
+    {
+      "name": "DifferenceAlsoRespectsMagnitudePolicyWhenBothOperandsFit",
+      "outcome": "Passed",
+      "duration": "00:00:00.1670735"
+    },
+    {
+      "name": "DifferenceOverflowIsDiagnosedWithoutProducingAMoneyValue",
+      "outcome": "Passed",
+      "duration": "00:00:00.1403485"
+    },
+    {
+      "name": "DifferentFinancialColumnsOnTheSameRowRemainDistinctSources",
+      "outcome": "Passed",
+      "duration": "00:00:00.3579138"
+    },
+    {
+      "name": "DifferentFxQuoteDoesNotMakeTheSameSourceRowsNew",
+      "outcome": "Passed",
+      "duration": "00:00:00.3764367"
+    },
+    {
+      "name": "DirectAssignmentsMustConserveTheirOwnPart",
+      "outcome": "Passed",
+      "duration": "00:00:00.0017170"
+    },
+    {
+      "name": "DisjointSelectionsFromOneFileStillAppendAndReopenAs358Point35",
+      "outcome": "Passed",
+      "duration": "00:00:00.5320620"
+    },
+    {
+      "name": "DisplayInstant_ContainsLocalizedDateTimeAndExplicitOffset",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001533"
+    },
+    {
+      "name": "Domain_DoesNotReferenceCalculationUiOrEntityFramework",
+      "outcome": "Passed",
+      "duration": "00:00:00.0059072"
+    },
+    {
+      "name": "DraftFreezesInputCollections",
+      "outcome": "Passed",
+      "duration": "00:00:00.0004289"
+    },
+    {
+      "name": "DuplicateAccountsBlockWholeBatchAndSignTotalsDoNotHideErrors",
+      "outcome": "Passed",
+      "duration": "00:00:00.2141791"
+    },
+    {
+      "name": "DuplicateAndEmptyHeadersRemainDistinctByColumnPosition",
+      "outcome": "Passed",
+      "duration": "00:00:00.0016873"
+    },
+    {
+      "name": "E02_AllModelAndMasterCommitsRemainVisibleAfterRefreshFailure (\"ChangeCenter\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1144308"
+    },
+    {
+      "name": "E02_AllModelAndMasterCommitsRemainVisibleAfterRefreshFailure (\"ChangeUnitState\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1275664"
+    },
+    {
+      "name": "E02_AllModelAndMasterCommitsRemainVisibleAfterRefreshFailure (\"Clone\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1469873"
+    },
+    {
+      "name": "E02_AllModelAndMasterCommitsRemainVisibleAfterRefreshFailure (\"CreateCenter\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1221645"
+    },
+    {
+      "name": "E02_AllModelAndMasterCommitsRemainVisibleAfterRefreshFailure (\"CreateDraft\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1152484"
+    },
+    {
+      "name": "E02_AllModelAndMasterCommitsRemainVisibleAfterRefreshFailure (\"Publish\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1297313"
+    },
+    {
+      "name": "E02_AllModelAndMasterCommitsRemainVisibleAfterRefreshFailure (\"SaveDraft\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1418509"
+    },
+    {
+      "name": "E02_AllModelAndMasterCommitsRemainVisibleAfterRefreshFailure (\"ToggleCenter\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1071691"
+    },
+    {
+      "name": "E02_RefreshPreservesPendingModelNodeAndMasterEditsWithoutRebasingTheirRevision",
+      "outcome": "Passed",
+      "duration": "00:00:00.1192991"
+    },
+    {
+      "name": "E03_AmbiguousRegionalFormatIsBlockedRatherThanGuessed",
+      "outcome": "Passed",
+      "duration": "00:00:00.0052959"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"0.00\";yyyy-mm-dd\";yyyy-mm-dd\",\"1234.50\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0027549"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"0.00\"folder\\\";yyyy-mm-dd\",\"1234.50\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0026855"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"0.00\"units*\";yyyy-mm-dd\",\"1234.50\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0027197"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"0.00\"units_\";yyyy-mm-dd\",\"1234.50\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0026101"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"0.00;0.00;yyyy-mm-dd\",\"0\",DateSerial)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0055417"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"0.00;yyyy-mm-dd\",\"1234.50\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.1092219"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"0.00E+00\",\"1234.50\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0055904"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"0.00\\;\\d;yyyy-mm-dd\",\"1234.50\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0031547"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"General\",\"1234.50\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0039098"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"[<0]0.00;[>=100000]0.00;yyyy-mm-dd\",\"45323\",DateSerial)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0035834"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"[<0]0.00;[>=100000]yyyy-mm-dd;0.00\",\"45323\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0032608"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"[>0]0.00\"units_\";yyyy-mm-dd\",\"1234.50\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0021055"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"[>100]yyyy-mm-dd;0.00\",\"100.000000000000000000000000000001\",DateSerial)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0045830"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"[>=100000]0.00;yyyy-mm-dd\",\"45323\",DateSerial)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0028845"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"[>=100000]yyyy-mm-dd;0.00\",\"1234.50\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0033087"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"[h]:mm\",\"0.5\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0027980"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"h:mm AM/PM\",\"0.5\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0027034"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"h:mm:ss A/P\",\"0.5\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0021678"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"h:mmm\",\"45323\",DateSerial)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0030411"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"h:mmmm\",\"45323\",DateSerial)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0021842"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"mm\",\"45323\",DateSerial)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0037458"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"mmm:ss\",\"45323\",DateSerial)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0022598"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"yyyy-mm-dd;0.00\",\"-1234.50\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0050237"
+    },
+    {
+      "name": "E03_OnlyTheEffectiveFormatSectionDeterminesCellKind (\"yyyy-mm-dd;0.00;0.00\",\"0\",Number)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0046584"
+    },
+    {
+      "name": "E03_UnsupportedCalendarTokensAreExplicitlyBlocked (\"[$-411]ee\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0028570"
+    },
+    {
+      "name": "E03_UnsupportedCalendarTokensAreExplicitlyBlocked (\"ggge\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0035017"
+    },
+    {
+      "name": "E03_UnsupportedCalendarTokensAreExplicitlyBlocked (\"ว/ด/ปปปป\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0060206"
+    },
+    {
+      "name": "E04_DateSerialAccountIsBlockedEvenWhenNumericAccountsAreAuthorized (False,PreserveStoredLexical)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0033989"
+    },
+    {
+      "name": "E04_DateSerialAccountIsBlockedEvenWhenNumericAccountsAreAuthorized (False,Reject)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0049367"
+    },
+    {
+      "name": "E04_DateSerialAccountIsBlockedEvenWhenNumericAccountsAreAuthorized (True,PreserveStoredLexical)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0026699"
+    },
+    {
+      "name": "E04_DateSerialAccountIsBlockedEvenWhenNumericAccountsAreAuthorized (True,Reject)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0035929"
+    },
+    {
+      "name": "E04_IsoDateAccountAndCachedDateRemainTypedAndBlocked (False,PreserveStoredLexical)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0029536"
+    },
+    {
+      "name": "E04_IsoDateAccountAndCachedDateRemainTypedAndBlocked (False,Reject)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0109251"
+    },
+    {
+      "name": "E04_IsoDateAccountAndCachedDateRemainTypedAndBlocked (True,PreserveStoredLexical)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0029062"
+    },
+    {
+      "name": "E04_IsoDateAccountAndCachedDateRemainTypedAndBlocked (True,Reject)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0058435"
+    },
+    {
+      "name": "E05_CorruptedWorkbookProducesControlledDiagnostic (\"duplicate-cell\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0034934"
+    },
+    {
+      "name": "E05_CorruptedWorkbookProducesControlledDiagnostic (\"duplicate-row\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0025385"
+    },
+    {
+      "name": "E05_CorruptedWorkbookProducesControlledDiagnostic (\"outside-sheet\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0016628"
+    },
+    {
+      "name": "E05_CorruptedWorkbookProducesControlledDiagnostic (\"reference\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0057935"
+    },
+    {
+      "name": "E05_CorruptedWorkbookProducesControlledDiagnostic (\"relationship\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0023687"
+    },
+    {
+      "name": "E05_CorruptedWorkbookProducesControlledDiagnostic (\"style\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0021972"
+    },
+    {
+      "name": "E06_ExactWholeDaysAndInvalidMappedDateHaveExplicitResults",
+      "outcome": "Passed",
+      "duration": "00:00:00.0021459"
+    },
+    {
+      "name": "E06_FractionalDateLexemesCannotRoundOrUnderflowToWholeDays (\"-0.000000000000000000000000000001\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0000008"
+    },
+    {
+      "name": "E06_FractionalDateLexemesCannotRoundOrUnderflowToWholeDays (\"0.000000000000000000000000000001\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001784"
+    },
+    {
+      "name": "E06_FractionalDateLexemesCannotRoundOrUnderflowToWholeDays (\"4.5323e4\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0000016"
+    },
+    {
+      "name": "E06_FractionalDateLexemesCannotRoundOrUnderflowToWholeDays (\"45323.\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0000023"
+    },
+    {
+      "name": "E06_FractionalDateLexemesCannotRoundOrUnderflowToWholeDays (\"45323.000000000000000000000000000001\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003953"
+    },
+    {
+      "name": "E06_FractionalDateLexemesCannotRoundOrUnderflowToWholeDays (\"45323.5\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0000019"
+    },
+    {
+      "name": "E07_AuditOperationCannotDisguiseAStudyStateTransition",
+      "outcome": "Passed",
+      "duration": "00:00:00.1202031"
+    },
+    {
+      "name": "E07_StudyCreationAuditCannotStartClosed",
+      "outcome": "Passed",
+      "duration": "00:00:00.1085682"
+    },
+    {
+      "name": "EmptyAndInvalidOperandInMiddleRowNeverBecomesZero (\"\",\"0\",4)",
+      "outcome": "Passed",
+      "duration": "00:00:00.2047159"
+    },
+    {
+      "name": "EmptyAndInvalidOperandInMiddleRowNeverBecomesZero (\"0\",\"\",1)",
+      "outcome": "Passed",
+      "duration": "00:00:00.1937188"
+    },
+    {
+      "name": "EmptyAndInvalidOperandInMiddleRowNeverBecomesZero (\"0\",\"no_disponible\",1)",
+      "outcome": "Passed",
+      "duration": "00:00:00.2278694"
+    },
+    {
+      "name": "EmptyAndInvalidOperandInMiddleRowNeverBecomesZero (\"no_disponible\",\"0\",4)",
+      "outcome": "Passed",
+      "duration": "00:00:00.2279423"
+    },
+    {
+      "name": "EnglishAndSpanishPublishedCatalogs_HaveExactlySameKeysAndPlaceholderSignatures",
+      "outcome": "Passed",
+      "duration": "00:00:00.0047115"
+    },
+    {
+      "name": "EqualOperandsCannotHideExcessivePrecisionOrMagnitude (\"0,123456789\",\"NUM_SCALE_EXCEEDED\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1977642"
+    },
+    {
+      "name": "EqualOperandsCannotHideExcessivePrecisionOrMagnitude (\"1000000000001\",\"NUM_MAGNITUDE_EXCEEDED\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2016996"
+    },
+    {
+      "name": "ExactRequestReplayReturnsSameBatchAndChangedActorOrHashIsRejected",
+      "outcome": "Passed",
+      "duration": "00:00:00.3242923"
+    },
+    {
+      "name": "ExampleCatalog_MatchesPackageFixtureExactly",
+      "outcome": "Passed",
+      "duration": "00:00:00.0007057"
+    },
+    {
+      "name": "ExclusionRequiresReason",
+      "outcome": "Passed",
+      "duration": "00:00:00.0013427"
+    },
+    {
+      "name": "ExplicitAccountSelectionPersistsOnlyChosenResourcesAndKeepsExcludedEvidence",
+      "outcome": "Passed",
+      "duration": "00:00:00.4310552"
+    },
+    {
+      "name": "ExplicitFullClosingBalanceKeeps160AndPersistsItsDistinctMeaning",
+      "outcome": "Passed",
+      "duration": "00:00:00.3987083"
+    },
+    {
+      "name": "ExplicitOffsetMustBeOneOfAmbiguousCandidates",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001722"
+    },
+    {
+      "name": "ExplicitRateOrientationMustMatchOriginalAndFunctionalCurrencies",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002106"
+    },
+    {
+      "name": "F01_CreateReopenRetainsIdentityPolicyUnitsAndAudit",
+      "outcome": "Passed",
+      "duration": "00:00:00.1317190"
+    },
+    {
+      "name": "F02_CreateNeverOverwritesExistingFile",
+      "outcome": "Passed",
+      "duration": "00:00:00.0009579"
+    },
+    {
+      "name": "F03_RealEfDecimalTextRoundTripsWithoutBinaryConversion",
+      "outcome": "Passed",
+      "duration": "00:00:00.0244962"
+    },
+    {
+      "name": "F05_CorruptTypedValuesNeverGetDefaults",
+      "outcome": "Passed",
+      "duration": "00:00:00.4854355"
+    },
+    {
+      "name": "F06_PhysicalConstraintsRejectSecondCompanyForeignKeyAndDuplicateCode",
+      "outcome": "Passed",
+      "duration": "00:00:00.0811441"
+    },
+    {
+      "name": "F07_TwoProcessesAndKillReleaseActualOsLock",
+      "outcome": "Passed",
+      "duration": "00:00:03.3745967"
+    },
+    {
+      "name": "F08_NormalCloseReleasesLockForAnotherProcess",
+      "outcome": "Passed",
+      "duration": "00:00:01.2435926"
+    },
+    {
+      "name": "F09_FutureSchemaBlockedBeforeAnyMigrationOrWrite",
+      "outcome": "Passed",
+      "duration": "00:00:00.1024526"
+    },
+    {
+      "name": "F10_ForeignCorruptMissingAndIncompleteFilesAreRejected",
+      "outcome": "Passed",
+      "duration": "00:00:00.0895461"
+    },
+    {
+      "name": "F11_FailureBetweenWritesRollsBackUnitsRevisionAndAuditAfterReopen",
+      "outcome": "Passed",
+      "duration": "00:00:00.1117527"
+    },
+    {
+      "name": "F12_CancellationImmediatelyBeforeCommitRevertsEverything",
+      "outcome": "Passed",
+      "duration": "00:00:00.0955089"
+    },
+    {
+      "name": "F13_LiveBackupIncludesCommittedWalWithoutRawCopy",
+      "outcome": "Passed",
+      "duration": "00:00:00.0959612"
+    },
+    {
+      "name": "F14_RestoreValidatesCreatesNewFileAndNeverOverwrites",
+      "outcome": "Passed",
+      "duration": "00:00:00.1039497"
+    },
+    {
+      "name": "F15_CultureDoesNotChangeStoredCurrencyDecimalsOrUtc",
+      "outcome": "Passed",
+      "duration": "00:00:00.3222164"
+    },
+    {
+      "name": "F_CreationFailureCleansOnlyOwnedTemporaryFile",
+      "outcome": "Passed",
+      "duration": "00:00:00.1376536"
+    },
+    {
+      "name": "F_CustomPolicyAndSnapshotCollectionsArePreserved",
+      "outcome": "Passed",
+      "duration": "00:00:00.0815378"
+    },
+    {
+      "name": "F_PathAliasesShareLockAndSymlinksAreRejected",
+      "outcome": "Passed",
+      "duration": "00:00:02.0856363"
+    },
+    {
+      "name": "F_ReadOnlyAndStaleRevisionRejectWrites",
+      "outcome": "Passed",
+      "duration": "00:00:00.0880795"
+    },
+    {
+      "name": "FailedNewFileCannotLeaveThePreviousMappingReady",
+      "outcome": "Passed",
+      "duration": "00:00:00.0028057"
+    },
+    {
+      "name": "FailedSplitLeavesOriginalIntactAndCannotReuseSiblingId",
+      "outcome": "Passed",
+      "duration": "00:00:00.0041653"
+    },
+    {
+      "name": "FixedAndVariableNeedExplicitDriverHorizonAndRange",
+      "outcome": "Passed",
+      "duration": "00:00:00.0040729"
+    },
+    {
+      "name": "ForeignAdjustmentNeedsRateAndReversalKeepsOriginalQuote",
+      "outcome": "Passed",
+      "duration": "00:00:00.0021240"
+    },
+    {
+      "name": "ForeignCurrencyIsPreservedAndCannotConfirmWithoutFxBridge",
+      "outcome": "Passed",
+      "duration": "00:00:00.2322467"
+    },
+    {
+      "name": "ForeignCurrencyIsRetainedAndStillNeedsFx",
+      "outcome": "Passed",
+      "duration": "00:00:00.1943748"
+    },
+    {
+      "name": "FrozenMetadata_DoesNotChangeWhenAnotherDefinitionExists",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001915"
+    },
+    {
+      "name": "FullClosingBalanceStillRequiresApprovalAndNeverWritesWhenUnapproved",
+      "outcome": "Passed",
+      "duration": "00:00:00.2220720"
+    },
+    {
+      "name": "FxConversion_PreservesOriginalPrecisionPolicy",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002176"
+    },
+    {
+      "name": "GenuinePreviouslyAcceptedV4PeriodLedgerAndSnapshotsRemainIdentical",
+      "outcome": "Passed",
+      "duration": "00:00:00.6661816"
+    },
+    {
+      "name": "GenuineV3MigrationPreservesAllFiveSnapshotsAuditAndSourceBytes",
+      "outcome": "Passed",
+      "duration": "00:00:00.1933751"
+    },
+    {
+      "name": "GenuineV5UpgradesToV6WithoutChangingHistoricalPayloads",
+      "outcome": "Passed",
+      "duration": "00:00:00.3501752"
+    },
+    {
+      "name": "GroupMagnitudeCannotExceedPrecisionPolicyEvenWhenIndividualRowsFit",
+      "outcome": "Passed",
+      "duration": "00:00:00.2289951"
+    },
+    {
+      "name": "GroupedWriteFaultOrCancellationRollsBackEveryContribution (AfterFirstWrite,False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.2695028"
+    },
+    {
+      "name": "GroupedWriteFaultOrCancellationRollsBackEveryContribution (AfterFirstWrite,True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.2676147"
+    },
+    {
+      "name": "GroupedWriteFaultOrCancellationRollsBackEveryContribution (BeforeCommit,False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.2755506"
+    },
+    {
+      "name": "GroupedWriteFaultOrCancellationRollsBackEveryContribution (BeforeCommit,True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.3028928"
+    },
+    {
+      "name": "GroupingUsesCodeDespiteDifferentDescriptionsAndRetainsEverySourceLink",
+      "outcome": "Passed",
+      "duration": "00:00:00.4113326"
+    },
+    {
+      "name": "GuidedModelReportsPendingMasterBeforePublicationAndRequiresActiveMasters",
+      "outcome": "Passed",
+      "duration": "00:00:00.1716390"
+    },
+    {
+      "name": "GuidedReviewRequiresExplicitMeaningAndRevokesPreparedSaveWhenWithdrawn",
+      "outcome": "Passed",
+      "duration": "00:00:02.2972672"
+    },
+    {
+      "name": "HeaderlessSourceCanConfirmAndExplicitZeroExclusionRemainsTraceable",
+      "outcome": "Passed",
+      "duration": "00:00:00.2196784"
+    },
+    {
+      "name": "HeaderlessSourcesKeepTheFirstDataRow (False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0025215"
+    },
+    {
+      "name": "HeaderlessSourcesKeepTheFirstDataRow (True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0039028"
+    },
+    {
+      "name": "I01_UiLanguageAndSpanishFormat_AreIndependentFromUsd",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002402"
+    },
+    {
+      "name": "I02_UsFormat_DoesNotIntroduceUsdForEur",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001843"
+    },
+    {
+      "name": "I05_PresentationPreferences_AreExcludedFromSyntheticEconomicHash",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001381"
+    },
+    {
+      "name": "I06_JpyProjection_UsesFrozenZeroDigitQuantum",
+      "outcome": "Passed",
+      "duration": "00:00:00.0012538"
+    },
+    {
+      "name": "I07_KwdProjection_UsesFrozenThreeDigitQuantum",
+      "outcome": "Passed",
+      "duration": "00:00:00.0004391"
+    },
+    {
+      "name": "I08_ChangingDisplayZone_DoesNotMoveBusinessDateOrInstantIdentity",
+      "outcome": "Passed",
+      "duration": "00:00:00.0008362"
+    },
+    {
+      "name": "I09_AmbiguousLocalTime_RequiresExplicitOffset",
+      "outcome": "Passed",
+      "duration": "00:00:00.0040591"
+    },
+    {
+      "name": "I10_UnsupportedRuntimeLanguage_FallsBackToEnglishAndLogsKey",
+      "outcome": "Passed",
+      "duration": "00:00:00.0014516"
+    },
+    {
+      "name": "I11_Pseudolocalization_ExpandsAtLeastFortyPercent_AndPreservesIdentifiers",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001641"
+    },
+    {
+      "name": "I13_MoneyDoesNotAddDifferentCurrencies",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002931"
+    },
+    {
+      "name": "I14_NewRateSetProducesNewConversionAndHashWithoutMutatingOldApplication",
+      "outcome": "Passed",
+      "duration": "00:00:00.0004348"
+    },
+    {
+      "name": "IdempotencyAndSourceRepetitionStillApplyToDebitCredit",
+      "outcome": "Passed",
+      "duration": "00:00:00.3529362"
+    },
+    {
+      "name": "IdentifiedReplacementCanExpandASelectionWithoutCountingTheRetiredBatch",
+      "outcome": "Passed",
+      "duration": "00:00:00.3970088"
+    },
+    {
+      "name": "ImmutableTablesCompositeScopeAndTamperedImportAuditAreEnforced",
+      "outcome": "Passed",
+      "duration": "00:00:00.2287457"
+    },
+    {
+      "name": "ImportPreviewPreservesUnsavedStudyAndCannotConfirmWithoutTarget",
+      "outcome": "Passed",
+      "duration": "00:00:00.0861011"
+    },
+    {
+      "name": "ImportedContextChangesAreBlockedButRenameCloseReopenAndBackupRemainValid",
+      "outcome": "Passed",
+      "duration": "00:00:00.6278262"
+    },
+    {
+      "name": "ImportedSnapshotV2RetainsV1HistoryAndRunnerReconciliation",
+      "outcome": "Passed",
+      "duration": "00:00:00.8068497"
+    },
+    {
+      "name": "IncompatibleMoneyAndDuplicateIdsAreRejected",
+      "outcome": "Passed",
+      "duration": "00:00:00.0054572"
+    },
+    {
+      "name": "InspectionOrReadOnlyDestinationExplainsRestrictionWithoutLosingRows (False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.5814575"
+    },
+    {
+      "name": "InspectionOrReadOnlyDestinationExplainsRestrictionWithoutLosingRows (True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.5049306"
+    },
+    {
+      "name": "InternationalAmbiguityAndDeclaredNbspAreExplicit",
+      "outcome": "Passed",
+      "duration": "00:00:00.0011530"
+    },
+    {
+      "name": "InternationalConfirmationRollsBackFully (AfterFirstWrite,False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.7533001"
+    },
+    {
+      "name": "InternationalConfirmationRollsBackFully (AfterFirstWrite,True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.6018172"
+    },
+    {
+      "name": "InternationalConfirmationRollsBackFully (BeforeCommit,False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.6964579"
+    },
+    {
+      "name": "InternationalConfirmationRollsBackFully (BeforeCommit,True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.5399153"
+    },
+    {
+      "name": "InternationalConvertsEachRecordBeforeGroupingAndPreservesTinyNegativeAndZero",
+      "outcome": "Passed",
+      "duration": "00:00:00.2370828"
+    },
+    {
+      "name": "InternationalCumulativeKeepsBothApprovedConversionBridges",
+      "outcome": "Passed",
+      "duration": "00:00:00.3662635"
+    },
+    {
+      "name": "InternationalEquivalentSourcesRetainTypedDatesAndAccount (\"de-DE\",\"1.234,50\",\",\",\".\",\"01.02.2026\",\"dd.MM.yyyy\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.5142778"
+    },
+    {
+      "name": "InternationalEquivalentSourcesRetainTypedDatesAndAccount (\"en-GB\",\"1,234.50\",\".\",\",\",\"01/02/2026\",\"dd/MM/yyyy\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.5672542"
+    },
+    {
+      "name": "InternationalEquivalentSourcesRetainTypedDatesAndAccount (\"en-US\",\"1,234.50\",\".\",\",\",\"02/01/2026\",\"MM/dd/yyyy\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.5475625"
+    },
+    {
+      "name": "InternationalEquivalentSourcesRetainTypedDatesAndAccount (\"es-ES\",\"1.234,50\",\",\",\".\",\"01/02/2026\",\"dd/MM/yyyy\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.5732328"
+    },
+    {
+      "name": "InternationalImportFreezesBridgeTotalsAndReopensSnapshot",
+      "outcome": "Passed",
+      "duration": "00:00:02.5064950"
+    },
+    {
+      "name": "InternationalInvalidBridgeCannotWrite (\"date\",\"IMP_RATE_DATE_INVALID\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.4953434"
+    },
+    {
+      "name": "InternationalInvalidBridgeCannotWrite (\"document\",\"IMP_DOCUMENT_DATE_INVALID\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.4996005"
+    },
+    {
+      "name": "InternationalInvalidBridgeCannotWrite (\"missing\",\"FX_RATE_MISSING\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.5450121"
+    },
+    {
+      "name": "InternationalInvalidBridgeCannotWrite (\"orientation\",\"FX_RATE_ORIENTATION_INVALID\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.5254375"
+    },
+    {
+      "name": "InternationalInvalidBridgeCannotWrite (\"unknown\",\"IMP_SOURCE_CURRENCY_INVALID\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.4948688"
+    },
+    {
+      "name": "InternationalReplacementKeepsOldRateAndOnlyActiveAmount",
+      "outcome": "Passed",
+      "duration": "00:00:01.1079071"
+    },
+    {
+      "name": "InternationalUiFreezesRatesAndInvalidatesAfterAnEdit",
+      "outcome": "Passed",
+      "duration": "00:00:00.2997657"
+    },
+    {
+      "name": "InternationalUpgradePreservesGenuineV6ComparisonsAndSnapshots",
+      "outcome": "Passed",
+      "duration": "00:00:00.5399319"
+    },
+    {
+      "name": "InternationalXlsxTypedAndTextCellsUseSourceRules (False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.4072577"
+    },
+    {
+      "name": "InternationalXlsxTypedAndTextCellsUseSourceRules (True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.2589903"
+    },
+    {
+      "name": "InvalidAmountsStayNullWithTheirOriginalLocation (\"\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0015593"
+    },
+    {
+      "name": "InvalidAmountsStayNullWithTheirOriginalLocation (\"invalid\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0007400"
+    },
+    {
+      "name": "InvalidLocalTime_IsRejectedRatherThanShifted",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002558"
+    },
+    {
+      "name": "InvalidMiddleRowNeverBecomesZeroOrConfirmsPartialBatch (\"\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2205127"
+    },
+    {
+      "name": "InvalidMiddleRowNeverBecomesZeroOrConfirmsPartialBatch (\"1,234567891\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2208959"
+    },
+    {
+      "name": "InvalidMiddleRowNeverBecomesZeroOrConfirmsPartialBatch (\"not-an-amount\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2102223"
+    },
+    {
+      "name": "InvalidSourceCannotBeMadeReadyByChoosingOnlyValidAccounts",
+      "outcome": "Passed",
+      "duration": "00:00:00.1877507"
+    },
+    {
+      "name": "InvalidXlsxCreditTypeNeverBecomesAZeroOperand (\"bad-text\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1824661"
+    },
+    {
+      "name": "InvalidXlsxCreditTypeNeverBecomesAZeroOperand (\"boolean\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1882403"
+    },
+    {
+      "name": "InvalidXlsxCreditTypeNeverBecomesAZeroOperand (\"date\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1861004"
+    },
+    {
+      "name": "InvalidXlsxCreditTypeNeverBecomesAZeroOperand (\"empty\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2012973"
+    },
+    {
+      "name": "InvalidXlsxCreditTypeNeverBecomesAZeroOperand (\"error\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2034315"
+    },
+    {
+      "name": "InvalidXlsxCreditTypeNeverBecomesAZeroOperand (\"missing\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2148081"
+    },
+    {
+      "name": "InvalidXlsxCreditTypeNeverBecomesAZeroOperand (\"no-cache\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2345843"
+    },
+    {
+      "name": "JsonConverter_WritesEconomicDecimalsAsCanonicalStrings",
+      "outcome": "Passed",
+      "duration": "00:00:00.0019166"
+    },
+    {
+      "name": "LanguageFormatAndZone_UpdateIndependently",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001814"
+    },
+    {
+      "name": "LiveSelectionIncludesRowsBeyondPreviewAndKeepsOrdinalCodesAndZeroGroups",
+      "outcome": "Passed",
+      "duration": "00:00:00.1819749"
+    },
+    {
+      "name": "LiveSelectionOverflowIsVisibleAndRecoversAfterExclusion",
+      "outcome": "Passed",
+      "duration": "00:00:00.1760598"
+    },
+    {
+      "name": "LiveSelectionReconcilesWithoutSavedStudyAndKeepsSourceEvidence",
+      "outcome": "Passed",
+      "duration": "00:00:00.2217838"
+    },
+    {
+      "name": "Localization_DoesNotReferenceCalculationWpfOrEntityFramework",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002321"
+    },
+    {
+      "name": "M01_CsvLimitsAlsoApplyToNonSeekableStreams (\"cell\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0000169"
+    },
+    {
+      "name": "M01_CsvLimitsAlsoApplyToNonSeekableStreams (\"columns\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0000415"
+    },
+    {
+      "name": "M01_CsvLimitsAlsoApplyToNonSeekableStreams (\"file\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0011657"
+    },
+    {
+      "name": "M01_CsvLimitsAlsoApplyToNonSeekableStreams (\"rows\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0004526"
+    },
+    {
+      "name": "M01_ExactFileBoundaryAndCancellationRemainSupported",
+      "outcome": "Passed",
+      "duration": "00:00:00.0018218"
+    },
+    {
+      "name": "M01_FileLimitCannotExceedTheReadersMemoryStreamAddressingRange (2147483648)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003099"
+    },
+    {
+      "name": "M01_FileLimitCannotExceedTheReadersMemoryStreamAddressingRange (9223372036854775807)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003334"
+    },
+    {
+      "name": "M01_UpgradeGenuineT03ArtifactPreservesSourceIdentityPolicyUnitsAndCompanyAudit",
+      "outcome": "Passed",
+      "duration": "00:00:00.1071694"
+    },
+    {
+      "name": "M01_XlsxResourceLimitsRejectBeforeReturningAPartialSource (\"cell\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0013698"
+    },
+    {
+      "name": "M01_XlsxResourceLimitsRejectBeforeReturningAPartialSource (\"columns\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0013210"
+    },
+    {
+      "name": "M01_XlsxResourceLimitsRejectBeforeReturningAPartialSource (\"entries\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0004034"
+    },
+    {
+      "name": "M01_XlsxResourceLimitsRejectBeforeReturningAPartialSource (\"expanded\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0006868"
+    },
+    {
+      "name": "M01_XlsxResourceLimitsRejectBeforeReturningAPartialSource (\"file\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0032523"
+    },
+    {
+      "name": "M01_XlsxResourceLimitsRejectBeforeReturningAPartialSource (\"part\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003874"
+    },
+    {
+      "name": "M01_XlsxResourceLimitsRejectBeforeReturningAPartialSource (\"rows\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0015546"
+    },
+    {
+      "name": "M02_CleanRefreshReconcilesMasterFieldsAndModelRevision",
+      "outcome": "Passed",
+      "duration": "00:00:00.1092741"
+    },
+    {
+      "name": "M02_MigrationFailureAndCancellationNeverPublishOrChangeOriginal",
+      "outcome": "Passed",
+      "duration": "00:00:00.1294942"
+    },
+    {
+      "name": "M03_FailedPreferenceSaveIsVisibleTranslatedAndRetryable (False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0078258"
+    },
+    {
+      "name": "M03_FailedPreferenceSaveIsVisibleTranslatedAndRetryable (True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0005457"
+    },
+    {
+      "name": "M03_FutureForeignAndStaleMigrationLockRejectedWithoutMutation",
+      "outcome": "Passed",
+      "duration": "00:00:00.0047502"
+    },
+    {
+      "name": "M04_CenterCodesUnicodeAndPhysicalUniqueConstraint",
+      "outcome": "Passed",
+      "duration": "00:00:00.0942268"
+    },
+    {
+      "name": "M05_M06_SetupProcessSeparatePoolsRolesFunctionsAndPendingPolicies",
+      "outcome": "Passed",
+      "duration": "00:00:00.1045198"
+    },
+    {
+      "name": "M07_CrossVersionAndCompanyRejectedByDomainAndCompoundForeignKeys",
+      "outcome": "Passed",
+      "duration": "00:00:00.1390323"
+    },
+    {
+      "name": "M08_MissingPoolAndInactiveUnitBlockPublicationWithoutPartialRows",
+      "outcome": "Passed",
+      "duration": "00:00:00.1563388"
+    },
+    {
+      "name": "M09_PublishedEditsAndInsertDeleteRejectedByPortsAndPersistence",
+      "outcome": "Passed",
+      "duration": "00:00:00.1299298"
+    },
+    {
+      "name": "M10_M14_DeactivateRenameMasterPreservesFrozenHistoryAndBlocksNewSelection",
+      "outcome": "Passed",
+      "duration": "00:00:00.1539340"
+    },
+    {
+      "name": "M11_CloneRemapsAllIdsAndEditsOnlyNewVersion",
+      "outcome": "Passed",
+      "duration": "00:00:00.1253839"
+    },
+    {
+      "name": "M12_CancelBeforeCommitRollsBackPublication",
+      "outcome": "Passed",
+      "duration": "00:00:00.1252111"
+    },
+    {
+      "name": "M12_InjectedFailureAfterRealWriteRollsBackAggregateAndAudit (\"Center\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1364891"
+    },
+    {
+      "name": "M12_InjectedFailureAfterRealWriteRollsBackAggregateAndAudit (\"Clone\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1455907"
+    },
+    {
+      "name": "M12_InjectedFailureAfterRealWriteRollsBackAggregateAndAudit (\"Publish\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1429444"
+    },
+    {
+      "name": "M12_InjectedFailureAfterRealWriteRollsBackAggregateAndAudit (\"Save\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1351767"
+    },
+    {
+      "name": "M12_InjectedFailureAfterRealWriteRollsBackAggregateAndAudit (\"Unit\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1364832"
+    },
+    {
+      "name": "M13_StaleRevisionsPublishRepeatAndCloneIdempotency",
+      "outcome": "Passed",
+      "duration": "00:00:00.1341479"
+    },
+    {
+      "name": "M15_StructureSortingCultureAndDefensiveCollectionsAreStable",
+      "outcome": "Passed",
+      "duration": "00:00:00.0959038"
+    },
+    {
+      "name": "M17_BackupRestoreRetainsPublishedCloneAndIndependentAuditStreams",
+      "outcome": "Passed",
+      "duration": "00:00:00.1448700"
+    },
+    {
+      "name": "M_AuditTamperAndUnknownSchemaRejectedBeforeWrite",
+      "outcome": "Passed",
+      "duration": "00:00:00.0904018"
+    },
+    {
+      "name": "M_ReadOnlyWorkspaceRejectsEveryWrite",
+      "outcome": "Passed",
+      "duration": "00:00:00.1018462"
+    },
+    {
+      "name": "MessageDescriptor_KeepsCodeKeyAndTypedArgumentsSeparate",
+      "outcome": "Passed",
+      "duration": "00:00:00.0008780"
+    },
+    {
+      "name": "MissingDebitCellRemainsMissingEvenWhenCreditIsExplicitZero",
+      "outcome": "Passed",
+      "duration": "00:00:00.1760641"
+    },
+    {
+      "name": "MissingGroupedContributionIsDetectedOnReopen",
+      "outcome": "Passed",
+      "duration": "00:00:00.2075798"
+    },
+    {
+      "name": "MissingPartitionIsNotSilentlyCreated",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001578"
+    },
+    {
+      "name": "MixedCanRemainInDraftButBlocksDefinitiveAbsorption",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001596"
+    },
+    {
+      "name": "ModelEditorFailedNodeWritesKeepFormAndSavedTableState",
+      "outcome": "Passed",
+      "duration": "00:00:00.1305435"
+    },
+    {
+      "name": "ModelEditorPrimaryActionsPersistAndClearCentreAndNodeForms",
+      "outcome": "Passed",
+      "duration": "00:00:00.1221874"
+    },
+    {
+      "name": "Money_RequiresSameCurrencyAndProtectsMagnitude",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002824"
+    },
+    {
+      "name": "NewRequestForRepeatedSourceIsBlockedEvenWithNewProfileAndPreparedIds",
+      "outcome": "Passed",
+      "duration": "00:00:00.2635022"
+    },
+    {
+      "name": "NonComparableCumulativesNeverWrite (\"100;x;00123\",\"2025-01-01\",\"2025-09-30\",\"EUR\",\"IMP_COMPARISON_INVALID\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2423364"
+    },
+    {
+      "name": "NonComparableCumulativesNeverWrite (\"100;x;00123\",\"2026-01-01\",\"2026-09-29\",\"EUR\",\"IMP_COMPARISON_INVALID\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2022922"
+    },
+    {
+      "name": "NonComparableCumulativesNeverWrite (\"100;x;00123\",\"2026-01-01\",\"2026-09-30\",\"USD\",\"IMP_COMPARISON_INVALID\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2089513"
+    },
+    {
+      "name": "NonComparableCumulativesNeverWrite (\"100;x;OTHER\",\"2026-01-01\",\"2026-09-30\",\"EUR\",\"IMP_COMPARISON_MISSING\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2441668"
+    },
+    {
+      "name": "NonComparableCumulativesNeverWrite (\"bad;x;00123\",\"2026-01-01\",\"2026-09-30\",\"EUR\",\"\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.2108361"
+    },
+    {
+      "name": "NumericAccountsRequireExplicitConsentAndPreserveStoredIdentity",
+      "outcome": "Passed",
+      "duration": "00:00:00.0040679"
+    },
+    {
+      "name": "OpposingDuplicateAccountsCannotConfirm",
+      "outcome": "Passed",
+      "duration": "00:00:00.2065023"
+    },
+    {
+      "name": "OpposingRowsProduceAnExplicitZeroGroupAndKeepSignedReconciliation",
+      "outcome": "Passed",
+      "duration": "00:00:00.1957171"
+    },
+    {
+      "name": "OriginalCurrenciesAreNotAddedNominally",
+      "outcome": "Passed",
+      "duration": "00:00:00.0004106"
+    },
+    {
+      "name": "PartCannotBeDirectAndPoolSimultaneously",
+      "outcome": "Passed",
+      "duration": "00:00:00.0013884"
+    },
+    {
+      "name": "Pdec1_EnforcesAmountQuantityPercentageScalesAndMagnitude",
+      "outcome": "Passed",
+      "duration": "00:00:00.0006385"
+    },
+    {
+      "name": "PendingAndSyntheticBusinessProfilesCannotConfirm (PendingBusinessApproval)",
+      "outcome": "Passed",
+      "duration": "00:00:00.1790923"
+    },
+    {
+      "name": "PendingAndSyntheticBusinessProfilesCannotConfirm (SyntheticFixture)",
+      "outcome": "Passed",
+      "duration": "00:00:00.1968854"
+    },
+    {
+      "name": "PluralRules_AreRegisteredForPublishedLanguages",
+      "outcome": "Passed",
+      "duration": "00:00:00.0011621"
+    },
+    {
+      "name": "PostCommitRefreshFailureRetainsSavedDebitCreditAndDisablesReplayClick",
+      "outcome": "Passed",
+      "duration": "00:00:00.2580792"
+    },
+    {
+      "name": "PreparingAndCancellationLeaveCompanyBytesRevisionAndAuditUnchanged",
+      "outcome": "Passed",
+      "duration": "00:00:00.2034390"
+    },
+    {
+      "name": "PresentationChangesPreserveValidatedSelectionAndStableColumnOptions",
+      "outcome": "Passed",
+      "duration": "00:00:00.0017999"
+    },
+    {
+      "name": "PreviewOfSavedStudyCannotWriteOrPromptAndRetainsPendingContext (False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.1551107"
+    },
+    {
+      "name": "PreviewOfSavedStudyCannotWriteOrPromptAndRetainsPendingContext (True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.1612734"
+    },
+    {
+      "name": "ProductionViewModelConfirmedStateSurvivesFailedRefreshAndDisablesDoubleClick",
+      "outcome": "Passed",
+      "duration": "00:00:00.2284445"
+    },
+    {
+      "name": "ProjectionRejectsMetadataFromAnotherCurrency",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002537"
+    },
+    {
+      "name": "PublishedCatalogs_AreCompleteAndNonEmpty",
+      "outcome": "Passed",
+      "duration": "00:00:00.0022551"
+    },
+    {
+      "name": "Quantity_UsesExplicitStableUnitId",
+      "outcome": "Passed",
+      "duration": "00:00:00.0004595"
+    },
+    {
+      "name": "QuotedCsvAmountRetainsOriginalLexicalWhileParsingDecodedText",
+      "outcome": "Passed",
+      "duration": "00:00:00.0018533"
+    },
+    {
+      "name": "R01_UtcInstantNormalizesExplicitOffsetAndRoundTrips",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002556"
+    },
+    {
+      "name": "R01_UtcInstantRejectsIncompleteOrZoneLessText",
+      "outcome": "Passed",
+      "duration": "00:00:00.0008042"
+    },
+    {
+      "name": "R02_EmptyInputIsRejected",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001069"
+    },
+    {
+      "name": "R02_EnUsRejectsMalformedGrouping",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001129"
+    },
+    {
+      "name": "R02_EsEsRejectsMalformedGrouping",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001101"
+    },
+    {
+      "name": "R02_ValidRegionalNumbersKeepTheirValue",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002252"
+    },
+    {
+      "name": "R03_DefaultMoneyCannotParticipateInArithmetic",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001320"
+    },
+    {
+      "name": "R03_IncompleteMoneyJsonIsRejected",
+      "outcome": "Passed",
+      "duration": "00:00:00.0038424"
+    },
+    {
+      "name": "R03_MoneyRejectsDefaultCurrency",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002769"
+    },
+    {
+      "name": "R04_IncompatiblePrecisionPoliciesAreRejected",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002037"
+    },
+    {
+      "name": "R04_MoneyArithmeticKeepsSelectedPrecisionPolicy",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002637"
+    },
+    {
+      "name": "R04_MoneyProjectionKeepsSelectedPrecisionPolicy",
+      "outcome": "Passed",
+      "duration": "00:00:00.0031476"
+    },
+    {
+      "name": "R05_AllProductionDiagnosticKeysExistInBothPublishedCatalogs",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003089"
+    },
+    {
+      "name": "R05_DiagnosticFormatter_UsesUiLanguageAndRegionalArgumentsIndependently",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003333"
+    },
+    {
+      "name": "R06_MalformedJsonRecoversToDefaults",
+      "outcome": "Passed",
+      "duration": "00:00:00.0081171"
+    },
+    {
+      "name": "R06_MissingPreferencesUseDefaultsWithoutRecoveryWarning",
+      "outcome": "Passed",
+      "duration": "00:00:00.0013825"
+    },
+    {
+      "name": "R06_NullNumberOptionsAreRejectedWithoutNullReference",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002130"
+    },
+    {
+      "name": "R06_NullNumberOptionsRecoverToDefaults",
+      "outcome": "Passed",
+      "duration": "00:00:00.0033104"
+    },
+    {
+      "name": "R06_OutOfRangeDecimalsRecoverToDefaults",
+      "outcome": "Passed",
+      "duration": "00:00:00.0011611"
+    },
+    {
+      "name": "R06_UnknownDatePresetIsRejected",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002240"
+    },
+    {
+      "name": "R06_UnknownDatePresetRecoversToDefaults",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003775"
+    },
+    {
+      "name": "R06_UnknownTimeZoneIsRejected",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002237"
+    },
+    {
+      "name": "R06_UnknownZoneRecoversToDefaults",
+      "outcome": "Passed",
+      "duration": "00:00:00.0004756"
+    },
+    {
+      "name": "RateMustBePositiveAndAtMostEighteenDecimals",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002444"
+    },
+    {
+      "name": "RealWriteFailureOrCancellationRollsBackAllTablesAuditAndRevision (AfterFirstWrite,False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.3124985"
+    },
+    {
+      "name": "RealWriteFailureOrCancellationRollsBackAllTablesAuditAndRevision (AfterFirstWrite,True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.2802105"
+    },
+    {
+      "name": "RealWriteFailureOrCancellationRollsBackAllTablesAuditAndRevision (BeforeCommit,False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.3210755"
+    },
+    {
+      "name": "RealWriteFailureOrCancellationRollsBackAllTablesAuditAndRevision (BeforeCommit,True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.2899299"
+    },
+    {
+      "name": "RegionChange_DoesNotReinterpretPendingEdit",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001839"
+    },
+    {
+      "name": "RegionLanguageAndPseudoPreserveBothColumnsAndPreparedFingerprint (\"en\",\"de-DE\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1816087"
+    },
+    {
+      "name": "RegionLanguageAndPseudoPreserveBothColumnsAndPreparedFingerprint (\"en\",\"en-GB\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1737652"
+    },
+    {
+      "name": "RegionLanguageAndPseudoPreserveBothColumnsAndPreparedFingerprint (\"en\",\"es-ES\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1930537"
+    },
+    {
+      "name": "RegionLanguageAndPseudoPreserveBothColumnsAndPreparedFingerprint (\"es\",\"en-US\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1932636"
+    },
+    {
+      "name": "RelevantRoundingCorpusCases_MatchExactly",
+      "outcome": "Passed",
+      "duration": "00:00:00.0026440"
+    },
+    {
+      "name": "RepartitionChecksWholeResourceBeforeReturningCandidate",
+      "outcome": "Passed",
+      "duration": "00:00:00.0014292"
+    },
+    {
+      "name": "ReplacementFailureOrCancellationPreservesOriginalBatch (AfterFirstWrite,False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.3940815"
+    },
+    {
+      "name": "ReplacementFailureOrCancellationPreservesOriginalBatch (AfterFirstWrite,True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.3932940"
+    },
+    {
+      "name": "ReplacementFailureOrCancellationPreservesOriginalBatch (BeforeCommit,False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.4363711"
+    },
+    {
+      "name": "ReplacementFailureOrCancellationPreservesOriginalBatch (BeforeCommit,True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.3995429"
+    },
+    {
+      "name": "ReplacementKeepsHistorySnapshotsAndCanRestoreAnEarlierSourceWithoutDoubleCounting",
+      "outcome": "Passed",
+      "duration": "00:00:00.9198347"
+    },
+    {
+      "name": "ReplacementRejectsForeignRetiredAndUnspecifiedTargetsWithoutWrites",
+      "outcome": "Passed",
+      "duration": "00:00:00.6184939"
+    },
+    {
+      "name": "Result_IsIndependentFromUiCultureAndInputOrder",
+      "outcome": "Passed",
+      "duration": "00:00:00.0006572"
+    },
+    {
+      "name": "RetainingComparisonDoesNotRequireApprovalOfTheCurrentBatch",
+      "outcome": "Passed",
+      "duration": "00:00:00.6552849"
+    },
+    {
+      "name": "RevalueStudy_ValidatesBeforeAtomicCommitAndCreatesNewRevision",
+      "outcome": "Passed",
+      "duration": "00:00:00.0006036"
+    },
+    {
+      "name": "RevalueStudy_ValidationFailureLeavesRepositoryUnchanged",
+      "outcome": "Passed",
+      "duration": "00:00:00.0004807"
+    },
+    {
+      "name": "ReversalMustReferToOneLocalAdjustmentAndCannotBeRepeated",
+      "outcome": "Passed",
+      "duration": "00:00:00.0039498"
+    },
+    {
+      "name": "ReversedHorizonAndInvalidActivityRangesAreRejected",
+      "outcome": "Passed",
+      "duration": "00:00:00.0064345"
+    },
+    {
+      "name": "ReviewKeepsEconomicErrorsBlockingAndCumulativeRequiresComparison",
+      "outcome": "Passed",
+      "duration": "00:00:00.6307527"
+    },
+    {
+      "name": "ReviewWithoutRepeatedApprovalCanSaveAndOpenT07WithOriginalsIntact",
+      "outcome": "Passed",
+      "duration": "00:00:01.0693965"
+    },
+    {
+      "name": "RowSelectionSupportsAllNoneSomeAndAllExceptOneDuplicate",
+      "outcome": "Passed",
+      "duration": "00:00:00.2563587"
+    },
+    {
+      "name": "S01_ExistingUpgradeEventIsPreservedAndNextStepUsesRevisionOne",
+      "outcome": "Passed",
+      "duration": "00:00:00.0544012"
+    },
+    {
+      "name": "S01_UpgradeActualHistoricalFilesAndFrozenMappings (1)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0865641"
+    },
+    {
+      "name": "S01_UpgradeActualHistoricalFilesAndFrozenMappings (2)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0925589"
+    },
+    {
+      "name": "S02_UpgradeFailuresCancellationFutureAndForeignLocksPreserveSource",
+      "outcome": "Passed",
+      "duration": "00:00:00.1117496"
+    },
+    {
+      "name": "S03_ExplicitEurStudyInUsdCompanyReopensAndRetriesWithoutDuplication",
+      "outcome": "Passed",
+      "duration": "00:00:00.1455182"
+    },
+    {
+      "name": "S04_InvalidPeriodCurrencyPurposeAndEmptyIdentityDoNotWrite",
+      "outcome": "Passed",
+      "duration": "00:00:00.1155749"
+    },
+    {
+      "name": "S05_DraftForeignModelsAndCompositeSqlScopesAreRejected",
+      "outcome": "Passed",
+      "duration": "00:00:00.1181852"
+    },
+    {
+      "name": "S06_StudyRevisionChangesIndependentlyAndOldSnapshotStaysHistorical",
+      "outcome": "Passed",
+      "duration": "00:00:00.1873426"
+    },
+    {
+      "name": "S07_StaleUpdatesAndCapturesDoNotDuplicateAuditOrSnapshots",
+      "outcome": "Passed",
+      "duration": "00:00:00.1146653"
+    },
+    {
+      "name": "S08_RealFirstWriteFailureRollsBackEverything (\"capture\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1356629"
+    },
+    {
+      "name": "S08_RealFirstWriteFailureRollsBackEverything (\"create\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1330578"
+    },
+    {
+      "name": "S08_RealFirstWriteFailureRollsBackEverything (\"state\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1340959"
+    },
+    {
+      "name": "S08_RealFirstWriteFailureRollsBackEverything (\"update\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1491494"
+    },
+    {
+      "name": "S09_CancellationImmediatelyBeforeCommitRollsBackEverything (\"capture\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1424106"
+    },
+    {
+      "name": "S09_CancellationImmediatelyBeforeCommitRollsBackEverything (\"create\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1383602"
+    },
+    {
+      "name": "S09_CancellationImmediatelyBeforeCommitRollsBackEverything (\"state\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1263883"
+    },
+    {
+      "name": "S09_CancellationImmediatelyBeforeCommitRollsBackEverything (\"update\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.1658841"
+    },
+    {
+      "name": "S10_CanonicalInputOrderingAndJsonPropertyOrderAreDeterministic",
+      "outcome": "Passed",
+      "duration": "00:00:00.0980003"
+    },
+    {
+      "name": "S11_CultureAndPresentationPreferencesNeverChangeStoredSnapshotHashes",
+      "outcome": "Passed",
+      "duration": "00:00:00.0968834"
+    },
+    {
+      "name": "S12_I08_PeriodDateDoesNotShiftWithUtcNearMidnight",
+      "outcome": "Passed",
+      "duration": "00:00:00.0890801"
+    },
+    {
+      "name": "S13_PeriodScenarioCurrencyPrecisionAndModelPolicyChangeEconomicHash",
+      "outcome": "Passed",
+      "duration": "00:00:00.0897455"
+    },
+    {
+      "name": "S14_AdministrativeNamesRevisionAndProvenanceChangeOnlyFullHash",
+      "outcome": "Passed",
+      "duration": "00:00:00.0889250"
+    },
+    {
+      "name": "S15_MissingUnknownDuplicateWrongTypeAndUnsupportedJsonNeverDefault",
+      "outcome": "Passed",
+      "duration": "00:00:00.0850387"
+    },
+    {
+      "name": "S16_MasterRenameAndDeactivationDoNotChangeHistoricalAppliedDefinitions",
+      "outcome": "Passed",
+      "duration": "00:00:00.1374783"
+    },
+    {
+      "name": "S17_EmptyContextIsCapturedWithReasonsAndNoFakeRunOrCost",
+      "outcome": "Passed",
+      "duration": "00:00:00.1261233"
+    },
+    {
+      "name": "S19_BackupRestoreContainsExactStudySnapshotAndAudit",
+      "outcome": "Passed",
+      "duration": "00:00:00.1761081"
+    },
+    {
+      "name": "S_CloseReopenAndAdministrativeRenameHaveExplicitRevisionSemantics",
+      "outcome": "Passed",
+      "duration": "00:00:00.2175090"
+    },
+    {
+      "name": "S_ContextCanSelectAnotherPublishedModelAndExplicitJpyCurrency",
+      "outcome": "Passed",
+      "duration": "00:00:00.1460437"
+    },
+    {
+      "name": "S_ImmutableSnapshotTriggersAuditTamperReadOnlyAndSessionLifetime",
+      "outcome": "Passed",
+      "duration": "00:00:00.1920557"
+    },
+    {
+      "name": "S_RunnerVerifiesActualReceiptWithoutDatabaseAndRejectsCorruptHash",
+      "outcome": "Passed",
+      "duration": "00:00:00.5908896"
+    },
+    {
+      "name": "SameOriginCannotBeCountedAsMaterialAndPoolEvenIfBothResourcesBalance",
+      "outcome": "Passed",
+      "duration": "00:00:00.0029053"
+    },
+    {
+      "name": "SelectedXlsxWorksheetStoredNumbersAndCachedFormulaPreserveBothOriginals",
+      "outcome": "Passed",
+      "duration": "00:00:00.2232047"
+    },
+    {
+      "name": "SignedAndZeroPendingPartsStayVisible",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003491"
+    },
+    {
+      "name": "SignificantSpacesInAccountCodesRemainUntouched",
+      "outcome": "Passed",
+      "duration": "00:00:00.0015826"
+    },
+    {
+      "name": "SourceChangedAfterPreviewCannotBeConfirmedAndNewApprovalInvalidatesPrepared",
+      "outcome": "Passed",
+      "duration": "00:00:00.1639740"
+    },
+    {
+      "name": "SourceLayoutChangeClearsColumnsAndValidatedMapping (\"delimiter\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0022052"
+    },
+    {
+      "name": "SourceLayoutChangeClearsColumnsAndValidatedMapping (\"encoding\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003949"
+    },
+    {
+      "name": "SourceLayoutChangeClearsColumnsAndValidatedMapping (\"row\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0006133"
+    },
+    {
+      "name": "SourceSessionCapturesTheFileOnceAndDoesNotFollowExternalEdits",
+      "outcome": "Passed",
+      "duration": "00:00:00.0029475"
+    },
+    {
+      "name": "SplitMixedPartIntoFixedAndVariableConservesOriginalAndUnblocksAbsorption",
+      "outcome": "Passed",
+      "duration": "00:00:00.0007555"
+    },
+    {
+      "name": "StaleRevisionWrongScopeAndClosedStudyCannotWrite",
+      "outcome": "Passed",
+      "duration": "00:00:00.2523642"
+    },
+    {
+      "name": "StrictV2RoundTripRejectsDeletedDuplicateAndAlteredAmounts",
+      "outcome": "Passed",
+      "duration": "00:00:00.2367063"
+    },
+    {
+      "name": "StructureSaveFeedbackAndReviewUseHistoricalCentresWithoutTechnicalNoise",
+      "outcome": "Passed",
+      "duration": "00:00:00.2851511"
+    },
+    {
+      "name": "StudyContextUsesTheSavedModelInsteadOfTheEditedChoice",
+      "outcome": "Passed",
+      "duration": "00:00:00.5798791"
+    },
+    {
+      "name": "StudyCurrencyContext_RequiresSnapshotForSameFunctionalCurrency",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002702"
+    },
+    {
+      "name": "SystemClock_ReturnsUtcInstant",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001774"
+    },
+    {
+      "name": "T06_01_CsvPreservesLeadingZerosUnicodeQuotesDelimiterAndMultiline",
+      "outcome": "Passed",
+      "duration": "00:00:00.0011255"
+    },
+    {
+      "name": "T06_02_CsvAcceptsDeclaredBomAndEncodingWithoutUsingCurrentCulture",
+      "outcome": "Passed",
+      "duration": "00:00:00.0018822"
+    },
+    {
+      "name": "T06_03_CsvRejectsBomEncodingMismatchAndMalformedQuoteState",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003825"
+    },
+    {
+      "name": "T06_04_NumberParsingIsExplicitForGroupingAmbiguityAndZero",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003810"
+    },
+    {
+      "name": "T06_05_NumberParsingOnlyAcceptsDeclaredNegativeSyntax",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002576"
+    },
+    {
+      "name": "T06_06_NumberParsingRejectsExponentInvalidGroupingOverflowAndUnderflow",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002300"
+    },
+    {
+      "name": "T06_07_DuplicateIdentityIsOrdinalAndLeadingZerosAreNotNormalized",
+      "outcome": "Passed",
+      "duration": "00:00:00.0004559"
+    },
+    {
+      "name": "T06_08_AggregatePolicyDoesNotDiscardSourceRows",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002455"
+    },
+    {
+      "name": "T06_09_CancelledReadDoesNotProduceAStagingDocument",
+      "outcome": "Passed",
+      "duration": "00:00:00.0003176"
+    },
+    {
+      "name": "T06_10_SourceExtractionAndBasicInspectionDoNotMutateStudyOrAudit",
+      "outcome": "Passed",
+      "duration": "00:00:00.0901071"
+    },
+    {
+      "name": "T06_11_XlsxPreservesTypedCellsCachedFormulaEmptyAndMissing",
+      "outcome": "Passed",
+      "duration": "00:00:00.0092787"
+    },
+    {
+      "name": "T06_12_XlsxSupports1900And1904DatesAndRejectsSerial60",
+      "outcome": "Passed",
+      "duration": "00:00:00.0041944"
+    },
+    {
+      "name": "T06_13_XlsxNumericAccountRequiresExplicitPolicyAndNeverRestoresZeros",
+      "outcome": "Passed",
+      "duration": "00:00:00.0014165"
+    },
+    {
+      "name": "T06_14_XlsxFormulaWithoutCacheAndCellErrorAreBlockingSourceDiagnostics",
+      "outcome": "Passed",
+      "duration": "00:00:00.0011791"
+    },
+    {
+      "name": "T06_15_XlsxRequiresExactDeclaredSheet",
+      "outcome": "Passed",
+      "duration": "00:00:00.0013841"
+    },
+    {
+      "name": "T06_16_XlsxFormatTokensKeepNumbersNumericAndRecognizeMonthDates",
+      "outcome": "Passed",
+      "duration": "00:00:00.0203830"
+    },
+    {
+      "name": "T06_17_XlsxBooleanAccountPreservesTypeAndIsBlocked",
+      "outcome": "Passed",
+      "duration": "00:00:00.0064694"
+    },
+    {
+      "name": "T06_18_ProfileRejectsNonPositiveColumnsAndReservedNumberSeparators",
+      "outcome": "Passed",
+      "duration": "00:00:00.0017820"
+    },
+    {
+      "name": "T06_19_CsvRejectsUtf32BomUnderUtf16Profile",
+      "outcome": "Passed",
+      "duration": "00:00:00.0006633"
+    },
+    {
+      "name": "T06_20_MalformedWorksheetXmlUsesImportDiagnosticAndCancellationStillEscapes",
+      "outcome": "Passed",
+      "duration": "00:00:00.0079599"
+    },
+    {
+      "name": "T07_AccountAggregationIgnoresDescriptionsAndPreservesSourceRows",
+      "outcome": "Passed",
+      "duration": "00:00:00.2181944"
+    },
+    {
+      "name": "T07_AdjustmentReversalUsesItsOwnHistoricFxAndCannotBeRepeated",
+      "outcome": "Passed",
+      "duration": "00:00:00.3712586"
+    },
+    {
+      "name": "T07_C04_PersistsAdjustmentRoutesAuditSnapshotAndReopens",
+      "outcome": "Passed",
+      "duration": "00:00:00.7419365"
+    },
+    {
+      "name": "T07_C05_Extra100AndMissingExclusionReasonNeverWrite",
+      "outcome": "Passed",
+      "duration": "00:00:00.2921808"
+    },
+    {
+      "name": "T07_C30_TransactionalRevalueRejectsOppositePerAccountErrors",
+      "outcome": "Passed",
+      "duration": "00:00:00.2409415"
+    },
+    {
+      "name": "T07_CapacityOwnerMustMatchPublishedPoolNodeAndUnit",
+      "outcome": "Passed",
+      "duration": "00:00:00.2389481"
+    },
+    {
+      "name": "T07_ChangedSourcesRequireExplicitResetWithoutDeletingHistory",
+      "outcome": "Passed",
+      "duration": "00:00:00.5113296"
+    },
+    {
+      "name": "T07_ChangingOnlyObjectNamePreservesEconomicHashButNotFullSnapshot",
+      "outcome": "Passed",
+      "duration": "00:00:00.4857601"
+    },
+    {
+      "name": "T07_CorrectionCalculationPreservesPendingIdentityAndClassification",
+      "outcome": "Passed",
+      "duration": "00:00:00.2183820"
+    },
+    {
+      "name": "T07_CorrectionCaseUseChanges50To20WithDeltaMinus30AndNoRepeatedWrite",
+      "outcome": "Passed",
+      "duration": "00:00:00.4721821"
+    },
+    {
+      "name": "T07_CumulativeAccountPreservesEarlierNegativeSourceAndFrozenRate",
+      "outcome": "Passed",
+      "duration": "00:00:00.3338431"
+    },
+    {
+      "name": "T07_FailedRevaluePreviewKeepsRateEditingAndFileUnchanged",
+      "outcome": "Passed",
+      "duration": "00:00:00.6392247"
+    },
+    {
+      "name": "T07_ForeignTargetsStaleRevisionReadOnlyAndClosedStudyAreBlocked",
+      "outcome": "Passed",
+      "duration": "00:00:00.4769521"
+    },
+    {
+      "name": "T07_GenuineV7UpgradePreservesImportsAndSnapshotsAndUsesFrozenSchema",
+      "outcome": "Passed",
+      "duration": "00:00:00.2189296"
+    },
+    {
+      "name": "T07_InlineBlocksUnsavedDestinationDraftWithoutLosingIt",
+      "outcome": "Passed",
+      "duration": "00:00:00.6306898"
+    },
+    {
+      "name": "T07_InlineCapturedCultureAndNegativeEffectiveRemainExact",
+      "outcome": "Passed",
+      "duration": "00:00:00.7175212"
+    },
+    {
+      "name": "T07_InlineClosedStudyAndStaleStoredRevisionRejectWithoutChangingSavedFile",
+      "outcome": "Passed",
+      "duration": "00:00:01.2077385"
+    },
+    {
+      "name": "T07_InlineCorrectionSavesTotalsDeltasAndReopensWithoutChangingOriginal",
+      "outcome": "Passed",
+      "duration": "00:00:01.3793248"
+    },
+    {
+      "name": "T07_InlineCorrectionsPreserveAssignedDestinationsAndUseSignedPendingRemainder",
+      "outcome": "Passed",
+      "duration": "00:00:01.1746883"
+    },
+    {
+      "name": "T07_InlineExistingForeignCorrectionRetainsFrozenFxAndAddsOnlyFunctionalDelta",
+      "outcome": "Passed",
+      "duration": "00:00:01.1580124"
+    },
+    {
+      "name": "T07_InlineInvalidOverflowPrecisionAndStaleRowNeverChangeFile",
+      "outcome": "Passed",
+      "duration": "00:00:00.7204872"
+    },
+    {
+      "name": "T07_InlineZeroAndRepeatedValueDoNotDuplicateCorrections",
+      "outcome": "Passed",
+      "duration": "00:00:00.8710831"
+    },
+    {
+      "name": "T07_MixedCurrencyAccountRetainsOriginalsAndEveryFxInSnapshot",
+      "outcome": "Passed",
+      "duration": "00:00:00.4413052"
+    },
+    {
+      "name": "T07_PendingZeroAndCompensatedPendingRoutesRemainVisible",
+      "outcome": "Passed",
+      "duration": "00:00:00.9948054"
+    },
+    {
+      "name": "T07_PoolChoicesDescribeFrozenCentreNodeRoleAndActivityUnit",
+      "outcome": "Passed",
+      "duration": "00:00:00.6118634"
+    },
+    {
+      "name": "T07_RequestPayloadAndAdjustmentIdentityCannotBeReusedAfterReset",
+      "outcome": "Passed",
+      "duration": "00:00:00.4100478"
+    },
+    {
+      "name": "T07_ResourceTransactionRollsBackAfterFirstWriteAndCancellation",
+      "outcome": "Passed",
+      "duration": "00:00:00.4324575"
+    },
+    {
+      "name": "T07_ReturnCanSaveCompletedDestinationsAndRestoreCorrections",
+      "outcome": "Passed",
+      "duration": "00:00:00.6979654"
+    },
+    {
+      "name": "T07_ReturnFromCleanDestinationsRestoresCorrectionsWithoutCreatingPartOrHistory",
+      "outcome": "Passed",
+      "duration": "00:00:00.7072434"
+    },
+    {
+      "name": "T07_ReturnWithUnappliedDestinationCanCancelThenDiscardWithoutLosingSavedCorrection",
+      "outcome": "Passed",
+      "duration": "00:00:00.7117395"
+    },
+    {
+      "name": "T07_RevaluationRequiresReconciledPartsAndPreservesOldSnapshotAndOriginalMoney",
+      "outcome": "Passed",
+      "duration": "00:00:00.5199254"
+    },
+    {
+      "name": "T07_TamperedLedgerAndMissingAdjustmentAuditAreRejected",
+      "outcome": "Passed",
+      "duration": "00:00:00.2728608"
+    },
+    {
+      "name": "T07_UiCancelStudyChangePreservesDraftAndDiscardIsExplicit",
+      "outcome": "Passed",
+      "duration": "00:00:00.5150335"
+    },
+    {
+      "name": "T07_UiGuidesBlocksUnappliedFormsAndPersistsOnce",
+      "outcome": "Passed",
+      "duration": "00:00:00.6804779"
+    },
+    {
+      "name": "T07_UiNewObjectDoesNotLosePendingPartAndCanBeSelectedImmediately",
+      "outcome": "Passed",
+      "duration": "00:00:00.7627649"
+    },
+    {
+      "name": "T07_UiRegionChangeRequiresExplicitCapturedCultureAndRetainsExactValue",
+      "outcome": "Passed",
+      "duration": "00:00:00.5207992"
+    },
+    {
+      "name": "T07_UiReturningToSameAccountKeepsUnappliedFormWithoutPrompt",
+      "outcome": "Passed",
+      "duration": "00:00:00.5907267"
+    },
+    {
+      "name": "T07_UiRevaluationPreviewsReconcilesAndSavesAllAmountsAtomically",
+      "outcome": "Passed",
+      "duration": "00:00:01.0639007"
+    },
+    {
+      "name": "T07_ZeroAccountMustRetainAnExplicitRoute",
+      "outcome": "Passed",
+      "duration": "00:00:00.2543178"
+    },
+    {
+      "name": "TamperedFxBridgeIsRejectedEvenIfItsArithmeticBalances",
+      "outcome": "Passed",
+      "duration": "00:00:00.0013968"
+    },
+    {
+      "name": "TemporalExample_OnlyLocalViewChangesWithZone",
+      "outcome": "Passed",
+      "duration": "00:00:00.0005590"
+    },
+    {
+      "name": "TypedExcelAccountErrorsStayBlocked (\"boolean\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0028791"
+    },
+    {
+      "name": "TypedExcelAccountErrorsStayBlocked (\"date\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0041422"
+    },
+    {
+      "name": "TypedExcelAccountErrorsStayBlocked (\"formula\")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0042381"
+    },
+    {
+      "name": "UnclassifiedIsVisibleWarningAndDoesNotBecomeVariable",
+      "outcome": "Passed",
+      "duration": "00:00:00.0005731"
+    },
+    {
+      "name": "UnconfirmedDebitMinusCreditConventionCannotSave",
+      "outcome": "Passed",
+      "duration": "00:00:00.2136705"
+    },
+    {
+      "name": "UnknownClassificationCodesFailClosed",
+      "outcome": "Passed",
+      "duration": "00:00:00.0043776"
+    },
+    {
+      "name": "UnknownRecordsAndMismatchedCodesCannotBeConfirmed",
+      "outcome": "Passed",
+      "duration": "00:00:00.2438629"
+    },
+    {
+      "name": "UserPresentationPreferences_RoundTripOutsideEconomicData",
+      "outcome": "Passed",
+      "duration": "00:00:00.0021312"
+    },
+    {
+      "name": "UtcInstant_NormalizesToCanonicalUtc",
+      "outcome": "Passed",
+      "duration": "00:00:00.0007131"
+    },
+    {
+      "name": "V4MappingAndMigrationSnapshotHaveNoPendingChanges",
+      "outcome": "Passed",
+      "duration": "00:00:00.0118961"
+    },
+    {
+      "name": "V5MigrationPreservesGenuineV4LedgerAndSnapshotsByteForByte",
+      "outcome": "Passed",
+      "duration": "00:00:00.2723802"
+    },
+    {
+      "name": "ValidationChecksRowsBeyondTheFiftyRowPreview",
+      "outcome": "Passed",
+      "duration": "00:00:00.0018953"
+    },
+    {
+      "name": "ViewModelRejectsSameColumnAndInvalidatesReadyMappingWhenSelectionChanges",
+      "outcome": "Passed",
+      "duration": "00:00:00.0023693"
+    },
+    {
+      "name": "WhitespaceOnlyAccountIsRequiredWithoutConvertingItToAnIdentity (\" \")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0021733"
+    },
+    {
+      "name": "WhitespaceOnlyAccountIsRequiredWithoutConvertingItToAnIdentity (\" \")",
+      "outcome": "Passed",
+      "duration": "00:00:00.0004888"
+    },
+    {
+      "name": "XlsxSecondWorksheetNativeNumbersConfirmExactlyInFunctionalCurrency",
+      "outcome": "Passed",
+      "duration": "00:00:00.1800245"
+    },
+    {
+      "name": "Xlsx_ExplicitSecondSheetAndReorderedColumnsUseStoredNumberGrammar",
+      "outcome": "Passed",
+      "duration": "00:00:00.0056990"
+    },
+    {
+      "name": "ZeroIsValidAndMissingAmountIsBlocked",
+      "outcome": "Passed",
+      "duration": "00:00:00.0014272"
+    }
+  ]
+}
