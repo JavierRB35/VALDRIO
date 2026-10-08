@@ -159,7 +159,7 @@ public partial class ImportColumnMappingWindow
         Check(studies.ImportedAmounts.Contains(batch.Id.ToString(), StringComparison.Ordinal) && studies.Snapshots.Count == 2,
             "backup and restore retain imports and both snapshot schemas");
         studies.Currency = "USD"; await Click(panel.SaveStudyButton);
-        Check(studies.IsDirty && studies.Status.StartsWith("IMP_CONTEXT_LOCKED", StringComparison.Ordinal), "functional currency cannot change under imported amounts");
+        Check(studies.IsDirty && studies.DiagnosticCode == "IMP_CONTEXT_LOCKED", "functional currency cannot change under imported amounts");
         await Click(panel.DiscardStudyButton);
         files.Paths.Enqueue(Path.Combine(output, "missing.csv")); await Click(OpenSourceButton);
         Check(!vm.IsReady && vm.AccountChoices.Count == 0 && studies.ImportedAmounts.Contains(batch.Id.ToString(), StringComparison.Ordinal), "failed next source preserves confirmed history");
