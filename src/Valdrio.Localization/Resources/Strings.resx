@@ -405,7 +405,7 @@ Full: {5}</value></data>
   <data name="ImportMapping.SourceRecords" xml:space="preserve"><value>Source rows</value></data>
   <data name="Study.ChooseExisting" xml:space="preserve"><value>Select a saved analysis to resume exactly where you left it.</value></data>
   <data name="Study.ChooseModelHelp" xml:space="preserve"><value>Choose the finalized cost structure to apply to this analysis. That exact version stays linked to the analysis for traceability.</value></data>
-  <data name="Study.GoToModels" xml:space="preserve"><value>Go to Cost structure</value></data>
+  <data name="Study.GoToModels" xml:space="preserve"><value>Go to Design structure</value></data>
   <data name="Study.CreationHelp" xml:space="preserve"><value>Give the analysis a recognisable name, choose the cost structure, period and currency, then save it to import that period's data.</value></data>
   <data name="Study.PreviewHelp" xml:space="preserve"><value>The guided workflow saves the analysis first. Reviewing a file without an analysis is optional and cannot save imports.</value></data>
   <data name="Study.NoStudiesYet" xml:space="preserve"><value>There are no saved analyses in this project yet.</value></data>
@@ -474,7 +474,7 @@ Full: {5}</value></data>
   <data name="Guide.Back" xml:space="preserve"><value>Back</value></data>
   <data name="Guide.Next" xml:space="preserve"><value>Continue</value></data>
   <data name="Guide.SaveAndImport" xml:space="preserve"><value>Save analysis and continue to import</value></data>
-  <data name="Guide.OpenImport" xml:space="preserve"><value>Import Excel or CSV into this analysis</value></data>
+  <data name="Guide.OpenImport" xml:space="preserve"><value>Import balances or movements into this analysis</value></data>
   <data name="Guide.Preview" xml:space="preserve"><value>Review a file without saving it (optional)</value></data>
   <data name="Guide.NeedCompany" xml:space="preserve"><value>First create or open a cost project. The structure, periods, imports and account preparation are all stored inside that project.</value></data>
   <data name="Guide.CompanyReady" xml:space="preserve"><value>Project open. Choose what you want to do below or continue to the cost structure.</value></data>
@@ -488,15 +488,15 @@ Full: {5}</value></data>
   <data name="Guide.NeedPrincipal" xml:space="preserve"><value>The cost structure needs at least one active Principal node. Auxiliary nodes can coexist. Choose the type according to your methodology.</value></data>
   <data name="Guide.SaveModel" xml:space="preserve"><value>There are pending changes. Save the cost structure before checking and finalizing it.</value></data>
   <data name="Guide.PublishModel" xml:space="preserve"><value>The structure is saved. Check it and finalize this version to make it available to cost analyses. Finalizing does not calculate costs or publish anything outside VALDRIO.</value></data>
-  <data name="Guide.ModelComplete" xml:space="preserve"><value>Cost structure finalized and ready to use. You can continue to Cost analysis. Create a new editable version if changes are needed.</value></data>
-  <data name="Guide.NeedPublished" xml:space="preserve"><value>A cost structure ready for use is required. Return to step 2, complete the structure and finalize that version. The list refreshes when you return here.</value></data>
+  <data name="Guide.ModelComplete" xml:space="preserve"><value>Cost structure finalized and ready to use. You can create an analysis period. Create a new editable version when structural changes are needed.</value></data>
+  <data name="Guide.NeedPublished" xml:space="preserve"><value>Before creating an analysis you need a finalized cost structure. Go to Design structure, complete it and finalize that version.</value></data>
   <data name="Guide.NeedStudyName" xml:space="preserve"><value>Enter a recognisable analysis name, for example “October 2026 costs”.</value></data>
   <data name="Guide.NeedStudyModel" xml:space="preserve"><value>Select the finalized cost structure to apply to this analysis.</value></data>
   <data name="Guide.NeedDates" xml:space="preserve"><value>Select the period start and end. The imported closing date must match the meaning you confirm.</value></data>
   <data name="Guide.InvalidDates" xml:space="preserve"><value>The start date cannot be after the end date. Correct the dates.</value></data>
   <data name="Guide.ClosedStudy" xml:space="preserve"><value>This analysis is closed. Reopen it to import data, or create another analysis.</value></data>
-  <data name="Guide.SaveStudy" xml:space="preserve"><value>Click Save analysis and continue. It will be stored inside the open company file and you can import the period data.</value></data>
-  <data name="Guide.StudyComplete" xml:space="preserve"><value>Analysis saved. You can now import the Excel or CSV for the period. The final import step stores the selected records in this analysis.</value></data>
+  <data name="Guide.SaveStudy" xml:space="preserve"><value>Save this analysis so you can import the period data.</value></data>
+  <data name="Guide.StudyComplete" xml:space="preserve"><value>Analysis saved. You can now import balances or movements for this period.</value></data>
   <data name="Guide.PreviewOnly" xml:space="preserve"><value>Review mode: you can read and select records but cannot save an import. To save, follow Company → Cost structure → Cost analysis → Import.</value></data>
   <data name="Guide.NeedMapping" xml:space="preserve"><value>Identify the account and amount columns, then click Check and continue.</value></data>
   <data name="Guide.NeedRecords" xml:space="preserve"><value>Select at least one row to import. You can keep all rows selected and exclude only those that do not belong.</value></data>
@@ -529,7 +529,7 @@ Full: {5}</value></data>
   <data name="Guide.MasterHelp" xml:space="preserve"><value>Define the physical or organisational centres first. You do not have to decide activity units in advance: create them here if you already know them, or directly inside a node when you need one.</value></data>
   <data name="Guide.NodesHelp" xml:space="preserve"><value>A node is a calculation unit within a centre. Choose its centre, role and activity unit. When you press Save node, VALDRIO immediately saves the draft and the node appears in the table.</value></data>
   <data name="Guide.HelpHint" xml:space="preserve"><value>Help: hover over a field or select it with Tab to see its explanation here.</value></data>
-  <data name="Guide.StoredAt" xml:space="preserve"><value>Data is saved in: </value></data>
+  <data name="Guide.StoredAt" xml:space="preserve"><value>Project file: </value></data>
   <data name="Guide.Help.CompanyName" xml:space="preserve"><value>Name identifying the company. Create file asks for a location; that file holds all company data.</value></data>
   <data name="Guide.Help.Currency" xml:space="preserve"><value>Study functional currency: currency used for results. At company level it is only a suggestion for new studies.</value></data>
   <data name="Guide.Help.UnitCode" xml:space="preserve"><value>Unique identifier for this unit, for example HOURS. This is not an account number.</value></data>
@@ -602,7 +602,7 @@ Full: {5}</value></data>
   <data name="Guide.Help.SelectedTimeZoneId" xml:space="preserve"><value>Zone used to display history timestamps. Does not change study business dates.</value></data>
   <data name="Guide.CorrectImport" xml:space="preserve"><value>Correct data</value></data>
   <data name="Guide.Working" xml:space="preserve"><value>Operation in progress. Please wait; your entries are preserved.</value></data>
-  <data name="Guide.ReadOnly" xml:space="preserve"><value>This company file is open for reading. You can inspect data, but saving requires an editable company file.</value></data>
+  <data name="Guide.ReadOnly" xml:space="preserve"><value>The project is open for review only. You can inspect its data, but saving changes requires an editable copy.</value></data>
   <data name="Guide.PendingCenter" xml:space="preserve"><value>The physical centre has unsaved changes. Review them in Centres, then save the centre before continuing.</value></data>
   <data name="Guide.ReviewCenter" xml:space="preserve"><value>Review pending centre</value></data>
   <data name="Guide.SaveCenterNext" xml:space="preserve"><value>Save centre and continue</value></data>
@@ -612,7 +612,7 @@ Full: {5}</value></data>
   <data name="Guide.ApplyNodeNext" xml:space="preserve"><value>Save node and continue</value></data>
   <data name="Guide.PublishContinue" xml:space="preserve"><value>Save, finalize structure and continue to analysis</value></data>
   <data name="Guide.ContinueStudy" xml:space="preserve"><value>Continue to analysis</value></data>
-  <data name="Guide.ContinueImport" xml:space="preserve"><value>Continue to import</value></data>
+  <data name="Guide.ContinueImport" xml:space="preserve"><value>Continue: import balances</value></data>
   <data name="Guide.Help.StudyModelChoice" xml:space="preserve"><value>Choose the finalized cost structure this analysis will use. It is linked when you save the analysis; no separate load action is required.</value></data>
   <data name="ImportMapping.ReviewChanged" xml:space="preserve"><value>You changed some import data. Review it again before saving; previous imports are not modified.</value></data>
   <data name="Guide.ReadOnlyAction" xml:space="preserve"><value>Read-only company file</value></data>
@@ -647,7 +647,7 @@ Full: {5}</value></data>
   <data name="Resources.Closed" xml:space="preserve"><value>The study is closed. Reopen it in the Study step to change its resources.</value></data>
   <data name="Resources.ChooseAccount" xml:space="preserve"><value>Select the account you want to review. You will see the imported amount, existing adjustments, effective amount, and anything still pending classification or assignment.</value></data>
   <data name="Resources.SelectAccountFirst" xml:space="preserve"><value>Select an account from the table to review its amounts.</value></data>
-  <data name="Resources.EditAccount" xml:space="preserve"><value>Edit selected account</value></data>
+  <data name="Resources.EditAccount" xml:space="preserve"><value>Review / adjust selected account</value></data>
   <data name="Resources.ContinueParts" xml:space="preserve"><value>Continue: distribute the amount</value></data>
   <data name="Resources.ReviewChanges" xml:space="preserve"><value>Continue: review and save</value></data>
   <data name="Resources.SaveAccount" xml:space="preserve"><value>Save changes to this account</value></data>
@@ -803,7 +803,7 @@ Difference to distribute: {7}</value></data>
   <data name="Resource.DateRequired" xml:space="preserve"><value>Select a valid date in the calendar.</value></data>
   <data name="Resource.RevalueUnbalanced" xml:space="preserve"><value>The account still has a difference after revaluation. Adjust its parts or explicitly leave the difference pending.</value></data>
   <data name="Guide.Resources" xml:space="preserve"><value>5. Prepare accounts</value></data>
-  <data name="Guide.ContinueResources" xml:space="preserve"><value>Continue: review and adjust accounts</value></data>
+  <data name="Guide.ContinueResources" xml:space="preserve"><value>Continue: prepare accounts</value></data>
   <data name="Guide.AnotherImport" xml:space="preserve"><value>Import another file / correct a previous import</value></data>
   <data name="Resources.LayerHelp" xml:space="preserve"><value>State whether this part belongs to production, commercial or structure. This is independent of fixed or variable behavior and its destination. You may leave it unclassified.</value></data>
   <data name="Resources.PoolHelp" xml:space="preserve"><value>A pool groups costs for later distribution. Choose one from your published model; its node’s principal or auxiliary role does not determine cost behavior.</value></data>
@@ -980,4 +980,5 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.TaskContinueAnalysis" xml:space="preserve"><value>Continue the current analysis</value></data>
   <data name="Guide.TaskContinueImport" xml:space="preserve"><value>Continue with balances for the current analysis</value></data>
   <data name="Guide.TaskContinueResources" xml:space="preserve"><value>Continue preparing imported accounts</value></data>
+  <data name="Resources.ProgressSummary" xml:space="preserve"><value>{0} of {1} accounts reconciled · {2} with amount pending assignment · {3} with unexplained difference</value></data>
 </root>
