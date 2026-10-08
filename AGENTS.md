@@ -66,3 +66,14 @@ Objetivo habitual: 0 USD de GitHub Actions.
 - No ejecutar GitHub-hosted runners ni workflows potencialmente facturables sin autorización explícita del propietario.
 - Priorizar compilación/pruebas locales y runners Windows self-hosted.
 - Los cambios exclusivamente documentales o visuales que puedan validarse localmente no justifican por sí mismos consumo de Actions.
+
+## 7. Requisito transversal obligatorio T08: identificación de cuentas
+
+Antes de trabajar en importación, recursos T07 o cuentas/reglas T08, en cualquier rama, consultar la directriz vigente de main [T08-CUENTA-01](docs/directrices/T08_CUENTAS_DESCRIPCION.md) y el [issue #28](https://github.com/JavierRB35/VALDRIO/issues/28).
+
+- La importación debe permitir capturar nombre/descripción de la cuenta; T08 debe mostrar **código + descripción** para que el analista la identifique fácilmente. Es requisito obligatorio de aceptación, no una capacidad declarada implementada.
+- Antes de decidir cambios, verificar por SHA el flujo real T06/T06A → selección de columna → preparación/confirmación → persistencia y reapertura → exposición en T07 → consumo en T08. Reutilizar lo comprobado y registrar las brechas como dependencias de importación previa/T07.
+- No afirmar cumplimiento por existir `ImportColumnMap.Description`, conservar filas originales, una maqueta o una descripción de PR. Exigir evidencia del recorrido completo y de la UI real.
+- Conservar identidad textual del código, ceros iniciales y procedencia. Resolver explícitamente ausencia de descripción y conflictos del mismo código, sin inventar nombres ni alterar agrupación/reglas económicas por descripción.
+- Dar visibilidad al requisito en desarrollos paralelos mediante issue y referencias en PR relevantes. No sobrescribir, rebasar ni forzar ramas activas; consultar main aunque la rama propia sea anterior a esta directriz.
+- Esta incorporación es documental/de seguimiento. No implementa ni autoriza ahora lógica/UI y no debe provocar consumo facturable de Actions. Los criterios, dependencias y evidencia preliminar están en la directriz enlazada.
