@@ -22,7 +22,7 @@ public partial class AllocationWorkspacePanel : UserControl
     {
         if (viewModel is null) return;
         Set(KeyGrid, "Name", "State"); Set(LinesGrid, "Include", "Destination", "NodeUnit", "Weight");
-        Set(CoverageGrid, "Source", "Amount", "AppliedKey", "Result"); Set(PrimaryGrid, "PrimarySource", "PrimaryDestination", "PrimaryAmount", "PrimaryRule"); Set(PrimaryGrid, "Account", "AppliedKey", "Priority");
+        Set(CoverageGrid, "Source", "Amount", "AppliedKey", "Result"); Set(PrimaryResultsGrid, "PrimarySource", "PrimaryDestination", "PrimaryAmount", "PrimaryRule"); Set(PrimaryGrid, "Account", "AppliedKey", "Priority");
         Set(SecondaryGrid, "Auxiliary", "Group", "AppliedKey"); Set(AbsoluteGrid, "Include", "Destination", "Amount");
         void Set(DataGrid grid, params string[] keys) { for (var i = 0; i < keys.Length; i++) grid.Columns[i].Header = viewModel[keys[i]]; }
     }

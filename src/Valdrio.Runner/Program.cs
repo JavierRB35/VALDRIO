@@ -5,7 +5,7 @@ using Valdrio.Infrastructure;
 using Valdrio.Infrastructure.CompanyFiles;
 
 
-if (args.Length is 2 or 3 && args[0] == "--primary-snapshot")
+if ((args.Length == 2 || args.Length == 3) && args[0] == "--primary-snapshot")
 {
     try
     {

@@ -59,7 +59,7 @@
    <StackPanel>
     <TextBlock Text="{Binding [PrimaryTitle]}" Style="{StaticResource Text.Section}"/>
     <TextBlock Text="{Binding PrimarySummary}" Margin="0,4,0,8" AutomationProperties.LiveSetting="Polite"/>
-    <DataGrid x:Name="PrimaryGrid" ItemsSource="{Binding PrimaryResults}" IsReadOnly="True" AutoGenerateColumns="False" Height="210"
+    <DataGrid x:Name="PrimaryResultsGrid" ItemsSource="{Binding PrimaryResults}" IsReadOnly="True" AutoGenerateColumns="False" Height="210"
               SelectionMode="Single" AutomationProperties.Name="{Binding [PrimaryTitle]}">
      <DataGrid.Columns>
       <DataGridTextColumn Binding="{Binding Source}" Width="2*"/>
