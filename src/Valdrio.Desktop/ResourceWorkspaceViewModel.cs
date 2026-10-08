@@ -36,7 +36,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     {
         this.company = company; this.studies = studies; this.catalog = catalog; this.texts = texts; this.preferences = preferences; this.dialogs = dialogs;
         RefreshCommand = new AsyncRelayCommand(async () => { if (await CanLeaveAsync()) await EnterAsync(true); }, () => !busy);
-        OpenSelectedResourceCommand = new AsyncRelayCommand(AdvanceAsync, () => CanAdvance && stage == 0 && ResourceChoice is not null);
+        OpenSelectedResourceCommand = new AsyncRelayCommand(OpenSelectedAccountAsync, () => CanNavigate && workspace is not null && ResourceChoice is not null);
         ApplyPartCommand = new RelayCommand(() => Try(ApplyPart), () => CanEdit && editing is not null);
         RemovePartCommand = new RelayCommand(() => Try(() => { if (PartChoice is { } p) { parts.RemoveAll(x => x.Id == p.Value.Id); dirty = true; ClearPart(); Recompute(); } }), () => CanEdit && PartChoice is not null);
         LoadPartCommand = new RelayCommand(() => Try(LoadPart), () => !busy && PartChoice is not null && !partDirty);
@@ -54,7 +54,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
         InitializeRevalueCommands();
         PartForm.Edited += PartEdited; AdjustmentForm.Edited += AdjustmentEdited; ObjectForm.Edited += ObjectEdited;
         earlierBusy = company.WorkspaceBusy; earlierBefore = studies.BeforeChangeAsync; earlierAfter = company.AfterChangeAsync;
-        company.WorkspaceBusy = () => busy || earlierBusy?.Invoke() == true;
+        company.WorkspaceBusy = () => busy || correctionCommitPending || earlierBusy?.Invoke() == true;
         studies.BeforeChangeAsync = async () => await CanLeaveAsync() && (earlierBefore is null || await earlierBefore());
         company.AfterChangeAsync = async () => { if (earlierAfter is not null) await earlierAfter(); ClearWorkspace(); };
         preferences.Changed += PreferencesChanged;
@@ -88,25 +88,25 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     private string Text(string key) { var s = texts.Get(key, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)); return pseudo ? PseudoLocalization.Expand(s) : s; }
     private string MoneyText(Money m) => m.Amount.ToString("0.########", Format) + " " + m.Currency;
     public bool IsBusy => busy;
-    public bool CanNavigate => !busy;
+    public bool CanNavigate => !busy && !correctionCommitPending;
     public bool CanEditAdjustmentsAndObjects => CanEdit && !IsRevaluing;
     public bool CanEdit => !busy && company.IsIdle && earlierBusy?.Invoke() != true && company.CanWrite && workspace?.Study.State == StudyState.Open;
     public bool IsDirty => dirty || partDirty || adjustmentDirty || objectDirty || IsRevaluing;
     public bool HasResourceChanges => dirty || partDirty || adjustmentDirty;
     public int Stage => stage;
-    public bool ShowList => stage == 0;
-    public bool ShowAdjustments => stage == 1;
+    public bool ShowList => true;
+    public bool ShowAdjustments => false;
     public bool ShowParts => stage == 2;
-    public bool ShowReview => stage == 3;
+    public bool ShowReview => stage == 2;
     public bool ShowDirect => PartForm.Route == ResourceRoutingKind.DirectObject;
     public bool ShowPool => PartForm.Route == ResourceRoutingKind.AllocationPool;
     public bool ShowExclusion => PartForm.Route == ResourceRoutingKind.Excluded;
     public bool ShowContext => PartForm.Behavior is ResourceBehavior.Fixed or ResourceBehavior.Variable or ResourceBehavior.MixedPending || PartForm.UnitId.HasValue;
     public bool ShowCapacity => PartForm.Capacity == ResourceCapacityTreatment.AssessAtPool;
-    public bool CanAdvance => !busy && workspace is not null && (stage < 3 || CanEdit);
-    public string NextAction => this[stage switch { 0 => "EditAccount", 1 => "ContinueParts", 2 => "ReviewChanges", _ => IsRevaluing ? "KeepRevalueParts" : "SaveAccount" }];
+    public bool CanAdvance => CanNavigate && workspace is not null && (stage == 0 || CanEdit);
+    public string NextAction => this[stage == 0 ? "EditAccount" : IsRevaluing ? "KeepRevalueParts" : "SaveAccount"];
     public string Requirement => this[workspace is null ? "NeedStudy" : workspace.Resources.Count == 0 ? "NeedImport" : !company.CanWrite ? "ReadOnly" :
-        workspace.Study.State == StudyState.Closed ? "Closed" : stage switch { 0 => "ChooseAccount", 1 => "AdjustmentHelp", 2 => "PartsHelp", _ => "ReviewHelp" }];
+        workspace.Study.State == StudyState.Closed ? "Closed" : stage == 0 ? "ChooseAccount" : "PartsHelp"];
     public string Status => diagnostic is null ? this[statusKey] : new DomainDiagnosticFormatter(texts)
         .Format(diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message;
     public string ProgressSummary
@@ -172,33 +172,32 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     public async Task AdvanceAsync()
     {
         if (!CanAdvance) return;
-        if (stage == 0)
-        {
-            if (ResourceChoice is null) { statusKey = "SelectAccountFirst"; Refresh(); return; }
-            if (editing?.Id == ResourceChoice.Id) { stage = 1; Refresh(); return; }
-            if (IsRevaluing && editing is not null && HasResourceChanges)
-            {
-                ResourceChoice = Rows.Single(r => r.Id == editing.Id);
-                stage = 1; statusKey = "RevalueFinishAccount"; Refresh(); return;
-            }
-            var selectedId = ResourceChoice.Id;
-            if (!IsRevaluing && !await CanLeaveAsync()) return;
-            LoadAccount(selectedId); stage = 1; Refresh();
-        }
-        else if (stage == 1)
-        {
-            if (adjustmentDirty) { statusKey = "ApplyAdjustmentFirst"; Refresh(); return; }
-            stage = 2; Refresh();
-        }
+        if (stage == 0) await OpenSelectedAccountAsync();
         else if (stage == 2)
         {
             if (partDirty || objectDirty) { statusKey = "ApplyPartFirst"; Refresh(); return; }
-            stage = 3; Refresh();
+            if (IsRevaluing) KeepRevalueParts();
+            else await SaveAsync();
         }
         else if (IsRevaluing) KeepRevalueParts();
         else await SaveAsync();
     }
-    public bool PreviousStep() { if (busy || stage == 0) return false; stage--; Refresh(); return true; }
+    private async Task OpenSelectedAccountAsync()
+    {
+        if (!CanNavigate || workspace is null) return;
+
+            if (ResourceChoice is null) { statusKey = "SelectAccountFirst"; Refresh(); return; }
+            if (editing?.Id == ResourceChoice.Id) { stage = 2; Refresh(); return; }
+            if (IsRevaluing && editing is not null && HasResourceChanges)
+            {
+                ResourceChoice = Rows.Single(r => r.Id == editing.Id);
+                stage = 2; statusKey = "RevalueFinishAccount"; Refresh(); return;
+            }
+            var selectedId = ResourceChoice.Id;
+            if (!IsRevaluing && !await CanLeaveAsync()) return;
+            LoadAccount(selectedId); stage = 2; Refresh();
+    }
+    public bool PreviousStep() { if (!CanNavigate || stage == 0) return false; stage = 0; Refresh(); return true; }
     private void LoadAccount(EntityId id)
     {
         editing = (IsRevaluing ? preview : workspace)!.Resources.Single(r => r.Id == id);
@@ -213,7 +212,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     }
     public async Task<bool> CanLeaveAsync()
     {
-        if (busy) return false;
+        if (busy || correctionCommitPending) return false;
         if (!IsDirty) return true;
         return dialogs.ResolvePending(this["PendingTitle"], this["PendingBody"]) switch
         {
@@ -284,7 +283,8 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
             var w = preview ?? workspace!; var c = w.Preparation.Coverage.Single(c => c.ResourceId == resource.Id);
             var originals = string.Join(" + ", ResourceWorkspaceRules.OriginalTotals(resource, w.Precision).Select(MoneyText));
             Rows.Add(new(resource.Id, w.Origins.Single(o => o.Id == resource.Id).Code, originals, MoneyText(c.ConvertedOriginal),
-                MoneyText(c.AdjustmentTotal), MoneyText(c.Effective), MoneyText(c.Pending), MoneyText(c.Difference)));
+                MoneyText(c.AdjustmentTotal), MoneyText(c.Effective), MoneyText(c.Pending), MoneyText(c.Difference))
+                { Revision = w.Study.Revision, CorrectionNumber = c.AdjustmentTotal.Amount.ToString("0.########", Format), FormatCulture = Format.Name });
         }
         ResourceChoice = Rows.FirstOrDefault(r => r.Id == id) ?? Rows.FirstOrDefault();
         var oldPart = PartChoice?.Value.Id; Parts.Clear();

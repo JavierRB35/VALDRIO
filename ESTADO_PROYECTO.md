@@ -1,5 +1,15 @@
 # ESTADO_PROYECTO
 
+## T07: correcciones en tabla y guardado automático — 2026-10-08
+
+La columna Correcciones es la única editable, siempre en moneda del análisis. El
+cambio confirmado en la celda se guarda y recalcula efectivo/pendiente. Se elimina
+la pantalla adicional de ajustes. Tabla, clasificación y destinos permanecen en
+una pantalla; originales, conversiones históricas, revisiones y auditoría se conservan.
+Cambio en `codex/usability-six-issues`, PR #27; no está fusionado automáticamente.
+[Evidencia](docs/evidencias/T07_CORRECCIONES_EN_TABLA_2026-10-08.md).
+
+
 ## Revisión de los seis problemas de usabilidad — 2026-10-08
 
 Cambios aplicados sobre la integración `770c640` en `codex/usability-six-issues`:

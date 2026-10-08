@@ -30,7 +30,12 @@ public sealed partial class ResourceEditorForm : ObservableObject
 }
 public sealed record ResourceChoice<T>(T Value, string Label);
 public sealed record ResourceGridRow(EntityId Id, string Code, string Originals, string Converted, string Adjustments,
-    string Effective, string Pending, string Difference);
+    string Effective, string Pending, string Difference)
+{
+    public long Revision { get; init; }
+    public string CorrectionNumber { get; init; } = "";
+    public string FormatCulture { get; init; } = "es-ES";
+}
 public sealed record ResourcePartRow(ResourcePartDraft Value, string Amount, string Route, string Target, string Behavior, string Layer);
 public sealed record ResourceAdjustmentRow(ResourceAdjustment Value, string Original, string Functional, string Type, string Reason, string State);
 public sealed class ResourceRevalueRow(EntityId resourceId, EntityId valueId, string account, FxRateApplication previous) : ObservableObject

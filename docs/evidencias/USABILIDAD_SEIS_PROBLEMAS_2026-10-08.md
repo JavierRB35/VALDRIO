@@ -41,3 +41,11 @@ Se conservan TRX y capturas en `artifacts/` (ignoradas por Git). La inspección 
 Durante la inspección visual se corrigieron estilos de ayuda que no heredaban ajuste de línea y recortaban textos. Se repararon expectativas WPF desfasadas que buscaban IDs en el historial visible, donde la base integrada ya mostraba archivos y totales; las comprobaciones persistentes de IDs/fingerprints/reapertura siguen activas. El ensayo de centro pendiente ahora mantiene la revisión visible: el helper anterior revelaba automáticamente el formulario y deshacía la precondición de redirección.
 
 Economía: compilación, tests y WPF locales. No se ejecuta ni dispara GitHub Actions; coste de Actions de esta tarea: 0 USD. Fuentes sincronizadas de `sources/` intactas.
+
+## Simplificación posterior de T07 solicitada el mismo día
+
+El formulario de correcciones descrito en la aceptación inicial ha sido sustituido
+por edición del total en la tabla, con guardado automático en moneda del análisis.
+La validación inicial de 522 tests/338 comprobaciones es histórica. El alcance vigente,
+la decisión sobre el motivo generado y sus nuevas pruebas están en
+[T07: correcciones en tabla](T07_CORRECCIONES_EN_TABLA_2026-10-08.md).

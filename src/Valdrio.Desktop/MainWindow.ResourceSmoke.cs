@@ -22,6 +22,13 @@ public partial class MainWindow
         var main = viewModel!; var company = main.Company!; var studies = main.Studies!; var vm = main.Resources!; var panel = ResourcePanel;
         var checks = new List<string>();
         void Check(bool condition, string message) { if (!condition) throw new InvalidOperationException("T07 native: " + message + " · " + vm.Status); checks.Add(message); }
+        TextBox? CorrectionEditor(System.Windows.DependencyObject node)
+        {
+            if (node is TextBox box) return box;
+            for (var i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(node); i++)
+                if (CorrectionEditor(System.Windows.Media.VisualTreeHelper.GetChild(node, i)) is { } child) return child;
+            return null;
+        }
         void Text(TextBox box, string value)
         {
             box.SetCurrentValue(TextBox.TextProperty, value); box.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
@@ -61,12 +68,42 @@ public partial class MainWindow
         await NavigateWorkflow(3); await ContinueAfterGuidedImport(0);
         Check(workflowStep == 4 && vm.Stage == 0 && panel.IsVisible, "newly saved import opens account review automatically");
         Check(vm.Rows.Count == 1 && vm.Rows.Single().Code == "6000", "account appears with converted original and pending coverage");
+        Check(panel.ResourceGrid.Columns.Where(c => c != panel.CorrectionsColumn).All(c => c.IsReadOnly), "only correction column allows editing");
+        GuidedUi.Reveal(panel.ResourceGrid);
+        panel.ResourceGrid.CurrentCell = new DataGridCellInfo(vm.Rows.Single(), panel.CorrectionsColumn);
+        Check(panel.ResourceGrid.BeginEdit(), "correction cell enters native edit mode");
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+        var cellContent = panel.CorrectionsColumn.GetCellContent(vm.Rows.Single());
+        var correctionBox = CorrectionEditor(cellContent!);
+        Check(correctionBox is not null, "correction editor is a keyboard-accessible text box");
+        correctionBox!.Text = "-100";
+        panel.ResourceGrid.CommitEdit(DataGridEditingUnit.Cell, true);
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+        if (panel.CorrectionSaveTask is { } save) Check(await save, "leaving the cell saves correction automatically");
+        Check(vm.Rows.Single().Effective == "900 EUR" && vm.Rows.Single().Pending == "900 EUR", "inline correction updates effective and pending in the table");
+        Check(company.ActiveResources!.ReadResources(study.CompanyId, study.Id).Resources.Single().Adjustments.Single().Conversion.OriginalMoney.Amount == -100m,
+            "inline correction is persisted in analysis currency before opening destinations");
+        async Task EditCorrection(string value, bool cancel = false)
+        {
+            panel.ResourceGrid.CurrentCell = new DataGridCellInfo(vm.Rows.Single(), panel.CorrectionsColumn);
+            Check(panel.ResourceGrid.BeginEdit(), "correction edit starts: " + value);
+            await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+            CorrectionEditor(panel.CorrectionsColumn.GetCellContent(vm.Rows.Single())!)!.Text = value;
+            if (cancel) panel.ResourceGrid.CancelEdit(); else panel.ResourceGrid.CommitEdit(DataGridEditingUnit.Cell, true);
+            await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+            if (!cancel && panel.CorrectionSaveTask is { } pending) await pending;
+        }
+        var correctionRevision = studies.Current!.Revision;
+        await EditCorrection("-200", true);
+        Check(studies.Current.Revision == correctionRevision && vm.Rows.Single().Adjustments == "-100 EUR", "cancelled cell edit leaves saved correction untouched");
+        await EditCorrection("invalid");
+        Check(studies.Current.Revision == correctionRevision && vm.Rows.Single().Adjustments == "-100 EUR" && vm.CorrectionLockMessage == vm["CorrectionNotSaved"],
+            "invalid cell value leaves saved correction untouched and explains failure");
+        await EditCorrection("-100");
+        Check(studies.Current.Revision == correctionRevision && vm.Status == vm["CorrectionUnchanged"], "repeating saved cell value creates no duplicate adjustment");
+        ResetScrollForCapture(); VisualEvidenceCapture.Capture(this, Path.Combine(output, "inline-corrections-es.png"));
         await Click(panel.OpenSelectedResourceButton);
-        Check(vm.Stage == 1, "visible review-adjust action opens selected account corrections");
-        Text(panel.AdjustmentForm_AmountBox, "-100"); Text(panel.AdjustmentForm_TypeBox, "Corrección"); Text(panel.AdjustmentForm_ReasonBox, "Partida que no representa coste");
-        await AdvanceWorkflow(); Check(vm.Stage == 1, "unapplied adjustment prevents silent loss on continue");
-        await Click(panel.AddAdjustmentButton); Check(vm.Adjustments.Single().Value.Conversion.OriginalMoney.Amount == -100m, "signed adjustment retains original currency and amount");
-        await AdvanceWorkflow(); Check(vm.Stage == 2, "adjustments advance to parts");
+        Check(vm.Stage == 2 && panel.ResourceGrid.IsVisible, "destinations open below the same account table without adjustment screen");
         vm.PartChoice = vm.Parts.Single(); await Click(panel.LoadPartButton);
         Text(panel.PartForm_AmountBox, "300"); Select(panel.PartForm_RouteBox, ResourceRoutingKind.DirectObject);
         Text(panel.ObjectForm_CodeBox, "PROD"); Text(panel.ObjectForm_NameBox, "Producto de prueba"); Select(panel.ObjectKindBox, ResourceObjectKind.Product);
@@ -86,11 +123,10 @@ public partial class MainWindow
         Text(panel.PartForm_ExclusionBox, "Fuera del perímetro del estudio"); await Click(panel.ApplyPartButton);
         Check(vm.Parts.Count == 3 && vm.Parts.Sum(p => p.Value.Amount.Amount) == 900m, "C04 routes 300 direct plus 500 pool plus 100 excluded");
         Text(panel.PartForm_AmountBox, "100"); await Click(panel.ApplyPartButton);
-        await AdvanceWorkflow(); Text(panel.ReasonBox, "Revisión C04 y comprobación de conservación");
+        Text(panel.ReasonBox, "Revisión C04 y comprobación de conservación");
         var revision = studies.Current!.Revision; await AdvanceWorkflow();
-        Check(vm.Stage == 3 && vm.IsDirty && studies.Current.Revision == revision, "extra 100 cannot be saved and draft stays editable");
-        await GoBackWorkflow(); vm.PartChoice = vm.Parts.Single(p => p.Value.Routing == ResourceRoutingKind.Pending); await Click(panel.RemovePartButton);
-        await AdvanceWorkflow();
+        Check(vm.Stage == 2 && vm.IsDirty && studies.Current.Revision == revision, "extra 100 cannot be saved and draft stays editable");
+        vm.PartChoice = vm.Parts.Single(p => p.Value.Routing == ResourceRoutingKind.Pending); await Click(panel.RemovePartButton);
         panel.ReasonBox.Focus(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         Check(!string.IsNullOrWhiteSpace(AutomationProperties.GetHelpText(panel.ReasonBox)), "resource field explanation is exposed to keyboard and assistive technology");
         ResetScrollForCapture(); VisualEvidenceCapture.Capture(this, Path.Combine(output, "review-es.png"));
