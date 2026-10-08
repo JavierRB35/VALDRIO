@@ -980,7 +980,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.TaskContinueAnalysis" xml:space="preserve"><value>Continuar el análisis actual</value></data>
   <data name="Guide.TaskContinueImport" xml:space="preserve"><value>Continuar con los saldos del análisis actual</value></data>
   <data name="Guide.TaskContinueResources" xml:space="preserve"><value>Continuar preparando las cuentas importadas</value></data>
-  <data name="Resources.ProgressSummary" xml:space="preserve"><value>{0} de {1} cuentas conciliadas · {2} con importe pendiente de asignar · {3} con diferencia sin explicar</value></data>
+  <data name="Resources.ProgressSummary" xml:space="preserve"><value>{0} de {1} cuentas conciliadas · {2} con importe pendiente de asignar · {3} con diferencia sin explicar · {4} con rutas pendientes</value></data>
   <data name="Model.ReviewSummary" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
   <data name="Model.TechnicalDetails" xml:space="preserve"><value>Detalles técnicos de trazabilidad</value></data>
   <data name="Model.ReviewTree" xml:space="preserve"><value>Centros físicos y nodos de costes · papel · unidad de actividad · función</value></data>
@@ -1006,4 +1006,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.PoolChoice" xml:space="preserve"><value>Centro {0} | Nodo {1} ({2}) | {3} | Unidad de actividad {4} | Funciones: {5}</value></data>
   <data name="Guide.Help.Resource.BackToCorrections" xml:space="preserve"><value>Cierra este editor opcional de la cuenta y vuelve a la tabla de correcciones. Si hay cambios de destinos sin guardar, elige guardar, descartar o cancelar; las correcciones guardadas se conservan.</value></data>
   <data name="Guide.WorkspaceNavigation" xml:space="preserve"><value>ESPACIO DE TRABAJO</value></data>
+  <data name="Resources.AssignmentStatus" xml:space="preserve"><value>Estado de asignación</value></data>
+  <data name="Resources.AssignmentPending" xml:space="preserve"><value>Rutas pendientes</value></data>
+  <data name="Resources.AssignmentComplete" xml:space="preserve"><value>Sin rutas pendientes</value></data>
+  <data name="Import.SourceRowsReused" xml:space="preserve"><value>Los registros {1} de {0} ya están incluidos en una importación vigente. Excluye esos registros o sustituye explícitamente el lote identificado.</value></data>
 </root>

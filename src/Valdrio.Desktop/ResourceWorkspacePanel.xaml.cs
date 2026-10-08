@@ -98,7 +98,7 @@ public partial class ResourceWorkspacePanel : UserControl
     {
         if (vm is null) return;
         void Headers(DataGrid grid, string[] keys) { for (var i = 0; i < keys.Length; i++) grid.Columns[i].Header = vm[keys[i]]; }
-        Headers(ResourceGrid, ["Code", "Originals", "Converted", "Adjustments", "Effective", "PendingAmount", "Difference"]);
+        Headers(ResourceGrid, ["Code", "Originals", "Converted", "Adjustments", "Effective", "PendingAmount", "Difference", "AssignmentStatus"]);
         CorrectionsColumn.IsReadOnly = vm.CorrectionsReadOnly;
         CorrectionsColumn.Header = vm["Adjustments"] + " (" + vm.FunctionalCurrency + ")";
         Headers(PartGrid, ["Amount", "Route", "Destination", "Behavior", "Layer"]);

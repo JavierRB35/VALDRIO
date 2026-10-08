@@ -35,6 +35,7 @@ public sealed record ResourceGridRow(EntityId Id, string Code, string Originals,
     public long Revision { get; init; }
     public string CorrectionNumber { get; init; } = "";
     public string FormatCulture { get; init; } = "es-ES";
+    public string AssignmentStatus { get; init; } = "";
 }
 public sealed record ResourcePartRow(ResourcePartDraft Value, string Amount, string Route, string Target, string Behavior, string Layer);
 public sealed record ResourceAdjustmentRow(ResourceAdjustment Value, string Original, string Functional, string Type, string Reason, string State);

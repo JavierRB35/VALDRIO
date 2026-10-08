@@ -74,7 +74,9 @@ public partial class MainWindow
         SaveLocation.Text = vm.Company?.ActivePath is { Length: > 0 } path ? vm.Guide("StoredAt") + path : "";
 
         var projectName = vm.Company?.Snapshot?.Name ?? "—";
-        var structureName = vm.Models?.Current?.Structure.Description ?? "—";
+        var structureName = workflowStep != 1 && vm.Studies?.Current is not null
+            ? vm.Studies.CurrentModelDescription
+            : vm.Models?.Current?.Structure.Description ?? "—";
         var analysisName = vm.Studies?.Current?.Name ?? "—";
         ProjectContextText.Text = hasProject
             ? string.Format(vm.Guide("Context"), projectName, structureName, analysisName)
