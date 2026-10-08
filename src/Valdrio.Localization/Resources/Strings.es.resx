@@ -1152,4 +1152,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.PrimaryManual" xml:space="preserve"><value>Clave manual</value></data>
   <data name="AllocationUI.PrimaryRuleSource" xml:space="preserve"><value>Regla</value></data>
   <data name="AllocationUI.PrimaryNotLoaded" xml:space="preserve"><value>Selecciona un estudio abierto para consultar el reparto primario.</value></data>
+  <data name="Primary.ResourceInvalid" xml:space="preserve"><value>Los recursos de origen no concilian. Revisa su preparación antes de repartir.</value></data>
+  <data name="Primary.PartDuplicate" xml:space="preserve"><value>Una parte de recurso aparece más de una vez en el estudio.</value></data>
+  <data name="Primary.NotBalanced" xml:space="preserve"><value>El reparto de esta parte no concilia a la precisión interna.</value></data>
+  <data name="Primary.Overflow" xml:space="preserve"><value>El resultado supera la magnitud o precisión decimal permitida.</value></data>
 </root>

@@ -1152,4 +1152,8 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.PrimaryManual" xml:space="preserve"><value>Manual key</value></data>
   <data name="AllocationUI.PrimaryRuleSource" xml:space="preserve"><value>Rule</value></data>
   <data name="AllocationUI.PrimaryNotLoaded" xml:space="preserve"><value>Select an open study to inspect primary allocation.</value></data>
+  <data name="Primary.ResourceInvalid" xml:space="preserve"><value>The source resources are not balanced. Review their preparation before allocating.</value></data>
+  <data name="Primary.PartDuplicate" xml:space="preserve"><value>A resource part appears more than once in this study.</value></data>
+  <data name="Primary.NotBalanced" xml:space="preserve"><value>The allocation of this part does not reconcile at internal ledger precision.</value></data>
+  <data name="Primary.Overflow" xml:space="preserve"><value>The result exceeds the allowed decimal magnitude or precision.</value></data>
 </root>

@@ -159,6 +159,6 @@ if (args.Contains("--verify-t02a-fx", StringComparer.Ordinal))
 }
 
 Console.WriteLine(
-    "VALDRIO Runner ready. Economic snapshot execution is not implemented yet.");
+    "VALDRIO Runner ready. Use --primary-snapshot <receipt.json> [output.json] for a read-only T09 primary allocation. Durable economic execution is not implemented yet.");
 
 return 0;
