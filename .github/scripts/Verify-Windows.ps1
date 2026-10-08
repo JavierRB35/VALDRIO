@@ -307,7 +307,7 @@ try {
         # WPF launch smoke
         $exe = (Resolve-Path "artifacts/desktop/Valdrio.Desktop.exe").Path
         $sample = (Resolve-Path "samples/t01-smoke.valdrio-dev.json").Path
-        $process = Start-Process -FilePath $exe -ArgumentList @($sample) -PassThru
+        $process = Start-Process -WindowStyle Hidden -FilePath $exe -ArgumentList @($sample) -PassThru
 
         try {
           Start-Sleep -Seconds 6
@@ -336,7 +336,7 @@ try {
           NumberDisplayOptions = $null
         } | ConvertTo-Json | Set-Content -Path $invalidPreferences -Encoding utf8NoBOM
 
-        $process = Start-Process -FilePath $exe -ArgumentList @(
+        $process = Start-Process -WindowStyle Hidden -FilePath $exe -ArgumentList @(
           $sample,
           "--preferences-path=$invalidPreferences"
         ) -PassThru
@@ -366,7 +366,7 @@ try {
     $captureDir = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($EvidenceDirectory)
     New-Item -ItemType Directory -Force -Path $captureDir | Out-Null
 
-    $process = Start-Process -FilePath $exe -ArgumentList @(
+    $process = Start-Process -WindowStyle Hidden -FilePath $exe -ArgumentList @(
       $sample,
       "--capture-dir=$captureDir"
     ) -PassThru -Wait
