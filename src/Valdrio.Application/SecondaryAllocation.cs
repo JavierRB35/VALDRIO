@@ -172,7 +172,7 @@ public static class SecondaryAllocationService
         {
             Schema = SecondaryAllocationResult.Schema,
             result.Primary.Currency, result.Primary.PolicyVersion,
-            Primary = result.Primary.Facts,
+            Primary = result.Primary.Facts.OrderBy(f => f.ResourceId).ThenBy(f => f.PartId).ThenBy(f => f.NodeId).ToArray(),
             SecondaryRules = config.SecondaryRules.Where(r => r.IsActive).OrderBy(r => r.Id).ToArray(),
             Final = result.Facts,
             Result = result.Totals,
