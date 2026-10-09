@@ -34,6 +34,7 @@ internal static class T11SecondaryRunner
                 calculated.Totals,
                 calculated.Reconciliations,
                 calculated.ResourceBridges,
+                calculated.GroupCirculations,
                 calculated.ExplanationLinks,
                 grossAuxiliaryFlows = calculated.Circulation.AuxiliaryIds.Select((id, i) =>
                     new SecondaryAuxiliaryGross(id, calculated.Circulation.Gross[i])).ToArray(),
