@@ -107,8 +107,9 @@ public sealed partial class AllocationWorkspaceViewModel
             throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
         var existing = c.SecondaryPartRoutingGroups ?? [];
         var groups = existing.Where(g => g.PartId != SecondaryGroupPart.Value)
-            .Concat(SecondaryGroupName == "all" ? [] :
-                [new SecondaryPartRoutingGroup(SecondaryGroupPart.Value, SecondaryGroupName)])
+            .Concat(SecondaryGroupName == "all"
+                ? Array.Empty<SecondaryPartRoutingGroup>()
+                : new[] { new SecondaryPartRoutingGroup(SecondaryGroupPart.Value, SecondaryGroupName) })
             .ToArray();
         return c.WithSecondaryPartRoutingGroups(groups);
     }, true);
