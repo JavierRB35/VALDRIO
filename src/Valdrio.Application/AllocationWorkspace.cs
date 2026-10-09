@@ -65,6 +65,8 @@ public sealed record ChangeAllocations(EntityId CompanyId, EntityId StudyId, lon
 public sealed record AllocationChangeReceipt(ChangeAllocations Request, StudyDefinition PreviousStudy,
     StudyDefinition ConfirmedStudy, IReadOnlyList<AllocationKeyVersion> ReferencedKeys, UtcInstant AtUtc)
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public SecondaryCalculationPublication? SecondaryPublication { get; init; }
     private IReadOnlyList<AllocationKeyVersion> referencedKeys = FrozenList.Copy(ReferencedKeys.OrderBy(k => k.Id));
     public IReadOnlyList<AllocationKeyVersion> ReferencedKeys { get => referencedKeys; init => referencedKeys = FrozenList.Copy(value.OrderBy(k => k.Id)); }
 }
@@ -83,12 +85,13 @@ public sealed class AllocationWorkspaceSnapshot
 {
     public AllocationWorkspaceSnapshot(ResourceWorkspaceSnapshot resources, IReadOnlyList<AllocationKeyVersion> keys,
         AllocationConfiguration configuration, long configurationRevision, bool includeUnroutedAccounts = true,
-        IReadOnlyList<EntityId>? usedKeyIds = null)
+        IReadOnlyList<EntityId>? usedKeyIds = null, SecondaryCalculationPublication? secondaryPublication = null)
     {
         Resources = resources; Keys = FrozenList.Copy(keys.OrderBy(k => k.Id));
         Configuration = configuration; ConfigurationRevision = configurationRevision;
         IncludeUnroutedAccounts = includeUnroutedAccounts;
         UsedKeyIds = FrozenList.Copy(usedKeyIds ?? []);
+        SecondaryPublication = configuration.SecondaryClosed ? secondaryPublication : null;
     }
     public ResourceWorkspaceSnapshot Resources { get; }
     public IReadOnlyList<AllocationKeyVersion> Keys { get; }
@@ -96,6 +99,7 @@ public sealed class AllocationWorkspaceSnapshot
     public long ConfigurationRevision { get; }
     public bool IncludeUnroutedAccounts { get; }
     [JsonIgnore] public IReadOnlyList<EntityId> UsedKeyIds { get; }
+    [JsonIgnore] public SecondaryCalculationPublication? SecondaryPublication { get; }
     [JsonIgnore] public IReadOnlyList<AllocationCoverage> Coverage => AllocationWorkspaceRules.Coverage(this);
 }
 
