@@ -90,3 +90,13 @@ Estado: **candidato supervisado; compilación .NET 10 y prueba WPF pendientes**.
 ## Decisión del supervisor
 
 Se han corregido problemas reales de usabilidad, trazabilidad y ciclo de cálculo y se ha ampliado el corpus de pruebas adversariales. Se mantiene **PR en borrador**; pasar a lista para fusionar exige evidencias de pruebas reales, resolución de defectos y aprobación de metodología A05.
+
+
+## Complemento de revisión monetaria y operaciones asíncronas
+
+- Riesgo adicional alto: la ruta pura del motor no comprobaba que cada Money de hechos, partes, recursos y pools coincidiera con CurrencyCode y PrecisionPolicy completos del estudio. Se corrigió con ValidatePrimaryMoney antes del cálculo, diagnosticando MONEY_CURRENCY_MISMATCH o PRECISION_POLICY_MISMATCH. Se añadieron pruebas que fuerzan USD en un estudio EUR y misma etiqueta de política con parámetros distintos.
+- Riesgo adicional: desbordamientos decimales en las ramas de grupo y sin auxiliares podían escapar sin diagnóstico T11. Ambas ramas convierten OverflowException a SECONDARY_NUMERIC_OVERFLOW.
+- El comando de cálculo ya no ocupa el hilo de interfaz: AsyncRelayCommand, Task.Run con CancellationToken, estado visible «Calculando», cancelación y rechazo de un resultado si cambia el workspace. Se limpia la conciliación de la ejecución anterior.
+- Riesgo adicional: C11/T11 debía preservar ResourceBehavior, ResourceCostLayer y ResourceCapacityTreatment en todas las transferencias. Existe una prueba de conservación fija/variable, comercial/estructura y capacidad.
+- Verificación metodológica local ampliada: el verificador de referencias oficial v0.4 ha informado status=passed, verified_count=39; el oráculo racional independiente de esta auditoría informó status PASSED para C09 per-part rounding, anillo de 100 nodos / 1000 fuentes, 97 terminales con un quantum firmado y amplificación 2e12. Ambas ejecuciones son **externas al C# en desarrollo**.
+- Todos los tests .NET nuevos permanecen escritos y no ejecutados. La autorización de CI no sustituye la observación real del coste ni una herramienta de dispatch: no se han creado eventos de gasto ni nuevos workflows.
