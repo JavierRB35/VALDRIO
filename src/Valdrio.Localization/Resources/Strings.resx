@@ -1254,4 +1254,11 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.SecondaryBridgeExcluded" xml:space="preserve"><value>Excluded</value></data>
   <data name="AllocationUI.SecondaryBridgeTerminal" xml:space="preserve"><value>To principal nodes</value></data>
   <data name="AllocationUI.SecondaryBridgeDifference" xml:space="preserve"><value>Difference</value></data>
+  <data name="AllocationUI.SecondarySourceGroupsTitle" xml:space="preserve"><value>Routing group by economic source</value></data>
+  <data name="AllocationUI.SecondarySourceGroupsHelp" xml:space="preserve"><value>A resource part uses the 'all' group unless you explicitly assign it to another group. For each group actually used, every auxiliary needs a published secondary key. Select 'all' to reset a prior assignment.</value></data>
+  <data name="AllocationUI.SecondarySourcePart" xml:space="preserve"><value>Resource part</value></data>
+  <data name="AllocationUI.SecondarySelectedGroup" xml:space="preserve"><value>Routing group</value></data>
+  <data name="AllocationUI.SecondaryAssignGroup" xml:space="preserve"><value>Assign group</value></data>
+  <data name="Secondary.GroupSourceInvalid" xml:space="preserve"><value>Secondary group assignments refer to resource parts not covered by primary allocation: {0}. Remove obsolete assignments and recalculate.</value></data>
+  <data name="Secondary.GraphInconsistent" xml:space="preserve"><value>Secondary groups disagree on the auxiliary and principal node structure. Review the selected model and group rules.</value></data>
 </root>
