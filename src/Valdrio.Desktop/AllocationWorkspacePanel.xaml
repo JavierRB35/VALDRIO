@@ -90,6 +90,8 @@
       <TextBlock Text="{Binding [ReciprocalGroup]}" Margin="0,8,0,0"/>
       <TextBox Text="{Binding GroupName, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [ReciprocalGroup]}"/>
       <Button Style="{StaticResource Button.Primary}" x:Name="SaveSecondaryButton" Content="{Binding [SaveRule]}" Command="{Binding SaveSecondaryCommand}" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+      <Button x:Name="FillMissingSecondaryButton" Content="{Binding [SecondaryFillMissing]}" Command="{Binding AssignSecondaryKeyToMissingCommand}" HorizontalAlignment="Left" Margin="0,8,0,0"
+              ToolTip="{Binding [SecondaryFillMissingHelp]}"/>
       </StackPanel>
       <Expander Header="{Binding [SecondarySourceGroupsTitle]}" Margin="0,16,0,0">
        <StackPanel Margin="0,8,0,0">
