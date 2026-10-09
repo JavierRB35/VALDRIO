@@ -103,112 +103,112 @@ public static class SecondaryAllocationService
         ArgumentNullException.ThrowIfNull(workspace);
         try
         {
-        var primary = PrimaryAllocationService.Calculate(workspace);
-        if (!primary.IsComplete)
-            throw Error("SECONDARY_PRIMARY_INCOMPLETE", "Secondary.PrimaryIncomplete");
-        var active = workspace.Resources.Model.Structure.Nodes.Where(n => n.IsActive).ToArray();
-        if (!active.Any(n => n.Role == NodeRole.Auxiliary))
-            return CalculateDirectOnly(primary, active.Where(n => n.Role == NodeRole.Principal)
-                .Select(n => n.Id).ToArray(), workspace.Resources.Precision, cancellation);
-        var precision = workspace.Resources.Precision;
-        var model = workspace.Resources.Model.Structure;
-        var configured = workspace.Configuration.SecondaryPartRoutingGroups ?? [];
-        var mapping = configured.ToDictionary(g => g.PartId,
-            g => g.ComponentRoutingGroup);
-        var parts = primary.Facts.Select(f => f.PartId).Distinct().ToHashSet();
-        var unrecognized = configured.Where(g => !parts.Contains(g.PartId))
-            .Select(g => g.PartId.ToString()).Order(StringComparer.Ordinal).ToArray();
-        if (unrecognized.Length != 0)
-            throw Error("SECONDARY_GROUP_SOURCE_INVALID", "Secondary.GroupSourceInvalid",
-                string.Join(", ", unrecognized));
-        var grouped = primary.Facts.GroupBy(f =>
-            mapping.TryGetValue(f.PartId, out var group) ? group : "all")
-            .OrderBy(g => g.Key, StringComparer.Ordinal).ToArray();
-        if (grouped.Length == 0)
-        {
-            // Validate the model graph even with a zero RHS. Zero cost does
-            // not legalize a closed auxiliary component.
-            grouped = primary.Facts.GroupBy(_ => "all").ToArray();
-        }
-        var groupSolutions = new List<SecondaryGroupCirculation>();
-        var posted = new List<SecondaryAllocationFact>();
-        var links = new List<SecondaryExplanationLink>();
-        var reconciliations = new List<SecondaryPartReconciliation>();
-        if (grouped.Length == 0)
-        {
-            var graph = ReciprocalGraphBuilder.FromPublishedSecondaryKeys(
-                model, workspace.Keys, workspace.Configuration.SecondaryRules,
-                workspace.Resources.Model.DriverUnits, precision);
-            var factor = ReciprocalFactorization.Prepare(graph, cancellation);
-            var zero = factor.Solve(
-                factor.AuxiliaryIds.ToDictionary(id => id, _ => 0m, StringComparer.Ordinal),
-                factor.TerminalIds.ToDictionary(id => id, _ => 0m, StringComparer.Ordinal), cancellation);
-            groupSolutions.Add(new("all", zero));
-        }
-        foreach (var group in grouped)
-        {
-            cancellation.ThrowIfCancellationRequested();
-            var missing = model.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary &&
-                !workspace.Configuration.SecondaryRules.Any(r => r.IsActive && r.AuxiliaryNodeId == n.Id &&
-                    StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, group.Key) &&
-                    workspace.Keys.Any(k => k.Id == r.KeyVersionId && k.Status == ModelStatus.Published &&
-                        k.Stage == AllocationStage.Secondary)))
-                .OrderBy(n => n.Code, StringComparer.Ordinal).Select(n => n.Code).ToArray();
-            if (missing.Length != 0)
-                throw Error("SECONDARY_MISSING_ASSIGNMENTS", "Secondary.MissingAssignments",
-                    group.Key + ": " + string.Join(", ", missing));
-            var graph = ReciprocalGraphBuilder.FromPublishedSecondaryKeys(
-                model, workspace.Keys, workspace.Configuration.SecondaryRules,
-                workspace.Resources.Model.DriverUnits, precision, group.Key);
-            var filteredFacts = group.OrderBy(f => f.ResourceId).ThenBy(f => f.PartId)
-                .ThenBy(f => f.NodeId).ToArray();
-            var filteredParts = primary.Parts.Where(p =>
-                filteredFacts.Any(f => f.PartId == p.PartId)).ToArray();
-            // The complete primary reconciliation is preserved by the final
-            // aggregate; subgroup economic sources are solved independently.
-            var subgroup = new PrimaryAllocationResult(primary.StudyId, primary.Revision,
-                primary.Currency, primary.PolicyVersion, filteredFacts, filteredParts, [], [], []);
-            var calculated = Calculate(subgroup, graph, precision, cancellation);
-            posted.AddRange(calculated.Facts);
-            // Only list keys on a directed route that can contribute to
-            // THIS selected principal, never all keys in the routing group.
-            var activeRules = workspace.Configuration.SecondaryRules.Where(r => r.IsActive &&
-                StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, group.Key)).ToArray();
-            var routeKeyCache = new Dictionary<(EntityId, EntityId), IReadOnlyList<EntityId>>();
-            foreach (var link in calculated.ExplanationLinks)
+            var primary = PrimaryAllocationService.Calculate(workspace);
+            if (!primary.IsComplete)
+                throw Error("SECONDARY_PRIMARY_INCOMPLETE", "Secondary.PrimaryIncomplete");
+            var active = workspace.Resources.Model.Structure.Nodes.Where(n => n.IsActive).ToArray();
+            if (!active.Any(n => n.Role == NodeRole.Auxiliary))
+                return CalculateDirectOnly(primary, active.Where(n => n.Role == NodeRole.Principal)
+                    .Select(n => n.Id).ToArray(), workspace.Resources.Precision, cancellation);
+            var precision = workspace.Resources.Precision;
+            var model = workspace.Resources.Model.Structure;
+            var configured = workspace.Configuration.SecondaryPartRoutingGroups ?? [];
+            var mapping = configured.ToDictionary(g => g.PartId,
+                g => g.ComponentRoutingGroup);
+            var parts = primary.Facts.Select(f => f.PartId).Distinct().ToHashSet();
+            var unrecognized = configured.Where(g => !parts.Contains(g.PartId))
+                .Select(g => g.PartId.ToString()).Order(StringComparer.Ordinal).ToArray();
+            if (unrecognized.Length != 0)
+                throw Error("SECONDARY_GROUP_SOURCE_INVALID", "Secondary.GroupSourceInvalid",
+                    string.Join(", ", unrecognized));
+            var grouped = primary.Facts.GroupBy(f =>
+                mapping.TryGetValue(f.PartId, out var group) ? group : "all")
+                .OrderBy(g => g.Key, StringComparer.Ordinal).ToArray();
+            if (grouped.Length == 0)
             {
-                var pair = (link.PrimaryNodeId, link.TerminalNodeId);
-                if (!routeKeyCache.TryGetValue(pair, out var routeKeys))
-                {
-                    routeKeys = ContributingSecondaryKeyVersions(graph, activeRules,
-                        link.PrimaryNodeId, link.TerminalNodeId);
-                    routeKeyCache.Add(pair, routeKeys);
-                }
-                links.Add(link with
-                {
-                    ComponentRoutingGroup = group.Key,
-                    SecondaryKeyVersionIds = routeKeys
-                });
+                // Validate the model graph even with a zero RHS. Zero cost does
+                // not legalize a closed auxiliary component.
+                grouped = primary.Facts.GroupBy(_ => "all").ToArray();
             }
-            reconciliations.AddRange(calculated.Reconciliations);
-            groupSolutions.Add(new(group.Key, calculated.Circulation));
-        }
-        var canonicalFacts = posted.OrderBy(f => f.ResourceId).ThenBy(f => f.PartId)
-            .ThenBy(f => f.TerminalNodeId).ToArray();
-        var totals = canonicalFacts.GroupBy(f => (f.TerminalNodeId, f.Behavior, f.CostLayer, f.CapacityTreatment))
-            .OrderBy(g => g.Key.TerminalNodeId).ThenBy(g => g.Key.Behavior)
-            .ThenBy(g => g.Key.CostLayer).ThenBy(g => g.Key.CapacityTreatment)
-            .Select(g => new SecondaryTerminalTotal(g.Key.TerminalNodeId, g.Key.Behavior,
-                g.Key.CostLayer, g.Key.CapacityTreatment,
-                new Money(g.Aggregate(0m, (sum, f) => checked(sum + f.PostedAmount.Amount)),
-                    primary.Currency, precision))).ToArray();
-        var aggregate = AggregateCirculation(groupSolutions);
-        return new(primary, canonicalFacts, links.OrderBy(l => l.ResourceId)
-            .ThenBy(l => l.PartId).ThenBy(l => l.PrimaryNodeId)
-            .ThenBy(l => l.TerminalNodeId).ToArray(),
-            totals, reconciliations.OrderBy(r => r.ResourceId).ThenBy(r => r.PartId).ToArray(),
-            aggregate, BuildResourceBridges(primary, canonicalFacts, precision),
-            groupSolutions);
+            var groupSolutions = new List<SecondaryGroupCirculation>();
+            var posted = new List<SecondaryAllocationFact>();
+            var links = new List<SecondaryExplanationLink>();
+            var reconciliations = new List<SecondaryPartReconciliation>();
+            if (grouped.Length == 0)
+            {
+                var graph = ReciprocalGraphBuilder.FromPublishedSecondaryKeys(
+                    model, workspace.Keys, workspace.Configuration.SecondaryRules,
+                    workspace.Resources.Model.DriverUnits, precision);
+                var factor = ReciprocalFactorization.Prepare(graph, cancellation);
+                var zero = factor.Solve(
+                    factor.AuxiliaryIds.ToDictionary(id => id, _ => 0m, StringComparer.Ordinal),
+                    factor.TerminalIds.ToDictionary(id => id, _ => 0m, StringComparer.Ordinal), cancellation);
+                groupSolutions.Add(new("all", zero));
+            }
+            foreach (var group in grouped)
+            {
+                cancellation.ThrowIfCancellationRequested();
+                var missing = model.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary &&
+                    !workspace.Configuration.SecondaryRules.Any(r => r.IsActive && r.AuxiliaryNodeId == n.Id &&
+                        StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, group.Key) &&
+                        workspace.Keys.Any(k => k.Id == r.KeyVersionId && k.Status == ModelStatus.Published &&
+                            k.Stage == AllocationStage.Secondary)))
+                    .OrderBy(n => n.Code, StringComparer.Ordinal).Select(n => n.Code).ToArray();
+                if (missing.Length != 0)
+                    throw Error("SECONDARY_MISSING_ASSIGNMENTS", "Secondary.MissingAssignments",
+                        group.Key + ": " + string.Join(", ", missing));
+                var graph = ReciprocalGraphBuilder.FromPublishedSecondaryKeys(
+                    model, workspace.Keys, workspace.Configuration.SecondaryRules,
+                    workspace.Resources.Model.DriverUnits, precision, group.Key);
+                var filteredFacts = group.OrderBy(f => f.ResourceId).ThenBy(f => f.PartId)
+                    .ThenBy(f => f.NodeId).ToArray();
+                var filteredParts = primary.Parts.Where(p =>
+                    filteredFacts.Any(f => f.PartId == p.PartId)).ToArray();
+                // The complete primary reconciliation is preserved by the final
+                // aggregate; subgroup economic sources are solved independently.
+                var subgroup = new PrimaryAllocationResult(primary.StudyId, primary.Revision,
+                    primary.Currency, primary.PolicyVersion, filteredFacts, filteredParts, [], [], []);
+                var calculated = Calculate(subgroup, graph, precision, cancellation);
+                posted.AddRange(calculated.Facts);
+                // Only list keys on a directed route that can contribute to
+                // THIS selected principal, never all keys in the routing group.
+                var activeRules = workspace.Configuration.SecondaryRules.Where(r => r.IsActive &&
+                    StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, group.Key)).ToArray();
+                var routeKeyCache = new Dictionary<(EntityId, EntityId), IReadOnlyList<EntityId>>();
+                foreach (var link in calculated.ExplanationLinks)
+                {
+                    var pair = (link.PrimaryNodeId, link.TerminalNodeId);
+                    if (!routeKeyCache.TryGetValue(pair, out var routeKeys))
+                    {
+                        routeKeys = ContributingSecondaryKeyVersions(graph, activeRules,
+                            link.PrimaryNodeId, link.TerminalNodeId);
+                        routeKeyCache.Add(pair, routeKeys);
+                    }
+                    links.Add(link with
+                    {
+                        ComponentRoutingGroup = group.Key,
+                        SecondaryKeyVersionIds = routeKeys
+                    });
+                }
+                reconciliations.AddRange(calculated.Reconciliations);
+                groupSolutions.Add(new(group.Key, calculated.Circulation));
+            }
+            var canonicalFacts = posted.OrderBy(f => f.ResourceId).ThenBy(f => f.PartId)
+                .ThenBy(f => f.TerminalNodeId).ToArray();
+            var totals = canonicalFacts.GroupBy(f => (f.TerminalNodeId, f.Behavior, f.CostLayer, f.CapacityTreatment))
+                .OrderBy(g => g.Key.TerminalNodeId).ThenBy(g => g.Key.Behavior)
+                .ThenBy(g => g.Key.CostLayer).ThenBy(g => g.Key.CapacityTreatment)
+                .Select(g => new SecondaryTerminalTotal(g.Key.TerminalNodeId, g.Key.Behavior,
+                    g.Key.CostLayer, g.Key.CapacityTreatment,
+                    new Money(g.Aggregate(0m, (sum, f) => checked(sum + f.PostedAmount.Amount)),
+                        primary.Currency, precision))).ToArray();
+            var aggregate = AggregateCirculation(groupSolutions);
+            return new(primary, canonicalFacts, links.OrderBy(l => l.ResourceId)
+                .ThenBy(l => l.PartId).ThenBy(l => l.PrimaryNodeId)
+                .ThenBy(l => l.TerminalNodeId).ToArray(),
+                totals, reconciliations.OrderBy(r => r.ResourceId).ThenBy(r => r.PartId).ToArray(),
+                aggregate, BuildResourceBridges(primary, canonicalFacts, precision),
+                groupSolutions);
         }
         catch (OverflowException)
         {
@@ -298,48 +298,48 @@ public static class SecondaryAllocationService
         ArgumentNullException.ThrowIfNull(precision);
         try
         {
-        if (!primary.IsComplete)
-            throw Error("SECONDARY_PRIMARY_INCOMPLETE", "Secondary.PrimaryIncomplete");
-        if (!StringComparer.Ordinal.Equals(primary.PolicyVersion, precision.Version))
-            throw Error("SECONDARY_PRECISION_POLICY_INVALID", "Secondary.PrecisionMismatch");
-        var terminals = principalIds.Distinct().Order().ToArray();
-        if (terminals.Length == 0 || terminals.Length != principalIds.Count)
-            throw Error("SECONDARY_PRIMARY_NODE_INVALID", "Secondary.PrimaryNodeInvalid",
-                terminals.Length == 0 ? "no-active-principals" : "duplicate-principal-id");
-        var terminalSet = terminals.ToHashSet();
-        if (primary.Facts.Any(f => !terminalSet.Contains(f.NodeId)))
-            throw Error("SECONDARY_PRIMARY_NODE_INVALID", "Secondary.PrimaryNodeInvalid",
-                primary.Facts.First(f => !terminalSet.Contains(f.NodeId)).NodeId.ToString());
-        var facts = primary.Facts.OrderBy(f => f.ResourceId).ThenBy(f => f.PartId).ThenBy(f => f.NodeId)
-            .Select(f => new SecondaryAllocationFact(f.ResourceId, f.PartId, f.Account, f.NodeId,
-                f.Behavior, f.CostLayer, f.CapacityTreatment, f.PostedAmount.Amount, 0m, 0m,
-                f.PostedAmount)).ToArray();
-        var links = primary.Facts.OrderBy(f => f.ResourceId).ThenBy(f => f.PartId).ThenBy(f => f.NodeId)
-            .Select(f => new SecondaryExplanationLink(f.ResourceId, f.PartId, f.NodeId, f.NodeId,
-                f.KeyVersionId, f.PostedAmount.Amount, 1m, f.PostedAmount.Amount)).ToArray();
-        var parts = facts.GroupBy(f => (f.ResourceId, f.PartId))
-            .OrderBy(g => g.Key.ResourceId).ThenBy(g => g.Key.PartId).Select(g =>
-        {
-            cancellation.ThrowIfCancellationRequested();
-            var amount = g.Aggregate(0m, (total, f) => checked(total + f.PostedAmount.Amount));
-            var money = new Money(amount, primary.Currency, precision);
-            return new SecondaryPartReconciliation(g.Key.ResourceId, g.Key.PartId, money, money,
-                new Money(0m, primary.Currency, precision));
-        }).ToArray();
-        var totals = facts.GroupBy(f => (f.TerminalNodeId, f.Behavior, f.CostLayer, f.CapacityTreatment))
-            .OrderBy(g => g.Key.TerminalNodeId).ThenBy(g => g.Key.Behavior)
-            .ThenBy(g => g.Key.CostLayer).ThenBy(g => g.Key.CapacityTreatment)
-            .Select(g => new SecondaryTerminalTotal(g.Key.TerminalNodeId, g.Key.Behavior,
-                g.Key.CostLayer, g.Key.CapacityTreatment,
-                new Money(g.Aggregate(0m, (sum, f) => checked(sum + f.PostedAmount.Amount)),
-                    primary.Currency, precision))).ToArray();
-        var finalAmounts = terminals.Select(node => facts.Where(f => f.TerminalNodeId == node)
-            .Aggregate(0m, (sum, f) => checked(sum + f.PostedAmount.Amount))).ToArray();
-        var circulation = new ReciprocalSolution(ReciprocalFactorization.Policy,
-            Array.Empty<string>(), terminals.Select(t => t.ToString()).ToArray(),
-            Array.Empty<decimal>(), finalAmounts, Array.Empty<decimal[]>(),
-            0m, 0m, 0m, 1m, Array.Empty<DomainDiagnostic>());
-        return new(primary, facts, links, totals, parts, circulation, BuildResourceBridges(primary, facts, precision));
+            if (!primary.IsComplete)
+                throw Error("SECONDARY_PRIMARY_INCOMPLETE", "Secondary.PrimaryIncomplete");
+            if (!StringComparer.Ordinal.Equals(primary.PolicyVersion, precision.Version))
+                throw Error("SECONDARY_PRECISION_POLICY_INVALID", "Secondary.PrecisionMismatch");
+            var terminals = principalIds.Distinct().Order().ToArray();
+            if (terminals.Length == 0 || terminals.Length != principalIds.Count)
+                throw Error("SECONDARY_PRIMARY_NODE_INVALID", "Secondary.PrimaryNodeInvalid",
+                    terminals.Length == 0 ? "no-active-principals" : "duplicate-principal-id");
+            var terminalSet = terminals.ToHashSet();
+            if (primary.Facts.Any(f => !terminalSet.Contains(f.NodeId)))
+                throw Error("SECONDARY_PRIMARY_NODE_INVALID", "Secondary.PrimaryNodeInvalid",
+                    primary.Facts.First(f => !terminalSet.Contains(f.NodeId)).NodeId.ToString());
+            var facts = primary.Facts.OrderBy(f => f.ResourceId).ThenBy(f => f.PartId).ThenBy(f => f.NodeId)
+                .Select(f => new SecondaryAllocationFact(f.ResourceId, f.PartId, f.Account, f.NodeId,
+                    f.Behavior, f.CostLayer, f.CapacityTreatment, f.PostedAmount.Amount, 0m, 0m,
+                    f.PostedAmount)).ToArray();
+            var links = primary.Facts.OrderBy(f => f.ResourceId).ThenBy(f => f.PartId).ThenBy(f => f.NodeId)
+                .Select(f => new SecondaryExplanationLink(f.ResourceId, f.PartId, f.NodeId, f.NodeId,
+                    f.KeyVersionId, f.PostedAmount.Amount, 1m, f.PostedAmount.Amount)).ToArray();
+            var parts = facts.GroupBy(f => (f.ResourceId, f.PartId))
+                .OrderBy(g => g.Key.ResourceId).ThenBy(g => g.Key.PartId).Select(g =>
+            {
+                cancellation.ThrowIfCancellationRequested();
+                var amount = g.Aggregate(0m, (total, f) => checked(total + f.PostedAmount.Amount));
+                var money = new Money(amount, primary.Currency, precision);
+                return new SecondaryPartReconciliation(g.Key.ResourceId, g.Key.PartId, money, money,
+                    new Money(0m, primary.Currency, precision));
+            }).ToArray();
+            var totals = facts.GroupBy(f => (f.TerminalNodeId, f.Behavior, f.CostLayer, f.CapacityTreatment))
+                .OrderBy(g => g.Key.TerminalNodeId).ThenBy(g => g.Key.Behavior)
+                .ThenBy(g => g.Key.CostLayer).ThenBy(g => g.Key.CapacityTreatment)
+                .Select(g => new SecondaryTerminalTotal(g.Key.TerminalNodeId, g.Key.Behavior,
+                    g.Key.CostLayer, g.Key.CapacityTreatment,
+                    new Money(g.Aggregate(0m, (sum, f) => checked(sum + f.PostedAmount.Amount)),
+                        primary.Currency, precision))).ToArray();
+            var finalAmounts = terminals.Select(node => facts.Where(f => f.TerminalNodeId == node)
+                .Aggregate(0m, (sum, f) => checked(sum + f.PostedAmount.Amount))).ToArray();
+            var circulation = new ReciprocalSolution(ReciprocalFactorization.Policy,
+                Array.Empty<string>(), terminals.Select(t => t.ToString()).ToArray(),
+                Array.Empty<decimal>(), finalAmounts, Array.Empty<decimal[]>(),
+                0m, 0m, 0m, 1m, Array.Empty<DomainDiagnostic>());
+            return new(primary, facts, links, totals, parts, circulation, BuildResourceBridges(primary, facts, precision));
         }
         catch (OverflowException)
         {
