@@ -100,6 +100,26 @@
    </StackPanel></Expander>
   </Border>
 
+  <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+   <Expander x:Name="ReciprocalSection" Header="{Binding [ReciprocalTitle]}" IsExpanded="False">
+    <StackPanel Margin="0,8,0,0">
+     <TextBlock Text="{Binding [ReciprocalHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+     <WrapPanel><Button x:Name="CheckReciprocalButton" Content="{Binding [CheckReciprocal]}" Command="{Binding CheckReciprocalCommand}" Style="{StaticResource Button.Primary}"/></WrapPanel>
+     <TextBlock Text="{Binding ReciprocalSummary}" Margin="0,8,0,8" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
+     <DataGrid x:Name="ReciprocalGrid" ItemsSource="{Binding ReciprocalChecks}" IsReadOnly="True"
+               AutoGenerateColumns="False" Height="165" MinRowHeight="32"
+               AutomationProperties.Name="{Binding [ReciprocalTitle]}">
+      <DataGrid.Columns>
+       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Group}" Width="2*"/>
+       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding State}" Width="*"/>
+       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Detail}" Width="3*"/>
+      </DataGrid.Columns>
+     </DataGrid>
+     <TextBlock Text="{Binding [ReciprocalNoPosting]}" TextWrapping="Wrap" Margin="0,8,0,0"
+                Foreground="{DynamicResource Text.Primary}"/>
+    </StackPanel>
+   </Expander>
+  </Border>
   <WrapPanel><Button Content="{Binding [Discard]}" Command="{Binding DiscardCommand}" x:Name="DiscardButton"/></WrapPanel>
   <TextBlock Text="{Binding Status}" AutomationProperties.LiveSetting="Polite" Margin="0,8,0,0"/>
  </StackPanel>
