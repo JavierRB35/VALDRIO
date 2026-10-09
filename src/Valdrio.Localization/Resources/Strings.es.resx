@@ -1271,4 +1271,5 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.SecondaryCalculating" xml:space="preserve"><value>Calculando los costes secundarios. Puedes cancelar la operación; no se guardarán resultados económicos hasta que cierres la fase.</value></data>
   <data name="AllocationUI.SecondaryCancelled" xml:space="preserve"><value>Cálculo secundario cancelado. Los resultados publicados y las reglas guardadas no se han modificado.</value></data>
   <data name="AllocationUI.SecondaryResultStale" xml:space="preserve"><value>El estudio ha cambiado durante el cálculo. Se ha descartado el resultado. Revisa las asignaciones y vuelve a calcular.</value></data>
+  <data name="AllocationUI.SecondaryObsoleteMappingsBlock" xml:space="preserve"><value>Existen asignaciones obsoletas entre partes y grupos. Elimínalas o corrígelas antes de calcular los costes secundarios.</value></data>
 </root>
