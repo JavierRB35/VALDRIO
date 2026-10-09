@@ -26,6 +26,8 @@ public sealed record SecondaryEconomicBridge(
     EntityId ResourceId, Money Effective, Money Direct, Money Excluded, Money Pending,
     Money Terminal, Money Difference);
 
+public sealed record SecondaryGroupCirculation(string ComponentRoutingGroup, ReciprocalSolution Solution);
+
 public sealed record SecondaryAuxiliaryGross(string AuxiliaryId, decimal GrossAmount);
 
 // Frozen publication of the economically adjudicated terminal facts at a
@@ -38,6 +40,7 @@ public sealed record SecondaryCalculationPublication(
     IReadOnlyList<SecondaryPartReconciliation> Reconciliations,
     IReadOnlyList<SecondaryExplanationLink> ExplanationLinks,
     IReadOnlyList<SecondaryEconomicBridge> ResourceBridges,
+    IReadOnlyList<SecondaryGroupCirculation> GroupCirculations,
     IReadOnlyList<SecondaryAuxiliaryGross> AuxiliaryGrossFlows,
     decimal MaxCirculationAmplification, decimal MinNormalizedPivot)
 {
@@ -56,7 +59,8 @@ public sealed class SecondaryAllocationResult
         IReadOnlyList<SecondaryTerminalTotal> totals,
         IReadOnlyList<SecondaryPartReconciliation> reconciliations,
         ReciprocalSolution circulation,
-        IReadOnlyList<SecondaryEconomicBridge>? resourceBridges = null)
+        IReadOnlyList<SecondaryEconomicBridge>? resourceBridges = null,
+        IReadOnlyList<SecondaryGroupCirculation>? groupCirculations = null)
     {
         Primary = primary;
         Facts = FrozenList.Copy(facts);
@@ -65,6 +69,7 @@ public sealed class SecondaryAllocationResult
         Reconciliations = FrozenList.Copy(reconciliations);
         Circulation = circulation;
         ResourceBridges = FrozenList.Copy(resourceBridges ?? []);
+        GroupCirculations = FrozenList.Copy(groupCirculations ?? []);
     }
     public PrimaryAllocationResult Primary { get; }
     public IReadOnlyList<SecondaryAllocationFact> Facts { get; }
@@ -73,6 +78,7 @@ public sealed class SecondaryAllocationResult
     public IReadOnlyList<SecondaryPartReconciliation> Reconciliations { get; }
     public ReciprocalSolution Circulation { get; }
     public IReadOnlyList<SecondaryEconomicBridge> ResourceBridges { get; }
+    public IReadOnlyList<SecondaryGroupCirculation> GroupCirculations { get; }
     public bool IsComplete => Primary.IsComplete && Reconciliations.All(r => r.Difference.Amount == 0m)
         && ResourceBridges.All(r => r.Difference.Amount == 0m);
     public IReadOnlyList<SecondaryAllocationFact> ByResource(EntityId id) =>
@@ -262,7 +268,8 @@ public static class SecondaryAllocationService
                     new Money(g.Aggregate(0m, (sum, f) => checked(sum + f.PostedAmount.Amount)), currency, precision)))
                 .ToArray();
             return new(primary, facts, links, totals, reconciliations, gross,
-                BuildResourceBridges(primary, facts, precision));
+                BuildResourceBridges(primary, facts, precision),
+                [new SecondaryGroupCirculation("all", gross)]);
         }
         catch (OverflowException) { throw Error("SECONDARY_NUMERIC_OVERFLOW", "Secondary.NumericOverflow"); }
     }
@@ -282,6 +289,7 @@ public static class SecondaryAllocationService
             FrozenList.Copy(calculated.Facts), FrozenList.Copy(calculated.Totals),
             FrozenList.Copy(calculated.Reconciliations), FrozenList.Copy(calculated.ExplanationLinks),
             FrozenList.Copy(calculated.ResourceBridges),
+            FrozenList.Copy(calculated.GroupCirculations),
             FrozenList.Copy(calculated.Circulation.AuxiliaryIds.Select((id, i) =>
                 new SecondaryAuxiliaryGross(id, calculated.Circulation.Gross[i]))),
             calculated.Circulation.MaxCirculationAmplification,
@@ -300,6 +308,8 @@ public static class SecondaryAllocationService
             Final = result.Facts,
             Result = result.Totals,
             Bridges = result.ResourceBridges,
+            PartGroups = config.SecondaryPartRoutingGroups,
+            result.GroupCirculations,
             ReciprocalPolicyVersion = result.Circulation.PolicyVersion,
             result.Circulation.AuxiliaryIds,
             result.Circulation.TerminalIds,
