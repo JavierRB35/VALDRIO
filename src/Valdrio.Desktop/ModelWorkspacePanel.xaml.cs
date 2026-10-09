@@ -20,6 +20,12 @@ public partial class ModelWorkspacePanel : UserControl
         };
     }
 
+    private void OpenModelSetup(object sender, System.Windows.RoutedEventArgs e)
+    {
+        // A new node needs a draft model; navigate, do not create or mutate one.
+        ModelSteps.SelectedIndex = 0;
+    }
+
     private void BindTableHeaders()
     {
         if (tableViewModel is not null)
