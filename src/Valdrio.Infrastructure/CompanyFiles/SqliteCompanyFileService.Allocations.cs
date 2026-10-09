@@ -40,7 +40,8 @@ public sealed partial class SqliteCompanyFileService
         return new(ResourceWorkspace(db, file, study), AllocationKeys(db, file.Id, study.SelectedModelVersionId),
             last?.Request.Configuration ?? AllocationConfiguration.Empty, last?.ConfirmedStudy.Revision ?? -1,
             usedKeyIds: db.AllocationChanges.AsNoTracking().ToArray().Select(AllocationChange)
-                .SelectMany(UsedKeys).Select(k => k.Id).Distinct().ToArray());
+                .SelectMany(UsedKeys).Select(k => k.Id).Distinct().ToArray(),
+            secondaryPublication: last?.SecondaryPublication);
     }
     private static void EnsurePrimaryOpen(AllocationDbContext db, EntityId companyId, EntityId studyId)
     {
@@ -132,6 +133,7 @@ public sealed partial class SqliteCompanyFileService
                         throw AllocationDiagnostics.Error("PRIMARY_CLOSED", "Allocation.PrimaryClosed");
                 }
                 var referenced = AllocationWorkspaceRules.ValidateConfiguration(current.Resources, current.Keys, request);
+                SecondaryCalculationPublication? publication = null;
                 if (config.SecondaryClosed)
                 {
                     if (!config.PrimaryClosed || existing.SecondaryClosed)
@@ -142,13 +144,15 @@ public sealed partial class SqliteCompanyFileService
                     var expected = Valdrio.Application.SecondaryAllocationService.ResultFingerprint(calculated, config);
                     if (!StringComparer.Ordinal.Equals(config.SecondaryCalculationHash, expected))
                         throw AllocationDiagnostics.Error("SECONDARY_RESULT_STALE", "Secondary.ResultStale");
+                    publication = SecondaryAllocationService.Publish(calculated, config, before.Revision);
                 }
                 if (config.PrimaryClosed && (current.Resources.Origins.Count == 0 ||
                     !Valdrio.Application.PrimaryAllocationService.Calculate(new AllocationWorkspaceSnapshot(current.Resources, current.Keys, config, current.ConfigurationRevision)).IsComplete))
                     throw AllocationDiagnostics.Error("PRIMARY_INCOMPLETE", "AllocationUI.PrimaryIncomplete");
                 var after = Changed(before, before.Name, before.PeriodStart, before.PeriodEnd, before.Purpose, before.ScenarioKind,
                     before.SelectedModelVersionId, before.Currency, before.State);
-                var result = new AllocationChangeReceipt(request, before, after, referenced, owner.time.GetUtcNow());
+                var result = new AllocationChangeReceipt(request, before, after, referenced, owner.time.GetUtcNow())
+                { SecondaryPublication = publication };
                 db.AllocationChanges.Add(new() { Id = request.RequestId.ToString(), CompanyId = file.Id.ToString(), StudyId = before.Id.ToString(),
                     ExpectedRevision = before.Revision, ConfirmedRevision = after.Revision, CanonicalJson = Json(result) });
                 FirstWrite(db); Apply(row, after);
