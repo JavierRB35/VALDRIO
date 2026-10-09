@@ -30,3 +30,12 @@ El sello aislado resulta insuficiente para la auditoría económica. Se material
 La interfaz cerrada consume el recibo inmutable. Reabrir secundario deja el histórico publicado disponible para auditoría, pero retira la publicación activa; reabrir primario invalida además su sello. La lectura de un estudio cerrado no es una orden de recálculo.
 
 **Estado del ADR: propuesto** hasta compilación, pruebas de persistencia/reapertura nativas, rendimiento y validación A05. No confundir publicación persistida con aceptación técnica.
+
+
+## Extensión: grupos por parte y puente de integridad
+
+Se conserva el contrato legado all cuando SecondaryPartRoutingGroups es null. La asignación de grupo es explícita por PartId; ninguna etiqueta Fixed/Variable se infiere a partir del nombre de un grupo. Cada Q/B se calcula y diagnostica de forma autónoma con la misma versión de modelo, y los hechos finales se agregan después sin multiplicar transferencias internas. No existe una matriz única de factores cuando distintas partes usan matrices diferentes: GroupCirculations conserva el detalle por grupo y la circulación total agregada no pretende ser una factorización única.
+
+SecondaryEconomicBridge integra las fronteras del reparto: directo, excluido, pendiente y costes terminales. No se incorpora el bruto auxiliar al total monetario. El recibo histórico guarda el puente y sus enlaces; una diferencia no nula bloquea el cierre. Las claves referenciadas y sus grupos forman parte de la huella de resultado.
+
+Se añade limpieza de asignaciones a partes desaparecidas y se protege la compatibilidad canónica de configuraciones históricas. ADR sigue propuesta hasta compilación, smoke WPF, replay real y A05.
