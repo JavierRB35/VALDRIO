@@ -1196,4 +1196,19 @@ Difference to distribute: {7}</value></data>
   <data name="Reciprocal.NumericOverflow" xml:space="preserve"><value>The reciprocal numeric calculation exceeded decimal capacity.</value></data>
   <data name="Reciprocal.RhsInvalid" xml:space="preserve"><value>The cost origins do not match the auxiliary and terminal IDs.</value></data>
   <data name="Reciprocal.AmplificationWarning" xml:space="preserve"><value>High internal circulation amplifies values by {0}.</value></data>
+  <data name="AllocationUI.ReciprocalTitle" xml:space="preserve"><value>Reciprocal routing viability</value></data>
+  <data name="AllocationUI.ReciprocalHelp" xml:space="preserve"><value>Check published secondary routes per group. This is a read-only feasibility check, not a cost allocation.</value></data>
+  <data name="AllocationUI.CheckReciprocal" xml:space="preserve"><value>Check viability</value></data>
+  <data name="AllocationUI.ReciprocalNeedStudy" xml:space="preserve"><value>Open a study to inspect its reciprocal routing.</value></data>
+  <data name="AllocationUI.ReciprocalNotChecked" xml:space="preserve"><value>Viability has not been checked for the current saved configuration.</value></data>
+  <data name="AllocationUI.ReciprocalNoAuxiliaries" xml:space="preserve"><value>This model has no active auxiliary nodes to check.</value></data>
+  <data name="AllocationUI.ReciprocalSummary" xml:space="preserve"><value>Viable routing groups: {0} of {1}.</value></data>
+  <data name="AllocationUI.ReciprocalGroup" xml:space="preserve"><value>Routing group</value></data>
+  <data name="AllocationUI.ReciprocalStatus" xml:space="preserve"><value>Viability</value></data>
+  <data name="AllocationUI.ReciprocalDetail" xml:space="preserve"><value>Details</value></data>
+  <data name="AllocationUI.ReciprocalViable" xml:space="preserve"><value>Viable</value></data>
+  <data name="AllocationUI.ReciprocalBlocked" xml:space="preserve"><value>Blocked</value></data>
+  <data name="AllocationUI.ReciprocalInvalid" xml:space="preserve"><value>Cannot validate these routes: invalid graph or numeric inputs.</value></data>
+  <data name="AllocationUI.ReciprocalMetrics" xml:space="preserve"><value>Minimum relative pivot: {0:0.############################}; maximum circulation: {1:0.############################}.</value></data>
+  <data name="AllocationUI.ReciprocalNoPosting" xml:space="preserve"><value>Only saved, published routing versions are checked. No costs are redistributed or published here.</value></data>
 </root>
