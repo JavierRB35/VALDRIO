@@ -26,10 +26,11 @@ public sealed partial class AllocationWorkspaceViewModel
         get => selectedSecondaryResult;
         set
         {
-            if (SetProperty(ref selectedSecondaryResult, value)) ShowSecondaryExplanation();
+            if (SetProperty(ref selectedSecondaryResult, value)) { SecondaryExplanation = ""; OnPropertyChanged(nameof(SecondaryExplanation)); ExplainSecondaryCommand.NotifyCanExecuteChanged(); }
         }
     }
     private SecondaryAllocationRow? selectedSecondaryResult;
+    public IRelayCommand ExplainSecondaryCommand { get; private set; } = null!;
     public IRelayCommand CalculateSecondaryCommand { get; private set; } = null!;
     public IAsyncRelayCommand ToggleSecondaryCommand { get; private set; } = null!;
     public bool IsSecondaryClosed => workspace?.Configuration.SecondaryClosed == true;
