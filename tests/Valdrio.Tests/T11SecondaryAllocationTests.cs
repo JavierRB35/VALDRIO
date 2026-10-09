@@ -232,4 +232,73 @@ public sealed class T11SecondaryAllocationTests
             configured.WithSecondaryClosed(true, "example").SecondaryPartRoutingGroups!.Single().ComponentRoutingGroup);
     }
 
+    [TestMethod]
+    public void Extreme100AuxiliaryRingPreserves1000SourcesAndDoesNotPostGrossCosts()
+    {
+        const int count = 100;
+        var auxiliaries = Enumerable.Range(0, count)
+            .Select(i => Id((100000 + i).ToString("D12"))).ToArray();
+        var sourceIds = auxiliaries.Select(id => id.ToString()).ToArray();
+        var terminals = new[] { P1.ToString(), P2.ToString() };
+        var q = Enumerable.Range(0, count).Select(_ => new decimal[count]).ToArray();
+        var b = Enumerable.Range(0, count).Select(_ => new[] { 0.9m, 0m }).ToArray();
+        for (var i = 0; i < count; i++) q[i][(i + 1) % count] = 0.1m;
+        var graph = new ReciprocalInput(sourceIds, terminals, q, b, false);
+        var facts = Enumerable.Range(0, 1000).Select(i =>
+        {
+            var baseFact = Primary(i + 100, auxiliaries[i % count], (i % 2 == 0 ? 1m : -0.5m));
+            return baseFact;
+        }).Append(Primary(2000, P2, 5m)).ToArray();
+        var origin = Source(facts);
+        var result = SecondaryAllocationService.Calculate(origin, graph, Precision);
+        Assert.IsTrue(result.IsComplete);
+        Assert.AreEqual(255m, result.Facts.Sum(x => x.PostedAmount.Amount));
+        Assert.AreEqual(250m, result.ByTerminal(P1).Sum(x => x.PostedAmount.Amount));
+        Assert.AreEqual(5m, result.ByTerminal(P2).Sum(x => x.PostedAmount.Amount));
+        Assert.AreEqual(1001, result.Reconciliations.Count);
+        Assert.AreEqual(0m, result.Reconciliations.Sum(x => x.Difference.Amount));
+        Assert.IsTrue(result.Circulation.Gross.Sum() > 200m);
+        Assert.AreEqual(100, result.Circulation.AuxiliaryIds.Count);
+    }
+
+    [TestMethod]
+    public void MicroscopicPositiveNegativeAndZeroSourceAmountsNeverLoseEightDigitQuantum()
+    {
+        var graph = new ReciprocalInput([A.ToString()], [P1.ToString(), P2.ToString()],
+            [[0m]], [[0.5m, 0.5m]], false);
+        var origin = Source(
+            Primary(11, A, 0.00000001m),
+            Primary(12, A, -0.00000001m),
+            Primary(13, A, 0m));
+        var result = SecondaryAllocationService.Calculate(origin, graph, Precision);
+        Assert.IsTrue(result.IsComplete);
+        Assert.AreEqual(0m, result.Facts.Sum(f => f.PostedAmount.Amount));
+        foreach (var part in origin.Facts)
+            Assert.AreEqual(part.PostedAmount.Amount, result.Facts
+                .Where(f => f.PartId == part.PartId).Sum(f => f.PostedAmount.Amount));
+        Assert.AreEqual(0m, result.Reconciliations.Sum(r => r.Difference.Amount));
+    }
+
+    [TestMethod]
+    public void ZeroSourceDoesNotMakeMathematicallyClosedCycleAcceptable()
+    {
+        var graph = new ReciprocalInput([A.ToString(), B.ToString()],
+            [P1.ToString()], [[0m, 1m], [1m, 0m]], [[0m], [0m]], false);
+        var source = Source(Primary(1, A, 0m), Primary(2, P1, 0m));
+        var failure = Assert.ThrowsExactly<DomainRuleException>(() =>
+            SecondaryAllocationService.Calculate(source, graph, Precision));
+        Assert.AreEqual("GRAPH_CLOSED_COMPONENT", failure.Diagnostic.Code);
+    }
+
+    [TestMethod]
+    public void HighlyAmplifiedOpenCycleMustBeRejectedInsteadOfPostingAnUnstableLedger()
+    {
+        var graph = new ReciprocalInput([A.ToString()], [P1.ToString()],
+            [[0.9999999999995m]], [[0.0000000000005m]], true);
+        var source = Source(Primary(1, A, 1m));
+        var failure = Assert.ThrowsExactly<DomainRuleException>(() =>
+            SecondaryAllocationService.Calculate(source, graph, Precision));
+        Assert.AreEqual("SOLVER_SENSITIVE", failure.Diagnostic.Code);
+    }
+
 }
