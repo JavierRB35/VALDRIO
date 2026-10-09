@@ -26,7 +26,17 @@ public sealed class CompositionAccountRow(EntityId id, string account, string am
 public sealed partial class AllocationWorkspaceViewModel
 {
     public ObservableCollection<CompositionAccountRow> CompositionAccounts { get; } = [];
-    public ICollectionView CompositionView => CollectionViewSource.GetDefaultView(CompositionAccounts);
+    private ICollectionView? compositionView;
+    public ICollectionView CompositionView
+    {
+        get
+        {
+            if (compositionView is not null) return compositionView;
+            compositionView = CollectionViewSource.GetDefaultView(CompositionAccounts);
+            compositionView.Filter = MatchComposition;
+            return compositionView;
+        }
+    }
     private bool compositionSelectionBatch;
     private string compositionSearch = "";
     private bool compositionOnlyExceptions;
@@ -37,7 +47,7 @@ public sealed partial class AllocationWorkspaceViewModel
         {
             if (!SetProperty(ref compositionSearch, value)) return;
             ClearCompositionSelection();
-            CompositionView.Refresh();
+            compositionView?.Refresh();
         }
     }
     public bool CompositionOnlyExceptions
@@ -47,12 +57,15 @@ public sealed partial class AllocationWorkspaceViewModel
         {
             if (!SetProperty(ref compositionOnlyExceptions, value)) return;
             ClearCompositionSelection();
-            CompositionView.Refresh();
+            compositionView?.Refresh();
         }
     }
     private bool MatchComposition(object obj)
     {
-        if (obj is not CompositionAccountRow row) return false;
+        return obj is CompositionAccountRow row && IsCompositionVisible(row);
+    }
+    private bool IsCompositionVisible(CompositionAccountRow row)
+    {
         if (CompositionOnlyExceptions && row.IsDefault) return false;
         var term = CompositionSearch.Trim();
         return term.Length == 0 || row.Account.Contains(term, StringComparison.CurrentCultureIgnoreCase) ||
@@ -75,7 +88,7 @@ public sealed partial class AllocationWorkspaceViewModel
     public string CompositionMaximum { get => compositionMaximum; set => SetProperty(ref compositionMaximum, value); }
     public bool CanEditClassification => CanEdit && !IsDirty && workspace is not null;
     private CompositionAccountRow[] CompositionSelection =>
-        CompositionView.Cast<CompositionAccountRow>().Where(r => r.CanBulk && r.Selected).ToArray();
+        CompositionAccounts.Where(IsCompositionVisible).Where(r => r.CanBulk && r.Selected).ToArray();
     public string CompositionSelected => string.Format(Format, this["CompositionSelected"], CompositionSelection.Length);
     public string CompositionSummary
     {
@@ -96,9 +109,8 @@ public sealed partial class AllocationWorkspaceViewModel
     public IRelayCommand CompositionClearSelectionCommand { get; private set; } = null!;
     private void InitializeCompositionCommands()
     {
-        CompositionView.Filter = MatchComposition;
         CompositionSelectVisibleCommand = new RelayCommand(() =>
-            SetCompositionSelection(CompositionView.Cast<CompositionAccountRow>().Where(r => r.CanBulk), true), () => CanEditClassification && CompositionView.Cast<CompositionAccountRow>().Any(r => r.CanBulk));
+            SetCompositionSelection(CompositionAccounts.Where(IsCompositionVisible).Where(r => r.CanBulk), true), () => CanEditClassification && CompositionAccounts.Any(r => IsCompositionVisible(r) && r.CanBulk));
         CompositionClearSelectionCommand = new RelayCommand(ClearCompositionSelection,
             () => CanEditClassification && CompositionSelection.Length > 0);
         CompositionFixedCommand = new AsyncRelayCommand(() => UpdateCompositionAsync(ResourceBehavior.AssumedFixed), () => CanEditClassification && CompositionSelection.Length > 0);

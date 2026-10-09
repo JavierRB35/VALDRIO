@@ -1,10 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
+    <Using Include="System.IO" />
     <Compile Include="../../src/Valdrio.Desktop/WorkspaceGuidance.cs" Link="Desktop/WorkspaceGuidance.cs" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="MSTest.TestAdapter" />
@@ -25,6 +27,7 @@
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Primary.cs" Link="Desktop/AllocationWorkspaceViewModel.Primary.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Reciprocal.cs" Link="Desktop/AllocationWorkspaceViewModel.Reciprocal.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Secondary.cs" Link="Desktop/AllocationWorkspaceViewModel.Secondary.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Composition.cs" Link="Desktop/AllocationWorkspaceViewModel.Composition.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ResourceWorkspaceViewModel*.cs" Link="Desktop/%(Filename)%(Extension)" />
     <Compile Include="../../src/Valdrio.Desktop/WorkspaceDialogContracts.cs" Link="Desktop/WorkspaceDialogContracts.cs" />
   </ItemGroup>
@@ -68,7 +71,7 @@
   <!-- Keep subprocess tests on the same build configuration, including Visual Studio Debug. -->
   <Target Name="CopyRunnerForTests" AfterTargets="Build">
     <ItemGroup>
-      <RunnerOutput Include="../../src/Valdrio.Runner/bin/$(Configuration)/$(TargetFramework)/**/*" />
+      <RunnerOutput Include="../../src/Valdrio.Runner/bin/$(Configuration)/net10.0/**/*" />
     </ItemGroup>
     <Copy SourceFiles="@(RunnerOutput)" DestinationFiles="@(RunnerOutput->'$(OutDir)runner/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
