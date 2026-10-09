@@ -52,7 +52,7 @@ public sealed partial class AllocationWorkspaceViewModel
     // Assignment completeness is intentionally distinct from mathematical feasibility:
     // complete but closed/unstable graphs must still allow Calculate to report the error.
     public bool CanCalculateSecondary => !busy && !IsDirty && CanManageSecondary && primaryComplete &&
-        workspace is not null && workspace.Resources.Model.Structure.Nodes.Any(n => n.IsActive && n.Role == NodeRole.Auxiliary) &&
+        workspace is not null &&
         !workspace.Configuration.SecondaryRules.Any(r => r.IsActive &&
             !StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, "all")) &&
         MissingSecondaryNodes().Count == 0;
