@@ -87,6 +87,10 @@ public static class SecondaryAllocationService
         var primary = PrimaryAllocationService.Calculate(workspace);
         if (!primary.IsComplete)
             throw Error("SECONDARY_PRIMARY_INCOMPLETE", "Secondary.PrimaryIncomplete");
+        var active = workspace.Resources.Model.Structure.Nodes.Where(n => n.IsActive).ToArray();
+        if (!active.Any(n => n.Role == NodeRole.Auxiliary))
+            return CalculateDirectOnly(primary, active.Where(n => n.Role == NodeRole.Principal)
+                .Select(n => n.Id).ToArray(), workspace.Resources.Precision, cancellation);
         // Current T08 model has no part -> custom routing-group mapping. Refuse to
         // silently treat a cost component as "all" when its route is different.
         var unmappedGroups = workspace.Configuration.SecondaryRules
@@ -111,6 +115,57 @@ public static class SecondaryAllocationService
             workspace.Configuration.SecondaryRules, workspace.Resources.Model.DriverUnits,
             workspace.Resources.Precision);
         return Calculate(primary, graph, workspace.Resources.Precision, cancellation);
+    }
+
+    // A study may have no auxiliary cost centers at all. In that case T11
+    // remains a closable no-op transfer, not a spurious "missing solver" error.
+    public static SecondaryAllocationResult CalculateDirectOnly(PrimaryAllocationResult primary,
+        IReadOnlyList<EntityId> principalIds, PrecisionPolicy precision, CancellationToken cancellation = default)
+    {
+        ArgumentNullException.ThrowIfNull(primary);
+        ArgumentNullException.ThrowIfNull(principalIds);
+        ArgumentNullException.ThrowIfNull(precision);
+        if (!primary.IsComplete)
+            throw Error("SECONDARY_PRIMARY_INCOMPLETE", "Secondary.PrimaryIncomplete");
+        if (!StringComparer.Ordinal.Equals(primary.PolicyVersion, precision.Version))
+            throw Error("SECONDARY_PRECISION_POLICY_INVALID", "Secondary.PrecisionMismatch");
+        var terminals = principalIds.Distinct().Order().ToArray();
+        if (terminals.Length == 0 || terminals.Length != principalIds.Count)
+            throw Error("SECONDARY_PRIMARY_NODE_INVALID", "Secondary.PrimaryNodeInvalid");
+        var terminalSet = terminals.ToHashSet();
+        if (primary.Facts.Any(f => !terminalSet.Contains(f.NodeId)))
+            throw Error("SECONDARY_PRIMARY_NODE_INVALID", "Secondary.PrimaryNodeInvalid",
+                primary.Facts.First(f => !terminalSet.Contains(f.NodeId)).NodeId.ToString());
+        var facts = primary.Facts.OrderBy(f => f.ResourceId).ThenBy(f => f.PartId).ThenBy(f => f.NodeId)
+            .Select(f => new SecondaryAllocationFact(f.ResourceId, f.PartId, f.Account, f.NodeId,
+                f.Behavior, f.CostLayer, f.CapacityTreatment, f.PostedAmount.Amount, 0m, 0m,
+                f.PostedAmount)).ToArray();
+        var links = primary.Facts.OrderBy(f => f.ResourceId).ThenBy(f => f.PartId).ThenBy(f => f.NodeId)
+            .Select(f => new SecondaryExplanationLink(f.ResourceId, f.PartId, f.NodeId, f.NodeId,
+                f.KeyVersionId, f.PostedAmount.Amount, 1m, f.PostedAmount.Amount)).ToArray();
+        var parts = facts.GroupBy(f => (f.ResourceId, f.PartId))
+            .OrderBy(g => g.Key.ResourceId).ThenBy(g => g.Key.PartId).Select(g =>
+        {
+            cancellation.ThrowIfCancellationRequested();
+            var amount = g.Aggregate(0m, (total, f) => checked(total + f.PostedAmount.Amount));
+            var money = new Money(amount, primary.Currency, precision);
+            return new SecondaryPartReconciliation(g.Key.ResourceId, g.Key.PartId, money, money,
+                new Money(0m, primary.Currency, precision));
+        }).ToArray();
+        var totals = facts.GroupBy(f => (f.TerminalNodeId, f.Behavior, f.CostLayer, f.CapacityTreatment))
+            .OrderBy(g => g.Key.TerminalNodeId).ThenBy(g => g.Key.Behavior)
+            .ThenBy(g => g.Key.CostLayer).ThenBy(g => g.Key.CapacityTreatment)
+            .Select(g => new SecondaryTerminalTotal(g.Key.TerminalNodeId, g.Key.Behavior,
+                g.Key.CostLayer, g.Key.CapacityTreatment,
+                new Money(g.Aggregate(0m, (sum, f) => checked(sum + f.PostedAmount.Amount)),
+                    primary.Currency, precision))).ToArray();
+        var finalAmounts = terminals.Select(node => facts.Where(f => f.TerminalNodeId == node)
+            .Aggregate(0m, (sum, f) => checked(sum + f.PostedAmount.Amount))).ToArray();
+        var circulation = new ReciprocalSolution(ReciprocalFactorization.Policy,
+            Array.Empty<string>(), terminals.Select(t => t.ToString()).ToArray(),
+            Array.Empty<decimal>(), finalAmounts, Array.Empty<decimal[]>(),
+            0m, 0m, 0m, 1m, Array.Empty<DomainDiagnostic>());
+        return new(primary, facts, links, totals, parts, circulation);
     }
 
     // Pure seam for corpus C09 and for tests independent from SQLite/WPF.
