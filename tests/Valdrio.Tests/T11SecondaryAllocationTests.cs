@@ -160,4 +160,23 @@ public sealed class T11SecondaryAllocationTests
         }
     }
 
+    [TestMethod]
+    public void WithoutAuxiliariesTheSecondaryPhaseIsAnIdentityWithAnEmptyCirculation()
+    {
+        var primary = Source(Primary(3, P1, 2000m), Primary(4, P2, -500m));
+        var result = SecondaryAllocationService.CalculateDirectOnly(primary, [P1, P2], Precision);
+        Assert.IsTrue(result.IsComplete);
+        Assert.AreEqual(1500m, result.Facts.Sum(f => f.PostedAmount.Amount));
+        Assert.AreEqual(2000m, result.ByTerminal(P1).Sum(f => f.PostedAmount.Amount));
+        Assert.AreEqual(-500m, result.ByTerminal(P2).Sum(f => f.PostedAmount.Amount));
+        Assert.AreEqual(0, result.Circulation.AuxiliaryIds.Count);
+        Assert.AreEqual(0m, result.Circulation.MaxCirculationAmplification);
+        Assert.IsTrue(result.Reconciliations.All(r => r.Difference.Amount == 0m));
+        var published = SecondaryAllocationService.Publish(result, AllocationConfiguration.Empty, 4);
+        Assert.AreEqual(0, published.AuxiliaryGrossFlows.Count);
+        Assert.ThrowsExactly<DomainRuleException>(() =>
+            SecondaryAllocationService.CalculateDirectOnly(Source(Primary(1, A, 100m)),
+                [P1, P2], Precision));
+    }
+
 }
