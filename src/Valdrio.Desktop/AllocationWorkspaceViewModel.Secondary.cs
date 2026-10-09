@@ -70,9 +70,9 @@ public sealed partial class AllocationWorkspaceViewModel
         }
         if (IsSecondaryClosed)
         {
-            // Closed results are reconstructed from the same immutable primary
-            // facts and published keys; never display a stale cache as approved.
-            CalculateSecondaryCore(true);
+            // Closing already published immutable ledger facts. Reopening a study
+            // displays that receipt; it MUST NOT rerun the full solver implicitly.
+            RestorePublishedSecondary();
             return;
         }
         var missing = MissingSecondaryNodes();
@@ -81,6 +81,37 @@ public sealed partial class AllocationWorkspaceViewModel
             missing.Count == 0 ? this["SecondaryReady"] :
             string.Format(Format, this["SecondaryMissingAssignments"],
                 string.Join(", ", missing.Select(NodeLabel)));
+    }
+
+    private void RestorePublishedSecondary()
+    {
+        var published = workspace?.SecondaryPublication;
+        if (workspace is null || published is null ||
+            !StringComparer.Ordinal.Equals(published.CalculationFingerprint,
+                workspace.Configuration.SecondaryCalculationHash))
+        {
+            SecondarySummary = "";
+            SecondaryDiagnostic = this["SecondaryPublishedMissing"];
+            return;
+        }
+        var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
+        var origins = workspace.Resources.Origins.ToDictionary(o => o.Id);
+        foreach (var fact in published.Facts)
+        {
+            SecondaryResults.Add(new(fact.ResourceId, fact.PartId, fact.TerminalNodeId,
+                origins.TryGetValue(fact.ResourceId, out var origin) ? AccountLabel(origin) : fact.Account,
+                nodes.TryGetValue(fact.TerminalNodeId, out var node) ? NodeLabel(node) : fact.TerminalNodeId.ToString(),
+                MoneyText(fact.PostedAmount), this["SecondaryBehavior" + fact.Behavior]));
+        }
+        foreach (var flow in published.AuxiliaryGrossFlows)
+        {
+            var name = nodes.Values.FirstOrDefault(n => n.Id.ToString() == flow.AuxiliaryId);
+            SecondaryCirculation.Add(new(name is null ? flow.AuxiliaryId : NodeLabel(name),
+                this["SecondaryGross"], flow.GrossAmount.ToString("0.########", Format)));
+        }
+        SecondarySummary = string.Format(Format, this["SecondaryTotals"],
+            published.Facts.Count, published.Totals.Count, workspace.Resources.Study.Currency.FunctionalCurrencyCode);
+        SecondaryDiagnostic = this["SecondaryClosedState"];
     }
 
     private void CalculateSecondary()
@@ -153,14 +184,16 @@ public sealed partial class AllocationWorkspaceViewModel
 
     private void ShowSecondaryExplanation()
     {
-        if (SelectedSecondaryResultRow is not { } row || secondaryPreview is null || workspace is null)
+        if (SelectedSecondaryResultRow is not { } row || workspace is null ||
+            (secondaryPreview is null && workspace.SecondaryPublication is null))
         {
             SecondaryExplanation = "";
             OnPropertyChanged(nameof(SecondaryExplanation));
             return;
         }
         var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
-        var links = secondaryPreview.ExplanationLinks.Where(l =>
+        var links = (secondaryPreview?.ExplanationLinks ??
+            workspace.SecondaryPublication!.ExplanationLinks).Where(l =>
             l.ResourceId == row.ResourceId && l.PartId == row.PartId &&
             l.TerminalNodeId == row.TerminalNodeId);
         SecondaryExplanation = string.Join(Environment.NewLine, links.Select(l =>
