@@ -260,9 +260,17 @@ public sealed partial class AllocationWorkspaceViewModel
             l.ResourceId == row.ResourceId && l.PartId == row.PartId &&
             l.TerminalNodeId == row.TerminalNodeId);
         SecondaryExplanation = string.Join(Environment.NewLine, links.Select(l =>
-            NodeLabel(nodes[l.PrimaryNodeId]) + " → " + NodeLabel(nodes[l.TerminalNodeId]) +
-            " · " + l.RawContribution.ToString("0.########", Format) + " " + Currency +
-            " · " + l.EffectiveShare.ToString("0.########", Format)));
+        {
+            var keys = (l.SecondaryKeyVersionIds ?? []).Select(id =>
+                workspace.Keys.FirstOrDefault(k => k.Id == id)).Where(k => k is not null)
+                .Select(k => k!.Name + " v" + k.VersionNumber.ToString(Format));
+            var group = l.ComponentRoutingGroup == "all" ?
+                this["AllComponents"] : l.ComponentRoutingGroup;
+            return NodeLabel(nodes[l.PrimaryNodeId]) + " → " + NodeLabel(nodes[l.TerminalNodeId]) +
+                " · " + l.RawContribution.ToString("0.########", Format) + " " + Currency +
+                " · " + l.EffectiveShare.ToString("0.########", Format) +
+                " · " + group + " · " + string.Join(", ", keys);
+        }));
         OnPropertyChanged(nameof(SecondaryExplanation));
     }
 
