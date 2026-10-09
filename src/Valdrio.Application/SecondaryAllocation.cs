@@ -22,6 +22,23 @@ public sealed record SecondaryTerminalTotal(
 public sealed record SecondaryPartReconciliation(
     EntityId ResourceId, EntityId PartId, Money PrimaryInput, Money FinalOutput, Money Difference);
 
+// Frozen publication of the economically adjudicated terminal facts at a
+// particular study input revision. Reciprocal flows remain separate metrics.
+public sealed record SecondaryCalculationPublication(
+    string SchemaVersion, EntityId StudyId, long SourceRevision, string CalculationFingerprint,
+    string NumericPolicyVersion, string PrimaryPolicyVersion,
+    IReadOnlyList<SecondaryAllocationFact> Facts,
+    IReadOnlyList<SecondaryTerminalTotal> Totals,
+    IReadOnlyList<SecondaryPartReconciliation> Reconciliations,
+    IReadOnlyList<SecondaryExplanationLink> ExplanationLinks,
+    decimal MaxCirculationAmplification, decimal MinNormalizedPivot)
+{
+    public IReadOnlyList<SecondaryAllocationFact> ByTerminal(EntityId node) =>
+        FrozenList.Copy(Facts.Where(f => f.TerminalNodeId == node));
+    public IReadOnlyList<SecondaryAllocationFact> ByResource(EntityId resource) =>
+        FrozenList.Copy(Facts.Where(f => f.ResourceId == resource));
+}
+
 public sealed class SecondaryAllocationResult
 {
     public const string Schema = "valdrio-secondary-allocation-v1";
@@ -163,6 +180,24 @@ public static class SecondaryAllocationService
             return new(primary, facts, links, totals, reconciliations, gross);
         }
         catch (OverflowException) { throw Error("SECONDARY_NUMERIC_OVERFLOW", "Secondary.NumericOverflow"); }
+    }
+
+    // Persist the posted 8-decimal ledger and its explanatory source links,
+    // without serializing a mutable LU factorization or double-counting circulation.
+    public static SecondaryCalculationPublication Publish(
+        SecondaryAllocationResult calculated, AllocationConfiguration configuration, long inputRevision)
+    {
+        ArgumentNullException.ThrowIfNull(calculated);
+        ArgumentNullException.ThrowIfNull(configuration);
+        if (!calculated.IsComplete || inputRevision < 0)
+            throw Error("SECONDARY_CLOSE_INVALID", "Secondary.CloseInvalid");
+        return new(SecondaryAllocationResult.Schema, calculated.Primary.StudyId,
+            inputRevision, ResultFingerprint(calculated, configuration),
+            calculated.Circulation.PolicyVersion, calculated.Primary.PolicyVersion,
+            FrozenList.Copy(calculated.Facts), FrozenList.Copy(calculated.Totals),
+            FrozenList.Copy(calculated.Reconciliations), FrozenList.Copy(calculated.ExplanationLinks),
+            calculated.Circulation.MaxCirculationAmplification,
+            calculated.Circulation.MinNormalizedPivot);
     }
 
     // Persist only a reproducible seal, not an opaque mutable balance cache.
