@@ -134,4 +134,53 @@ public sealed partial class T06ImportConfirmationTests
             closed.SecondaryPublication.Facts.Sum(x => x.PostedAmount.Amount));
     }
 
+    [TestMethod]
+    public async Task T11_TwoComponentGroupsKeepFixedAndVariableCostsInTheirOwnFinalDestinations()
+    {
+        using var file = Baseline();
+        var w = RouteForKey(file, await ImportedResources(file));
+        var original = w.Resources.Single();
+        var previous = original.Parts.Single();
+        var fixedPart = new ResourcePartDraft(Id(), Eur(400m),
+            ResourceRoutingKind.AllocationPool, poolId: previous.PoolId);
+        var variablePart = new ResourcePartDraft(Id(), Eur(600m),
+            ResourceRoutingKind.AllocationPool, poolId: previous.PoolId);
+        file.Resources.ChangeResources(Mutation(w, ResourceMutationKind.EditResource,
+            original.Id, [fixedPart, variablePart]));
+        w = file.Resources.ReadResources(w.Study.CompanyId, w.Study.Id);
+        var model = w.Model.Structure;
+        var auxiliaries = model.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary).ToArray();
+        var principals = model.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Principal).ToArray();
+        Assert.IsTrue(principals.Length >= 2);
+
+        var primary = file.Allocations.SaveAllocationKey(KeyCommand(w,
+            lines: [new(auxiliaries[0].Id, 100m)])).After;
+        var firstKey = file.Allocations.SaveAllocationKey(KeyCommand(w, stage: AllocationStage.Secondary,
+            lines: [new(principals[0].Id, 100m)])).After;
+        var secondKey = file.Allocations.SaveAllocationKey(KeyCommand(w, stage: AllocationStage.Secondary,
+            lines: [new(principals[1].Id, 100m)])).After;
+        var rules = auxiliaries.SelectMany(node => new[]
+        {
+            new SecondaryRule(Id(), w.Study.CompanyId, model.Id,
+                node.Id, "fixed", firstKey.Id, true),
+            new SecondaryRule(Id(), w.Study.CompanyId, model.Id,
+                node.Id, "variable", secondKey.Id, true)
+        }).ToArray();
+        var config = new AllocationConfiguration([], rules,
+            [new ExplicitPrimaryAssignment(fixedPart.Id, primary.Id),
+             new ExplicitPrimaryAssignment(variablePart.Id, primary.Id)], [], [],
+            secondaryPartRoutingGroups: [new(fixedPart.Id, "fixed"), new(variablePart.Id, "variable")]);
+        file.Allocations.ChangeAllocations(AllocationCommand(w, config));
+        var live = file.Allocations.ReadAllocations(w.Study.CompanyId, w.Study.Id);
+        var result = SecondaryAllocationService.Calculate(live);
+        Assert.IsTrue(result.IsComplete);
+        Assert.AreEqual(400m, result.ByTerminal(principals[0].Id).Sum(x => x.PostedAmount.Amount));
+        Assert.AreEqual(600m, result.ByTerminal(principals[1].Id).Sum(x => x.PostedAmount.Amount));
+        CollectionAssert.AreEqual(new[] { "fixed", "variable" },
+            result.GroupCirculations.Select(x => x.ComponentRoutingGroup).ToArray());
+        Assert.AreEqual(2, result.ExplanationLinks.Count);
+        Assert.IsTrue(result.ExplanationLinks.All(x => x.SecondaryKeyVersionIds?.Count == 1));
+        Assert.AreEqual(0m, result.ResourceBridges.Single().Difference.Amount);
+    }
+
 }
