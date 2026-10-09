@@ -91,4 +91,47 @@ public sealed partial class T06ImportConfirmationTests
             reopened.Allocations.ReadAllocationHistory(companyId, studyId)
                 .Single(c => c.SecondaryPublication is not null).SecondaryPublication!));
     }
+    [TestMethod]
+    public async Task T11_SpecializedRoutingGroupPersistsThroughClosedPublicationAndHistoricalReplay()
+    {
+        using var file = Baseline();
+        var resource = await ImportedResources(file);
+        var model = resource.Model.Structure;
+        var auxiliaries = model.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary).ToArray();
+        var principal = model.Nodes.First(n => n.IsActive && n.Role == NodeRole.Principal);
+        var primaryKey = file.Allocations.SaveAllocationKey(KeyCommand(resource,
+            lines: [new(auxiliaries[0].Id, 100m)])).After;
+        var secondaryKey = file.Allocations.SaveAllocationKey(KeyCommand(resource,
+            stage: AllocationStage.Secondary, lines: [new(principal.Id, 100m)])).After;
+        var rules = auxiliaries.Select(node => new SecondaryRule(Id(), resource.Study.CompanyId,
+            model.Id, node.Id, "operations", secondaryKey.Id, true)).ToArray();
+        var part = resource.Resources.Single().Parts.Single();
+        var config = new AllocationConfiguration([], rules,
+            [new ExplicitPrimaryAssignment(part.Id, primaryKey.Id)], [], [],
+            secondaryPartRoutingGroups: [new SecondaryPartRoutingGroup(part.Id, "operations")]);
+        file.Allocations.ChangeAllocations(AllocationCommand(resource, config));
+        var live = file.Allocations.ReadAllocations(resource.Study.CompanyId, resource.Study.Id);
+        Assert.AreEqual("operations",
+            live.Configuration.SecondaryPartRoutingGroups!.Single().ComponentRoutingGroup);
+        var result = SecondaryAllocationService.Calculate(live);
+        Assert.IsTrue(result.IsComplete);
+        Assert.AreEqual(part.Amount.Amount, result.ByTerminal(principal.Id)
+            .Sum(x => x.PostedAmount.Amount));
+        Assert.AreEqual("operations", result.GroupCirculations.Single().ComponentRoutingGroup);
+
+        file.Allocations.ChangeAllocations(AllocationCommand(live.Resources,
+            live.Configuration.WithPrimaryClosed(true)));
+        live = file.Allocations.ReadAllocations(resource.Study.CompanyId, resource.Study.Id);
+        var calculated = SecondaryAllocationService.Calculate(live);
+        var fingerprint = SecondaryAllocationService.ResultFingerprint(calculated, live.Configuration);
+        file.Allocations.ChangeAllocations(AllocationCommand(live.Resources,
+            live.Configuration.WithSecondaryClosed(true, fingerprint)));
+        var closed = file.Allocations.ReadAllocations(resource.Study.CompanyId, resource.Study.Id);
+        Assert.AreEqual("operations",
+            closed.SecondaryPublication!.GroupCirculations.Single().ComponentRoutingGroup);
+        Assert.AreEqual(fingerprint, closed.SecondaryPublication.CalculationFingerprint);
+        Assert.AreEqual(part.Amount.Amount,
+            closed.SecondaryPublication.Facts.Sum(x => x.PostedAmount.Amount));
+    }
+
 }
