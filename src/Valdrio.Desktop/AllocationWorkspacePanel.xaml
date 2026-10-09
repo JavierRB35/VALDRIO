@@ -157,7 +157,11 @@
       <Button x:Name="ToggleSecondaryButton" DockPanel.Dock="Right" Command="{Binding ToggleSecondaryCommand}" Content="{Binding SecondaryToggleLabel}"/>
       <TextBlock Text="{Binding SecondaryState}" VerticalAlignment="Center"/>
      </DockPanel>
-     <Button x:Name="CalculateSecondaryButton" Style="{StaticResource Button.Primary}" Content="{Binding [CalculateSecondary]}" Command="{Binding CalculateSecondaryCommand}" HorizontalAlignment="Left"/>
+     <WrapPanel>
+      <Button x:Name="CalculateSecondaryButton" Style="{StaticResource Button.Primary}" Content="{Binding [CalculateSecondary]}" Command="{Binding CalculateSecondaryCommand}"/>
+      <Button x:Name="CancelSecondaryButton" Content="{Binding [SecondaryCancel]}" Command="{Binding CancelSecondaryCommand}"
+              Margin="8,0,0,0"/>
+     </WrapPanel>
      <TextBlock Text="{Binding SecondarySummary}" Margin="0,8,0,4" AutomationProperties.LiveSetting="Polite"/>
      <TextBlock Text="{Binding SecondaryDiagnostic}" TextWrapping="Wrap" Margin="0,4,0,8" AutomationProperties.LiveSetting="Polite"/>
      <DataGrid x:Name="SecondaryResultsGrid" ItemsSource="{Binding SecondaryResults}" SelectedItem="{Binding SelectedSecondaryResultRow}" IsReadOnly="True" AutoGenerateColumns="False" Height="215">
