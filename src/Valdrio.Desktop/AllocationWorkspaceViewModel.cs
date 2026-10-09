@@ -304,7 +304,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         {
             var command = BuildKey(publish || editingKey?.Status == ModelStatus.Published); var port = company.ActiveAllocations!;
             var receipt = await Task.Run(() => port.SaveAllocationKey(command));
-            workspace = new(workspace.Resources, workspace.Keys.Where(k => k.Id != receipt.After.Id).Append(receipt.After).ToArray(), workspace.Configuration, workspace.ConfigurationRevision, usedKeyIds: workspace.UsedKeyIds);
+            workspace = new(workspace.Resources, workspace.Keys.Where(k => k.Id != receipt.After.Id).Append(receipt.After).ToArray(), workspace.Configuration, workspace.ConfigurationRevision, includeUnroutedAccounts: workspace.IncludeUnroutedAccounts,
+                usedKeyIds: workspace.UsedKeyIds, secondaryPublication: workspace.SecondaryPublication);
             LoadKey(receipt.After); previewId = new(Guid.NewGuid()); Rebuild(); statusKey = publish ? "PublishedSaved" : "DraftSaved";
         });
     }
@@ -368,7 +369,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             var receipt = await Task.Run(() => port.ChangeAllocations(new(study.CompanyId, study.Id, study.Revision, new(Guid.NewGuid()), "local-user", config)));
             // Retain the committed revision even if a dependent refresh fails.
             var r = workspace.Resources;
-            workspace = new(new(receipt.ConfirmedStudy, r.Precision, r.Model, r.Origins, r.Ledger, r.EconomicRevision), workspace.Keys, config, receipt.ConfirmedStudy.Revision, usedKeyIds: workspace.UsedKeyIds.Concat(receipt.ReferencedKeys.Where(k => config.ExplicitAssignments.Any(a => a.KeyVersionId == k.Id) || config.PrimaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id) || config.SecondaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id)).Select(k => k.Id)).Distinct().ToArray(), secondaryPublication: receipt.SecondaryPublication);
+            workspace = new(new(receipt.ConfirmedStudy, r.Precision, r.Model, r.Origins, r.Ledger, r.EconomicRevision), workspace.Keys, config, receipt.ConfirmedStudy.Revision, includeUnroutedAccounts: workspace.IncludeUnroutedAccounts,
+                usedKeyIds: workspace.UsedKeyIds.Concat(receipt.ReferencedKeys.Where(k => config.ExplicitAssignments.Any(a => a.KeyVersionId == k.Id) || config.PrimaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id) || config.SecondaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id)).Select(k => k.Id)).Distinct().ToArray(), secondaryPublication: receipt.SecondaryPublication);
             ClearRule(); LoadAbsolute(); Rebuild(); statusKey = "Saved";
             try { await studies.ApplyResourceReceiptAsync(receipt.ConfirmedStudy); }
             catch (Exception ex) when (ex is IOException or CompanyFileException or InvalidOperationException) { statusKey = "SavedRefreshPending"; }
@@ -393,7 +395,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
                 new(Guid.NewGuid()), "local-user") { Delete = true };
             await Task.Run(() => company.ActiveAllocations!.SaveAllocationKey(command));
             workspace = new(workspace!.Resources, workspace.Keys.Where(key => key.Id != k.Id).ToArray(),
-                workspace.Configuration, workspace.ConfigurationRevision, usedKeyIds: workspace.UsedKeyIds);
+                workspace.Configuration, workspace.ConfigurationRevision, includeUnroutedAccounts: workspace.IncludeUnroutedAccounts,
+                usedKeyIds: workspace.UsedKeyIds, secondaryPublication: workspace.SecondaryPublication);
             if (editingKey?.Id == k.Id) LoadKey(null);
             Rebuild(); statusKey = "KeyDeleted";
         });
