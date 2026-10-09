@@ -1,3 +1,9 @@
+## T10 — Solver recíproco y prueba de viabilidad (integración autorizada en main, aceptación pendiente, 2026-10-09)
+
+El propietario solicita explícitamente fusionar T10 en `main` a través de la PR #34 para continuar con T11, pues la comprobación funcional completa en la aplicación queda aplazada hasta que T11 esté desarrollada. Esta autorización **es de integración de código, no certificación técnica ni aprobación A05**. La rama de desarrollo es `feature/t10-solver-reciproco-viabilidad`. Se han incorporado kernel LU decimal determinista, grafo Q/B derivado de claves secundarias publicadas T08, controles de cobertura, salida y estabilidad, varios RHS, diagnóstico estructurado ES/EN, runner local sobre datos sintéticos y recibos congelados T08, pruebas C09–C14/C32 más 100 auxiliares y tarjeta WPF de comprobación de rutas guardadas por grupo, de solo lectura. **T10 no está cerrada**: este entorno carece de .NET/Windows, no se ha compilado ni ejecutado el C# ni evaluado la nueva interfaz WPF en un Windows real. El verificador racional v0.4 pasó 39/39 pero no ejecuta el solver C#. Tampoco acredita el cierre histórico de T09.
+
+No se han iniciado GitHub Actions para T10; workflow exclusivamente manual y presupuesto de gasto no autorizado. Detalles: [ficha T10](docs/tareas/T10.md), [ADR-0013](docs/adr/ADR-0013-solver-reciproco-pnum1.md) y [evidencia](docs/evidencias/T10_CANDIDATO_2026-10-09.md).
+
 # ESTADO_PROYECTO
 
 ## T09 — candidato de reparto primario para revisión (2026-10-08)

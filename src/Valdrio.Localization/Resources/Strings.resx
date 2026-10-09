@@ -1182,4 +1182,35 @@ Difference to distribute: {7}</value></data>
   <data name="Allocation.PrimaryClosed" xml:space="preserve"><value>Primary allocation is closed. Reopen it in step 6 before changing amounts or assignments.</value></data>
   <data name="Resources.PrimaryClosed" xml:space="preserve"><value>Primary allocation is closed. Reopen it in step 6 to correct amounts.</value></data>
   <data name="AllocationUI.RulesAndAssignments" xml:space="preserve"><value>Rules and special assignments</value></data>
+
+  <data name="Reciprocal.SchemaInvalid" xml:space="preserve"><value>The reciprocal routing graph is incomplete or has duplicate IDs.</value></data>
+  <data name="Reciprocal.WeightInvalid" xml:space="preserve"><value>The auxiliary {0} has an invalid routing fraction.</value></data>
+  <data name="Reciprocal.SelfNotAllowed" xml:space="preserve"><value>Self-allocation is not permitted for auxiliary {0}.</value></data>
+  <data name="Reciprocal.CoverageInvalid" xml:space="preserve"><value>Auxiliary {0} has a routing total of {1}; it must equal 1.</value></data>
+  <data name="Reciprocal.ClosedComponent" xml:space="preserve"><value>These auxiliaries cannot reach a terminal: {0}.</value></data>
+  <data name="Reciprocal.Singular" xml:space="preserve"><value>The reciprocal system has a zero pivot near auxiliary {0}.</value></data>
+  <data name="Reciprocal.Sensitive" xml:space="preserve"><value>The reciprocal system is numerically unstable near {0}. Check the diagnostic values.</value></data>
+  <data name="Reciprocal.NegativeFactor" xml:space="preserve"><value>The effective terminal transfer factor for auxiliary {0} is negative.</value></data>
+  <data name="Reciprocal.FactorDrift" xml:space="preserve"><value>The terminal factors of auxiliary {0} do not conserve 1; drift is {1}.</value></data>
+  <data name="Reciprocal.Residual" xml:space="preserve"><value>The reciprocal solution has excessive residual {0} (relative {1}).</value></data>
+  <data name="Reciprocal.NumericOverflow" xml:space="preserve"><value>The reciprocal numeric calculation exceeded decimal capacity.</value></data>
+  <data name="Reciprocal.RhsInvalid" xml:space="preserve"><value>The cost origins do not match the auxiliary and terminal IDs.</value></data>
+  <data name="Reciprocal.AmplificationWarning" xml:space="preserve"><value>High internal circulation amplifies values by {0}.</value></data>
+  <data name="AllocationUI.ReciprocalTitle" xml:space="preserve"><value>Reciprocal routing viability</value></data>
+  <data name="AllocationUI.ReciprocalHelp" xml:space="preserve"><value>Check published secondary routes per group. This is a read-only feasibility check, not a cost allocation.</value></data>
+  <data name="AllocationUI.CheckReciprocal" xml:space="preserve"><value>Check viability</value></data>
+  <data name="AllocationUI.ReciprocalNeedStudy" xml:space="preserve"><value>Open a study to inspect its reciprocal routing.</value></data>
+  <data name="AllocationUI.ReciprocalNotChecked" xml:space="preserve"><value>Viability has not been checked for the current saved configuration.</value></data>
+  <data name="AllocationUI.ReciprocalNoAuxiliaries" xml:space="preserve"><value>This model has no active auxiliary nodes to check.</value></data>
+  <data name="AllocationUI.ReciprocalSummary" xml:space="preserve"><value>Viable routing groups: {0} of {1}.</value></data>
+  <data name="AllocationUI.ReciprocalGroup" xml:space="preserve"><value>Routing group</value></data>
+  <data name="AllocationUI.ReciprocalStatus" xml:space="preserve"><value>Viability</value></data>
+  <data name="AllocationUI.ReciprocalDetail" xml:space="preserve"><value>Details</value></data>
+  <data name="AllocationUI.ReciprocalViable" xml:space="preserve"><value>Viable</value></data>
+  <data name="AllocationUI.ReciprocalBlocked" xml:space="preserve"><value>Blocked</value></data>
+  <data name="AllocationUI.ReciprocalInvalid" xml:space="preserve"><value>Cannot validate these routes: invalid graph or numeric inputs.</value></data>
+  <data name="AllocationUI.ReciprocalMetrics" xml:space="preserve"><value>Minimum relative pivot: {0:0.############################}; maximum circulation: {1:0.############################}.</value></data>
+  <data name="AllocationUI.ReciprocalNoPosting" xml:space="preserve"><value>Only saved, published routing versions are checked. No costs are redistributed or published here.</value></data>
+  <data name="Reciprocal.SensitivePivot" xml:space="preserve"><value>The reciprocal system is unstable near auxiliary {0}; normalized pivot: {1}.</value></data>
+  <data name="Reciprocal.SensitiveAmplification" xml:space="preserve"><value>The reciprocal system is unstable; circulation amplification: {0}.</value></data>
 </root>

@@ -23,6 +23,7 @@
     <Compile Include="../../src/Valdrio.Desktop/ResourceEditorForm.cs" Link="Desktop/ResourceEditorForm.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.cs" Link="Desktop/AllocationWorkspaceViewModel.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Primary.cs" Link="Desktop/AllocationWorkspaceViewModel.Primary.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Reciprocal.cs" Link="Desktop/AllocationWorkspaceViewModel.Reciprocal.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ResourceWorkspaceViewModel*.cs" Link="Desktop/%(Filename)%(Extension)" />
     <Compile Include="../../src/Valdrio.Desktop/WorkspaceDialogContracts.cs" Link="Desktop/WorkspaceDialogContracts.cs" />
   </ItemGroup>
@@ -43,6 +44,9 @@
              CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../../reference/t02a-fx-cases.json"
              Link="reference/t02a-fx-cases.json"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../specification/v0.4/casos/casos_metodologicos.json"
+             Link="reference/t10-cases.json"
              CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
