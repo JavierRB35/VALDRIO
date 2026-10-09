@@ -14,3 +14,5 @@
 ## Garantías y pruebas adicionales de integración
 Se añaden pruebas de mutación `ClassifyBatch` para actualización masiva, reclasificación posterior, conservación y rechazo de alteraciones de importes. La lectura de estudios antiguos conserva `Unclassified` hasta que el usuario confirma el cierre, evitando migraciones implícitas.
 El cierre de clasificación se materializa antes del cierre del reparto en **dos transacciones auditadas consecutivas**, porque ya existen dos servicios de guardado independientes. Si falla el cierre del reparto, las suposiciones fijas quedan guardadas en la etapa aún abierta y el usuario puede modificarlas; no se proclama atomicidad entre ambas fases.
+
+Las revisiones que cambian solamente el comportamiento sin cambiar importes/rutas no invalidan las asignaciones absolutas: `ResourceHistory.EconomicRevision` conserva la revisión de los datos monetarios o de destino. La revisión general del estudio, el recibo de cambios y la huella económica del snapshot siguen reflejando las clasificaciones nuevas.

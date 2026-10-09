@@ -12,6 +12,7 @@ public sealed partial class T06ImportConfirmationTests
         var w = await ImportedResources(file, "Amount;Ignored;Account\n100;x;00001\n200;y;00002");
         var company = w.Study.CompanyId; var study = w.Study.Id;
         var original = w.Resources.ToDictionary(r => r.Id, r => r.Parts.Single());
+        var economicRevision = w.EconomicRevision;
         var fixedDefault = new ResourceClassification(ResourceBehavior.AssumedFixed, null,
             ResourceCostLayer.Unclassified, ResourceCapacityTreatment.None, null);
         var replacements = w.Resources.Select(r => new ResourcePartReplacement(r.Id,
@@ -22,6 +23,7 @@ public sealed partial class T06ImportConfirmationTests
         w = file.Resources.ReadResources(company, study);
         Assert.IsTrue(w.Resources.All(r => r.Parts.Single().Classification.Behavior == ResourceBehavior.AssumedFixed));
         Assert.AreEqual(300m, w.Preparation.Coverage.Sum(c => c.Effective.Amount));
+        Assert.AreEqual(economicRevision, w.EconomicRevision);
         Assert.IsTrue(w.Preparation.Coverage.All(c => c.Difference.Amount == 0m));
         foreach (var r in w.Resources)
         {
@@ -48,6 +50,7 @@ public sealed partial class T06ImportConfirmationTests
         w = file.Resources.ReadResources(company, study);
         Assert.IsTrue(w.Resources.All(r => r.Parts.Single().Classification.Behavior == ResourceBehavior.AssumedFixed));
         Assert.AreEqual(3, file.Resources.ReadResourceHistory(company, study).Count);
+        Assert.AreEqual(economicRevision, w.EconomicRevision);
         Assert.AreEqual(300m, w.Preparation.Coverage.Sum(c => c.Effective.Amount));
     }
 
