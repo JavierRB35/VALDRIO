@@ -122,6 +122,8 @@ public static class SecondaryAllocationService
         ArgumentNullException.ThrowIfNull(precision);
         if (!primary.IsComplete)
             throw Error("SECONDARY_PRIMARY_INCOMPLETE", "Secondary.PrimaryIncomplete");
+        if (!StringComparer.Ordinal.Equals(primary.PolicyVersion, precision.Version))
+            throw Error("SECONDARY_PRECISION_POLICY_INVALID", "Secondary.PrecisionMismatch");
         var factor = ReciprocalFactorization.Prepare(graph, cancellation);
         var auxIds = factor.AuxiliaryIds.ToArray();
         var terminalIds = factor.TerminalIds.ToArray();
