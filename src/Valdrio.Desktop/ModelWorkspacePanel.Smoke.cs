@@ -150,6 +150,9 @@ public partial class ModelWorkspacePanel
         Check(!vm.Current.Structure.Nodes.Any(n => original.Structure.Nodes.Any(old => old.Id == n.Id)) && vm.Current.Structure.Pools.All(p => vm.Current.Structure.Nodes.Any(n => n.Id == p.NodeId)), "clone node IDs remapped");
         Check(RoleBox.IsEnabled && PoolBox.IsEnabled && !CloneToEditNodesButton.IsVisible,
             "draft clone unlocks both principal/auxiliary and pool description");
+        // Reactivate the master; its current name remains distinct from frozen publication.
+        Select(MasterBox, vm.Centers.Single(x => x.Value.Code == "PRENSA-001"));
+        await Click(ToggleCenterButton);
         var clonedMaintenance = vm.Nodes.Single(n => n.Node.Code == "MANT");
         NodeSummary.SetCurrentValue(DataGrid.SelectedItemProperty, clonedMaintenance);
         NodeSummary.GetBindingExpression(DataGrid.SelectedItemProperty)!.UpdateSource();
@@ -169,9 +172,6 @@ public partial class ModelWorkspacePanel
             original.Structure.Pools.Single(p =>
                 p.NodeId == original.Structure.Nodes.Single(n => n.Code == "MANT").Id).Description == "MANT driver h",
             "original published role and pool description remain frozen");
-        // Reactivate the master; its current name remains distinct from frozen publication.
-        Select(MasterBox, vm.Centers.Single(x => x.Value.Code == "PRENSA-001"));
-        await Click(ToggleCenterButton);
         Text(DescriptionBox, "Clone editable");
         pending.Choices.Enqueue(PendingEditChoice.Cancel);
         files.Paths.Enqueue(path);
