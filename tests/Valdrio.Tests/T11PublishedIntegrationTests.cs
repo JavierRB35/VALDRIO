@@ -135,7 +135,7 @@ public sealed partial class T06ImportConfirmationTests
     }
 
     [TestMethod]
-    public async Task T11_TwoComponentGroupsKeepFixedAndVariableCostsInTheirOwnFinalDestinations()
+    public async Task T11_TwoComponentGroupsRouteEachPartToItsOwnPrincipalWithoutMixing()
     {
         using var file = Baseline();
         var w = RouteForKey(file, await ImportedResources(file));
