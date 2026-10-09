@@ -330,4 +330,25 @@ public sealed class T11SecondaryAllocationTests
             SecondaryAllocationService.ContributingSecondaryKeyVersions(graph, rules, c, P2).ToArray());
     }
 
+    [TestMethod]
+    public void NinetySevenTerminalsShareOneInternalQuantumWithoutMoneyCreation()
+    {
+        var terminals = Enumerable.Range(0, 97)
+            .Select(i => Id((200000 + i).ToString("D12"))).ToArray();
+        var routes = Enumerable.Repeat(1m / 97m, 97).ToArray();
+        routes[^1] = 1m - routes.Take(96).Sum();
+        var graph = new ReciprocalInput([A.ToString()],
+            terminals.Select(id => id.ToString()).ToArray(), [[0m]], [routes], false);
+        var positive = SecondaryAllocationService.Calculate(
+            Source(Primary(555, A, 0.00000001m)), graph, Precision);
+        var negative = SecondaryAllocationService.Calculate(
+            Source(Primary(555, A, -0.00000001m)), graph, Precision);
+        Assert.AreEqual(0.00000001m, positive.Facts.Sum(f => f.PostedAmount.Amount));
+        Assert.AreEqual(-0.00000001m, negative.Facts.Sum(f => f.PostedAmount.Amount));
+        Assert.AreEqual(1, positive.Facts.Count(f => f.PostedAmount.Amount != 0m));
+        Assert.AreEqual(1, negative.Facts.Count(f => f.PostedAmount.Amount != 0m));
+        Assert.IsTrue(positive.Reconciliations.All(r => r.Difference.Amount == 0m));
+        Assert.IsTrue(negative.Reconciliations.All(r => r.Difference.Amount == 0m));
+    }
+
 }
