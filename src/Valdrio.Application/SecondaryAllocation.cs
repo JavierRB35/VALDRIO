@@ -168,14 +168,26 @@ public static class SecondaryAllocationService
                 primary.Currency, primary.PolicyVersion, filteredFacts, filteredParts, [], [], []);
             var calculated = Calculate(subgroup, graph, precision, cancellation);
             posted.AddRange(calculated.Facts);
-            var routeKeys = workspace.Configuration.SecondaryRules.Where(r => r.IsActive &&
-                    StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, group.Key))
-                .Select(r => r.KeyVersionId).Distinct().Order().ToArray();
-            links.AddRange(calculated.ExplanationLinks.Select(l => l with
+            // Only list keys on a directed route that can contribute to
+            // THIS selected principal, never all keys in the routing group.
+            var activeRules = workspace.Configuration.SecondaryRules.Where(r => r.IsActive &&
+                StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, group.Key)).ToArray();
+            var routeKeyCache = new Dictionary<(EntityId, EntityId), IReadOnlyList<EntityId>>();
+            foreach (var link in calculated.ExplanationLinks)
             {
-                ComponentRoutingGroup = group.Key,
-                SecondaryKeyVersionIds = FrozenList.Copy(routeKeys)
-            }));
+                var pair = (link.PrimaryNodeId, link.TerminalNodeId);
+                if (!routeKeyCache.TryGetValue(pair, out var routeKeys))
+                {
+                    routeKeys = ContributingSecondaryKeyVersions(graph, activeRules,
+                        link.PrimaryNodeId, link.TerminalNodeId);
+                    routeKeyCache.Add(pair, routeKeys);
+                }
+                links.Add(link with
+                {
+                    ComponentRoutingGroup = group.Key,
+                    SecondaryKeyVersionIds = routeKeys
+                });
+            }
             reconciliations.AddRange(calculated.Reconciliations);
             groupSolutions.Add(new(group.Key, calculated.Circulation));
         }
@@ -196,6 +208,55 @@ public static class SecondaryAllocationService
             aggregate, BuildResourceBridges(primary, canonicalFacts, precision),
             groupSolutions);
 
+    }
+
+    private static IReadOnlyList<EntityId> ContributingSecondaryKeyVersions(
+        ReciprocalInput graph, IReadOnlyList<SecondaryRule> rules,
+        EntityId origin, EntityId terminal)
+    {
+        var ids = graph.AuxiliaryIds;
+        var startingIndex = Array.FindIndex(ids, id => id == origin.ToString());
+        var destinationIndex = Array.FindIndex(graph.TerminalIds,
+            id => id == terminal.ToString());
+        if (startingIndex < 0 || destinationIndex < 0) return [];
+        var n = ids.Length;
+        // Reverse reachability to the specific principal, not just to any
+        // terminal, eliminates routes that cannot explain the selected cost.
+        var reachesDestination = new bool[n];
+        for (var i = 0; i < n; i++)
+            reachesDestination[i] = graph.B[i][destinationIndex] > 0m;
+        bool changed;
+        do
+        {
+            changed = false;
+            for (var i = 0; i < n; i++)
+                if (!reachesDestination[i])
+                    for (var j = 0; j < n; j++)
+                        if (graph.Q[i][j] > 0m && reachesDestination[j])
+                        {
+                            reachesDestination[i] = changed = true;
+                            break;
+                        }
+        } while (changed);
+        if (!reachesDestination[startingIndex]) return [];
+        var visited = new bool[n];
+        var queue = new Queue<int>();
+        visited[startingIndex] = true;
+        queue.Enqueue(startingIndex);
+        while (queue.Count != 0)
+        {
+            var source = queue.Dequeue();
+            for (var j = 0; j < n; j++)
+                if (!visited[j] && graph.Q[source][j] > 0m && reachesDestination[j])
+                {
+                    visited[j] = true;
+                    queue.Enqueue(j);
+                }
+        }
+        var keyByNode = rules.ToDictionary(r => r.AuxiliaryNodeId.ToString(),
+            r => r.KeyVersionId, StringComparer.Ordinal);
+        return FrozenList.Copy(Enumerable.Range(0, n).Where(i => visited[i])
+            .Select(i => keyByNode[ids[i]]).Distinct().Order());
     }
 
     private static ReciprocalSolution AggregateCirculation(
