@@ -10,6 +10,8 @@ public sealed record SecondaryAllocationRow(
     EntityId ResourceId, EntityId PartId, EntityId TerminalNodeId,
     string Source, string Destination, string Amount, string Behavior);
 
+public sealed record SecondaryGroupRow(string Source, string Group);
+
 public sealed record SecondaryBridgeRow(
     string Resource, string Effective, string Direct, string Excluded, string Terminal, string Difference);
 
@@ -21,6 +23,23 @@ public sealed partial class AllocationWorkspaceViewModel
     private bool secondaryCalculated;
     public ObservableCollection<SecondaryAllocationRow> SecondaryResults { get; } = [];
     public ObservableCollection<SecondaryBridgeRow> SecondaryBridges { get; } = [];
+    public ObservableCollection<SecondaryGroupRow> SecondaryGroupAssignments { get; } = [];
+    private EntityId? secondaryGroupPart;
+    private string secondaryGroupName = "all";
+    public EntityId? SecondaryGroupPart { get => secondaryGroupPart;
+        set { if (SetProperty(ref secondaryGroupPart, value)) Refresh(); } }
+    public string SecondaryGroupName { get => secondaryGroupName;
+        set { if (SetProperty(ref secondaryGroupName, value ?? "all")) Refresh(); } }
+    public IReadOnlyList<ResourceChoice<string>> SecondaryGroupChoices =>
+        (workspace?.Configuration.SecondaryRules.Where(r => r.IsActive)
+            .Select(r => r.ComponentRoutingGroup).Append("all")
+            .Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)
+            .Select(g => new ResourceChoice<string>(g,
+                g == "all" ? this["AllComponents"] : g)).ToArray()) ?? [];
+    public IAsyncRelayCommand SaveSecondaryGroupCommand { get; private set; } = null!;
+    public bool CanSaveSecondaryGroup => CanEditSecondaryConfiguration && SecondaryGroupPart.HasValue &&
+        SecondaryGroupChoices.Any(g => g.Value == SecondaryGroupName);
+
     public ObservableCollection<ReciprocalCheckRow> SecondaryCirculation { get; } = [];
     public string SecondarySummary { get; private set; } = "";
     public string SecondaryDiagnostic { get; private set; } = "";
@@ -43,22 +62,52 @@ public sealed partial class AllocationWorkspaceViewModel
     public string SecondaryState => this[IsSecondaryClosed ? "SecondaryClosedState" : "SecondaryOpenState"];
     public string SecondaryToggleLabel => this[IsSecondaryClosed ? "ReopenSecondary" : "CloseSecondary"];
 
-    private IReadOnlyList<CalculationNodeDefinition> MissingSecondaryNodes()
+    private IReadOnlyList<(string Group, CalculationNodeDefinition Node)> MissingSecondaryNodes()
     {
         if (workspace is null) return [];
         var model = workspace.Resources.Model.Structure;
-        return model.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary &&
-            !workspace.Configuration.SecondaryRules.Any(r => r.IsActive && r.AuxiliaryNodeId == n.Id &&
-                StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, "all") &&
-                workspace.Keys.Any(k => k.Id == r.KeyVersionId && k.Status == ModelStatus.Published &&
-                    k.Stage == AllocationStage.Secondary))).OrderBy(n => n.Id).ToArray();
+        var usedGroups = RequiredSecondaryGroups();
+        return usedGroups.SelectMany(group => model.Nodes.Where(n =>
+            n.IsActive && n.Role == NodeRole.Auxiliary &&
+            !workspace.Configuration.SecondaryRules.Any(r => r.IsActive &&
+                r.AuxiliaryNodeId == n.Id &&
+                StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, group) &&
+                workspace.Keys.Any(k => k.Id == r.KeyVersionId &&
+                    k.Status == ModelStatus.Published && k.Stage == AllocationStage.Secondary)))
+            .Select(node => (Group: group, Node: node)))
+            .OrderBy(issue => issue.Group, StringComparer.Ordinal)
+            .ThenBy(issue => issue.Node.Id).ToArray();
     }
+    private IReadOnlyList<string> RequiredSecondaryGroups()
+    {
+        if (workspace is null) return [];
+        var map = (workspace.Configuration.SecondaryPartRoutingGroups ?? [])
+            .ToDictionary(p => p.PartId, p => p.ComponentRoutingGroup);
+        try
+        {
+            var primary = PrimaryAllocationService.Calculate(workspace);
+            return primary.Facts.Select(f => map.TryGetValue(f.PartId, out var group) ? group : "all")
+                .Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+        }
+        catch (DomainRuleException) { return ["all"]; }
+    }
+
+    private Task SaveSecondaryPartGroupAsync() => CommitConfig(c =>
+    {
+        if (!SecondaryGroupPart.HasValue || !SecondaryGroupChoices.Any(g => g.Value == SecondaryGroupName))
+            throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
+        var existing = c.SecondaryPartRoutingGroups ?? [];
+        var groups = existing.Where(g => g.PartId != SecondaryGroupPart.Value)
+            .Concat(SecondaryGroupName == "all" ? [] :
+                [new SecondaryPartRoutingGroup(SecondaryGroupPart.Value, SecondaryGroupName)])
+            .ToArray();
+        return c.WithSecondaryPartRoutingGroups(groups);
+    }, true);
+
     // Assignment completeness is intentionally distinct from mathematical feasibility:
     // complete but closed/unstable graphs must still allow Calculate to report the error.
     public bool CanCalculateSecondary => !busy && !IsDirty && CanManageSecondary && primaryComplete &&
         workspace is not null &&
-        !workspace.Configuration.SecondaryRules.Any(r => r.IsActive &&
-            !StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, "all")) &&
         MissingSecondaryNodes().Count == 0;
 
     private void RebuildSecondary()
@@ -67,6 +116,7 @@ public sealed partial class AllocationWorkspaceViewModel
         secondaryCalculated = false;
         SecondaryResults.Clear();
         SecondaryBridges.Clear();
+        SecondaryGroupAssignments.Clear();
         SecondaryCirculation.Clear();
         SelectedSecondaryResultRow = null;
         SecondaryExplanation = "";
@@ -75,6 +125,13 @@ public sealed partial class AllocationWorkspaceViewModel
             SecondarySummary = "";
             SecondaryDiagnostic = this["SecondaryNeedStudy"];
             return;
+        }
+        foreach (var part in Parts)
+        {
+            var group = workspace.Configuration.SecondaryPartRoutingGroups?
+                .FirstOrDefault(g => g.PartId == part.Value)?.ComponentRoutingGroup ?? "all";
+            SecondaryGroupAssignments.Add(new(part.Label,
+                group == "all" ? this["AllComponents"] : group));
         }
         if (IsSecondaryClosed)
         {
@@ -85,15 +142,10 @@ public sealed partial class AllocationWorkspaceViewModel
         }
         var missing = MissingSecondaryNodes();
         SecondarySummary = this["SecondaryOpenState"];
-        var customGroups = workspace.Configuration.SecondaryRules.Where(r => r.IsActive &&
-            !StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, "all"))
-            .Select(r => r.ComponentRoutingGroup).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
         SecondaryDiagnostic = !primaryComplete ? this["SecondaryPrimaryIncomplete"] :
-            customGroups.Length != 0 ? string.Format(Format, Text("Secondary.GroupMappingRequired"),
-                string.Join(", ", customGroups)) :
             missing.Count == 0 ? this["SecondaryReady"] :
             string.Format(Format, this["SecondaryMissingAssignments"],
-                string.Join(", ", missing.Select(NodeLabel)));
+                string.Join(", ", missing.Select(x => x.Group + ": " + NodeLabel(x.Node))));
     }
 
     private void RestorePublishedSecondary()
