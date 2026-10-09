@@ -78,6 +78,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         RefreshCommand = new AsyncRelayCommand(async () => { if (await CanLeaveAsync()) await EnterAsync(true); }, () => !busy);
         CheckReciprocalCommand = new RelayCommand(CheckReciprocal, () => workspace is not null && !busy);
         CalculateSecondaryCommand = new RelayCommand(CalculateSecondary, () => CanCalculateSecondary);
+        ExplainSecondaryCommand = new RelayCommand(ShowSecondaryExplanation, () => SelectedSecondaryResultRow is not null);
         ToggleSecondaryCommand = new AsyncRelayCommand(ToggleSecondaryAsync,
             () => !busy && CanManagePrimary && !IsDirty && (IsSecondaryClosed || secondaryCalculated));
         SaveRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(false), () => CanSaveRule);
@@ -489,7 +490,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     {
         foreach (var command in new IRelayCommand?[] { DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
             SaveRuleCommand, RemoveRuleCommand, LoadRuleCommand, NewRuleCommand, SaveSecondaryCommand, LoadSecondaryCommand, NewSecondaryCommand,
-            RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CheckReciprocalCommand, CalculateSecondaryCommand, ToggleSecondaryCommand }) command?.NotifyCanExecuteChanged();
+            RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CheckReciprocalCommand, CalculateSecondaryCommand, ExplainSecondaryCommand, ToggleSecondaryCommand }) command?.NotifyCanExecuteChanged();
     }
     private void Refresh() { OnPropertyChanged(string.Empty); Commands(); }
     public void RefreshPresentation(bool value) { pseudo = value; Rebuild(); }
