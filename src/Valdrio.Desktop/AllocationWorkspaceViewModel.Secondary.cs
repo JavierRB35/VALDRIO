@@ -20,6 +20,7 @@ public sealed record SecondaryBridgeRow(
 public sealed partial class AllocationWorkspaceViewModel
 {
     private SecondaryAllocationResult? secondaryPreview;
+    private IReadOnlyList<string> requiredSecondaryGroups = [];
     private bool secondaryCalculated;
     public ObservableCollection<SecondaryAllocationRow> SecondaryResults { get; } = [];
     public ObservableCollection<SecondaryBridgeRow> SecondaryBridges { get; } = [];
@@ -75,7 +76,7 @@ public sealed partial class AllocationWorkspaceViewModel
     {
         if (workspace is null) return [];
         var model = workspace.Resources.Model.Structure;
-        var usedGroups = RequiredSecondaryGroups();
+        var usedGroups = requiredSecondaryGroups;
         return usedGroups.SelectMany(group => model.Nodes.Where(n =>
             n.IsActive && n.Role == NodeRole.Auxiliary &&
             !workspace.Configuration.SecondaryRules.Any(r => r.IsActive &&
@@ -87,7 +88,7 @@ public sealed partial class AllocationWorkspaceViewModel
             .OrderBy(issue => issue.Group, StringComparer.Ordinal)
             .ThenBy(issue => issue.Node.Id).ToArray();
     }
-    private IReadOnlyList<string> RequiredSecondaryGroups()
+    private IReadOnlyList<string> DetermineRequiredSecondaryGroups()
     {
         if (workspace is null) return [];
         var map = (workspace.Configuration.SecondaryPartRoutingGroups ?? [])
@@ -122,6 +123,7 @@ public sealed partial class AllocationWorkspaceViewModel
 
     private void RebuildSecondary()
     {
+        requiredSecondaryGroups = DetermineRequiredSecondaryGroups();
         secondaryPreview = null;
         secondaryCalculated = false;
         SecondaryResults.Clear();
