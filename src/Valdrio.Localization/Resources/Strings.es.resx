@@ -1244,4 +1244,5 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.SecondaryBehaviorVariable" xml:space="preserve"><value>Variable</value></data>
   <data name="AllocationUI.SecondaryBehaviorMixedPending" xml:space="preserve"><value>Mixto — pendiente de clasificación</value></data>
   <data name="AllocationUI.SecondaryPublishedMissing" xml:space="preserve"><value>El reparto secundario cerrado no tiene un libro de resultados publicado válido. Revisa el historial del estudio antes de utilizar estos totales.</value></data>
+  <data name="Secondary.MissingAssignments" xml:space="preserve"><value>Estos nodos auxiliares no tienen una clave de reparto secundario publicada para el grupo «all»: {0}. Asigna una clave a cada auxiliar indicado.</value></data>
 </root>
