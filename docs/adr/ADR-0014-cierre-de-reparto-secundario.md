@@ -17,7 +17,7 @@ Se mantiene el almacenamiento histórico de cambios en `AllocationChangeReceipt`
 ## Riesgos y consecuencias
 
 - El hash es un **sello reproducible de estado**, complementado ahora por un recibo persistido de hechos terminales y explicaciones; falta ejecutar y aceptar las pruebas nativas de cierre/replay antes de T12.
-- No existe mapeo de parte de recurso a `ComponentRoutingGroup`; no se permite ejecutar grupos especializados hasta que ese contrato exista. Se soporta el grupo `all` con rutas recíprocas.
+- Se ha incorporado mapeo explícito `SecondaryPartRoutingGroup(PartId, ComponentRoutingGroup)` a la configuración, opcional y omitido en snapshots históricos; la ausencia equivale a `all`. Cada grupo utilizado se resuelve con claves completas para todos los auxiliares, y los importes finales se agregan por parte y destino; nunca se confunden las matrices de factores entre grupos.
 - No se admite el cierre si T09 no está completo o si T10 rechaza el grafo.
 - El cálculo y los tests C# deben ejecutarse en Windows/.NET 10, con métricas de estabilidad y memoria. Sin ello, ADR no pasa a Accepted.
 - Los workflows de GitHub Actions continúan manuales y sin consumo autorizado.
