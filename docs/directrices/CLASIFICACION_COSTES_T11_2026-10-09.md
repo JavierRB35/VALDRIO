@@ -16,3 +16,6 @@ Se añaden pruebas de mutación `ClassifyBatch` para actualización masiva, recl
 El cierre de clasificación se materializa antes del cierre del reparto en **dos transacciones auditadas consecutivas**, porque ya existen dos servicios de guardado independientes. Si falla el cierre del reparto, las suposiciones fijas quedan guardadas en la etapa aún abierta y el usuario puede modificarlas; no se proclama atomicidad entre ambas fases.
 
 Las revisiones que cambian solamente el comportamiento sin cambiar importes/rutas no invalidan las asignaciones absolutas: `ResourceHistory.EconomicRevision` conserva la revisión de los datos monetarios o de destino. La revisión general del estudio, el recibo de cambios y la huella económica del snapshot siguen reflejando las clasificaciones nuevas.
+
+## Continuación: fijo revisado
+El selector masivo incorpora «Marcar fijo revisado» junto a «Marcar variable». Ambos exigen unidad de actividad, periodo del estudio y un rango explícito, almacenando `ResourceBehaviorContext`. «Volver a fijo por defecto» mantiene un supuesto sin verificar y retira el contexto, sin alterar importe, ruta, capa ni capacidad. La secuencia de revisiones queda incluida en la prueba de integración escrita, todavía sin ejecutar.

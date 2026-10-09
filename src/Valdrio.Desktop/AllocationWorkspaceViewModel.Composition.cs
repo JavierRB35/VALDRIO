@@ -45,11 +45,13 @@ public sealed partial class AllocationWorkspaceViewModel
     }
     public IAsyncRelayCommand CompositionFixedCommand { get; private set; } = null!;
     public IAsyncRelayCommand CompositionVariableCommand { get; private set; } = null!;
+    public IAsyncRelayCommand CompositionReviewedFixedCommand { get; private set; } = null!;
     public IAsyncRelayCommand CompositionMixedCommand { get; private set; } = null!;
     private void InitializeCompositionCommands()
     {
         CompositionFixedCommand = new AsyncRelayCommand(() => UpdateCompositionAsync(ResourceBehavior.AssumedFixed), () => CanEditClassification && CompositionSelection.Length > 0);
         CompositionVariableCommand = new AsyncRelayCommand(() => UpdateCompositionAsync(ResourceBehavior.Variable), () => CanEditClassification && CompositionSelection.Length > 0);
+        CompositionReviewedFixedCommand = new AsyncRelayCommand(() => UpdateCompositionAsync(ResourceBehavior.Fixed), () => CanEditClassification && CompositionSelection.Length > 0);
         CompositionMixedCommand = new AsyncRelayCommand(() => UpdateCompositionAsync(ResourceBehavior.MixedPending), () => CanEditClassification && CompositionSelection.Length > 0);
     }
     private void CompositionSelectionChanged(object? sender, PropertyChangedEventArgs e)
@@ -92,7 +94,7 @@ public sealed partial class AllocationWorkspaceViewModel
         var ids = CompositionSelection.Select(r => r.Id).ToHashSet();
         if (ids.Count == 0) return;
         ResourceBehaviorContext? context = null;
-        if (behavior == ResourceBehavior.Variable)
+        if (behavior is ResourceBehavior.Fixed or ResourceBehavior.Variable)
         {
             if (CompositionUnit is not { } unit || string.IsNullOrWhiteSpace(CompositionMinimum) ||
                 string.IsNullOrWhiteSpace(CompositionMaximum))

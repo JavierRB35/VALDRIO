@@ -516,7 +516,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             SaveRuleCommand, RemoveRuleCommand, LoadRuleCommand, NewRuleCommand, SaveSecondaryCommand, LoadSecondaryCommand, NewSecondaryCommand,
             RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CheckReciprocalCommand, CalculateSecondaryCommand, CancelSecondaryCommand, ExplainSecondaryCommand, ToggleSecondaryCommand,
             SaveSecondaryGroupCommand, ClearObsoleteSecondaryGroupsCommand, AssignSecondaryKeyToMissingCommand,
-            CompositionFixedCommand, CompositionVariableCommand, CompositionMixedCommand }) command?.NotifyCanExecuteChanged();
+            CompositionFixedCommand, CompositionVariableCommand, CompositionReviewedFixedCommand, CompositionMixedCommand }) command?.NotifyCanExecuteChanged();
     }
     private void Refresh() { OnPropertyChanged(string.Empty); Commands(); }
     public void RefreshPresentation(bool value) { pseudo = value; Rebuild(); }

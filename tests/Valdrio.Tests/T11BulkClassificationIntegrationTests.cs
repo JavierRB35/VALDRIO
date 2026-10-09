@@ -37,6 +37,13 @@ public sealed partial class T06ImportConfirmationTests
         var unit = w.Model.DriverUnits.First().Id;
         var context = new ResourceBehaviorContext(unit, w.Study.PeriodStart.Value,
             w.Study.PeriodEnd.Value, new Quantity(0m, unit, w.Precision), new Quantity(1000m, unit, w.Precision));
+        var reviewedFixed = fixedDefault with { Behavior = ResourceBehavior.Fixed, Context = context };
+        file.Resources.ChangeResources(Mutation(w, ResourceMutationKind.ClassifyBatch,
+            replacements: [new(target.Id, [target.Parts.Single().WithClassification(reviewedFixed)])]));
+        w = file.Resources.ReadResources(company, study);
+        Assert.AreEqual(ResourceBehavior.Fixed, w.Resources.Single(r => r.Id == target.Id).Parts.Single().Classification.Behavior);
+        Assert.IsNotNull(w.Resources.Single(r => r.Id == target.Id).Parts.Single().Classification.Context);
+        target = w.Resources.Single(r => r.Id == target.Id);
         var variable = fixedDefault with { Behavior = ResourceBehavior.Variable, Context = context };
         file.Resources.ChangeResources(Mutation(w, ResourceMutationKind.ClassifyBatch,
             replacements: [new(target.Id, [target.Parts.Single().WithClassification(variable)])]));
@@ -49,7 +56,7 @@ public sealed partial class T06ImportConfirmationTests
             replacements: [new(target.Id, [target.Parts.Single().WithClassification(fixedDefault)])]));
         w = file.Resources.ReadResources(company, study);
         Assert.IsTrue(w.Resources.All(r => r.Parts.Single().Classification.Behavior == ResourceBehavior.AssumedFixed));
-        Assert.AreEqual(3, file.Resources.ReadResourceHistory(company, study).Count);
+        Assert.AreEqual(4, file.Resources.ReadResourceHistory(company, study).Count);
         Assert.AreEqual(economicRevision, w.EconomicRevision);
         Assert.AreEqual(300m, w.Preparation.Coverage.Sum(c => c.Effective.Amount));
     }

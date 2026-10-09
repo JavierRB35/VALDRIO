@@ -85,7 +85,10 @@
         <TextBox Text="{Binding CompositionMaximum, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [CompositionMaximum]}"/>
        </StackPanel>
       </WrapPanel>
-      <Button Content="{Binding [CompositionMarkVariable]}" Command="{Binding CompositionVariableCommand}" Style="{StaticResource Button.Primary}" HorizontalAlignment="Left"/>
+      <WrapPanel>
+       <Button Content="{Binding [CompositionMarkVariable]}" Command="{Binding CompositionVariableCommand}" Style="{StaticResource Button.Primary}" Margin="0,0,8,4"/>
+       <Button Content="{Binding [CompositionMarkReviewedFixed]}" Command="{Binding CompositionReviewedFixedCommand}" Margin="0,0,8,4"/>
+      </WrapPanel>
      </StackPanel>
      <TextBlock Text="{Binding [CompositionCloseHelp]}" TextWrapping="Wrap" Margin="0,12,0,0"/>
     </StackPanel>
