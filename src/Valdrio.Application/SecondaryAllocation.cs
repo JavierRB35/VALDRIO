@@ -210,7 +210,7 @@ public static class SecondaryAllocationService
 
     }
 
-    private static IReadOnlyList<EntityId> ContributingSecondaryKeyVersions(
+    public static IReadOnlyList<EntityId> ContributingSecondaryKeyVersions(
         ReciprocalInput graph, IReadOnlyList<SecondaryRule> rules,
         EntityId origin, EntityId terminal)
     {
