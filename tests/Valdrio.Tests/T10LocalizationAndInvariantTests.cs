@@ -17,7 +17,7 @@ public sealed class T10LocalizationAndInvariantTests
         var keys = new[]
         {
             "SchemaInvalid", "WeightInvalid", "SelfNotAllowed", "CoverageInvalid",
-            "ClosedComponent", "Singular", "Sensitive", "NegativeFactor",
+            "ClosedComponent", "Singular", "Sensitive", "SensitivePivot", "SensitiveAmplification", "NegativeFactor",
             "FactorDrift", "Residual", "NumericOverflow", "RhsInvalid", "AmplificationWarning"
         };
         foreach (var suffix in keys)
