@@ -1214,7 +1214,7 @@ Difference to distribute: {7}</value></data>
   <data name="Reciprocal.SensitivePivot" xml:space="preserve"><value>The reciprocal system is unstable near auxiliary {0}; normalized pivot: {1}.</value></data>
   <data name="Reciprocal.SensitiveAmplification" xml:space="preserve"><value>The reciprocal system is unstable; circulation amplification: {0}.</value></data>
   <data name="Secondary.PrimaryIncomplete" xml:space="preserve"><value>Finish all primary assignments before calculating the secondary allocation.</value></data>
-  <data name="Secondary.GroupMappingRequired" xml:space="preserve"><value>Custom secondary routing groups have no mapping from primary cost components. Assign all active auxiliaries to the 'all' group or define that mapping before calculation.</value></data>
+  <data name="Secondary.GroupMappingRequired" xml:space="preserve"><value>These secondary routing groups have no defined primary cost component mapping: {0}. Assign auxiliary keys to the 'all' group or define the group mapping before calculating.</value></data>
   <data name="Secondary.SourceInconsistent" xml:space="preserve"><value>The source {0} mixes incompatible economic classifications within one resource part.</value></data>
   <data name="Secondary.PrimaryNodeInvalid" xml:space="preserve"><value>The primary allocation has an unknown or inactive destination node: {0}.</value></data>
   <data name="Secondary.NumericOverflow" xml:space="preserve"><value>The secondary calculation exceeded the supported decimal range. Review the amounts and reciprocal amplification.</value></data>
