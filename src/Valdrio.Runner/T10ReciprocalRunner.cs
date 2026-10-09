@@ -63,7 +63,7 @@ internal static class T10ReciprocalRunner
             return 4;
         }
         catch (Exception ex) when (ex is IOException or JsonException or FormatException or
-            ArgumentException or OverflowException or InvalidOperationException)
+            ArgumentException or KeyNotFoundException or OverflowException or InvalidOperationException)
         {
             Console.Error.WriteLine("RECIPROCAL_INPUT_INVALID: " + ex.GetType().Name);
             return 3;
@@ -125,7 +125,7 @@ internal static class T10ReciprocalRunner
             return 4;
         }
         catch (Exception ex) when (ex is IOException or JsonException or FormatException or
-            ArgumentException or OverflowException or InvalidOperationException)
+            ArgumentException or KeyNotFoundException or OverflowException or InvalidOperationException)
         {
             Console.Error.WriteLine("RECIPROCAL_STUDY_INVALID: " + ex.GetType().Name);
             return 3;
