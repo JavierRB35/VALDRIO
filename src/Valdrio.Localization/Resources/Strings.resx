@@ -1239,4 +1239,8 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reopen secondary allocation</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explain selected cost</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Behavior</value></data>
+  <data name="AllocationUI.SecondaryBehaviorUnclassified" xml:space="preserve"><value>Unclassified</value></data>
+  <data name="AllocationUI.SecondaryBehaviorFixed" xml:space="preserve"><value>Fixed</value></data>
+  <data name="AllocationUI.SecondaryBehaviorVariable" xml:space="preserve"><value>Variable</value></data>
+  <data name="AllocationUI.SecondaryBehaviorMixedPending" xml:space="preserve"><value>Mixed — pending classification</value></data>
 </root>
