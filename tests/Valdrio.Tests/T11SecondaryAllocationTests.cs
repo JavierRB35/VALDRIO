@@ -399,4 +399,35 @@ public sealed class T11SecondaryAllocationTests
         Assert.AreEqual("PRECISION_POLICY_MISMATCH", failure.Diagnostic.Code);
     }
 
+    [TestMethod]
+    public void ReciprocalPassThroughDoesNotChangeBehaviorCostLayerOrCapacityTreatment()
+    {
+        var fixedCost = Primary(31, A, 100m, ResourceBehavior.Fixed) with
+        {
+            CostLayer = ResourceCostLayer.Structure,
+            CapacityTreatment = ResourceCapacityTreatment.AssessAtPool
+        };
+        var variableCost = Primary(32, B, 200m, ResourceBehavior.Variable) with
+        {
+            CostLayer = ResourceCostLayer.Commercial,
+            CapacityTreatment = ResourceCapacityTreatment.PeriodCost
+        };
+        var final = SecondaryAllocationService.Calculate(
+            Source(fixedCost, variableCost), Graph(), Precision);
+        Assert.IsTrue(final.IsComplete);
+        Assert.AreEqual(300m, final.Facts.Sum(f => f.PostedAmount.Amount));
+        Assert.IsTrue(final.Facts.Where(f => f.PartId == fixedCost.PartId)
+            .All(f => f.Behavior == ResourceBehavior.Fixed &&
+                f.CostLayer == ResourceCostLayer.Structure &&
+                f.CapacityTreatment == ResourceCapacityTreatment.AssessAtPool));
+        Assert.IsTrue(final.Facts.Where(f => f.PartId == variableCost.PartId)
+            .All(f => f.Behavior == ResourceBehavior.Variable &&
+                f.CostLayer == ResourceCostLayer.Commercial &&
+                f.CapacityTreatment == ResourceCapacityTreatment.PeriodCost));
+        Assert.AreEqual(100m, final.Facts.Where(f => f.PartId == fixedCost.PartId)
+            .Sum(f => f.PostedAmount.Amount));
+        Assert.AreEqual(200m, final.Facts.Where(f => f.PartId == variableCost.PartId)
+            .Sum(f => f.PostedAmount.Amount));
+    }
+
 }
