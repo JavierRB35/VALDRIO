@@ -113,7 +113,7 @@ public sealed partial class AllocationWorkspaceViewModel
             {
                 SecondaryResults.Add(new(fact.ResourceId, fact.PartId, fact.TerminalNodeId,
                     AccountLabel(origins[fact.ResourceId]), NodeLabel(nodes[fact.TerminalNodeId]),
-                    MoneyText(fact.PostedAmount), fact.Behavior.ToString()));
+                    MoneyText(fact.PostedAmount), this["SecondaryBehavior" + fact.Behavior]));
             }
             for (var i = 0; i < result.Circulation.AuxiliaryIds.Count; i++)
             {
@@ -154,7 +154,7 @@ public sealed partial class AllocationWorkspaceViewModel
             l.TerminalNodeId == row.TerminalNodeId);
         SecondaryExplanation = string.Join(Environment.NewLine, links.Select(l =>
             NodeLabel(nodes[l.PrimaryNodeId]) + " → " + NodeLabel(nodes[l.TerminalNodeId]) +
-            " · " + l.RawContribution.ToString("0.########", Format) +
+            " · " + l.RawContribution.ToString("0.########", Format) + " " + Currency +
             " · " + l.EffectiveShare.ToString("0.########", Format)));
         OnPropertyChanged(nameof(SecondaryExplanation));
     }
