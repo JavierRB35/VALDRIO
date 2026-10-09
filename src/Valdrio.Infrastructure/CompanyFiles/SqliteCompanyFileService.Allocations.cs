@@ -112,9 +112,37 @@ public sealed partial class SqliteCompanyFileService
                 var row = RequiredStudy(db, file.Id, request.StudyId); var before = Study(row);
                 var current = AllocationWorkspace(db, file, before);
                 var config = request.Configuration;
-                if (current.Configuration.PrimaryClosed && (config.PrimaryClosed || Json(config) != Json(current.Configuration.WithPrimaryClosed(false))))
-                    throw AllocationDiagnostics.Error("PRIMARY_CLOSED", "Allocation.PrimaryClosed");
+                var existing = current.Configuration;
+                if (existing.SecondaryClosed)
+                {
+                    // Reopen secondary first. No simultaneous edit and no implicit reopening primary.
+                    if (Json(config) != Json(existing.WithSecondaryClosed(false)))
+                        throw AllocationDiagnostics.Error("SECONDARY_CLOSED", "Secondary.Closed");
+                }
+                else if (existing.PrimaryClosed)
+                {
+                    if (!config.PrimaryClosed)
+                    {
+                        if (Json(config) != Json(existing.WithPrimaryClosed(false)))
+                            throw AllocationDiagnostics.Error("PRIMARY_CLOSED", "Allocation.PrimaryClosed");
+                    }
+                    else if (Json(new { existing.PrimaryRules, existing.ExplicitAssignments, existing.AbsoluteAssignments,
+                        existing.Descriptions }) != Json(new { config.PrimaryRules, config.ExplicitAssignments,
+                        config.AbsoluteAssignments, config.Descriptions }))
+                        throw AllocationDiagnostics.Error("PRIMARY_CLOSED", "Allocation.PrimaryClosed");
+                }
                 var referenced = AllocationWorkspaceRules.ValidateConfiguration(current.Resources, current.Keys, request);
+                if (config.SecondaryClosed)
+                {
+                    if (!config.PrimaryClosed || existing.SecondaryClosed)
+                        throw AllocationDiagnostics.Error("SECONDARY_CLOSE_INVALID", "Secondary.CloseInvalid");
+                    var proposed = new AllocationWorkspaceSnapshot(current.Resources, current.Keys,
+                        config, current.ConfigurationRevision);
+                    var calculated = Valdrio.Application.SecondaryAllocationService.Calculate(proposed, token);
+                    var expected = Valdrio.Application.SecondaryAllocationService.ResultFingerprint(calculated, config);
+                    if (!StringComparer.Ordinal.Equals(config.SecondaryCalculationHash, expected))
+                        throw AllocationDiagnostics.Error("SECONDARY_RESULT_STALE", "Secondary.ResultStale");
+                }
                 if (config.PrimaryClosed && (current.Resources.Origins.Count == 0 ||
                     !Valdrio.Application.PrimaryAllocationService.Calculate(new AllocationWorkspaceSnapshot(current.Resources, current.Keys, config, current.ConfigurationRevision)).IsComplete))
                     throw AllocationDiagnostics.Error("PRIMARY_INCOMPLETE", "AllocationUI.PrimaryIncomplete");
