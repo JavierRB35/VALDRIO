@@ -1247,4 +1247,11 @@ Difference to distribute: {7}</value></data>
   <data name="Secondary.MissingAssignments" xml:space="preserve"><value>These auxiliary nodes do not have a published secondary distribution key for the 'all' group: {0}. Assign a key to every listed auxiliary.</value></data>
   <data name="Secondary.PrecisionMismatch" xml:space="preserve"><value>The primary and secondary allocation precision policies differ. Recalculate the primary using the current study policy before continuing.</value></data>
   <data name="Secondary.ResourceBridgeInvalid" xml:space="preserve"><value>The resource {0} does not reconcile: terminal costs plus direct assignments, exclusions and pending amounts differ from its effective amount. Review primary allocation and resource preparation.</value></data>
+  <data name="AllocationUI.SecondaryBridgeTitle" xml:space="preserve"><value>Reconciliation by resource</value></data>
+  <data name="AllocationUI.SecondaryBridgeHelp" xml:space="preserve"><value>Effective cost = direct assignments + exclusions + terminal costs + pending amounts. The final difference must be zero. Auxiliary gross flows are informational only.</value></data>
+  <data name="AllocationUI.SecondaryBridgeEffective" xml:space="preserve"><value>Effective cost</value></data>
+  <data name="AllocationUI.SecondaryBridgeDirect" xml:space="preserve"><value>Direct to objects</value></data>
+  <data name="AllocationUI.SecondaryBridgeExcluded" xml:space="preserve"><value>Excluded</value></data>
+  <data name="AllocationUI.SecondaryBridgeTerminal" xml:space="preserve"><value>To principal nodes</value></data>
+  <data name="AllocationUI.SecondaryBridgeDifference" xml:space="preserve"><value>Difference</value></data>
 </root>
