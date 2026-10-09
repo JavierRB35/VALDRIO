@@ -78,4 +78,36 @@ public sealed class T11SecondaryAllocationTests
             SecondaryAllocationService.Calculate(Source(Primary(1, P1, 0m)), graph, Precision));
         Assert.AreEqual("GRAPH_CLOSED_COMPONENT", ex.Diagnostic.Code);
     }
+    [TestMethod]
+    public void ClosingSecondaryLocksPrimary_AndReopeningPrimaryDiscardsItsSeal()
+    {
+        var config = AllocationConfiguration.Empty;
+        var closed = config.WithSecondaryClosed(true, "sha256-example");
+        Assert.IsTrue(closed.PrimaryClosed);
+        Assert.IsTrue(closed.SecondaryClosed);
+        Assert.AreEqual("sha256-example", closed.SecondaryCalculationHash);
+        var reopenedSecondary = closed.WithSecondaryClosed(false);
+        Assert.IsTrue(reopenedSecondary.PrimaryClosed);
+        Assert.IsFalse(reopenedSecondary.SecondaryClosed);
+        Assert.IsNull(reopenedSecondary.SecondaryCalculationHash);
+        var reopenedPrimary = closed.WithPrimaryClosed(false);
+        Assert.IsFalse(reopenedPrimary.PrimaryClosed);
+        Assert.IsFalse(reopenedPrimary.SecondaryClosed);
+        Assert.IsNull(reopenedPrimary.SecondaryCalculationHash);
+        Assert.ThrowsExactly<DomainRuleException>(() =>
+            new AllocationConfiguration([], [], [], [], [], false, true, "invalid"));
+    }
+
+    [TestMethod]
+    public void CalculationFingerprintIsIndependentOfInputFactOrder()
+    {
+        var facts = new[] { Primary(2, B, 500m), Primary(1, A, 1000m),
+            Primary(3, P1, 2000m), Primary(4, P2, 3000m) };
+        var first = SecondaryAllocationService.Calculate(Source(facts), Graph(), Precision);
+        var second = SecondaryAllocationService.Calculate(Source(facts.Reverse().ToArray()), Graph(), Precision);
+        Assert.AreEqual(
+            SecondaryAllocationService.ResultFingerprint(first, AllocationConfiguration.Empty),
+            SecondaryAllocationService.ResultFingerprint(second, AllocationConfiguration.Empty));
+    }
+
 }
