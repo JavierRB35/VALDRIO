@@ -1246,4 +1246,5 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.SecondaryPublishedMissing" xml:space="preserve"><value>The closed secondary calculation has no valid published ledger. Review the study history before relying on these totals.</value></data>
   <data name="Secondary.MissingAssignments" xml:space="preserve"><value>These auxiliary nodes do not have a published secondary distribution key for the 'all' group: {0}. Assign a key to every listed auxiliary.</value></data>
   <data name="Secondary.PrecisionMismatch" xml:space="preserve"><value>The primary and secondary allocation precision policies differ. Recalculate the primary using the current study policy before continuing.</value></data>
+  <data name="Secondary.ResourceBridgeInvalid" xml:space="preserve"><value>The resource {0} does not reconcile: terminal costs plus direct assignments, exclusions and pending amounts differ from its effective amount. Review primary allocation and resource preparation.</value></data>
 </root>
