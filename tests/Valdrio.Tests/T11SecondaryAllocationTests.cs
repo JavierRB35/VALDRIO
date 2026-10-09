@@ -209,4 +209,27 @@ public sealed class T11SecondaryAllocationTests
         Assert.AreEqual("SECONDARY_RESOURCE_BRIDGE_INVALID", failure.Diagnostic.Code);
     }
 
+    [TestMethod]
+    public void HistoricalConfigurationsOmitNewGroupField_AndExplicitGroupsRoundTrip()
+    {
+        var legacy = CanonicalSnapshotJson.Serialize(AllocationConfiguration.Empty);
+        Assert.IsFalse(legacy.Contains("SecondaryPartRoutingGroups", StringComparison.Ordinal));
+        Assert.AreEqual(legacy, CanonicalSnapshotJson.Serialize(
+            CanonicalSnapshotJson.Deserialize<AllocationConfiguration>(legacy)));
+
+        var part = Id("000000001234");
+        var configured = AllocationConfiguration.Empty.WithSecondaryPartRoutingGroups(
+            [new SecondaryPartRoutingGroup(part, "operations")]);
+        var json = CanonicalSnapshotJson.Serialize(configured);
+        Assert.IsTrue(json.Contains("SecondaryPartRoutingGroups", StringComparison.Ordinal));
+        var replay = CanonicalSnapshotJson.Deserialize<AllocationConfiguration>(json);
+        Assert.AreEqual(json, CanonicalSnapshotJson.Serialize(replay));
+        Assert.AreEqual("operations",
+            replay.SecondaryPartRoutingGroups!.Single().ComponentRoutingGroup);
+        Assert.AreEqual("operations",
+            configured.WithPrimaryClosed(true).SecondaryPartRoutingGroups!.Single().ComponentRoutingGroup);
+        Assert.AreEqual("operations",
+            configured.WithSecondaryClosed(true, "example").SecondaryPartRoutingGroups!.Single().ComponentRoutingGroup);
+    }
+
 }
