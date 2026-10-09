@@ -1239,4 +1239,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reabrir reparto secundario</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explicar coste seleccionado</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Comportamiento</value></data>
+  <data name="AllocationUI.SecondaryBehaviorUnclassified" xml:space="preserve"><value>Sin clasificar</value></data>
+  <data name="AllocationUI.SecondaryBehaviorFixed" xml:space="preserve"><value>Fijo</value></data>
+  <data name="AllocationUI.SecondaryBehaviorVariable" xml:space="preserve"><value>Variable</value></data>
+  <data name="AllocationUI.SecondaryBehaviorMixedPending" xml:space="preserve"><value>Mixto — pendiente de clasificación</value></data>
 </root>
