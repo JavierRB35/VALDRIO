@@ -27,7 +27,16 @@ public sealed partial class AllocationWorkspaceViewModel
     private EntityId? secondaryGroupPart;
     private string secondaryGroupName = "all";
     public EntityId? SecondaryGroupPart { get => secondaryGroupPart;
-        set { if (SetProperty(ref secondaryGroupPart, value)) Refresh(); } }
+        set
+        {
+            if (SetProperty(ref secondaryGroupPart, value))
+            {
+                SecondaryGroupName = value is { } id ?
+                    workspace?.Configuration.SecondaryPartRoutingGroups?
+                        .FirstOrDefault(g => g.PartId == id)?.ComponentRoutingGroup ?? "all" : "all";
+                Refresh();
+            }
+        } }
     public string SecondaryGroupName { get => secondaryGroupName;
         set { if (SetProperty(ref secondaryGroupName, value ?? "all")) Refresh(); } }
     public IReadOnlyList<ResourceChoice<string>> SecondaryGroupChoices =>
