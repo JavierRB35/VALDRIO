@@ -22,6 +22,8 @@ public sealed record SecondaryTerminalTotal(
 public sealed record SecondaryPartReconciliation(
     EntityId ResourceId, EntityId PartId, Money PrimaryInput, Money FinalOutput, Money Difference);
 
+public sealed record SecondaryAuxiliaryGross(string AuxiliaryId, decimal GrossAmount);
+
 // Frozen publication of the economically adjudicated terminal facts at a
 // particular study input revision. Reciprocal flows remain separate metrics.
 public sealed record SecondaryCalculationPublication(
@@ -31,6 +33,7 @@ public sealed record SecondaryCalculationPublication(
     IReadOnlyList<SecondaryTerminalTotal> Totals,
     IReadOnlyList<SecondaryPartReconciliation> Reconciliations,
     IReadOnlyList<SecondaryExplanationLink> ExplanationLinks,
+    IReadOnlyList<SecondaryAuxiliaryGross> AuxiliaryGrossFlows,
     decimal MaxCirculationAmplification, decimal MinNormalizedPivot)
 {
     public IReadOnlyList<SecondaryAllocationFact> ByTerminal(EntityId node) =>
@@ -196,6 +199,8 @@ public static class SecondaryAllocationService
             calculated.Circulation.PolicyVersion, calculated.Primary.PolicyVersion,
             FrozenList.Copy(calculated.Facts), FrozenList.Copy(calculated.Totals),
             FrozenList.Copy(calculated.Reconciliations), FrozenList.Copy(calculated.ExplanationLinks),
+            FrozenList.Copy(calculated.Circulation.AuxiliaryIds.Select((id, i) =>
+                new SecondaryAuxiliaryGross(id, calculated.Circulation.Gross[i]))),
             calculated.Circulation.MaxCirculationAmplification,
             calculated.Circulation.MinNormalizedPivot);
     }
