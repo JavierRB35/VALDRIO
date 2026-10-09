@@ -39,7 +39,8 @@ public sealed class AllocationStudySnapshotInput : IStudySnapshotInput
             revision = after.Revision;
         }
         var last = AllocationHistory.Last();
-        Allocations = new(Workspace, last.ReferencedKeys, last.Request.Configuration, last.ConfirmedStudy.Revision, includeUnroutedAccounts);
+        Allocations = new(Workspace, last.ReferencedKeys, last.Request.Configuration, last.ConfirmedStudy.Revision,
+            includeUnroutedAccounts, secondaryPublication: last.SecondaryPublication);
     }
     public string SnapshotSchemaVersion => Schema;
     public string InputPreparationVersion => IncludeUnroutedAccounts ? "allocation-preparation-t09-v2" : "allocation-preparation-t08-v1";
