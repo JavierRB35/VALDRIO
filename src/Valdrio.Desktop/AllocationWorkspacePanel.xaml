@@ -94,6 +94,9 @@
       <Expander Header="{Binding [SecondarySourceGroupsTitle]}" Margin="0,16,0,0">
        <StackPanel Margin="0,8,0,0">
         <TextBlock Text="{Binding [SecondarySourceGroupsHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+        <Button Content="{Binding [SecondaryClearObsoleteGroups]}" Command="{Binding ClearObsoleteSecondaryGroupsCommand}"
+                Visibility="{Binding HasObsoleteSecondaryGroups, Converter={StaticResource Visible}}"
+                HorizontalAlignment="Left" Margin="0,0,0,8"/>
         <DataGrid x:Name="SecondaryGroupAssignmentsGrid" ItemsSource="{Binding SecondaryGroupAssignments}" AutoGenerateColumns="False" IsReadOnly="True" Height="135">
          <DataGrid.Columns>
           <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Source}" Width="2*"/>
