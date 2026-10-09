@@ -86,7 +86,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         RemoveRuleCommand = new AsyncRelayCommand(() => CommitConfig(c => new(c.PrimaryRules.Where(r => r.Id != SelectedRule!.Id).ToArray(), c.SecondaryRules, c.ExplicitAssignments, c.AbsoluteAssignments, c.Descriptions)), () => CanEditConfiguration && !HasUnappliedRule && SelectedRule is not null);
         LoadRuleCommand = new RelayCommand(LoadRule, () => CanEdit && SelectedRule is not null && !ruleDirty);
         NewRuleCommand = new RelayCommand(ClearRule, () => CanEditConfiguration && !HasUnappliedRule);
-        SaveSecondaryCommand = new AsyncRelayCommand(SaveSecondaryAsync, () => CanEditSecondaryConfiguration && Auxiliary.HasValue && SecondaryKey.HasValue && !HasUnappliedRule);
+        SaveSecondaryCommand = new AsyncRelayCommand(SaveSecondaryAsync, () => CanEditSecondaryConfiguration && Auxiliary.HasValue && SecondaryKey.HasValue);
         LoadSecondaryCommand = new RelayCommand(LoadSecondary, () => CanEditSecondaryConfiguration && SelectedSecondary is not null && !ruleDirty);
         RemoveSecondaryCommand = new AsyncRelayCommand(() => CommitConfig(c => c.WithSecondaryRules(c.SecondaryRules.Where(r => r.Id != SelectedSecondary!.Id).ToArray()), true), () => CanEditSecondaryConfiguration && !HasUnappliedRule && SelectedSecondary is not null);
         NewSecondaryCommand = new RelayCommand(ClearRule, () => CanEditSecondaryConfiguration && !HasUnappliedRule);
