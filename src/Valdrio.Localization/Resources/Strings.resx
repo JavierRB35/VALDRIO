@@ -1263,4 +1263,8 @@ Difference to distribute: {7}</value></data>
   <data name="Secondary.GraphInconsistent" xml:space="preserve"><value>Secondary groups disagree on the auxiliary and principal node structure. Review the selected model and group rules.</value></data>
   <data name="AllocationUI.SecondaryObsoleteGroup" xml:space="preserve"><value>Obsolete part</value></data>
   <data name="AllocationUI.SecondaryClearObsoleteGroups" xml:space="preserve"><value>Clear obsolete group assignments</value></data>
+  <data name="AllocationUI.SecondaryFillMissing" xml:space="preserve"><value>Apply this key to unassigned auxiliaries</value></data>
+  <data name="AllocationUI.SecondaryFillMissingHelp" xml:space="preserve"><value>Uses the selected published key and routing group. Keeps all existing manual rules; verifies each auxiliary before saving all assignments in one operation.</value></data>
+  <data name="Secondary.BatchUnitMismatch" xml:space="preserve"><value>Cannot apply this activity-unit key to auxiliary {0} because its activity unit differs. Choose a compatible key or assign this auxiliary manually.</value></data>
+  <data name="AllocationUI.SecondaryExplainAmounts" xml:space="preserve"><value>Assigned: {0}. Raw: {1}. Numeric adjustment: {2}. Rounding: {3}.</value></data>
 </root>
