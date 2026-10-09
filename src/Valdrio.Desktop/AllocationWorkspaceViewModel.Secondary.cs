@@ -47,6 +47,9 @@ public sealed partial class AllocationWorkspaceViewModel
             .Select(g => new ResourceChoice<string>(g,
                 g == "all" ? this["AllComponents"] : g)).ToArray()) ?? [];
     public IAsyncRelayCommand SaveSecondaryGroupCommand { get; private set; } = null!;
+    public IAsyncRelayCommand ClearObsoleteSecondaryGroupsCommand { get; private set; } = null!;
+    public bool HasObsoleteSecondaryGroups => workspace?.Configuration.SecondaryPartRoutingGroups?
+        .Any(g => !Parts.Any(p => p.Value == g.PartId)) == true;
     public bool CanSaveSecondaryGroup => CanEditSecondaryConfiguration && SecondaryGroupPart.HasValue &&
         SecondaryGroupChoices.Any(g => g.Value == SecondaryGroupName);
 
@@ -115,6 +118,10 @@ public sealed partial class AllocationWorkspaceViewModel
         return c.WithSecondaryPartRoutingGroups(groups);
     }, true);
 
+    private Task ClearObsoleteSecondaryGroupsAsync() => CommitConfig(c =>
+        c.WithSecondaryPartRoutingGroups((c.SecondaryPartRoutingGroups ?? [])
+            .Where(g => Parts.Any(p => p.Value == g.PartId)).ToArray()), true);
+
     // Assignment completeness is intentionally distinct from mathematical feasibility:
     // complete but closed/unstable graphs must still allow Calculate to report the error.
     public bool CanCalculateSecondary => !busy && !IsDirty && CanManageSecondary && primaryComplete &&
@@ -145,6 +152,10 @@ public sealed partial class AllocationWorkspaceViewModel
             SecondaryGroupAssignments.Add(new(part.Label,
                 group == "all" ? this["AllComponents"] : group));
         }
+        foreach (var orphan in workspace.Configuration.SecondaryPartRoutingGroups ?? [])
+            if (!Parts.Any(p => p.Value == orphan.PartId))
+                SecondaryGroupAssignments.Add(new(orphan.PartId.ToString(),
+                    orphan.ComponentRoutingGroup + " · " + this["SecondaryObsoleteGroup"]));
         if (IsSecondaryClosed)
         {
             // Closing already published immutable ledger facts. Reopening a study
