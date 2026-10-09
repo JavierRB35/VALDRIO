@@ -21,3 +21,12 @@ Se mantiene el almacenamiento histórico de cambios en `AllocationChangeReceipt`
 - No se admite el cierre si T09 no está completo o si T10 rechaza el grafo.
 - El cálculo y los tests C# deben ejecutarse en Windows/.NET 10, con métricas de estabilidad y memoria. Sin ello, ADR no pasa a Accepted.
 - Los workflows de GitHub Actions continúan manuales y sin consumo autorizado.
+
+
+## Extensión de decisión — publicación íntegra, 2026-10-09
+
+El sello aislado resulta insuficiente para la auditoría económica. Se materializa `SecondaryCalculationPublication` como propiedad opcional del `AllocationChangeReceipt` de cierre (ausente en todos los recibos históricos T08–T10). Incluye hechos finales y enlaces, totalizaciones, conciliación de partes, bruto auxiliar, revisión fuente y versiones metodológicas. Se verifica en la transacción de cierre y por replay histórico, usando entrada y claves publicadas en el recibo; el resto de cambios conserva `SecondaryPublication=null`. El estado activo expone únicamente la última publicación cuando `SecondaryClosed=true`.
+
+La interfaz cerrada consume el recibo inmutable. Reabrir secundario deja el histórico publicado disponible para auditoría, pero retira la publicación activa; reabrir primario invalida además su sello. La lectura de un estudio cerrado no es una orden de recálculo.
+
+**Estado del ADR: propuesto** hasta compilación, pruebas de persistencia/reapertura nativas, rendimiento y validación A05. No confundir publicación persistida con aceptación técnica.
