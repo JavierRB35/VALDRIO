@@ -64,11 +64,14 @@
       <DataGrid.Columns>
        <DataGridTemplateColumn Width="45"><DataGridTemplateColumn.CellTemplate><DataTemplate>
         <CheckBox IsChecked="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                  IsEnabled="{Binding DataContext.CanEditClassification, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                   ToolTip="{Binding Account}" HorizontalAlignment="Center" VerticalAlignment="Center">
          <CheckBox.Style>
-          <Style TargetType="CheckBox">
-           <Style.Triggers><DataTrigger Binding="{Binding CanBulk}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger></Style.Triggers>
+          <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+           <Setter Property="IsEnabled" Value="True"/>
+           <Style.Triggers>
+            <DataTrigger Binding="{Binding CanBulk}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger>
+            <DataTrigger Binding="{Binding DataContext.CanEditClassification, RelativeSource={RelativeSource AncestorType=DataGrid}}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger>
+           </Style.Triggers>
           </Style>
          </CheckBox.Style>
         </CheckBox>
