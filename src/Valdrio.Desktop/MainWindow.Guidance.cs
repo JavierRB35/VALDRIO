@@ -22,7 +22,12 @@ public partial class MainWindow
             if (source is not null) { workflowSources.Add(source); source.PropertyChanged += WorkflowChanged; }
         UpdateWorkflow();
     }
-    private void WorkflowChanged(object? sender, PropertyChangedEventArgs e) => UpdateWorkflow();
+    private void WorkflowChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (sender is ResourceWorkspaceViewModel or AllocationWorkspaceViewModel && !string.IsNullOrEmpty(e.PropertyName)
+            && e.PropertyName is not ("Stage" or "IsBusy" or "CanAdvance" or "CanNavigate" or "Requirement" or "ShowParts")) return;
+        UpdateWorkflow();
+    }
     private string? lastHelpKey;
     private int lastResourceStage = -1;
     internal void ShowFieldHelp(string text, string? key = null) { lastHelpKey = key; FieldHelpText.Text = text; }
@@ -62,6 +67,8 @@ public partial class MainWindow
         StudyPanel.Visibility = workflowStep == 2 ? Visibility.Visible : Visibility.Collapsed;
         ResourcePanel.Visibility = workflowStep == 4 ? Visibility.Visible : Visibility.Collapsed;
         AllocationPanel.Visibility = workflowStep == 5 ? Visibility.Visible : Visibility.Collapsed;
+        DistributionDetails.Visibility = workflowStep == 5 ? Visibility.Visible : Visibility.Collapsed;
+        AllocationPanel.IsEnabled = !DistributionDetails.IsExpanded;
         ImportHome.Visibility = workflowStep == 3 ? Visibility.Visible : Visibility.Collapsed;
         PreferencesPanel.Visibility = DevelopmentTools.Visibility = workflowStep == 6 ? Visibility.Visible : Visibility.Collapsed;
         WorkflowTitle.Text = vm.Guide(keys[workflowStep]);
@@ -121,14 +128,21 @@ public partial class MainWindow
         if (step is 4 or 5 && vm.Studies?.Current is null) step = 2;
         if (step is 4 or 5 && vm.Studies?.HasConfirmedImports != true) step = 3;
         if (vm.Company?.WorkspaceIdle == false) return;
-        if (workflowStep == 4 && step != 4 && vm.Resources is { } oldResources && !await oldResources.CanLeaveAsync()) return;
-        if (workflowStep == 5 && step != 5 && vm.Allocations is { } oldAllocations && !await oldAllocations.CanLeaveAsync()) return;
+        if (workflowStep == 4 && step != 4 && vm.Resources is { } oldResources && !await oldResources.CanLeaveAsync())
+        { ResourcePanel.ActionStatus.BringIntoView(); return; }
+        if (workflowStep == 5 && step != 5 && vm.Allocations is { } oldAllocations && !await oldAllocations.CanLeaveAsync())
+        { AllocationPanel.ActionStatus.BringIntoView(); return; }
+        if (workflowStep == 5 && step != 5 && vm.Resources is { } distribution && !await distribution.CanLeaveAsync())
+        { DistributionResourcePanel.ActionStatus.BringIntoView(); return; }
+        if (workflowStep == 5 && step != 5 && vm.Resources is { ShowParts: true } detail)
+            await detail.CloseDestinationsAsync();
         lastHelpKey = null;
         workflowStep = step;
         if (step == 2 && vm.Studies?.RefreshCommand.CanExecute(null) == true)
             await vm.Studies.RefreshCommand.ExecuteAsync(null);
         if (step == 4 && vm.Resources is { } resources) await resources.EnterAsync();
-        if (step == 5 && vm.Allocations is { } allocations) await allocations.EnterAsync();
+        if (step == 5 && vm.Allocations is { } allocations)
+        { if (vm.Resources is { } source) await source.EnterAsync(); await allocations.EnterAsync(); }
         UpdateWorkflow(); RootScrollViewer.ScrollToTop();
     }
     private async void ChooseCompany(object sender, RoutedEventArgs e) => await NavigateWorkflow(0);
@@ -138,6 +152,33 @@ public partial class MainWindow
     private async void ChooseResources(object sender, RoutedEventArgs e) => await NavigateWorkflow(4);
     private async void ChooseAllocations(object sender, RoutedEventArgs e) => await NavigateWorkflow(5);
     private async void ChooseSettings(object sender, RoutedEventArgs e) => await NavigateWorkflow(6);
+    private bool changingDistributionDetails;
+    private async void OpenDistributionDetails(object sender, RoutedEventArgs e)
+    {
+        if (e.OriginalSource != DistributionDetails || changingDistributionDetails || viewModel?.Allocations is not { } allocations) return;
+        if (!await allocations.CanLeaveAsync())
+        { changingDistributionDetails = true; DistributionDetails.IsExpanded = false; changingDistributionDetails = false; return; }
+        if (viewModel.Resources is { } resources) await resources.EnterAsync();
+        UpdateWorkflow();
+    }
+    private async void CloseDistributionDetails(object sender, RoutedEventArgs e)
+    {
+        if (e.OriginalSource != DistributionDetails || changingDistributionDetails || viewModel?.Resources is not { } resources) return;
+        if (!await resources.CanLeaveAsync())
+        { changingDistributionDetails = true; DistributionDetails.IsExpanded = true; changingDistributionDetails = false; return; }
+        if (viewModel.Allocations is { } allocations) await allocations.EnterAsync(true);
+        UpdateWorkflow();
+    }
+    internal Task? DistributionSaveTask { get; private set; }
+    private async void SaveDistributionDetails(object sender, RoutedEventArgs e)
+    { DistributionSaveTask = SaveDistributionAsync(); await DistributionSaveTask; }
+    private async Task SaveDistributionAsync()
+    {
+        if (viewModel?.Resources is { IsRevaluing: true } revalue) { await revalue.AdvanceAsync(); return; }
+        if (viewModel?.Resources is not { } resources || !await resources.SavePendingAndLeaveAsync())
+        { DistributionResourcePanel.ActionStatus.BringIntoView(); return; }
+        if (viewModel.Allocations is { } allocations) await allocations.EnterAsync(true);
+    }
     private async void ChooseProjectStructure(object sender, RoutedEventArgs e) => await NavigateWorkflow(1);
     private async void ChooseProjectAnalysis(object sender, RoutedEventArgs e) => await NavigateWorkflow(2);
     private async void ContinueProjectWork(object sender, RoutedEventArgs e) => await ContinueProjectWorkAsync();
@@ -214,6 +255,7 @@ public partial class MainWindow
         else if (element == ModelPanel || GuidedUi.Contains(ModelPanel, element)) { workflowStep = 1; ModelPanel.RevealElement(element); }
         else if (element == StudyPanel || GuidedUi.Contains(StudyPanel, element)) workflowStep = 2;
         else if (element == ResourcePanel || GuidedUi.Contains(ResourcePanel, element)) workflowStep = 4;
+        else if (element == DistributionDetails || GuidedUi.Contains(DistributionDetails, element)) { workflowStep = 5; DistributionDetails.IsExpanded = true; }
         else if (element == AllocationPanel || GuidedUi.Contains(AllocationPanel, element)) workflowStep = 5;
         else workflowStep = 6;
         UpdateWorkflow(); UpdateLayout();

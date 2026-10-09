@@ -22,6 +22,7 @@
     <Compile Include="../../src/Valdrio.Desktop/ImportColumnMappingViewModel.Accounts.cs" Link="Desktop/ImportColumnMappingViewModel.Accounts.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ResourceEditorForm.cs" Link="Desktop/ResourceEditorForm.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.cs" Link="Desktop/AllocationWorkspaceViewModel.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Primary.cs" Link="Desktop/AllocationWorkspaceViewModel.Primary.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ResourceWorkspaceViewModel*.cs" Link="Desktop/%(Filename)%(Extension)" />
     <Compile Include="../../src/Valdrio.Desktop/WorkspaceDialogContracts.cs" Link="Desktop/WorkspaceDialogContracts.cs" />
   </ItemGroup>

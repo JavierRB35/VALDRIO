@@ -33,10 +33,9 @@ public sealed partial class T06ImportConfirmationTests
         publish = publish with { Lines = [new(w.Model.Structure.Nodes[0].Id, 100)] };
         var saved = file.Allocations.SaveAllocationKey(publish);
         Assert.AreEqual(CanonicalSnapshotJson.Serialize(saved), CanonicalSnapshotJson.Serialize(file.Allocations.SaveAllocationKey(publish)));
-        hash = Hash(file.Path);
-        Assert.AreEqual("KEY_IMMUTABLE", Assert.ThrowsExactly<DomainRuleException>(() => file.Allocations.SaveAllocationKey(
-            publish with { ExpectedRevision = 1, RequestId = Id(), Name = "Changed" })).Diagnostic.Code);
-        Assert.AreEqual(hash, Hash(file.Path));
+        var renamed = file.Allocations.SaveAllocationKey(publish with { ExpectedRevision = 1, RequestId = Id(), Name = "Changed" });
+        Assert.AreEqual("Changed", renamed.After.Name);
+        Assert.AreEqual(saved.After.Lines.Single(), renamed.After.Lines.Single());
         var next = file.Allocations.SaveAllocationKey(publish with { KeyId = Id(), ParentVersionId = saved.After.Id, ExpectedRevision = -1, RequestId = Id() });
         Assert.AreEqual(2, next.After.VersionNumber); Assert.AreEqual(saved.After.FamilyId, next.After.FamilyId);
         Assert.AreEqual(2, file.Allocations.ReadAllocationKeys(w.Study.CompanyId, w.Model.Structure.Id).Count);

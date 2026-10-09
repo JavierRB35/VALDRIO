@@ -100,7 +100,7 @@ public partial class MainWindow : Window
 
     internal void ScrollToElement(FrameworkElement element)
     {
-        RevealWorkflowElement(element);
+        GuidedUi.Reveal(element);
         Keyboard.ClearFocus(); UpdateLayout();
         var offset=RootScrollViewer.VerticalOffset + element.TranslatePoint(new Point(0,0),RootScrollViewer).Y;
         RootScrollViewer.ScrollToVerticalOffset(offset); UpdateLayout();

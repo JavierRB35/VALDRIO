@@ -1,5 +1,24 @@
 # ESTADO_PROYECTO
 
+## T09 — candidato de reparto primario para revisión (2026-10-08)
+
+Base: `main@6f99e592` (incluye T08). Desarrollo aislado en
+`feature/t09-primary-allocation-20261008`; no fusionado ni publicado como ejecución.
+Se calculan hechos primarios por parte y nodo mediante claves publicadas de T08,
+adjudicación PDEC-1 a 8 decimales y asignación absoluta validada. Consulta por
+recurso/nodo, totales por pool, naturaleza y capacidad, conciliaciones por parte
+y recurso, vista WPF y exportación CanonicalExchange desde un snapshot capturado.
+
+**Estado de aceptación: pendiente de compilación .NET 10, suite funcional y
+verificación Windows/WPF.** Este entorno no dispone de SDK ni de runner Windows
+local; por ello no se certifica la T09 como cerrada. No se ha iniciado GitHub
+Actions para evitar un posible gasto facturable no autorizado. El corpus racional
+independiente 39/39 se comprobó localmente y no sustituye pruebas C#.
+Ver [evidencia y comandos](docs/evidencias/T09_CANDIDATO_2026-10-08.md)
+y [entrega](docs/tareas/T09.md). D04/D05/D10/D11 conservan su condición propuesta;
+T10–T11 siguen fuera de alcance.
+
+
 ## Consolidación autorizada en main — 2026-10-08
 
 El propietario autoriza promocionar workspace `3cf853a` a main después de comprobar

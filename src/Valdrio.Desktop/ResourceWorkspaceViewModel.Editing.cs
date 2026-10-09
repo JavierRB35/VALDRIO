@@ -51,7 +51,7 @@ public sealed partial class ResourceWorkspaceViewModel
         try { ObjectForm["Code"] = ObjectForm["Name"] = ""; ObjectForm["Kind"] = ResourceObjectKind.Other.ToString(); ObjectForm.Numbers = new(Format); objectDirty = false; }
         finally { loading = false; Refresh(); }
     }
-    public IReadOnlyList<ResourceChoice<ResourceObjectKind>> ObjectKinds => Choices<ResourceObjectKind>();
+    public IReadOnlyList<ResourceChoice<ResourceObjectKind>> ObjectKinds => choices.Get<ResourceChoice<ResourceObjectKind>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => Choices<ResourceObjectKind>());
     public ResourceObjectKind ObjectKind
     {
         get => Enum.TryParse<ResourceObjectKind>(ObjectForm["Kind"], out var value) ? value : ResourceObjectKind.Other;

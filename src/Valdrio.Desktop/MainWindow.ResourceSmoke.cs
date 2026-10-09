@@ -43,6 +43,7 @@ public partial class MainWindow
             ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
             if (button.Command is IAsyncRelayCommand command && command.ExecutionTask is { } task) await task;
+            if (button == SaveDistributionButton && DistributionSaveTask is { } saving) await saving;
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         }
         main.ApplyPresentationPreset("es", "es-ES", "Europe/Madrid", false, false);
@@ -111,11 +112,14 @@ public partial class MainWindow
         await EditCorrection("-100");
         Check(studies.Current.Revision == correctionRevision && vm.Status == vm["CorrectionUnchanged"], "repeating saved cell value creates no duplicate adjustment");
         ResetScrollForCapture(); VisualEvidenceCapture.Capture(this, Path.Combine(output, "inline-corrections-es.png"));
+        Check(!panel.OpenSelectedResourceButton.IsVisible, "step 5 only prepares amounts; destination editor is absent");
+        await NavigateWorkflow(5); DistributionDetails.IsExpanded = true;
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+        panel = DistributionResourcePanel;
         await Click(panel.OpenSelectedResourceButton);
         Check(vm.Stage == 2 && panel.ResourceGrid.IsVisible, "destinations open below the same account table without adjustment screen");
         Check(panel.BackToCorrectionsButton.IsVisible, "destinations provide explicit return to Corrections");
-        Check(WorkflowBack.IsVisible && (string)WorkflowBack.Content == vm["BackToCorrectionsButton"],
-            "fixed navigation always names return to Corrections while editing destinations");
+        Check(workflowStep == 5 && DistributionDetails.IsVisible, "special account treatments are available in step 6");
         await Click(panel.BackToCorrectionsButton);
         Check(vm.Stage == 0 && vm.CanEditCorrections, "return closes destinations and restores editable corrections");
         await Click(panel.OpenSelectedResourceButton);
@@ -129,7 +133,7 @@ public partial class MainWindow
         await Click(panel.PutObjectButton);
         Check(vm.PartForm["Amount"] == "300" && vm.Stage == 2, "saving a direct cost object preserves the unfinished part form");
         Select(panel.PartForm_ObjectIdBox, vm.Objects.Single().Value);
-        Select(panel.PartForm_BehaviorBox, ResourceBehavior.Fixed); Select(panel.PartForm_UnitIdBox, vm.Units.Single().Value);
+        Select(panel.PartForm_BehaviorBox, ResourceBehavior.Fixed); Select(panel.PartForm_UnitIdBox, vm.Units.First().Value);
         Text(panel.PartForm_MinimumBox, "0"); Text(panel.PartForm_MaximumBox, "100"); Select(panel.PartForm_LayerBox, ResourceCostLayer.Production);
         await Click(panel.ApplyPartButton);
         Text(panel.PartForm_AmountBox, "500"); Select(panel.PartForm_RouteBox, ResourceRoutingKind.AllocationPool); Select(panel.PartForm_PoolIdBox, vm.Pools.First().Value);
@@ -140,7 +144,7 @@ public partial class MainWindow
         Check(poolPopup is { IsOpen: true, Child: FrameworkElement }, "pool choices render in the actual dropdown");
         VisualEvidenceCapture.Capture((FrameworkElement)poolPopup!.Child, Path.Combine(output, "pool-choices-es.png"));
         panel.PartForm_PoolIdBox.IsDropDownOpen = false;
-        Select(panel.PartForm_BehaviorBox, ResourceBehavior.Variable); Select(panel.PartForm_UnitIdBox, vm.Units.Single().Value);
+        Select(panel.PartForm_BehaviorBox, ResourceBehavior.Variable); Select(panel.PartForm_UnitIdBox, vm.Units.First().Value);
         Text(panel.PartForm_MinimumBox, "0"); Text(panel.PartForm_MaximumBox, "100"); Select(panel.PartForm_LayerBox, ResourceCostLayer.Production);
         Select(panel.PartForm_CapacityBox, ResourceCapacityTreatment.AssessAtPool); Text(panel.PartForm_NormalBox, "100"); Text(panel.PartForm_ActualBox, "90");
         await Click(panel.ApplyPartButton);
@@ -150,7 +154,7 @@ public partial class MainWindow
         Check(vm.Parts.Count == 3 && vm.Parts.Sum(p => p.Value.Amount.Amount) == 900m, "C04 routes 300 direct plus 500 pool plus 100 excluded");
         Text(panel.PartForm_AmountBox, "100"); await Click(panel.ApplyPartButton);
         Text(panel.ReasonBox, "Revisión C04 y comprobación de conservación");
-        var revision = studies.Current!.Revision; await AdvanceWorkflow();
+        var revision = studies.Current!.Revision; await Click(SaveDistributionButton);
         Check(vm.Stage == 2 && vm.IsDirty && studies.Current.Revision == revision, "extra 100 cannot be saved and draft stays editable");
         vm.PartChoice = vm.Parts.Single(p => p.Value.Routing == ResourceRoutingKind.Pending); await Click(panel.RemovePartButton);
         panel.ReasonBox.Focus(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
@@ -159,7 +163,10 @@ public partial class MainWindow
         main.ApplyPresentationPreset("en", "es-ES", "UTC", true, true); ResetScrollForCapture();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "review-pseudo-rtl.png"));
         main.ApplyPresentationPreset("es", "es-ES", "Europe/Madrid", false, false);
-        await AdvanceWorkflow(); Check(!vm.IsDirty && vm.Stage == 0 && vm.Status == vm["Saved"], "primary save persists account with explicit saved confirmation");
+        await Click(SaveDistributionButton); Check(!vm.IsDirty && vm.Stage == 0 && vm.Status == vm["Saved"], "primary save persists account with explicit saved confirmation");
+        Check(await vm.CanLeaveAsync(), "saved account can leave without another confirmation");
+        DistributionDetails.IsExpanded = false;
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         var current = studies.Current!; var snapshot = company.ActiveStudies!.Capture(new(current.CompanyId, current.Id, current.Revision, new(Guid.NewGuid()), "native-test"));
         snapshot.EnsureValid();
         File.WriteAllText(Path.Combine(output, "snapshot-receipt.json"), CanonicalSnapshotJson.Serialize(snapshot));

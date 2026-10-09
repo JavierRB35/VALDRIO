@@ -1,3 +1,14 @@
+## T09 — separación entre preview y política económica (2026-10-08)
+
+La T09 implementa un **candidato técnico de preview** para reparto primario
+con las claves publicadas y precisión propuesta PDEC-1 ya fijadas por T02/T08.
+Los pendientes, incluidas partes sin clave o ruta, bloquean `IsComplete` y
+quedan explicados. Una preview completa **no publica** una ejecución ni da por
+aceptadas D04 (capacidad), D05 (auxiliares), D10 (autorreparto) o D11 (cobertura
+productiva); la autorización económica futura permanece diferenciada de las
+comprobaciones de conservación. Véase
+[registro T09](../evidencias/T09_CANDIDATO_2026-10-08.md).
+
 # Decisiones de producto y negocio
 
 ## Correcciones directamente en tabla — 2026-10-08

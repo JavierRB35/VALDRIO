@@ -71,8 +71,13 @@
     <Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,0,0,12"/>
   </Style>
   <Style x:Key="Text.TableNumber" TargetType="TextBlock" BasedOn="{StaticResource Text.Number}">
-    <Setter Property="TextAlignment" Value="Right"/><Setter Property="TextWrapping" Value="Wrap"/>
+    <Setter Property="TextAlignment" Value="Right"/><Setter Property="TextWrapping" Value="NoWrap"/>
     <Setter Property="Margin" Value="4,2"/>
+  </Style>
+  <Style x:Key="Text.TableText" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+    <Setter Property="TextWrapping" Value="Wrap"/>
+    <Setter Property="Padding" Value="4,3"/>
+    <Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}"/>
   </Style>
   <Style x:Key="Card" TargetType="Border">
     <Setter Property="Background" Value="{DynamicResource Brand.White}"/>
@@ -322,6 +327,9 @@
     </Setter>
   </Style>
   <Style TargetType="DataGrid">
+    <Setter Property="MinColumnWidth" Value="100"/>
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+    <Setter Property="EnableRowVirtualization" Value="True"/>
     <Setter Property="Background" Value="{DynamicResource Brand.White}"/>
     <Setter Property="Foreground" Value="{DynamicResource Text.Primary}"/>
     <Setter Property="BorderBrush" Value="{DynamicResource Border.Soft}"/>
@@ -335,6 +343,13 @@
     <Setter Property="MinRowHeight" Value="30"/>
   </Style>
   <Style TargetType="DataGridColumnHeader">
+    <Setter Property="ContentTemplate">
+      <Setter.Value>
+        <DataTemplate>
+          <TextBlock Text="{Binding}" TextWrapping="Wrap" MaxHeight="52" TextTrimming="CharacterEllipsis" ToolTip="{Binding}"/>
+        </DataTemplate>
+      </Setter.Value>
+    </Setter>
     <Setter Property="Background" Value="{DynamicResource Surface.Subtle}"/>
     <Setter Property="Foreground" Value="{DynamicResource Text.Primary}"/>
     <Setter Property="FontWeight" Value="SemiBold"/>

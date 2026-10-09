@@ -20,7 +20,7 @@ public sealed partial class T06ImportConfirmationTests
         destinations[0].Value = "40,5"; destinations[1].Value = "59,5";
         ui.Preferences.Update(ui.Preferences.Current with { UiLanguageTag = "en", FormatCultureTag = "en-US" });
         Assert.IsTrue(await vm.SaveKeyAsync(true), vm.Status);
-        Assert.IsFalse(vm.CanEditKey); Assert.AreEqual(vm["Complete"], vm.Validation);
+        Assert.IsTrue(vm.CanEditKey); Assert.IsTrue(vm.CanEditComposition); Assert.AreEqual(vm["Complete"], vm.Validation);
         Assert.AreEqual(100m, vm.Keys.Single().Value.Lines.Sum(l => l.Value));
         vm.SelectedKey = vm.Keys.Single(); await vm.NewVersionCommand.ExecuteAsync(null);
         Assert.IsTrue(vm.CanEditKey); Assert.IsTrue(vm.IsDirty);

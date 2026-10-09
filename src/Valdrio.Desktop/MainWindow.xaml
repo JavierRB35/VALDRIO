@@ -84,8 +84,15 @@
     <local:CompanyFilePanel x:Name="CompanyPanel" Grid.Row="4" DataContext="{Binding Company}" />
     <local:ModelWorkspacePanel x:Name="ModelPanel" Grid.Row="6" DataContext="{Binding Models}" />
     <local:StudyWorkspacePanel x:Name="StudyPanel" Grid.Row="8" DataContext="{Binding Studies}" />
-    <local:ResourceWorkspacePanel x:Name="ResourcePanel" Grid.Row="8" DataContext="{Binding Resources}" />
+    <local:ResourceWorkspacePanel x:Name="ResourcePanel" Grid.Row="8" DataContext="{Binding Resources}" ShowDistributionTools="False" />
     <local:AllocationWorkspacePanel x:Name="AllocationPanel" Grid.Row="8" DataContext="{Binding Allocations}" />
+    <Expander x:Name="DistributionDetails" Grid.Row="9" Header="{Binding Allocations[AccountDetails]}" Expanded="OpenDistributionDetails" Collapsed="CloseDistributionDetails">
+     <StackPanel>
+      <TextBlock Text="{Binding Allocations[AccountDetailsHelp]}" Margin="0,8,0,12"/>
+      <local:ResourceWorkspacePanel x:Name="DistributionResourcePanel" DataContext="{Binding Resources}"/>
+      <Button x:Name="SaveDistributionButton" Content="{Binding Resources.NextAction}" Click="SaveDistributionDetails" Visibility="{Binding Resources.ShowParts, Converter={StaticResource BooleanVisibility}}" IsEnabled="{Binding Resources.CanEdit}" Style="{StaticResource Button.Primary}" HorizontalAlignment="Left"/>
+     </StackPanel>
+    </Expander>
     <GroupBox Grid.Row="10" Header="{Binding PreferencesTitle}" Padding="16" x:Name="PreferencesPanel">
      <Grid>
       <Grid.ColumnDefinitions>

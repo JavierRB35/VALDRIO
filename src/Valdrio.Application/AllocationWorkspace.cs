@@ -9,6 +9,8 @@ public sealed record SaveAllocationKey(EntityId CompanyId, EntityId ModelVersion
     UnitId? UnitId, SelfAllocationPolicy SelfAllocation, IReadOnlyList<AllocationKeyLine> Lines,
     bool Publish, EntityId RequestId, string Actor)
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool Delete { get; init; }
     private IReadOnlyList<AllocationKeyLine> lines = FrozenList.Copy(Lines);
     public IReadOnlyList<AllocationKeyLine> Lines { get => lines; init => lines = FrozenList.Copy(value); }
 }
@@ -19,18 +21,22 @@ public sealed class AllocationConfiguration
 {
     public AllocationConfiguration(IReadOnlyList<PrimaryRule> primaryRules, IReadOnlyList<SecondaryRule> secondaryRules,
         IReadOnlyList<ExplicitPrimaryAssignment> explicitAssignments, IReadOnlyList<AbsolutePartAllocation> absoluteAssignments,
-        IReadOnlyList<AccountDescriptionChoice> descriptions)
+        IReadOnlyList<AccountDescriptionChoice> descriptions, bool primaryClosed = false)
     {
         if (primaryRules is null || secondaryRules is null || explicitAssignments is null || absoluteAssignments is null || descriptions is null ||
             primaryRules.Any(r => r is null) || secondaryRules.Any(r => r is null) || explicitAssignments.Any(r => r is null) ||
             absoluteAssignments.Any(r => r is null) || descriptions.Any(r => r is null))
             throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
+        PrimaryClosed = primaryClosed;
         PrimaryRules = FrozenList.Copy(primaryRules.OrderBy(r => r.Id));
         SecondaryRules = FrozenList.Copy(secondaryRules.OrderBy(r => r.Id));
         ExplicitAssignments = FrozenList.Copy(explicitAssignments.OrderBy(r => r.PartId));
         AbsoluteAssignments = FrozenList.Copy(absoluteAssignments.OrderBy(r => r.PartId));
         Descriptions = FrozenList.Copy(descriptions.OrderBy(r => r.Account, StringComparer.Ordinal));
     }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool PrimaryClosed { get; }
+    public AllocationConfiguration WithPrimaryClosed(bool closed) => new(PrimaryRules, SecondaryRules, ExplicitAssignments, AbsoluteAssignments, Descriptions, closed);
     public IReadOnlyList<PrimaryRule> PrimaryRules { get; }
     public IReadOnlyList<SecondaryRule> SecondaryRules { get; }
     public IReadOnlyList<ExplicitPrimaryAssignment> ExplicitAssignments { get; }
@@ -60,22 +66,27 @@ public interface IAllocationWorkspace
 public sealed class AllocationWorkspaceSnapshot
 {
     public AllocationWorkspaceSnapshot(ResourceWorkspaceSnapshot resources, IReadOnlyList<AllocationKeyVersion> keys,
-        AllocationConfiguration configuration, long configurationRevision)
+        AllocationConfiguration configuration, long configurationRevision, bool includeUnroutedAccounts = true,
+        IReadOnlyList<EntityId>? usedKeyIds = null)
     {
         Resources = resources; Keys = FrozenList.Copy(keys.OrderBy(k => k.Id));
         Configuration = configuration; ConfigurationRevision = configurationRevision;
+        IncludeUnroutedAccounts = includeUnroutedAccounts;
+        UsedKeyIds = FrozenList.Copy(usedKeyIds ?? []);
     }
     public ResourceWorkspaceSnapshot Resources { get; }
     public IReadOnlyList<AllocationKeyVersion> Keys { get; }
     public AllocationConfiguration Configuration { get; }
     public long ConfigurationRevision { get; }
+    public bool IncludeUnroutedAccounts { get; }
+    [JsonIgnore] public IReadOnlyList<EntityId> UsedKeyIds { get; }
     [JsonIgnore] public IReadOnlyList<AllocationCoverage> Coverage => AllocationWorkspaceRules.Coverage(this);
 }
 
 public static class AllocationWorkspaceRules
 {
     public static AllocationKeyVersion SaveKey(SaveAllocationKey request, PublishedModelStructure model,
-        PrecisionPolicy precision, IReadOnlyList<AllocationKeyVersion> existing, UtcInstant now)
+        PrecisionPolicy precision, IReadOnlyList<AllocationKeyVersion> existing, UtcInstant now, bool allowUnusedPublishedEdit = false)
     {
         request.RequestId.EnsureValid(); request.KeyId.EnsureValid();
         if (request.CompanyId != model.Structure.CompanyId || request.ModelVersionId != model.Structure.Id || string.IsNullOrWhiteSpace(request.Actor))
@@ -83,11 +94,15 @@ public static class AllocationWorkspaceRules
         var before = existing.SingleOrDefault(k => k.Id == request.KeyId);
         if (before is not null && (before.CompanyId != request.CompanyId || before.ModelVersionId != request.ModelVersionId))
             throw AllocationDiagnostics.Error("KEY_SCOPE_INVALID", "Allocation.ScopeInvalid", request.KeyId);
-        if (before?.Status == ModelStatus.Published)
+        if (before?.IsDeleted == true || request.Delete && before is null)
+            throw AllocationDiagnostics.Error("KEY_DELETED", "Allocation.KeyDeleted", request.KeyId);
+        if (before?.Status == ModelStatus.Published && (!request.Publish || !allowUnusedPublishedEdit &&
+            (before.Stage != request.Stage || before.Mode != request.Mode || before.UnitId != request.UnitId ||
+             before.SelfAllocation != request.SelfAllocation || !before.Lines.SequenceEqual(request.Lines.OrderBy(l => l.DestinationNodeId)))))
             throw AllocationDiagnostics.Error("KEY_IMMUTABLE", "Allocation.Immutable", request.KeyId);
         if ((before?.Revision ?? -1) != request.ExpectedRevision)
             throw AllocationDiagnostics.Error("KEY_REVISION_CHANGED", "Allocation.RevisionChanged", request.KeyId);
-        var parent = request.ParentVersionId is { } parentId ? existing.SingleOrDefault(k => k.Id == parentId && k.CompanyId == request.CompanyId && k.ModelVersionId == request.ModelVersionId && k.Status == ModelStatus.Published) : null;
+        var parent = request.ParentVersionId is { } parentId ? existing.SingleOrDefault(k => k.Id == parentId && k.CompanyId == request.CompanyId && k.ModelVersionId == request.ModelVersionId && k.Status == ModelStatus.Published && !k.IsDeleted) : null;
         if (request.ParentVersionId.HasValue && parent is null || before is not null && before.ParentVersionId != request.ParentVersionId)
             throw AllocationDiagnostics.Error("KEY_PARENT_INVALID", "Allocation.ParentInvalid", request.KeyId);
         var family = before?.FamilyId ?? parent?.FamilyId ?? request.KeyId;
@@ -95,7 +110,7 @@ public static class AllocationWorkspaceRules
         var result = new AllocationKeyVersion(request.KeyId, request.CompanyId, request.ModelVersionId, family,
             version, request.ParentVersionId, (before?.Revision ?? -1) + 1, request.Name, request.Stage, request.Mode,
             request.UnitId, request.SelfAllocation, request.Publish ? ModelStatus.Published : ModelStatus.Draft,
-            request.Publish ? now : null, request.Lines);
+            request.Publish ? now : null, request.Lines, request.Delete);
         AllocationKeyRules.Validate(result, model.Structure, model.DriverUnits, precision, request.Publish);
         return result;
     }
@@ -139,7 +154,7 @@ public static class AllocationWorkspaceRules
             _ = Key(rule.KeyVersionId, AllocationStage.Secondary);
             if (rule.IsActive) _ = AllocationKeyRules.ResolveSecondary(rule.AuxiliaryNodeId, rule.ComponentRoutingGroup, config.SecondaryRules, keys, model);
         }
-        var eligible = resources.Resources.SelectMany(r => r.Parts).Where(p => p.Routing == ResourceRoutingKind.AllocationPool).ToDictionary(p => p.Id);
+        var eligible = resources.Resources.SelectMany(r => r.Parts).Where(p => p.Routing is ResourceRoutingKind.AllocationPool or ResourceRoutingKind.Pending).ToDictionary(p => p.Id);
         foreach (var item in config.ExplicitAssignments)
         {
             Invalid(!eligible.ContainsKey(item.PartId) || config.AbsoluteAssignments.Any(a => a.PartId == item.PartId));
@@ -164,7 +179,7 @@ public static class AllocationWorkspaceRules
             var account = resources.Origins.Single(o => o.Id == resource.Id).Code;
             try
             {
-                if (part.Routing == ResourceRoutingKind.Pending) throw AllocationDiagnostics.Error("KEY_PART_PENDING", "Allocation.PartPending", part.Id);
+                if (part.Routing == ResourceRoutingKind.Pending && !workspace.IncludeUnroutedAccounts) throw AllocationDiagnostics.Error("KEY_PART_PENDING", "Allocation.PartPending", part.Id);
                 if (workspace.Configuration.AbsoluteAssignments.SingleOrDefault(a => a.PartId == part.Id) is { } absolute)
                 {
                     // Descriptive/rule changes do not invalidate amounts. A new import or resource revision does.
@@ -180,7 +195,7 @@ public static class AllocationWorkspaceRules
             }
             catch (DomainRuleException ex) { result.Add(new(part.Id, account, null, ex.Diagnostic)); }
         }
-        var eligible = resources.Resources.SelectMany(r => r.Parts).Where(p => p.Routing == ResourceRoutingKind.AllocationPool).Select(p => p.Id).ToHashSet();
+        var eligible = resources.Resources.SelectMany(r => r.Parts).Where(p => p.Routing == ResourceRoutingKind.AllocationPool || workspace.IncludeUnroutedAccounts && p.Routing == ResourceRoutingKind.Pending).Select(p => p.Id).ToHashSet();
         foreach (var orphan in workspace.Configuration.ExplicitAssignments.Select(a => a.PartId).Concat(workspace.Configuration.AbsoluteAssignments.Select(a => a.PartId)).Where(id => !eligible.Contains(id)).Distinct())
             result.Add(new(orphan, "", null, AllocationDiagnostics.Error("KEY_PART_CHANGED", "Allocation.PartChanged", orphan).Diagnostic));
         foreach (var node in resources.Model.Structure.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary))

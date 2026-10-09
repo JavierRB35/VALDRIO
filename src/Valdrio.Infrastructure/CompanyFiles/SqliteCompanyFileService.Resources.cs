@@ -50,6 +50,7 @@ public sealed partial class SqliteCompanyFileService
                     return receipt;
                 }
                 var row = RequiredStudy(db, file.Id, command.StudyId); var before = Study(row);
+                EnsurePrimaryOpen((AllocationDbContext)db, file.Id, command.StudyId);
                 foreach (var delta in command.Adjustments.Where(a => a.ReversalOfId is null))
                 {
                     if (delta.OriginalDelta is not { } money || delta.CurrencyMetadata != owner.FreezeResourceCurrency(money.Currency))

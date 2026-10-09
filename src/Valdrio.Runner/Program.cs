@@ -4,6 +4,41 @@ using Valdrio.Application;
 using Valdrio.Infrastructure;
 using Valdrio.Infrastructure.CompanyFiles;
 
+
+if ((args.Length == 2 || args.Length == 3) && args[0] == "--primary-snapshot")
+{
+    try
+    {
+        // CanonicalExchange only: receipt already freezes T08 rules, amounts, currency and revision.
+        var receipt = CanonicalSnapshotJson.Deserialize<StudySnapshotReceipt>(File.ReadAllText(args[1]));
+        receipt.EnsureValid();
+        if (receipt.Input is not AllocationStudySnapshotInput snapshot)
+        {
+            Console.Error.WriteLine("PRIMARY_SNAPSHOT_SCHEMA_UNSUPPORTED");
+            return 3;
+        }
+        var result = PrimaryAllocationService.Calculate(snapshot);
+        using var json = JsonDocument.Parse(CanonicalSnapshotJson.Serialize(new
+        {
+            status = result.IsComplete ? "balanced" : "incomplete",
+            exportProfile = "CanonicalExchange",
+            result.SchemaVersion, result.StudyId, result.Revision, result.Currency, result.PolicyVersion,
+            receipt.EconomicInputHash, receipt.FullSnapshotHash,
+            result.Facts, result.Parts, result.Resources, result.Pools, result.Gaps
+        }));
+        var content = json.RootElement.GetProperty("Value").GetRawText();
+        if (args.Length == 3) File.WriteAllText(args[2], content);
+        Console.WriteLine(content);
+        return result.IsComplete ? 0 : 4;
+    }
+    catch (Exception ex) when (ex is IOException or JsonException or ArgumentException or
+        InvalidOperationException or OverflowException or Valdrio.Domain.DomainRuleException)
+    {
+        Console.Error.WriteLine("PRIMARY_SNAPSHOT_INVALID: " + ex.GetType().Name);
+        return 3;
+    }
+}
+
 // Portable subprocess probe: real session/OS lock, no economic execution.
 if (args.Length == 2 && args[0] == "--study-snapshot")
 {
@@ -124,6 +159,6 @@ if (args.Contains("--verify-t02a-fx", StringComparer.Ordinal))
 }
 
 Console.WriteLine(
-    "VALDRIO Runner ready. Economic snapshot execution is not implemented yet.");
+    "VALDRIO Runner ready. Use --primary-snapshot <receipt.json> [output.json] for a read-only T09 primary allocation. Durable economic execution is not implemented yet.");
 
 return 0;
