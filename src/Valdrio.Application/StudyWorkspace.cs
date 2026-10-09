@@ -115,7 +115,7 @@ public static class StudyPreparationService
         else if (input is AllocationStudySnapshotInput allocated)
         {
             diagnostics.AddRange(allocated.Workspace.Preparation.Diagnostics);
-            if (allocated.Workspace.Preparation.HasPendingParts) Add("STUDY_PARTITIONS_PENDING", "Study.PartitionsPending");
+            if (!allocated.IncludeUnroutedAccounts && allocated.Workspace.Preparation.HasPendingParts) Add("STUDY_PARTITIONS_PENDING", "Study.PartitionsPending");
             diagnostics.AddRange(allocated.Workspace.Preparation.Warnings);
             diagnostics.AddRange(allocated.Allocations.Coverage.Where(c => c.Diagnostic is not null).Select(c => c.Diagnostic!));
         }

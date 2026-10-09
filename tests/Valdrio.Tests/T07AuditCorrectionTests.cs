@@ -63,8 +63,11 @@ public sealed partial class T06ImportConfirmationTests
         foreach (var language in new[] { "es", "en" })
         {
             ui.Preferences.Update(ui.Preferences.Current with { UiLanguageTag = language });
-            StringAssert.Contains(vm.ProgressSummary, language == "es" ? "1 con rutas pendientes" : "1 with pending routes");
+            StringAssert.Contains(vm.ProgressSummary, language == "es" ? "1 de 1 cuentas conciliadas" : "1 of 1 accounts reconciled");
             Assert.AreEqual(vm["AssignmentPending"], vm.Rows.Single().AssignmentStatus);
+            // Net zero must not hide the two unallocated parts in step 6.
+            var allocation = ui.Company.ActiveAllocations!.ReadAllocations(study.CompanyId, study.Id);
+            Assert.AreEqual(2, allocation.Coverage.Count(c => c.Account == "6000" && c.Diagnostic?.Code == "KEY_RULE_MISSING"));
         }
         w = ui.Company.ActiveResources.ReadResources(study.CompanyId, study.Id);
         ui.Company.ActiveResources.ChangeResources(Mutation(w, ResourceMutationKind.EditResource,

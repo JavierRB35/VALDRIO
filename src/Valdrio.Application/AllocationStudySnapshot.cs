@@ -8,13 +8,15 @@ public sealed class AllocationStudySnapshotInput : IStudySnapshotInput
     public const string Schema = "valdrio-study-input-v7";
     public AllocationStudySnapshotInput(StudyDefinition studyContext, PrecisionPolicy precisionPolicy,
         PublishedModelStructure model, StudySnapshotProvenance provenance, IReadOnlyList<ImportedBatch> imports,
-        IReadOnlyList<ResourceMutationReceipt> history, IReadOnlyList<AllocationChangeReceipt> allocationHistory)
+        IReadOnlyList<ResourceMutationReceipt> history, IReadOnlyList<AllocationChangeReceipt> allocationHistory,
+        bool includeUnroutedAccounts = false)
     {
         _ = new StudySnapshotInput(StudySnapshotInput.Schema, StudySnapshotInput.PreparationVersion,
             studyContext, precisionPolicy, model, provenance, [], [], [], []);
         if (imports.Count > 0) _ = new ImportedStudySnapshotInput(studyContext, precisionPolicy, model, provenance, imports);
         if (allocationHistory.Count == 0) throw StudyRules.Error("STUDY_SNAPSHOT_INVALID", "Study.SnapshotInvalid");
         StudyContext = studyContext; PrecisionPolicy = precisionPolicy; Model = model; Provenance = provenance;
+        IncludeUnroutedAccounts = includeUnroutedAccounts;
         Imports = FrozenList.Copy(imports.OrderBy(b => b.ConfirmedStudy.Revision));
         History = FrozenList.Copy(history.OrderBy(h => h.ConfirmedStudy.Revision));
         var ledger = ResourceHistory.Replay(studyContext, precisionPolicy, model, Imports, History);
@@ -37,10 +39,13 @@ public sealed class AllocationStudySnapshotInput : IStudySnapshotInput
             revision = after.Revision;
         }
         var last = AllocationHistory.Last();
-        Allocations = new(Workspace, last.ReferencedKeys, last.Request.Configuration, last.ConfirmedStudy.Revision);
+        Allocations = new(Workspace, last.ReferencedKeys, last.Request.Configuration, last.ConfirmedStudy.Revision, includeUnroutedAccounts);
     }
     public string SnapshotSchemaVersion => Schema;
-    public string InputPreparationVersion => "allocation-preparation-t08-v1";
+    public string InputPreparationVersion => IncludeUnroutedAccounts ? "allocation-preparation-t09-v2" : "allocation-preparation-t08-v1";
+    // Omitted in historical v7 snapshots: retain their preparation policy and hashes.
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool IncludeUnroutedAccounts { get; }
     public StudyDefinition StudyContext { get; }
     public PrecisionPolicy PrecisionPolicy { get; }
     public PublishedModelStructure Model { get; }

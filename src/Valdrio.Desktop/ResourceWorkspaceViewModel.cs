@@ -11,6 +11,7 @@ namespace Valdrio.Desktop;
 public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisposable
 {
     private readonly CompanyFileViewModel company;
+    private readonly WorkspaceChoices choices = new();
     private readonly StudyWorkspaceViewModel studies;
     private readonly UiTextCatalog texts;
     private readonly PresentationPreferencesService preferences;
@@ -74,14 +75,14 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     public ObservableCollection<ResourceGridRow> Rows { get; } = [];
     public ObservableCollection<ResourcePartRow> Parts { get; } = [];
     public ObservableCollection<ResourceAdjustmentRow> Adjustments { get; } = [];
-    public IReadOnlyList<ResourceChoice<ResourceRoutingKind>> Routes => Choices<ResourceRoutingKind>();
-    public IReadOnlyList<ResourceChoice<ResourceBehavior>> Behaviors => Choices<ResourceBehavior>();
-    public IReadOnlyList<ResourceChoice<ResourceCostLayer>> Layers => Choices<ResourceCostLayer>();
-    public IReadOnlyList<ResourceChoice<ResourceCapacityTreatment>> Capacities => Choices<ResourceCapacityTreatment>();
+    public IReadOnlyList<ResourceChoice<ResourceRoutingKind>> Routes => choices.Get<ResourceChoice<ResourceRoutingKind>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => Choices<ResourceRoutingKind>());
+    public IReadOnlyList<ResourceChoice<ResourceBehavior>> Behaviors => choices.Get<ResourceChoice<ResourceBehavior>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => Choices<ResourceBehavior>());
+    public IReadOnlyList<ResourceChoice<ResourceCostLayer>> Layers => choices.Get<ResourceChoice<ResourceCostLayer>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => Choices<ResourceCostLayer>());
+    public IReadOnlyList<ResourceChoice<ResourceCapacityTreatment>> Capacities => choices.Get<ResourceChoice<ResourceCapacityTreatment>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => Choices<ResourceCapacityTreatment>());
     private IReadOnlyList<ResourceChoice<T>> Choices<T>() where T : struct, Enum => Enum.GetValues<T>().Select(v => new ResourceChoice<T>(v, this[v.ToString()])).ToArray();
-    public IReadOnlyList<ResourceChoice<EntityId>> Pools => workspace?.Model.Structure.Pools
+    public IReadOnlyList<ResourceChoice<EntityId>> Pools => choices.Get<ResourceChoice<EntityId>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => workspace?.Model.Structure.Pools
         .Where(p => workspace.Model.Structure.Nodes.Any(n => n.Id == p.NodeId && n.IsActive))
-        .Select(p => new ResourceChoice<EntityId>(p.Id, PoolLabel(p))).OrderBy(p => p.Label, StringComparer.Ordinal).ToArray() ?? [];
+        .Select(p => new ResourceChoice<EntityId>(p.Id, PoolLabel(p))).OrderBy(p => p.Label, StringComparer.Ordinal).ToArray() ?? []);
     private string PoolLabel(CostPoolDefinition pool)
     {
         var model = workspace!.Model;
@@ -93,8 +94,8 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
             Text(node.Role == NodeRole.Principal ? "Model.Principal" : "Model.Auxiliary"), description,
             unit.Code + " · " + unit.Symbol, string.Join(", ", node.FunctionTags));
     }
-    public IReadOnlyList<ResourceChoice<UnitId>> Units => workspace?.Model.DriverUnits.Select(u => new ResourceChoice<UnitId>(u.Id, u.Code + " · " + u.Symbol)).ToArray() ?? [];
-    public IReadOnlyList<ResourceChoice<EntityId>> Objects => workspace?.Ledger.Objects.Select(o => new ResourceChoice<EntityId>(o.Id, o.Code + " · " + o.Name)).ToArray() ?? [];
+    public IReadOnlyList<ResourceChoice<UnitId>> Units => choices.Get<ResourceChoice<UnitId>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => workspace?.Model.DriverUnits.Select(u => new ResourceChoice<UnitId>(u.Id, u.Code + " · " + u.Symbol)).ToArray() ?? []);
+    public IReadOnlyList<ResourceChoice<EntityId>> Objects => choices.Get<ResourceChoice<EntityId>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => workspace?.Ledger.Objects.Select(o => new ResourceChoice<EntityId>(o.Id, o.Code + " · " + o.Name)).ToArray() ?? []);
     public string this[string key] => Text("Resources." + key);
     public string Guide(string key) => Text("Guide." + key);
     private CultureInfo Format => CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
@@ -242,10 +243,19 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
         {
             PendingEditChoice.Cancel => false,
             PendingEditChoice.Discard => DiscardAndLeave(),
-            _ => await SaveAsync()
+            _ => await SavePendingAndLeaveAsync()
         };
     }
     private bool DiscardAndLeave() { Discard(); return true; }
+    public async Task<bool> SavePendingAndLeaveAsync()
+    {
+        if (!CanEdit || !CheckCulture()) return false;
+        if (IsRevaluing) { statusKey = "ApplyFormsFirst"; Refresh(); return false; }
+        if (objectDirty) { await SaveObject(); if (objectDirty) return false; }
+        if (adjustmentDirty) { Try(AddAdjustment); if (adjustmentDirty) return false; }
+        if (partDirty) { Try(ApplyPart); if (partDirty) return false; }
+        return !IsDirty || await SaveAsync();
+    }
     public async Task<bool> SaveAsync()
     {
         if (!CanEdit || workspace is null || editing is null || IsRevaluing) return false;
@@ -330,9 +340,17 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
                 this[a.ReversalOfId.HasValue ? "Reversal" : "Adjustment"]));
         AdjustmentChoice = Adjustments.FirstOrDefault(a => a.Value.Id == oldAdjustment);
     }
-    private void PartEdited() { if (!loading) { partDirty = true; cultureAcknowledged = false; } Refresh(); }
-    private void AdjustmentEdited() { if (!loading) { adjustmentDirty = true; cultureAcknowledged = false; } Refresh(); }
-    private void ObjectEdited() { if (!loading) { objectDirty = true; cultureAcknowledged = false; } Refresh(); }
+    private void PartEdited() { if (loading) return; partDirty = true; cultureAcknowledged = false; RefreshEditor(); }
+    private void AdjustmentEdited() { if (loading) return; adjustmentDirty = true; cultureAcknowledged = false; RefreshEditor(); }
+    private void ObjectEdited() { if (loading) return; objectDirty = true; cultureAcknowledged = false; RefreshEditor(); }
+    private void RefreshEditor()
+    {
+        foreach (var property in new[] { nameof(IsDirty), nameof(HasResourceChanges), nameof(CultureChanged), nameof(CultureMessage),
+            nameof(ShowDirect), nameof(ShowPool), nameof(ShowExclusion), nameof(ShowContext), nameof(ShowCapacity),
+            nameof(ShowAdjustmentFx), nameof(ObjectKind), nameof(CanEditCorrections), nameof(CorrectionsReadOnly), nameof(CorrectionLockMessage) })
+            OnPropertyChanged(property);
+        RefreshCommands();
+    }
     public void RefreshPresentation(bool value) { pseudo = value; RebuildRows(); Refresh(); }
     private void PreferencesChanged(object? sender, PresentationPreferencesChangedEventArgs e) { cultureAcknowledged = false; RebuildRows(); Refresh(); }
     private void Refresh() { OnPropertyChanged(string.Empty); RefreshCommands(); }

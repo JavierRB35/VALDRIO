@@ -48,12 +48,11 @@ public partial class MainWindow
             await studies.ApplyResourceReceiptAsync(batch.ConfirmedStudy);
         }
         var w = company.ActiveResources!.ReadResources(study.CompanyId, study.Id);
-        var principal = w.Model.Structure.Nodes.Single(n => n.Role == NodeRole.Principal);
+        var principal = w.Model.Structure.Nodes.First(n => n.Role == NodeRole.Principal);
         var auxiliary = w.Model.Structure.Nodes.Single(n => n.Role == NodeRole.Auxiliary);
-        var part = new ResourcePartDraft(new(Guid.NewGuid()), new(1000,new("EUR")), ResourceRoutingKind.AllocationPool, poolId: w.Model.Structure.Pools.Single(p => p.NodeId == principal.Id).Id);
-        var routed = company.ActiveResources.ChangeResources(new(ResourceMutationKind.EditResource, study.CompanyId, study.Id, w.Study.Revision,
-            new(Guid.NewGuid()), "native-test", "Synthetic T08 indirect resource", w.Resources.Single().Id, [part], [], null, null, [], []));
-        await studies.ApplyResourceReceiptAsync(routed.ConfirmedStudy); await NavigateWorkflow(4); await AdvanceWorkflow(); await Idle();
+        var part = w.Resources.Single().Parts.Single();
+        Check(part.Routing == ResourceRoutingKind.Pending && part.PoolId is null, "imported account needs no prior pool or classification");
+        await NavigateWorkflow(4); await AdvanceWorkflow(); await Idle();
         Check(workflowStep == 5 && panel.IsVisible && vm.CanEdit, "T07 continues to the real allocation editor");
         Check(vm.Accounts.Single().Label.Contains(vm["NameConflict"], StringComparison.Ordinal), "conflicting descriptions are visible with their account code");
         Text(panel.KeyNameBox, "Consumos de oficina");
@@ -70,6 +69,7 @@ public partial class MainWindow
         Check(secondary.Lines.Single().Value == 1m, "equal shares preserve a positive unit weight");
         panel.RuleTabs.SelectedIndex = 0; await Idle(); Select(panel.RuleAccountBox, "6005"); Select(panel.RuleKeyBox, primaryKey.Id);
         await Click(panel.SaveRuleButton); Check(vm.PrimaryRules.Count == 1, "account rule persists through its visible save action");
+        Check(vm.PrimaryResults.Count == 1 && vm.PrimaryResults.Single().Amount == "1000 EUR", "step 6 distributes the prepared account directly to its node");
         panel.RuleTabs.SelectedIndex = 1; await Idle(); Select(panel.AuxiliaryBox, auxiliary.Id); Select(panel.SecondaryKeyBox, secondary.Id);
         await Click(panel.SaveSecondaryButton); Check(vm.SecondaryRules.Count == 1 && vm.Coverage.All(c => c.Status == vm["Covered"]), "primary and secondary demo coverage has no missing or ambiguous rule");
         panel.RuleTabs.SelectedIndex = 3; await Idle(); Select(panel.NameAccountBox, "6005");

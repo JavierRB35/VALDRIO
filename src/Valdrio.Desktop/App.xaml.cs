@@ -173,11 +173,11 @@ public partial class App : System.Windows.Application
         bool allowClose = false;
         window.Closing += async (_, args) =>
         {
-            if (!company.IsIdle || models.IsBusy || studies.IsBusy || resources.IsBusy)
+            if (!company.IsIdle || models.IsBusy || studies.IsBusy || resources.IsBusy || allocations.IsBusy)
             {
                 args.Cancel = true; company.CancelCommand.Execute(null); models.CancelCommand.Execute(null); studies.CancelCommand.Execute(null); resources.CancelCommand.Execute(null); return;
             }
-            if (!allowClose && (models.IsDirty || studies.IsDirty || resources.IsDirty))
+            if (!allowClose && (models.IsDirty || studies.IsDirty || resources.IsDirty || allocations.IsDirty))
             {
                 args.Cancel = true; if (await company.BeforeChangeAsync!()) { allowClose = true; window.Close(); }
             }
@@ -195,11 +195,16 @@ public partial class App : System.Windows.Application
                     {
                         try
                         {
-                        if (e.Args.Contains("--allocation-only", StringComparer.Ordinal))
+                        if (e.Args.Contains("--allocation-only", StringComparer.Ordinal) || e.Args.Contains("--workspace-fixes-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("Allocation capture requires a disposable project copy.");
                             await company.OpenPath(requestedPath);
+                            if (company.Snapshot is null) throw new InvalidOperationException("Cannot open synthetic project: " + company.Status);
+                            if (e.Args.Contains("--workspace-fixes-only", StringComparer.Ordinal))
+                                await window.RunResourceChecks(captureDirectory);
                             await window.RunAllocationChecks(captureDirectory);
+                            if (e.Args.Contains("--workspace-fixes-only", StringComparer.Ordinal))
+                                await window.RunWorkspaceEditingChecks(captureDirectory, (QueuedModelEditorDialogs)modelDialogs);
                             Shutdown(0); return;
                         }
                         await window.CompanyPanel.RunCompanyInteractionChecks(captureDirectory,

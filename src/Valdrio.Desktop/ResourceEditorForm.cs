@@ -29,6 +29,23 @@ public sealed partial class ResourceEditorForm : ObservableObject
     protected override void OnPropertyChanged(PropertyChangedEventArgs e) { base.OnPropertyChanged(e); Edited?.Invoke(); }
 }
 public sealed record ResourceChoice<T>(T Value, string Label);
+
+// WPF selectors must retain their ItemsSource while a form is being edited.
+// Replacing equivalent lists can clear SelectedValue and create a false edit.
+internal sealed class WorkspaceChoices
+{
+    private readonly Dictionary<string, (object Context, object Items)> entries = [];
+    public IReadOnlyList<T> Get<T>(object context, Func<IReadOnlyList<T>> build,
+        [System.Runtime.CompilerServices.CallerMemberName] string name = "")
+    {
+        if (entries.TryGetValue(name, out var entry) && Equals(entry.Context, context))
+            return (IReadOnlyList<T>)entry.Items;
+        var items = build();
+        if (entry.Items is IReadOnlyList<T> previous && previous.SequenceEqual(items)) items = previous;
+        entries[name] = (context, items);
+        return items;
+    }
+}
 public sealed record ResourceGridRow(EntityId Id, string Code, string Originals, string Converted, string Adjustments,
     string Effective, string Pending, string Difference)
 {

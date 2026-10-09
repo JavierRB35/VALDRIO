@@ -22,11 +22,12 @@ public sealed record AllocationKeyRow(AllocationKeyVersion Value, string Name, s
 public sealed record AllocationRuleRow(EntityId Id, string Account, string Key, string Priority);
 public sealed record AllocationSecondaryRow(EntityId Id, string Source, string Group, string Key);
 public sealed record AllocationCoverageRow(EntityId Id, string Source, string Amount, string Key, string Status);
-public sealed record AllocationPartChoice(EntityId Value, string Label, ResourcePartDraft Part);
+public sealed record AllocationPartChoice(EntityId Value, string Label, Money Amount);
 
 public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDisposable
 {
     private readonly CompanyFileViewModel company;
+    private readonly WorkspaceChoices choices = new();
     private readonly StudyWorkspaceViewModel studies;
     private readonly UiTextCatalog texts;
     private readonly PresentationPreferencesService preferences;
@@ -114,7 +115,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public string KeyState => this[editingKey?.Status == ModelStatus.Published ? "PublishedHelp" : keyDirty ? "Unsaved" : "DraftHelp"];
     public string Currency => workspace?.Resources.Study.Currency.FunctionalCurrencyCode.ToString() ?? "";
     public string NumberFormatHelp => string.Format(Format, this["NumberFormat"], numbers.CapturedCulture.Name, numbers.CapturedCulture.NumberFormat.NumberDecimalSeparator);
-    public string CoverageSummary => workspace is null ? "" : string.Format(Format, this["CoverageSummary"], workspace.Coverage.Count(c => c.Diagnostic is null), workspace.Coverage.Count);
+    private int coveredCount;
+    public string CoverageSummary => workspace is null ? "" : string.Format(Format, this["CoverageSummary"], coveredCount, Coverage.Count);
     public string Total
     {
         get
@@ -173,17 +175,17 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public IReadOnlyList<string> DescriptionOptions => workspace?.Resources.Origins.SingleOrDefault(o => o.Code == Account)?.Descriptions ?? [];
     public string DescriptionProvenance => string.Join(Environment.NewLine, workspace?.Resources.Origins.SingleOrDefault(o => o.Code == Account)?.Rows
         .Select(r => (string.IsNullOrWhiteSpace(r.Description) ? this["NoDescription"] : r.Description) + " · " + r.FileName + " · " + this["Row"] + " " + r.RecordNumber.ToString(Format)) ?? []);
-    public IReadOnlyList<ResourceChoice<AllocationStage>> Stages => Enum.GetValues<AllocationStage>().Select(v => new ResourceChoice<AllocationStage>(v, this[v.ToString()])).ToArray();
-    public IReadOnlyList<ResourceChoice<AllocationKeyMode>> Modes => Enum.GetValues<AllocationKeyMode>().Select(v => new ResourceChoice<AllocationKeyMode>(v, this[v.ToString()])).ToArray();
-    public IReadOnlyList<ResourceChoice<AccountSelectorKind>> Selectors => Enum.GetValues<AccountSelectorKind>().Select(v => new ResourceChoice<AccountSelectorKind>(v, this[v.ToString()])).ToArray();
-    public IReadOnlyList<ResourceChoice<UnitId>> Units => workspace?.Resources.Model.DriverUnits.Select(u => new ResourceChoice<UnitId>(u.Id, u.Code + " · " + u.Symbol)).ToArray() ?? [];
-    public IReadOnlyList<ResourceChoice<EntityId>> PublishedPrimary => Published(AllocationStage.Primary);
-    public IReadOnlyList<ResourceChoice<EntityId>> PublishedSecondary => Published(AllocationStage.Secondary);
+    public IReadOnlyList<ResourceChoice<AllocationStage>> Stages => choices.Get<ResourceChoice<AllocationStage>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => Enum.GetValues<AllocationStage>().Select(v => new ResourceChoice<AllocationStage>(v, this[v.ToString()])).ToArray());
+    public IReadOnlyList<ResourceChoice<AllocationKeyMode>> Modes => choices.Get<ResourceChoice<AllocationKeyMode>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => Enum.GetValues<AllocationKeyMode>().Select(v => new ResourceChoice<AllocationKeyMode>(v, this[v.ToString()])).ToArray());
+    public IReadOnlyList<ResourceChoice<AccountSelectorKind>> Selectors => choices.Get<ResourceChoice<AccountSelectorKind>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => Enum.GetValues<AccountSelectorKind>().Select(v => new ResourceChoice<AccountSelectorKind>(v, this[v.ToString()])).ToArray());
+    public IReadOnlyList<ResourceChoice<UnitId>> Units => choices.Get<ResourceChoice<UnitId>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => workspace?.Resources.Model.DriverUnits.Select(u => new ResourceChoice<UnitId>(u.Id, u.Code + " · " + u.Symbol)).ToArray() ?? []);
+    public IReadOnlyList<ResourceChoice<EntityId>> PublishedPrimary => choices.Get<ResourceChoice<EntityId>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => Published(AllocationStage.Primary));
+    public IReadOnlyList<ResourceChoice<EntityId>> PublishedSecondary => choices.Get<ResourceChoice<EntityId>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => Published(AllocationStage.Secondary));
     private IReadOnlyList<ResourceChoice<EntityId>> Published(AllocationStage type) => workspace?.Keys.Where(k => k.Stage == type && k.Status == ModelStatus.Published).Select(k => new ResourceChoice<EntityId>(k.Id, KeyLabel(k))).ToArray() ?? [];
-    public IReadOnlyList<ResourceChoice<string>> Accounts => workspace?.Resources.Origins.Select(o => new ResourceChoice<string>(o.Code, AccountLabel(o))).ToArray() ?? [];
-    public IReadOnlyList<ResourceChoice<EntityId>> Auxiliaries => workspace?.Resources.Model.Structure.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary).Select(n => new ResourceChoice<EntityId>(n.Id, NodeLabel(n))).ToArray() ?? [];
-    public IReadOnlyList<AllocationPartChoice> Parts => workspace?.Resources.Resources.SelectMany(r => r.Parts.Where(p => p.Routing == ResourceRoutingKind.AllocationPool)
-        .Select((p, i) => new AllocationPartChoice(p.Id, AccountLabel(workspace.Resources.Origins.Single(o => o.Id == r.Id)) + " · " + this["Part"] + " " + (i + 1).ToString(Format) + " · " + MoneyText(p.Amount), p))).ToArray() ?? [];
+    public IReadOnlyList<ResourceChoice<string>> Accounts => choices.Get<ResourceChoice<string>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => workspace?.Resources.Origins.Select(o => new ResourceChoice<string>(o.Code, AccountLabel(o))).ToArray() ?? []);
+    public IReadOnlyList<ResourceChoice<EntityId>> Auxiliaries => choices.Get<ResourceChoice<EntityId>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => workspace?.Resources.Model.Structure.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary).Select(n => new ResourceChoice<EntityId>(n.Id, NodeLabel(n))).ToArray() ?? []);
+    public IReadOnlyList<AllocationPartChoice> Parts => choices.Get<AllocationPartChoice>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => workspace?.Resources.Resources.SelectMany(r => r.Parts.Where(p => p.Routing is ResourceRoutingKind.AllocationPool or ResourceRoutingKind.Pending)
+        .Select((p, i) => new AllocationPartChoice(p.Id, AccountLabel(workspace.Resources.Origins.Single(o => o.Id == r.Id)) + " · " + this["Part"] + " " + (i + 1).ToString(Format) + " · " + MoneyText(p.Amount), p.Amount))).ToArray() ?? []);
     private string KeyLabel(AllocationKeyVersion key) => key.Name + " · " + this["Version"] + " " + key.VersionNumber.ToString(Format);
     private string AccountLabel(ResourceOrigin origin)
     {
@@ -203,14 +205,21 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         var u = model.DriverUnits.Single(u => u.Id == pool.DriverUnitId); return u.Code + " · " + u.Symbol;
     }
     private decimal Parse(string value) => numbers.TryCommit(value, out var parsed) ? parsed : throw AllocationDiagnostics.Error("KEY_NUMBER_INVALID", "Allocation.NumberInvalid");
-    private void KeyEdited() { if (!loading) keyDirty = true; Refresh(); }
-    private void RuleEdited() { if (!loading) ruleDirty = true; Refresh(); }
+    private void KeyEdited() { if (loading) return; keyDirty = true; RefreshEditor(); }
+    private void RuleEdited() { if (loading) return; ruleDirty = true; RefreshEditor(); }
+    private void RefreshEditor()
+    {
+        foreach (var property in new[] { nameof(IsDirty), nameof(HasUnappliedRule), nameof(KeyState), nameof(CanEditConfiguration),
+            nameof(CanEditKey), nameof(CanEditWeights), nameof(IsPercentage), nameof(IsDriver), nameof(IsSecondary),
+            nameof(IsExact), nameof(IsPrefix), nameof(Total), nameof(Validation) }) OnPropertyChanged(property);
+        Commands();
+    }
     private void LineChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (Mode == AllocationKeyMode.EqualShares && sender is AllocationLineEditor line && line.Value != "1") line.Value = "1";
         KeyEdited();
     }
-    private void AbsoluteChanged(object? sender, PropertyChangedEventArgs e) { if (!loading) absoluteDirty = true; Refresh(); }
+    private void AbsoluteChanged(object? sender, PropertyChangedEventArgs e) { if (loading) return; absoluteDirty = true; RefreshEditor(); }
     private void LoadKey(AllocationKeyVersion? key)
     {
         loading = true; editingKey = key; newParent = key?.ParentVersionId; numbers = new(Format);
@@ -300,7 +309,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         c.ExplicitAssignments.Where(a => a.PartId != Part).Append(new(Part!.Value, PartKey!.Value)).ToArray(), c.AbsoluteAssignments.Where(a => a.PartId != Part).ToArray(), c.Descriptions));
     private Task SaveAbsoluteAsync() => CommitConfig(c =>
     {
-        var selected = Parts.Single(p => p.Value == Part).Part;
+        var selected = workspace!.Resources.Resources.SelectMany(r => r.Parts).Single(p => p.Id == Part);
         var absolute = new AbsolutePartAllocation(selected.Id, workspace!.Resources.EconomicRevision, selected.Amount,
             AbsoluteLines.Where(l => l.Included).Select(l => new AbsoluteAllocationLine(l.Id, new Money(Parse(l.Value), selected.Amount.Currency, selected.Amount.PrecisionPolicy))).ToArray());
         return new(c.PrimaryRules, c.SecondaryRules, c.ExplicitAssignments.Where(a => a.PartId != Part).ToArray(), c.AbsoluteAssignments.Where(a => a.PartId != Part).Append(absolute).ToArray(), c.Descriptions);
@@ -338,14 +347,16 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             foreach (var k in workspace.Keys.OrderBy(k => k.Name, StringComparer.Ordinal).ThenBy(k => k.VersionNumber)) Keys.Add(new(k, KeyLabel(k), this[k.Mode.ToString()], this[k.Stage.ToString()], this[k.Status.ToString()]));
             foreach (var r in workspace.Configuration.PrimaryRules) PrimaryRules.Add(new(r.Id, r.SelectorKind == AccountSelectorKind.Exact ? Accounts.FirstOrDefault(a => a.Value == r.SelectorValue)?.Label ?? r.SelectorValue : this["Prefix"] + ": " + r.SelectorValue, KeyLabel(workspace.Keys.Single(k => k.Id == r.KeyVersionId)), r.Priority.ToString(Format)));
             foreach (var r in workspace.Configuration.SecondaryRules) SecondaryRules.Add(new(r.Id, NodeLabel(workspace.Resources.Model.Structure.Nodes.Single(n => n.Id == r.AuxiliaryNodeId)), r.ComponentRoutingGroup == "all" ? this["AllComponents"] : r.ComponentRoutingGroup, KeyLabel(workspace.Keys.Single(k => k.Id == r.KeyVersionId))));
-            foreach (var c in workspace.Coverage)
+            var coverage = workspace.Coverage;
+            coveredCount = coverage.Count(c => c.Diagnostic is null);
+            foreach (var c in coverage)
             {
                 var item = Parts.FirstOrDefault(p => p.Value == c.SourceId);
                 var origin = workspace.Resources.Origins.FirstOrDefault(o => o.Code == c.Account);
                 var source = item?.Label ?? (c.ComponentGroup.Length > 0 ? Auxiliaries.FirstOrDefault(a => a.Value == c.SourceId)?.Label : origin is null ? c.Account : AccountLabel(origin)) ?? c.Account;
                 if (string.IsNullOrWhiteSpace(source)) source = this["ChangedPart"];
                 var status = c.Diagnostic is null ? this["Covered"] : new DomainDiagnosticFormatter(texts).Format(c.Diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message;
-                Coverage.Add(new(c.SourceId, source, item is null ? "" : MoneyText(item.Part.Amount), c.KeyId is { } id ? KeyLabel(workspace.Keys.Single(k => k.Id == id)) : c.Diagnostic is null ? this["Absolute"] : "—", status));
+                Coverage.Add(new(c.SourceId, source, item is null ? "" : MoneyText(item.Amount), c.KeyId is { } id ? KeyLabel(workspace.Keys.Single(k => k.Id == id)) : c.Diagnostic is null ? this["Absolute"] : "—", status));
             }
         }
         RebuildPrimary();

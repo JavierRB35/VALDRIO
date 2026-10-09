@@ -8,6 +8,77 @@ namespace Valdrio.Tests;
 public sealed partial class T06ImportConfirmationTests
 {
     [TestMethod]
+    public async Task T09_PreparedAccountAllocatesWithoutPriorPoolAndReopensWithFrozenPolicy()
+    {
+        EntityId studyId;
+        string expected;
+        using (var file = Baseline())
+        {
+            var w = await ImportedResources(file);
+            studyId = w.Study.Id;
+            var correction = ResourceCorrectionCommand.Prepare(w, w.Resources.Single().Id, w.Study.Revision,
+                Eur(-200m), Catalog.GetRequired(new("EUR")).Freeze(), Id(), Id(), Id(), "test")!;
+            file.Resources.ChangeResources(correction);
+            w = file.Resources.ReadResources(w.Study.CompanyId, studyId);
+            Assert.IsTrue(w.Resources.Single().Parts.All(p => p.PoolId is null && p.Routing == ResourceRoutingKind.Pending));
+            var nodes = w.Model.Structure.Nodes.Take(2).ToArray();
+            var key = file.Allocations.SaveAllocationKey(KeyCommand(w, lines: [new(nodes[0].Id, 25m), new(nodes[1].Id, 75m)])).After;
+            var rule = new PrimaryRule(Id(), w.Study.CompanyId, w.Model.Structure.Id, AccountSelectorKind.Exact,
+                w.Origins.Single().Code, 0, key.Id, true);
+            file.Allocations.ChangeAllocations(AllocationCommand(w, new([rule], [], [], [], [])));
+            var live = file.Allocations.ReadAllocations(w.Study.CompanyId, studyId);
+            var result = PrimaryAllocationService.Calculate(live);
+            Assert.IsTrue(result.IsComplete);
+            Assert.AreEqual(800m, result.Facts.Sum(f => f.PostedAmount.Amount));
+            Assert.AreEqual(200m, result.ByNode(nodes[0].Id).Sum(f => f.PostedAmount.Amount));
+            Assert.AreEqual(600m, result.ByNode(nodes[1].Id).Sum(f => f.PostedAmount.Amount));
+            Assert.AreEqual(0m, result.Resources.Single().Pending.Amount);
+            Assert.AreEqual(800m, result.Resources.Single().Pools.Amount);
+            expected = CanonicalSnapshotJson.Serialize(result);
+            var snapshot = file.Studies.Capture(new(w.Study.CompanyId, studyId, live.Resources.Study.Revision, Id(), "test"));
+            snapshot.EnsureValid();
+            var input = (AllocationStudySnapshotInput)snapshot.Input;
+            Assert.IsTrue(input.IncludeUnroutedAccounts);
+            Assert.AreEqual(expected, CanonicalSnapshotJson.Serialize(PrimaryAllocationService.Calculate(input)));
+            Assert.IsFalse(StudyPreparationService.Evaluate(input).Diagnostics.Any(d => d.Code == "STUDY_PARTITIONS_PENDING"));
+
+            // Existing v7 snapshots omit the new flag and keep the original pending-route semantics.
+            var historical = new AllocationStudySnapshotInput(input.StudyContext, input.PrecisionPolicy, input.Model,
+                input.Provenance, input.Imports, input.History, input.AllocationHistory);
+            var historicalJson = AllocationStudySnapshotJson.Serialize(historical);
+            Assert.IsFalse(historicalJson.Contains("IncludeUnroutedAccounts", StringComparison.Ordinal));
+            var replay = AllocationStudySnapshotJson.Deserialize(historicalJson);
+            Assert.AreEqual(historicalJson, AllocationStudySnapshotJson.Serialize(replay));
+            Assert.AreEqual(AllocationStudySnapshotJson.EconomicJson(historical), AllocationStudySnapshotJson.EconomicJson(replay));
+            Assert.IsTrue(PrimaryAllocationService.Calculate(replay).Gaps.All(g => g.Diagnostic.Code == "KEY_PART_PENDING"));
+        }
+        using var reopened = Service().Open(FileOf("current.valdrio"));
+        Assert.AreEqual(expected, CanonicalSnapshotJson.Serialize(PrimaryAllocationService.Calculate(reopened.Allocations.ReadAllocations(reopened.Read().Id, studyId))));
+        reopened.Studies.ReadSnapshots(reopened.Read().Id, studyId).Single().EnsureValid();
+    }
+
+    [TestMethod]
+    public async Task T09_UnroutedAccountSupportsManualAndAbsoluteAssignmentsButMissingRuleStaysPending()
+    {
+        using var file = Baseline(); var w = await ImportedResources(file);
+        var part = w.Resources.Single().Parts.Single();
+        var missing = PrimaryAllocationService.Calculate(file.Allocations.ReadAllocations(w.Study.CompanyId, w.Study.Id));
+        Assert.IsFalse(missing.IsComplete);
+        Assert.AreEqual("KEY_RULE_MISSING", missing.Gaps.Single().Diagnostic.Code);
+        Assert.AreEqual(1000m, missing.Resources.Single().Pending.Amount);
+        var node = w.Model.Structure.Nodes.First();
+        var key = file.Allocations.SaveAllocationKey(KeyCommand(w, lines: [new(node.Id, 100m)])).After;
+        file.Allocations.ChangeAllocations(AllocationCommand(w, new([], [], [new(part.Id, key.Id)], [], [])));
+        var live = file.Allocations.ReadAllocations(w.Study.CompanyId, w.Study.Id);
+        Assert.IsTrue(PrimaryAllocationService.Calculate(live).IsComplete);
+        var absolute = new AbsolutePartAllocation(part.Id, w.EconomicRevision, part.Amount, [new(node.Id, part.Amount)]);
+        file.Allocations.ChangeAllocations(AllocationCommand(live.Resources, new([], [], [], [absolute], [])));
+        live = file.Allocations.ReadAllocations(w.Study.CompanyId, w.Study.Id);
+        Assert.AreEqual("absolute", PrimaryAllocationService.Calculate(live).Facts.Single().Selection);
+        Assert.IsNull(live.Coverage.Single(c => c.SourceId == part.Id).Diagnostic);
+    }
+
+    [TestMethod]
     public async Task T09_RealCompanyAndFrozenSnapshotProduceIdenticalBalancedFacts()
     {
         using var file = Baseline();

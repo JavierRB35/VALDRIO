@@ -17,7 +17,10 @@ public partial class AllocationWorkspacePanel : UserControl
             Headers();
         };
     }
-    private void Changed(object? sender, PropertyChangedEventArgs e) => Headers();
+    private void Changed(object? sender, PropertyChangedEventArgs e)
+    {
+        if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == "Item[]") Headers();
+    }
     private void Headers()
     {
         if (viewModel is null) return;

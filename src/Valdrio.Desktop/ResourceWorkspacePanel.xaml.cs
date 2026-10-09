@@ -8,6 +8,13 @@ using System.Windows.Threading;
 namespace Valdrio.Desktop;
 public partial class ResourceWorkspacePanel : UserControl
 {
+    public static readonly DependencyProperty ShowDistributionToolsProperty = DependencyProperty.Register(
+        nameof(ShowDistributionTools), typeof(bool), typeof(ResourceWorkspacePanel), new PropertyMetadata(true));
+    public bool ShowDistributionTools
+    {
+        get => (bool)GetValue(ShowDistributionToolsProperty);
+        set => SetValue(ShowDistributionToolsProperty, value);
+    }
     private ResourceWorkspaceViewModel? vm;
     private CultureInfo? correctionCulture;
     public Task<bool>? CorrectionSaveTask { get; private set; }
@@ -24,7 +31,12 @@ public partial class ResourceWorkspacePanel : UserControl
         if (vm is not null) vm.PropertyChanged += Changed;
         RefreshHeaders();
     }
-    private void Changed(object? sender, PropertyChangedEventArgs e) => RefreshHeaders();
+    private void Changed(object? sender, PropertyChangedEventArgs e)
+    {
+        if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == "Item[]") RefreshHeaders();
+        else if (e.PropertyName == nameof(ResourceWorkspaceViewModel.CorrectionsReadOnly) && vm is not null)
+            CorrectionsColumn.IsReadOnly = vm.CorrectionsReadOnly;
+    }
     private static T? Ancestor<T>(DependencyObject? source) where T : DependencyObject
     {
         while (source is not null)
@@ -99,6 +111,8 @@ public partial class ResourceWorkspacePanel : UserControl
         if (vm is null) return;
         void Headers(DataGrid grid, string[] keys) { for (var i = 0; i < keys.Length; i++) grid.Columns[i].Header = vm[keys[i]]; }
         Headers(ResourceGrid, ["Code", "Originals", "Converted", "Adjustments", "Effective", "PendingAmount", "Difference", "AssignmentStatus"]);
+        // Preparation only reconciles amounts; allocation status belongs to step 6.
+        ResourceGrid.Columns[5].Visibility = ResourceGrid.Columns[7].Visibility = ShowDistributionTools ? Visibility.Visible : Visibility.Collapsed;
         CorrectionsColumn.IsReadOnly = vm.CorrectionsReadOnly;
         CorrectionsColumn.Header = vm["Adjustments"] + " (" + vm.FunctionalCurrency + ")";
         Headers(PartGrid, ["Amount", "Route", "Destination", "Behavior", "Layer"]);

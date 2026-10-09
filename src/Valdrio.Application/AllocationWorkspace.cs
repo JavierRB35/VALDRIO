@@ -60,15 +60,17 @@ public interface IAllocationWorkspace
 public sealed class AllocationWorkspaceSnapshot
 {
     public AllocationWorkspaceSnapshot(ResourceWorkspaceSnapshot resources, IReadOnlyList<AllocationKeyVersion> keys,
-        AllocationConfiguration configuration, long configurationRevision)
+        AllocationConfiguration configuration, long configurationRevision, bool includeUnroutedAccounts = true)
     {
         Resources = resources; Keys = FrozenList.Copy(keys.OrderBy(k => k.Id));
         Configuration = configuration; ConfigurationRevision = configurationRevision;
+        IncludeUnroutedAccounts = includeUnroutedAccounts;
     }
     public ResourceWorkspaceSnapshot Resources { get; }
     public IReadOnlyList<AllocationKeyVersion> Keys { get; }
     public AllocationConfiguration Configuration { get; }
     public long ConfigurationRevision { get; }
+    public bool IncludeUnroutedAccounts { get; }
     [JsonIgnore] public IReadOnlyList<AllocationCoverage> Coverage => AllocationWorkspaceRules.Coverage(this);
 }
 
@@ -139,7 +141,7 @@ public static class AllocationWorkspaceRules
             _ = Key(rule.KeyVersionId, AllocationStage.Secondary);
             if (rule.IsActive) _ = AllocationKeyRules.ResolveSecondary(rule.AuxiliaryNodeId, rule.ComponentRoutingGroup, config.SecondaryRules, keys, model);
         }
-        var eligible = resources.Resources.SelectMany(r => r.Parts).Where(p => p.Routing == ResourceRoutingKind.AllocationPool).ToDictionary(p => p.Id);
+        var eligible = resources.Resources.SelectMany(r => r.Parts).Where(p => p.Routing is ResourceRoutingKind.AllocationPool or ResourceRoutingKind.Pending).ToDictionary(p => p.Id);
         foreach (var item in config.ExplicitAssignments)
         {
             Invalid(!eligible.ContainsKey(item.PartId) || config.AbsoluteAssignments.Any(a => a.PartId == item.PartId));
@@ -164,7 +166,7 @@ public static class AllocationWorkspaceRules
             var account = resources.Origins.Single(o => o.Id == resource.Id).Code;
             try
             {
-                if (part.Routing == ResourceRoutingKind.Pending) throw AllocationDiagnostics.Error("KEY_PART_PENDING", "Allocation.PartPending", part.Id);
+                if (part.Routing == ResourceRoutingKind.Pending && !workspace.IncludeUnroutedAccounts) throw AllocationDiagnostics.Error("KEY_PART_PENDING", "Allocation.PartPending", part.Id);
                 if (workspace.Configuration.AbsoluteAssignments.SingleOrDefault(a => a.PartId == part.Id) is { } absolute)
                 {
                     // Descriptive/rule changes do not invalidate amounts. A new import or resource revision does.
@@ -180,7 +182,7 @@ public static class AllocationWorkspaceRules
             }
             catch (DomainRuleException ex) { result.Add(new(part.Id, account, null, ex.Diagnostic)); }
         }
-        var eligible = resources.Resources.SelectMany(r => r.Parts).Where(p => p.Routing == ResourceRoutingKind.AllocationPool).Select(p => p.Id).ToHashSet();
+        var eligible = resources.Resources.SelectMany(r => r.Parts).Where(p => p.Routing == ResourceRoutingKind.AllocationPool || workspace.IncludeUnroutedAccounts && p.Routing == ResourceRoutingKind.Pending).Select(p => p.Id).ToHashSet();
         foreach (var orphan in workspace.Configuration.ExplicitAssignments.Select(a => a.PartId).Concat(workspace.Configuration.AbsoluteAssignments.Select(a => a.PartId)).Where(id => !eligible.Contains(id)).Distinct())
             result.Add(new(orphan, "", null, AllocationDiagnostics.Error("KEY_PART_CHANGED", "Allocation.PartChanged", orphan).Diagnostic));
         foreach (var node in resources.Model.Structure.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary))

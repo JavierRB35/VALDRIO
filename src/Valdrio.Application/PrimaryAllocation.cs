@@ -81,12 +81,12 @@ public static class PrimaryAllocationService
         {
             if (!seenParts.Add(part.Id))
                 throw AllocationDiagnostics.Error("PRIMARY_PART_DUPLICATE", "Primary.PartDuplicate", part.Id);
-            if (part.Routing == ResourceRoutingKind.Pending)
+            if (part.Routing == ResourceRoutingKind.Pending && !input.IncludeUnroutedAccounts)
             {
                 gaps.Add(new(part.Id, AllocationDiagnostics.Error("KEY_PART_PENDING", "Allocation.PartPending", part.Id).Diagnostic));
                 continue;
             }
-            if (part.Routing != ResourceRoutingKind.AllocationPool) continue;
+            if (part.Routing is not (ResourceRoutingKind.AllocationPool or ResourceRoutingKind.Pending)) continue;
             var account = accountByResource[resource.Id];
             try
             {
@@ -153,9 +153,15 @@ public static class PrimaryAllocationService
                 parts.Add(new(resource.Id, part.Id, part.Amount, zero, part.Amount, false));
             }
         }
+        // Preparation keeps the imported account unassigned. Only successfully distributed
+        // parts move out of pending in this result; the source ledger is never rewritten.
+        var distributed = parts.Where(p => p.Covered).Select(p => p.PartId).ToHashSet();
+        var newlyAllocated = resources.Resources.ToDictionary(r => r.Id, r => r.Parts
+            .Where(p => p.Routing == ResourceRoutingKind.Pending && distributed.Contains(p.Id))
+            .Aggregate(new Money(0m, currency, precision), (sum, p) => sum + p.Amount));
         var frontier = resources.Preparation.Coverage.OrderBy(c => c.ResourceId).Select(c =>
-            new PrimaryResourceReconciliation(c.ResourceId, c.Effective, c.Direct, c.Pools,
-                c.Excluded, c.Pending, c.Difference)).ToArray();
+            new PrimaryResourceReconciliation(c.ResourceId, c.Effective, c.Direct, c.Pools + newlyAllocated[c.ResourceId],
+                c.Excluded, c.Pending - newlyAllocated[c.ResourceId], c.Difference)).ToArray();
         var totals = facts.GroupBy(f => (f.NodeId, f.PoolId, f.Behavior, f.CostLayer, f.CapacityTreatment))
             .OrderBy(g => g.Key.NodeId).ThenBy(g => g.Key.PoolId).ThenBy(g => g.Key.Behavior)
             .ThenBy(g => g.Key.CostLayer).ThenBy(g => g.Key.CapacityTreatment)
