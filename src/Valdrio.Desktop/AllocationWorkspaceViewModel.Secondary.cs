@@ -327,7 +327,17 @@ public sealed partial class AllocationWorkspaceViewModel
             workspace.SecondaryPublication!.ExplanationLinks).Where(l =>
             l.ResourceId == row.ResourceId && l.PartId == row.PartId &&
             l.TerminalNodeId == row.TerminalNodeId);
-        SecondaryExplanation = string.Join(Environment.NewLine, links.Select(l =>
+        var finalFacts = secondaryPreview?.Facts ?? workspace.SecondaryPublication!.Facts;
+        var selectedFact = finalFacts.SingleOrDefault(f => f.ResourceId == row.ResourceId &&
+            f.PartId == row.PartId && f.TerminalNodeId == row.TerminalNodeId);
+        var amountDetail = selectedFact is null ? "" :
+            string.Format(Format, this["SecondaryExplainAmounts"],
+                MoneyText(selectedFact.PostedAmount),
+                selectedFact.RawAmount.ToString("0.########", Format) + " " + Currency,
+                selectedFact.NumericAdjustment.ToString("0.########", Format) + " " + Currency,
+                selectedFact.RoundingAdjustment.ToString("0.########", Format) + " " + Currency);
+        SecondaryExplanation = amountDetail + Environment.NewLine +
+            string.Join(Environment.NewLine, links.Select(l =>
         {
             var keys = (l.SecondaryKeyVersionIds ?? []).Select(id =>
                 workspace.Keys.FirstOrDefault(k => k.Id == id)).Where(k => k is not null)
