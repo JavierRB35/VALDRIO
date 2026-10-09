@@ -21,13 +21,18 @@ public sealed class AllocationConfiguration
 {
     public AllocationConfiguration(IReadOnlyList<PrimaryRule> primaryRules, IReadOnlyList<SecondaryRule> secondaryRules,
         IReadOnlyList<ExplicitPrimaryAssignment> explicitAssignments, IReadOnlyList<AbsolutePartAllocation> absoluteAssignments,
-        IReadOnlyList<AccountDescriptionChoice> descriptions, bool primaryClosed = false)
+        IReadOnlyList<AccountDescriptionChoice> descriptions, bool primaryClosed = false,
+        bool secondaryClosed = false, string? secondaryCalculationHash = null)
     {
         if (primaryRules is null || secondaryRules is null || explicitAssignments is null || absoluteAssignments is null || descriptions is null ||
             primaryRules.Any(r => r is null) || secondaryRules.Any(r => r is null) || explicitAssignments.Any(r => r is null) ||
             absoluteAssignments.Any(r => r is null) || descriptions.Any(r => r is null))
             throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
+        if (secondaryClosed && (!primaryClosed || string.IsNullOrWhiteSpace(secondaryCalculationHash)))
+            throw AllocationDiagnostics.Error("SECONDARY_CLOSE_INVALID", "Secondary.CloseInvalid");
         PrimaryClosed = primaryClosed;
+        SecondaryClosed = secondaryClosed;
+        SecondaryCalculationHash = secondaryClosed ? secondaryCalculationHash : null;
         PrimaryRules = FrozenList.Copy(primaryRules.OrderBy(r => r.Id));
         SecondaryRules = FrozenList.Copy(secondaryRules.OrderBy(r => r.Id));
         ExplicitAssignments = FrozenList.Copy(explicitAssignments.OrderBy(r => r.PartId));
@@ -36,7 +41,18 @@ public sealed class AllocationConfiguration
     }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool PrimaryClosed { get; }
-    public AllocationConfiguration WithPrimaryClosed(bool closed) => new(PrimaryRules, SecondaryRules, ExplicitAssignments, AbsoluteAssignments, Descriptions, closed);
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool SecondaryClosed { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? SecondaryCalculationHash { get; }
+    // Reopening primary necessarily invalidates a previously closed secondary run.
+    public AllocationConfiguration WithPrimaryClosed(bool closed) =>
+        new(PrimaryRules, SecondaryRules, ExplicitAssignments, AbsoluteAssignments, Descriptions, closed);
+    public AllocationConfiguration WithSecondaryClosed(bool closed, string? calculationHash = null) =>
+        new(PrimaryRules, SecondaryRules, ExplicitAssignments, AbsoluteAssignments, Descriptions,
+            PrimaryClosed || closed, closed, closed ? calculationHash : null);
+    public AllocationConfiguration WithSecondaryRules(IReadOnlyList<SecondaryRule> rules) =>
+        new(PrimaryRules, rules, ExplicitAssignments, AbsoluteAssignments, Descriptions, PrimaryClosed);
     public IReadOnlyList<PrimaryRule> PrimaryRules { get; }
     public IReadOnlyList<SecondaryRule> SecondaryRules { get; }
     public IReadOnlyList<ExplicitPrimaryAssignment> ExplicitAssignments { get; }
