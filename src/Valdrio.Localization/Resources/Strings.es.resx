@@ -1213,4 +1213,30 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.ReciprocalNoPosting" xml:space="preserve"><value>Solo se comprueban las versiones de reparto guardadas y publicadas. Aquí no se redistribuyen ni publican costes.</value></data>
   <data name="Reciprocal.SensitivePivot" xml:space="preserve"><value>El sistema recíproco es inestable cerca del auxiliar {0}; pivote normalizado: {1}.</value></data>
   <data name="Reciprocal.SensitiveAmplification" xml:space="preserve"><value>El sistema recíproco es inestable; amplificación de circulación: {0}.</value></data>
+  <data name="Secondary.PrimaryIncomplete" xml:space="preserve"><value>Completa todas las asignaciones primarias antes de calcular el reparto secundario.</value></data>
+  <data name="Secondary.GroupMappingRequired" xml:space="preserve"><value>Los grupos específicos del reparto secundario no tienen correspondencia con los componentes de coste primario. Asigna los auxiliares activos al grupo «all» o define esa correspondencia antes de calcular.</value></data>
+  <data name="Secondary.SourceInconsistent" xml:space="preserve"><value>El origen {0} mezcla clasificaciones económicas incompatibles en la misma parte de recurso.</value></data>
+  <data name="Secondary.PrimaryNodeInvalid" xml:space="preserve"><value>El reparto primario contiene un nodo de destino desconocido o inactivo: {0}.</value></data>
+  <data name="Secondary.NumericOverflow" xml:space="preserve"><value>El cálculo secundario ha superado el rango decimal admitido. Revisa los importes y la amplificación recíproca.</value></data>
+  <data name="Secondary.CloseInvalid" xml:space="preserve"><value>No se puede cerrar el reparto secundario sin un cálculo reproducible y la fase primaria bloqueada.</value></data>
+  <data name="Secondary.Closed" xml:space="preserve"><value>El reparto secundario está cerrado. Reábrelo antes de cambiar las reglas o el cálculo.</value></data>
+  <data name="Secondary.ResultStale" xml:space="preserve"><value>El resultado secundario ya no coincide con las asignaciones guardadas. Reabre el secundario y vuelve a calcular.</value></data>
+  <data name="AllocationUI.SecondaryTitle" xml:space="preserve"><value>Reparto secundario — costes finales</value></data>
+  <data name="AllocationUI.SecondaryHelp" xml:space="preserve"><value>Define una clave secundaria publicada para cada auxiliar. Cuando estén todas las asignaciones, calcula y revisa los costes efectivos. Cierra la fase después de comprobar los resultados. La circulación bruta se muestra aparte.</value></data>
+  <data name="AllocationUI.SecondaryRouteHelp" xml:space="preserve"><value>Asigna a cada auxiliar una clave secundaria publicada; sus destinos pueden ser nodos principales u otros auxiliares. El grupo «all» se aplica al cálculo completo.</value></data>
+  <data name="AllocationUI.SecondaryNeedStudy" xml:space="preserve"><value>Selecciona un estudio para calcular los costes secundarios.</value></data>
+  <data name="AllocationUI.SecondaryOpenState" xml:space="preserve"><value>El reparto secundario está abierto para edición.</value></data>
+  <data name="AllocationUI.SecondaryClosedState" xml:space="preserve"><value>El reparto secundario está cerrado; la edición del primario está bloqueada.</value></data>
+  <data name="AllocationUI.SecondaryPrimaryIncomplete" xml:space="preserve"><value>Completa primero el reparto primario.</value></data>
+  <data name="AllocationUI.SecondaryReady" xml:space="preserve"><value>Todas las asignaciones secundarias están definidas. Ya puedes realizar el cálculo.</value></data>
+  <data name="AllocationUI.SecondaryMissingAssignments" xml:space="preserve"><value>Faltan claves secundarias publicadas para estos auxiliares: {0}.</value></data>
+  <data name="AllocationUI.SecondaryTotals" xml:space="preserve"><value>{0} contribuciones · {1} grupos de coste final · {2}</value></data>
+  <data name="AllocationUI.SecondaryCalculationReady" xml:space="preserve"><value>Cálculo finalizado. Revisa los resultados y cierra el reparto secundario para bloquear el primario.</value></data>
+  <data name="AllocationUI.SecondaryInvalid" xml:space="preserve"><value>No se puede completar el cálculo. Revisa los datos y las reglas de reparto.</value></data>
+  <data name="AllocationUI.SecondaryGross" xml:space="preserve"><value>Circulación bruta de auxiliares (informativa, no se suma al coste final)</value></data>
+  <data name="AllocationUI.CalculateSecondary" xml:space="preserve"><value>Realizar cálculo</value></data>
+  <data name="AllocationUI.CloseSecondary" xml:space="preserve"><value>Cerrar reparto secundario</value></data>
+  <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reabrir reparto secundario</value></data>
+  <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explicar coste seleccionado</value></data>
+  <data name="AllocationUI.Behavior" xml:space="preserve"><value>Comportamiento</value></data>
 </root>
