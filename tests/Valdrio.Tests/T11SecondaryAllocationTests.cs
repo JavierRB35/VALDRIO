@@ -110,4 +110,27 @@ public sealed class T11SecondaryAllocationTests
             SecondaryAllocationService.ResultFingerprint(second, AllocationConfiguration.Empty));
     }
 
+    [TestMethod]
+    public void PublicationKeepsCanonicalEightDecimalFactsAndIndependentGrossFlows()
+    {
+        var calculation = SecondaryAllocationService.Calculate(Source(
+            Primary(1, A, 1000m), Primary(2, B, 500m, ResourceBehavior.Variable),
+            Primary(3, P1, 2000m), Primary(4, P2, 3000m)), Graph(), Precision);
+        var publication = SecondaryAllocationService.Publish(calculation, AllocationConfiguration.Empty, 17);
+        Assert.AreEqual(SecondaryAllocationResult.Schema, publication.SchemaVersion);
+        Assert.AreEqual(17L, publication.SourceRevision);
+        Assert.AreEqual(calculation.Primary.StudyId, publication.StudyId);
+        Assert.AreEqual(6500m, publication.Facts.Sum(f => f.PostedAmount.Amount));
+        Assert.AreEqual(2857.14285715m, publication.ByTerminal(P1).Sum(f => f.PostedAmount.Amount));
+        Assert.AreEqual(3642.85714285m, publication.ByTerminal(P2).Sum(f => f.PostedAmount.Amount));
+        Assert.AreEqual(4, publication.Reconciliations.Count);
+        Assert.AreEqual(2, publication.AuxiliaryGrossFlows.Count);
+        Assert.IsTrue(publication.AuxiliaryGrossFlows.Sum(f => f.GrossAmount) > 1500m);
+        Assert.AreEqual(SecondaryAllocationService.ResultFingerprint(calculation, AllocationConfiguration.Empty),
+            publication.CalculationFingerprint);
+        var canonical = CanonicalSnapshotJson.Serialize(publication);
+        Assert.AreEqual(canonical, CanonicalSnapshotJson.Serialize(
+            CanonicalSnapshotJson.Deserialize<SecondaryCalculationPublication>(canonical)));
+    }
+
 }
