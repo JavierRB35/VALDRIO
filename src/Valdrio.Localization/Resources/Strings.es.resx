@@ -1211,4 +1211,6 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.ReciprocalInvalid" xml:space="preserve"><value>No se pueden comprobar las rutas: datos del grafo o importes numéricos no válidos.</value></data>
   <data name="AllocationUI.ReciprocalMetrics" xml:space="preserve"><value>Pivote relativo mínimo: {0:0.############################}; circulación máxima: {1:0.############################}.</value></data>
   <data name="AllocationUI.ReciprocalNoPosting" xml:space="preserve"><value>Solo se comprueban las versiones de reparto guardadas y publicadas. Aquí no se redistribuyen ni publican costes.</value></data>
+  <data name="Reciprocal.SensitivePivot" xml:space="preserve"><value>El sistema recíproco es inestable cerca del auxiliar {0}; pivote normalizado: {1}.</value></data>
+  <data name="Reciprocal.SensitiveAmplification" xml:space="preserve"><value>El sistema recíproco es inestable; amplificación de circulación: {0}.</value></data>
 </root>
