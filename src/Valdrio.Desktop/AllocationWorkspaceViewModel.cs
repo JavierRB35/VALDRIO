@@ -85,7 +85,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             () => !busy && CanManagePrimary && !IsDirty && (IsSecondaryClosed || secondaryCalculated));
         SaveSecondaryGroupCommand = new AsyncRelayCommand(SaveSecondaryPartGroupAsync, () => CanSaveSecondaryGroup);
         AssignSecondaryKeyToMissingCommand = new AsyncRelayCommand(AssignSecondaryKeyToMissingAsync, () => CanAssignSecondaryKeyToMissing);
-        ClearObsoleteSecondaryGroupsCommand = new AsyncRelayCommand(ClearObsoleteSecondaryGroupsAsync, () => CanEditSecondaryConfiguration && HasObsoleteSecondaryGroups);
+        ClearObsoleteSecondaryGroupsCommand = new AsyncRelayCommand(ClearObsoleteSecondaryGroupsAsync, () => CanEditSecondaryConfiguration && !HasUnappliedRule && HasObsoleteSecondaryGroups);
         SaveRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(false), () => CanSaveRule);
         ApplyRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(true), () => CanSaveRule);
         SaveKeyCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey && MissingKeyInput(true) is null);
