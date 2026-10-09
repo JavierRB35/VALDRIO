@@ -1267,4 +1267,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.SecondaryFillMissingHelp" xml:space="preserve"><value>Utiliza la clave publicada y el grupo seleccionados. Conserva todas las reglas manuales existentes y comprueba cada auxiliar antes de guardar las asignaciones en una sola operación.</value></data>
   <data name="Secondary.BatchUnitMismatch" xml:space="preserve"><value>No se puede aplicar esta clave por unidades de actividad al auxiliar {0} porque su unidad de actividad es distinta. Selecciona una clave compatible o asigna este auxiliar manualmente.</value></data>
   <data name="AllocationUI.SecondaryExplainAmounts" xml:space="preserve"><value>Adjudicado: {0}. Bruto: {1}. Ajuste numérico: {2}. Redondeo: {3}.</value></data>
+  <data name="AllocationUI.SecondaryCancel" xml:space="preserve"><value>Cancelar cálculo</value></data>
+  <data name="AllocationUI.SecondaryCalculating" xml:space="preserve"><value>Calculando los costes secundarios. Puedes cancelar la operación; no se guardarán resultados económicos hasta que cierres la fase.</value></data>
+  <data name="AllocationUI.SecondaryCancelled" xml:space="preserve"><value>Cálculo secundario cancelado. Los resultados publicados y las reglas guardadas no se han modificado.</value></data>
+  <data name="AllocationUI.SecondaryResultStale" xml:space="preserve"><value>El estudio ha cambiado durante el cálculo. Se ha descartado el resultado. Revisa las asignaciones y vuelve a calcular.</value></data>
 </root>
