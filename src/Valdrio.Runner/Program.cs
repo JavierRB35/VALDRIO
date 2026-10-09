@@ -4,6 +4,10 @@ using Valdrio.Application;
 using Valdrio.Infrastructure;
 using Valdrio.Infrastructure.CompanyFiles;
 
+// The T10 feasibility probe never publishes an economic execution.
+if ((args.Length == 2 || args.Length == 3) && args[0] == "--reciprocal-input")
+    return T10ReciprocalRunner.Run(args);
+
 
 if ((args.Length == 2 || args.Length == 3) && args[0] == "--primary-snapshot")
 {
