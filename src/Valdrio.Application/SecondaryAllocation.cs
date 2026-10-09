@@ -106,30 +106,110 @@ public static class SecondaryAllocationService
         if (!active.Any(n => n.Role == NodeRole.Auxiliary))
             return CalculateDirectOnly(primary, active.Where(n => n.Role == NodeRole.Principal)
                 .Select(n => n.Id).ToArray(), workspace.Resources.Precision, cancellation);
-        // Current T08 model has no part -> custom routing-group mapping. Refuse to
-        // silently treat a cost component as "all" when its route is different.
-        var unmappedGroups = workspace.Configuration.SecondaryRules
-            .Where(r => r.IsActive && !StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, "all"))
-            .Select(r => r.ComponentRoutingGroup).Distinct(StringComparer.Ordinal)
-            .Order(StringComparer.Ordinal).ToArray();
-        if (unmappedGroups.Length != 0)
-            throw Error("SECONDARY_GROUP_MAPPING_REQUIRED", "Secondary.GroupMappingRequired",
-                string.Join(", ", unmappedGroups));
+        var precision = workspace.Resources.Precision;
         var model = workspace.Resources.Model.Structure;
-        var missing = model.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary &&
-            !workspace.Configuration.SecondaryRules.Any(r => r.IsActive && r.AuxiliaryNodeId == n.Id &&
-                StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, "all") &&
-                workspace.Keys.Any(k => k.Id == r.KeyVersionId && k.Status == ModelStatus.Published &&
-                    k.Stage == AllocationStage.Secondary)))
-            .OrderBy(n => n.Code, StringComparer.Ordinal).Select(n => n.Code).ToArray();
-        if (missing.Length != 0)
-            throw Error("SECONDARY_MISSING_ASSIGNMENTS", "Secondary.MissingAssignments",
-                string.Join(", ", missing));
-        var graph = ReciprocalGraphBuilder.FromPublishedSecondaryKeys(
-            workspace.Resources.Model.Structure, workspace.Keys,
-            workspace.Configuration.SecondaryRules, workspace.Resources.Model.DriverUnits,
-            workspace.Resources.Precision);
-        return Calculate(primary, graph, workspace.Resources.Precision, cancellation);
+        var configured = workspace.Configuration.SecondaryPartRoutingGroups ?? [];
+        var mapping = configured.ToDictionary(g => g.PartId,
+            g => g.ComponentRoutingGroup);
+        var parts = primary.Facts.Select(f => f.PartId).Distinct().ToHashSet();
+        var unrecognized = configured.Where(g => !parts.Contains(g.PartId))
+            .Select(g => g.PartId.ToString()).Order(StringComparer.Ordinal).ToArray();
+        if (unrecognized.Length != 0)
+            throw Error("SECONDARY_GROUP_SOURCE_INVALID", "Secondary.GroupSourceInvalid",
+                string.Join(", ", unrecognized));
+        var grouped = primary.Facts.GroupBy(f =>
+            mapping.TryGetValue(f.PartId, out var group) ? group : "all")
+            .OrderBy(g => g.Key, StringComparer.Ordinal).ToArray();
+        if (grouped.Length == 0)
+        {
+            // Validate the model graph even with a zero RHS. Zero cost does
+            // not legalize a closed auxiliary component.
+            grouped = primary.Facts.GroupBy(_ => "all").ToArray();
+        }
+        var groupSolutions = new List<SecondaryGroupCirculation>();
+        var posted = new List<SecondaryAllocationFact>();
+        var links = new List<SecondaryExplanationLink>();
+        var reconciliations = new List<SecondaryPartReconciliation>();
+        if (grouped.Length == 0)
+        {
+            var graph = ReciprocalGraphBuilder.FromPublishedSecondaryKeys(
+                model, workspace.Keys, workspace.Configuration.SecondaryRules,
+                workspace.Resources.Model.DriverUnits, precision);
+            var factor = ReciprocalFactorization.Prepare(graph, cancellation);
+            var zero = factor.Solve(
+                factor.AuxiliaryIds.ToDictionary(id => id, _ => 0m, StringComparer.Ordinal),
+                factor.TerminalIds.ToDictionary(id => id, _ => 0m, StringComparer.Ordinal), cancellation);
+            groupSolutions.Add(new("all", zero));
+        }
+        foreach (var group in grouped)
+        {
+            cancellation.ThrowIfCancellationRequested();
+            var missing = model.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary &&
+                !workspace.Configuration.SecondaryRules.Any(r => r.IsActive && r.AuxiliaryNodeId == n.Id &&
+                    StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, group.Key) &&
+                    workspace.Keys.Any(k => k.Id == r.KeyVersionId && k.Status == ModelStatus.Published &&
+                        k.Stage == AllocationStage.Secondary)))
+                .OrderBy(n => n.Code, StringComparer.Ordinal).Select(n => n.Code).ToArray();
+            if (missing.Length != 0)
+                throw Error("SECONDARY_MISSING_ASSIGNMENTS", "Secondary.MissingAssignments",
+                    group.Key + ": " + string.Join(", ", missing));
+            var graph = ReciprocalGraphBuilder.FromPublishedSecondaryKeys(
+                model, workspace.Keys, workspace.Configuration.SecondaryRules,
+                workspace.Resources.Model.DriverUnits, precision, group.Key);
+            var filteredFacts = group.OrderBy(f => f.ResourceId).ThenBy(f => f.PartId)
+                .ThenBy(f => f.NodeId).ToArray();
+            var filteredParts = primary.Parts.Where(p =>
+                filteredFacts.Any(f => f.PartId == p.PartId)).ToArray();
+            // The complete primary reconciliation is preserved by the final
+            // aggregate; subgroup economic sources are solved independently.
+            var subgroup = new PrimaryAllocationResult(primary.StudyId, primary.Revision,
+                primary.Currency, primary.PolicyVersion, filteredFacts, filteredParts, [], [], []);
+            var calculated = Calculate(subgroup, graph, precision, cancellation);
+            posted.AddRange(calculated.Facts);
+            links.AddRange(calculated.ExplanationLinks);
+            reconciliations.AddRange(calculated.Reconciliations);
+            groupSolutions.Add(new(group.Key, calculated.Circulation));
+        }
+        var canonicalFacts = posted.OrderBy(f => f.ResourceId).ThenBy(f => f.PartId)
+            .ThenBy(f => f.TerminalNodeId).ToArray();
+        var totals = canonicalFacts.GroupBy(f => (f.TerminalNodeId, f.Behavior, f.CostLayer, f.CapacityTreatment))
+            .OrderBy(g => g.Key.TerminalNodeId).ThenBy(g => g.Key.Behavior)
+            .ThenBy(g => g.Key.CostLayer).ThenBy(g => g.Key.CapacityTreatment)
+            .Select(g => new SecondaryTerminalTotal(g.Key.TerminalNodeId, g.Key.Behavior,
+                g.Key.CostLayer, g.Key.CapacityTreatment,
+                new Money(g.Aggregate(0m, (sum, f) => checked(sum + f.PostedAmount.Amount)),
+                    primary.Currency, precision))).ToArray();
+        var aggregate = AggregateCirculation(groupSolutions);
+        return new(primary, canonicalFacts, links.OrderBy(l => l.ResourceId)
+            .ThenBy(l => l.PartId).ThenBy(l => l.PrimaryNodeId)
+            .ThenBy(l => l.TerminalNodeId).ToArray(),
+            totals, reconciliations.OrderBy(r => r.ResourceId).ThenBy(r => r.PartId).ToArray(),
+            aggregate, BuildResourceBridges(primary, canonicalFacts, precision),
+            groupSolutions);
+
+    }
+
+    private static ReciprocalSolution AggregateCirculation(
+        IReadOnlyList<SecondaryGroupCirculation> groups)
+    {
+        var first = groups[0].Solution;
+        if (groups.Count == 1) return first;
+        var sameNodes = groups.All(g =>
+            g.Solution.AuxiliaryIds.SequenceEqual(first.AuxiliaryIds) &&
+            g.Solution.TerminalIds.SequenceEqual(first.TerminalIds));
+        if (!sameNodes) throw Error("SECONDARY_GRAPH_INCONSISTENT", "Secondary.GraphInconsistent");
+        var gross = first.AuxiliaryIds.Select((_, i) => groups.Aggregate(0m,
+            (sum, g) => checked(sum + g.Solution.Gross[i]))).ToArray();
+        var final = first.TerminalIds.Select((_, i) => groups.Aggregate(0m,
+            (sum, g) => checked(sum + g.Solution.Final[i]))).ToArray();
+        // There is no single economic factor matrix for a mixture of group
+        // policies. Keep each group's own factors in GroupCirculations.
+        return new(ReciprocalFactorization.Policy, first.AuxiliaryIds, first.TerminalIds,
+            gross, final, [], groups.Max(g => g.Solution.AbsoluteResidual),
+            groups.Max(g => g.Solution.RelativeResidual),
+            groups.Max(g => g.Solution.MaxCirculationAmplification),
+            groups.Min(g => g.Solution.MinNormalizedPivot),
+            groups.SelectMany(g => g.Solution.Warnings).ToArray());
     }
 
     // A study may have no auxiliary cost centers at all. In that case T11
