@@ -109,11 +109,17 @@ public sealed partial class AllocationWorkspaceViewModel
             catch (Exception e) when (e is DomainRuleException or ArgumentException or OverflowException)
             { statusKey = "CompositionContextRequired"; Refresh(); return; }
         }
-        var changes = workspace.Resources.Resources.Where(r => ids.Contains(r.Id) && r.Parts.Count == 1)
-            .Select(r => new ResourcePartReplacement(r.Id, r.Parts.Select(p =>
-                p.WithClassification(p.Classification with { Behavior = behavior, Context = context })).ToArray()))
-            .Where(r => r.Parts[0].Classification != workspace.Resources.Resources.Single(x => x.Id == r.ResourceId).Parts[0].Classification)
-            .ToArray();
+        ResourcePartReplacement[] changes;
+        try
+        {
+            changes = workspace.Resources.Resources.Where(r => ids.Contains(r.Id) && r.Parts.Count == 1)
+                .Select(r => new ResourcePartReplacement(r.Id, r.Parts.Select(p =>
+                    p.WithClassification(p.Classification with { Behavior = behavior, Context = context })).ToArray()))
+                .Where(r => r.Parts[0].Classification != workspace.Resources.Resources.Single(x => x.Id == r.ResourceId).Parts[0].Classification)
+                .ToArray();
+        }
+        catch (Exception e) when (e is DomainRuleException or ArgumentException or OverflowException)
+        { statusKey = "CompositionContextRequired"; Refresh(); return; }
         if (changes.Length == 0) { statusKey = "CompositionUnchanged"; Refresh(); return; }
         await SaveCompositionAsync(changes, this["CompositionEditReason"]);
     }

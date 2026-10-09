@@ -397,6 +397,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     {
         if (!CanManagePrimary || IsDirty || earlierBefore is not null && !await earlierBefore()) return;
         await EnterAsync(true);
+        if (!CanManagePrimary || IsDirty) return;
         if (!IsPrimaryClosed && !await ConfirmCompositionDefaultsAsync()) return;
         await EnterAsync(true);
         if (await CommitConfig(c => c.WithPrimaryClosed(!c.PrimaryClosed), true))

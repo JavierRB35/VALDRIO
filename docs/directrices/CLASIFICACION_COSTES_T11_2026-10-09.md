@@ -10,3 +10,7 @@
 - AssumedFixed genera advertencia y no permite absorción definitiva sin revisar; no equivale a Fixed con contexto.
 - No se altera schema SQL ni versiones canónicas v0.4; la nueva mutación se reproduce desde ResourceChanges.
 - **Pendiente** de compilar .NET 10, pruebas C# y aceptación de WPF Windows. PR #35 continúa en borrador. GitHub Actions no se ejecutó; gasto 0 USD por estas operaciones.
+
+## Garantías y pruebas adicionales de integración
+Se añaden pruebas de mutación `ClassifyBatch` para actualización masiva, reclasificación posterior, conservación y rechazo de alteraciones de importes. La lectura de estudios antiguos conserva `Unclassified` hasta que el usuario confirma el cierre, evitando migraciones implícitas.
+El cierre de clasificación se materializa antes del cierre del reparto en **dos transacciones auditadas consecutivas**, porque ya existen dos servicios de guardado independientes. Si falla el cierre del reparto, las suposiciones fijas quedan guardadas en la etapa aún abierta y el usuario puede modificarlas; no se proclama atomicidad entre ambas fases.
