@@ -10,6 +10,9 @@ public sealed record SecondaryAllocationRow(
     EntityId ResourceId, EntityId PartId, EntityId TerminalNodeId,
     string Source, string Destination, string Amount, string Behavior);
 
+public sealed record SecondaryBridgeRow(
+    string Resource, string Effective, string Direct, string Excluded, string Terminal, string Difference);
+
 // The secondary workspace reuses the T08 key library and T09 primary facts.
 // It does not post an economic run in the UI until the user explicitly calculates.
 public sealed partial class AllocationWorkspaceViewModel
@@ -17,6 +20,7 @@ public sealed partial class AllocationWorkspaceViewModel
     private SecondaryAllocationResult? secondaryPreview;
     private bool secondaryCalculated;
     public ObservableCollection<SecondaryAllocationRow> SecondaryResults { get; } = [];
+    public ObservableCollection<SecondaryBridgeRow> SecondaryBridges { get; } = [];
     public ObservableCollection<ReciprocalCheckRow> SecondaryCirculation { get; } = [];
     public string SecondarySummary { get; private set; } = "";
     public string SecondaryDiagnostic { get; private set; } = "";
@@ -62,6 +66,7 @@ public sealed partial class AllocationWorkspaceViewModel
         secondaryPreview = null;
         secondaryCalculated = false;
         SecondaryResults.Clear();
+        SecondaryBridges.Clear();
         SecondaryCirculation.Clear();
         SelectedSecondaryResultRow = null;
         SecondaryExplanation = "";
@@ -111,6 +116,7 @@ public sealed partial class AllocationWorkspaceViewModel
                 nodes.TryGetValue(fact.TerminalNodeId, out var node) ? NodeLabel(node) : fact.TerminalNodeId.ToString(),
                 MoneyText(fact.PostedAmount), this["SecondaryBehavior" + fact.Behavior]));
         }
+        PopulateSecondaryBridges(published.ResourceBridges);
         foreach (var flow in published.AuxiliaryGrossFlows)
         {
             var name = nodes.Values.FirstOrDefault(n => n.Id.ToString() == flow.AuxiliaryId);
@@ -150,6 +156,7 @@ public sealed partial class AllocationWorkspaceViewModel
                     AccountLabel(origins[fact.ResourceId]), NodeLabel(nodes[fact.TerminalNodeId]),
                     MoneyText(fact.PostedAmount), this["SecondaryBehavior" + fact.Behavior]));
             }
+            PopulateSecondaryBridges(result.ResourceBridges);
             for (var i = 0; i < result.Circulation.AuxiliaryIds.Count; i++)
             {
                 var id = result.Circulation.AuxiliaryIds[i];
@@ -173,6 +180,17 @@ public sealed partial class AllocationWorkspaceViewModel
             SecondarySummary = "";
             SecondaryDiagnostic = this["SecondaryInvalid"];
         }
+    }
+
+    private void PopulateSecondaryBridges(IReadOnlyList<SecondaryEconomicBridge> bridges)
+    {
+        if (workspace is null) return;
+        var origins = workspace.Resources.Origins.ToDictionary(x => x.Id);
+        foreach (var b in bridges)
+            SecondaryBridges.Add(new(
+                origins.TryGetValue(b.ResourceId, out var r) ? AccountLabel(r) : b.ResourceId.ToString(),
+                MoneyText(b.Effective), MoneyText(b.Direct), MoneyText(b.Excluded),
+                MoneyText(b.Terminal), MoneyText(b.Difference)));
     }
 
     private void ShowSecondaryExplanation()
