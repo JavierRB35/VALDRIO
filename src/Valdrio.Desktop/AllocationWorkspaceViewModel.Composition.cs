@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Windows.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Valdrio.Application;
@@ -24,13 +25,52 @@ public sealed class CompositionAccountRow(EntityId id, string account, string am
 public sealed partial class AllocationWorkspaceViewModel
 {
     public ObservableCollection<CompositionAccountRow> CompositionAccounts { get; } = [];
+    public ICollectionView CompositionView => CollectionViewSource.GetDefaultView(CompositionAccounts);
+    private string compositionSearch = "";
+    private bool compositionOnlyExceptions;
+    public string CompositionSearch
+    {
+        get => compositionSearch;
+        set
+        {
+            if (!SetProperty(ref compositionSearch, value)) return;
+            ClearCompositionSelection();
+            CompositionView.Refresh();
+        }
+    }
+    public bool CompositionOnlyExceptions
+    {
+        get => compositionOnlyExceptions;
+        set
+        {
+            if (!SetProperty(ref compositionOnlyExceptions, value)) return;
+            ClearCompositionSelection();
+            CompositionView.Refresh();
+        }
+    }
+    private bool MatchComposition(object obj)
+    {
+        if (obj is not CompositionAccountRow row) return false;
+        if (CompositionOnlyExceptions && row.Review == this["CompositionUnreviewed"]) return false;
+        var term = CompositionSearch.Trim();
+        return term.Length == 0 || row.Account.Contains(term, StringComparison.CurrentCultureIgnoreCase) ||
+            row.Behavior.Contains(term, StringComparison.CurrentCultureIgnoreCase) ||
+            row.Review.Contains(term, StringComparison.CurrentCultureIgnoreCase);
+    }
+    private void ClearCompositionSelection()
+    {
+        foreach (var row in CompositionAccounts) row.Selected = false;
+        OnPropertyChanged(nameof(CompositionSelected));
+        Commands();
+    }
     private UnitId? compositionUnit;
     private string compositionMinimum = "", compositionMaximum = "";
     public UnitId? CompositionUnit { get => compositionUnit; set => SetProperty(ref compositionUnit, value); }
     public string CompositionMinimum { get => compositionMinimum; set => SetProperty(ref compositionMinimum, value); }
     public string CompositionMaximum { get => compositionMaximum; set => SetProperty(ref compositionMaximum, value); }
     public bool CanEditClassification => CanEdit && !IsDirty && workspace is not null;
-    private CompositionAccountRow[] CompositionSelection => CompositionAccounts.Where(r => r.CanBulk && r.Selected).ToArray();
+    private CompositionAccountRow[] CompositionSelection =>
+        CompositionView.Cast<CompositionAccountRow>().Where(r => r.CanBulk && r.Selected).ToArray();
     public string CompositionSelected => string.Format(Format, this["CompositionSelected"], CompositionSelection.Length);
     public string CompositionSummary
     {
@@ -47,8 +87,18 @@ public sealed partial class AllocationWorkspaceViewModel
     public IAsyncRelayCommand CompositionVariableCommand { get; private set; } = null!;
     public IAsyncRelayCommand CompositionReviewedFixedCommand { get; private set; } = null!;
     public IAsyncRelayCommand CompositionMixedCommand { get; private set; } = null!;
+    public IRelayCommand CompositionSelectVisibleCommand { get; private set; } = null!;
+    public IRelayCommand CompositionClearSelectionCommand { get; private set; } = null!;
     private void InitializeCompositionCommands()
     {
+        CompositionView.Filter = MatchComposition;
+        CompositionSelectVisibleCommand = new RelayCommand(() =>
+        {
+            foreach (var row in CompositionView.Cast<CompositionAccountRow>().Where(r => r.CanBulk))
+                row.Selected = true;
+        }, () => CanEditClassification && CompositionView.Cast<CompositionAccountRow>().Any(r => r.CanBulk));
+        CompositionClearSelectionCommand = new RelayCommand(ClearCompositionSelection,
+            () => CanEditClassification && CompositionSelection.Length > 0);
         CompositionFixedCommand = new AsyncRelayCommand(() => UpdateCompositionAsync(ResourceBehavior.AssumedFixed), () => CanEditClassification && CompositionSelection.Length > 0);
         CompositionVariableCommand = new AsyncRelayCommand(() => UpdateCompositionAsync(ResourceBehavior.Variable), () => CanEditClassification && CompositionSelection.Length > 0);
         CompositionReviewedFixedCommand = new AsyncRelayCommand(() => UpdateCompositionAsync(ResourceBehavior.Fixed), () => CanEditClassification && CompositionSelection.Length > 0);
@@ -86,6 +136,7 @@ public sealed partial class AllocationWorkspaceViewModel
         }
         OnPropertyChanged(nameof(CompositionSelected));
         OnPropertyChanged(nameof(CompositionSummary));
+        Commands();
     }
 
     private async Task UpdateCompositionAsync(ResourceBehavior behavior)

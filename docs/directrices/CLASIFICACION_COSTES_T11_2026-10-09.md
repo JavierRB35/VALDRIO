@@ -19,3 +19,6 @@ Las revisiones que cambian solamente el comportamiento sin cambiar importes/ruta
 
 ## Continuación: fijo revisado
 El selector masivo incorpora «Marcar fijo revisado» junto a «Marcar variable». Ambos exigen unidad de actividad, periodo del estudio y un rango explícito, almacenando `ResourceBehaviorContext`. «Volver a fijo por defecto» mantiene un supuesto sin verificar y retira el contexto, sin alterar importe, ruta, capa ni capacidad. La secuencia de revisiones queda incluida en la prueba de integración escrita, todavía sin ejecutar.
+
+## Filtros y selección masiva
+Búsqueda por código/descripción/estado, filtro de partidas modificadas o mixtas, selección de todas las visibles y limpieza de selección. Cambiar el filtro cancela la selección previa, evitando aplicar cambios a cuentas ocultas. Se conserva la transacción `ClassifyBatch` y la reapertura sin perder las modificaciones anteriores.

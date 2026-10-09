@@ -1308,4 +1308,8 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.CompositionEditReason" xml:space="preserve"><value>Editable batch cost classification</value></data>
   <data name="AllocationUI.CompositionCloseReason" xml:space="preserve"><value>Confirmation of default-fixed assumptions</value></data>
   <data name="AllocationUI.CompositionMarkReviewedFixed" xml:space="preserve"><value>Mark as reviewed fixed</value></data>
+  <data name="AllocationUI.CompositionSearch" xml:space="preserve"><value>Search account, description or status</value></data>
+  <data name="AllocationUI.CompositionOnlyExceptions" xml:space="preserve"><value>Only classified or mixed</value></data>
+  <data name="AllocationUI.CompositionSelectVisible" xml:space="preserve"><value>Select all visible</value></data>
+  <data name="AllocationUI.CompositionClearSelection" xml:space="preserve"><value>Clear selection</value></data>
 </root>

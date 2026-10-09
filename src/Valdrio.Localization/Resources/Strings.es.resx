@@ -1308,4 +1308,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.CompositionEditReason" xml:space="preserve"><value>Clasificación masiva editable de costes</value></data>
   <data name="AllocationUI.CompositionCloseReason" xml:space="preserve"><value>Confirmación de hipótesis fijas por defecto</value></data>
   <data name="AllocationUI.CompositionMarkReviewedFixed" xml:space="preserve"><value>Marcar fijo revisado</value></data>
+  <data name="AllocationUI.CompositionSearch" xml:space="preserve"><value>Buscar cuenta, descripción o estado</value></data>
+  <data name="AllocationUI.CompositionOnlyExceptions" xml:space="preserve"><value>Solo clasificadas o mixtas</value></data>
+  <data name="AllocationUI.CompositionSelectVisible" xml:space="preserve"><value>Seleccionar todas las visibles</value></data>
+  <data name="AllocationUI.CompositionClearSelection" xml:space="preserve"><value>Quitar selección</value></data>
 </root>

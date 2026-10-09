@@ -51,7 +51,16 @@
     <StackPanel Margin="0,8,0,0">
      <TextBlock Text="{Binding [CompositionHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
      <TextBlock Text="{Binding CompositionSummary}" FontWeight="SemiBold" Margin="0,0,0,8"/>
-     <DataGrid x:Name="CompositionGrid" ItemsSource="{Binding CompositionAccounts}" AutoGenerateColumns="False" IsReadOnly="True" Height="240" MinRowHeight="32">
+     <WrapPanel Margin="0,0,0,8">
+      <StackPanel MinWidth="260" Margin="0,0,12,4">
+       <TextBlock Text="{Binding [CompositionSearch]}"/>
+       <TextBox Text="{Binding CompositionSearch, UpdateSourceTrigger=PropertyChanged}"
+                AutomationProperties.Name="{Binding [CompositionSearch]}"/>
+      </StackPanel>
+      <CheckBox Content="{Binding [CompositionOnlyExceptions]}" IsChecked="{Binding CompositionOnlyExceptions, Mode=TwoWay}"
+                VerticalAlignment="Bottom" Margin="0,0,0,10"/>
+     </WrapPanel>
+     <DataGrid x:Name="CompositionGrid" ItemsSource="{Binding CompositionView}" AutoGenerateColumns="False" IsReadOnly="True" Height="240" MinRowHeight="32">
       <DataGrid.Columns>
        <DataGridTemplateColumn Width="45"><DataGridTemplateColumn.CellTemplate><DataTemplate>
         <CheckBox IsChecked="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -64,7 +73,11 @@
        <DataGridTextColumn Binding="{Binding Review}" ElementStyle="{StaticResource Text.TableText}" Width="2*" MinWidth="130"/>
       </DataGrid.Columns>
      </DataGrid>
-     <TextBlock Text="{Binding CompositionSelected}" Margin="0,8,0,8" AutomationProperties.LiveSetting="Polite"/>
+     <WrapPanel Margin="0,8,0,8">
+      <Button Content="{Binding [CompositionSelectVisible]}" Command="{Binding CompositionSelectVisibleCommand}" Margin="0,0,8,4"/>
+      <Button Content="{Binding [CompositionClearSelection]}" Command="{Binding CompositionClearSelectionCommand}" Margin="0,0,8,4"/>
+      <TextBlock Text="{Binding CompositionSelected}" VerticalAlignment="Center" Margin="0,0,0,4" AutomationProperties.LiveSetting="Polite"/>
+     </WrapPanel>
      <StackPanel IsEnabled="{Binding CanEditClassification}">
       <WrapPanel>
        <Button Content="{Binding [CompositionMarkFixed]}" Command="{Binding CompositionFixedCommand}" Margin="0,4,8,4"/>
