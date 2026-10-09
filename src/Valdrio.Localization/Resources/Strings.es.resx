@@ -1261,4 +1261,6 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.SecondaryAssignGroup" xml:space="preserve"><value>Asignar grupo</value></data>
   <data name="Secondary.GroupSourceInvalid" xml:space="preserve"><value>Las asignaciones de grupos secundarios hacen referencia a partes sin cobertura en el reparto primario: {0}. Elimina las asignaciones obsoletas y vuelve a calcular.</value></data>
   <data name="Secondary.GraphInconsistent" xml:space="preserve"><value>Los grupos secundarios no coinciden en la estructura de nodos auxiliares y principales. Revisa el modelo seleccionado y las reglas por grupo.</value></data>
+  <data name="AllocationUI.SecondaryObsoleteGroup" xml:space="preserve"><value>Parte obsoleta</value></data>
+  <data name="AllocationUI.SecondaryClearObsoleteGroups" xml:space="preserve"><value>Eliminar asignaciones obsoletas de grupos</value></data>
 </root>
