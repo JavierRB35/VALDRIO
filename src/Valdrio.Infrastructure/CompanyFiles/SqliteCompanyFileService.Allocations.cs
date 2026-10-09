@@ -195,6 +195,21 @@ public sealed partial class SqliteCompanyFileService
                 Invalid(!events.Any(e => e.After.Id == key.Id && e.After.Revision == key.Revision && Json(e.After) == Json(key)), "Referenced key revision missing");
             var referenced = AllocationWorkspaceRules.ValidateConfiguration(resources, change.ReferencedKeys, c);
             Invalid(Json(referenced) != Json(change.ReferencedKeys), "Referenced immutable keys differ");
+            if (c.Configuration.SecondaryClosed)
+            {
+                // Historic posted ledger is an economic receipt, not a cache:
+                // replay it from the exact source revision and published keys.
+                var replayWorkspace = new AllocationWorkspaceSnapshot(resources, change.ReferencedKeys,
+                    c.Configuration, change.PreviousStudy.Revision);
+                var replayResult = SecondaryAllocationService.Calculate(replayWorkspace);
+                var replayPublication = SecondaryAllocationService.Publish(replayResult,
+                    c.Configuration, change.PreviousStudy.Revision);
+                Invalid(change.SecondaryPublication is null ||
+                    Json(replayPublication) != Json(change.SecondaryPublication) ||
+                    !StringComparer.Ordinal.Equals(c.Configuration.SecondaryCalculationHash,
+                        replayPublication.CalculationFingerprint), "Secondary published receipt differs");
+            }
+            else Invalid(change.SecondaryPublication is not null, "Unexpected secondary receipt");
             var matches = audits.Where(a => a.Type == "AllocationChange" && a.Id == c.RequestId.ToString()).ToArray();
             Invalid(matches.Length != 1, "Allocation audit missing"); var a = matches[0];
             Invalid(a.Row.Revision != 0 || a.Request != c.RequestId.ToString() || a.Row.Operation != "ChangeAllocations" ||
