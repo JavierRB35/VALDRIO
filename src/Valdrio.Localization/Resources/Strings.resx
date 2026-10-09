@@ -1243,4 +1243,5 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.SecondaryBehaviorFixed" xml:space="preserve"><value>Fixed</value></data>
   <data name="AllocationUI.SecondaryBehaviorVariable" xml:space="preserve"><value>Variable</value></data>
   <data name="AllocationUI.SecondaryBehaviorMixedPending" xml:space="preserve"><value>Mixed — pending classification</value></data>
+  <data name="AllocationUI.SecondaryPublishedMissing" xml:space="preserve"><value>The closed secondary calculation has no valid published ledger. Review the study history before relying on these totals.</value></data>
 </root>
