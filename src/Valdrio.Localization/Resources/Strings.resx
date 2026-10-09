@@ -1158,4 +1158,7 @@ Difference to distribute: {7}</value></data>
   <data name="Primary.Overflow" xml:space="preserve"><value>The result exceeds the allowed decimal magnitude or precision.</value></data>
   <data name="AllocationUI.AccountDetails" xml:space="preserve"><value>Account options: split, exclusion and classification</value></data>
   <data name="AllocationUI.AccountDetailsHelp" xml:space="preserve"><value>Only for accounts requiring special treatment. Normal allocation to nodes is configured above. Previously saved destinations and classifications are retained.</value></data>
+  <data name="AllocationUI.NameRequired" xml:space="preserve"><value>Enter a name for the key.</value></data>
+  <data name="AllocationUI.UnitRequired" xml:space="preserve"><value>Select the allocation criterion unit.</value></data>
+  <data name="AllocationUI.DestinationsRequired" xml:space="preserve"><value>Include at least one destination node before publishing.</value></data>
 </root>

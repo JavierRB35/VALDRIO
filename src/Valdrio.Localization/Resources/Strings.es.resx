@@ -1158,4 +1158,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Primary.Overflow" xml:space="preserve"><value>El resultado supera la magnitud o precisión decimal permitida.</value></data>
   <data name="AllocationUI.AccountDetails" xml:space="preserve"><value>Opciones de cuenta: desglose, exclusión y clasificación</value></data>
   <data name="AllocationUI.AccountDetailsHelp" xml:space="preserve"><value>Solo si una cuenta necesita un tratamiento especial. El reparto normal a nodos se realiza arriba. Se conservan los destinos y clasificaciones guardados anteriormente.</value></data>
+  <data name="AllocationUI.NameRequired" xml:space="preserve"><value>Introduce un nombre para la clave.</value></data>
+  <data name="AllocationUI.UnitRequired" xml:space="preserve"><value>Selecciona la unidad del criterio de reparto.</value></data>
+  <data name="AllocationUI.DestinationsRequired" xml:space="preserve"><value>Incluye al menos un nodo de destino antes de publicar.</value></data>
 </root>

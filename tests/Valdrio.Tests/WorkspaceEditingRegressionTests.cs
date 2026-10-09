@@ -7,6 +7,48 @@ namespace Valdrio.Tests;
 public sealed partial class T06ImportConfirmationTests
 {
     [TestMethod]
+    public async Task IncompleteKeyIsRejectedBeforeDomainConstructionAndCanBeCompleted()
+    {
+        using var ui = await ResourceUiReady();
+        using var vm = new AllocationWorkspaceViewModel(ui.Company, ui.Studies, new UiTextCatalog(), ui.Preferences, ui.Dialogs);
+        await vm.EnterAsync();
+        vm.Mode = AllocationKeyMode.DriverUnits; vm.Unit = vm.Units.First().Value;
+        var before = Hash(ui.Company.ActivePath!);
+        var invalidExceptions = 0;
+        EventHandler<System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs> handler = (_, e) =>
+        { if (e.Exception is DomainRuleException ex && ex.Diagnostic.Code == "KEY_INVALID") Interlocked.Increment(ref invalidExceptions); };
+        AppDomain.CurrentDomain.FirstChanceException += handler;
+        try
+        {
+            Assert.AreEqual(vm["NameRequired"], vm.Validation);
+            Assert.IsFalse(vm.PublishCommand.CanExecute(null));
+            Assert.IsFalse(vm.SaveDraftCommand.CanExecute(null));
+            Assert.IsFalse(await vm.SaveKeyAsync(true));
+            Assert.AreEqual(vm["NameRequired"], vm.Status);
+            vm.Name = "   "; Assert.IsFalse(await vm.SaveKeyAsync(false));
+            vm.Name = "Activity distribution"; vm.Unit = null;
+            Assert.AreEqual(vm["UnitRequired"], vm.Validation);
+            Assert.IsFalse(await vm.SaveKeyAsync(true));
+            vm.Unit = vm.Units.First().Value;
+            Assert.AreEqual(vm["DestinationsRequired"], vm.Validation);
+            Assert.IsFalse(await vm.SaveKeyAsync(true));
+            Assert.AreEqual(before, Hash(ui.Company.ActivePath!));
+            Assert.IsTrue(vm.IsDirty);
+            Assert.AreEqual(0, invalidExceptions);
+        }
+        finally { AppDomain.CurrentDomain.FirstChanceException -= handler; }
+        // A named draft may still be incomplete; completing it allows publication.
+        Assert.IsTrue(vm.SaveDraftCommand.CanExecute(null));
+        Assert.IsTrue(await vm.SaveKeyAsync(false), vm.Status);
+        vm.Mode = AllocationKeyMode.Percentage;
+        vm.Lines.First().Included = true; vm.Lines.First().Value = "100";
+        Assert.IsTrue(vm.PublishCommand.CanExecute(null));
+        Assert.IsTrue(await vm.SaveKeyAsync(true), vm.Status);
+        Assert.AreEqual("Activity distribution", vm.Keys.Single().Value.Name);
+        Assert.IsFalse(vm.IsDirty);
+    }
+
+    [TestMethod]
     public async Task ResourceSaveOnLeaveAppliesValidFormAndDoesNotPromptAgain()
     {
         using var ui = await ResourceUiReady();

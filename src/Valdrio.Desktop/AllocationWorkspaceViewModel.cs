@@ -63,8 +63,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             if (SelectedKey?.Value is not { Status: ModelStatus.Published } source || !await CanLeaveAsync()) return;
             LoadKey(source); editingKey = null; newParent = source.Id; keyDirty = true; Refresh();
         }, () => CanEdit && SelectedKey?.Value.Status == ModelStatus.Published);
-        SaveDraftCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(false), () => CanEditKey);
-        PublishCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey);
+        SaveDraftCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(false), () => CanEditKey && MissingKeyInput(false) is null);
+        PublishCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey && MissingKeyInput(true) is null);
         RefreshCommand = new AsyncRelayCommand(async () => { if (await CanLeaveAsync()) await EnterAsync(true); }, () => !busy);
         SaveRuleCommand = new AsyncRelayCommand(SaveRuleAsync, () => CanEdit);
         RemoveRuleCommand = new AsyncRelayCommand(() => CommitConfig(c => new(c.PrimaryRules.Where(r => r.Id != SelectedRule!.Id).ToArray(), c.SecondaryRules, c.ExplicitAssignments, c.AbsoluteAssignments, c.Descriptions)), () => CanEditConfiguration && !HasUnappliedRule && SelectedRule is not null);
@@ -134,6 +134,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         get
         {
             if (workspace is null) return this["NeedStudy"];
+            if (MissingKeyInput(true) is { } missing) return this[missing];
             try { if (editingKey?.Status == ModelStatus.Published) AllocationKeyRules.Validate(editingKey, workspace.Resources.Model.Structure, workspace.Resources.Model.DriverUnits, workspace.Resources.Precision, true); else _ = PreviewKey(true); return this["Complete"]; }
             catch (DomainRuleException ex) { return new DomainDiagnosticFormatter(texts).Format(ex.Diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message; }
             catch (Exception ex) when (ex is ArgumentException or OverflowException or InvalidOperationException) { return this["CheckNumbers"]; }
@@ -263,9 +264,16 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private EntityId previewId = new(Guid.NewGuid());
     private AllocationKeyVersion PreviewKey(bool publish) => AllocationWorkspaceRules.SaveKey(BuildKey(publish), workspace!.Resources.Model, workspace.Resources.Precision,
         workspace.Keys, UtcInstant.ParseIso("2000-01-01T00:00:00Z"));
+    private string? MissingKeyInput(bool publish) => string.IsNullOrWhiteSpace(Name) ? "NameRequired"
+        : IsDriver && !Unit.HasValue ? "UnitRequired"
+        : publish && !Lines.Any(l => l.Included) ? "DestinationsRequired" : null;
     public async Task<bool> SaveKeyAsync(bool publish)
     {
         if (!CanEditKey || workspace is null) return false;
+        if (MissingKeyInput(publish) is { } missing)
+        {
+            diagnostic = null; statusKey = missing; Refresh(); return false;
+        }
         return await Run(async () =>
         {
             var command = BuildKey(publish); var port = company.ActiveAllocations!;
