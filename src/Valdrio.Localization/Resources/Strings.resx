@@ -1261,4 +1261,6 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.SecondaryAssignGroup" xml:space="preserve"><value>Assign group</value></data>
   <data name="Secondary.GroupSourceInvalid" xml:space="preserve"><value>Secondary group assignments refer to resource parts not covered by primary allocation: {0}. Remove obsolete assignments and recalculate.</value></data>
   <data name="Secondary.GraphInconsistent" xml:space="preserve"><value>Secondary groups disagree on the auxiliary and principal node structure. Review the selected model and group rules.</value></data>
+  <data name="AllocationUI.SecondaryObsoleteGroup" xml:space="preserve"><value>Obsolete part</value></data>
+  <data name="AllocationUI.SecondaryClearObsoleteGroups" xml:space="preserve"><value>Clear obsolete group assignments</value></data>
 </root>
