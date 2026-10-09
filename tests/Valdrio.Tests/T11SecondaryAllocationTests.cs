@@ -351,4 +351,25 @@ public sealed class T11SecondaryAllocationTests
         Assert.IsTrue(negative.Reconciliations.All(r => r.Difference.Amount == 0m));
     }
 
+    [TestMethod]
+    public void CancellationBeforeSolverPreparationDoesNotReturnPartialEconomicFacts()
+    {
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        Assert.ThrowsExactly<OperationCanceledException>(() =>
+            SecondaryAllocationService.Calculate(Source(Primary(1, A, 100m)),
+                Graph(), Precision, cancellation.Token));
+    }
+
+    [TestMethod]
+    public void SelfAllocationWithoutExplicitPermissionReturnsSpecificDiagnostic()
+    {
+        var graph = new ReciprocalInput([A.ToString()], [P1.ToString()],
+            [[0.1m]], [[0.9m]], false);
+        var failure = Assert.ThrowsExactly<DomainRuleException>(() =>
+            SecondaryAllocationService.Calculate(Source(Primary(1, A, 100m)),
+                graph, Precision));
+        Assert.AreEqual("GRAPH_SELF_NOT_ALLOWED", failure.Diagnostic.Code);
+    }
+
 }
