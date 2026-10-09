@@ -171,12 +171,12 @@ public static class SecondaryAllocationService
         PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new
         {
             Schema = SecondaryAllocationResult.Schema,
-            result.Primary.Currency, result.Primary.PolicyVersion,
+            result.Primary.Currency, PrimaryPolicyVersion = result.Primary.PolicyVersion,
             Primary = result.Primary.Facts.OrderBy(f => f.ResourceId).ThenBy(f => f.PartId).ThenBy(f => f.NodeId).ToArray(),
             SecondaryRules = config.SecondaryRules.Where(r => r.IsActive).OrderBy(r => r.Id).ToArray(),
             Final = result.Facts,
             Result = result.Totals,
-            result.Circulation.PolicyVersion,
+            ReciprocalPolicyVersion = result.Circulation.PolicyVersion,
             result.Circulation.AuxiliaryIds,
             result.Circulation.TerminalIds,
             result.Circulation.FactorsByAuxiliaryOrigin
