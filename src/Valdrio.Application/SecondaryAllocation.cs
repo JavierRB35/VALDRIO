@@ -13,7 +13,9 @@ public sealed record SecondaryAllocationFact(
 public sealed record SecondaryExplanationLink(
     EntityId ResourceId, EntityId PartId, EntityId PrimaryNodeId, EntityId TerminalNodeId,
     EntityId? PrimaryKeyVersionId, decimal PrimaryPostedAmount,
-    decimal EffectiveShare, decimal RawContribution);
+    decimal EffectiveShare, decimal RawContribution,
+    string ComponentRoutingGroup = "all",
+    IReadOnlyList<EntityId>? SecondaryKeyVersionIds = null);
 
 public sealed record SecondaryTerminalTotal(
     EntityId TerminalNodeId, ResourceBehavior Behavior, ResourceCostLayer CostLayer,
@@ -166,7 +168,14 @@ public static class SecondaryAllocationService
                 primary.Currency, primary.PolicyVersion, filteredFacts, filteredParts, [], [], []);
             var calculated = Calculate(subgroup, graph, precision, cancellation);
             posted.AddRange(calculated.Facts);
-            links.AddRange(calculated.ExplanationLinks);
+            var routeKeys = workspace.Configuration.SecondaryRules.Where(r => r.IsActive &&
+                    StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, group.Key))
+                .Select(r => r.KeyVersionId).Distinct().Order().ToArray();
+            links.AddRange(calculated.ExplanationLinks.Select(l => l with
+            {
+                ComponentRoutingGroup = group.Key,
+                SecondaryKeyVersionIds = FrozenList.Copy(routeKeys)
+            }));
             reconciliations.AddRange(calculated.Reconciliations);
             groupSolutions.Add(new(group.Key, calculated.Circulation));
         }
