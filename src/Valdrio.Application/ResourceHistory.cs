@@ -9,7 +9,7 @@ public static class ResourceHistory
             // published absolute allocations tied to these parts; canonical history and study revision
             // still record the behavioral change for downstream costing and audit.
             .Concat(history.Where(h => h.ConfirmedStudy.Revision <= study.Revision &&
-                h.Request.Kind != ResourceMutationKind.ClassifyBatch).Select(h => h.ConfirmedStudy.Revision))
+                h.Request.Kind is not (ResourceMutationKind.ClassifyBatch or ResourceMutationKind.EditStudyNodes)).Select(h => h.ConfirmedStudy.Revision))
             .DefaultIfEmpty(0).Max();
     public static ResourceLedger Replay(StudyDefinition study, PrecisionPolicy precision, PublishedModelStructure model,
         IReadOnlyList<ImportedBatch> imports, IReadOnlyList<ResourceMutationReceipt> history)

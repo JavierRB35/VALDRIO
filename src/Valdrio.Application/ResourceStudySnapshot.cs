@@ -59,7 +59,7 @@ public static class ResourceStudySnapshotJson
     public static string EconomicJson(ResourceStudySnapshotInput input)
     {
         var context = new StudySnapshotInput(StudySnapshotInput.Schema, StudySnapshotInput.PreparationVersion,
-            input.StudyContext, input.PrecisionPolicy, input.Model, input.Provenance, [], [], [], []);
+            input.StudyContext, input.PrecisionPolicy, input.Workspace.Model, input.Provenance, [], [], [], []);
         return CanonicalSnapshotJson.Serialize(new
         {
             SchemaVersion = "valdrio-study-economy-v6", input.InputPreparationVersion,

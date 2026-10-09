@@ -188,7 +188,7 @@
        </StackPanel>
       </Border>
       <Border Style="{StaticResource Card}" Margin="0,0,0,12"
-              Visibility="{Binding IsPublished, Converter={StaticResource Visible}}">
+              Visibility="{Binding ShowPublishedNodeLock, Converter={StaticResource Visible}}">
        <StackPanel>
         <TextBlock Text="{Binding NodeEditorPublishedHelp}" TextWrapping="Wrap"
                    AutomationProperties.LiveSetting="Polite"/>
@@ -209,7 +209,6 @@
         <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding Node.Code}" Width="110"/>
         <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding RoleLabel}" Width="115"/>
         <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding UnitLabel}" Width="90"/>
-        <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding LayerLabel}" Width="110"/>
         <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding PoolLabel}" Width="*"/>
         <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding FunctionsLabel}" Width="160"/>
        </DataGrid.Columns>
@@ -251,11 +250,7 @@
           <ComboBox x:Name="UnitBox" ItemsSource="{Binding Units}" SelectedItem="{Binding DriverUnit}" TabIndex="45" AutomationProperties.Name="{Binding UnitLabel}" local:FieldHelp.Key="DriverUnit"/>
           <TextBlock Text="{Binding UnitHelp}" Style="{StaticResource FieldHint}"/>
          </StackPanel>
-         <StackPanel Grid.Column="1">
-          <TextBlock Text="{Binding LayerLabel}"/>
-          <ComboBox x:Name="LayerBox" ItemsSource="{Binding Layers}" SelectedItem="{Binding Layer}" TabIndex="46" AutomationProperties.Name="{Binding LayerLabel}" local:FieldHelp.Key="Layer"/>
-          <TextBlock Text="{Binding LayerHelp}" Style="{StaticResource FieldHint}"/>
-         </StackPanel>
+
         </Grid>
 
         <TextBlock Text="{Binding PoolLabel}"/>

@@ -86,6 +86,9 @@ public sealed partial class AllocationWorkspaceViewModel
     public UnitId? CompositionUnit { get => compositionUnit; set => SetProperty(ref compositionUnit, value); }
     public string CompositionMinimum { get => compositionMinimum; set => SetProperty(ref compositionMinimum, value); }
     public string CompositionMaximum { get => compositionMaximum; set => SetProperty(ref compositionMaximum, value); }
+    private string compositionFixedPercentage = "100", compositionVariablePercentage = "0";
+    public string CompositionFixedPercentage { get => compositionFixedPercentage; set => SetProperty(ref compositionFixedPercentage, value); }
+    public string CompositionVariablePercentage { get => compositionVariablePercentage; set => SetProperty(ref compositionVariablePercentage, value); }
     public bool CanEditClassification => CanEdit && !IsDirty && workspace is not null;
     private CompositionAccountRow[] CompositionSelection =>
         CompositionAccounts.Where(IsCompositionVisible).Where(r => r.CanBulk && r.Selected).ToArray();
@@ -105,6 +108,7 @@ public sealed partial class AllocationWorkspaceViewModel
     public IAsyncRelayCommand CompositionVariableCommand { get; private set; } = null!;
     public IAsyncRelayCommand CompositionReviewedFixedCommand { get; private set; } = null!;
     public IAsyncRelayCommand CompositionMixedCommand { get; private set; } = null!;
+    public IAsyncRelayCommand CompositionApplyWeightsCommand { get; private set; } = null!;
     public IRelayCommand CompositionSelectVisibleCommand { get; private set; } = null!;
     public IRelayCommand CompositionClearSelectionCommand { get; private set; } = null!;
     private void InitializeCompositionCommands()
@@ -117,6 +121,8 @@ public sealed partial class AllocationWorkspaceViewModel
         CompositionVariableCommand = new AsyncRelayCommand(() => UpdateCompositionAsync(ResourceBehavior.Variable), () => CanEditClassification && CompositionSelection.Length > 0);
         CompositionReviewedFixedCommand = new AsyncRelayCommand(() => UpdateCompositionAsync(ResourceBehavior.Fixed), () => CanEditClassification && CompositionSelection.Length > 0);
         CompositionMixedCommand = new AsyncRelayCommand(() => UpdateCompositionAsync(ResourceBehavior.MixedPending), () => CanEditClassification && CompositionSelection.Length > 0);
+        CompositionApplyWeightsCommand = new AsyncRelayCommand(ApplyCompositionWeightsAsync,
+            () => CanEditClassification && CompositionSelection.Length > 0);
     }
     private void CompositionSelectionChanged(object? sender, PropertyChangedEventArgs e)
     {
@@ -143,6 +149,8 @@ public sealed partial class AllocationWorkspaceViewModel
                     behavior is ResourceBehavior.Unclassified or ResourceBehavior.AssumedFixed ? this["CompositionFixedDefault"] :
                     behavior == ResourceBehavior.Fixed ? this["CompositionFixedReviewed"] :
                     behavior == ResourceBehavior.Variable ? this["CompositionVariable"] : this["CompositionMixed"];
+                if (single && resource.Parts[0].Classification.VariablePercentage is { } variablePercentage)
+                    type = string.Format(Format, this["CompositionWeightsSummary"], 100m - variablePercentage, variablePercentage);
                 var isDefault = single && behavior is ResourceBehavior.Unclassified or ResourceBehavior.AssumedFixed;
                 var review = !single ? this["CompositionDetail"] :
                     isDefault ? this["CompositionUnreviewed"] : this["CompositionReviewed"];
@@ -185,13 +193,30 @@ public sealed partial class AllocationWorkspaceViewModel
         {
             changes = workspace.Resources.Resources.Where(r => ids.Contains(r.Id) && r.Parts.Count == 1)
                 .Select(r => new ResourcePartReplacement(r.Id, r.Parts.Select(p =>
-                    p.WithClassification(p.Classification with { Behavior = behavior, Context = context })).ToArray()))
+                    p.WithClassification(p.Classification with { Behavior = behavior, Context = context, VariablePercentage = null })).ToArray()))
                 .Where(r => r.Parts[0].Classification != workspace.Resources.Resources.Single(x => x.Id == r.ResourceId).Parts[0].Classification)
                 .ToArray();
         }
         catch (Exception e) when (e is DomainRuleException or ArgumentException or OverflowException)
         { statusKey = "CompositionContextRequired"; Refresh(); return; }
         if (changes.Length == 0) { statusKey = "CompositionUnchanged"; Refresh(); return; }
+        await SaveCompositionAsync(changes, this["CompositionEditReason"]);
+    }
+
+    private async Task ApplyCompositionWeightsAsync()
+    {
+        if (!CanEditClassification || workspace is null) return;
+        decimal fixedWeight, variableWeight;
+        try { fixedWeight = Parse(CompositionFixedPercentage); variableWeight = Parse(CompositionVariablePercentage); }
+        catch (Exception ex) when (ex is ArgumentException or DomainRuleException or OverflowException)
+        { statusKey = "CompositionWeightsInvalid"; Refresh(); return; }
+        if (fixedWeight < 0m || fixedWeight > 100m || variableWeight < 0m || variableWeight > 100m || fixedWeight + variableWeight != 100m)
+        { statusKey = "CompositionWeightsInvalid"; Refresh(); return; }
+        var ids = CompositionSelection.Select(r => r.Id).ToHashSet();
+        var behavior = variableWeight == 0m ? ResourceBehavior.Fixed : variableWeight == 100m ? ResourceBehavior.Variable : ResourceBehavior.Mixed;
+        var changes = workspace.Resources.Resources.Where(r => ids.Contains(r.Id) && r.Parts.Count == 1)
+            .Select(r => new ResourcePartReplacement(r.Id, r.Parts.Select(p => p.WithClassification(p.Classification with
+            { Behavior = behavior, VariablePercentage = variableWeight, Context = null })).ToArray())).ToArray();
         await SaveCompositionAsync(changes, this["CompositionEditReason"]);
     }
 

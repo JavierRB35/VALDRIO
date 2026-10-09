@@ -11,6 +11,10 @@ public sealed record SaveAllocationKey(EntityId CompanyId, EntityId ModelVersion
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool Delete { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public EntityId? ValidationStudyId { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public long? ValidationStudyRevision { get; init; }
     private IReadOnlyList<AllocationKeyLine> lines = FrozenList.Copy(Lines);
     public IReadOnlyList<AllocationKeyLine> Lines { get => lines; init => lines = FrozenList.Copy(value); }
 }

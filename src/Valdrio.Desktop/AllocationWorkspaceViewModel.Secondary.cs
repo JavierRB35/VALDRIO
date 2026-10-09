@@ -9,7 +9,7 @@ namespace Valdrio.Desktop;
 
 public sealed record SecondaryAllocationRow(
     EntityId ResourceId, EntityId PartId, EntityId TerminalNodeId,
-    string Source, string Destination, string Amount, string Behavior);
+    string Source, string Destination, string Amount, string Behavior) { public ResourceBehavior SourceBehavior { get; init; } }
 
 public sealed record SecondaryGroupRow(string Source, string Group);
 
@@ -235,7 +235,7 @@ public sealed partial class AllocationWorkspaceViewModel
             SecondaryResults.Add(new(fact.ResourceId, fact.PartId, fact.TerminalNodeId,
                 origins.TryGetValue(fact.ResourceId, out var origin) ? AccountLabel(origin) : fact.Account,
                 nodes.TryGetValue(fact.TerminalNodeId, out var node) ? NodeLabel(node) : fact.TerminalNodeId.ToString(),
-                MoneyText(fact.PostedAmount), this["SecondaryBehavior" + fact.Behavior]));
+                MoneyText(fact.PostedAmount), this["SecondaryBehavior" + fact.Behavior]) { SourceBehavior = fact.Behavior });
         }
         PopulateSecondaryBridges(published.ResourceBridges);
         foreach (var flow in published.AuxiliaryGrossFlows)
@@ -247,6 +247,30 @@ public sealed partial class AllocationWorkspaceViewModel
         SecondarySummary = string.Format(Format, this["SecondaryTotals"],
             published.Facts.Count, published.Totals.Count, workspace.Resources.Study.Currency.FunctionalCurrencyCode);
         SecondaryDiagnostic = this["SecondaryClosedState"];
+    }
+
+    private void PresentSecondaryPreview(SecondaryAllocationResult result)
+    {
+            if (workspace is null) return;
+            var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
+            var origins = workspace.Resources.Origins.ToDictionary(o => o.Id);
+            foreach (var fact in result.Facts)
+            {
+                SecondaryResults.Add(new(fact.ResourceId, fact.PartId, fact.TerminalNodeId,
+                    AccountLabel(origins[fact.ResourceId]), NodeLabel(nodes[fact.TerminalNodeId]),
+                    MoneyText(fact.PostedAmount), this["SecondaryBehavior" + fact.Behavior]) { SourceBehavior = fact.Behavior });
+            }
+            PopulateSecondaryBridges(result.ResourceBridges);
+            for (var i = 0; i < result.Circulation.AuxiliaryIds.Count; i++)
+            {
+                var id = result.Circulation.AuxiliaryIds[i];
+                var name = nodes.Values.FirstOrDefault(n => n.Id.ToString() == id);
+                SecondaryCirculation.Add(new(name is null ? id : NodeLabel(name),
+                    this["SecondaryGross"], result.Circulation.Gross[i].ToString("0.########", Format)));
+            }
+            SecondarySummary = string.Format(Format, this["SecondaryTotals"],
+                result.Facts.Count, result.Totals.Count, result.Primary.Currency);
+            SecondaryDiagnostic = this["SecondaryCalculationReady"];
     }
 
     private async Task CalculateSecondaryAsync()
@@ -282,25 +306,7 @@ public sealed partial class AllocationWorkspaceViewModel
             }
             secondaryPreview = result;
             secondaryCalculated = true;
-            var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
-            var origins = workspace.Resources.Origins.ToDictionary(o => o.Id);
-            foreach (var fact in result.Facts)
-            {
-                SecondaryResults.Add(new(fact.ResourceId, fact.PartId, fact.TerminalNodeId,
-                    AccountLabel(origins[fact.ResourceId]), NodeLabel(nodes[fact.TerminalNodeId]),
-                    MoneyText(fact.PostedAmount), this["SecondaryBehavior" + fact.Behavior]));
-            }
-            PopulateSecondaryBridges(result.ResourceBridges);
-            for (var i = 0; i < result.Circulation.AuxiliaryIds.Count; i++)
-            {
-                var id = result.Circulation.AuxiliaryIds[i];
-                var name = nodes.Values.FirstOrDefault(n => n.Id.ToString() == id);
-                SecondaryCirculation.Add(new(name is null ? id : NodeLabel(name),
-                    this["SecondaryGross"], result.Circulation.Gross[i].ToString("0.########", Format)));
-            }
-            SecondarySummary = string.Format(Format, this["SecondaryTotals"],
-                result.Facts.Count, result.Totals.Count, result.Primary.Currency);
-            SecondaryDiagnostic = this["SecondaryCalculationReady"];
+            PresentSecondaryPreview(result);
         }
         catch (OperationCanceledException)
         {
@@ -353,10 +359,10 @@ public sealed partial class AllocationWorkspaceViewModel
         var links = (secondaryPreview?.ExplanationLinks ??
             workspace.SecondaryPublication!.ExplanationLinks).Where(l =>
             l.ResourceId == row.ResourceId && l.PartId == row.PartId &&
-            l.TerminalNodeId == row.TerminalNodeId);
+            l.TerminalNodeId == row.TerminalNodeId && (l.SourceBehavior is null || l.SourceBehavior == row.SourceBehavior));
         var finalFacts = secondaryPreview?.Facts ?? workspace.SecondaryPublication!.Facts;
         var selectedFact = finalFacts.SingleOrDefault(f => f.ResourceId == row.ResourceId &&
-            f.PartId == row.PartId && f.TerminalNodeId == row.TerminalNodeId);
+            f.PartId == row.PartId && f.TerminalNodeId == row.TerminalNodeId && f.Behavior == row.SourceBehavior);
         var amountDetail = selectedFact is null ? "" :
             string.Format(Format, this["SecondaryExplainAmounts"],
                 MoneyText(selectedFact.PostedAmount),

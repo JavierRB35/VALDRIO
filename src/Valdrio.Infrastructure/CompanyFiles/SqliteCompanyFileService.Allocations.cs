@@ -5,6 +5,21 @@ namespace Valdrio.Infrastructure.CompanyFiles;
 
 public sealed partial class SqliteCompanyFileService
 {
+    private static PublishedModelStructure KeyValidationModel(AllocationDbContext db, EntityId companyId,
+        SaveAllocationKey request, bool current)
+    {
+        var model = RequiredPublication(db, companyId, request.ModelVersionId);
+        if (request.ValidationStudyId is not { } studyId)
+        {
+            if (request.ValidationStudyRevision is not null) throw AllocationDiagnostics.Error("KEY_SCOPE_INVALID", "Allocation.ScopeInvalid");
+            return model;
+        }
+        var study = Study(RequiredStudy(db, companyId, studyId));
+        if (study.SelectedModelVersionId != request.ModelVersionId || request.ValidationStudyRevision is not { } revision ||
+            revision < 0 || revision > study.Revision || current && revision != study.Revision)
+            throw AllocationDiagnostics.Error("KEY_SCOPE_INVALID", "Allocation.ScopeInvalid");
+        return ResourceWorkspaceRules.ApplyStudyNodes(model, LedgerAt(db, companyId, studyId, revision).NodeEdits);
+    }
     private static AllocationKeyReceipt KeyEvent(AllocationKeyEventRow row)
     {
         var value = CanonicalSnapshotJson.Deserialize<AllocationKeyReceipt>(row.CanonicalJson);
@@ -81,7 +96,7 @@ public sealed partial class SqliteCompanyFileService
                     if (Json(receipt.Request) != Json(request)) throw AllocationDiagnostics.Error("KEY_REQUEST_REUSED", "Allocation.RequestReused");
                     return receipt;
                 }
-                var model = RequiredPublication(db, file.Id, request.ModelVersionId);
+                var model = KeyValidationModel(db, file.Id, request, true);
                 var keys = AllocationKeys(db, file.Id, request.ModelVersionId, true);
                 var before = keys.SingleOrDefault(k => k.Id == request.KeyId);
                 if (request.Delete && (db.AllocationChanges.AsNoTracking().ToArray().Select(AllocationChange).Any(c => c.ReferencedKeys.Any(k => k.Id == request.KeyId))
@@ -173,7 +188,7 @@ public sealed partial class SqliteCompanyFileService
         {
             keys.TryGetValue(e.After.Id, out var before);
             Invalid((e.Before is null ? "null" : Json(e.Before)) != (before is null ? "null" : Json(before)), "Key history chain differs");
-            var after = AllocationWorkspaceRules.SaveKey(e.Request, RequiredPublication(db, file.Id, e.Request.ModelVersionId),
+            var after = AllocationWorkspaceRules.SaveKey(e.Request, KeyValidationModel(db, file.Id, e.Request, false),
                 file.PrecisionPolicy, keys.Values.ToArray(), e.AtUtc,
                 !changes.Any(c => UsedKeys(c).Any(k => k.Id == e.After.Id && k.Revision <= (before?.Revision ?? -1))));
             Invalid(Json(after) != Json(e.After), "Key history replay differs");

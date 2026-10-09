@@ -54,8 +54,7 @@ public partial class ModelWorkspacePanel : UserControl
         NodeSummary.Columns[1].Header = tableViewModel.Text("Model.ColumnCode");
         NodeSummary.Columns[2].Header = tableViewModel.Text("Model.ColumnRole");
         NodeSummary.Columns[3].Header = tableViewModel.Text("Model.ColumnUnit");
-        NodeSummary.Columns[4].Header = tableViewModel.Text("Model.ColumnLayer");
-        NodeSummary.Columns[5].Header = tableViewModel.Text("Model.ColumnPool");
-        NodeSummary.Columns[6].Header = tableViewModel.Text("Model.ColumnFunctions");
+        NodeSummary.Columns[4].Header = tableViewModel.Text("Model.ColumnPool");
+        NodeSummary.Columns[5].Header = tableViewModel.Text("Model.ColumnFunctions");
     }
 }

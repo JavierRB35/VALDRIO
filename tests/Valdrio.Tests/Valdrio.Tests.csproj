@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="../../src/Valdrio.Desktop/CompanyFileViewModel.cs" Link="Desktop/CompanyFileViewModel.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/ModelWorkspaceViewModel.StudyNodes.cs" Link="Desktop/ModelWorkspaceViewModel.StudyNodes.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ModelWorkspaceViewModel.cs" Link="Desktop/ModelWorkspaceViewModel.cs" />
     <Compile Include="../../src/Valdrio.Desktop/StudyWorkspaceViewModel.cs" Link="Desktop/StudyWorkspaceViewModel.cs" />
     <Compile Include="../../src/Valdrio.Desktop/MainWindowViewModel.cs" Link="Desktop/MainWindowViewModel.cs" />

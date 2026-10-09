@@ -1,0 +1,95 @@
+using System.IO;
+using System.Text.Json;
+using System.Windows;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using CommunityToolkit.Mvvm.Input;
+using Valdrio.Application;
+using Valdrio.Domain;
+
+namespace Valdrio.Desktop;
+public partial class MainWindow
+{
+    internal async Task RunMethodologyChecks(string directory)
+    {
+        var output = Path.Combine(directory, "methodology"); Directory.CreateDirectory(output);
+        var main = viewModel!; var company = main.Company!; var studies = main.Studies!;
+        var vm = main.Allocations!; var nodes = main.Models!;
+        var checks = new List<string>();
+        void Check(bool ok, string label) { if (!ok) throw new InvalidOperationException("Methodology: " + label + " / " + vm.Status + " / " + nodes.Status); checks.Add(label); }
+        async Task Idle() { await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle); UpdateLayout(); }
+        void Text(TextBox box, string value) { box.SetCurrentValue(TextBox.TextProperty, value); box.GetBindingExpression(TextBox.TextProperty)!.UpdateSource(); }
+        async Task Click(Button button)
+        {
+            GuidedUi.Reveal(button); await Idle(); Check(button.IsEnabled, "enabled " + button.Name);
+            ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke(); await Idle();
+            if (button.Command is IAsyncRelayCommand command && command.ExecutionTask is { } task) await task.WaitAsync(TimeSpan.FromSeconds(60));
+            await Idle();
+        }
+        main.ApplyPresentationPreset("es", "es-ES", "Europe/Madrid", false, false);
+        await NavigateWorkflow(5); await Idle();
+        Check(AllocationPanel.IsVisible && !SecondaryPanel.IsVisible, "primary has a separate page");
+        Check(AllocationPanel.CompositionSection.IsExpanded, "composition is visible by default in step 6");
+        vm.CompositionAccounts.Single().Selected = true;
+        Text(AllocationPanel.FixedPercentageBox, "70"); Text(AllocationPanel.VariablePercentageBox, "30");
+        await Click(AllocationPanel.ApplyCompositionWeightsButton);
+        Check(vm.CompositionAccounts.Single().Behavior.Contains("70"), "70 fixed and 30 variable saved by visible controls");
+        ScrollToElement(AllocationPanel.CompositionSection); await Idle();
+        VisualEvidenceCapture.Capture(this, Path.Combine(output, "es-primary-composition.png"));
+        await NavigateWorkflow(4); await Idle();
+        Check(!string.IsNullOrWhiteSpace(main.Resources!.History), "classification history loads without missing resources");
+        await NavigateWorkflow(1); await Idle();
+        Check(nodes.CanEditStudyNodes, "study nodes remain editable before primary closure");
+        var principal = nodes.Nodes.First(n => n.Node.Role == NodeRole.Principal);
+        nodes.SelectedNode = principal;
+        ModelPanel.ModelSteps.SelectedIndex = 2;
+        Text(ModelPanel.PoolBox, "Producción revisada en el análisis");
+        await nodes.SaveNodeCommand.ExecuteAsync(null); await Idle();
+        Check(!nodes.IsDirty && !nodes.HasError, "study node edit saved");
+        Check(ModelPanel.FindName("LayerBox") is null, "node editor has no fixed or variable selector");
+        Check(company.ActiveResources!.ReadResources(studies.Current!.CompanyId, studies.Current.Id)
+            .Model.Structure.Pools.Single(p => p.NodeId == principal.Node.Id).Description.Contains("revisada"), "study node change persists");
+        ScrollToElement(ModelPanel.NodeSummary); await Idle();
+        VisualEvidenceCapture.Capture(this, Path.Combine(output, "es-editable-nodes.png"));
+        await NavigateWorkflow(5); await Click(AllocationPanel.TogglePrimaryButton);
+        Check(vm.IsPrimaryClosed, "primary closes with weighted composition");
+        await NavigateWorkflow(1); await Idle(); Check(!nodes.CanEdit, "primary closure locks analysis nodes");
+        await NavigateWorkflow(7); await Idle();
+        var secondary = SecondaryPanel.Workspace;
+        Check(SecondaryPanel.IsVisible && !AllocationPanel.IsVisible && workflowStep == 7, "secondary is independent step 7");
+        Check(!secondary.CompositionSection.IsVisible, "secondary does not offer reclassification");
+        await Click(secondary.NewKeyButton);
+        Check(vm.Stage == AllocationStage.Secondary, "new key belongs to secondary automatically");
+        Text(secondary.KeyNameBox, "Servicios auxiliares a producción");
+        vm.Lines.Single(l => l.Id == principal.Node.Id).Included = true;
+        vm.Lines.Single(l => l.Id == principal.Node.Id).Value = "100";
+        await Click(secondary.SaveKeyButton);
+        var key = vm.Keys.Single().Value;
+        foreach (var auxiliary in vm.Auxiliaries.ToArray())
+        {
+            vm.Auxiliary = auxiliary.Value; vm.SecondaryKey = key.Id;
+            await Click(secondary.SaveSecondaryButton);
+        }
+        await Click(secondary.CalculateSecondaryButton);
+        Check(vm.SecondaryResults.Count == 2, "secondary preserves both fixed and variable components");
+        vm.SelectedSecondaryResultRow = vm.SecondaryResults.First();
+        await Click(secondary.ExplainSecondaryButton);
+        Check(!string.IsNullOrWhiteSpace(vm.SecondaryExplanation), "component explanation selects the matching fact");
+        foreach (var language in new[] { "es", "en" })
+        {
+            main.ApplyPresentationPreset(language, language == "es" ? "es-ES" : "en-US", "UTC", false, false);
+            await Idle(); ScrollToElement(secondary.SecondaryResultsSection); await Idle();
+            VisualEvidenceCapture.Capture(this, Path.Combine(output, language + "-secondary.png"));
+            Check(SecondaryStep.Content.ToString()!.StartsWith("7."), language + " secondary navigation label");
+        }
+        await Click(secondary.ToggleSecondaryButton); Check(vm.IsSecondaryClosed, "secondary publication closes");
+        var studyId = studies.Current!.Id; var path = company.ActivePath!;
+        await company.CloseCommand.ExecuteAsync(null); await company.OpenPath(path);
+        studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == studyId); await studies.LoadCommand.ExecuteAsync(null);
+        await NavigateWorkflow(7); await Idle();
+        Check(vm.IsSecondaryClosed && vm.SecondaryResults.Count == 2, "published mixed result survives reopen");
+        File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }, new JsonSerializerOptions { WriteIndented = true }));
+    }
+}

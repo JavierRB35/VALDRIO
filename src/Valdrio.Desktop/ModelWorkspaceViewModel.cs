@@ -70,13 +70,13 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         LoadCommand = new AsyncRelayCommand(LoadChosen, () => Ready && ModelChoice is not null);
         SaveCommand = new AsyncRelayCommand(Save, () => CanEdit && (dirty || nodeFormEdited));
         ValidateCommand = new AsyncRelayCommand(Validate, () => Ready && Current is not null && !dirty && !nodeFormEdited);
-        PublishCommand = new AsyncRelayCommand(Publish, () => CanEdit && !dirty && !nodeFormEdited);
+        PublishCommand = new AsyncRelayCommand(Publish, () => CanEdit && !IsPublished && !dirty && !nodeFormEdited);
         CloneCommand = new AsyncRelayCommand(Clone, () => Ready && company.CanWrite && Current?.Status == ModelStatus.Published);
         ApplyNodeCommand = new RelayCommand(ApplyNode, () => CanEdit);
         SaveNodeCommand = new AsyncRelayCommand(SaveNode, () => CanEdit && nodeFormEdited);
-        RemoveNodeCommand = new RelayCommand(RemoveNode, () => CanEdit && SelectedNode is not null);
-        DeleteNodeCommand = new AsyncRelayCommand(DeleteNode, () => CanEdit && SelectedNode is not null && !nodeFormEdited);
-        NewNodeCommand = new RelayCommand(ClearNodeForm, () => CanEdit);
+        RemoveNodeCommand = new RelayCommand(RemoveNode, () => CanEdit && !IsPublished && SelectedNode is not null);
+        DeleteNodeCommand = new AsyncRelayCommand(DeleteNode, () => CanEdit && !IsPublished && SelectedNode is not null && !nodeFormEdited);
+        NewNodeCommand = new RelayCommand(ClearNodeForm, () => CanEdit && !IsPublished);
         DiscardCommand = new RelayCommand(() =>
         {
             if (Current is not null)
@@ -100,11 +100,11 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public bool IsDirty => dirty || nodeFormEdited || CenterFormEdited;
     public bool IsPublished => Current?.Status == ModelStatus.Published;
     public bool HasNoModel => Current is null;
-    public string NodeEditorPublishedHelp => Text("Model.NodeEditorPublishedHelp");
+    public string NodeEditorPublishedHelp => Text(EditingStudyNodes ? "Model.StudyNodesClosedHelp" : "Model.NodeEditorPublishedHelp");
     public string NodeEditorMissingModelHelp => Text("Model.NodeEditorMissingModelHelp");
     public string NodeClassificationHelp => Text("Model.NodeClassificationHelp");
     private bool Ready => !busy && company.WorkspaceIdle && company.ActiveModels is not null;
-    public bool IsEditable => Current?.Status == ModelStatus.Draft;
+    public bool IsEditable => Current?.Status == ModelStatus.Draft || CanEditStudyNodes;
     public bool CanEdit => Ready && IsEditable && company.CanWrite;
     public bool CanEditMasters => Ready && company.CanWrite;
     public bool DescriptionReadOnly => IsPublished || !company.CanWrite;
@@ -895,6 +895,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
                 return;
         }
 
+        if (EditingStudyNodes) { await SaveStudyNodesAsync(); return; }
+
         await Run(async t =>
         {
             var value = Structure();
@@ -929,12 +931,12 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     {
         try
         {
-            if (Physical is null || DriverUnit is null || Role is null || Layer is null)
+            if (Physical is null || DriverUnit is null || Role is null)
                 throw ModelRules.Error("MODEL_INPUT_INVALID", "Model.InputInvalid");
             var id = SelectedNode?.Node.Id ?? new(Guid.NewGuid());
             var modelId = Current!.Structure.Id;
             var n = new CalculationNodeDefinition(id, modelId, Physical.Value.Id, NodeCode, Role.Value, FunctionTags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), true);
-            var p = new CostPoolDefinition(SelectedNode?.Pool?.Id ?? new(Guid.NewGuid()), modelId, n.Id, DriverUnit.Value.Definition.Id, PoolDescription, Layer.Value, ModelPolicyReference.PendingCapacity);
+            var p = new CostPoolDefinition(SelectedNode?.Pool?.Id ?? new(Guid.NewGuid()), modelId, n.Id, DriverUnit.Value.Definition.Id, PoolDescription, SelectedNode?.Pool?.CostLayer ?? CostLayer.Unclassified, SelectedNode?.Pool?.CapacityPolicy ?? ModelPolicyReference.PendingCapacity);
             var ns = draftNodes.Where(x => x.Id != id).Append(n).ToArray();
             var ps = draftPools.Where(x => x.NodeId != id).Append(p).ToArray();
             _ = new ModelStructure(Current.Structure.Id, Current.Structure.CompanyId, Current.Structure.FamilyId, Current.Structure.VersionNumber, Current.Structure.ParentVersionId, Description, Current.Structure.PrecisionPolicyVersion, Current.Structure.MethodPolicy, ns, ps);

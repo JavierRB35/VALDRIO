@@ -127,6 +127,7 @@ public partial class App : System.Windows.Application
             { ImportColumns = importColumns };
         resources = new ResourceWorkspaceViewModel(company, studies, currencyCatalog, texts, preferences, modelDialogs);
         allocations = new AllocationWorkspaceViewModel(company, studies, texts, preferences, modelDialogs);
+        models.AttachStudyNodes(studies);
         allocations.AfterPrimaryStateChanged = () => resources.EnterAsync(true);
         var viewModel =
             new MainWindowViewModel(
@@ -204,6 +205,7 @@ public partial class App : System.Windows.Application
                             if (e.Args.Contains("--workspace-fixes-only", StringComparer.Ordinal))
                                 await window.RunResourceChecks(captureDirectory);
                             await window.RunAllocationChecks(captureDirectory);
+                            if (e.Args.Contains("--methodology", StringComparer.Ordinal)) await window.RunMethodologyChecks(captureDirectory);
                             if (e.Args.Contains("--workspace-fixes-only", StringComparer.Ordinal))
                                 await window.RunWorkspaceEditingChecks(captureDirectory, (QueuedModelEditorDialogs)modelDialogs);
                             Shutdown(0); return;
@@ -228,6 +230,7 @@ public partial class App : System.Windows.Application
                         await window.RunGuidedWorkflowChecks(captureDirectory, (QueuedCompanyFileDialogs)companyDialogs, (QueuedImportSourceDialogs)importDialogs);
                         await window.RunResourceChecks(captureDirectory);
                         await window.RunAllocationChecks(captureDirectory);
+                            if (e.Args.Contains("--methodology", StringComparer.Ordinal)) await window.RunMethodologyChecks(captureDirectory);
                         await window.RunVisualShellChecks(captureDirectory);
                         CaptureVisualEvidence(
                             window,

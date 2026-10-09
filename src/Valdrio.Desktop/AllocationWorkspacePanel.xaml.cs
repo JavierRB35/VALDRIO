@@ -9,6 +9,7 @@ public partial class AllocationWorkspacePanel : UserControl
     public AllocationWorkspacePanel()
     {
         InitializeComponent();
+        ConfigurePage(false);
         DataContextChanged += (_, e) =>
         {
             if (viewModel is not null) viewModel.PropertyChanged -= Changed;
@@ -16,6 +17,23 @@ public partial class AllocationWorkspacePanel : UserControl
             if (viewModel is not null) viewModel.PropertyChanged += Changed;
             Headers();
         };
+    }
+    public bool SecondaryOnly { set => ConfigurePage(value); }
+    private void ConfigurePage(bool secondary)
+    {
+        // Each page has its own visual tree; shared controls retain the same commands and validation.
+        static void Card(FrameworkElement section, bool visible) =>
+            ((FrameworkElement)section.Parent).Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        Card(CompositionSection, !secondary);
+        Card(AccountsSection, !secondary);
+        Card(ResultsSection, !secondary);
+        Card(SecondaryResultsSection, secondary);
+        Card(ReciprocalSection, secondary);
+        ((FrameworkElement)((FrameworkElement)TogglePrimaryButton.Parent).Parent).Visibility = secondary ? Visibility.Collapsed : Visibility.Visible;
+        for (var i = 0; i < RuleTabs.Items.Count; i++)
+            ((TabItem)RuleTabs.Items[i]).Visibility = (i == 1) == secondary ? Visibility.Visible : Visibility.Collapsed;
+        RuleTabs.SelectedIndex = secondary ? 1 : 0;
+        RulesSection.IsExpanded = true;
     }
     private void Changed(object? sender, PropertyChangedEventArgs e)
     {

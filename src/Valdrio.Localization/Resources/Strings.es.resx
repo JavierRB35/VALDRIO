@@ -639,7 +639,7 @@ Completa: {5}</value></data>
 <data name="Resource.SplitMismatch" xml:space="preserve"><value>Las partes de sustitución deben sumar exactamente el importe de la parte original.</value></data>
 <data name="Resource.PartNotFound" xml:space="preserve"><value>Selecciona una parte existente y única de este recurso.</value></data>
   <data name="Resources.Title" xml:space="preserve"><value>Recursos</value></data>
-  <data name="Resources.Introduction" xml:space="preserve"><value>Revisa los saldos importados y ajusta Correcciones (por ejemplo, amortización técnica o ajustes extracontables). Cada celda confirmada se guarda automáticamente. El importe efectivo se distribuye a los nodos en 6. Claves y reglas.</value></data>
+  <data name="Resources.Introduction" xml:space="preserve"><value>Revisa los saldos importados y ajusta Correcciones (por ejemplo, amortización técnica o ajustes extracontables). Cada celda confirmada se guarda automáticamente. El importe efectivo se distribuye a los nodos en 6. Reparto primario.</value></data>
   <data name="Resources.Ready" xml:space="preserve"><value>Correcciones se guarda al confirmar cada celda. La distribución se configura en Claves y reglas.</value></data>
   <data name="Resources.NeedStudy" xml:space="preserve"><value>Guarda o carga un estudio en el paso 3 para preparar sus recursos.</value></data>
   <data name="Resources.NeedImport" xml:space="preserve"><value>Primero importa y guarda datos contables en el análisis. Al terminar la importación, VALDRIO te traerá directamente aquí.</value></data>
@@ -1038,7 +1038,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Allocation.HistoryInvalid" xml:space="preserve"><value>El historial de repartos no coincide con los datos guardados. Revisa el archivo de proyecto.</value></data>
   <data name="Allocation.NumberInvalid" xml:space="preserve"><value>Escribe un número válido usando el separador decimal indicado en el editor.</value></data>
   <data name="Allocation.InputInvalid" xml:space="preserve"><value>No se ha guardado. Revisa los campos y vuelve a intentarlo; si el archivo no está disponible, ábrelo de nuevo.</value></data>
-  <data name="Guide.Allocations" xml:space="preserve"><value>6. Claves y reglas</value></data>
+  <data name="Guide.Allocations" xml:space="preserve"><value>6. Reparto primario</value></data>
   <data name="Guide.ContinueAllocations" xml:space="preserve"><value>Continuar a claves y reglas</value></data>
   <data name="Guide.Help.AllocationInput" xml:space="preserve"><value>Guarda una clave con sus destinos y asígnala a las cuentas. Guardar regla no reparte; Aplicar regla actualiza el reparto.</value></data>
   <data name="AllocationUI.Ready" xml:space="preserve"><value>Elige una clave o crea una nueva. Guarda sus destinos y asígnala a las cuentas.</value></data>
@@ -1274,11 +1274,11 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.SecondaryObsoleteMappingsBlock" xml:space="preserve"><value>Existen asignaciones obsoletas entre partes y grupos. Elimínalas o corrígelas antes de calcular los costes secundarios.</value></data>
   <data name="Model.NodeEditorPublishedHelp" xml:space="preserve"><value>Este modelo está publicado y no se puede editar. Para cambiar el tipo de nodo (Principal/Auxiliar) o la descripción del grupo de costes, crea una versión editable. La versión publicada permanecerá intacta.</value></data>
   <data name="Model.NodeEditorMissingModelHelp" xml:space="preserve"><value>No hay ningún modelo seleccionado. Primero crea o carga una estructura en preparación en Modelos y vuelve aquí para definir los nodos.</value></data>
-  <data name="Model.NodeClassificationHelp" xml:space="preserve"><value>Principal/Auxiliar se define en cada NODO, no en el centro físico. Selecciona un nodo para consultar su tipo y la descripción del grupo de costes. Ambos campos se editan en un borrador. Producción/Comercial/Estructura es otra clasificación de los costes de los recursos.</value></data>
+  <data name="Model.NodeClassificationHelp" xml:space="preserve"><value>El nodo define su función principal o auxiliar. La composición fija y variable de las cuentas se configura en el paso 6, Claves y reglas de reparto primario.</value></data>
   <data name="Resources.AssumedFixed" xml:space="preserve"><value>Fijo por defecto (sin revisar)</value></data>
   <data name="Resource.BehaviorAssumedFixed" xml:space="preserve"><value>La parte {0} es fija por defecto, no verificada; necesita revisión antes de una absorción definitiva.</value></data>
   <data name="AllocationUI.CompositionTitle" xml:space="preserve"><value>Composición y comportamiento del coste</value></data>
-  <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Inicialmente, las cuentas sin clasificar se consideran fijas por defecto (sin revisar). Seleccione varias cuentas para modificarlas. Las ya modificadas pueden volver a editarse hasta cerrar el reparto primario. Los costes desglosados se editan en el detalle de cuenta.</value></data>
+  <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Selecciona cuentas y guarda su composición fija y variable. Puedes cambiarla hasta cerrar el reparto primario. Las cuentas con varios componentes se revisan en el detalle.</value></data>
   <data name="AllocationUI.CompositionSummary" xml:space="preserve"><value>Partes: {0} · Fijas por defecto: {1} · Otras: {2} · Mixtas pendientes: {3}</value></data>
   <data name="AllocationUI.CompositionSelected" xml:space="preserve"><value>Cuentas seleccionadas: {0}</value></data>
   <data name="AllocationUI.CompositionAccount" xml:space="preserve"><value>Cuenta y descripción</value></data>
@@ -1300,7 +1300,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.CompositionUnit" xml:space="preserve"><value>Unidad de actividad</value></data>
   <data name="AllocationUI.CompositionMinimum" xml:space="preserve"><value>Actividad mínima</value></data>
   <data name="AllocationUI.CompositionMaximum" xml:space="preserve"><value>Actividad máxima</value></data>
-  <data name="AllocationUI.CompositionCloseHelp" xml:space="preserve"><value>Los cambios se guardan y se pueden repetir. Al cerrar el reparto primario se confirman las hipótesis fijas restantes y se bloquea la edición hasta reabrirlo. Los mixtos pendientes deben desglosarse. La absorción definitiva requiere revisar los fijos por defecto.</value></data>
+  <data name="AllocationUI.CompositionCloseHelp" xml:space="preserve"><value>Los cambios quedan guardados. El cierre del reparto primario bloquea la composición y los nodos del análisis; reabrirlo permite corregirlos.</value></data>
   <data name="AllocationUI.CompositionContextRequired" xml:space="preserve"><value>Indique unidad y rango de actividad válidos antes de marcar fijos revisados o variables.</value></data>
   <data name="AllocationUI.CompositionSaved" xml:space="preserve"><value>Clasificación guardada. Puede volver a modificar las mismas cuentas.</value></data>
   <data name="AllocationUI.CompositionUnchanged" xml:space="preserve"><value>Las cuentas ya tienen esta clasificación.</value></data>
@@ -1312,4 +1312,20 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.CompositionOnlyExceptions" xml:space="preserve"><value>Solo clasificadas o mixtas</value></data>
   <data name="AllocationUI.CompositionSelectVisible" xml:space="preserve"><value>Seleccionar todas las visibles</value></data>
   <data name="AllocationUI.CompositionClearSelection" xml:space="preserve"><value>Quitar selección</value></data>
+  <data name="AllocationUI.CompositionApplyWeights" xml:space="preserve"><value>Guardar composición</value></data>
+  <data name="AllocationUI.CompositionWeightsSummary" xml:space="preserve"><value>{0} % fijo / {1} % variable</value></data>
+  <data name="Guide.SecondaryAllocations" xml:space="preserve"><value>7. Reparto secundario y cierre</value></data>
+  <data name="AllocationUI.CompositionVariableWeight" xml:space="preserve"><value>Componente variable (%)</value></data>
+  <data name="AllocationUI.CompositionWeightsInvalid" xml:space="preserve"><value>Introduce porcentajes entre 0 y 100 cuya suma sea 100.</value></data>
+  <data name="Resources.EditStudyNodes" xml:space="preserve"><value>Nodos del análisis actualizados</value></data>
+  <data name="Guide.ContinueSecondary" xml:space="preserve"><value>Continuar al reparto secundario</value></data>
+  <data name="Model.StudyNodesSaved" xml:space="preserve"><value>Nodos guardados para este análisis. Puedes modificarlos hasta cerrar el reparto primario.</value></data>
+  <data name="Resources.Mixed" xml:space="preserve"><value>Mixto con porcentajes</value></data>
+  <data name="AllocationUI.CompositionAdvanced" xml:space="preserve"><value>Contexto de actividad y clasificación anterior</value></data>
+  <data name="Model.StudyNodeIdentity" xml:space="preserve"><value>En este análisis puedes editar los nodos existentes. Para añadir o eliminar nodos, crea una nueva versión de la estructura.</value></data>
+  <data name="AllocationUI.CompositionWeightsHelp" xml:space="preserve"><value>Cada cuenta comienza con 100 % fijo. Define 100 % variable o una combinación fija y variable que sume 100 %. Los importes y destinos se conservan.</value></data>
+  <data name="AllocationUI.SecondaryBehaviorMixed" xml:space="preserve"><value>Mixto</value></data>
+  <data name="Resources.ClassifyBatch" xml:space="preserve"><value>Composición de costes actualizada</value></data>
+  <data name="AllocationUI.CompositionFixedWeight" xml:space="preserve"><value>Componente fijo (%)</value></data>
+  <data name="Model.StudyNodesClosedHelp" xml:space="preserve"><value>El reparto primario está cerrado. Reábrelo en el paso 6 para modificar los nodos de este análisis.</value></data>
 </root>

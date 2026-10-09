@@ -15,7 +15,11 @@ public sealed record SecondaryExplanationLink(
     EntityId? PrimaryKeyVersionId, decimal PrimaryPostedAmount,
     decimal EffectiveShare, decimal RawContribution,
     string ComponentRoutingGroup = "all",
-    IReadOnlyList<EntityId>? SecondaryKeyVersionIds = null);
+    IReadOnlyList<EntityId>? SecondaryKeyVersionIds = null)
+{
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public ResourceBehavior? SourceBehavior { get; init; }
+}
 
 public sealed record SecondaryTerminalTotal(
     EntityId TerminalNodeId, ResourceBehavior Behavior, ResourceCostLayer CostLayer,
@@ -317,7 +321,8 @@ public static class SecondaryAllocationService
                     f.PostedAmount)).ToArray();
             var links = primary.Facts.OrderBy(f => f.ResourceId).ThenBy(f => f.PartId).ThenBy(f => f.NodeId)
                 .Select(f => new SecondaryExplanationLink(f.ResourceId, f.PartId, f.NodeId, f.NodeId,
-                    f.KeyVersionId, f.PostedAmount.Amount, 1m, f.PostedAmount.Amount)).ToArray();
+                    f.KeyVersionId, f.PostedAmount.Amount, 1m, f.PostedAmount.Amount)
+                    { SourceBehavior = primary.Facts.Any(other => other.PartId == f.PartId && other.Behavior != f.Behavior) ? f.Behavior : null }).ToArray();
             var parts = facts.GroupBy(f => (f.ResourceId, f.PartId))
                 .OrderBy(g => g.Key.ResourceId).ThenBy(g => g.Key.PartId).Select(g =>
             {
@@ -375,7 +380,7 @@ public static class SecondaryAllocationService
         var rounder = new BalancedRounder(precision);
         try
         {
-            foreach (var part in primary.Facts.GroupBy(f => (f.ResourceId, f.PartId))
+            foreach (var part in primary.Facts.GroupBy(f => (f.ResourceId, f.PartId, f.Behavior))
                 .OrderBy(g => g.Key.ResourceId).ThenBy(g => g.Key.PartId))
             {
                 cancellation.ThrowIfCancellationRequested();
@@ -404,7 +409,8 @@ public static class SecondaryAllocationService
                         if (raw != 0m)
                             links.Add(new(fact.ResourceId, fact.PartId, fact.NodeId,
                                 new EntityId(Guid.Parse(terminalIds[j])), fact.KeyVersionId,
-                                fact.PostedAmount.Amount, share, raw));
+                                fact.PostedAmount.Amount, share, raw)
+                                { SourceBehavior = primary.Facts.Any(other => other.PartId == fact.PartId && other.Behavior != fact.Behavior) ? fact.Behavior : null });
                     }
                 }
                 var rounded = rounder.Round(source, terminalIds.Select((id, i) =>
@@ -432,7 +438,12 @@ public static class SecondaryAllocationService
                     g.Key.CostLayer, g.Key.CapacityTreatment,
                     new Money(g.Aggregate(0m, (sum, f) => checked(sum + f.PostedAmount.Amount)), currency, precision)))
                 .ToArray();
-            return new(primary, facts, links, totals, reconciliations, gross,
+            var partReconciliations = reconciliations.GroupBy(r => (r.ResourceId, r.PartId))
+                .Select(g => new SecondaryPartReconciliation(g.Key.ResourceId, g.Key.PartId,
+                    new Money(g.Sum(r => r.PrimaryInput.Amount), currency, precision),
+                    new Money(g.Sum(r => r.FinalOutput.Amount), currency, precision),
+                    new Money(g.Sum(r => r.Difference.Amount), currency, precision))).ToArray();
+            return new(primary, facts, links, totals, partReconciliations, gross,
                 BuildResourceBridges(primary, facts, precision),
                 [new SecondaryGroupCirculation("all", gross)]);
         }

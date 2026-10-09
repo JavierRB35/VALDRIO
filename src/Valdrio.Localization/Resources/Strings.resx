@@ -639,7 +639,7 @@ Full: {5}</value></data>
 <data name="Resource.SplitMismatch" xml:space="preserve"><value>Replacement parts must sum exactly to the original part amount.</value></data>
 <data name="Resource.PartNotFound" xml:space="preserve"><value>Select one existing part of this resource.</value></data>
   <data name="Resources.Title" xml:space="preserve"><value>Resources</value></data>
-  <data name="Resources.Introduction" xml:space="preserve"><value>Review imported balances and edit Corrections (for example, technical depreciation or non-accounting adjustments). Each confirmed cell is saved automatically. Allocate the effective amount to nodes in 6. Keys and rules.</value></data>
+  <data name="Resources.Introduction" xml:space="preserve"><value>Review imported balances and edit Corrections (for example, technical depreciation or non-accounting adjustments). Each confirmed cell is saved automatically. Allocate the effective amount to nodes in 6. Primary allocation.</value></data>
   <data name="Resources.Ready" xml:space="preserve"><value>Corrections are saved when each cell is confirmed. Allocation is configured in Keys and rules.</value></data>
   <data name="Resources.NeedStudy" xml:space="preserve"><value>Save or load a study in step 3 to prepare its resources.</value></data>
   <data name="Resources.NeedImport" xml:space="preserve"><value>First import and save accounting data in the analysis. When the import finishes, VALDRIO will take you directly here.</value></data>
@@ -1038,7 +1038,7 @@ Difference to distribute: {7}</value></data>
   <data name="Allocation.HistoryInvalid" xml:space="preserve"><value>The allocation history does not match the saved data. Check the project file.</value></data>
   <data name="Allocation.NumberInvalid" xml:space="preserve"><value>Enter a valid number using the decimal separator shown in the editor.</value></data>
   <data name="Allocation.InputInvalid" xml:space="preserve"><value>Nothing was saved. Check the fields and try again; if the file is unavailable, open it again.</value></data>
-  <data name="Guide.Allocations" xml:space="preserve"><value>6. Keys and rules</value></data>
+  <data name="Guide.Allocations" xml:space="preserve"><value>6. Primary allocation</value></data>
   <data name="Guide.ContinueAllocations" xml:space="preserve"><value>Continue to keys and rules</value></data>
   <data name="Guide.Help.AllocationInput" xml:space="preserve"><value>Save a key with its destinations and assign it to accounts. Save rule stores it; Apply rule updates the allocation.</value></data>
   <data name="AllocationUI.Ready" xml:space="preserve"><value>Choose a key or create one. Save its destinations and assign it to accounts.</value></data>
@@ -1274,11 +1274,11 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.SecondaryObsoleteMappingsBlock" xml:space="preserve"><value>There are obsolete source-to-group assignments. Clear or correct them before calculating secondary costs.</value></data>
   <data name="Model.NodeEditorPublishedHelp" xml:space="preserve"><value>This model has been published and cannot be edited. To change the Principal/Auxiliary role or the cost-pool description, create an editable version. The published version will remain unchanged.</value></data>
   <data name="Model.NodeEditorMissingModelHelp" xml:space="preserve"><value>No model is selected. First create or load a draft structure in Models, then return here to define its nodes.</value></data>
-  <data name="Model.NodeClassificationHelp" xml:space="preserve"><value>Principal/Auxiliary is defined per NODE, not per physical center. Select a node to inspect its role and cost-pool description. Both fields can be edited in a draft. Production/Commercial/Structure is a separate classification of resource costs.</value></data>
+  <data name="Model.NodeClassificationHelp" xml:space="preserve"><value>The node defines its principal or auxiliary role. Fixed and variable account composition is configured in step 6, Primary allocation keys and rules.</value></data>
   <data name="Resources.AssumedFixed" xml:space="preserve"><value>Fixed by default (unreviewed)</value></data>
   <data name="Resource.BehaviorAssumedFixed" xml:space="preserve"><value>Part {0} is fixed by default, not verified; review is required before definitive absorption.</value></data>
   <data name="AllocationUI.CompositionTitle" xml:space="preserve"><value>Cost composition and behavior</value></data>
-  <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Unclassified accounts start as fixed by default (unreviewed). Select multiple accounts to update them; edited accounts can be changed again until primary allocation is closed. Split costs remain editable in account details.</value></data>
+  <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Select accounts and save their fixed and variable composition. You can change it until primary allocation is closed. Review accounts with multiple components in account details.</value></data>
   <data name="AllocationUI.CompositionSummary" xml:space="preserve"><value>Parts: {0} · Default fixed: {1} · Other: {2} · Mixed pending: {3}</value></data>
   <data name="AllocationUI.CompositionSelected" xml:space="preserve"><value>Selected accounts: {0}</value></data>
   <data name="AllocationUI.CompositionAccount" xml:space="preserve"><value>Account and description</value></data>
@@ -1300,7 +1300,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.CompositionUnit" xml:space="preserve"><value>Activity unit</value></data>
   <data name="AllocationUI.CompositionMinimum" xml:space="preserve"><value>Minimum activity</value></data>
   <data name="AllocationUI.CompositionMaximum" xml:space="preserve"><value>Maximum activity</value></data>
-  <data name="AllocationUI.CompositionCloseHelp" xml:space="preserve"><value>Changes are saved and can be revised repeatedly. Closing primary allocation confirms remaining fixed assumptions and locks editing until reopened. Mixed costs must be split. Definitive absorption requires reviewing default-fixed assumptions.</value></data>
+  <data name="AllocationUI.CompositionCloseHelp" xml:space="preserve"><value>Changes are saved. Closing primary allocation locks account composition and analysis nodes; reopen it to make corrections.</value></data>
   <data name="AllocationUI.CompositionContextRequired" xml:space="preserve"><value>Supply valid activity unit and range before marking reviewed fixed or variable.</value></data>
   <data name="AllocationUI.CompositionSaved" xml:space="preserve"><value>Classification saved. The same accounts can be changed again.</value></data>
   <data name="AllocationUI.CompositionUnchanged" xml:space="preserve"><value>Accounts already have this classification.</value></data>
@@ -1312,4 +1312,20 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.CompositionOnlyExceptions" xml:space="preserve"><value>Only classified or mixed</value></data>
   <data name="AllocationUI.CompositionSelectVisible" xml:space="preserve"><value>Select all visible</value></data>
   <data name="AllocationUI.CompositionClearSelection" xml:space="preserve"><value>Clear selection</value></data>
+  <data name="AllocationUI.CompositionApplyWeights" xml:space="preserve"><value>Save composition</value></data>
+  <data name="AllocationUI.CompositionWeightsSummary" xml:space="preserve"><value>{0}% fixed / {1}% variable</value></data>
+  <data name="Guide.SecondaryAllocations" xml:space="preserve"><value>7. Secondary allocation and closing</value></data>
+  <data name="AllocationUI.CompositionVariableWeight" xml:space="preserve"><value>Variable component (%)</value></data>
+  <data name="AllocationUI.CompositionWeightsInvalid" xml:space="preserve"><value>Enter percentages between 0 and 100 totaling 100.</value></data>
+  <data name="Resources.EditStudyNodes" xml:space="preserve"><value>Analysis nodes updated</value></data>
+  <data name="Guide.ContinueSecondary" xml:space="preserve"><value>Continue to secondary allocation</value></data>
+  <data name="Model.StudyNodesSaved" xml:space="preserve"><value>Nodes saved for this analysis. You can edit them until primary allocation is closed.</value></data>
+  <data name="Resources.Mixed" xml:space="preserve"><value>Mixed with percentages</value></data>
+  <data name="AllocationUI.CompositionAdvanced" xml:space="preserve"><value>Activity context and earlier classification</value></data>
+  <data name="Model.StudyNodeIdentity" xml:space="preserve"><value>You can edit existing nodes in this analysis. Create a new structure version to add or remove nodes.</value></data>
+  <data name="AllocationUI.CompositionWeightsHelp" xml:space="preserve"><value>Each account starts as 100% fixed. Choose 100% variable or fixed and variable percentages totaling 100%. Amounts and destinations are preserved.</value></data>
+  <data name="AllocationUI.SecondaryBehaviorMixed" xml:space="preserve"><value>Mixed</value></data>
+  <data name="Resources.ClassifyBatch" xml:space="preserve"><value>Cost composition updated</value></data>
+  <data name="AllocationUI.CompositionFixedWeight" xml:space="preserve"><value>Fixed component (%)</value></data>
+  <data name="Model.StudyNodesClosedHelp" xml:space="preserve"><value>Primary allocation is closed. Reopen it in step 6 to edit the nodes for this analysis.</value></data>
 </root>

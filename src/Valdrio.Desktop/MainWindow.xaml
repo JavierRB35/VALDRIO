@@ -21,6 +21,7 @@
       <Button x:Name="ImportStep" Click="ChooseImport" Style="{StaticResource Sidebar.Button}" />
       <Button x:Name="ResourcesStep" Click="ChooseResources" Style="{StaticResource Sidebar.Button}" />
       <Button x:Name="AllocationsStep" Click="ChooseAllocations" Style="{StaticResource Sidebar.Button}" />
+      <Button x:Name="SecondaryStep" Click="ChooseSecondary" Style="{StaticResource Sidebar.Button}" />
      <Border BorderBrush="{DynamicResource Accent.ActiveGreen}" BorderThickness="0,1,0,0" Margin="16,16,16,8" />
      <Button x:Name="SettingsStep" Click="ChooseSettings" Style="{StaticResource Sidebar.Button}" />
     </StackPanel>
@@ -86,6 +87,7 @@
     <local:StudyWorkspacePanel x:Name="StudyPanel" Grid.Row="8" DataContext="{Binding Studies}" />
     <local:ResourceWorkspacePanel x:Name="ResourcePanel" Grid.Row="8" DataContext="{Binding Resources}" ShowDistributionTools="False" />
     <local:AllocationWorkspacePanel x:Name="AllocationPanel" Grid.Row="8" DataContext="{Binding Allocations}" />
+    <local:SecondaryWorkspacePanel x:Name="SecondaryPanel" Grid.Row="8" DataContext="{Binding Allocations}" Visibility="Collapsed" />
     <Expander x:Name="DistributionDetails" Grid.Row="9" Header="{Binding Allocations[AccountDetails]}" Expanded="OpenDistributionDetails" Collapsed="CloseDistributionDetails">
      <StackPanel>
       <TextBlock Text="{Binding Allocations[AccountDetailsHelp]}" Margin="0,8,0,12"/>

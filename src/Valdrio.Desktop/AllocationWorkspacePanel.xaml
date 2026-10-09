@@ -29,7 +29,7 @@
      <DockPanel LastChildFill="False" Margin="0,0,0,8"><Button Style="{StaticResource Button.Primary}" Content="{Binding [SaveKey]}" Command="{Binding SaveKeyCommand}" x:Name="SaveKeyButton" DockPanel.Dock="Right"/></DockPanel>
      <StackPanel IsEnabled="{Binding CanEditKey}">
       <TextBlock Text="{Binding [Name]}"/><TextBox x:Name="KeyNameBox" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Name]}"/>
-      <StackPanel IsEnabled="{Binding CanEditComposition}"><TextBlock Text="{Binding [Stage]}" Margin="0,8,0,0"/><ComboBox ItemsSource="{Binding Stages}" SelectedValue="{Binding Stage}" AutomationProperties.Name="{Binding [Stage]}"/><TextBlock Text="{Binding [Criterion]}" Margin="0,8,0,0"/><ComboBox x:Name="ModeBox" ItemsSource="{Binding Modes}" SelectedValue="{Binding Mode}" AutomationProperties.Name="{Binding [Criterion]}"/>
+      <StackPanel IsEnabled="{Binding CanEditComposition}"><TextBlock Text="{Binding [Criterion]}" Margin="0,8,0,0"/><ComboBox x:Name="ModeBox" ItemsSource="{Binding Modes}" SelectedValue="{Binding Mode}" AutomationProperties.Name="{Binding [Criterion]}"/>
       <StackPanel Visibility="{Binding IsDriver, Converter={StaticResource Visible}}"><TextBlock Text="{Binding [Unit]}" Margin="0,8,0,0"/><ComboBox ItemsSource="{Binding Units}" SelectedValue="{Binding Unit}" AutomationProperties.Name="{Binding [Unit]}" x:Name="UnitBox"/></StackPanel></StackPanel>
      </StackPanel>
      <TextBlock Text="{Binding NumberFormatHelp}" Margin="0,12,0,8"/>
@@ -47,7 +47,7 @@
    </Border>
 </Grid>
     <Border Style="{StaticResource Card}" Margin="0,0,0,16">
-   <Expander x:Name="CompositionSection" Header="{Binding [CompositionTitle]}" IsExpanded="False">
+   <Expander x:Name="CompositionSection" Header="{Binding [CompositionTitle]}" IsExpanded="True">
     <StackPanel Margin="0,8,0,0">
      <TextBlock Text="{Binding [CompositionHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
      <TextBlock Text="{Binding CompositionSummary}" FontWeight="SemiBold" Margin="0,0,0,8"/>
@@ -88,6 +88,13 @@
       <TextBlock Text="{Binding CompositionSelected}" VerticalAlignment="Center" Margin="0,0,0,4" AutomationProperties.LiveSetting="Polite"/>
      </WrapPanel>
      <StackPanel IsEnabled="{Binding CanEditClassification}">
+      <TextBlock Text="{Binding [CompositionWeightsHelp]}" TextWrapping="Wrap" Margin="0,4,0,8"/>
+      <WrapPanel>
+       <StackPanel Width="140" Margin="0,0,12,8"><TextBlock Text="{Binding [CompositionFixedWeight]}"/><TextBox x:Name="FixedPercentageBox" Text="{Binding CompositionFixedPercentage, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [CompositionFixedWeight]}"/></StackPanel>
+       <StackPanel Width="140" Margin="0,0,12,8"><TextBlock Text="{Binding [CompositionVariableWeight]}"/><TextBox x:Name="VariablePercentageBox" Text="{Binding CompositionVariablePercentage, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [CompositionVariableWeight]}"/></StackPanel>
+       <Button x:Name="ApplyCompositionWeightsButton" Content="{Binding [CompositionApplyWeights]}" Command="{Binding CompositionApplyWeightsCommand}" Style="{StaticResource Button.Primary}" VerticalAlignment="Bottom" Margin="0,0,0,8"/>
+      </WrapPanel>
+      <Expander Header="{Binding [CompositionAdvanced]}" Margin="0,8,0,0"><StackPanel>
       <WrapPanel>
        <Button Content="{Binding [CompositionMarkFixed]}" Command="{Binding CompositionFixedCommand}" Margin="0,4,8,4"/>
        <Button Content="{Binding [CompositionMarkMixed]}" Command="{Binding CompositionMixedCommand}" Margin="0,4,8,4"/>
@@ -112,6 +119,7 @@
        <Button Content="{Binding [CompositionMarkReviewedFixed]}" Command="{Binding CompositionReviewedFixedCommand}" Margin="0,0,8,4"/>
       </WrapPanel>
      </StackPanel>
+     </Expander></StackPanel>
      <TextBlock Text="{Binding [CompositionCloseHelp]}" TextWrapping="Wrap" Margin="0,12,0,0"/>
     </StackPanel>
    </Expander>
