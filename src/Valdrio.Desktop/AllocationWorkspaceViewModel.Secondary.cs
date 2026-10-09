@@ -50,7 +50,7 @@ public sealed partial class AllocationWorkspaceViewModel
                 g == "all" ? this["AllComponents"] : g)).ToArray()) ?? [];
     public IAsyncRelayCommand AssignSecondaryKeyToMissingCommand { get; private set; } = null!;
     public bool CanAssignSecondaryKeyToMissing =>
-        CanEditSecondaryConfiguration && SecondaryKey.HasValue && workspace is not null &&
+        CanEditSecondaryConfiguration && !HasUnappliedRule && SecondaryKey.HasValue && workspace is not null &&
         workspace.Keys.Any(k => k.Id == SecondaryKey.Value &&
             k.Status == ModelStatus.Published && k.Stage == AllocationStage.Secondary) &&
         workspace.Resources.Model.Structure.Nodes.Any(n => n.IsActive && n.Role == NodeRole.Auxiliary &&
@@ -63,7 +63,7 @@ public sealed partial class AllocationWorkspaceViewModel
     public IAsyncRelayCommand ClearObsoleteSecondaryGroupsCommand { get; private set; } = null!;
     public bool HasObsoleteSecondaryGroups => workspace?.Configuration.SecondaryPartRoutingGroups?
         .Any(g => !Parts.Any(p => p.Value == g.PartId)) == true;
-    public bool CanSaveSecondaryGroup => CanEditSecondaryConfiguration && SecondaryGroupPart.HasValue &&
+    public bool CanSaveSecondaryGroup => CanEditSecondaryConfiguration && !HasUnappliedRule && SecondaryGroupPart.HasValue &&
         SecondaryGroupChoices.Any(g => g.Value == SecondaryGroupName);
 
     public ObservableCollection<ReciprocalCheckRow> SecondaryCirculation { get; } = [];
