@@ -77,7 +77,9 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         PublishCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey && MissingKeyInput(true) is null);
         RefreshCommand = new AsyncRelayCommand(async () => { if (await CanLeaveAsync()) await EnterAsync(true); }, () => !busy);
         CheckReciprocalCommand = new RelayCommand(CheckReciprocal, () => workspace is not null && !busy);
-        CalculateSecondaryCommand = new RelayCommand(CalculateSecondary, () => CanCalculateSecondary);
+        CalculateSecondaryCommand = new AsyncRelayCommand(CalculateSecondaryAsync, () => CanCalculateSecondary);
+        CancelSecondaryCommand = new RelayCommand(CancelSecondary,
+            () => secondaryCalculationCts is { IsCancellationRequested: false });
         ExplainSecondaryCommand = new RelayCommand(ShowSecondaryExplanation, () => SelectedSecondaryResultRow is not null);
         ToggleSecondaryCommand = new AsyncRelayCommand(ToggleSecondaryAsync,
             () => !busy && CanManagePrimary && !IsDirty && (IsSecondaryClosed || secondaryCalculated));
@@ -507,7 +509,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     {
         foreach (var command in new IRelayCommand?[] { DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
             SaveRuleCommand, RemoveRuleCommand, LoadRuleCommand, NewRuleCommand, SaveSecondaryCommand, LoadSecondaryCommand, NewSecondaryCommand,
-            RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CheckReciprocalCommand, CalculateSecondaryCommand, ExplainSecondaryCommand, ToggleSecondaryCommand,
+            RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CheckReciprocalCommand, CalculateSecondaryCommand, CancelSecondaryCommand, ExplainSecondaryCommand, ToggleSecondaryCommand,
             SaveSecondaryGroupCommand, ClearObsoleteSecondaryGroupsCommand, AssignSecondaryKeyToMissingCommand }) command?.NotifyCanExecuteChanged();
     }
     private void Refresh() { OnPropertyChanged(string.Empty); Commands(); }
