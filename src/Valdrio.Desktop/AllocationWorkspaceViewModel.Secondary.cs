@@ -45,6 +45,7 @@ public sealed partial class AllocationWorkspaceViewModel
         var model = workspace.Resources.Model.Structure;
         return model.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary &&
             !workspace.Configuration.SecondaryRules.Any(r => r.IsActive && r.AuxiliaryNodeId == n.Id &&
+                StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, "all") &&
                 workspace.Keys.Any(k => k.Id == r.KeyVersionId && k.Status == ModelStatus.Published &&
                     k.Stage == AllocationStage.Secondary))).OrderBy(n => n.Id).ToArray();
     }
@@ -52,6 +53,8 @@ public sealed partial class AllocationWorkspaceViewModel
     // complete but closed/unstable graphs must still allow Calculate to report the error.
     public bool CanCalculateSecondary => !busy && !IsDirty && CanManageSecondary && primaryComplete &&
         workspace is not null && workspace.Resources.Model.Structure.Nodes.Any(n => n.IsActive && n.Role == NodeRole.Auxiliary) &&
+        !workspace.Configuration.SecondaryRules.Any(r => r.IsActive &&
+            !StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, "all")) &&
         MissingSecondaryNodes().Count == 0;
 
     private void RebuildSecondary()
@@ -77,7 +80,12 @@ public sealed partial class AllocationWorkspaceViewModel
         }
         var missing = MissingSecondaryNodes();
         SecondarySummary = this["SecondaryOpenState"];
+        var customGroups = workspace.Configuration.SecondaryRules.Where(r => r.IsActive &&
+            !StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, "all"))
+            .Select(r => r.ComponentRoutingGroup).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
         SecondaryDiagnostic = !primaryComplete ? this["SecondaryPrimaryIncomplete"] :
+            customGroups.Length != 0 ? string.Format(Format, Text("Secondary.GroupMappingRequired"),
+                string.Join(", ", customGroups)) :
             missing.Count == 0 ? this["SecondaryReady"] :
             string.Format(Format, this["SecondaryMissingAssignments"],
                 string.Join(", ", missing.Select(NodeLabel)));
