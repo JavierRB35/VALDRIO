@@ -96,6 +96,16 @@ public static class SecondaryAllocationService
         if (unmappedGroups.Length != 0)
             throw Error("SECONDARY_GROUP_MAPPING_REQUIRED", "Secondary.GroupMappingRequired",
                 string.Join(", ", unmappedGroups));
+        var model = workspace.Resources.Model.Structure;
+        var missing = model.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary &&
+            !workspace.Configuration.SecondaryRules.Any(r => r.IsActive && r.AuxiliaryNodeId == n.Id &&
+                StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, "all") &&
+                workspace.Keys.Any(k => k.Id == r.KeyVersionId && k.Status == ModelStatus.Published &&
+                    k.Stage == AllocationStage.Secondary)))
+            .OrderBy(n => n.Code, StringComparer.Ordinal).Select(n => n.Code).ToArray();
+        if (missing.Length != 0)
+            throw Error("SECONDARY_MISSING_ASSIGNMENTS", "Secondary.MissingAssignments",
+                string.Join(", ", missing));
         var graph = ReciprocalGraphBuilder.FromPublishedSecondaryKeys(
             workspace.Resources.Model.Structure, workspace.Keys,
             workspace.Configuration.SecondaryRules, workspace.Resources.Model.DriverUnits,
