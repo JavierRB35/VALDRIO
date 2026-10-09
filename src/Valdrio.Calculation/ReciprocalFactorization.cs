@@ -175,7 +175,7 @@ public sealed class ReciprocalFactorization
                 var normalized = Math.Abs(lu[k, k]) / rowNorm[k];
                 smallest = Math.Min(smallest, normalized);
                 if (normalized < PivotFloor)
-                    throw Error("SOLVER_SENSITIVE", "Reciprocal.Sensitive", Id("auxiliary", aux[pivots[k]]),
+                    throw Error("SOLVER_SENSITIVE", "Reciprocal.SensitivePivot", Id("auxiliary", aux[pivots[k]]),
                         Number("pivot", normalized));
                 for (var i = k + 1; i < n; i++)
                 {
@@ -224,7 +224,7 @@ public sealed class ReciprocalFactorization
                 amplification = Math.Max(amplification, circulation);
             }
             if (amplification > BlockAmplification)
-                throw Error("SOLVER_SENSITIVE", "Reciprocal.Sensitive", Number("amplification", amplification));
+                throw Error("SOLVER_SENSITIVE", "Reciprocal.SensitiveAmplification", Number("amplification", amplification));
             return new(m, lu, b, pivots, factors, aux, terminal, smallest, amplification);
         }
         catch (OverflowException)
