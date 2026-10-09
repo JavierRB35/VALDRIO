@@ -1163,12 +1163,23 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.DestinationsRequired" xml:space="preserve"><value>Incluye al menos un nodo de destino antes de guardar la clave.</value></data>
   <data name="AllocationUI.SaveKey" xml:space="preserve"><value>Guardar clave</value></data>
   <data name="AllocationUI.UsedKeyHelp" xml:space="preserve"><value>Esta clave ya se ha usado: puedes cambiar su nombre. Su reparto se conserva.</value></data>
-  <data name="AllocationUI.AvailableKey" xml:space="preserve"><value>Lista para usar</value></data>
-  <data name="AllocationUI.IncompleteKey" xml:space="preserve"><value>Por completar</value></data>
+  <data name="AllocationUI.AvailableKey" xml:space="preserve"><value>Lista</value></data>
+  <data name="AllocationUI.IncompleteKey" xml:space="preserve"><value>Incompleta</value></data>
   <data name="AllocationUI.RuleActive" xml:space="preserve"><value>Aplicada</value></data>
   <data name="AllocationUI.RulePending" xml:space="preserve"><value>Sin aplicar</value></data>
   <data name="AllocationUI.RuleSavedOnly" xml:space="preserve"><value>Regla guardada sin aplicar. Pulsa Aplicar regla cuando quieras actualizar el reparto.</value></data>
   <data name="AllocationUI.RuleApplied" xml:space="preserve"><value>Regla aplicada. El reparto se ha actualizado respetando las asignaciones manuales.</value></data>
   <data name="AllocationUI.ApplyRule" xml:space="preserve"><value>Aplicar regla</value></data>
   <data name="AllocationUI.SelectAccounts" xml:space="preserve"><value>Seleccionar cuentas</value></data>
+  <data name="AllocationUI.DeleteKey" xml:space="preserve"><value>Eliminar clave</value></data>
+  <data name="AllocationUI.KeyDeleted" xml:space="preserve"><value>Clave eliminada.</value></data>
+  <data name="Allocation.KeyDeleted" xml:space="preserve"><value>Esta clave se ha eliminado. Recarga las claves del proyecto.</value></data>
+  <data name="Allocation.KeyDeleteUsed" xml:space="preserve"><value>La clave está referenciada por reglas, asignaciones o el historial y no se puede eliminar.</value></data>
+  <data name="AllocationUI.ClosePrimary" xml:space="preserve"><value>Cerrar reparto primario</value></data>
+  <data name="AllocationUI.ReopenPrimary" xml:space="preserve"><value>Reabrir reparto primario</value></data>
+  <data name="AllocationUI.PrimaryOpenState" xml:space="preserve"><value>Reparto primario abierto. Completa las asignaciones para poder cerrarlo.</value></data>
+  <data name="AllocationUI.PrimaryClosedState" xml:space="preserve"><value>Reparto primario cerrado. Las correcciones y asignaciones están bloqueadas hasta reabrirlo.</value></data>
+  <data name="Allocation.PrimaryClosed" xml:space="preserve"><value>El reparto primario está cerrado. Reábrelo en la pantalla 6 antes de modificar los importes o las asignaciones.</value></data>
+  <data name="Resources.PrimaryClosed" xml:space="preserve"><value>El reparto primario está cerrado. Para corregir importes, reábrelo en la pantalla 6.</value></data>
+  <data name="AllocationUI.RulesAndAssignments" xml:space="preserve"><value>Reglas y asignaciones especiales</value></data>
 </root>

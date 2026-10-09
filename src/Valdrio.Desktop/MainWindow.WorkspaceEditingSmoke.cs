@@ -107,13 +107,43 @@ public partial class MainWindow
         ResetScrollForCapture(); CheckGrid(AllocationPanel.KeyGrid); CheckGrid(AllocationPanel.LinesGrid);
         Check(RunSectionLayoutSmoke(), "allocation sections and account options never overlap");
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "es-keys-19-accounts.png"));
+        AllocationPanel.LibrarySection.IsExpanded = false; AllocationPanel.DefinitionSection.IsExpanded = false;
+        AllocationPanel.RulesSection.IsExpanded = false; AllocationPanel.ResultsSection.IsExpanded = false;
+        Check(!AllocationPanel.KeyGrid.IsVisible && !AllocationPanel.LinesGrid.IsVisible, "key sections collapse independently");
+        ScrollToElement(AllocationPanel.CoverageGrid); await Idle();
+        var originalRows = allocations.Coverage.ToArray(); var chosenRow = originalRows[14];
+        AllocationPanel.CoverageGrid.SelectedItem = chosenRow;
+        AllocationPanel.CoverageGrid.ScrollIntoView(chosenRow); await Idle();
+        var rowContainer = (DataGridRow)AllocationPanel.CoverageGrid.ItemContainerGenerator.ContainerFromItem(chosenRow);
+        var combo = Descendants<ComboBox>(rowContainer).Single();
+        var gridScroll = Descendants<ScrollViewer>(AllocationPanel.CoverageGrid).First();
+        var previousOffset = gridScroll.VerticalOffset;
+        combo.Focus(); System.Windows.Input.Keyboard.Focus(combo);
+        combo.SetCurrentValue(ComboBox.SelectedValueProperty, allocations.PublishedPrimary.First(k => k.Value != chosenRow.SelectedKeyId).Value);
+        await AllocationPanel.CoverageAssignmentTask; await Idle();
+        Check(originalRows.SequenceEqual(allocations.Coverage), "assignment retains row identity and order");
+        Check(ReferenceEquals(chosenRow, AllocationPanel.CoverageGrid.SelectedItem) && Math.Abs(previousOffset - gridScroll.VerticalOffset) < 1,
+            "assignment retains selected row and scroll position");
+        Check(AllocationPanel.CoverageGrid.ActualHeight >= 400, "account table has an expanded viewport");
+        VisualEvidenceCapture.Capture(this, Path.Combine(output, "es-stable-account-selection.png"));
+        AllocationPanel.ResultsSection.IsExpanded = true;
         ScrollToElement(AllocationPanel.PrimaryResultsGrid); await Idle(); CheckGrid(AllocationPanel.PrimaryResultsGrid);
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "es-results-19-accounts.png"));
+        await allocations.TogglePrimaryCommand.ExecuteAsync(null); await Idle();
+        Check(allocations.IsPrimaryClosed, "primary allocation closes after reconciliation");
+        await NavigateWorkflow(4); await Idle();
+        Check(resources.CorrectionsReadOnly && !resources.CanEditCorrections, "closed primary allocation locks corrections in step 5");
+        VisualEvidenceCapture.Capture(this, Path.Combine(output, "es-closed-corrections.png"));
+        await NavigateWorkflow(5); await Idle();
         var path = company.ActivePath!;
         await company.CloseCommand.ExecuteAsync(null); Check(company.Snapshot is null, "saved work closes without prompting");
         await company.OpenPath(path); studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == study.Id);
         await studies.LoadCommand.ExecuteAsync(null); await NavigateWorkflow(5); await Idle();
         Check(allocations.PrimaryResults.Count == 19 && !allocations.IsDirty, "19 allocations reopen without unsaved state");
+        Check(allocations.IsPrimaryClosed, "primary closure survives file reopen");
+        await allocations.TogglePrimaryCommand.ExecuteAsync(null); await NavigateWorkflow(4); await Idle();
+        Check(!resources.CorrectionsReadOnly, "reopening from step 6 unlocks corrections");
+        await NavigateWorkflow(5); await Idle();
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new
         {
             Status = "passed", PassedChecks = checks, Accounts = 19,

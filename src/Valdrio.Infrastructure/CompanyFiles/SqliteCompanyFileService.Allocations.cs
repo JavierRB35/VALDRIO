@@ -21,9 +21,9 @@ public sealed partial class SqliteCompanyFileService
             value.ConfirmedStudy.Revision != row.ConfirmedRevision || Json(value) != row.CanonicalJson, "Allocation change columns/payload differ");
         return value;
     }
-    private static IReadOnlyList<AllocationKeyVersion> AllocationKeys(AllocationDbContext db, EntityId companyId, EntityId modelId) =>
+    private static IReadOnlyList<AllocationKeyVersion> AllocationKeys(AllocationDbContext db, EntityId companyId, EntityId modelId, bool includeDeleted = false) =>
         FrozenList.Copy(db.AllocationKeyEvents.AsNoTracking().Where(r => r.CompanyId == companyId.ToString() && r.ModelVersionId == modelId.ToString())
-            .ToArray().Select(KeyEvent).GroupBy(r => r.After.Id).Select(g => g.MaxBy(r => r.After.Revision)!.After).OrderBy(k => k.Id));
+            .ToArray().Select(KeyEvent).GroupBy(r => r.After.Id).Select(g => g.MaxBy(r => r.After.Revision)!.After).Where(k => includeDeleted || !k.IsDeleted).OrderBy(k => k.Id));
     private static IReadOnlyList<AllocationChangeReceipt> AllocationChanges(AllocationDbContext db, EntityId companyId, EntityId studyId) =>
         FrozenList.Copy(db.AllocationChanges.AsNoTracking().Where(r => r.CompanyId == companyId.ToString() && r.StudyId == studyId.ToString())
             .OrderBy(r => r.ConfirmedRevision).ToArray().Select(AllocationChange));
@@ -41,6 +41,11 @@ public sealed partial class SqliteCompanyFileService
             last?.Request.Configuration ?? AllocationConfiguration.Empty, last?.ConfirmedStudy.Revision ?? -1,
             usedKeyIds: db.AllocationChanges.AsNoTracking().ToArray().Select(AllocationChange)
                 .SelectMany(UsedKeys).Select(k => k.Id).Distinct().ToArray());
+    }
+    private static void EnsurePrimaryOpen(AllocationDbContext db, EntityId companyId, EntityId studyId)
+    {
+        if (AllocationChanges(db, companyId, studyId).LastOrDefault()?.Request.Configuration.PrimaryClosed == true)
+            throw AllocationDiagnostics.Error("PRIMARY_CLOSED", "Allocation.PrimaryClosed");
     }
     private sealed partial class Session
     {
@@ -76,8 +81,11 @@ public sealed partial class SqliteCompanyFileService
                     return receipt;
                 }
                 var model = RequiredPublication(db, file.Id, request.ModelVersionId);
-                var keys = AllocationKeys(db, file.Id, request.ModelVersionId);
+                var keys = AllocationKeys(db, file.Id, request.ModelVersionId, true);
                 var before = keys.SingleOrDefault(k => k.Id == request.KeyId);
+                if (request.Delete && (db.AllocationChanges.AsNoTracking().ToArray().Select(AllocationChange).Any(c => c.ReferencedKeys.Any(k => k.Id == request.KeyId))
+                    || keys.Any(k => k.ParentVersionId == request.KeyId)))
+                    throw AllocationDiagnostics.Error("KEY_DELETE_USED", "Allocation.KeyDeleteUsed");
                 var now = owner.time.GetUtcNow();
                 var used = db.AllocationChanges.AsNoTracking().ToArray().Select(AllocationChange)
                     .Any(c => UsedKeys(c).Any(k => k.Id == request.KeyId));
@@ -102,8 +110,14 @@ public sealed partial class SqliteCompanyFileService
                     return receipt;
                 }
                 var row = RequiredStudy(db, file.Id, request.StudyId); var before = Study(row);
-                var referenced = AllocationWorkspaceRules.ValidateConfiguration(ResourceWorkspace(db, file, before),
-                    AllocationKeys(db, file.Id, before.SelectedModelVersionId), request);
+                var current = AllocationWorkspace(db, file, before);
+                var config = request.Configuration;
+                if (current.Configuration.PrimaryClosed && (config.PrimaryClosed || Json(config) != Json(current.Configuration.WithPrimaryClosed(false))))
+                    throw AllocationDiagnostics.Error("PRIMARY_CLOSED", "Allocation.PrimaryClosed");
+                var referenced = AllocationWorkspaceRules.ValidateConfiguration(current.Resources, current.Keys, request);
+                if (config.PrimaryClosed && (current.Resources.Origins.Count == 0 ||
+                    !Valdrio.Application.PrimaryAllocationService.Calculate(new AllocationWorkspaceSnapshot(current.Resources, current.Keys, config, current.ConfigurationRevision)).IsComplete))
+                    throw AllocationDiagnostics.Error("PRIMARY_INCOMPLETE", "AllocationUI.PrimaryIncomplete");
                 var after = Changed(before, before.Name, before.PeriodStart, before.PeriodEnd, before.Purpose, before.ScenarioKind,
                     before.SelectedModelVersionId, before.Currency, before.State);
                 var result = new AllocationChangeReceipt(request, before, after, referenced, owner.time.GetUtcNow());

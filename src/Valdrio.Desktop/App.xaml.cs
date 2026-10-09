@@ -127,6 +127,7 @@ public partial class App : System.Windows.Application
             { ImportColumns = importColumns };
         resources = new ResourceWorkspaceViewModel(company, studies, currencyCatalog, texts, preferences, modelDialogs);
         allocations = new AllocationWorkspaceViewModel(company, studies, texts, preferences, modelDialogs);
+        allocations.AfterPrimaryStateChanged = () => resources.EnterAsync(true);
         var viewModel =
             new MainWindowViewModel(
                 texts,

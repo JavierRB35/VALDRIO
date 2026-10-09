@@ -21,7 +21,15 @@ public sealed partial class AllocationLineEditor(EntityId id, string label, stri
 public sealed record AllocationKeyRow(AllocationKeyVersion Value, string Name, string Criterion, string Stage, string State);
 public sealed record AllocationRuleRow(EntityId Id, string Account, string Key, string Priority, string State);
 public sealed record AllocationSecondaryRow(EntityId Id, string Source, string Group, string Key);
-public sealed record AllocationCoverageRow(EntityId Id, string Source, string Amount, string Key, string Status, EntityId? SelectedKeyId);
+public sealed partial class AllocationCoverageRow(EntityId id, string source, string amount, string key, string status, EntityId? selectedKeyId) : ObservableObject
+{
+    public EntityId Id { get; } = id;
+    [ObservableProperty] private string source = source;
+    [ObservableProperty] private string amount = amount;
+    [ObservableProperty] private string key = key;
+    [ObservableProperty] private string status = status;
+    [ObservableProperty] private EntityId? selectedKeyId = selectedKeyId;
+}
 public sealed record AllocationPartChoice(EntityId Value, string Label, Money Amount);
 
 public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDisposable
@@ -63,6 +71,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             if (SelectedKey?.Value is not { Status: ModelStatus.Published } source || !await CanLeaveAsync()) return;
             LoadKey(source); editingKey = null; newParent = source.Id; keyDirty = true; Refresh();
         }, () => CanEdit && SelectedKey?.Value.Status == ModelStatus.Published);
+        DeleteKeyCommand = new AsyncRelayCommand(DeleteKeyAsync, () => CanEdit && !IsDirty && SelectedKey is { } row && !workspace!.UsedKeyIds.Contains(row.Value.Id));
+        TogglePrimaryCommand = new AsyncRelayCommand(TogglePrimaryAsync, () => CanManagePrimary && !IsDirty && (IsPrimaryClosed || primaryComplete));
         SaveDraftCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(false), () => CanEditKey && MissingKeyInput(false) is null);
         PublishCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey && MissingKeyInput(true) is null);
         RefreshCommand = new AsyncRelayCommand(async () => { if (await CanLeaveAsync()) await EnterAsync(true); }, () => !busy);
@@ -97,7 +107,11 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private CultureInfo Format => CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
     private string MoneyText(Money value) => value.Amount.ToString("0.########", Format) + " " + value.Currency;
     public bool IsBusy => busy;
-    public bool CanEdit => !busy && earlierBusy?.Invoke() != true && company.CanWrite && workspace?.Resources.Study.State == StudyState.Open;
+    public bool CanManagePrimary => !busy && earlierBusy?.Invoke() != true && company.CanWrite && workspace?.Resources.Study.State == StudyState.Open;
+    public bool IsPrimaryClosed => workspace?.Configuration.PrimaryClosed == true;
+    public bool CanEdit => CanManagePrimary && !IsPrimaryClosed;
+    public string PrimaryState => this[IsPrimaryClosed ? "PrimaryClosedState" : "PrimaryOpenState"];
+    public string PrimaryToggleLabel => this[IsPrimaryClosed ? "ReopenPrimary" : "ClosePrimary"];
     private bool CanSaveRule => CanEditConfiguration && RuleKey.HasValue && !string.IsNullOrWhiteSpace(IsExact ? RuleAccount : Prefix);
     public bool CanAssignCoverage => CanEditConfiguration && !HasUnappliedRule;
     public bool CanEditConfiguration => CanEdit && !keyDirty;
@@ -164,7 +178,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public UnitId? Unit { get => unit; set { if (SetProperty(ref unit, value)) KeyEdited(); } }
     public bool SelfAllowed { get => selfAllowed; set { if (SetProperty(ref selfAllowed, value)) KeyEdited(); } }
     public AccountSelectorKind SelectorKind { get => selectorKind; set { if (SetProperty(ref selectorKind, value)) RuleEdited(); } }
-    public string RuleAccount { get => ruleAccount; set { if (SetProperty(ref ruleAccount, value)) RuleEdited(); } }
+    public string RuleAccount { get => ruleAccount; set { if (SetProperty(ref ruleAccount, value ?? "")) RuleEdited(); } }
     public string Prefix { get => prefix; set { if (SetProperty(ref prefix, value)) RuleEdited(); } }
     public string Priority { get => priority; set { if (SetProperty(ref priority, value)) RuleEdited(); } }
     public EntityId? RuleKey { get => ruleKey; set { if (SetProperty(ref ruleKey, value)) RuleEdited(); } }
@@ -339,9 +353,9 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             AbsoluteLines.Where(l => l.Included).Select(l => new AbsoluteAllocationLine(l.Id, new Money(Parse(l.Value), selected.Amount.Currency, selected.Amount.PrecisionPolicy))).ToArray());
         return new(c.PrimaryRules, c.SecondaryRules, c.ExplicitAssignments.Where(a => a.PartId != Part).ToArray(), c.AbsoluteAssignments.Where(a => a.PartId != Part).Append(absolute).ToArray(), c.Descriptions);
     });
-    private async Task<bool> CommitConfig(Func<AllocationConfiguration, AllocationConfiguration> change)
+    private async Task<bool> CommitConfig(Func<AllocationConfiguration, AllocationConfiguration> change, bool allowClosed = false)
     {
-        if (!CanEdit || workspace is null) return false;
+        if ((!CanEdit && !(allowClosed && CanManagePrimary)) || workspace is null) return false;
         return await Run(async () =>
         {
             var study = workspace.Resources.Study; var config = change(workspace.Configuration); var port = company.ActiveAllocations!;
@@ -352,6 +366,30 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             ClearRule(); LoadAbsolute(); Rebuild(); statusKey = "Saved";
             try { await studies.ApplyResourceReceiptAsync(receipt.ConfirmedStudy); }
             catch (Exception ex) when (ex is IOException or CompanyFileException or InvalidOperationException) { statusKey = "SavedRefreshPending"; }
+        });
+    }
+    public Func<Task>? AfterPrimaryStateChanged { get; set; }
+    private async Task TogglePrimaryAsync()
+    {
+        if (!CanManagePrimary || IsDirty || earlierBefore is not null && !await earlierBefore()) return;
+        await EnterAsync(true);
+        if (await CommitConfig(c => c.WithPrimaryClosed(!c.PrimaryClosed), true))
+        { statusKey = IsPrimaryClosed ? "PrimaryClosedState" : "PrimaryOpenState"; Refresh(); if (AfterPrimaryStateChanged is not null) await AfterPrimaryStateChanged(); }
+    }
+    private async Task DeleteKeyAsync()
+    {
+        if (!CanEdit || IsDirty || SelectedKey is not { } row) return;
+        await Run(async () =>
+        {
+            var k = row.Value;
+            var command = new SaveAllocationKey(k.CompanyId, k.ModelVersionId, k.Id, k.ParentVersionId, k.Revision,
+                k.Name, k.Stage, k.Mode, k.UnitId, k.SelfAllocation, k.Lines, k.Status == ModelStatus.Published,
+                new(Guid.NewGuid()), "local-user") { Delete = true };
+            await Task.Run(() => company.ActiveAllocations!.SaveAllocationKey(command));
+            workspace = new(workspace!.Resources, workspace.Keys.Where(key => key.Id != k.Id).ToArray(),
+                workspace.Configuration, workspace.ConfigurationRevision, usedKeyIds: workspace.UsedKeyIds);
+            if (editingKey?.Id == k.Id) LoadKey(null);
+            Rebuild(); statusKey = "KeyDeleted";
         });
     }
     public async Task<bool> CanLeaveAsync()
@@ -366,7 +404,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     }
     private void Rebuild()
     {
-        var keyId = SelectedKey?.Value.Id; Keys.Clear(); PrimaryRules.Clear(); SecondaryRules.Clear(); Coverage.Clear();
+        var keyId = SelectedKey?.Value.Id; Keys.Clear(); PrimaryRules.Clear(); SecondaryRules.Clear();
+        var nextCoverage = new List<AllocationCoverageRow>();
         if (workspace is not null)
         {
             foreach (var k in workspace.Keys.Where(k => k.Stage == AllocationStage.Primary).OrderBy(k => k.Name, StringComparer.Ordinal).ThenBy(k => k.VersionNumber)) Keys.Add(new(k, KeyLabel(k), this[k.Mode.ToString()], this[k.Stage.ToString()], this[k.Status == ModelStatus.Published ? "AvailableKey" : "IncompleteKey"]));
@@ -375,7 +414,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             var partIds = Parts.Select(p => p.Value).ToHashSet();
             var coverage = workspace.Coverage.Where(c => partIds.Contains(c.SourceId)).ToArray();
             coveredCount = coverage.Count(c => c.Diagnostic is null);
-            foreach (var c in coverage)
+            foreach (var c in coverage.OrderBy(c => c.Account, StringComparer.Ordinal).ThenBy(c => c.SourceId))
             {
                 var item = Parts.FirstOrDefault(p => p.Value == c.SourceId);
                 var origin = workspace.Resources.Origins.FirstOrDefault(o => o.Code == c.Account);
@@ -384,8 +423,17 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
                 if (resource?.Parts.Count > 1) source += " · " + this["Part"] + " " + (resource.Parts.ToList().FindIndex(p => p.Id == c.SourceId) + 1).ToString(Format);
                 if (string.IsNullOrWhiteSpace(source)) source = this["ChangedPart"];
                 var status = c.Diagnostic is null ? this["Covered"] : new DomainDiagnosticFormatter(texts).Format(c.Diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message;
-                Coverage.Add(new(c.SourceId, source, item is null ? "" : MoneyText(item.Amount), c.KeyId is { } id ? KeyLabel(workspace.Keys.Single(k => k.Id == id)) : c.Diagnostic is null ? this["Absolute"] : "—", status, c.KeyId));
+                nextCoverage.Add(new(c.SourceId, source, item is null ? "" : MoneyText(item.Amount), c.KeyId is { } id ? KeyLabel(workspace.Keys.Single(k => k.Id == id)) : c.Diagnostic is null ? this["Absolute"] : "—", status, c.KeyId));
             }
+        }
+        // Keep row identity and collection order so WPF preserves selection, sorting and scroll.
+        var ids = nextCoverage.Select(r => r.Id).ToHashSet();
+        foreach (var old in Coverage.Where(r => !ids.Contains(r.Id)).ToArray()) Coverage.Remove(old);
+        foreach (var next in nextCoverage)
+        {
+            var old = Coverage.FirstOrDefault(r => r.Id == next.Id);
+            if (old is null) Coverage.Add(next);
+            else { old.Source = next.Source; old.Amount = next.Amount; old.Key = next.Key; old.Status = next.Status; old.SelectedKeyId = next.SelectedKeyId; }
         }
         RebuildPrimary();
         SelectedKey = Keys.FirstOrDefault(k => k.Value.Id == keyId); Refresh();
@@ -400,6 +448,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         { diagnostic = AllocationDiagnostics.Error("KEY_INPUT_INVALID", "Allocation.InputInvalid").Diagnostic; return false; }
         finally { busy = false; company.NotifyWorkspaceStateChanged(); Refresh(); }
     }
+    public IAsyncRelayCommand DeleteKeyCommand { get; }
+    public IAsyncRelayCommand TogglePrimaryCommand { get; }
     public IAsyncRelayCommand NewKeyCommand { get; }
     public IAsyncRelayCommand LoadKeyCommand { get; }
     public IAsyncRelayCommand NewVersionCommand { get; }
@@ -431,7 +481,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public IRelayCommand DiscardCommand { get; }
     private void Commands()
     {
-        foreach (var command in new IRelayCommand?[] { NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
+        foreach (var command in new IRelayCommand?[] { DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
             SaveRuleCommand, RemoveRuleCommand, LoadRuleCommand, NewRuleCommand, SaveSecondaryCommand, LoadSecondaryCommand, NewSecondaryCommand,
             RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand }) command?.NotifyCanExecuteChanged();
     }

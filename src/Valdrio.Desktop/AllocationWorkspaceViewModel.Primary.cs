@@ -13,8 +13,10 @@ public sealed partial class AllocationWorkspaceViewModel
     public string PrimarySummary { get; private set; } = "";
     public string PrimaryDiagnostic { get; private set; } = "";
 
+    private bool primaryComplete;
     private void RebuildPrimary()
     {
+        primaryComplete = false;
         PrimaryResults.Clear();
         if (workspace is null)
         {
@@ -26,6 +28,7 @@ public sealed partial class AllocationWorkspaceViewModel
         try
         {
             var primary = PrimaryAllocationService.Calculate(workspace);
+            primaryComplete = workspace.Resources.Origins.Count > 0 && primary.IsComplete;
             var nodeById = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
             var resourceById = workspace.Resources.Origins.ToDictionary(o => o.Id);
             foreach (var fact in primary.Facts)

@@ -13,7 +13,7 @@ public sealed class AllocationKeyVersion
     public AllocationKeyVersion(EntityId id, EntityId companyId, EntityId modelVersionId, EntityId familyId,
         int versionNumber, EntityId? parentVersionId, long revision, string name, AllocationStage stage,
         AllocationKeyMode mode, UnitId? unitId, SelfAllocationPolicy selfAllocation,
-        ModelStatus status, UtcInstant? publishedAtUtc, IReadOnlyList<AllocationKeyLine> lines)
+        ModelStatus status, UtcInstant? publishedAtUtc, IReadOnlyList<AllocationKeyLine> lines, bool isDeleted = false)
     {
         id.EnsureValid(); companyId.EnsureValid(); modelVersionId.EnsureValid(); familyId.EnsureValid();
         parentVersionId?.EnsureValid(); unitId?.EnsureValid();
@@ -27,8 +27,10 @@ public sealed class AllocationKeyVersion
         Id = id; CompanyId = companyId; ModelVersionId = modelVersionId; FamilyId = familyId;
         VersionNumber = versionNumber; ParentVersionId = parentVersionId; Revision = revision; Name = name;
         Stage = stage; Mode = mode; UnitId = unitId; SelfAllocation = selfAllocation; Status = status;
-        PublishedAtUtc = publishedAtUtc; Lines = FrozenList.Copy(lines.OrderBy(l => l.DestinationNodeId));
+        IsDeleted = isDeleted; PublishedAtUtc = publishedAtUtc; Lines = FrozenList.Copy(lines.OrderBy(l => l.DestinationNodeId));
     }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public bool IsDeleted { get; }
     public EntityId Id { get; }
     public EntityId CompanyId { get; }
     public EntityId ModelVersionId { get; }

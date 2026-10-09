@@ -55,6 +55,10 @@ public partial class MainWindow
         await NavigateWorkflow(4); await AdvanceWorkflow(); await Idle();
         Check(workflowStep == 5 && panel.IsVisible && vm.CanEdit, "T07 continues to the real allocation editor");
         Check(vm.Accounts.Single().Label.Contains(vm["NameConflict"], StringComparison.Ordinal), "conflicting descriptions are visible with their account code");
+        Text(panel.KeyNameBox, "Clave sin uso para eliminar");
+        vm.Lines.First().Included = true; vm.Lines.First().Value = "100";
+        await Click(panel.SaveKeyButton); vm.SelectedKey = vm.Keys.Single();
+        await Click(panel.DeleteKeyButton); Check(vm.Keys.Count == 0, "unused key is deleted through the visible action");
         Text(panel.KeyNameBox, "Consumos de oficina");
         var line = vm.Lines.Single(l => l.Id == principal.Id); line.Included = true; line.Value = "80";
         await Click(panel.SaveKeyButton); Check(vm.Keys.Count == 0 && vm.CanEditKey, "80 percent is rejected without losing editing");
@@ -72,6 +76,7 @@ public partial class MainWindow
         panel.RuleTabs.SelectedIndex = 2; await Idle(); Select(panel.NameAccountBox, "6005");
         panel.DescriptionBox.SetCurrentValue(ComboBox.SelectedItemProperty, "Papelería"); panel.DescriptionBox.GetBindingExpression(ComboBox.SelectedItemProperty)!.UpdateSource();
         await Click(panel.ChooseDescriptionButton); Check(vm.Accounts.Single().Label == "6005 — Papelería", "chosen description replaces the conflict label without changing the account code");
+        Check(!vm.IsDirty, "description save leaves no pending form: " + vm.KeyState + " / rule=" + vm.HasUnappliedRule);
         await NavigateWorkflow(4); Check(main.Resources!.Rows.Single().DisplayName == "6005 — Papelería", "chosen name is also visible in T07");
         await NavigateWorkflow(5); await Idle();
         panel.RuleTabs.SelectedIndex = 1; await Idle(); Select(panel.PartBox, part.Id); Select(panel.PartKeyBox, primaryKey.Id);

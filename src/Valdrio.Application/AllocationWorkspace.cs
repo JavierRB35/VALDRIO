@@ -9,6 +9,8 @@ public sealed record SaveAllocationKey(EntityId CompanyId, EntityId ModelVersion
     UnitId? UnitId, SelfAllocationPolicy SelfAllocation, IReadOnlyList<AllocationKeyLine> Lines,
     bool Publish, EntityId RequestId, string Actor)
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool Delete { get; init; }
     private IReadOnlyList<AllocationKeyLine> lines = FrozenList.Copy(Lines);
     public IReadOnlyList<AllocationKeyLine> Lines { get => lines; init => lines = FrozenList.Copy(value); }
 }
@@ -19,18 +21,22 @@ public sealed class AllocationConfiguration
 {
     public AllocationConfiguration(IReadOnlyList<PrimaryRule> primaryRules, IReadOnlyList<SecondaryRule> secondaryRules,
         IReadOnlyList<ExplicitPrimaryAssignment> explicitAssignments, IReadOnlyList<AbsolutePartAllocation> absoluteAssignments,
-        IReadOnlyList<AccountDescriptionChoice> descriptions)
+        IReadOnlyList<AccountDescriptionChoice> descriptions, bool primaryClosed = false)
     {
         if (primaryRules is null || secondaryRules is null || explicitAssignments is null || absoluteAssignments is null || descriptions is null ||
             primaryRules.Any(r => r is null) || secondaryRules.Any(r => r is null) || explicitAssignments.Any(r => r is null) ||
             absoluteAssignments.Any(r => r is null) || descriptions.Any(r => r is null))
             throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
+        PrimaryClosed = primaryClosed;
         PrimaryRules = FrozenList.Copy(primaryRules.OrderBy(r => r.Id));
         SecondaryRules = FrozenList.Copy(secondaryRules.OrderBy(r => r.Id));
         ExplicitAssignments = FrozenList.Copy(explicitAssignments.OrderBy(r => r.PartId));
         AbsoluteAssignments = FrozenList.Copy(absoluteAssignments.OrderBy(r => r.PartId));
         Descriptions = FrozenList.Copy(descriptions.OrderBy(r => r.Account, StringComparer.Ordinal));
     }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool PrimaryClosed { get; }
+    public AllocationConfiguration WithPrimaryClosed(bool closed) => new(PrimaryRules, SecondaryRules, ExplicitAssignments, AbsoluteAssignments, Descriptions, closed);
     public IReadOnlyList<PrimaryRule> PrimaryRules { get; }
     public IReadOnlyList<SecondaryRule> SecondaryRules { get; }
     public IReadOnlyList<ExplicitPrimaryAssignment> ExplicitAssignments { get; }
@@ -88,13 +94,15 @@ public static class AllocationWorkspaceRules
         var before = existing.SingleOrDefault(k => k.Id == request.KeyId);
         if (before is not null && (before.CompanyId != request.CompanyId || before.ModelVersionId != request.ModelVersionId))
             throw AllocationDiagnostics.Error("KEY_SCOPE_INVALID", "Allocation.ScopeInvalid", request.KeyId);
+        if (before?.IsDeleted == true || request.Delete && before is null)
+            throw AllocationDiagnostics.Error("KEY_DELETED", "Allocation.KeyDeleted", request.KeyId);
         if (before?.Status == ModelStatus.Published && (!request.Publish || !allowUnusedPublishedEdit &&
             (before.Stage != request.Stage || before.Mode != request.Mode || before.UnitId != request.UnitId ||
              before.SelfAllocation != request.SelfAllocation || !before.Lines.SequenceEqual(request.Lines.OrderBy(l => l.DestinationNodeId)))))
             throw AllocationDiagnostics.Error("KEY_IMMUTABLE", "Allocation.Immutable", request.KeyId);
         if ((before?.Revision ?? -1) != request.ExpectedRevision)
             throw AllocationDiagnostics.Error("KEY_REVISION_CHANGED", "Allocation.RevisionChanged", request.KeyId);
-        var parent = request.ParentVersionId is { } parentId ? existing.SingleOrDefault(k => k.Id == parentId && k.CompanyId == request.CompanyId && k.ModelVersionId == request.ModelVersionId && k.Status == ModelStatus.Published) : null;
+        var parent = request.ParentVersionId is { } parentId ? existing.SingleOrDefault(k => k.Id == parentId && k.CompanyId == request.CompanyId && k.ModelVersionId == request.ModelVersionId && k.Status == ModelStatus.Published && !k.IsDeleted) : null;
         if (request.ParentVersionId.HasValue && parent is null || before is not null && before.ParentVersionId != request.ParentVersionId)
             throw AllocationDiagnostics.Error("KEY_PARENT_INVALID", "Allocation.ParentInvalid", request.KeyId);
         var family = before?.FamilyId ?? parent?.FamilyId ?? request.KeyId;
@@ -102,7 +110,7 @@ public static class AllocationWorkspaceRules
         var result = new AllocationKeyVersion(request.KeyId, request.CompanyId, request.ModelVersionId, family,
             version, request.ParentVersionId, (before?.Revision ?? -1) + 1, request.Name, request.Stage, request.Mode,
             request.UnitId, request.SelfAllocation, request.Publish ? ModelStatus.Published : ModelStatus.Draft,
-            request.Publish ? now : null, request.Lines);
+            request.Publish ? now : null, request.Lines, request.Delete);
         AllocationKeyRules.Validate(result, model.Structure, model.DriverUnits, precision, request.Publish);
         return result;
     }

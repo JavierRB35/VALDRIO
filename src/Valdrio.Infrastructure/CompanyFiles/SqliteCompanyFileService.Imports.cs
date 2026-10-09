@@ -49,6 +49,7 @@ public sealed partial class SqliteCompanyFileService
                 return previous;
             }
             var row = RequiredStudy(db, file.Id, command.StudyId); var before = Study(row);
+            EnsurePrimaryOpen((AllocationDbContext)db, file.Id, command.StudyId);
             StudyRules.CheckRevision(command.ExpectedRevision, before.Revision, before.Id);
             if (before.State != StudyState.Open) throw StudyRules.Error("STUDY_CLOSED", "Study.ClosedDiagnostic", before.Id);
             if (Json(before) != Json(prepared.StudyContext)) throw ImportRules.Error("IMP_PREPARED_INVALID", "Import.PreparedInvalid");

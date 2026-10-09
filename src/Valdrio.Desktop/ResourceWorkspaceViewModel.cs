@@ -104,7 +104,8 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     public bool IsBusy => busy;
     public bool CanNavigate => !busy && !correctionCommitPending;
     public bool CanEditAdjustmentsAndObjects => CanEdit && !IsRevaluing;
-    public bool CanEdit => !busy && company.IsIdle && earlierBusy?.Invoke() != true && company.CanWrite && workspace?.Study.State == StudyState.Open;
+    private bool primaryClosed;
+    public bool CanEdit => !primaryClosed && !busy && company.IsIdle && earlierBusy?.Invoke() != true && company.CanWrite && workspace?.Study.State == StudyState.Open;
     public bool IsDirty => dirty || partDirty || adjustmentDirty || objectDirty || IsRevaluing;
     public bool HasResourceChanges => dirty || partDirty || adjustmentDirty;
     public int Stage => stage;
@@ -119,7 +120,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     public bool ShowCapacity => PartForm.Capacity == ResourceCapacityTreatment.AssessAtPool;
     public bool CanAdvance => CanNavigate && workspace is not null && (stage == 0 || CanEdit);
     public string NextAction => this[stage == 0 ? "EditAccount" : IsRevaluing ? "KeepRevalueParts" : "SaveAccount"];
-    public string Requirement => this[workspace is null ? "NeedStudy" : workspace.Resources.Count == 0 ? "NeedImport" : !company.CanWrite ? "ReadOnly" :
+    public string Requirement => this[primaryClosed ? "PrimaryClosed" : workspace is null ? "NeedStudy" : workspace.Resources.Count == 0 ? "NeedImport" : !company.CanWrite ? "ReadOnly" :
         workspace.Study.State == StudyState.Closed ? "Closed" : stage == 0 ? "ChooseAccount" : "PartsHelp"];
     public string Status => diagnostic is null ? this[statusKey] : new DomainDiagnosticFormatter(texts)
         .Format(diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message;
@@ -180,8 +181,8 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
         await Run(async token =>
         {
             var port = company.ActiveResources!;
-            var data = await Task.Run(() => (port.ReadResources(current.CompanyId, current.Id, token), port.ReadResourceHistory(current.CompanyId, current.Id, token), company.ActiveAllocations!.ReadAllocations(current.CompanyId, current.Id, token).Configuration.Descriptions), token);
-            workspace = data.Item1; history = data.Item2; accountDescriptions = data.Item3; path = company.ActivePath; preview = workspace; editing = null; stage = 0;
+            var data = await Task.Run(() => (port.ReadResources(current.CompanyId, current.Id, token), port.ReadResourceHistory(current.CompanyId, current.Id, token), company.ActiveAllocations!.ReadAllocations(current.CompanyId, current.Id, token).Configuration), token);
+            workspace = data.Item1; history = data.Item2; accountDescriptions = data.Item3.Descriptions; primaryClosed = data.Item3.PrimaryClosed; path = company.ActivePath; preview = workspace; editing = null; stage = 0;
             statusKey = "Ready"; RebuildRows(); Refresh();
         });
     }
@@ -229,7 +230,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
         parts.Clear(); parts.AddRange(editing.Parts); deltas.Clear(); dirty = false; reason = "";
         ClearPart(); ClearAdjustment(); ClearObject(); Recompute();
     }
-    private void ClearWorkspace() { workspace = preview = null; history = []; editing = null; Discard(); RebuildRows(); Refresh(); }
+    private void ClearWorkspace() { primaryClosed = false; workspace = preview = null; history = []; editing = null; Discard(); RebuildRows(); Refresh(); }
     private void Discard()
     {
         dirty = false; editing = null; parts.Clear(); deltas.Clear(); reason = ""; stage = 0; preview = workspace; CancelRevalue();

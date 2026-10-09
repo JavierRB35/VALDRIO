@@ -1163,7 +1163,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.DestinationsRequired" xml:space="preserve"><value>Include at least one destination node before saving the key.</value></data>
   <data name="AllocationUI.SaveKey" xml:space="preserve"><value>Save key</value></data>
   <data name="AllocationUI.UsedKeyHelp" xml:space="preserve"><value>This key has been used: you can rename it. Its allocation is preserved.</value></data>
-  <data name="AllocationUI.AvailableKey" xml:space="preserve"><value>Ready to use</value></data>
+  <data name="AllocationUI.AvailableKey" xml:space="preserve"><value>Ready</value></data>
   <data name="AllocationUI.IncompleteKey" xml:space="preserve"><value>Incomplete</value></data>
   <data name="AllocationUI.RuleActive" xml:space="preserve"><value>Applied</value></data>
   <data name="AllocationUI.RulePending" xml:space="preserve"><value>Not applied</value></data>
@@ -1171,4 +1171,15 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.RuleApplied" xml:space="preserve"><value>Rule applied. Allocation updated, preserving manual assignments.</value></data>
   <data name="AllocationUI.ApplyRule" xml:space="preserve"><value>Apply rule</value></data>
   <data name="AllocationUI.SelectAccounts" xml:space="preserve"><value>Select accounts</value></data>
+  <data name="AllocationUI.DeleteKey" xml:space="preserve"><value>Delete key</value></data>
+  <data name="AllocationUI.KeyDeleted" xml:space="preserve"><value>Key deleted.</value></data>
+  <data name="Allocation.KeyDeleted" xml:space="preserve"><value>This key has been deleted. Reload project keys.</value></data>
+  <data name="Allocation.KeyDeleteUsed" xml:space="preserve"><value>This key is referenced by rules, assignments or history and cannot be deleted.</value></data>
+  <data name="AllocationUI.ClosePrimary" xml:space="preserve"><value>Close primary allocation</value></data>
+  <data name="AllocationUI.ReopenPrimary" xml:space="preserve"><value>Reopen primary allocation</value></data>
+  <data name="AllocationUI.PrimaryOpenState" xml:space="preserve"><value>Primary allocation is open. Complete the assignments before closing it.</value></data>
+  <data name="AllocationUI.PrimaryClosedState" xml:space="preserve"><value>Primary allocation is closed. Corrections and assignments are locked until reopened.</value></data>
+  <data name="Allocation.PrimaryClosed" xml:space="preserve"><value>Primary allocation is closed. Reopen it in step 6 before changing amounts or assignments.</value></data>
+  <data name="Resources.PrimaryClosed" xml:space="preserve"><value>Primary allocation is closed. Reopen it in step 6 to correct amounts.</value></data>
+  <data name="AllocationUI.RulesAndAssignments" xml:space="preserve"><value>Rules and special assignments</value></data>
 </root>
