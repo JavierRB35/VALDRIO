@@ -365,7 +365,18 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         if ((!CanEdit && !(allowClosed && CanManagePrimary)) || workspace is null) return false;
         return await Run(async () =>
         {
-            var study = workspace.Resources.Study; var config = change(workspace.Configuration); var port = company.ActiveAllocations!;
+            var study = workspace.Resources.Study;
+            var previous = workspace.Configuration;
+            var config = change(previous);
+            // Legacy primary editor commands rebuild only the original five
+            // fields. Never silently drop an explicit T11 group assignment.
+            if (previous.SecondaryPartRoutingGroups is not null &&
+                config.SecondaryPartRoutingGroups is null)
+                config = new AllocationConfiguration(config.PrimaryRules, config.SecondaryRules,
+                    config.ExplicitAssignments, config.AbsoluteAssignments, config.Descriptions,
+                    config.PrimaryClosed, config.SecondaryClosed, config.SecondaryCalculationHash,
+                    previous.SecondaryPartRoutingGroups);
+            var port = company.ActiveAllocations!;
             var receipt = await Task.Run(() => port.ChangeAllocations(new(study.CompanyId, study.Id, study.Revision, new(Guid.NewGuid()), "local-user", config)));
             // Retain the committed revision even if a dependent refresh fails.
             var r = workspace.Resources;
