@@ -125,6 +125,38 @@
   </Border>
 
   <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+   <Expander x:Name="SecondaryResultsSection" Header="{Binding [SecondaryTitle]}" IsExpanded="True">
+    <StackPanel Margin="0,8,0,0">
+     <TextBlock Text="{Binding [SecondaryHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+     <DockPanel LastChildFill="True" Margin="0,0,0,8">
+      <Button x:Name="ToggleSecondaryButton" DockPanel.Dock="Right" Command="{Binding ToggleSecondaryCommand}" Content="{Binding SecondaryToggleLabel}"/>
+      <TextBlock Text="{Binding SecondaryState}" VerticalAlignment="Center"/>
+     </DockPanel>
+     <Button x:Name="CalculateSecondaryButton" Style="{StaticResource Button.Primary}" Content="{Binding [CalculateSecondary]}" Command="{Binding CalculateSecondaryCommand}" HorizontalAlignment="Left"/>
+     <TextBlock Text="{Binding SecondarySummary}" Margin="0,8,0,4" AutomationProperties.LiveSetting="Polite"/>
+     <TextBlock Text="{Binding SecondaryDiagnostic}" TextWrapping="Wrap" Margin="0,4,0,8" AutomationProperties.LiveSetting="Polite"/>
+     <DataGrid x:Name="SecondaryResultsGrid" ItemsSource="{Binding SecondaryResults}" SelectedItem="{Binding SelectedSecondaryResultRow}" IsReadOnly="True" AutoGenerateColumns="False" Height="215">
+      <DataGrid.Columns>
+       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Source}" Width="2*"/>
+       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Destination}" Width="2*"/>
+       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Amount}" Width="*"/>
+       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Behavior}" Width="*"/>
+      </DataGrid.Columns>
+     </DataGrid>
+     <Expander Header="{Binding [SecondaryExplain]}" Margin="0,10,0,0"><TextBlock Text="{Binding SecondaryExplanation}" TextWrapping="Wrap" Margin="8"/></Expander>
+     <Expander Header="{Binding [SecondaryGross]}" Margin="0,8,0,0">
+      <DataGrid x:Name="SecondaryCirculationGrid" ItemsSource="{Binding SecondaryCirculation}" IsReadOnly="True" AutoGenerateColumns="False" Height="135">
+       <DataGrid.Columns>
+        <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Group}" Width="2*"/>
+        <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Detail}" Width="*"/>
+       </DataGrid.Columns>
+      </DataGrid>
+     </Expander>
+    </StackPanel>
+   </Expander>
+  </Border>
+
+  <Border Style="{StaticResource Card}" Margin="0,0,0,16">
    <Expander x:Name="ReciprocalSection" Header="{Binding [ReciprocalTitle]}" IsExpanded="False">
     <StackPanel Margin="0,8,0,0">
      <TextBlock Text="{Binding [ReciprocalHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
