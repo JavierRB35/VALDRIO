@@ -26,6 +26,20 @@ public sealed class T10LocalizationAndInvariantTests
             Assert.IsTrue(english.TryGetValue(key, out var en) && !string.IsNullOrWhiteSpace(en), "EN " + key);
             Assert.IsTrue(spanish.TryGetValue(key, out var es) && !string.IsNullOrWhiteSpace(es), "ES " + key);
         }
+        var uiKeys = new[]
+        {
+            "ReciprocalTitle", "ReciprocalHelp", "CheckReciprocal",
+            "ReciprocalNeedStudy", "ReciprocalNotChecked", "ReciprocalNoAuxiliaries",
+            "ReciprocalSummary", "ReciprocalGroup", "ReciprocalStatus",
+            "ReciprocalDetail", "ReciprocalViable", "ReciprocalBlocked",
+            "ReciprocalInvalid", "ReciprocalMetrics", "ReciprocalNoPosting"
+        };
+        foreach (var suffix in uiKeys)
+        {
+            var key = "AllocationUI." + suffix;
+            Assert.IsTrue(english.TryGetValue(key, out var en) && !string.IsNullOrWhiteSpace(en), "EN " + key);
+            Assert.IsTrue(spanish.TryGetValue(key, out var es) && !string.IsNullOrWhiteSpace(es), "ES " + key);
+        }
         var blocked = Assert.ThrowsExactly<DomainRuleException>(() =>
             ReciprocalFactorization.Prepare(new ReciprocalInput(
                 ["A"], ["P"], [[0.1m]], [[0.9m]], false)));
