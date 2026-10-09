@@ -23,6 +23,7 @@ public sealed partial class AllocationWorkspaceViewModel
     private SecondaryAllocationResult? secondaryPreview;
     private IReadOnlyList<string> requiredSecondaryGroups = [];
     private bool secondaryCalculated;
+    private CancellationTokenSource? secondaryCalculationCts;
     public ObservableCollection<SecondaryAllocationRow> SecondaryResults { get; } = [];
     public ObservableCollection<SecondaryBridgeRow> SecondaryBridges { get; } = [];
     public ObservableCollection<SecondaryGroupRow> SecondaryGroupAssignments { get; } = [];
@@ -79,7 +80,8 @@ public sealed partial class AllocationWorkspaceViewModel
     }
     private SecondaryAllocationRow? selectedSecondaryResult;
     public IRelayCommand ExplainSecondaryCommand { get; private set; } = null!;
-    public IRelayCommand CalculateSecondaryCommand { get; private set; } = null!;
+    public IAsyncRelayCommand CalculateSecondaryCommand { get; private set; } = null!;
+    public IRelayCommand CancelSecondaryCommand { get; private set; } = null!;
     public IAsyncRelayCommand ToggleSecondaryCommand { get; private set; } = null!;
     public bool IsSecondaryClosed => workspace?.Configuration.SecondaryClosed == true;
     public bool CanManageSecondary => CanManagePrimary && !IsSecondaryClosed;
@@ -246,16 +248,13 @@ public sealed partial class AllocationWorkspaceViewModel
         SecondaryDiagnostic = this["SecondaryClosedState"];
     }
 
-    private void CalculateSecondary()
+    private async Task CalculateSecondaryAsync()
     {
         if (!CanCalculateSecondary || workspace is null) return;
-        CalculateSecondaryCore();
-        Refresh();
-    }
-
-    private void CalculateSecondaryCore()
-    {
-        if (workspace is null) return;
+        var input = workspace;
+        using var cancellation = new CancellationTokenSource();
+        secondaryCalculationCts = cancellation;
+        busy = true;
         secondaryPreview = null;
         secondaryCalculated = false;
         SecondaryResults.Clear();
@@ -263,9 +262,23 @@ public sealed partial class AllocationWorkspaceViewModel
         SecondaryCirculation.Clear();
         SelectedSecondaryResultRow = null;
         SecondaryExplanation = "";
+        SecondarySummary = "";
+        SecondaryDiagnostic = this["SecondaryCalculating"];
+        company.NotifyWorkspaceStateChanged();
+        Refresh();
         try
         {
-            var result = SecondaryAllocationService.Calculate(workspace);
+            // Heavy reciprocal factorization is never performed on the WPF
+            // dispatcher. Only the result projection touches bound collections.
+            var result = await Task.Run(
+                () => SecondaryAllocationService.Calculate(input, cancellation.Token),
+                cancellation.Token);
+            cancellation.Token.ThrowIfCancellationRequested();
+            if (!ReferenceEquals(workspace, input))
+            {
+                SecondaryDiagnostic = this["SecondaryResultStale"];
+                return;
+            }
             secondaryPreview = result;
             secondaryCalculated = true;
             var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
@@ -288,6 +301,10 @@ public sealed partial class AllocationWorkspaceViewModel
                 result.Facts.Count, result.Totals.Count, result.Primary.Currency);
             SecondaryDiagnostic = this["SecondaryCalculationReady"];
         }
+        catch (OperationCanceledException)
+        {
+            SecondaryDiagnostic = this["SecondaryCancelled"];
+        }
         catch (DomainRuleException ex)
         {
             SecondarySummary = "";
@@ -300,7 +317,16 @@ public sealed partial class AllocationWorkspaceViewModel
             SecondarySummary = "";
             SecondaryDiagnostic = this["SecondaryInvalid"];
         }
+        finally
+        {
+            secondaryCalculationCts = null;
+            busy = false;
+            company.NotifyWorkspaceStateChanged();
+            Refresh();
+        }
     }
+
+    private void CancelSecondary() => secondaryCalculationCts?.Cancel();
 
     private void PopulateSecondaryBridges(IReadOnlyList<SecondaryEconomicBridge> bridges)
     {
