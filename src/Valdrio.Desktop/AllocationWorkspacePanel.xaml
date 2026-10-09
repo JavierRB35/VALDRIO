@@ -143,7 +143,8 @@
        <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Behavior}" Width="*"/>
       </DataGrid.Columns>
      </DataGrid>
-     <Expander Header="{Binding [SecondaryExplain]}" Margin="0,10,0,0"><TextBlock Text="{Binding SecondaryExplanation}" TextWrapping="Wrap" Margin="8"/></Expander>
+     <Button x:Name="ExplainSecondaryButton" Content="{Binding [SecondaryExplain]}" Command="{Binding ExplainSecondaryCommand}" HorizontalAlignment="Left" Margin="0,8,0,0"/>
+     <Expander Header="{Binding [SecondaryExplain]}" Margin="0,8,0,0"><TextBlock Text="{Binding SecondaryExplanation}" TextWrapping="Wrap" Margin="8"/></Expander>
      <Expander Header="{Binding [SecondaryGross]}" Margin="0,8,0,0">
       <DataGrid x:Name="SecondaryCirculationGrid" ItemsSource="{Binding SecondaryCirculation}" IsReadOnly="True" AutoGenerateColumns="False" Height="135">
        <DataGrid.Columns>
