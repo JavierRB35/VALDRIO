@@ -1246,4 +1246,5 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.SecondaryPublishedMissing" xml:space="preserve"><value>El reparto secundario cerrado no tiene un libro de resultados publicado válido. Revisa el historial del estudio antes de utilizar estos totales.</value></data>
   <data name="Secondary.MissingAssignments" xml:space="preserve"><value>Estos nodos auxiliares no tienen una clave de reparto secundario publicada para el grupo «all»: {0}. Asigna una clave a cada auxiliar indicado.</value></data>
   <data name="Secondary.PrecisionMismatch" xml:space="preserve"><value>Las políticas de precisión del reparto primario y secundario son distintas. Recalcula el primario con la política vigente del estudio antes de continuar.</value></data>
+  <data name="Secondary.ResourceBridgeInvalid" xml:space="preserve"><value>El recurso {0} no concilia: los costes finales, imputaciones directas, exclusiones y pendientes no suman su importe efectivo. Revisa el reparto primario y la preparación del recurso.</value></data>
 </root>
