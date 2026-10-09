@@ -114,7 +114,7 @@ public sealed partial class AllocationWorkspaceViewModel
         {
             var primary = PrimaryAllocationService.Calculate(workspace);
             return primary.Facts.Select(f => map.TryGetValue(f.PartId, out var group) ? group : "all")
-                .Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+                .DefaultIfEmpty("all").Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
         }
         catch (DomainRuleException) { return ["all"]; }
     }
@@ -170,7 +170,7 @@ public sealed partial class AllocationWorkspaceViewModel
     // Assignment completeness is intentionally distinct from mathematical feasibility:
     // complete but closed/unstable graphs must still allow Calculate to report the error.
     public bool CanCalculateSecondary => !busy && !IsDirty && CanManageSecondary && primaryComplete &&
-        workspace is not null &&
+        workspace is not null && !HasObsoleteSecondaryGroups &&
         MissingSecondaryNodes().Count == 0;
 
     private void RebuildSecondary()
@@ -211,6 +211,7 @@ public sealed partial class AllocationWorkspaceViewModel
         var missing = MissingSecondaryNodes();
         SecondarySummary = this["SecondaryOpenState"];
         SecondaryDiagnostic = !primaryComplete ? this["SecondaryPrimaryIncomplete"] :
+            HasObsoleteSecondaryGroups ? this["SecondaryObsoleteMappingsBlock"] :
             missing.Count == 0 ? this["SecondaryReady"] :
             string.Format(Format, this["SecondaryMissingAssignments"],
                 string.Join(", ", missing.Select(x => x.Group + ": " + NodeLabel(x.Node))));
