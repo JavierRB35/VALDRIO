@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using Valdrio.Application;
+using Valdrio.Calculation;
 using Valdrio.Domain;
 using Valdrio.Localization;
 
@@ -46,6 +47,17 @@ public sealed partial class AllocationWorkspaceViewModel
             .Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)
             .Select(g => new ResourceChoice<string>(g,
                 g == "all" ? this["AllComponents"] : g)).ToArray()) ?? [];
+    public IAsyncRelayCommand AssignSecondaryKeyToMissingCommand { get; private set; } = null!;
+    public bool CanAssignSecondaryKeyToMissing =>
+        CanEditSecondaryConfiguration && SecondaryKey.HasValue && workspace is not null &&
+        workspace.Keys.Any(k => k.Id == SecondaryKey.Value &&
+            k.Status == ModelStatus.Published && k.Stage == AllocationStage.Secondary) &&
+        workspace.Resources.Model.Structure.Nodes.Any(n => n.IsActive && n.Role == NodeRole.Auxiliary &&
+            !workspace.Configuration.SecondaryRules.Any(r => r.IsActive &&
+                r.AuxiliaryNodeId == n.Id &&
+                StringComparer.Ordinal.Equals(r.ComponentRoutingGroup,
+                    string.IsNullOrWhiteSpace(GroupName) ? "all" : GroupName.Trim())));
+
     public IAsyncRelayCommand SaveSecondaryGroupCommand { get; private set; } = null!;
     public IAsyncRelayCommand ClearObsoleteSecondaryGroupsCommand { get; private set; } = null!;
     public bool HasObsoleteSecondaryGroups => workspace?.Configuration.SecondaryPartRoutingGroups?
@@ -104,6 +116,37 @@ public sealed partial class AllocationWorkspaceViewModel
         }
         catch (DomainRuleException) { return ["all"]; }
     }
+
+    // One optional convenience operation for large models. Never overwrites
+    // manual rules and validates every proposed route before a single save.
+    private Task AssignSecondaryKeyToMissingAsync() => CommitConfig(c =>
+    {
+        if (workspace is null || !SecondaryKey.HasValue)
+            throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
+        var model = workspace.Resources.Model.Structure;
+        var group = string.IsNullOrWhiteSpace(GroupName) ? "all" : GroupName.Trim();
+        var key = workspace.Keys.SingleOrDefault(k => k.Id == SecondaryKey.Value &&
+            k.Status == ModelStatus.Published && k.Stage == AllocationStage.Secondary)
+            ?? throw AllocationDiagnostics.Error("KEY_PUBLICATION_REQUIRED", "Allocation.PublicationRequired");
+        var missing = model.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary &&
+            !c.SecondaryRules.Any(r => r.IsActive && r.AuxiliaryNodeId == n.Id &&
+                StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, group)))
+            .OrderBy(n => n.Id).ToArray();
+        if (missing.Length == 0) return c;
+        // Driver mode cannot be copied to auxiliaries with different units.
+        foreach (var node in missing)
+            if (key.Mode == AllocationKeyMode.DriverUnits &&
+                model.Pools.Single(p => p.NodeId == node.Id).DriverUnitId != key.UnitId)
+                throw new DomainRuleException(new DomainDiagnostic("SECONDARY_BATCH_UNIT_MISMATCH",
+                    "Secondary.BatchUnitMismatch",
+                    [new DiagnosticArgument("source", DiagnosticArgumentType.Identifier, NodeLabel(node))]));
+        var proposed = c.SecondaryRules.Concat(missing.Select(n => new SecondaryRule(
+            new EntityId(Guid.NewGuid()), model.CompanyId, model.Id, n.Id, group, key.Id, true)))
+            .ToArray();
+        foreach (var node in missing)
+            _ = AllocationKeyRules.ResolveSecondary(node.Id, group, proposed, workspace.Keys, model);
+        return c.WithSecondaryRules(proposed);
+    }, true);
 
     private Task SaveSecondaryPartGroupAsync() => CommitConfig(c =>
     {
