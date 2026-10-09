@@ -1247,4 +1247,11 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Secondary.MissingAssignments" xml:space="preserve"><value>Estos nodos auxiliares no tienen una clave de reparto secundario publicada para el grupo «all»: {0}. Asigna una clave a cada auxiliar indicado.</value></data>
   <data name="Secondary.PrecisionMismatch" xml:space="preserve"><value>Las políticas de precisión del reparto primario y secundario son distintas. Recalcula el primario con la política vigente del estudio antes de continuar.</value></data>
   <data name="Secondary.ResourceBridgeInvalid" xml:space="preserve"><value>El recurso {0} no concilia: los costes finales, imputaciones directas, exclusiones y pendientes no suman su importe efectivo. Revisa el reparto primario y la preparación del recurso.</value></data>
+  <data name="AllocationUI.SecondaryBridgeTitle" xml:space="preserve"><value>Conciliación por recurso</value></data>
+  <data name="AllocationUI.SecondaryBridgeHelp" xml:space="preserve"><value>Coste efectivo = imputaciones directas + exclusiones + costes finales + importes pendientes. La diferencia final debe ser cero. La circulación bruta entre auxiliares es solo informativa.</value></data>
+  <data name="AllocationUI.SecondaryBridgeEffective" xml:space="preserve"><value>Coste efectivo</value></data>
+  <data name="AllocationUI.SecondaryBridgeDirect" xml:space="preserve"><value>Directo a objetos</value></data>
+  <data name="AllocationUI.SecondaryBridgeExcluded" xml:space="preserve"><value>Excluido</value></data>
+  <data name="AllocationUI.SecondaryBridgeTerminal" xml:space="preserve"><value>A nodos principales</value></data>
+  <data name="AllocationUI.SecondaryBridgeDifference" xml:space="preserve"><value>Diferencia</value></data>
 </root>
