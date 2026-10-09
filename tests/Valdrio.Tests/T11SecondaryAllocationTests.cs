@@ -301,4 +301,33 @@ public sealed class T11SecondaryAllocationTests
         Assert.AreEqual("SOLVER_SENSITIVE", failure.Diagnostic.Code);
     }
 
+    [TestMethod]
+    public void ExplainListsOnlyKeysThatCanActuallyReachTheSelectedPrincipal()
+    {
+        var c = Id("000000000007");
+        var company = Id("000000000008");
+        var model = Id("000000000009");
+        var aKey = Id("000000000010");
+        var bKey = Id("000000000011");
+        var cKey = Id("000000000012");
+        var rules = new[] {
+            new SecondaryRule(Id("000000000013"), company, model, A, "all", aKey, true),
+            new SecondaryRule(Id("000000000014"), company, model, B, "all", bKey, true),
+            new SecondaryRule(Id("000000000015"), company, model, c, "all", cKey, true)
+        };
+        var graph = new ReciprocalInput([A.ToString(), B.ToString(), c.ToString()],
+            [P1.ToString(), P2.ToString()],
+            [[0m, 1m, 0m], [0m, 0m, 0m], [0m, 0m, 0m]],
+            [[0m, 0m], [1m, 0m], [0m, 1m]], false);
+        var toP1 = SecondaryAllocationService.ContributingSecondaryKeyVersions(
+            graph, rules, A, P1);
+        CollectionAssert.AreEquivalent(new[] { aKey, bKey }, toP1.ToArray());
+        Assert.AreEqual(0, SecondaryAllocationService.ContributingSecondaryKeyVersions(
+            graph, rules, A, P2).Count);
+        Assert.AreEqual(0, SecondaryAllocationService.ContributingSecondaryKeyVersions(
+            graph, rules, P2, P2).Count);
+        CollectionAssert.AreEquivalent(new[] { cKey },
+            SecondaryAllocationService.ContributingSecondaryKeyVersions(graph, rules, c, P2).ToArray());
+    }
+
 }
