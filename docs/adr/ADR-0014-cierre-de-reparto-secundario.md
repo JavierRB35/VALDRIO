@@ -1,0 +1,23 @@
+# ADR-0014 — Estado del reparto secundario y sello reproducible (propuesto)
+
+Fecha: 2026-10-09 · Estado: **candidato sujeto a validación nativa**.
+
+## Contexto
+
+VALDRIO permite publicar claves de reparto en T08, visualizar hechos primarios en T09 y resolver la circulación recíproca en T10. El usuario confirma que puede haber rutas auxiliar → auxiliar y auxiliar → principal y que el cierre secundario debe bloquear el primario sin impedir reabrir fases posteriormente.
+
+## Decisión
+
+El usuario lanza un cálculo explícito cuando hay cobertura de reglas publicadas. No se confunde *cobertura* con *resolubilidad*: el botón se habilita con reglas completas, y al ejecutarlo T10 diagnostica los circuitos cerrados, deriva, pivotes y demás bloqueos.
+
+El resultado del cálculo de T11 distingue importes efectivos adjudicados por origen a cada principal de flujo bruto auxiliar informativo. La fase secundaria cerrada conserva un `SecondaryCalculationHash` canónico y la fase primaria bloqueada. El servicio de persistencia recalcula y contrasta el sello antes de aceptar el cierre. Un primario que se reabra elimina el sello y el cierre secundarios; el secundario reabierto conserva cerrado el primario.
+
+Se mantiene el almacenamiento histórico de cambios en `AllocationChangeReceipt`, sin migración SQLite adicional. La presentación reconstruye resultados deterministas desde los hechos históricos, contrastando la huella si la fase está cerrada.
+
+## Riesgos y consecuencias
+
+- El hash es **sello reproducible de estado**, no materialización de un ledger inmutable autónomo: antes de aceptación de T11 debe decidirse y probarse el recibo publicado completo previsto por CM07/T12.
+- No existe mapeo de parte de recurso a `ComponentRoutingGroup`; no se permite ejecutar grupos especializados hasta que ese contrato exista. Se soporta el grupo `all` con rutas recíprocas.
+- No se admite el cierre si T09 no está completo o si T10 rechaza el grafo.
+- El cálculo y los tests C# deben ejecutarse en Windows/.NET 10, con métricas de estabilidad y memoria. Sin ello, ADR no pasa a Accepted.
+- Los workflows de GitHub Actions continúan manuales y sin consumo autorizado.
