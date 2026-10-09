@@ -10,7 +10,7 @@ using Valdrio.Domain;
 namespace Valdrio.Desktop;
 
 public sealed class CompositionAccountRow(EntityId id, string account, string amount,
-    string behavior, string review, bool canBulk) : ObservableObject
+    string behavior, string review, bool canBulk, bool isDefault) : ObservableObject
 {
     private bool selected;
     public EntityId Id { get; } = id;
@@ -19,6 +19,7 @@ public sealed class CompositionAccountRow(EntityId id, string account, string am
     public string Behavior { get; } = behavior;
     public string Review { get; } = review;
     public bool CanBulk { get; } = canBulk;
+    public bool IsDefault { get; } = isDefault;
     public bool Selected { get => selected; set => SetProperty(ref selected, value); }
 }
 
@@ -26,6 +27,7 @@ public sealed partial class AllocationWorkspaceViewModel
 {
     public ObservableCollection<CompositionAccountRow> CompositionAccounts { get; } = [];
     public ICollectionView CompositionView => CollectionViewSource.GetDefaultView(CompositionAccounts);
+    private bool compositionSelectionBatch;
     private string compositionSearch = "";
     private bool compositionOnlyExceptions;
     public string CompositionSearch
@@ -51,18 +53,21 @@ public sealed partial class AllocationWorkspaceViewModel
     private bool MatchComposition(object obj)
     {
         if (obj is not CompositionAccountRow row) return false;
-        if (CompositionOnlyExceptions && row.Review == this["CompositionUnreviewed"]) return false;
+        if (CompositionOnlyExceptions && row.IsDefault) return false;
         var term = CompositionSearch.Trim();
         return term.Length == 0 || row.Account.Contains(term, StringComparison.CurrentCultureIgnoreCase) ||
             row.Behavior.Contains(term, StringComparison.CurrentCultureIgnoreCase) ||
             row.Review.Contains(term, StringComparison.CurrentCultureIgnoreCase);
     }
-    private void ClearCompositionSelection()
+    private void SetCompositionSelection(IEnumerable<CompositionAccountRow> rows, bool selected)
     {
-        foreach (var row in CompositionAccounts) row.Selected = false;
+        compositionSelectionBatch = true;
+        try { foreach (var row in rows) row.Selected = selected; }
+        finally { compositionSelectionBatch = false; }
         OnPropertyChanged(nameof(CompositionSelected));
         Commands();
     }
+    private void ClearCompositionSelection() => SetCompositionSelection(CompositionAccounts, false);
     private UnitId? compositionUnit;
     private string compositionMinimum = "", compositionMaximum = "";
     public UnitId? CompositionUnit { get => compositionUnit; set => SetProperty(ref compositionUnit, value); }
@@ -93,10 +98,7 @@ public sealed partial class AllocationWorkspaceViewModel
     {
         CompositionView.Filter = MatchComposition;
         CompositionSelectVisibleCommand = new RelayCommand(() =>
-        {
-            foreach (var row in CompositionView.Cast<CompositionAccountRow>().Where(r => r.CanBulk))
-                row.Selected = true;
-        }, () => CanEditClassification && CompositionView.Cast<CompositionAccountRow>().Any(r => r.CanBulk));
+            SetCompositionSelection(CompositionView.Cast<CompositionAccountRow>().Where(r => r.CanBulk), true), () => CanEditClassification && CompositionView.Cast<CompositionAccountRow>().Any(r => r.CanBulk));
         CompositionClearSelectionCommand = new RelayCommand(ClearCompositionSelection,
             () => CanEditClassification && CompositionSelection.Length > 0);
         CompositionFixedCommand = new AsyncRelayCommand(() => UpdateCompositionAsync(ResourceBehavior.AssumedFixed), () => CanEditClassification && CompositionSelection.Length > 0);
@@ -106,7 +108,7 @@ public sealed partial class AllocationWorkspaceViewModel
     }
     private void CompositionSelectionChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(CompositionAccountRow.Selected))
+        if (!compositionSelectionBatch && e.PropertyName == nameof(CompositionAccountRow.Selected))
         { OnPropertyChanged(nameof(CompositionSelected)); Commands(); }
     }
     private void RebuildComposition()
@@ -116,19 +118,23 @@ public sealed partial class AllocationWorkspaceViewModel
         CompositionAccounts.Clear();
         if (workspace is not null)
         {
+            // Build lookups once: typical companies can contain thousands of accounts.
+            var resourceLookup = workspace.Resources.Resources.ToDictionary(r => r.Id);
+            var coverageLookup = workspace.Resources.Preparation.Coverage.ToDictionary(c => c.ResourceId);
             foreach (var origin in workspace.Resources.Origins.OrderBy(o => o.Code, StringComparer.Ordinal))
             {
-                var resource = workspace.Resources.Resources.Single(r => r.Id == origin.Id);
-                var amount = workspace.Resources.Preparation.Coverage.Single(c => c.ResourceId == resource.Id).Effective;
+                var resource = resourceLookup[origin.Id];
+                var amount = coverageLookup[resource.Id].Effective;
                 var single = resource.Parts.Count == 1;
                 var behavior = single ? resource.Parts[0].Classification.Behavior : ResourceBehavior.MixedPending;
                 var type = !single ? this["CompositionSplit"] :
                     behavior is ResourceBehavior.Unclassified or ResourceBehavior.AssumedFixed ? this["CompositionFixedDefault"] :
                     behavior == ResourceBehavior.Fixed ? this["CompositionFixedReviewed"] :
                     behavior == ResourceBehavior.Variable ? this["CompositionVariable"] : this["CompositionMixed"];
+                var isDefault = single && behavior is ResourceBehavior.Unclassified or ResourceBehavior.AssumedFixed;
                 var review = !single ? this["CompositionDetail"] :
-                    behavior is ResourceBehavior.Unclassified or ResourceBehavior.AssumedFixed ? this["CompositionUnreviewed"] : this["CompositionReviewed"];
-                var row = new CompositionAccountRow(resource.Id, AccountLabel(origin), MoneyText(amount), type, review, single);
+                    isDefault ? this["CompositionUnreviewed"] : this["CompositionReviewed"];
+                var row = new CompositionAccountRow(resource.Id, AccountLabel(origin), MoneyText(amount), type, review, single, isDefault);
                 row.Selected = single && previous.Contains(resource.Id);
                 row.PropertyChanged += CompositionSelectionChanged;
                 CompositionAccounts.Add(row);

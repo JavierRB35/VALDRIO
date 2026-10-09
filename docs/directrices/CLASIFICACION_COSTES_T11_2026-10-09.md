@@ -22,3 +22,6 @@ El selector masivo incorpora «Marcar fijo revisado» junto a «Marcar variable�
 
 ## Filtros y selección masiva
 Búsqueda por código/descripción/estado, filtro de partidas modificadas o mixtas, selección de todas las visibles y limpieza de selección. Cambiar el filtro cancela la selección previa, evitando aplicar cambios a cuentas ocultas. Se conserva la transacción `ClassifyBatch` y la reapertura sin perder las modificaciones anteriores.
+
+## Ajuste de rendimiento y bloqueo
+La actualización de la selección masiva agrupa notificaciones para evitar cálculos cuadráticos al marcar centenares de cuentas; la tabla utiliza búsquedas por `ResourceId` precalculadas para enumerar miles de cuentas. El filtro de excepción usa una bandera tipada de estado inicial y no comparaciones de textos traducidos. El checkbox de cada cuenta se desactiva si el reparto primario está cerrado, y los componentes múltiples siguen sin clasificación masiva para evitar desgloses involuntarios.

@@ -64,8 +64,14 @@
       <DataGrid.Columns>
        <DataGridTemplateColumn Width="45"><DataGridTemplateColumn.CellTemplate><DataTemplate>
         <CheckBox IsChecked="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                  IsEnabled="{Binding CanBulk}" ToolTip="{Binding Account}"
-                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  IsEnabled="{Binding DataContext.CanEditClassification, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                  ToolTip="{Binding Account}" HorizontalAlignment="Center" VerticalAlignment="Center">
+         <CheckBox.Style>
+          <Style TargetType="CheckBox">
+           <Style.Triggers><DataTrigger Binding="{Binding CanBulk}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger></Style.Triggers>
+          </Style>
+         </CheckBox.Style>
+        </CheckBox>
        </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
        <DataGridTextColumn Binding="{Binding Account}" ElementStyle="{StaticResource Text.TableText}" Width="3*" MinWidth="200"/>
        <DataGridTextColumn Binding="{Binding Amount}" ElementStyle="{StaticResource Text.TableNumber}" Width="125"/>
