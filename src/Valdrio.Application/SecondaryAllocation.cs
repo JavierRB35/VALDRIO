@@ -101,6 +101,8 @@ public static class SecondaryAllocationService
         CancellationToken cancellation = default)
     {
         ArgumentNullException.ThrowIfNull(workspace);
+        try
+        {
         var primary = PrimaryAllocationService.Calculate(workspace);
         if (!primary.IsComplete)
             throw Error("SECONDARY_PRIMARY_INCOMPLETE", "Secondary.PrimaryIncomplete");
@@ -207,7 +209,11 @@ public static class SecondaryAllocationService
             totals, reconciliations.OrderBy(r => r.ResourceId).ThenBy(r => r.PartId).ToArray(),
             aggregate, BuildResourceBridges(primary, canonicalFacts, precision),
             groupSolutions);
-
+        }
+        catch (OverflowException)
+        {
+            throw Error("SECONDARY_NUMERIC_OVERFLOW", "Secondary.NumericOverflow");
+        }
     }
 
     public static IReadOnlyList<EntityId> ContributingSecondaryKeyVersions(
@@ -290,6 +296,8 @@ public static class SecondaryAllocationService
         ArgumentNullException.ThrowIfNull(primary);
         ArgumentNullException.ThrowIfNull(principalIds);
         ArgumentNullException.ThrowIfNull(precision);
+        try
+        {
         if (!primary.IsComplete)
             throw Error("SECONDARY_PRIMARY_INCOMPLETE", "Secondary.PrimaryIncomplete");
         if (!StringComparer.Ordinal.Equals(primary.PolicyVersion, precision.Version))
@@ -332,6 +340,11 @@ public static class SecondaryAllocationService
             Array.Empty<decimal>(), finalAmounts, Array.Empty<decimal[]>(),
             0m, 0m, 0m, 1m, Array.Empty<DomainDiagnostic>());
         return new(primary, facts, links, totals, parts, circulation, BuildResourceBridges(primary, facts, precision));
+        }
+        catch (OverflowException)
+        {
+            throw Error("SECONDARY_NUMERIC_OVERFLOW", "Secondary.NumericOverflow");
+        }
     }
 
     // Pure seam for corpus C09 and for tests independent from SQLite/WPF.
