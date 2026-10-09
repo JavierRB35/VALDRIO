@@ -1214,7 +1214,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Reciprocal.SensitivePivot" xml:space="preserve"><value>El sistema recíproco es inestable cerca del auxiliar {0}; pivote normalizado: {1}.</value></data>
   <data name="Reciprocal.SensitiveAmplification" xml:space="preserve"><value>El sistema recíproco es inestable; amplificación de circulación: {0}.</value></data>
   <data name="Secondary.PrimaryIncomplete" xml:space="preserve"><value>Completa todas las asignaciones primarias antes de calcular el reparto secundario.</value></data>
-  <data name="Secondary.GroupMappingRequired" xml:space="preserve"><value>Los grupos específicos del reparto secundario no tienen correspondencia con los componentes de coste primario. Asigna los auxiliares activos al grupo «all» o define esa correspondencia antes de calcular.</value></data>
+  <data name="Secondary.GroupMappingRequired" xml:space="preserve"><value>Estos grupos secundarios no tienen definida la correspondencia con los componentes de coste primario: {0}. Asigna las claves auxiliares al grupo «all» o define dicha correspondencia antes de calcular.</value></data>
   <data name="Secondary.SourceInconsistent" xml:space="preserve"><value>El origen {0} mezcla clasificaciones económicas incompatibles en la misma parte de recurso.</value></data>
   <data name="Secondary.PrimaryNodeInvalid" xml:space="preserve"><value>El reparto primario contiene un nodo de destino desconocido o inactivo: {0}.</value></data>
   <data name="Secondary.NumericOverflow" xml:space="preserve"><value>El cálculo secundario ha superado el rango decimal admitido. Revisa los importes y la amplificación recíproca.</value></data>
