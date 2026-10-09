@@ -117,11 +117,11 @@ public sealed partial class AllocationWorkspaceViewModel
     private void CalculateSecondary()
     {
         if (!CanCalculateSecondary || workspace is null) return;
-        CalculateSecondaryCore(false);
+        CalculateSecondaryCore();
         Refresh();
     }
 
-    private void CalculateSecondaryCore(bool restoringClosed)
+    private void CalculateSecondaryCore()
     {
         if (workspace is null) return;
         secondaryPreview = null;
@@ -132,26 +132,11 @@ public sealed partial class AllocationWorkspaceViewModel
         try
         {
             var result = SecondaryAllocationService.Calculate(workspace);
-            var publication = workspace.SecondaryPublication;
-            if (restoringClosed)
-            {
-                if (publication is null || !StringComparer.Ordinal.Equals(
-                    workspace.Configuration.SecondaryCalculationHash,
-                    SecondaryAllocationService.ResultFingerprint(result, workspace.Configuration)) ||
-                    !StringComparer.Ordinal.Equals(
-                        CanonicalSnapshotJson.Serialize(publication),
-                        CanonicalSnapshotJson.Serialize(SecondaryAllocationService.Publish(
-                            result, workspace.Configuration, publication.SourceRevision))))
-                    throw new DomainRuleException(new DomainDiagnostic(
-                        "SECONDARY_RESULT_STALE", "Secondary.ResultStale", []));
-            }
             secondaryPreview = result;
             secondaryCalculated = true;
             var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
             var origins = workspace.Resources.Origins.ToDictionary(o => o.Id);
-            // A closed phase renders the stored posted ledger; the recalculation
-            // above is an independent integrity check, not the displayed authority.
-            foreach (var fact in restoringClosed ? publication!.Facts : result.Facts)
+            foreach (var fact in result.Facts)
             {
                 SecondaryResults.Add(new(fact.ResourceId, fact.PartId, fact.TerminalNodeId,
                     AccountLabel(origins[fact.ResourceId]), NodeLabel(nodes[fact.TerminalNodeId]),
@@ -166,7 +151,7 @@ public sealed partial class AllocationWorkspaceViewModel
             }
             SecondarySummary = string.Format(Format, this["SecondaryTotals"],
                 result.Facts.Count, result.Totals.Count, result.Primary.Currency);
-            SecondaryDiagnostic = this[restoringClosed ? "SecondaryClosedState" : "SecondaryCalculationReady"];
+            SecondaryDiagnostic = this["SecondaryCalculationReady"];
         }
         catch (DomainRuleException ex)
         {
