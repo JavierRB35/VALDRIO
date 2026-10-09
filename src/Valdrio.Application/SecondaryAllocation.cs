@@ -89,9 +89,13 @@ public static class SecondaryAllocationService
             throw Error("SECONDARY_PRIMARY_INCOMPLETE", "Secondary.PrimaryIncomplete");
         // Current T08 model has no part -> custom routing-group mapping. Refuse to
         // silently treat a cost component as "all" when its route is different.
-        if (workspace.Configuration.SecondaryRules.Any(r => r.IsActive &&
-            !StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, "all")))
-            throw Error("SECONDARY_GROUP_MAPPING_REQUIRED", "Secondary.GroupMappingRequired");
+        var unmappedGroups = workspace.Configuration.SecondaryRules
+            .Where(r => r.IsActive && !StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, "all"))
+            .Select(r => r.ComponentRoutingGroup).Distinct(StringComparer.Ordinal)
+            .Order(StringComparer.Ordinal).ToArray();
+        if (unmappedGroups.Length != 0)
+            throw Error("SECONDARY_GROUP_MAPPING_REQUIRED", "Secondary.GroupMappingRequired",
+                string.Join(", ", unmappedGroups));
         var graph = ReciprocalGraphBuilder.FromPublishedSecondaryKeys(
             workspace.Resources.Model.Structure, workspace.Keys,
             workspace.Configuration.SecondaryRules, workspace.Resources.Model.DriverUnits,
