@@ -32,6 +32,13 @@ public sealed class T10ReciprocalTests
             {
                 var ex = Assert.ThrowsExactly<DomainRuleException>(() => ReciprocalFactorization.Prepare(request));
                 Assert.AreEqual(diagnostic.GetString(), ex.Diagnostic.Code, id);
+                if (id == "C14")
+                {
+                    Assert.AreEqual("Reciprocal.SensitivePivot", ex.Diagnostic.MessageKey);
+                    Assert.AreEqual("auxiliary", ex.Diagnostic.Arguments[0].Name);
+                    Assert.AreEqual("pivot", ex.Diagnostic.Arguments[1].Name);
+                    Assert.IsTrue(Decimal(ex.Diagnostic.Arguments[1].CanonicalValue) > 0m);
+                }
             }
             else
             {
