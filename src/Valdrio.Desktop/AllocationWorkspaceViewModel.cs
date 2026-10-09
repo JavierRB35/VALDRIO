@@ -82,6 +82,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         ToggleSecondaryCommand = new AsyncRelayCommand(ToggleSecondaryAsync,
             () => !busy && CanManagePrimary && !IsDirty && (IsSecondaryClosed || secondaryCalculated));
         SaveSecondaryGroupCommand = new AsyncRelayCommand(SaveSecondaryPartGroupAsync, () => CanSaveSecondaryGroup);
+        ClearObsoleteSecondaryGroupsCommand = new AsyncRelayCommand(ClearObsoleteSecondaryGroupsAsync, () => CanEditSecondaryConfiguration && HasObsoleteSecondaryGroups);
         SaveRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(false), () => CanSaveRule);
         ApplyRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(true), () => CanSaveRule);
         SaveKeyCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey && MissingKeyInput(true) is null);
@@ -506,7 +507,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         foreach (var command in new IRelayCommand?[] { DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
             SaveRuleCommand, RemoveRuleCommand, LoadRuleCommand, NewRuleCommand, SaveSecondaryCommand, LoadSecondaryCommand, NewSecondaryCommand,
             RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CheckReciprocalCommand, CalculateSecondaryCommand, ExplainSecondaryCommand, ToggleSecondaryCommand,
-            SaveSecondaryGroupCommand }) command?.NotifyCanExecuteChanged();
+            SaveSecondaryGroupCommand, ClearObsoleteSecondaryGroupsCommand }) command?.NotifyCanExecuteChanged();
     }
     private void Refresh() { OnPropertyChanged(string.Empty); Commands(); }
     public void RefreshPresentation(bool value) { pseudo = value; Rebuild(); }
