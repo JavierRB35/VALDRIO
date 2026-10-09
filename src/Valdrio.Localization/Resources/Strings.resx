@@ -1211,4 +1211,6 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.ReciprocalInvalid" xml:space="preserve"><value>Cannot validate these routes: invalid graph or numeric inputs.</value></data>
   <data name="AllocationUI.ReciprocalMetrics" xml:space="preserve"><value>Minimum relative pivot: {0:0.############################}; maximum circulation: {1:0.############################}.</value></data>
   <data name="AllocationUI.ReciprocalNoPosting" xml:space="preserve"><value>Only saved, published routing versions are checked. No costs are redistributed or published here.</value></data>
+  <data name="Reciprocal.SensitivePivot" xml:space="preserve"><value>The reciprocal system is unstable near auxiliary {0}; normalized pivot: {1}.</value></data>
+  <data name="Reciprocal.SensitiveAmplification" xml:space="preserve"><value>The reciprocal system is unstable; circulation amplification: {0}.</value></data>
 </root>
