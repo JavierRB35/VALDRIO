@@ -133,4 +133,31 @@ public sealed class T11SecondaryAllocationTests
             CanonicalSnapshotJson.Deserialize<SecondaryCalculationPublication>(canonical)));
     }
 
+    [TestMethod]
+    public void EffectiveFactorsAndDirectMultipleRightHandSidesAgreePerSource()
+    {
+        var primary = Source(Primary(1, A, 1000m), Primary(2, B, 500m),
+            Primary(3, P1, 2000m), Primary(4, P2, 3000m));
+        var graph = Graph();
+        var factor = ReciprocalFactorization.Prepare(graph);
+        var result = SecondaryAllocationService.Calculate(primary, graph, Precision);
+        foreach (var source in primary.Facts)
+        {
+            var auxiliaries = factor.AuxiliaryIds.ToDictionary(id => id,
+                id => StringComparer.Ordinal.Equals(id, source.NodeId.ToString()) ? source.PostedAmount.Amount : 0m);
+            var terminals = factor.TerminalIds.ToDictionary(id => id,
+                id => StringComparer.Ordinal.Equals(id, source.NodeId.ToString()) ? source.PostedAmount.Amount : 0m);
+            var direct = factor.Solve(auxiliaries, terminals);
+            for (var i = 0; i < factor.TerminalIds.Count; i++)
+            {
+                var target = new EntityId(Guid.Parse(factor.TerminalIds[i]));
+                var fromEffectiveFactors = result.Facts
+                    .Where(f => f.PartId == source.PartId && f.TerminalNodeId == target)
+                    .Sum(f => f.RawAmount);
+                Assert.IsTrue(Math.Abs(direct.Final[i] - fromEffectiveFactors) <= 0.00000001m,
+                    "Factor/RHS disagreement for " + source.PartId + " => " + target);
+            }
+        }
+    }
+
 }
