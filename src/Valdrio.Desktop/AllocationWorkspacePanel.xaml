@@ -46,7 +46,52 @@
      </StackPanel></Expander>
    </Border>
 </Grid>
-  <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+    <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+   <Expander x:Name="CompositionSection" Header="{Binding [CompositionTitle]}" IsExpanded="False">
+    <StackPanel Margin="0,8,0,0">
+     <TextBlock Text="{Binding [CompositionHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+     <TextBlock Text="{Binding CompositionSummary}" FontWeight="SemiBold" Margin="0,0,0,8"/>
+     <DataGrid x:Name="CompositionGrid" ItemsSource="{Binding CompositionAccounts}" AutoGenerateColumns="False" IsReadOnly="True" Height="240" MinRowHeight="32">
+      <DataGrid.Columns>
+       <DataGridTemplateColumn Width="45"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+        <CheckBox IsChecked="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  IsEnabled="{Binding CanBulk}" ToolTip="{Binding Account}"
+                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+       </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+       <DataGridTextColumn Binding="{Binding Account}" ElementStyle="{StaticResource Text.TableText}" Width="3*" MinWidth="200"/>
+       <DataGridTextColumn Binding="{Binding Amount}" ElementStyle="{StaticResource Text.TableNumber}" Width="125"/>
+       <DataGridTextColumn Binding="{Binding Behavior}" ElementStyle="{StaticResource Text.TableText}" Width="2*" MinWidth="160"/>
+       <DataGridTextColumn Binding="{Binding Review}" ElementStyle="{StaticResource Text.TableText}" Width="2*" MinWidth="130"/>
+      </DataGrid.Columns>
+     </DataGrid>
+     <TextBlock Text="{Binding CompositionSelected}" Margin="0,8,0,8" AutomationProperties.LiveSetting="Polite"/>
+     <StackPanel IsEnabled="{Binding CanEditClassification}">
+      <WrapPanel>
+       <Button Content="{Binding [CompositionMarkFixed]}" Command="{Binding CompositionFixedCommand}" Margin="0,4,8,4"/>
+       <Button Content="{Binding [CompositionMarkMixed]}" Command="{Binding CompositionMixedCommand}" Margin="0,4,8,4"/>
+      </WrapPanel>
+      <TextBlock Text="{Binding [CompositionVariableHelp]}" Margin="0,8,0,4" TextWrapping="Wrap"/>
+      <WrapPanel>
+       <StackPanel MinWidth="200" Margin="0,0,8,8">
+        <TextBlock Text="{Binding [CompositionUnit]}"/>
+        <ComboBox ItemsSource="{Binding Units}" SelectedValue="{Binding CompositionUnit}" AutomationProperties.Name="{Binding [CompositionUnit]}"/>
+       </StackPanel>
+       <StackPanel MinWidth="110" Margin="0,0,8,8">
+        <TextBlock Text="{Binding [CompositionMinimum]}"/>
+        <TextBox Text="{Binding CompositionMinimum, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [CompositionMinimum]}"/>
+       </StackPanel>
+       <StackPanel MinWidth="110" Margin="0,0,8,8">
+        <TextBlock Text="{Binding [CompositionMaximum]}"/>
+        <TextBox Text="{Binding CompositionMaximum, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [CompositionMaximum]}"/>
+       </StackPanel>
+      </WrapPanel>
+      <Button Content="{Binding [CompositionMarkVariable]}" Command="{Binding CompositionVariableCommand}" Style="{StaticResource Button.Primary}" HorizontalAlignment="Left"/>
+     </StackPanel>
+     <TextBlock Text="{Binding [CompositionCloseHelp]}" TextWrapping="Wrap" Margin="0,12,0,0"/>
+    </StackPanel>
+   </Expander>
+  </Border>
+<Border Style="{StaticResource Card}" Margin="0,0,0,16">
    <Expander x:Name="AccountsSection" Header="{Binding [Coverage]}" IsExpanded="True"><StackPanel Margin="0,8,0,0"><TextBlock Text="{Binding CoverageSummary}" Margin="0,0,0,8"/>
     <DataGrid x:Name="CoverageGrid" ItemsSource="{Binding Coverage}" IsReadOnly="True" AutoGenerateColumns="False" Height="420" MinRowHeight="32">
      <DataGrid.Columns><DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Source}" Width="2*"/><DataGridTextColumn Binding="{Binding Amount}" ElementStyle="{StaticResource Text.TableNumber}" Width="110"/><DataGridTemplateColumn Width="2*" MinWidth="180"><DataGridTemplateColumn.CellTemplate><DataTemplate><ComboBox ItemsSource="{Binding DataContext.PublishedPrimary, RelativeSource={RelativeSource AncestorType=DataGrid}}" SelectedValue="{Binding SelectedKeyId, Mode=OneWay}" IsEnabled="{Binding DataContext.CanAssignCoverage, RelativeSource={RelativeSource AncestorType=DataGrid}}" SelectionChanged="CoverageKeyChanged" AutomationProperties.Name="{Binding Source}" ToolTip="{Binding Key}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn><DataGridTextColumn Binding="{Binding Status}" Width="2*" ElementStyle="{StaticResource {x:Type TextBlock}}"/></DataGrid.Columns>

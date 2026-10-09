@@ -106,6 +106,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         ChooseDescriptionCommand = new AsyncRelayCommand(() => CommitConfig(c => new(c.PrimaryRules, c.SecondaryRules, c.ExplicitAssignments, c.AbsoluteAssignments,
             c.Descriptions.Where(d => d.Account != Account).Append(new(Account!, ChosenDescription)).ToArray())), () => CanEdit && Account is not null && DescriptionOptions.Contains(ChosenDescription, StringComparer.Ordinal));
         DiscardCommand = new RelayCommand(() => { LoadKey(editingKey); ClearRule(); LoadAbsolute(); statusKey = "Discarded"; Refresh(); }, () => !busy && IsDirty);
+        InitializeCompositionCommands();
         earlierBusy = company.WorkspaceBusy; earlierBefore = studies.BeforeChangeAsync; earlierAfter = company.AfterChangeAsync;
         company.WorkspaceBusy = () => busy || earlierBusy?.Invoke() == true;
         studies.BeforeChangeAsync = async () => await CanLeaveAsync() && (earlierBefore is null || await earlierBefore());
@@ -396,6 +397,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     {
         if (!CanManagePrimary || IsDirty || earlierBefore is not null && !await earlierBefore()) return;
         await EnterAsync(true);
+        if (!IsPrimaryClosed && !await ConfirmCompositionDefaultsAsync()) return;
+        await EnterAsync(true);
         if (await CommitConfig(c => c.WithPrimaryClosed(!c.PrimaryClosed), true))
         { statusKey = IsPrimaryClosed ? "PrimaryClosedState" : "PrimaryOpenState"; Refresh(); if (AfterPrimaryStateChanged is not null) await AfterPrimaryStateChanged(); }
     }
@@ -459,6 +462,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             if (old is null) Coverage.Add(next);
             else { old.Source = next.Source; old.Amount = next.Amount; old.Key = next.Key; old.Status = next.Status; old.SelectedKeyId = next.SelectedKeyId; }
         }
+        RebuildComposition();
         RebuildPrimary();
         RebuildSecondary();
         ResetReciprocal();
@@ -510,7 +514,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         foreach (var command in new IRelayCommand?[] { DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
             SaveRuleCommand, RemoveRuleCommand, LoadRuleCommand, NewRuleCommand, SaveSecondaryCommand, LoadSecondaryCommand, NewSecondaryCommand,
             RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CheckReciprocalCommand, CalculateSecondaryCommand, CancelSecondaryCommand, ExplainSecondaryCommand, ToggleSecondaryCommand,
-            SaveSecondaryGroupCommand, ClearObsoleteSecondaryGroupsCommand, AssignSecondaryKeyToMissingCommand }) command?.NotifyCanExecuteChanged();
+            SaveSecondaryGroupCommand, ClearObsoleteSecondaryGroupsCommand, AssignSecondaryKeyToMissingCommand,
+            CompositionFixedCommand, CompositionVariableCommand, CompositionMixedCommand }) command?.NotifyCanExecuteChanged();
     }
     private void Refresh() { OnPropertyChanged(string.Empty); Commands(); }
     public void RefreshPresentation(bool value) { pseudo = value; Rebuild(); }

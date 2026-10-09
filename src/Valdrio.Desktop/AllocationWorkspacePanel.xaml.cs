@@ -25,6 +25,10 @@ public partial class AllocationWorkspacePanel : UserControl
     {
         if (viewModel is null) return;
         Set(KeyGrid, "Name", "State"); Set(LinesGrid, "Include", "Destination", "NodeUnit", "Weight"); Set(ReciprocalGrid, "ReciprocalGroup", "ReciprocalStatus", "ReciprocalDetail"); Set(SecondaryRulesGrid, "Auxiliary", "ReciprocalGroup", "AppliedKey"); Set(SecondaryResultsGrid, "PrimarySource", "PrimaryDestination", "PrimaryAmount", "Behavior"); Set(SecondaryCirculationGrid, "Auxiliary", "SecondaryGross"); Set(SecondaryBridgesGrid, "PrimarySource", "SecondaryBridgeEffective", "SecondaryBridgeDirect", "SecondaryBridgeExcluded", "SecondaryBridgeTerminal", "SecondaryBridgeDifference"); Set(SecondaryGroupAssignmentsGrid, "SecondarySourcePart", "SecondarySelectedGroup");
+        CompositionGrid.Columns[1].Header = viewModel["CompositionAccount"];
+        CompositionGrid.Columns[2].Header = viewModel["CompositionAmount"];
+        CompositionGrid.Columns[3].Header = viewModel["CompositionBehavior"];
+        CompositionGrid.Columns[4].Header = viewModel["CompositionReview"];
         Set(CoverageGrid, "Source", "Amount", "AppliedKey", "Result"); Set(PrimaryResultsGrid, "PrimarySource", "PrimaryDestination", "PrimaryAmount", "PrimaryRule"); Set(PrimaryGrid, "Account", "AppliedKey", "State");
         Set(AbsoluteGrid, "Include", "Destination", "Amount");
         void Set(DataGrid grid, params string[] keys) { for (var i = 0; i < keys.Length; i++) grid.Columns[i].Header = viewModel[keys[i]]; }

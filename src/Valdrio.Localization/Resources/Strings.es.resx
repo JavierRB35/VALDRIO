@@ -1277,4 +1277,34 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.NodeClassificationHelp" xml:space="preserve"><value>Principal/Auxiliar se define en cada NODO, no en el centro físico. Selecciona un nodo para consultar su tipo y la descripción del grupo de costes. Ambos campos se editan en un borrador. Producción/Comercial/Estructura es otra clasificación de los costes de los recursos.</value></data>
   <data name="Resources.AssumedFixed" xml:space="preserve"><value>Fijo por defecto (sin revisar)</value></data>
   <data name="Resource.BehaviorAssumedFixed" xml:space="preserve"><value>La parte {0} es fija por defecto, no verificada; necesita revisión antes de una absorción definitiva.</value></data>
+  <data name="AllocationUI.CompositionTitle" xml:space="preserve"><value>Composición y comportamiento del coste</value></data>
+  <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Inicialmente, las cuentas sin clasificar se consideran fijas por defecto (sin revisar). Seleccione varias cuentas para modificarlas. Las ya modificadas pueden volver a editarse hasta cerrar el reparto primario. Los costes desglosados se editan en el detalle de cuenta.</value></data>
+  <data name="AllocationUI.CompositionSummary" xml:space="preserve"><value>Partes: {0} · Fijas por defecto: {1} · Otras: {2} · Mixtas pendientes: {3}</value></data>
+  <data name="AllocationUI.CompositionSelected" xml:space="preserve"><value>Cuentas seleccionadas: {0}</value></data>
+  <data name="AllocationUI.CompositionAccount" xml:space="preserve"><value>Cuenta y descripción</value></data>
+  <data name="AllocationUI.CompositionAmount" xml:space="preserve"><value>Importe efectivo</value></data>
+  <data name="AllocationUI.CompositionBehavior" xml:space="preserve"><value>Comportamiento</value></data>
+  <data name="AllocationUI.CompositionReview" xml:space="preserve"><value>Estado</value></data>
+  <data name="AllocationUI.CompositionSplit" xml:space="preserve"><value>Varios componentes</value></data>
+  <data name="AllocationUI.CompositionDetail" xml:space="preserve"><value>Editar en detalle</value></data>
+  <data name="AllocationUI.CompositionFixedDefault" xml:space="preserve"><value>Fijo por defecto</value></data>
+  <data name="AllocationUI.CompositionFixedReviewed" xml:space="preserve"><value>Fijo revisado</value></data>
+  <data name="AllocationUI.CompositionVariable" xml:space="preserve"><value>Variable</value></data>
+  <data name="AllocationUI.CompositionMixed" xml:space="preserve"><value>Mixto sin desglosar</value></data>
+  <data name="AllocationUI.CompositionUnreviewed" xml:space="preserve"><value>Hipótesis sin revisar</value></data>
+  <data name="AllocationUI.CompositionReviewed" xml:space="preserve"><value>Clasificación editada</value></data>
+  <data name="AllocationUI.CompositionMarkFixed" xml:space="preserve"><value>Volver a fijo por defecto</value></data>
+  <data name="AllocationUI.CompositionMarkVariable" xml:space="preserve"><value>Marcar variables</value></data>
+  <data name="AllocationUI.CompositionMarkMixed" xml:space="preserve"><value>Marcar mixtas</value></data>
+  <data name="AllocationUI.CompositionVariableHelp" xml:space="preserve"><value>Para marcar costes como variables, indique una misma unidad y un rango de actividad válido. Se utiliza el periodo del estudio; no se infiere la unidad del nodo.</value></data>
+  <data name="AllocationUI.CompositionUnit" xml:space="preserve"><value>Unidad de actividad</value></data>
+  <data name="AllocationUI.CompositionMinimum" xml:space="preserve"><value>Actividad mínima</value></data>
+  <data name="AllocationUI.CompositionMaximum" xml:space="preserve"><value>Actividad máxima</value></data>
+  <data name="AllocationUI.CompositionCloseHelp" xml:space="preserve"><value>Los cambios se guardan y se pueden repetir. Al cerrar el reparto primario se confirman las hipótesis fijas restantes y se bloquea la edición hasta reabrirlo. Los mixtos pendientes deben desglosarse. La absorción definitiva requiere revisar los fijos por defecto.</value></data>
+  <data name="AllocationUI.CompositionContextRequired" xml:space="preserve"><value>Indique unidad y rango de actividad válidos antes de marcar variables.</value></data>
+  <data name="AllocationUI.CompositionSaved" xml:space="preserve"><value>Clasificación guardada. Puede volver a modificar las mismas cuentas.</value></data>
+  <data name="AllocationUI.CompositionUnchanged" xml:space="preserve"><value>Las cuentas ya tienen esta clasificación.</value></data>
+  <data name="AllocationUI.CompositionMixedBlock" xml:space="preserve"><value>Desglose los costes mixtos pendientes antes del cierre.</value></data>
+  <data name="AllocationUI.CompositionEditReason" xml:space="preserve"><value>Clasificación masiva editable de costes</value></data>
+  <data name="AllocationUI.CompositionCloseReason" xml:space="preserve"><value>Confirmación de hipótesis fijas por defecto</value></data>
 </root>

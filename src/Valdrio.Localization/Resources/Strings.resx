@@ -1277,4 +1277,34 @@ Difference to distribute: {7}</value></data>
   <data name="Model.NodeClassificationHelp" xml:space="preserve"><value>Principal/Auxiliary is defined per NODE, not per physical center. Select a node to inspect its role and cost-pool description. Both fields can be edited in a draft. Production/Commercial/Structure is a separate classification of resource costs.</value></data>
   <data name="Resources.AssumedFixed" xml:space="preserve"><value>Fixed by default (unreviewed)</value></data>
   <data name="Resource.BehaviorAssumedFixed" xml:space="preserve"><value>Part {0} is fixed by default, not verified; review is required before definitive absorption.</value></data>
+  <data name="AllocationUI.CompositionTitle" xml:space="preserve"><value>Cost composition and behavior</value></data>
+  <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Unclassified accounts start as fixed by default (unreviewed). Select multiple accounts to update them; edited accounts can be changed again until primary allocation is closed. Split costs remain editable in account details.</value></data>
+  <data name="AllocationUI.CompositionSummary" xml:space="preserve"><value>Parts: {0} · Default fixed: {1} · Other: {2} · Mixed pending: {3}</value></data>
+  <data name="AllocationUI.CompositionSelected" xml:space="preserve"><value>Selected accounts: {0}</value></data>
+  <data name="AllocationUI.CompositionAccount" xml:space="preserve"><value>Account and description</value></data>
+  <data name="AllocationUI.CompositionAmount" xml:space="preserve"><value>Effective amount</value></data>
+  <data name="AllocationUI.CompositionBehavior" xml:space="preserve"><value>Behavior</value></data>
+  <data name="AllocationUI.CompositionReview" xml:space="preserve"><value>Status</value></data>
+  <data name="AllocationUI.CompositionSplit" xml:space="preserve"><value>Multiple components</value></data>
+  <data name="AllocationUI.CompositionDetail" xml:space="preserve"><value>Edit in account details</value></data>
+  <data name="AllocationUI.CompositionFixedDefault" xml:space="preserve"><value>Fixed by default</value></data>
+  <data name="AllocationUI.CompositionFixedReviewed" xml:space="preserve"><value>Reviewed fixed</value></data>
+  <data name="AllocationUI.CompositionVariable" xml:space="preserve"><value>Variable</value></data>
+  <data name="AllocationUI.CompositionMixed" xml:space="preserve"><value>Mixed pending split</value></data>
+  <data name="AllocationUI.CompositionUnreviewed" xml:space="preserve"><value>Unreviewed assumption</value></data>
+  <data name="AllocationUI.CompositionReviewed" xml:space="preserve"><value>Edited classification</value></data>
+  <data name="AllocationUI.CompositionMarkFixed" xml:space="preserve"><value>Return to default fixed</value></data>
+  <data name="AllocationUI.CompositionMarkVariable" xml:space="preserve"><value>Mark variable</value></data>
+  <data name="AllocationUI.CompositionMarkMixed" xml:space="preserve"><value>Mark mixed</value></data>
+  <data name="AllocationUI.CompositionVariableHelp" xml:space="preserve"><value>To mark variable costs, supply a shared activity unit and valid range. The study period applies; the unit is not inferred from the node.</value></data>
+  <data name="AllocationUI.CompositionUnit" xml:space="preserve"><value>Activity unit</value></data>
+  <data name="AllocationUI.CompositionMinimum" xml:space="preserve"><value>Minimum activity</value></data>
+  <data name="AllocationUI.CompositionMaximum" xml:space="preserve"><value>Maximum activity</value></data>
+  <data name="AllocationUI.CompositionCloseHelp" xml:space="preserve"><value>Changes are saved and can be revised repeatedly. Closing primary allocation confirms remaining fixed assumptions and locks editing until reopened. Mixed costs must be split. Definitive absorption requires reviewing default-fixed assumptions.</value></data>
+  <data name="AllocationUI.CompositionContextRequired" xml:space="preserve"><value>Supply valid activity unit and range before marking variable.</value></data>
+  <data name="AllocationUI.CompositionSaved" xml:space="preserve"><value>Classification saved. The same accounts can be changed again.</value></data>
+  <data name="AllocationUI.CompositionUnchanged" xml:space="preserve"><value>Accounts already have this classification.</value></data>
+  <data name="AllocationUI.CompositionMixedBlock" xml:space="preserve"><value>Split mixed pending costs before closing.</value></data>
+  <data name="AllocationUI.CompositionEditReason" xml:space="preserve"><value>Editable batch cost classification</value></data>
+  <data name="AllocationUI.CompositionCloseReason" xml:space="preserve"><value>Confirmation of default-fixed assumptions</value></data>
 </root>
