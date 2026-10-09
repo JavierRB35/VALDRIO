@@ -27,7 +27,12 @@ public sealed class AllocationConfiguration
     {
         if (primaryRules is null || secondaryRules is null || explicitAssignments is null || absoluteAssignments is null || descriptions is null ||
             primaryRules.Any(r => r is null) || secondaryRules.Any(r => r is null) || explicitAssignments.Any(r => r is null) ||
-            absoluteAssignments.Any(r => r is null) || descriptions.Any(r => r is null))
+            absoluteAssignments.Any(r => r is null) || descriptions.Any(r => r is null) ||
+            (secondaryPartRoutingGroups is { } groups && (
+                groups.Any(g => g is null || !g.PartId.IsValid ||
+                    string.IsNullOrWhiteSpace(g.ComponentRoutingGroup) ||
+                    g.ComponentRoutingGroup != g.ComponentRoutingGroup.Trim()) ||
+                groups.Select(g => g.PartId).Distinct().Count() != groups.Count)))
             throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
         if (secondaryClosed && (!primaryClosed || string.IsNullOrWhiteSpace(secondaryCalculationHash)))
             throw AllocationDiagnostics.Error("SECONDARY_CLOSE_INVALID", "Secondary.CloseInvalid");
