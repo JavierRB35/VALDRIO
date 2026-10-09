@@ -372,4 +372,31 @@ public sealed class T11SecondaryAllocationTests
         Assert.AreEqual("GRAPH_SELF_NOT_ALLOWED", failure.Diagnostic.Code);
     }
 
+    [TestMethod]
+    public void MixedCurrencyPrimaryFactsCannotBeSilentlyTreatedAsStudyCurrency()
+    {
+        var foreign = Primary(21, A, 100m) with
+        {
+            PostedAmount = new Money(100m, new CurrencyCode("USD"), Precision)
+        };
+        var primary = Source(foreign);
+        var failure = Assert.ThrowsExactly<DomainRuleException>(() =>
+            SecondaryAllocationService.Calculate(primary, Graph(), Precision));
+        Assert.AreEqual("MONEY_CURRENCY_MISMATCH", failure.Diagnostic.Code);
+    }
+
+    [TestMethod]
+    public void SamePolicyLabelWithDifferentActualPrecisionParametersCannotPass()
+    {
+        var changedPolicy = Precision with { MaximumNumericCorrection = 0.00000002m };
+        var inconsistent = Primary(22, A, 100m) with
+        {
+            PostedAmount = new Money(100m, Eur, changedPolicy)
+        };
+        var primary = Source(inconsistent);
+        var failure = Assert.ThrowsExactly<DomainRuleException>(() =>
+            SecondaryAllocationService.Calculate(primary, Graph(), Precision));
+        Assert.AreEqual("PRECISION_POLICY_MISMATCH", failure.Diagnostic.Code);
+    }
+
 }
