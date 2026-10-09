@@ -216,7 +216,9 @@ public sealed partial class AllocationWorkspaceViewModel
         secondaryPreview = null;
         secondaryCalculated = false;
         SecondaryResults.Clear();
+        SecondaryBridges.Clear();
         SecondaryCirculation.Clear();
+        SelectedSecondaryResultRow = null;
         SecondaryExplanation = "";
         try
         {
