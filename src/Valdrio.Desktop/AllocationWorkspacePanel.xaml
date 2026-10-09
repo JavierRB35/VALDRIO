@@ -67,7 +67,7 @@
      <WrapPanel><Button Content="{Binding [SaveRule]}" Command="{Binding SaveRuleCommand}" x:Name="SaveRuleButton"/><Button Style="{StaticResource Button.Primary}" Content="{Binding [ApplyRule]}" Command="{Binding ApplyRuleCommand}" x:Name="ApplyRuleButton"/></WrapPanel>
     </StackPanel>
    </TabItem>
-       <TabItem Header="{Binding [SecondaryRules]}" IsEnabled="{Binding CanEditSecondaryConfiguration}">
+       <TabItem Header="{Binding [SecondaryRules]}">
      <StackPanel Margin="16">
       <TextBlock Text="{Binding [SecondaryRouteHelp]}" TextWrapping="Wrap" Margin="0,0,0,12"/>
       <DataGrid x:Name="SecondaryRulesGrid" ItemsSource="{Binding SecondaryRules}" SelectedItem="{Binding SelectedSecondary}" IsReadOnly="True" AutoGenerateColumns="False" Height="155">
@@ -77,6 +77,7 @@
         <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Key}" Width="2*"/>
        </DataGrid.Columns>
       </DataGrid>
+      <StackPanel IsEnabled="{Binding CanEditSecondaryConfiguration}">
       <WrapPanel Margin="0,8,0,12">
        <Button x:Name="LoadSecondaryButton" Content="{Binding [EditRule]}" Command="{Binding LoadSecondaryCommand}"/>
        <Button x:Name="NewSecondaryButton" Content="{Binding [NewRule]}" Command="{Binding NewSecondaryCommand}"/>
@@ -89,6 +90,7 @@
       <TextBlock Text="{Binding [ReciprocalGroup]}" Margin="0,8,0,0"/>
       <TextBox Text="{Binding GroupName, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [ReciprocalGroup]}"/>
       <Button Style="{StaticResource Button.Primary}" x:Name="SaveSecondaryButton" Content="{Binding [SaveRule]}" Command="{Binding SaveSecondaryCommand}" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+      </StackPanel>
       <Expander Header="{Binding [SecondarySourceGroupsTitle]}" Margin="0,16,0,0">
        <StackPanel Margin="0,8,0,0">
         <TextBlock Text="{Binding [SecondarySourceGroupsHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
@@ -98,11 +100,13 @@
           <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Group}" Width="*"/>
          </DataGrid.Columns>
         </DataGrid>
+        <StackPanel IsEnabled="{Binding CanEditSecondaryConfiguration}">
         <TextBlock Text="{Binding [SecondarySourcePart]}" Margin="0,8,0,0"/>
         <ComboBox ItemsSource="{Binding Parts}" SelectedValue="{Binding SecondaryGroupPart}" AutomationProperties.Name="{Binding [SecondarySourcePart]}"/>
         <TextBlock Text="{Binding [SecondarySelectedGroup]}" Margin="0,8,0,0"/>
         <ComboBox ItemsSource="{Binding SecondaryGroupChoices}" SelectedValue="{Binding SecondaryGroupName}" AutomationProperties.Name="{Binding [SecondarySelectedGroup]}"/>
         <Button Style="{StaticResource Button.Primary}" Content="{Binding [SecondaryAssignGroup]}" Command="{Binding SaveSecondaryGroupCommand}" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+        </StackPanel>
        </StackPanel>
       </Expander>
      </StackPanel>
