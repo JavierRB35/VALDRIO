@@ -1275,4 +1275,6 @@ Difference to distribute: {7}</value></data>
   <data name="Model.NodeEditorPublishedHelp" xml:space="preserve"><value>This model has been published and cannot be edited. To change the Principal/Auxiliary role or the cost-pool description, create an editable version. The published version will remain unchanged.</value></data>
   <data name="Model.NodeEditorMissingModelHelp" xml:space="preserve"><value>No model is selected. First create or load a draft structure in Models, then return here to define its nodes.</value></data>
   <data name="Model.NodeClassificationHelp" xml:space="preserve"><value>Principal/Auxiliary is defined per NODE, not per physical center. Select a node to inspect its role and cost-pool description. Both fields can be edited in a draft. Production/Commercial/Structure is a separate classification of resource costs.</value></data>
+  <data name="Resources.AssumedFixed" xml:space="preserve"><value>Fixed by default (unreviewed)</value></data>
+  <data name="Resource.BehaviorAssumedFixed" xml:space="preserve"><value>Part {0} is fixed by default, not verified; review is required before definitive absorption.</value></data>
 </root>

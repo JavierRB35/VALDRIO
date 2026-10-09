@@ -1,6 +1,6 @@
 namespace Valdrio.Domain;
 
-public enum ResourceBehavior { Unclassified, Fixed, Variable, MixedPending }
+public enum ResourceBehavior { Unclassified, Fixed, Variable, MixedPending, AssumedFixed }
 // Economic perimeter is independent of fixed/variable behavior. Do not reuse legacy CostLayer.
 public enum ResourceCostLayer { Unclassified, Production, Commercial, Structure }
 public enum ResourceCapacityTreatment { None, AssessAtPool, PeriodCost }

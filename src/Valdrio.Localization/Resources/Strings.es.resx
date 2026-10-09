@@ -1275,4 +1275,6 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.NodeEditorPublishedHelp" xml:space="preserve"><value>Este modelo está publicado y no se puede editar. Para cambiar el tipo de nodo (Principal/Auxiliar) o la descripción del grupo de costes, crea una versión editable. La versión publicada permanecerá intacta.</value></data>
   <data name="Model.NodeEditorMissingModelHelp" xml:space="preserve"><value>No hay ningún modelo seleccionado. Primero crea o carga una estructura en preparación en Modelos y vuelve aquí para definir los nodos.</value></data>
   <data name="Model.NodeClassificationHelp" xml:space="preserve"><value>Principal/Auxiliar se define en cada NODO, no en el centro físico. Selecciona un nodo para consultar su tipo y la descripción del grupo de costes. Ambos campos se editan en un borrador. Producción/Comercial/Estructura es otra clasificación de los costes de los recursos.</value></data>
+  <data name="Resources.AssumedFixed" xml:space="preserve"><value>Fijo por defecto (sin revisar)</value></data>
+  <data name="Resource.BehaviorAssumedFixed" xml:space="preserve"><value>La parte {0} es fija por defecto, no verificada; necesita revisión antes de una absorción definitiva.</value></data>
 </root>

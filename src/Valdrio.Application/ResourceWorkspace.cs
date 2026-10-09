@@ -20,7 +20,7 @@ public sealed record ResourceAdjustmentRequest(EntityId Id, Money? OriginalDelta
     string Type, string Reason, EntityId? ReversalOfId, CurrencyMetadataSnapshot? CurrencyMetadata);
 public sealed record ResourceRateChoice(EntityId ValueId, FxRateId RateId);
 public sealed record ResourcePartReplacement(EntityId ResourceId, IReadOnlyList<ResourcePartDraft> Parts);
-public enum ResourceMutationKind { EditResource, PutObject, ResetPreparation, Revalue }
+public enum ResourceMutationKind { EditResource, PutObject, ResetPreparation, Revalue, ClassifyBatch }
 
 // A request freezes the user's choices; the application reconstructs every economic result.
 public sealed class ResourceMutation

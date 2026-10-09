@@ -142,6 +142,39 @@ public static class ResourceWorkspaceRules
                 if (command.CostObject is not null) throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
                 entries.Clear(); // Explicit, reasoned operation. The immutable history retains every previous state.
                 break;
+            case ResourceMutationKind.ClassifyBatch:
+                // One auditable, atomic classification-only update over several accounts.
+                // No source, amount, route, direct assignment, FX, layer or capacity ownership may change.
+                if (command.ResourceId is not null || command.CostObject is not null ||
+                    command.Parts.Count != 0 || command.Adjustments.Count != 0 ||
+                    command.RateSet is not null || command.RateChoices.Count != 0 ||
+                    command.Replacements.Count == 0 ||
+                    command.Replacements.Select(r => r.ResourceId).Distinct().Count() != command.Replacements.Count)
+                    throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
+                foreach (var replacement in command.Replacements)
+                {
+                    var source = before.Resources.SingleOrDefault(r => r.Id == replacement.ResourceId)
+                        ?? throw Error("RES_NOT_FOUND", "Resource.NotFound");
+                    if (source.Parts.Count != replacement.Parts.Count ||
+                        replacement.Parts.Select(p => p.Id).Distinct().Count() != replacement.Parts.Count)
+                        throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
+                    foreach (var candidate in replacement.Parts)
+                    {
+                        var original = source.Parts.SingleOrDefault(p => p.Id == candidate.Id)
+                            ?? throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
+                        if (original.Amount != candidate.Amount || original.Routing != candidate.Routing ||
+                            original.PoolId != candidate.PoolId || original.ExclusionReason != candidate.ExclusionReason ||
+                            !original.DirectAssignments.SequenceEqual(candidate.DirectAssignments) ||
+                            original.Classification.Layer != candidate.Classification.Layer ||
+                            original.Classification.CapacityTreatment != candidate.Classification.CapacityTreatment ||
+                            original.Classification.CapacityOwner != candidate.Classification.CapacityOwner)
+                            throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
+                        candidate.Classification.EnsureValid(candidate);
+                    }
+                    entries.RemoveAll(r => r.Id == source.Id);
+                    entries.Add(new ResourceDraft(source.Id, source.Sources, source.Adjustments, replacement.Parts));
+                }
+                break;
             case ResourceMutationKind.Revalue:
                 if (command.ResourceId is not null || command.CostObject is not null || command.Parts.Count != 0 || command.Adjustments.Count != 0 ||
                     command.RateSet is null) throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");

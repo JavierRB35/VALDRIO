@@ -109,6 +109,14 @@ public static class ResourcePreparationRules
                             diagnostics.Add(unclassified);
                         else warnings.Add(unclassified);
                     }
+                    if (classification.Behavior == ResourceBehavior.AssumedFixed)
+                    {
+                        var assumed = PartDiagnostic(part, "RES_BEHAVIOR_ASSUMED_FIXED", "Resource.BehaviorAssumedFixed");
+                        if (requireDefinitiveAbsorption ||
+                            (capacityRequiresBehavior && classification.CapacityTreatment == ResourceCapacityTreatment.AssessAtPool))
+                            diagnostics.Add(assumed);
+                        else warnings.Add(assumed);
+                    }
                     if (classification.Behavior == ResourceBehavior.MixedPending)
                     {
                         var mixed = PartDiagnostic(part, "RES_BEHAVIOR_MIXED_PENDING", "Resource.BehaviorMixedPending");
