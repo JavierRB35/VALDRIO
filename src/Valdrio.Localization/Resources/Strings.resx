@@ -1271,4 +1271,5 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.SecondaryCalculating" xml:space="preserve"><value>Calculating secondary costs. You can cancel this operation; no economic data will be saved until you close the phase.</value></data>
   <data name="AllocationUI.SecondaryCancelled" xml:space="preserve"><value>Secondary calculation cancelled. Previous published results and saved rules remain unchanged.</value></data>
   <data name="AllocationUI.SecondaryResultStale" xml:space="preserve"><value>The study changed during calculation. The result was discarded. Review assignments and calculate again.</value></data>
+  <data name="AllocationUI.SecondaryObsoleteMappingsBlock" xml:space="preserve"><value>There are obsolete source-to-group assignments. Clear or correct them before calculating secondary costs.</value></data>
 </root>
