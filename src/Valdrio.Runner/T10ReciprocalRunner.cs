@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
+using Valdrio.Application;
 using Valdrio.Calculation;
 using Valdrio.Domain;
 
@@ -65,6 +66,68 @@ internal static class T10ReciprocalRunner
             ArgumentException or OverflowException or InvalidOperationException)
         {
             Console.Error.WriteLine("RECIPROCAL_INPUT_INVALID: " + ex.GetType().Name);
+            return 3;
+        }
+    }
+
+
+    // Read a real frozen T08 receipt; validate routing only, never invent
+    // primary costs or publish T11 results.
+    public static int RunStudy(string[] args)
+    {
+        try
+        {
+            var receipt = CanonicalSnapshotJson.Deserialize<StudySnapshotReceipt>(File.ReadAllText(args[1]));
+            receipt.EnsureValid();
+            if (receipt.Input is not AllocationStudySnapshotInput snapshot)
+            {
+                Console.Error.WriteLine("RECIPROCAL_STUDY_SCHEMA_UNSUPPORTED");
+                return 3;
+            }
+            var group = args.Length == 3 ? args[2] : "all";
+            var graph = ReciprocalGraphBuilder.FromPublishedSecondaryKeys(
+                snapshot.Model.Structure, snapshot.Allocations.Keys,
+                snapshot.Allocations.Configuration.SecondaryRules,
+                snapshot.Model.DriverUnits, snapshot.PrecisionPolicy, group);
+            var factor = ReciprocalFactorization.Prepare(graph);
+            var report = factor.Solve(
+                graph.AuxiliaryIds.ToDictionary(id => id, _ => 0m, StringComparer.Ordinal),
+                graph.TerminalIds.ToDictionary(id => id, _ => 0m, StringComparer.Ordinal));
+            Console.WriteLine(JsonSerializer.Serialize(new
+            {
+                status = "routing-viable",
+                task = "T10",
+                schema = "valdrio-reciprocal-feasibility-v1",
+                policy = report.PolicyVersion,
+                componentRoutingGroup = group,
+                receipt.StudyId,
+                receipt.EconomicInputHash,
+                auxiliaryIds = report.AuxiliaryIds,
+                terminalIds = report.TerminalIds,
+                factorsByAuxiliaryOrigin = report.FactorsByAuxiliaryOrigin
+                    .Select(row => row.Select(CanonicalDecimal.Format).ToArray()).ToArray(),
+                maxAmplification = CanonicalDecimal.Format(report.MaxCirculationAmplification),
+                minNormalizedPivot = CanonicalDecimal.Format(report.MinNormalizedPivot),
+                warnings = report.Warnings.Select(Diagnostic).ToArray(),
+                economicExecution = false
+            }));
+            return 0;
+        }
+        catch (DomainRuleException ex)
+        {
+            Console.WriteLine(JsonSerializer.Serialize(new
+            {
+                status = "routing-blocked",
+                task = "T10",
+                policy = ReciprocalFactorization.Policy,
+                diagnostic = Diagnostic(ex.Diagnostic)
+            }));
+            return 4;
+        }
+        catch (Exception ex) when (ex is IOException or JsonException or FormatException or
+            ArgumentException or OverflowException or InvalidOperationException)
+        {
+            Console.Error.WriteLine("RECIPROCAL_STUDY_INVALID: " + ex.GetType().Name);
             return 3;
         }
     }
