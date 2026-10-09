@@ -179,4 +179,34 @@ public sealed class T11SecondaryAllocationTests
                 [P1, P2], Precision));
     }
 
+    [TestMethod]
+    public void ResourceBridgeShowsDirectExcludedAndTerminalWithoutDoubleCounting()
+    {
+        var origin = Primary(9, P1, 100m);
+        Money M(decimal value) => new(value, Eur, Precision);
+        var resource = new PrimaryResourceReconciliation(origin.ResourceId,
+            M(160m), M(20m), M(100m), M(40m), M(0m), M(0m));
+        var primary = new PrimaryAllocationResult(Id("000000000005"), 3, Eur, Precision.Version,
+            [origin], [], [resource], [], []);
+        var result = SecondaryAllocationService.CalculateDirectOnly(primary, [P1], Precision);
+        Assert.IsTrue(result.IsComplete);
+        var bridge = result.ResourceBridges.Single();
+        Assert.AreEqual(160m, bridge.Effective.Amount);
+        Assert.AreEqual(20m, bridge.Direct.Amount);
+        Assert.AreEqual(40m, bridge.Excluded.Amount);
+        Assert.AreEqual(100m, bridge.Terminal.Amount);
+        Assert.AreEqual(0m, bridge.Difference.Amount);
+        var receipt = SecondaryAllocationService.Publish(result, AllocationConfiguration.Empty, 3);
+        Assert.AreEqual(bridge, receipt.ResourceBridges.Single());
+        Assert.AreEqual(100m, receipt.Facts.Sum(x => x.PostedAmount.Amount));
+
+        // A synthetic inconsistent primary summary must not be laundered into
+        // an apparently complete secondary publication.
+        var incorrect = new PrimaryAllocationResult(Id("000000000005"), 3, Eur, Precision.Version,
+            [origin], [], [resource with { Effective = M(170m) }], [], []);
+        var failure = Assert.ThrowsExactly<DomainRuleException>(() =>
+            SecondaryAllocationService.CalculateDirectOnly(incorrect, [P1], Precision));
+        Assert.AreEqual("SECONDARY_RESOURCE_BRIDGE_INVALID", failure.Diagnostic.Code);
+    }
+
 }
