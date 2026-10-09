@@ -1254,4 +1254,11 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.SecondaryBridgeExcluded" xml:space="preserve"><value>Excluido</value></data>
   <data name="AllocationUI.SecondaryBridgeTerminal" xml:space="preserve"><value>A nodos principales</value></data>
   <data name="AllocationUI.SecondaryBridgeDifference" xml:space="preserve"><value>Diferencia</value></data>
+  <data name="AllocationUI.SecondarySourceGroupsTitle" xml:space="preserve"><value>Grupo de reparto por origen económico</value></data>
+  <data name="AllocationUI.SecondarySourceGroupsHelp" xml:space="preserve"><value>Una parte de recurso utiliza el grupo «Todos» salvo que le asignes expresamente otro. Para cada grupo utilizado, todos los auxiliares necesitan una clave secundaria publicada. Selecciona «Todos» para quitar una asignación anterior.</value></data>
+  <data name="AllocationUI.SecondarySourcePart" xml:space="preserve"><value>Parte de recurso</value></data>
+  <data name="AllocationUI.SecondarySelectedGroup" xml:space="preserve"><value>Grupo de reparto</value></data>
+  <data name="AllocationUI.SecondaryAssignGroup" xml:space="preserve"><value>Asignar grupo</value></data>
+  <data name="Secondary.GroupSourceInvalid" xml:space="preserve"><value>Las asignaciones de grupos secundarios hacen referencia a partes sin cobertura en el reparto primario: {0}. Elimina las asignaciones obsoletas y vuelve a calcular.</value></data>
+  <data name="Secondary.GraphInconsistent" xml:space="preserve"><value>Los grupos secundarios no coinciden en la estructura de nodos auxiliares y principales. Revisa el modelo seleccionado y las reglas por grupo.</value></data>
 </root>
