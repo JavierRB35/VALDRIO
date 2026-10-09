@@ -165,6 +165,23 @@ public static class SecondaryAllocationService
         catch (OverflowException) { throw Error("SECONDARY_NUMERIC_OVERFLOW", "Secondary.NumericOverflow"); }
     }
 
+    // Persist only a reproducible seal, not an opaque mutable balance cache.
+    // Include adopted secondary rules even when two rules happen to yield equal amounts.
+    public static string ResultFingerprint(SecondaryAllocationResult result, AllocationConfiguration config) =>
+        PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new
+        {
+            Schema = SecondaryAllocationResult.Schema,
+            result.Primary.Currency, result.Primary.PolicyVersion,
+            Primary = result.Primary.Facts,
+            SecondaryRules = config.SecondaryRules.Where(r => r.IsActive).OrderBy(r => r.Id).ToArray(),
+            Final = result.Facts,
+            Result = result.Totals,
+            result.Circulation.PolicyVersion,
+            result.Circulation.AuxiliaryIds,
+            result.Circulation.TerminalIds,
+            result.Circulation.FactorsByAuxiliaryOrigin
+        }));
+
     private static DomainRuleException Error(string code, string key, string? id = null) =>
         new(new DomainDiagnostic(code, key, id is null ? [] :
             [new DiagnosticArgument("source", DiagnosticArgumentType.Identifier, id)]));
