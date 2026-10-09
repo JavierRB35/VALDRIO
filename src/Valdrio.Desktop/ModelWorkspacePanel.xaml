@@ -177,6 +177,26 @@
     <TabItem x:Name="ModelTab2">
      <StackPanel Margin="10">
       <TextBlock TextWrapping="Wrap" x:Name="NodesHelp" Style="{StaticResource SectionHelp}"/>
+      <Border Style="{StaticResource Card}" Margin="0,0,0,12"
+              Visibility="{Binding HasNoModel, Converter={StaticResource Visible}}">
+       <StackPanel>
+        <TextBlock Text="{Binding NodeEditorMissingModelHelp}" TextWrapping="Wrap"
+                   AutomationProperties.LiveSetting="Polite"/>
+        <Button x:Name="GoToModelSetupButton" Content="{Binding ModelLabel}"
+                Click="OpenModelSetup" HorizontalAlignment="Left" Margin="0,8,0,0"/>
+       </StackPanel>
+      </Border>
+      <Border Style="{StaticResource Card}" Margin="0,0,0,12"
+              Visibility="{Binding IsPublished, Converter={StaticResource Visible}}">
+       <StackPanel>
+        <TextBlock Text="{Binding NodeEditorPublishedHelp}" TextWrapping="Wrap"
+                   AutomationProperties.LiveSetting="Polite"/>
+        <Button x:Name="CloneToEditNodesButton" Content="{Binding CloneLabel}"
+                Command="{Binding CloneCommand}" HorizontalAlignment="Left" Margin="0,8,0,0"
+                Style="{StaticResource Button.Primary}"/>
+       </StackPanel>
+      </Border>
+      <TextBlock Text="{Binding NodeClassificationHelp}" Style="{StaticResource SectionHelp}"/>
 
       <TextBlock Text="{Binding NodeListTitle}" Style="{StaticResource SectionTitle}"/>
       <TextBlock Text="{Binding NodeListHelp}" Style="{StaticResource SectionHelp}"/>
@@ -237,16 +257,16 @@
          </StackPanel>
         </Grid>
 
+        <TextBlock Text="{Binding PoolLabel}"/>
+        <TextBlock Text="{Binding PoolHelp}" Style="{StaticResource FieldHint}"/>
+        <TextBox x:Name="PoolBox" Text="{Binding PoolDescription,UpdateSourceTrigger=PropertyChanged}" TabIndex="47" AutomationProperties.Name="{Binding PoolLabel}" local:FieldHelp.Key="PoolDescription"/>
+
         <Expander x:Name="NodeUnitCreator" Header="{Binding CreateUnitHereLabel}" Margin="0,4,0,8">
          <StackPanel Margin="8,4,0,4">
           <TextBlock Text="{Binding CreateUnitHereHelp}" Style="{StaticResource SectionHelp}"/>
           <ContentControl x:Name="NodeUnitsCreationHost"/>
          </StackPanel>
         </Expander>
-
-        <TextBlock Text="{Binding PoolLabel}"/>
-        <TextBlock Text="{Binding PoolHelp}" Style="{StaticResource FieldHint}"/>
-        <TextBox x:Name="PoolBox" Text="{Binding PoolDescription,UpdateSourceTrigger=PropertyChanged}" TabIndex="47" AutomationProperties.Name="{Binding PoolLabel}" local:FieldHelp.Key="PoolDescription"/>
 
         <Expander Header="{Binding OptionalNodeDataLabel}" Margin="0,6,0,4">
          <StackPanel>
