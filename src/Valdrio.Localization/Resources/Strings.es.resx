@@ -1263,4 +1263,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Secondary.GraphInconsistent" xml:space="preserve"><value>Los grupos secundarios no coinciden en la estructura de nodos auxiliares y principales. Revisa el modelo seleccionado y las reglas por grupo.</value></data>
   <data name="AllocationUI.SecondaryObsoleteGroup" xml:space="preserve"><value>Parte obsoleta</value></data>
   <data name="AllocationUI.SecondaryClearObsoleteGroups" xml:space="preserve"><value>Eliminar asignaciones obsoletas de grupos</value></data>
+  <data name="AllocationUI.SecondaryFillMissing" xml:space="preserve"><value>Aplicar esta clave a los auxiliares sin asignar</value></data>
+  <data name="AllocationUI.SecondaryFillMissingHelp" xml:space="preserve"><value>Utiliza la clave publicada y el grupo seleccionados. Conserva todas las reglas manuales existentes y comprueba cada auxiliar antes de guardar las asignaciones en una sola operación.</value></data>
+  <data name="Secondary.BatchUnitMismatch" xml:space="preserve"><value>No se puede aplicar esta clave por unidades de actividad al auxiliar {0} porque su unidad de actividad es distinta. Selecciona una clave compatible o asigna este auxiliar manualmente.</value></data>
+  <data name="AllocationUI.SecondaryExplainAmounts" xml:space="preserve"><value>Adjudicado: {0}. Bruto: {1}. Ajuste numérico: {2}. Redondeo: {3}.</value></data>
 </root>
