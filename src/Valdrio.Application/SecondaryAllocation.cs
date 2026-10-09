@@ -22,6 +22,10 @@ public sealed record SecondaryTerminalTotal(
 public sealed record SecondaryPartReconciliation(
     EntityId ResourceId, EntityId PartId, Money PrimaryInput, Money FinalOutput, Money Difference);
 
+public sealed record SecondaryEconomicBridge(
+    EntityId ResourceId, Money Effective, Money Direct, Money Excluded, Money Pending,
+    Money Terminal, Money Difference);
+
 public sealed record SecondaryAuxiliaryGross(string AuxiliaryId, decimal GrossAmount);
 
 // Frozen publication of the economically adjudicated terminal facts at a
@@ -33,6 +37,7 @@ public sealed record SecondaryCalculationPublication(
     IReadOnlyList<SecondaryTerminalTotal> Totals,
     IReadOnlyList<SecondaryPartReconciliation> Reconciliations,
     IReadOnlyList<SecondaryExplanationLink> ExplanationLinks,
+    IReadOnlyList<SecondaryEconomicBridge> ResourceBridges,
     IReadOnlyList<SecondaryAuxiliaryGross> AuxiliaryGrossFlows,
     decimal MaxCirculationAmplification, decimal MinNormalizedPivot)
 {
@@ -50,7 +55,8 @@ public sealed class SecondaryAllocationResult
         IReadOnlyList<SecondaryExplanationLink> links,
         IReadOnlyList<SecondaryTerminalTotal> totals,
         IReadOnlyList<SecondaryPartReconciliation> reconciliations,
-        ReciprocalSolution circulation)
+        ReciprocalSolution circulation,
+        IReadOnlyList<SecondaryEconomicBridge>? resourceBridges = null)
     {
         Primary = primary;
         Facts = FrozenList.Copy(facts);
@@ -58,6 +64,7 @@ public sealed class SecondaryAllocationResult
         Totals = FrozenList.Copy(totals);
         Reconciliations = FrozenList.Copy(reconciliations);
         Circulation = circulation;
+        ResourceBridges = FrozenList.Copy(resourceBridges ?? []);
     }
     public PrimaryAllocationResult Primary { get; }
     public IReadOnlyList<SecondaryAllocationFact> Facts { get; }
@@ -65,7 +72,9 @@ public sealed class SecondaryAllocationResult
     public IReadOnlyList<SecondaryTerminalTotal> Totals { get; }
     public IReadOnlyList<SecondaryPartReconciliation> Reconciliations { get; }
     public ReciprocalSolution Circulation { get; }
-    public bool IsComplete => Primary.IsComplete && Reconciliations.All(r => r.Difference.Amount == 0m);
+    public IReadOnlyList<SecondaryEconomicBridge> ResourceBridges { get; }
+    public bool IsComplete => Primary.IsComplete && Reconciliations.All(r => r.Difference.Amount == 0m)
+        && ResourceBridges.All(r => r.Difference.Amount == 0m);
     public IReadOnlyList<SecondaryAllocationFact> ByResource(EntityId id) =>
         FrozenList.Copy(Facts.Where(f => f.ResourceId == id));
     public IReadOnlyList<SecondaryAllocationFact> ByTerminal(EntityId id) =>
@@ -166,7 +175,7 @@ public static class SecondaryAllocationService
             Array.Empty<string>(), terminals.Select(t => t.ToString()).ToArray(),
             Array.Empty<decimal>(), finalAmounts, Array.Empty<decimal[]>(),
             0m, 0m, 0m, 1m, Array.Empty<DomainDiagnostic>());
-        return new(primary, facts, links, totals, parts, circulation);
+        return new(primary, facts, links, totals, parts, circulation, BuildResourceBridges(primary, facts, precision));
     }
 
     // Pure seam for corpus C09 and for tests independent from SQLite/WPF.
@@ -252,7 +261,8 @@ public static class SecondaryAllocationService
                     g.Key.CostLayer, g.Key.CapacityTreatment,
                     new Money(g.Aggregate(0m, (sum, f) => checked(sum + f.PostedAmount.Amount)), currency, precision)))
                 .ToArray();
-            return new(primary, facts, links, totals, reconciliations, gross);
+            return new(primary, facts, links, totals, reconciliations, gross,
+                BuildResourceBridges(primary, facts, precision));
         }
         catch (OverflowException) { throw Error("SECONDARY_NUMERIC_OVERFLOW", "Secondary.NumericOverflow"); }
     }
@@ -271,6 +281,7 @@ public static class SecondaryAllocationService
             calculated.Circulation.PolicyVersion, calculated.Primary.PolicyVersion,
             FrozenList.Copy(calculated.Facts), FrozenList.Copy(calculated.Totals),
             FrozenList.Copy(calculated.Reconciliations), FrozenList.Copy(calculated.ExplanationLinks),
+            FrozenList.Copy(calculated.ResourceBridges),
             FrozenList.Copy(calculated.Circulation.AuxiliaryIds.Select((id, i) =>
                 new SecondaryAuxiliaryGross(id, calculated.Circulation.Gross[i]))),
             calculated.Circulation.MaxCirculationAmplification,
@@ -288,11 +299,38 @@ public static class SecondaryAllocationService
             SecondaryRules = config.SecondaryRules.Where(r => r.IsActive).OrderBy(r => r.Id).ToArray(),
             Final = result.Facts,
             Result = result.Totals,
+            Bridges = result.ResourceBridges,
             ReciprocalPolicyVersion = result.Circulation.PolicyVersion,
             result.Circulation.AuxiliaryIds,
             result.Circulation.TerminalIds,
             result.Circulation.FactorsByAuxiliaryOrigin
         }));
+
+    // Direct-to-object and excluded amounts never pass through the auxiliary
+    // solver. Publish an explicit resource-level bridge so they cannot be
+    // mistaken for missing cost or counted twice as terminal contributions.
+    private static IReadOnlyList<SecondaryEconomicBridge> BuildResourceBridges(
+        PrimaryAllocationResult primary, IReadOnlyList<SecondaryAllocationFact> terminal,
+        PrecisionPolicy precision)
+    {
+        var result = new List<SecondaryEconomicBridge>();
+        foreach (var resource in primary.Resources.OrderBy(r => r.ResourceId))
+        {
+            var terminalAmount = terminal.Where(f => f.ResourceId == resource.ResourceId)
+                .Aggregate(0m, (sum, f) => checked(sum + f.PostedAmount.Amount));
+            var counted = checked(resource.Direct.Amount + resource.Excluded.Amount +
+                resource.Pending.Amount + terminalAmount);
+            var diff = checked(resource.Effective.Amount - counted);
+            if (diff != resource.Difference.Amount || diff != 0m)
+                throw Error("SECONDARY_RESOURCE_BRIDGE_INVALID", "Secondary.ResourceBridgeInvalid",
+                    resource.ResourceId.ToString());
+            result.Add(new(resource.ResourceId, resource.Effective, resource.Direct,
+                resource.Excluded, resource.Pending,
+                new Money(terminalAmount, primary.Currency, precision),
+                new Money(diff, primary.Currency, precision)));
+        }
+        return FrozenList.Copy(result);
+    }
 
     private static DomainRuleException Error(string code, string key, string? id = null) =>
         new(new DomainDiagnostic(code, key, id is null ? [] :
