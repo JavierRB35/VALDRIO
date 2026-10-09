@@ -131,7 +131,8 @@ public static class SecondaryAllocationService
             throw Error("SECONDARY_PRECISION_POLICY_INVALID", "Secondary.PrecisionMismatch");
         var terminals = principalIds.Distinct().Order().ToArray();
         if (terminals.Length == 0 || terminals.Length != principalIds.Count)
-            throw Error("SECONDARY_PRIMARY_NODE_INVALID", "Secondary.PrimaryNodeInvalid");
+            throw Error("SECONDARY_PRIMARY_NODE_INVALID", "Secondary.PrimaryNodeInvalid",
+                terminals.Length == 0 ? "no-active-principals" : "duplicate-principal-id");
         var terminalSet = terminals.ToHashSet();
         if (primary.Facts.Any(f => !terminalSet.Contains(f.NodeId)))
             throw Error("SECONDARY_PRIMARY_NODE_INVALID", "Secondary.PrimaryNodeInvalid",
