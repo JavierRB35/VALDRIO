@@ -16,7 +16,7 @@ Se mantiene el almacenamiento histórico de cambios en `AllocationChangeReceipt`
 
 ## Riesgos y consecuencias
 
-- El hash es **sello reproducible de estado**, no materialización de un ledger inmutable autónomo: antes de aceptación de T11 debe decidirse y probarse el recibo publicado completo previsto por CM07/T12.
+- El hash es un **sello reproducible de estado**, complementado ahora por un recibo persistido de hechos terminales y explicaciones; falta ejecutar y aceptar las pruebas nativas de cierre/replay antes de T12.
 - No existe mapeo de parte de recurso a `ComponentRoutingGroup`; no se permite ejecutar grupos especializados hasta que ese contrato exista. Se soporta el grupo `all` con rutas recíprocas.
 - No se admite el cierre si T09 no está completo o si T10 rechaza el grafo.
 - El cálculo y los tests C# deben ejecutarse en Windows/.NET 10, con métricas de estabilidad y memoria. Sin ello, ADR no pasa a Accepted.
