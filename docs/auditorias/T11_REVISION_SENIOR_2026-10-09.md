@@ -100,3 +100,8 @@ Se han corregido problemas reales de usabilidad, trazabilidad y ciclo de cálcul
 - Riesgo adicional: C11/T11 debía preservar ResourceBehavior, ResourceCostLayer y ResourceCapacityTreatment en todas las transferencias. Existe una prueba de conservación fija/variable, comercial/estructura y capacidad.
 - Verificación metodológica local ampliada: el verificador de referencias oficial v0.4 ha informado status=passed, verified_count=39; el oráculo racional independiente de esta auditoría informó status PASSED para C09 per-part rounding, anillo de 100 nodos / 1000 fuentes, 97 terminales con un quantum firmado y amplificación 2e12. Ambas ejecuciones son **externas al C# en desarrollo**.
 - Todos los tests .NET nuevos permanecen escritos y no ejecutados. La autorización de CI no sustituye la observación real del coste ni una herramienta de dispatch: no se han creado eventos de gasto ni nuevos workflows.
+
+
+## Incidencia transversal modelo T04 detectada durante T11
+
+El propietario no podía seleccionar Principal/Auxiliar ni editar Pool description desde la estructura. Revisión del editor: los campos existían pero quedaban deshabilitados cuando `Current.Status=Published` y la propia pestaña Nodos no indicaba qué hacer. Se añadió un aviso de «modelo publicado» con clonación directa a versión editable en la misma pestaña, guía para ausencia de modelo y mayor prioridad visual a la descripción del pool. Un smoke WPF ahora cubre modificar y guardar ambos campos tras clonar, con original inmutable. Esta mejora **no crea** una clasificación funcional Producción/Comercial/Estructura a nivel de nodo: esa clasificación sigue asignándose a las partes de recurso. La ejecución del smoke en Windows es pendiente.
