@@ -76,6 +76,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         SaveDraftCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(false), () => CanEditKey && MissingKeyInput(false) is null);
         PublishCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey && MissingKeyInput(true) is null);
         RefreshCommand = new AsyncRelayCommand(async () => { if (await CanLeaveAsync()) await EnterAsync(true); }, () => !busy);
+        CheckReciprocalCommand = new RelayCommand(CheckReciprocal, () => workspace is not null && !busy);
         SaveRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(false), () => CanSaveRule);
         ApplyRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(true), () => CanSaveRule);
         SaveKeyCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey && MissingKeyInput(true) is null);
@@ -436,6 +437,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             else { old.Source = next.Source; old.Amount = next.Amount; old.Key = next.Key; old.Status = next.Status; old.SelectedKeyId = next.SelectedKeyId; }
         }
         RebuildPrimary();
+        ResetReciprocal();
         SelectedKey = Keys.FirstOrDefault(k => k.Value.Id == keyId); Refresh();
     }
     private async Task<bool> Run(Func<Task> work)
@@ -483,7 +485,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     {
         foreach (var command in new IRelayCommand?[] { DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
             SaveRuleCommand, RemoveRuleCommand, LoadRuleCommand, NewRuleCommand, SaveSecondaryCommand, LoadSecondaryCommand, NewSecondaryCommand,
-            RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand }) command?.NotifyCanExecuteChanged();
+            RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CheckReciprocalCommand }) command?.NotifyCanExecuteChanged();
     }
     private void Refresh() { OnPropertyChanged(string.Empty); Commands(); }
     public void RefreshPresentation(bool value) { pseudo = value; Rebuild(); }
