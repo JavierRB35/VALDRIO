@@ -99,6 +99,10 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         : MasterEdited;
     public bool IsDirty => dirty || nodeFormEdited || CenterFormEdited;
     public bool IsPublished => Current?.Status == ModelStatus.Published;
+    public bool HasNoModel => Current is null;
+    public string NodeEditorPublishedHelp => Text("Model.NodeEditorPublishedHelp");
+    public string NodeEditorMissingModelHelp => Text("Model.NodeEditorMissingModelHelp");
+    public string NodeClassificationHelp => Text("Model.NodeClassificationHelp");
     private bool Ready => !busy && company.WorkspaceIdle && company.ActiveModels is not null;
     public bool IsEditable => Current?.Status == ModelStatus.Draft;
     public bool CanEdit => Ready && IsEditable && company.CanWrite;
