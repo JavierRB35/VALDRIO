@@ -302,6 +302,7 @@ public static class SecondaryAllocationService
                 throw Error("SECONDARY_PRIMARY_INCOMPLETE", "Secondary.PrimaryIncomplete");
             if (!StringComparer.Ordinal.Equals(primary.PolicyVersion, precision.Version))
                 throw Error("SECONDARY_PRECISION_POLICY_INVALID", "Secondary.PrecisionMismatch");
+            ValidatePrimaryMoney(primary, precision);
             var terminals = principalIds.Distinct().Order().ToArray();
             if (terminals.Length == 0 || terminals.Length != principalIds.Count)
                 throw Error("SECONDARY_PRIMARY_NODE_INVALID", "Secondary.PrimaryNodeInvalid",
@@ -358,6 +359,7 @@ public static class SecondaryAllocationService
             throw Error("SECONDARY_PRIMARY_INCOMPLETE", "Secondary.PrimaryIncomplete");
         if (!StringComparer.Ordinal.Equals(primary.PolicyVersion, precision.Version))
             throw Error("SECONDARY_PRECISION_POLICY_INVALID", "Secondary.PrecisionMismatch");
+        ValidatePrimaryMoney(primary, precision);
         var factor = ReciprocalFactorization.Prepare(graph, cancellation);
         var auxIds = factor.AuxiliaryIds.ToArray();
         var terminalIds = factor.TerminalIds.ToArray();
@@ -478,6 +480,33 @@ public static class SecondaryAllocationService
             result.Circulation.TerminalIds,
             result.Circulation.FactorsByAuxiliaryOrigin
         }));
+
+    private static void ValidatePrimaryMoney(PrimaryAllocationResult primary, PrecisionPolicy precision)
+    {
+        var currency = primary.Currency;
+        void Check(Money value)
+        {
+            value.EnsureValid("secondarySource");
+            if (value.Currency != currency)
+                throw new DomainRuleException(new DomainDiagnostic(
+                    "MONEY_CURRENCY_MISMATCH", "Money.CurrencyMismatch",
+                    [new DiagnosticArgument("leftCurrency", DiagnosticArgumentType.CurrencyCode, value.Currency.Value),
+                     new DiagnosticArgument("rightCurrency", DiagnosticArgumentType.CurrencyCode, currency.Value)]));
+            PrecisionPolicyCompatibility.EnsureSame(value.PrecisionPolicy, precision,
+                "secondarySource", "secondaryPolicy");
+        }
+        foreach (var fact in primary.Facts) Check(fact.PostedAmount);
+        foreach (var part in primary.Parts)
+        {
+            Check(part.Input); Check(part.Output); Check(part.Difference);
+        }
+        foreach (var resource in primary.Resources)
+        {
+            Check(resource.Effective); Check(resource.Direct); Check(resource.Pools);
+            Check(resource.Excluded); Check(resource.Pending); Check(resource.Difference);
+        }
+        foreach (var total in primary.Pools) Check(total.PostedAmount);
+    }
 
     // Direct-to-object and excluded amounts never pass through the auxiliary
     // solver. Publish an explicit resource-level bridge so they cannot be
