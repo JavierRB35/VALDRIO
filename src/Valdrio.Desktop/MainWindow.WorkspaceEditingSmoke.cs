@@ -102,7 +102,7 @@ public partial class MainWindow
         allocations.SelectedKey = allocations.Keys.Single(k => k.Value.Name == "Distribución de las cuentas ajustadas"); await allocations.LoadKeyCommand.ExecuteAsync(null);
         Check(await allocations.SaveKeyAsync(true), "saved key can publish");
         allocations.SelectorKind = AccountSelectorKind.Prefix; allocations.Prefix = "60";
-        allocations.RuleKey = allocations.Keys.Single(k => k.Value.Name == "Distribución de las cuentas ajustadas").Value.Id; await allocations.SaveRuleCommand.ExecuteAsync(null); await Idle();
+        allocations.RuleKey = allocations.Keys.Single(k => k.Value.Name == "Distribución de las cuentas ajustadas").Value.Id; await allocations.ApplyRuleCommand.ExecuteAsync(null); await Idle();
         Check(allocations.PrimaryResults.Count == 19, "all prepared accounts distribute without selecting a pool");
         ResetScrollForCapture(); CheckGrid(AllocationPanel.KeyGrid); CheckGrid(AllocationPanel.LinesGrid);
         Check(RunSectionLayoutSmoke(), "allocation sections and account options never overlap");

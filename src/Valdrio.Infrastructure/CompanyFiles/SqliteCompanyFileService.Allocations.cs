@@ -27,11 +27,20 @@ public sealed partial class SqliteCompanyFileService
     private static IReadOnlyList<AllocationChangeReceipt> AllocationChanges(AllocationDbContext db, EntityId companyId, EntityId studyId) =>
         FrozenList.Copy(db.AllocationChanges.AsNoTracking().Where(r => r.CompanyId == companyId.ToString() && r.StudyId == studyId.ToString())
             .OrderBy(r => r.ConfirmedRevision).ToArray().Select(AllocationChange));
+    private static IEnumerable<AllocationKeyVersion> UsedKeys(AllocationChangeReceipt change)
+    {
+        var c = change.Request.Configuration;
+        return change.ReferencedKeys.Where(k => c.PrimaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id)
+            || c.SecondaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id)
+            || c.ExplicitAssignments.Any(a => a.KeyVersionId == k.Id));
+    }
     private static AllocationWorkspaceSnapshot AllocationWorkspace(AllocationDbContext db, CompanyFileSnapshot file, StudyDefinition study)
     {
         var last = AllocationChanges(db, file.Id, study.Id).LastOrDefault(c => c.ConfirmedStudy.Revision <= study.Revision);
         return new(ResourceWorkspace(db, file, study), AllocationKeys(db, file.Id, study.SelectedModelVersionId),
-            last?.Request.Configuration ?? AllocationConfiguration.Empty, last?.ConfirmedStudy.Revision ?? -1);
+            last?.Request.Configuration ?? AllocationConfiguration.Empty, last?.ConfirmedStudy.Revision ?? -1,
+            usedKeyIds: db.AllocationChanges.AsNoTracking().ToArray().Select(AllocationChange)
+                .SelectMany(UsedKeys).Select(k => k.Id).Distinct().ToArray());
     }
     private sealed partial class Session
     {
@@ -70,7 +79,9 @@ public sealed partial class SqliteCompanyFileService
                 var keys = AllocationKeys(db, file.Id, request.ModelVersionId);
                 var before = keys.SingleOrDefault(k => k.Id == request.KeyId);
                 var now = owner.time.GetUtcNow();
-                var after = AllocationWorkspaceRules.SaveKey(request, model, file.PrecisionPolicy, keys, now);
+                var used = db.AllocationChanges.AsNoTracking().ToArray().Select(AllocationChange)
+                    .Any(c => UsedKeys(c).Any(k => k.Id == request.KeyId));
+                var after = AllocationWorkspaceRules.SaveKey(request, model, file.PrecisionPolicy, keys, now, !used);
                 var result = new AllocationKeyReceipt(request, before, after, now);
                 db.AllocationKeyEvents.Add(new() { Id = request.RequestId.ToString(), CompanyId = file.Id.ToString(),
                     ModelVersionId = request.ModelVersionId.ToString(), KeyId = request.KeyId.ToString(), Revision = after.Revision, CanonicalJson = Json(result) });
@@ -117,7 +128,8 @@ public sealed partial class SqliteCompanyFileService
             keys.TryGetValue(e.After.Id, out var before);
             Invalid((e.Before is null ? "null" : Json(e.Before)) != (before is null ? "null" : Json(before)), "Key history chain differs");
             var after = AllocationWorkspaceRules.SaveKey(e.Request, RequiredPublication(db, file.Id, e.Request.ModelVersionId),
-                file.PrecisionPolicy, keys.Values.ToArray(), e.AtUtc);
+                file.PrecisionPolicy, keys.Values.ToArray(), e.AtUtc,
+                !changes.Any(c => UsedKeys(c).Any(k => k.Id == e.After.Id && k.Revision <= (before?.Revision ?? -1))));
             Invalid(Json(after) != Json(e.After), "Key history replay differs");
             keys[after.Id] = after;
             var matches = audits.Where(a => a.Type == "AllocationKey" && a.Id == after.Id.ToString() && a.Row.Revision == after.Revision).ToArray();
@@ -133,7 +145,9 @@ public sealed partial class SqliteCompanyFileService
                 RequiredPublication(db, file.Id, change.PreviousStudy.SelectedModelVersionId),
                 ResourceOrigins.FromImports(change.PreviousStudy, historicalImports), LedgerAt(db, file.Id, c.StudyId, change.PreviousStudy.Revision),
                 ResourceHistory.EconomicRevision(change.PreviousStudy, historicalImports, ResourceChanges(db, file.Id, c.StudyId)));
-            var referenced = AllocationWorkspaceRules.ValidateConfiguration(resources, keys.Values.ToArray(), c);
+            foreach (var key in change.ReferencedKeys)
+                Invalid(!events.Any(e => e.After.Id == key.Id && e.After.Revision == key.Revision && Json(e.After) == Json(key)), "Referenced key revision missing");
+            var referenced = AllocationWorkspaceRules.ValidateConfiguration(resources, change.ReferencedKeys, c);
             Invalid(Json(referenced) != Json(change.ReferencedKeys), "Referenced immutable keys differ");
             var matches = audits.Where(a => a.Type == "AllocationChange" && a.Id == c.RequestId.ToString()).ToArray();
             Invalid(matches.Length != 1, "Allocation audit missing"); var a = matches[0];

@@ -1020,13 +1020,13 @@ Difference to distribute: {7}</value></data>
   <data name="Allocation.WeightInvalid" xml:space="preserve"><value>Weights cannot be negative. Equal shares use a weight of 1 for every destination.</value></data>
   <data name="Allocation.TotalOverflow" xml:space="preserve"><value>The total exceeds the supported numeric range. Check the weights or amounts.</value></data>
   <data name="Allocation.Incomplete" xml:space="preserve"><value>Select the destinations. Percentages must total exactly 100%; an incomplete draft can be saved.</value></data>
-  <data name="Allocation.Immutable" xml:space="preserve"><value>This version is published. Create a new version to change it.</value></data>
+  <data name="Allocation.Immutable" xml:space="preserve"><value>This key has been used. You can rename it; create a new key for a different allocation.</value></data>
   <data name="Allocation.RevisionChanged" xml:space="preserve"><value>The key changed after editing began. Refresh the library and review your changes.</value></data>
   <data name="Allocation.ParentInvalid" xml:space="preserve"><value>Choose a published version of this key as the starting point.</value></data>
-  <data name="Allocation.RuleInvalid" xml:space="preserve"><value>Complete the account or prefix, published key and rule fields. Check for duplicate assignments.</value></data>
-  <data name="Allocation.RuleMissing" xml:space="preserve"><value>Assign a published key or define a rule covering this source.</value></data>
-  <data name="Allocation.RuleAmbiguous" xml:space="preserve"><value>Two rules have the same preference and scope. Remove one or assign different priorities before continuing.</value></data>
-  <data name="Allocation.PublicationRequired" xml:space="preserve"><value>Choose a published key for the relevant allocation stage and model.</value></data>
+  <data name="Allocation.RuleInvalid" xml:space="preserve"><value>Complete the account or prefix and select a key. Review rules matching the same account.</value></data>
+  <data name="Allocation.RuleMissing" xml:space="preserve"><value>Select a key on the account or apply a rule that includes it.</value></data>
+  <data name="Allocation.RuleAmbiguous" xml:space="preserve"><value>Rules compete for the same accounts. Edit and apply the rule to use or remove the unwanted one.</value></data>
+  <data name="Allocation.PublicationRequired" xml:space="preserve"><value>Choose a complete saved key from this model for the corresponding allocation.</value></data>
   <data name="Allocation.AuxiliaryInvalid" xml:space="preserve"><value>The secondary allocation source must be an active auxiliary node in the model.</value></data>
   <data name="Allocation.SelfForbidden" xml:space="preserve"><value>The key assigns a share to the source auxiliary. Remove that destination or explicitly allow self-allocation in a new version.</value></data>
   <data name="Allocation.SelfOnly" xml:space="preserve"><value>An auxiliary cannot allocate 100% to itself. It needs an outgoing share to another node.</value></data>
@@ -1040,13 +1040,13 @@ Difference to distribute: {7}</value></data>
   <data name="Allocation.InputInvalid" xml:space="preserve"><value>Nothing was saved. Check the fields and try again; if the file is unavailable, open it again.</value></data>
   <data name="Guide.Allocations" xml:space="preserve"><value>6. Keys and rules</value></data>
   <data name="Guide.ContinueAllocations" xml:space="preserve"><value>Continue to keys and rules</value></data>
-  <data name="Guide.Help.AllocationInput" xml:space="preserve"><value>Define the destinations and criterion. Save a draft while editing; publish once the key is complete.</value></data>
-  <data name="AllocationUI.Ready" xml:space="preserve"><value>Choose a key or create a new one. Rules only use published versions.</value></data>
-  <data name="AllocationUI.Help" xml:space="preserve"><value>Allocate effective amounts from Prepare accounts directly to nodes using keys and rules. No prior pool selection is required.</value></data>
+  <data name="Guide.Help.AllocationInput" xml:space="preserve"><value>Save a key with its destinations and assign it to accounts. Save rule stores it; Apply rule updates the allocation.</value></data>
+  <data name="AllocationUI.Ready" xml:space="preserve"><value>Choose a key or create one. Save its destinations and assign it to accounts.</value></data>
+  <data name="AllocationUI.Help" xml:space="preserve"><value>Save a key with its destinations. Then assign it directly to accounts or apply a rule.</value></data>
   <data name="AllocationUI.NeedStudy" xml:space="preserve"><value>Select a study with a saved import to prepare its allocations.</value></data>
   <data name="AllocationUI.ReadOnly" xml:space="preserve"><value>Project opened read-only. You can inspect saved keys and rules.</value></data>
   <data name="AllocationUI.Closed" xml:space="preserve"><value>The study is closed. Reopen it to change the rules.</value></data>
-  <data name="AllocationUI.Library" xml:space="preserve"><value>Key library</value></data>
+  <data name="AllocationUI.Library" xml:space="preserve"><value>Project keys</value></data>
   <data name="AllocationUI.Definition" xml:space="preserve"><value>Definition and destinations</value></data>
   <data name="AllocationUI.NewKey" xml:space="preserve"><value>New key</value></data>
   <data name="AllocationUI.OpenKey" xml:space="preserve"><value>Open selected key</value></data>
@@ -1066,11 +1066,11 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.Published" xml:space="preserve"><value>Published</value></data>
   <data name="AllocationUI.State" xml:space="preserve"><value>State</value></data>
   <data name="AllocationUI.Version" xml:space="preserve"><value>version</value></data>
-  <data name="AllocationUI.DraftHelp" xml:space="preserve"><value>Draft: incomplete weights are allowed; it cannot be used in rules yet.</value></data>
+  <data name="AllocationUI.DraftHelp" xml:space="preserve"><value>Define destinations and save the key to use it on accounts.</value></data>
   <data name="AllocationUI.PublishedHelp" xml:space="preserve"><value>Published and protected. To edit it, create a new version from the library.</value></data>
   <data name="AllocationUI.Unsaved" xml:space="preserve"><value>Unsaved changes</value></data>
   <data name="AllocationUI.DraftSaved" xml:space="preserve"><value>Draft saved in the project.</value></data>
-  <data name="AllocationUI.PublishedSaved" xml:space="preserve"><value>Key published. You can now select it in rules and assignments.</value></data>
+  <data name="AllocationUI.PublishedSaved" xml:space="preserve"><value>Key saved. You can now assign it to accounts or use it in rules.</value></data>
   <data name="AllocationUI.Saved" xml:space="preserve"><value>Changes saved in the study. Coverage updated.</value></data>
   <data name="AllocationUI.SavedRefreshPending" xml:space="preserve"><value>Changes saved. Reload the data to update the other screens.</value></data>
   <data name="AllocationUI.Discarded" xml:space="preserve"><value>Saved data restored.</value></data>
@@ -1084,25 +1084,25 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.Include" xml:space="preserve"><value>Include</value></data>
   <data name="AllocationUI.Destination" xml:space="preserve"><value>Centre / node</value></data>
   <data name="AllocationUI.Weight" xml:space="preserve"><value>Weight / %</value></data>
-  <data name="AllocationUI.Total" xml:space="preserve"><value>Selected total</value></data>
+  <data name="AllocationUI.Total" xml:space="preserve"><value>Key total:</value></data>
   <data name="AllocationUI.Destinations" xml:space="preserve"><value>destinations</value></data>
   <data name="AllocationUI.NumberFormat" xml:space="preserve"><value>Editing format: {0}. Decimal separator: “{1}”. Kept while you edit.</value></data>
   <data name="AllocationUI.CheckNumbers" xml:space="preserve"><value>Check the entered values.</value></data>
-  <data name="AllocationUI.Complete" xml:space="preserve"><value>Complete key: ready to publish.</value></data>
-  <data name="AllocationUI.Coverage" xml:space="preserve"><value>Study coverage</value></data>
-  <data name="AllocationUI.CoverageSummary" xml:space="preserve"><value>{0} of {1} sources have an allocation</value></data>
+  <data name="AllocationUI.Complete" xml:space="preserve"><value>Valid key: ready to save and use.</value></data>
+  <data name="AllocationUI.Coverage" xml:space="preserve"><value>Assign keys to accounts</value></data>
+  <data name="AllocationUI.CoverageSummary" xml:space="preserve"><value>{0} of {1} parts assigned. Select a key in the table to assign it directly.</value></data>
   <data name="AllocationUI.Covered" xml:space="preserve"><value>Allocation defined</value></data>
-  <data name="AllocationUI.Source" xml:space="preserve"><value>Account or auxiliary</value></data>
+  <data name="AllocationUI.Source" xml:space="preserve"><value>Account / part</value></data>
   <data name="AllocationUI.Amount" xml:space="preserve"><value>Amount</value></data>
   <data name="AllocationUI.AppliedKey" xml:space="preserve"><value>Applied key</value></data>
   <data name="AllocationUI.Result" xml:space="preserve"><value>Check</value></data>
   <data name="AllocationUI.Rules" xml:space="preserve"><value>Automatic account rules</value></data>
-  <data name="AllocationUI.RuleHelp" xml:space="preserve"><value>Your manual assignment comes first, then the exact account, then the longest prefix. At equal specificity the higher priority wins. Ties must be resolved.</value></data>
+  <data name="AllocationUI.RuleHelp" xml:space="preserve"><value>Save stores the rule without applying it. Apply updates the allocation. Manual assignments take precedence, followed by exact accounts and the most specific prefix.</value></data>
   <data name="AllocationUI.Exact" xml:space="preserve"><value>Exact account</value></data>
   <data name="AllocationUI.Prefix" xml:space="preserve"><value>Accounts starting with</value></data>
   <data name="AllocationUI.Account" xml:space="preserve"><value>Account code and description</value></data>
   <data name="AllocationUI.Priority" xml:space="preserve"><value>Priority (higher first)</value></data>
-  <data name="AllocationUI.PublishedKey" xml:space="preserve"><value>Published key</value></data>
+  <data name="AllocationUI.PublishedKey" xml:space="preserve"><value>Key</value></data>
   <data name="AllocationUI.SaveRule" xml:space="preserve"><value>Save rule</value></data>
   <data name="AllocationUI.EditRule" xml:space="preserve"><value>Edit selected rule</value></data>
   <data name="AllocationUI.NewRule" xml:space="preserve"><value>New rule</value></data>
@@ -1113,17 +1113,17 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.AllComponents" xml:space="preserve"><value>All components</value></data>
   <data name="AllocationUI.Exceptions" xml:space="preserve"><value>Manual part assignment</value></data>
   <data name="AllocationUI.Part" xml:space="preserve"><value>part</value></data>
-  <data name="AllocationUI.ExceptionsHelp" xml:space="preserve"><value>Select a part sent to a cost pool in Prepare accounts. A manual choice overrides rules for that part.</value></data>
+  <data name="AllocationUI.ExceptionsHelp" xml:space="preserve"><value>Assign a key to a specific part or enter amounts per node. Removing a manual assignment lets rules act on that part again.</value></data>
   <data name="AllocationUI.Assign" xml:space="preserve"><value>Apply key to this part</value></data>
-  <data name="AllocationUI.Automatic" xml:space="preserve"><value>Use automatic rules again</value></data>
+  <data name="AllocationUI.Automatic" xml:space="preserve"><value>Remove manual assignment</value></data>
   <data name="AllocationUI.Absolute" xml:space="preserve"><value>Amounts for this part</value></data>
   <data name="AllocationUI.AbsoluteHelp" xml:space="preserve"><value>Amounts must total the part amount, with the same sign and currency. This allocation only applies to this part and must be reviewed if the study changes.</value></data>
   <data name="AllocationUI.SaveAbsolute" xml:space="preserve"><value>Save amount allocation</value></data>
-  <data name="AllocationUI.Names" xml:space="preserve"><value>Account descriptions</value></data>
+  <data name="AllocationUI.Names" xml:space="preserve"><value>Clarify account names</value></data>
   <data name="AllocationUI.NameConflict" xml:space="preserve"><value>Conflicting description</value></data>
   <data name="AllocationUI.NoDescription" xml:space="preserve"><value>No description</value></data>
   <data name="AllocationUI.Row" xml:space="preserve"><value>row</value></data>
-  <data name="AllocationUI.NamesHelp" xml:space="preserve"><value>Codes identify accounts. If files use different names, choose which to display; all original names and amounts are retained.</value></data>
+  <data name="AllocationUI.NamesHelp" xml:space="preserve"><value>Only needed when an account was imported with different names. Choose the visible name; its code, amount and allocation do not change. The source of each description is shown below.</value></data>
   <data name="AllocationUI.ChooseName" xml:space="preserve"><value>Use this description</value></data>
   <data name="AllocationUI.VisibleName" xml:space="preserve"><value>Display description</value></data>
   <data name="AllocationUI.Provenance" xml:space="preserve"><value>Descriptions and provenance</value></data>
@@ -1140,10 +1140,10 @@ Difference to distribute: {7}</value></data>
   
 <data name="Import.SourceRowsReused" xml:space="preserve"><value>Source records {1} in {0} are already included in an active import. Exclude those records or explicitly replace the identified batch.</value></data>
 
-  <data name="AllocationUI.PrimaryTitle" xml:space="preserve"><value>Primary allocation by resource and node</value></data>
-  <data name="AllocationUI.PrimarySummary" xml:space="preserve"><value>{0} allocation lines · {1} uncovered parts · {2} pool totals ({3})</value></data>
-  <data name="AllocationUI.PrimaryReady" xml:space="preserve"><value>Each source is balanced at the internal ledger precision. Values are a preview, not a published run.</value></data>
-  <data name="AllocationUI.PrimaryIncomplete" xml:space="preserve"><value>Primary allocation is incomplete: resolve the uncovered parts before running a definitive allocation.</value></data>
+  <data name="AllocationUI.PrimaryTitle" xml:space="preserve"><value>Primary allocation result</value></data>
+  <data name="AllocationUI.PrimarySummary" xml:space="preserve"><value>{0} node allocations · {1} pending parts ({3})</value></data>
+  <data name="AllocationUI.PrimaryReady" xml:space="preserve"><value>Amounts are allocated and reconciled.</value></data>
+  <data name="AllocationUI.PrimaryIncomplete" xml:space="preserve"><value>Some accounts remain unallocated. Review pending rows in the account table.</value></data>
   <data name="AllocationUI.PrimarySource" xml:space="preserve"><value>Resource / account</value></data>
   <data name="AllocationUI.PrimaryDestination" xml:space="preserve"><value>Destination node</value></data>
   <data name="AllocationUI.PrimaryAmount" xml:space="preserve"><value>Posted amount</value></data>
@@ -1160,5 +1160,15 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.AccountDetailsHelp" xml:space="preserve"><value>Only for accounts requiring special treatment. Normal allocation to nodes is configured above. Previously saved destinations and classifications are retained.</value></data>
   <data name="AllocationUI.NameRequired" xml:space="preserve"><value>Enter a name for the key.</value></data>
   <data name="AllocationUI.UnitRequired" xml:space="preserve"><value>Select the allocation criterion unit.</value></data>
-  <data name="AllocationUI.DestinationsRequired" xml:space="preserve"><value>Include at least one destination node before publishing.</value></data>
+  <data name="AllocationUI.DestinationsRequired" xml:space="preserve"><value>Include at least one destination node before saving the key.</value></data>
+  <data name="AllocationUI.SaveKey" xml:space="preserve"><value>Save key</value></data>
+  <data name="AllocationUI.UsedKeyHelp" xml:space="preserve"><value>This key has been used: you can rename it. Its allocation is preserved.</value></data>
+  <data name="AllocationUI.AvailableKey" xml:space="preserve"><value>Ready to use</value></data>
+  <data name="AllocationUI.IncompleteKey" xml:space="preserve"><value>Incomplete</value></data>
+  <data name="AllocationUI.RuleActive" xml:space="preserve"><value>Applied</value></data>
+  <data name="AllocationUI.RulePending" xml:space="preserve"><value>Not applied</value></data>
+  <data name="AllocationUI.RuleSavedOnly" xml:space="preserve"><value>Rule saved without applying. Choose Apply rule to update the allocation.</value></data>
+  <data name="AllocationUI.RuleApplied" xml:space="preserve"><value>Rule applied. Allocation updated, preserving manual assignments.</value></data>
+  <data name="AllocationUI.ApplyRule" xml:space="preserve"><value>Apply rule</value></data>
+  <data name="AllocationUI.SelectAccounts" xml:space="preserve"><value>Select accounts</value></data>
 </root>

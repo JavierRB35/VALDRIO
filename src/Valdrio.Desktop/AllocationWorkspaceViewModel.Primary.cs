@@ -53,7 +53,7 @@ public sealed partial class AllocationWorkspaceViewModel
                 var formatter = new Valdrio.Localization.DomainDiagnosticFormatter(texts);
                 var culture = System.Globalization.CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag);
                 PrimaryDiagnostic += Environment.NewLine + string.Join(Environment.NewLine,
-                    primary.Gaps.Select(g => formatter.Format(g.Diagnostic, culture, Format).Message));
+                    primary.Gaps.Select(g => formatter.Format(g.Diagnostic, culture, Format).Message).Distinct());
             }
         }
         catch (DomainRuleException ex)

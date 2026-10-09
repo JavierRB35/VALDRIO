@@ -60,24 +60,27 @@ public interface IAllocationWorkspace
 public sealed class AllocationWorkspaceSnapshot
 {
     public AllocationWorkspaceSnapshot(ResourceWorkspaceSnapshot resources, IReadOnlyList<AllocationKeyVersion> keys,
-        AllocationConfiguration configuration, long configurationRevision, bool includeUnroutedAccounts = true)
+        AllocationConfiguration configuration, long configurationRevision, bool includeUnroutedAccounts = true,
+        IReadOnlyList<EntityId>? usedKeyIds = null)
     {
         Resources = resources; Keys = FrozenList.Copy(keys.OrderBy(k => k.Id));
         Configuration = configuration; ConfigurationRevision = configurationRevision;
         IncludeUnroutedAccounts = includeUnroutedAccounts;
+        UsedKeyIds = FrozenList.Copy(usedKeyIds ?? []);
     }
     public ResourceWorkspaceSnapshot Resources { get; }
     public IReadOnlyList<AllocationKeyVersion> Keys { get; }
     public AllocationConfiguration Configuration { get; }
     public long ConfigurationRevision { get; }
     public bool IncludeUnroutedAccounts { get; }
+    [JsonIgnore] public IReadOnlyList<EntityId> UsedKeyIds { get; }
     [JsonIgnore] public IReadOnlyList<AllocationCoverage> Coverage => AllocationWorkspaceRules.Coverage(this);
 }
 
 public static class AllocationWorkspaceRules
 {
     public static AllocationKeyVersion SaveKey(SaveAllocationKey request, PublishedModelStructure model,
-        PrecisionPolicy precision, IReadOnlyList<AllocationKeyVersion> existing, UtcInstant now)
+        PrecisionPolicy precision, IReadOnlyList<AllocationKeyVersion> existing, UtcInstant now, bool allowUnusedPublishedEdit = false)
     {
         request.RequestId.EnsureValid(); request.KeyId.EnsureValid();
         if (request.CompanyId != model.Structure.CompanyId || request.ModelVersionId != model.Structure.Id || string.IsNullOrWhiteSpace(request.Actor))
@@ -85,7 +88,9 @@ public static class AllocationWorkspaceRules
         var before = existing.SingleOrDefault(k => k.Id == request.KeyId);
         if (before is not null && (before.CompanyId != request.CompanyId || before.ModelVersionId != request.ModelVersionId))
             throw AllocationDiagnostics.Error("KEY_SCOPE_INVALID", "Allocation.ScopeInvalid", request.KeyId);
-        if (before?.Status == ModelStatus.Published)
+        if (before?.Status == ModelStatus.Published && (!request.Publish || !allowUnusedPublishedEdit &&
+            (before.Stage != request.Stage || before.Mode != request.Mode || before.UnitId != request.UnitId ||
+             before.SelfAllocation != request.SelfAllocation || !before.Lines.SequenceEqual(request.Lines.OrderBy(l => l.DestinationNodeId)))))
             throw AllocationDiagnostics.Error("KEY_IMMUTABLE", "Allocation.Immutable", request.KeyId);
         if ((before?.Revision ?? -1) != request.ExpectedRevision)
             throw AllocationDiagnostics.Error("KEY_REVISION_CHANGED", "Allocation.RevisionChanged", request.KeyId);

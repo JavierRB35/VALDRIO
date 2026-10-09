@@ -25,9 +25,27 @@ public partial class AllocationWorkspacePanel : UserControl
     {
         if (viewModel is null) return;
         Set(KeyGrid, "Name", "State"); Set(LinesGrid, "Include", "Destination", "NodeUnit", "Weight");
-        Set(CoverageGrid, "Source", "Amount", "AppliedKey", "Result"); Set(PrimaryResultsGrid, "PrimarySource", "PrimaryDestination", "PrimaryAmount", "PrimaryRule"); Set(PrimaryGrid, "Account", "AppliedKey", "Priority");
-        Set(SecondaryGrid, "Auxiliary", "Group", "AppliedKey"); Set(AbsoluteGrid, "Include", "Destination", "Amount");
+        Set(CoverageGrid, "Source", "Amount", "AppliedKey", "Result"); Set(PrimaryResultsGrid, "PrimarySource", "PrimaryDestination", "PrimaryAmount", "PrimaryRule"); Set(PrimaryGrid, "Account", "AppliedKey", "State");
+        Set(AbsoluteGrid, "Include", "Destination", "Amount");
         void Set(DataGrid grid, params string[] keys) { for (var i = 0; i < keys.Length; i++) grid.Columns[i].Header = viewModel[keys[i]]; }
+    }
+    private async void OpenKeyDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (ItemsControl.ContainerFromElement(KeyGrid, e.OriginalSource as DependencyObject) is DataGridRow && viewModel?.LoadKeyCommand.CanExecute(null) == true)
+            await viewModel.LoadKeyCommand.ExecuteAsync(null);
+    }
+    private async void OpenKeyKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter && viewModel?.LoadKeyCommand.CanExecute(null) == true)
+        { e.Handled = true; await viewModel.LoadKeyCommand.ExecuteAsync(null); }
+    }
+    internal Task CoverageAssignmentTask { get; private set; } = Task.CompletedTask;
+    private async void CoverageKeyChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is not ComboBox { IsKeyboardFocusWithin: true, DataContext: AllocationCoverageRow row, SelectedValue: Valdrio.Domain.EntityId key } box || key == row.SelectedKeyId || viewModel is null) return;
+        CoverageAssignmentTask = viewModel.AssignCoverageAsync(row.Id, key);
+        await CoverageAssignmentTask;
+        box.GetBindingExpression(ComboBox.SelectedValueProperty)?.UpdateTarget();
     }
     private bool restoringTab;
     private int previousTab;

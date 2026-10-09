@@ -47,7 +47,11 @@ public sealed class AllocationKeyVersion
 }
 
 public sealed record PrimaryRule(EntityId Id, EntityId CompanyId, EntityId ModelVersionId,
-    AccountSelectorKind SelectorKind, string SelectorValue, int Priority, EntityId KeyVersionId, bool IsActive);
+    AccountSelectorKind SelectorKind, string SelectorValue, int Priority, EntityId KeyVersionId, bool IsActive)
+{
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public EntityId? DraftOfId { get; init; }
+}
 public sealed record SecondaryRule(EntityId Id, EntityId CompanyId, EntityId ModelVersionId,
     EntityId AuxiliaryNodeId, string ComponentRoutingGroup, EntityId KeyVersionId, bool IsActive);
 public sealed record ExplicitPrimaryAssignment(EntityId PartId, EntityId KeyVersionId);

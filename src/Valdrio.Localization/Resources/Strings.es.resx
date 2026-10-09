@@ -1020,13 +1020,13 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Allocation.WeightInvalid" xml:space="preserve"><value>Los pesos no pueden ser negativos. En partes iguales cada destino tiene peso 1.</value></data>
   <data name="Allocation.TotalOverflow" xml:space="preserve"><value>El total supera la capacidad numérica admitida. Revisa los pesos o importes.</value></data>
   <data name="Allocation.Incomplete" xml:space="preserve"><value>Selecciona los destinos. Los porcentajes deben sumar exactamente 100 %; puedes guardar un borrador incompleto.</value></data>
-  <data name="Allocation.Immutable" xml:space="preserve"><value>Esta versión ya está publicada. Crea una nueva versión para cambiarla.</value></data>
+  <data name="Allocation.Immutable" xml:space="preserve"><value>Esta clave ya se ha usado. Puedes cambiar su nombre; para otro reparto, crea una clave nueva.</value></data>
   <data name="Allocation.RevisionChanged" xml:space="preserve"><value>La clave cambió desde que empezaste a editar. Actualiza la biblioteca y revisa tus cambios.</value></data>
   <data name="Allocation.ParentInvalid" xml:space="preserve"><value>Elige una versión publicada de esta clave como punto de partida.</value></data>
-  <data name="Allocation.RuleInvalid" xml:space="preserve"><value>Completa la cuenta o prefijo, la clave publicada y los campos de la regla. Revisa destinos duplicados.</value></data>
-  <data name="Allocation.RuleMissing" xml:space="preserve"><value>Falta asignar una clave publicada o definir una regla que cubra este origen.</value></data>
-  <data name="Allocation.RuleAmbiguous" xml:space="preserve"><value>Hay dos reglas con la misma preferencia y alcance. Elimina una o asigna prioridades distintas antes de continuar.</value></data>
-  <data name="Allocation.PublicationRequired" xml:space="preserve"><value>Elige una clave publicada del tipo de reparto y modelo correspondientes.</value></data>
+  <data name="Allocation.RuleInvalid" xml:space="preserve"><value>Completa la cuenta o prefijo y selecciona una clave. Revisa las reglas que coinciden con la misma cuenta.</value></data>
+  <data name="Allocation.RuleMissing" xml:space="preserve"><value>Selecciona una clave en la cuenta o aplica una regla que la incluya.</value></data>
+  <data name="Allocation.RuleAmbiguous" xml:space="preserve"><value>Hay reglas que compiten por las mismas cuentas. Edita y aplica la regla que debe utilizarse o elimina la que sobra.</value></data>
+  <data name="Allocation.PublicationRequired" xml:space="preserve"><value>Elige una clave guardada y completa de este modelo para el reparto correspondiente.</value></data>
   <data name="Allocation.AuxiliaryInvalid" xml:space="preserve"><value>El emisor del reparto secundario debe ser un nodo auxiliar activo del modelo.</value></data>
   <data name="Allocation.SelfForbidden" xml:space="preserve"><value>La clave asigna una parte al propio auxiliar. Quita ese destino o permite explícitamente la autoasignación en una nueva versión.</value></data>
   <data name="Allocation.SelfOnly" xml:space="preserve"><value>Un auxiliar no puede destinarse el 100 % a sí mismo. Debe existir una salida a otro nodo.</value></data>
@@ -1040,13 +1040,13 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Allocation.InputInvalid" xml:space="preserve"><value>No se ha guardado. Revisa los campos y vuelve a intentarlo; si el archivo no está disponible, ábrelo de nuevo.</value></data>
   <data name="Guide.Allocations" xml:space="preserve"><value>6. Claves y reglas</value></data>
   <data name="Guide.ContinueAllocations" xml:space="preserve"><value>Continuar a claves y reglas</value></data>
-  <data name="Guide.Help.AllocationInput" xml:space="preserve"><value>Define los destinos y el criterio. Guarda como borrador mientras trabajas; publica cuando la clave esté completa.</value></data>
-  <data name="AllocationUI.Ready" xml:space="preserve"><value>Elige una clave o crea una nueva. Las reglas solo utilizan versiones publicadas.</value></data>
-  <data name="AllocationUI.Help" xml:space="preserve"><value>Distribuye los importes efectivos de Preparar cuentas directamente a los nodos mediante claves y reglas. No necesitas elegir un pool previamente.</value></data>
+  <data name="Guide.Help.AllocationInput" xml:space="preserve"><value>Guarda una clave con sus destinos y asígnala a las cuentas. Guardar regla no reparte; Aplicar regla actualiza el reparto.</value></data>
+  <data name="AllocationUI.Ready" xml:space="preserve"><value>Elige una clave o crea una nueva. Guarda sus destinos y asígnala a las cuentas.</value></data>
+  <data name="AllocationUI.Help" xml:space="preserve"><value>Guarda una clave con sus destinos. Después asígnala directamente a las cuentas o aplica una regla.</value></data>
   <data name="AllocationUI.NeedStudy" xml:space="preserve"><value>Selecciona un estudio con una importación guardada para preparar sus repartos.</value></data>
   <data name="AllocationUI.ReadOnly" xml:space="preserve"><value>Proyecto abierto en solo lectura. Puedes consultar las claves y las reglas guardadas.</value></data>
   <data name="AllocationUI.Closed" xml:space="preserve"><value>El estudio está cerrado. Reábrelo para cambiar las reglas.</value></data>
-  <data name="AllocationUI.Library" xml:space="preserve"><value>Biblioteca de claves</value></data>
+  <data name="AllocationUI.Library" xml:space="preserve"><value>Claves del proyecto</value></data>
   <data name="AllocationUI.Definition" xml:space="preserve"><value>Definición y destinos</value></data>
   <data name="AllocationUI.NewKey" xml:space="preserve"><value>Nueva clave</value></data>
   <data name="AllocationUI.OpenKey" xml:space="preserve"><value>Abrir clave seleccionada</value></data>
@@ -1066,11 +1066,11 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.Published" xml:space="preserve"><value>Publicada</value></data>
   <data name="AllocationUI.State" xml:space="preserve"><value>Estado</value></data>
   <data name="AllocationUI.Version" xml:space="preserve"><value>versión</value></data>
-  <data name="AllocationUI.DraftHelp" xml:space="preserve"><value>Borrador: admite pesos incompletos; no se usa todavía en reglas.</value></data>
+  <data name="AllocationUI.DraftHelp" xml:space="preserve"><value>Define los destinos y guarda la clave para utilizarla en las cuentas.</value></data>
   <data name="AllocationUI.PublishedHelp" xml:space="preserve"><value>Publicada y protegida. Para editarla, crea una nueva versión desde la biblioteca.</value></data>
   <data name="AllocationUI.Unsaved" xml:space="preserve"><value>Cambios sin guardar</value></data>
   <data name="AllocationUI.DraftSaved" xml:space="preserve"><value>Borrador guardado en el proyecto.</value></data>
-  <data name="AllocationUI.PublishedSaved" xml:space="preserve"><value>Clave publicada. Ya puedes seleccionarla en reglas y asignaciones.</value></data>
+  <data name="AllocationUI.PublishedSaved" xml:space="preserve"><value>Clave guardada. Ya puedes asignarla a las cuentas o utilizarla en reglas.</value></data>
   <data name="AllocationUI.Saved" xml:space="preserve"><value>Cambios guardados en el estudio. Cobertura actualizada.</value></data>
   <data name="AllocationUI.SavedRefreshPending" xml:space="preserve"><value>Cambios guardados. Recarga los datos para actualizar las otras pantallas.</value></data>
   <data name="AllocationUI.Discarded" xml:space="preserve"><value>Se han recuperado los datos guardados.</value></data>
@@ -1084,25 +1084,25 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.Include" xml:space="preserve"><value>Incluir</value></data>
   <data name="AllocationUI.Destination" xml:space="preserve"><value>Centro / nodo</value></data>
   <data name="AllocationUI.Weight" xml:space="preserve"><value>Peso / %</value></data>
-  <data name="AllocationUI.Total" xml:space="preserve"><value>Total seleccionado</value></data>
+  <data name="AllocationUI.Total" xml:space="preserve"><value>Total de la clave:</value></data>
   <data name="AllocationUI.Destinations" xml:space="preserve"><value>destinos</value></data>
   <data name="AllocationUI.NumberFormat" xml:space="preserve"><value>Formato de edición: {0}. Separador decimal: «{1}». Se conserva mientras editas.</value></data>
   <data name="AllocationUI.CheckNumbers" xml:space="preserve"><value>Revisa los valores introducidos.</value></data>
-  <data name="AllocationUI.Complete" xml:space="preserve"><value>Clave completa: puede publicarse.</value></data>
-  <data name="AllocationUI.Coverage" xml:space="preserve"><value>Cobertura del estudio</value></data>
-  <data name="AllocationUI.CoverageSummary" xml:space="preserve"><value>{0} de {1} orígenes con reparto definido</value></data>
+  <data name="AllocationUI.Complete" xml:space="preserve"><value>Clave válida: puede guardarse y utilizarse.</value></data>
+  <data name="AllocationUI.Coverage" xml:space="preserve"><value>Asignar claves a las cuentas</value></data>
+  <data name="AllocationUI.CoverageSummary" xml:space="preserve"><value>{0} de {1} partes asignadas. Selecciona una clave en la tabla para asignarla directamente.</value></data>
   <data name="AllocationUI.Covered" xml:space="preserve"><value>Reparto definido</value></data>
-  <data name="AllocationUI.Source" xml:space="preserve"><value>Cuenta o auxiliar</value></data>
+  <data name="AllocationUI.Source" xml:space="preserve"><value>Cuenta / parte</value></data>
   <data name="AllocationUI.Amount" xml:space="preserve"><value>Importe</value></data>
   <data name="AllocationUI.AppliedKey" xml:space="preserve"><value>Clave aplicada</value></data>
   <data name="AllocationUI.Result" xml:space="preserve"><value>Comprobación</value></data>
   <data name="AllocationUI.Rules" xml:space="preserve"><value>Reglas automáticas por cuenta</value></data>
-  <data name="AllocationUI.RuleHelp" xml:space="preserve"><value>Se respeta primero tu asignación manual; después la cuenta exacta y después el prefijo más largo. A igual alcance gana la prioridad mayor. Un empate debe resolverse.</value></data>
+  <data name="AllocationUI.RuleHelp" xml:space="preserve"><value>Guardar conserva la regla sin aplicarla. Aplicar actualiza el reparto. La asignación manual tiene preferencia; después, la cuenta exacta y el prefijo más específico.</value></data>
   <data name="AllocationUI.Exact" xml:space="preserve"><value>Cuenta exacta</value></data>
   <data name="AllocationUI.Prefix" xml:space="preserve"><value>Cuentas que empiezan por</value></data>
   <data name="AllocationUI.Account" xml:space="preserve"><value>Código y descripción de la cuenta</value></data>
   <data name="AllocationUI.Priority" xml:space="preserve"><value>Prioridad (mayor primero)</value></data>
-  <data name="AllocationUI.PublishedKey" xml:space="preserve"><value>Clave publicada</value></data>
+  <data name="AllocationUI.PublishedKey" xml:space="preserve"><value>Clave</value></data>
   <data name="AllocationUI.SaveRule" xml:space="preserve"><value>Guardar regla</value></data>
   <data name="AllocationUI.EditRule" xml:space="preserve"><value>Editar regla seleccionada</value></data>
   <data name="AllocationUI.NewRule" xml:space="preserve"><value>Nueva regla</value></data>
@@ -1113,17 +1113,17 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.AllComponents" xml:space="preserve"><value>Todos los componentes</value></data>
   <data name="AllocationUI.Exceptions" xml:space="preserve"><value>Asignación manual de una parte</value></data>
   <data name="AllocationUI.Part" xml:space="preserve"><value>parte</value></data>
-  <data name="AllocationUI.ExceptionsHelp" xml:space="preserve"><value>Selecciona una parte enviada a un grupo de costes en Preparar cuentas. La elección manual sustituye las reglas para esa parte.</value></data>
+  <data name="AllocationUI.ExceptionsHelp" xml:space="preserve"><value>Asigna una clave a una parte concreta o introduce importes por nodo. Quitar asignación manual permite que vuelvan a actuar las reglas sobre esa parte.</value></data>
   <data name="AllocationUI.Assign" xml:space="preserve"><value>Aplicar clave a esta parte</value></data>
-  <data name="AllocationUI.Automatic" xml:space="preserve"><value>Volver a las reglas automáticas</value></data>
+  <data name="AllocationUI.Automatic" xml:space="preserve"><value>Quitar asignación manual</value></data>
   <data name="AllocationUI.Absolute" xml:space="preserve"><value>Importes para esta parte</value></data>
   <data name="AllocationUI.AbsoluteHelp" xml:space="preserve"><value>Los importes deben sumar el total de la parte, con su mismo signo y moneda. Este reparto solo vale para esta parte y debe revisarse si cambia el estudio.</value></data>
   <data name="AllocationUI.SaveAbsolute" xml:space="preserve"><value>Guardar reparto por importes</value></data>
-  <data name="AllocationUI.Names" xml:space="preserve"><value>Descripciones de cuentas</value></data>
+  <data name="AllocationUI.Names" xml:space="preserve"><value>Aclarar nombres de cuentas</value></data>
   <data name="AllocationUI.NameConflict" xml:space="preserve"><value>Descripción en conflicto</value></data>
   <data name="AllocationUI.NoDescription" xml:space="preserve"><value>Sin descripción</value></data>
   <data name="AllocationUI.Row" xml:space="preserve"><value>fila</value></data>
-  <data name="AllocationUI.NamesHelp" xml:space="preserve"><value>Los códigos identifican las cuentas. Si varios archivos usan nombres distintos, elige cuál mostrar; se conservan todos los nombres originales y sus importes.</value></data>
+  <data name="AllocationUI.NamesHelp" xml:space="preserve"><value>Solo es necesario si una cuenta se importó con nombres diferentes. Elige el nombre visible; no cambia su código, importe ni reparto. Debajo puedes consultar de dónde procede cada descripción.</value></data>
   <data name="AllocationUI.ChooseName" xml:space="preserve"><value>Usar esta descripción</value></data>
   <data name="AllocationUI.VisibleName" xml:space="preserve"><value>Descripción visible</value></data>
   <data name="AllocationUI.Provenance" xml:space="preserve"><value>Descripciones y procedencia</value></data>
@@ -1140,10 +1140,10 @@ Diferencia que falta repartir: {7}</value></data>
   
 <data name="Import.SourceRowsReused" xml:space="preserve"><value>Los registros {1} de {0} ya están incluidos en una importación vigente. Excluye esos registros o sustituye explícitamente el lote identificado.</value></data>
 
-  <data name="AllocationUI.PrimaryTitle" xml:space="preserve"><value>Reparto primario por recurso y nodo</value></data>
-  <data name="AllocationUI.PrimarySummary" xml:space="preserve"><value>{0} líneas de reparto · {1} partes sin cubrir · {2} totales de pool ({3})</value></data>
-  <data name="AllocationUI.PrimaryReady" xml:space="preserve"><value>Cada origen concilia a la precisión interna. Son resultados de previsualización, no una ejecución publicada.</value></data>
-  <data name="AllocationUI.PrimaryIncomplete" xml:space="preserve"><value>El reparto primario está incompleto: resuelve las partes sin cubrir antes de ejecutar un reparto definitivo.</value></data>
+  <data name="AllocationUI.PrimaryTitle" xml:space="preserve"><value>Resultado del reparto primario</value></data>
+  <data name="AllocationUI.PrimarySummary" xml:space="preserve"><value>{0} asignaciones a nodos · {1} partes pendientes ({3})</value></data>
+  <data name="AllocationUI.PrimaryReady" xml:space="preserve"><value>Los importes están repartidos y conciliados.</value></data>
+  <data name="AllocationUI.PrimaryIncomplete" xml:space="preserve"><value>Quedan cuentas sin repartir. Revisa las filas pendientes en la tabla de cuentas.</value></data>
   <data name="AllocationUI.PrimarySource" xml:space="preserve"><value>Recurso / cuenta</value></data>
   <data name="AllocationUI.PrimaryDestination" xml:space="preserve"><value>Nodo de destino</value></data>
   <data name="AllocationUI.PrimaryAmount" xml:space="preserve"><value>Importe adjudicado</value></data>
@@ -1160,5 +1160,15 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.AccountDetailsHelp" xml:space="preserve"><value>Solo si una cuenta necesita un tratamiento especial. El reparto normal a nodos se realiza arriba. Se conservan los destinos y clasificaciones guardados anteriormente.</value></data>
   <data name="AllocationUI.NameRequired" xml:space="preserve"><value>Introduce un nombre para la clave.</value></data>
   <data name="AllocationUI.UnitRequired" xml:space="preserve"><value>Selecciona la unidad del criterio de reparto.</value></data>
-  <data name="AllocationUI.DestinationsRequired" xml:space="preserve"><value>Incluye al menos un nodo de destino antes de publicar.</value></data>
+  <data name="AllocationUI.DestinationsRequired" xml:space="preserve"><value>Incluye al menos un nodo de destino antes de guardar la clave.</value></data>
+  <data name="AllocationUI.SaveKey" xml:space="preserve"><value>Guardar clave</value></data>
+  <data name="AllocationUI.UsedKeyHelp" xml:space="preserve"><value>Esta clave ya se ha usado: puedes cambiar su nombre. Su reparto se conserva.</value></data>
+  <data name="AllocationUI.AvailableKey" xml:space="preserve"><value>Lista para usar</value></data>
+  <data name="AllocationUI.IncompleteKey" xml:space="preserve"><value>Por completar</value></data>
+  <data name="AllocationUI.RuleActive" xml:space="preserve"><value>Aplicada</value></data>
+  <data name="AllocationUI.RulePending" xml:space="preserve"><value>Sin aplicar</value></data>
+  <data name="AllocationUI.RuleSavedOnly" xml:space="preserve"><value>Regla guardada sin aplicar. Pulsa Aplicar regla cuando quieras actualizar el reparto.</value></data>
+  <data name="AllocationUI.RuleApplied" xml:space="preserve"><value>Regla aplicada. El reparto se ha actualizado respetando las asignaciones manuales.</value></data>
+  <data name="AllocationUI.ApplyRule" xml:space="preserve"><value>Aplicar regla</value></data>
+  <data name="AllocationUI.SelectAccounts" xml:space="preserve"><value>Seleccionar cuentas</value></data>
 </root>
