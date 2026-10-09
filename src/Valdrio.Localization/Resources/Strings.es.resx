@@ -1182,4 +1182,18 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Allocation.PrimaryClosed" xml:space="preserve"><value>El reparto primario está cerrado. Reábrelo en la pantalla 6 antes de modificar los importes o las asignaciones.</value></data>
   <data name="Resources.PrimaryClosed" xml:space="preserve"><value>El reparto primario está cerrado. Para corregir importes, reábrelo en la pantalla 6.</value></data>
   <data name="AllocationUI.RulesAndAssignments" xml:space="preserve"><value>Reglas y asignaciones especiales</value></data>
+
+  <data name="Reciprocal.SchemaInvalid" xml:space="preserve"><value>El grafo de prestaciones recíprocas está incompleto o contiene identificadores duplicados.</value></data>
+  <data name="Reciprocal.WeightInvalid" xml:space="preserve"><value>El auxiliar {0} tiene una fracción de reparto no válida.</value></data>
+  <data name="Reciprocal.SelfNotAllowed" xml:space="preserve"><value>El autorreparto no está permitido para el auxiliar {0}.</value></data>
+  <data name="Reciprocal.CoverageInvalid" xml:space="preserve"><value>El reparto del auxiliar {0} suma {1}; debe ser igual a 1.</value></data>
+  <data name="Reciprocal.ClosedComponent" xml:space="preserve"><value>Estos auxiliares no tienen salida a un destino final: {0}.</value></data>
+  <data name="Reciprocal.Singular" xml:space="preserve"><value>El sistema recíproco tiene un pivote nulo junto al auxiliar {0}.</value></data>
+  <data name="Reciprocal.Sensitive" xml:space="preserve"><value>El sistema recíproco es numéricamente inestable cerca de {0}. Revisa los valores del diagnóstico.</value></data>
+  <data name="Reciprocal.NegativeFactor" xml:space="preserve"><value>El factor de transferencia final del auxiliar {0} es negativo.</value></data>
+  <data name="Reciprocal.FactorDrift" xml:space="preserve"><value>Los factores finales del auxiliar {0} no conservan 1; la desviación es {1}.</value></data>
+  <data name="Reciprocal.Residual" xml:space="preserve"><value>La solución recíproca tiene un residuo excesivo de {0} (relativo {1}).</value></data>
+  <data name="Reciprocal.NumericOverflow" xml:space="preserve"><value>El cálculo numérico recíproco superó la capacidad del tipo decimal.</value></data>
+  <data name="Reciprocal.RhsInvalid" xml:space="preserve"><value>Los orígenes de coste no corresponden a los identificadores auxiliares y finales.</value></data>
+  <data name="Reciprocal.AmplificationWarning" xml:space="preserve"><value>La elevada circulación interna amplifica los valores por {0}.</value></data>
 </root>
