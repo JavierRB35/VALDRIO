@@ -145,6 +145,21 @@
      </DataGrid>
      <Button x:Name="ExplainSecondaryButton" Content="{Binding [SecondaryExplain]}" Command="{Binding ExplainSecondaryCommand}" HorizontalAlignment="Left" Margin="0,8,0,0"/>
      <Expander Header="{Binding [SecondaryExplain]}" Margin="0,8,0,0"><TextBlock Text="{Binding SecondaryExplanation}" TextWrapping="Wrap" Margin="8"/></Expander>
+     <Expander Header="{Binding [SecondaryBridgeTitle]}" Margin="0,8,0,0">
+      <StackPanel Margin="0,8,0,0">
+       <TextBlock Text="{Binding [SecondaryBridgeHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+       <DataGrid x:Name="SecondaryBridgesGrid" ItemsSource="{Binding SecondaryBridges}" IsReadOnly="True" AutoGenerateColumns="False" Height="155" CanUserAddRows="False">
+        <DataGrid.Columns>
+         <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Resource}" Width="2*"/>
+         <DataGridTextColumn ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Effective}" Width="*"/>
+         <DataGridTextColumn ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Direct}" Width="*"/>
+         <DataGridTextColumn ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Excluded}" Width="*"/>
+         <DataGridTextColumn ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Terminal}" Width="*"/>
+         <DataGridTextColumn ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Difference}" Width="*"/>
+        </DataGrid.Columns>
+       </DataGrid>
+      </StackPanel>
+     </Expander>
      <Expander Header="{Binding [SecondaryGross]}" Margin="0,8,0,0">
       <DataGrid x:Name="SecondaryCirculationGrid" ItemsSource="{Binding SecondaryCirculation}" IsReadOnly="True" AutoGenerateColumns="False" Height="135">
        <DataGrid.Columns>
