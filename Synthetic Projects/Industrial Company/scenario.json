@@ -142,5 +142,19 @@
       "FINISHING": "2900.69930070"
     },
     "maxAbsoluteError": "0.00000002"
+  },
+  "composition": {
+    "628001": {
+      "behavior": "Variable",
+      "variablePercentage": 100
+    },
+    "640001": {
+      "behavior": "Mixed",
+      "variablePercentage": 40
+    },
+    "681001": {
+      "behavior": "Fixed",
+      "variablePercentage": 0
+    }
   }
 }
