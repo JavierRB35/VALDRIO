@@ -287,6 +287,10 @@
                <Setter Property="Background" Value="{DynamicResource Status.WarningBg}"/>
             </Trigger>
             <Trigger Property="Validation.HasError" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Brand.Red}"/><Setter Property="Background" Value="{DynamicResource Status.ErrorBg}"/></Trigger>
+             <Trigger Property="Tag" Value="error">
+               <Setter Property="BorderBrush" Value="{DynamicResource Brand.Red}"/>
+               <Setter Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
+             </Trigger>
              <Trigger Property="IsEnabled" Value="False">
               <Setter Property="Background" Value="{DynamicResource Surface.Disabled}"/>
               <Setter Property="BorderBrush" Value="{DynamicResource Border.Disabled}"/>
