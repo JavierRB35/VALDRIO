@@ -97,6 +97,11 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     }
     public string InterpretationPrompt => this[amountMode == "cumulative" ? "ApproveComparison" : amountMode == "closing-full" ? (IsDebitCredit ? "ApproveClosingDebitCredit" : "ApproveClosing") : (IsDebitCredit ? "ApproveDebitCredit" : "ApproveInterpretation")];
     public bool HasColumns => document is not null;
+    // Highlight required columns as soon as the source has been read.
+    public bool MissingAccountColumn => HasColumns && !AccountColumn.HasValue;
+    public bool MissingAmountColumn => HasColumns && IsSignedAmount && !AmountColumn.HasValue;
+    public bool MissingDebitColumn => HasColumns && IsDebitCredit && !DebitColumn.HasValue;
+    public bool MissingCreditColumn => HasColumns && IsDebitCredit && !CreditColumn.HasValue;
     public bool IsReady => validation?.IsValid == true;
     public ImportColumnSelectionResult? ValidatedSelection => IsReady ? validation : null;
     public string FileName => session?.FileName ?? "";
