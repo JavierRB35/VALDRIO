@@ -23,3 +23,15 @@ reglas económicas, sin obligar a conocer la arquitectura interna para trabajar.
 T07 fue autorizada para implementación completa el 2026-10-07; el recorrido añade
 Recursos después de Importación. Esta prioridad no elimina funcionalidades
 ni sustituye las validaciones del dominio; reorganiza cómo se presentan y ejecutan.
+
+## Edición directa en tablas — decisión del propietario (2026-10-09)
+
+Todo lo que pueda consultarse o modificarse en una tabla se hará en la propia tabla.
+No duplicar campos en formularios externos ni añadir paneles de edición para datos
+que ya aparecen en filas. Priorizar simplicidad, controles por celda y un guardado
+inequívoco que solo se habilite cuando existan cambios pendientes.
+
+En reparto primario: comportamiento Fijo/Variable/Mixto mediante combo por cuenta.
+Los porcentajes fijo y variable pertenecen a esa fila; solo se muestran como campos
+editables para Mixto. Fijo equivale a 100/0 y Variable a 0/100. Guardar confirma los
+cambios de la tabla y vuelve a desactivarse hasta la siguiente modificación.

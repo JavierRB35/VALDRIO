@@ -21,6 +21,32 @@ public sealed class CompositionAccountRow(EntityId id, string account, string am
     public bool CanBulk { get; } = canBulk;
     public bool IsDefault { get; } = isDefault;
     public bool Selected { get => selected; set => SetProperty(ref selected, value); }
+    private ResourceBehavior choice = ResourceBehavior.Fixed, savedChoice = ResourceBehavior.Fixed;
+    private string fixedPercentage = "100", variablePercentage = "0", savedFixed = "100", savedVariable = "0";
+    public ResourceBehavior Choice
+    {
+        get => choice;
+        set
+        {
+            if (!SetProperty(ref choice, value)) return;
+            if (value == ResourceBehavior.Fixed) { FixedPercentage = "100"; VariablePercentage = "0"; }
+            if (value == ResourceBehavior.Variable) { FixedPercentage = "0"; VariablePercentage = "100"; }
+            OnPropertyChanged(nameof(IsMixed)); OnPropertyChanged(nameof(IsDirty));
+        }
+    }
+    public bool IsMixed => CanBulk && Choice == ResourceBehavior.Mixed;
+    public string FixedPercentage { get => fixedPercentage; set { if (SetProperty(ref fixedPercentage, value)) OnPropertyChanged(nameof(IsDirty)); } }
+    public string VariablePercentage { get => variablePercentage; set { if (SetProperty(ref variablePercentage, value)) OnPropertyChanged(nameof(IsDirty)); } }
+    public bool IsDirty => choice != savedChoice || fixedPercentage != savedFixed || variablePercentage != savedVariable;
+    public void InitializeWeights(ResourceBehavior value, decimal? variable, System.Globalization.CultureInfo culture)
+    {
+        Choice = value is ResourceBehavior.Mixed or ResourceBehavior.MixedPending ? ResourceBehavior.Mixed :
+            value == ResourceBehavior.Variable ? ResourceBehavior.Variable : ResourceBehavior.Fixed;
+        VariablePercentage = (variable ?? (Choice == ResourceBehavior.Variable ? 100m : 0m)).ToString(culture);
+        FixedPercentage = (100m - (variable ?? (Choice == ResourceBehavior.Variable ? 100m : 0m))).ToString(culture);
+        AcceptChanges();
+    }
+    public void AcceptChanges() { savedChoice = choice; savedFixed = fixedPercentage; savedVariable = variablePercentage; OnPropertyChanged(nameof(IsDirty)); }
 }
 
 public sealed partial class AllocationWorkspaceViewModel
@@ -89,7 +115,11 @@ public sealed partial class AllocationWorkspaceViewModel
     private string compositionFixedPercentage = "100", compositionVariablePercentage = "0";
     public string CompositionFixedPercentage { get => compositionFixedPercentage; set => SetProperty(ref compositionFixedPercentage, value); }
     public string CompositionVariablePercentage { get => compositionVariablePercentage; set => SetProperty(ref compositionVariablePercentage, value); }
-    public bool CanEditClassification => CanEdit && !IsDirty && workspace is not null;
+    public bool CanEditClassification => CanEdit && !keyDirty && !ruleDirty && !absoluteDirty && workspace is not null;
+    public bool HasCompositionChanges => CompositionAccounts.Any(r => r.IsDirty);
+    public IReadOnlyList<ResourceChoice<ResourceBehavior>> CompositionChoices =>
+        [new(ResourceBehavior.Fixed, this["SecondaryBehaviorFixed"]), new(ResourceBehavior.Variable, this["SecondaryBehaviorVariable"]), new(ResourceBehavior.Mixed, this["SecondaryBehaviorMixed"])];
+    public IAsyncRelayCommand SaveCompositionRowsCommand { get; private set; } = null!;
     private CompositionAccountRow[] CompositionSelection =>
         CompositionAccounts.Where(IsCompositionVisible).Where(r => r.CanBulk && r.Selected).ToArray();
     public string CompositionSelected => string.Format(Format, this["CompositionSelected"], CompositionSelection.Length);
@@ -113,6 +143,7 @@ public sealed partial class AllocationWorkspaceViewModel
     public IRelayCommand CompositionClearSelectionCommand { get; private set; } = null!;
     private void InitializeCompositionCommands()
     {
+        SaveCompositionRowsCommand = new AsyncRelayCommand(async () => await SaveCompositionRowsAsync(), () => CanEditClassification && HasCompositionChanges);
         CompositionSelectVisibleCommand = new RelayCommand(() =>
             SetCompositionSelection(CompositionAccounts.Where(IsCompositionVisible).Where(r => r.CanBulk), true), () => CanEditClassification && CompositionAccounts.Any(r => IsCompositionVisible(r) && r.CanBulk));
         CompositionClearSelectionCommand = new RelayCommand(ClearCompositionSelection,
@@ -126,11 +157,14 @@ public sealed partial class AllocationWorkspaceViewModel
     }
     private void CompositionSelectionChanged(object? sender, PropertyChangedEventArgs e)
     {
+        if (e.PropertyName == nameof(CompositionAccountRow.IsDirty))
+        { statusKey = HasCompositionChanges ? "Unsaved" : "CompositionUnchanged"; company.NotifyWorkspaceStateChanged(); Refresh(); }
         if (!compositionSelectionBatch && e.PropertyName == nameof(CompositionAccountRow.Selected))
         { OnPropertyChanged(nameof(CompositionSelected)); Commands(); }
     }
     private void RebuildComposition()
     {
+        if (HasCompositionChanges) return; // Presentation refresh must not discard table edits.
         var previous = CompositionAccounts.Where(r => r.Selected).Select(r => r.Id).ToHashSet();
         foreach (var row in CompositionAccounts) row.PropertyChanged -= CompositionSelectionChanged;
         CompositionAccounts.Clear();
@@ -155,6 +189,7 @@ public sealed partial class AllocationWorkspaceViewModel
                 var review = !single ? this["CompositionDetail"] :
                     isDefault ? this["CompositionUnreviewed"] : this["CompositionReviewed"];
                 var row = new CompositionAccountRow(resource.Id, AccountLabel(origin), MoneyText(amount), type, review, single, isDefault);
+                row.InitializeWeights(behavior, single ? resource.Parts[0].Classification.VariablePercentage : null, numbers.CapturedCulture);
                 row.Selected = single && previous.Contains(resource.Id);
                 row.PropertyChanged += CompositionSelectionChanged;
                 CompositionAccounts.Add(row);
@@ -163,6 +198,34 @@ public sealed partial class AllocationWorkspaceViewModel
         OnPropertyChanged(nameof(CompositionSelected));
         OnPropertyChanged(nameof(CompositionSummary));
         Commands();
+    }
+
+    private void DiscardCompositionChanges()
+    {
+        foreach (var row in CompositionAccounts) { row.PropertyChanged -= CompositionSelectionChanged; row.AcceptChanges(); }
+        RebuildComposition();
+    }
+
+    private async Task<bool> SaveCompositionRowsAsync()
+    {
+        if (!CanEditClassification || workspace is null || !HasCompositionChanges) return false;
+        var changes = new List<ResourcePartReplacement>();
+        try
+        {
+            foreach (var row in CompositionAccounts.Where(r => r.IsDirty))
+            {
+                var fixedWeight = Parse(row.FixedPercentage); var variableWeight = Parse(row.VariablePercentage);
+                if (!row.CanBulk || fixedWeight < 0m || variableWeight < 0m || fixedWeight + variableWeight != 100m ||
+                    row.IsMixed && (fixedWeight == 0m || variableWeight == 0m))
+                { statusKey = "CompositionWeightsInvalid"; Refresh(); return false; }
+                var resource = workspace.Resources.Resources.Single(r => r.Id == row.Id);
+                changes.Add(new(row.Id, resource.Parts.Select(p => p.WithClassification(p.Classification with
+                    { Behavior = row.Choice, VariablePercentage = variableWeight, Context = null })).ToArray()));
+            }
+        }
+        catch (Exception ex) when (ex is ArgumentException or DomainRuleException or OverflowException)
+        { statusKey = "CompositionWeightsInvalid"; Refresh(); return false; }
+        return await SaveCompositionAsync(changes, this["CompositionEditReason"]);
     }
 
     private async Task UpdateCompositionAsync(ResourceBehavior behavior)
@@ -231,6 +294,7 @@ public sealed partial class AllocationWorkspaceViewModel
                 [], [], null, null, [], changes);
             _ = ResourceWorkspaceRules.Apply(workspace.Resources, command);
             var receipt = await Task.Run(() => company.ActiveResources!.ChangeResources(command));
+            foreach (var row in CompositionAccounts) row.AcceptChanges();
             statusKey = "CompositionSaved";
             try { await studies.ApplyResourceReceiptAsync(receipt.ConfirmedStudy); }
             catch (Exception e) when (e is IOException or CompanyFileException or InvalidOperationException)

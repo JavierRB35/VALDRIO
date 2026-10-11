@@ -32,9 +32,40 @@ public partial class MainWindow
         await NavigateWorkflow(5); await Idle();
         Check(AllocationPanel.IsVisible && !SecondaryPanel.IsVisible, "primary has a separate page");
         Check(AllocationPanel.CompositionSection.IsExpanded, "composition is visible by default in step 6");
-        vm.CompositionAccounts.Single().Selected = true;
-        Text(AllocationPanel.FixedPercentageBox, "70"); Text(AllocationPanel.VariablePercentageBox, "30");
-        await Click(AllocationPanel.ApplyCompositionWeightsButton);
+        var composition = vm.CompositionAccounts.Single();
+        AllocationPanel.CompositionGrid.ScrollIntoView(composition); await Idle();
+        var gridRow = (DataGridRow)AllocationPanel.CompositionGrid.ItemContainerGenerator.ContainerFromItem(composition);
+        IEnumerable<T> Descendants<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (var i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+                if (child is T match) yield return match;
+                foreach (var nested in Descendants<T>(child)) yield return nested;
+            }
+        }
+        Check(!AllocationPanel.SaveCompositionRowsButton.IsEnabled, "table save starts disabled");
+        var behaviorCombo = Descendants<ComboBox>(gridRow).Single();
+        Check(Descendants<TextBox>(gridRow).Where(b => b.GetBindingExpression(TextBox.TextProperty) is not null).All(b => !b.IsVisible), "fixed rows hide percentage inputs");
+        behaviorCombo.SetCurrentValue(ComboBox.SelectedValueProperty, ResourceBehavior.Mixed); await Idle();
+        var weightBoxes = Descendants<TextBox>(gridRow).Where(b => b.GetBindingExpression(TextBox.TextProperty) is not null).ToArray();
+        Check(weightBoxes.Length == 2 && weightBoxes.All(b => b.IsVisible && b.IsEnabled), "mixed percentages editable inside row");
+        Text(weightBoxes[0], "70"); Text(weightBoxes[1], "40");
+        await Click(AllocationPanel.SaveCompositionRowsButton);
+        Check(vm.HasCompositionChanges, "invalid percentages keep table edits");
+        Text(weightBoxes[1], "30"); await Click(AllocationPanel.SaveCompositionRowsButton);
+        Check(!AllocationPanel.SaveCompositionRowsButton.IsEnabled, "table save disables after persistence");
+        composition = vm.CompositionAccounts.Single();
+        AllocationPanel.CompositionGrid.ScrollIntoView(composition); await Idle();
+        gridRow = (DataGridRow)AllocationPanel.CompositionGrid.ItemContainerGenerator.ContainerFromItem(composition);
+        behaviorCombo = Descendants<ComboBox>(gridRow).Single();
+        behaviorCombo.SetCurrentValue(ComboBox.SelectedValueProperty, ResourceBehavior.Variable); await Idle();
+        Check(AllocationPanel.SaveCompositionRowsButton.IsEnabled, "new table edit enables save again");
+        Check(Descendants<TextBox>(gridRow).Where(b => b.GetBindingExpression(TextBox.TextProperty) is not null).All(b => !b.IsVisible), "variable rows hide percentage inputs");
+        behaviorCombo.SetCurrentValue(ComboBox.SelectedValueProperty, ResourceBehavior.Mixed); await Idle();
+        weightBoxes = Descendants<TextBox>(gridRow).Where(b => b.GetBindingExpression(TextBox.TextProperty) is not null).ToArray();
+        Text(weightBoxes[0], "70"); Text(weightBoxes[1], "30"); await Idle();
+        Check(!AllocationPanel.SaveCompositionRowsButton.IsEnabled, "restoring original values clears pending edits");
         Check(vm.CompositionAccounts.Single().Behavior.Contains("70"), "70 fixed and 30 variable saved by visible controls");
         ScrollToElement(AllocationPanel.CompositionSection); await Idle();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "es-primary-composition.png"));

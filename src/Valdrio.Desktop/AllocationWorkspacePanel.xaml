@@ -62,64 +62,29 @@
      </WrapPanel>
      <DataGrid x:Name="CompositionGrid" ItemsSource="{Binding CompositionView}" AutoGenerateColumns="False" IsReadOnly="True" Height="240" MinRowHeight="32">
       <DataGrid.Columns>
-       <DataGridTemplateColumn Width="45"><DataGridTemplateColumn.CellTemplate><DataTemplate>
-        <CheckBox IsChecked="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                  ToolTip="{Binding Account}" HorizontalAlignment="Center" VerticalAlignment="Center">
-         <CheckBox.Style>
-          <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-           <Setter Property="IsEnabled" Value="True"/>
-           <Style.Triggers>
-            <DataTrigger Binding="{Binding CanBulk}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger>
-            <DataTrigger Binding="{Binding DataContext.CanEditClassification, RelativeSource={RelativeSource AncestorType=DataGrid}}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger>
-           </Style.Triggers>
-          </Style>
-         </CheckBox.Style>
-        </CheckBox>
-       </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
        <DataGridTextColumn Binding="{Binding Account}" ElementStyle="{StaticResource Text.TableText}" Width="3*" MinWidth="200"/>
        <DataGridTextColumn Binding="{Binding Amount}" ElementStyle="{StaticResource Text.TableNumber}" Width="125"/>
-       <DataGridTextColumn Binding="{Binding Behavior}" ElementStyle="{StaticResource Text.TableText}" Width="2*" MinWidth="160"/>
+       <DataGridTemplateColumn Width="150"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+        <ComboBox ItemsSource="{Binding DataContext.CompositionChoices, RelativeSource={RelativeSource AncestorType=DataGrid}}" SelectedValue="{Binding Choice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding Account}">
+         <ComboBox.Style><Style TargetType="ComboBox" BasedOn="{StaticResource Input.Combo}"><Setter Property="DisplayMemberPath" Value="Label"/><Setter Property="SelectedValuePath" Value="Value"/>
+          <Style.Triggers><DataTrigger Binding="{Binding CanBulk}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger><DataTrigger Binding="{Binding DataContext.CanEditClassification, RelativeSource={RelativeSource AncestorType=DataGrid}}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger></Style.Triggers>
+         </Style></ComboBox.Style>
+        </ComboBox>
+       </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+       <DataGridTemplateColumn Width="110"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+        <TextBox Text="{Binding FixedPercentage, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsMixed, Converter={StaticResource Visible}}" AutomationProperties.Name="{Binding DataContext[CompositionFixedWeight], RelativeSource={RelativeSource AncestorType=DataGrid}}" TextAlignment="Right">
+         <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}"><Style.Triggers><DataTrigger Binding="{Binding CanBulk}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger><DataTrigger Binding="{Binding DataContext.CanEditClassification, RelativeSource={RelativeSource AncestorType=DataGrid}}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger></Style.Triggers></Style></TextBox.Style>
+        </TextBox>
+       </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+       <DataGridTemplateColumn Width="110"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+        <TextBox Text="{Binding VariablePercentage, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsMixed, Converter={StaticResource Visible}}" AutomationProperties.Name="{Binding DataContext[CompositionVariableWeight], RelativeSource={RelativeSource AncestorType=DataGrid}}" TextAlignment="Right">
+         <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}"><Style.Triggers><DataTrigger Binding="{Binding CanBulk}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger><DataTrigger Binding="{Binding DataContext.CanEditClassification, RelativeSource={RelativeSource AncestorType=DataGrid}}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger></Style.Triggers></Style></TextBox.Style>
+        </TextBox>
+       </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
        <DataGridTextColumn Binding="{Binding Review}" ElementStyle="{StaticResource Text.TableText}" Width="2*" MinWidth="130"/>
       </DataGrid.Columns>
      </DataGrid>
-     <WrapPanel Margin="0,8,0,8">
-      <Button Content="{Binding [CompositionSelectVisible]}" Command="{Binding CompositionSelectVisibleCommand}" Margin="0,0,8,4"/>
-      <Button Content="{Binding [CompositionClearSelection]}" Command="{Binding CompositionClearSelectionCommand}" Margin="0,0,8,4"/>
-      <TextBlock Text="{Binding CompositionSelected}" VerticalAlignment="Center" Margin="0,0,0,4" AutomationProperties.LiveSetting="Polite"/>
-     </WrapPanel>
-     <StackPanel IsEnabled="{Binding CanEditClassification}">
-      <TextBlock Text="{Binding [CompositionWeightsHelp]}" TextWrapping="Wrap" Margin="0,4,0,8"/>
-      <WrapPanel>
-       <StackPanel Width="140" Margin="0,0,12,8"><TextBlock Text="{Binding [CompositionFixedWeight]}"/><TextBox x:Name="FixedPercentageBox" Text="{Binding CompositionFixedPercentage, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [CompositionFixedWeight]}"/></StackPanel>
-       <StackPanel Width="140" Margin="0,0,12,8"><TextBlock Text="{Binding [CompositionVariableWeight]}"/><TextBox x:Name="VariablePercentageBox" Text="{Binding CompositionVariablePercentage, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [CompositionVariableWeight]}"/></StackPanel>
-       <Button x:Name="ApplyCompositionWeightsButton" Content="{Binding [CompositionApplyWeights]}" Command="{Binding CompositionApplyWeightsCommand}" Style="{StaticResource Button.Primary}" VerticalAlignment="Bottom" Margin="0,0,0,8"/>
-      </WrapPanel>
-      <Expander Header="{Binding [CompositionAdvanced]}" Margin="0,8,0,0"><StackPanel>
-      <WrapPanel>
-       <Button Content="{Binding [CompositionMarkFixed]}" Command="{Binding CompositionFixedCommand}" Margin="0,4,8,4"/>
-       <Button Content="{Binding [CompositionMarkMixed]}" Command="{Binding CompositionMixedCommand}" Margin="0,4,8,4"/>
-      </WrapPanel>
-      <TextBlock Text="{Binding [CompositionVariableHelp]}" Margin="0,8,0,4" TextWrapping="Wrap"/>
-      <WrapPanel>
-       <StackPanel MinWidth="200" Margin="0,0,8,8">
-        <TextBlock Text="{Binding [CompositionUnit]}"/>
-        <ComboBox ItemsSource="{Binding Units}" SelectedValue="{Binding CompositionUnit}" AutomationProperties.Name="{Binding [CompositionUnit]}"/>
-       </StackPanel>
-       <StackPanel MinWidth="110" Margin="0,0,8,8">
-        <TextBlock Text="{Binding [CompositionMinimum]}"/>
-        <TextBox Text="{Binding CompositionMinimum, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [CompositionMinimum]}"/>
-       </StackPanel>
-       <StackPanel MinWidth="110" Margin="0,0,8,8">
-        <TextBlock Text="{Binding [CompositionMaximum]}"/>
-        <TextBox Text="{Binding CompositionMaximum, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [CompositionMaximum]}"/>
-       </StackPanel>
-      </WrapPanel>
-      <WrapPanel>
-       <Button Content="{Binding [CompositionMarkVariable]}" Command="{Binding CompositionVariableCommand}" Style="{StaticResource Button.Primary}" Margin="0,0,8,4"/>
-       <Button Content="{Binding [CompositionMarkReviewedFixed]}" Command="{Binding CompositionReviewedFixedCommand}" Margin="0,0,8,4"/>
-      </WrapPanel>
-     </StackPanel>
-     </Expander></StackPanel>
+     <Button x:Name="SaveCompositionRowsButton" Content="{Binding [SaveCompositionRows]}" Command="{Binding SaveCompositionRowsCommand}" Style="{StaticResource Button.Primary}" HorizontalAlignment="Right" Margin="0,8,0,0"/>
      <TextBlock Text="{Binding [CompositionCloseHelp]}" TextWrapping="Wrap" Margin="0,12,0,0"/>
     </StackPanel>
    </Expander>

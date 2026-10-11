@@ -1278,7 +1278,7 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.AssumedFixed" xml:space="preserve"><value>Fixed by default (unreviewed)</value></data>
   <data name="Resource.BehaviorAssumedFixed" xml:space="preserve"><value>Part {0} is fixed by default, not verified; review is required before definitive absorption.</value></data>
   <data name="AllocationUI.CompositionTitle" xml:space="preserve"><value>Cost composition and behavior</value></data>
-  <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Select accounts and save their fixed and variable composition. You can change it until primary allocation is closed. Review accounts with multiple components in account details.</value></data>
+  <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Edit behavior directly in each row. Only Mixed allows fixed and variable percentages, which must add up to 100. Save changes before continuing. Split accounts are reviewed in their detail.</value></data>
   <data name="AllocationUI.CompositionSummary" xml:space="preserve"><value>Parts: {0} · Default fixed: {1} · Other: {2} · Mixed pending: {3}</value></data>
   <data name="AllocationUI.CompositionSelected" xml:space="preserve"><value>Selected accounts: {0}</value></data>
   <data name="AllocationUI.CompositionAccount" xml:space="preserve"><value>Account and description</value></data>
@@ -1316,7 +1316,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.CompositionWeightsSummary" xml:space="preserve"><value>{0}% fixed / {1}% variable</value></data>
   <data name="Guide.SecondaryAllocations" xml:space="preserve"><value>7. Secondary allocation and closing</value></data>
   <data name="AllocationUI.CompositionVariableWeight" xml:space="preserve"><value>Variable component (%)</value></data>
-  <data name="AllocationUI.CompositionWeightsInvalid" xml:space="preserve"><value>Enter percentages between 0 and 100 totaling 100.</value></data>
+  <data name="AllocationUI.CompositionWeightsInvalid" xml:space="preserve"><value>For Mixed, both percentages must be greater than 0 and add up to 100. For 100/0 or 0/100 choose Fixed or Variable.</value></data>
   <data name="Resources.EditStudyNodes" xml:space="preserve"><value>Analysis nodes updated</value></data>
   <data name="Guide.ContinueSecondary" xml:space="preserve"><value>Continue to secondary allocation</value></data>
   <data name="Model.StudyNodesSaved" xml:space="preserve"><value>Nodes saved for this analysis. You can edit them until primary allocation is closed.</value></data>
@@ -1328,4 +1328,7 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.ClassifyBatch" xml:space="preserve"><value>Cost composition updated</value></data>
   <data name="AllocationUI.CompositionFixedWeight" xml:space="preserve"><value>Fixed component (%)</value></data>
   <data name="Model.StudyNodesClosedHelp" xml:space="preserve"><value>Primary allocation is closed. Reopen it in step 6 to edit the nodes for this analysis.</value></data>
+  <data name="AllocationUI.PositiveTotalRequired" xml:space="preserve"><value>Enter positive destination weights before saving.</value></data>
+  <data name="AllocationUI.PercentageTotalRequired" xml:space="preserve"><value>Destination percentages must add up to 100. Complete the table values before saving.</value></data>
+  <data name="AllocationUI.SaveCompositionRows" xml:space="preserve"><value>Save changes</value></data>
 </root>

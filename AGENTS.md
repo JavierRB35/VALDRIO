@@ -125,3 +125,9 @@ El propietario autoriza ahora promocionar T08 y workspace a main tras revisar la
 ramas. Esta autorización sustituye la espera de promoción indicada en la entrega
 anterior. Continuar las nuevas tareas desde el main consolidado; conservar siempre
 validación local, diseño, requisitos y política de workflows exclusivamente manuales.
+
+## Edición en tablas — preferencia permanente del propietario
+
+Todo lo que pueda editarse en las tablas se hará en las tablas, sin duplicarlo en
+campos o formularios adicionales. Priorizar simplicidad. Ver la decisión de
+2026-10-09 en `docs/directrices/USABILIDAD.md`.

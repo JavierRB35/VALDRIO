@@ -9,6 +9,52 @@ namespace Valdrio.Tests;
 public sealed partial class T06ImportConfirmationTests
 {
     [TestMethod]
+    public async Task T11_TableCompositionTracksSavesAndPendingNavigation()
+    {
+        using var ui = await ResourceUiReady();
+        using var vm = new AllocationWorkspaceViewModel(ui.Company, ui.Studies, new UiTextCatalog(), ui.Preferences, ui.Dialogs);
+        await vm.EnterAsync();
+        var row = vm.CompositionAccounts.Single();
+        Assert.IsFalse(vm.SaveCompositionRowsCommand.CanExecute(null));
+        row.Choice = ResourceBehavior.Mixed; row.FixedPercentage = "70"; row.VariablePercentage = "40";
+        Assert.IsTrue(vm.IsDirty); Assert.IsTrue(vm.SaveCompositionRowsCommand.CanExecute(null));
+        var original = Hash(ui.Company.ActivePath!);
+        await vm.SaveCompositionRowsCommand.ExecuteAsync(null);
+        Assert.AreEqual(original, Hash(ui.Company.ActivePath!)); Assert.IsTrue(vm.IsDirty);
+        ui.Dialogs.Next = PendingEditChoice.Cancel;
+        Assert.IsFalse(await vm.CanLeaveAsync());
+        vm.RefreshPresentation(false);
+        Assert.AreSame(row, vm.CompositionAccounts.Single()); Assert.AreEqual("40", row.VariablePercentage);
+        row.VariablePercentage = "30";
+        ui.Dialogs.Next = PendingEditChoice.Save;
+        Assert.IsTrue(await vm.CanLeaveAsync()); Assert.IsFalse(vm.IsDirty);
+        Assert.IsFalse(vm.SaveCompositionRowsCommand.CanExecute(null));
+        row = vm.CompositionAccounts.Single(); Assert.AreEqual(ResourceBehavior.Mixed, row.Choice);
+        row.Choice = ResourceBehavior.Variable;
+        Assert.AreEqual("0", row.FixedPercentage); Assert.AreEqual("100", row.VariablePercentage);
+        Assert.IsTrue(vm.SaveCompositionRowsCommand.CanExecute(null));
+        await vm.SaveCompositionRowsCommand.ExecuteAsync(null);
+        row = vm.CompositionAccounts.Single(); Assert.AreEqual(ResourceBehavior.Variable, row.Choice);
+        row.Choice = ResourceBehavior.Fixed;
+        ui.Dialogs.Next = PendingEditChoice.Discard;
+        Assert.IsTrue(await vm.CanLeaveAsync()); Assert.IsFalse(vm.IsDirty);
+        Assert.AreEqual(ResourceBehavior.Variable, vm.CompositionAccounts.Single().Choice);
+    }
+
+    [TestMethod]
+    public async Task T11_IncompletePercentageKeyCannotBePublishedFromEditor()
+    {
+        using var ui = await ResourceUiReady();
+        using var vm = new AllocationWorkspaceViewModel(ui.Company, ui.Studies, new UiTextCatalog(), ui.Preferences, ui.Dialogs);
+        await vm.EnterAsync(); vm.Name = "Percentage validation"; vm.Mode = AllocationKeyMode.Percentage;
+        var line = vm.Lines.First(); line.Included = true; line.Value = "0";
+        Assert.IsFalse(vm.SaveKeyCommand.CanExecute(null)); Assert.IsFalse(await vm.SaveKeyAsync(true));
+        Assert.IsTrue(vm.Status.Contains("100"));
+        line.Value = "100"; Assert.IsTrue(vm.SaveKeyCommand.CanExecute(null));
+        Assert.IsTrue(await vm.SaveKeyAsync(true));
+    }
+
+    [TestMethod]
     [DataRow("1")]
     [DataRow("-1")]
     public async Task T11_ComponentRoundingPreservesAccountTotalsAcrossNodes(string amount)

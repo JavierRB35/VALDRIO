@@ -1278,7 +1278,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.AssumedFixed" xml:space="preserve"><value>Fijo por defecto (sin revisar)</value></data>
   <data name="Resource.BehaviorAssumedFixed" xml:space="preserve"><value>La parte {0} es fija por defecto, no verificada; necesita revisión antes de una absorción definitiva.</value></data>
   <data name="AllocationUI.CompositionTitle" xml:space="preserve"><value>Composición y comportamiento del coste</value></data>
-  <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Selecciona cuentas y guarda su composición fija y variable. Puedes cambiarla hasta cerrar el reparto primario. Las cuentas con varios componentes se revisan en el detalle.</value></data>
+  <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Edita el comportamiento directamente en cada fila. Solo Mixto permite introducir los porcentajes fijo y variable, que deben sumar 100. Guarda los cambios antes de continuar. Las cuentas divididas se revisan en su detalle.</value></data>
   <data name="AllocationUI.CompositionSummary" xml:space="preserve"><value>Partes: {0} · Fijas por defecto: {1} · Otras: {2} · Mixtas pendientes: {3}</value></data>
   <data name="AllocationUI.CompositionSelected" xml:space="preserve"><value>Cuentas seleccionadas: {0}</value></data>
   <data name="AllocationUI.CompositionAccount" xml:space="preserve"><value>Cuenta y descripción</value></data>
@@ -1316,7 +1316,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.CompositionWeightsSummary" xml:space="preserve"><value>{0} % fijo / {1} % variable</value></data>
   <data name="Guide.SecondaryAllocations" xml:space="preserve"><value>7. Reparto secundario y cierre</value></data>
   <data name="AllocationUI.CompositionVariableWeight" xml:space="preserve"><value>Componente variable (%)</value></data>
-  <data name="AllocationUI.CompositionWeightsInvalid" xml:space="preserve"><value>Introduce porcentajes entre 0 y 100 cuya suma sea 100.</value></data>
+  <data name="AllocationUI.CompositionWeightsInvalid" xml:space="preserve"><value>En Mixto, ambos porcentajes deben ser mayores que 0 y sumar 100. Para 100/0 o 0/100 selecciona Fijo o Variable.</value></data>
   <data name="Resources.EditStudyNodes" xml:space="preserve"><value>Nodos del análisis actualizados</value></data>
   <data name="Guide.ContinueSecondary" xml:space="preserve"><value>Continuar al reparto secundario</value></data>
   <data name="Model.StudyNodesSaved" xml:space="preserve"><value>Nodos guardados para este análisis. Puedes modificarlos hasta cerrar el reparto primario.</value></data>
@@ -1328,4 +1328,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.ClassifyBatch" xml:space="preserve"><value>Composición de costes actualizada</value></data>
   <data name="AllocationUI.CompositionFixedWeight" xml:space="preserve"><value>Componente fijo (%)</value></data>
   <data name="Model.StudyNodesClosedHelp" xml:space="preserve"><value>El reparto primario está cerrado. Reábrelo en el paso 6 para modificar los nodos de este análisis.</value></data>
+  <data name="AllocationUI.PositiveTotalRequired" xml:space="preserve"><value>Introduce pesos positivos en los destinos antes de guardar.</value></data>
+  <data name="AllocationUI.PercentageTotalRequired" xml:space="preserve"><value>Los porcentajes de los destinos deben sumar 100. Completa los valores de la tabla antes de guardar.</value></data>
+  <data name="AllocationUI.SaveCompositionRows" xml:space="preserve"><value>Guardar cambios</value></data>
 </root>

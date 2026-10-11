@@ -117,7 +117,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         SaveAbsoluteCommand = new AsyncRelayCommand(SaveAbsoluteAsync, () => CanEditConfiguration && Part.HasValue);
         ChooseDescriptionCommand = new AsyncRelayCommand(() => CommitConfig(c => new(c.PrimaryRules, c.SecondaryRules, c.ExplicitAssignments, c.AbsoluteAssignments,
             c.Descriptions.Where(d => d.Account != Account).Append(new(Account!, ChosenDescription)).ToArray())), () => CanEdit && Account is not null && DescriptionOptions.Contains(ChosenDescription, StringComparer.Ordinal));
-        DiscardCommand = new RelayCommand(() => { LoadKey(editingKey); ClearRule(); LoadAbsolute(); statusKey = "Discarded"; Refresh(); }, () => !busy && IsDirty);
+        DiscardCommand = new RelayCommand(() => { DiscardCompositionChanges(); LoadKey(editingKey); ClearRule(); LoadAbsolute(); statusKey = "Discarded"; Refresh(); }, () => !busy && IsDirty);
         InitializeCompositionCommands();
         earlierBusy = company.WorkspaceBusy; earlierBefore = studies.BeforeChangeAsync; earlierAfter = company.AfterChangeAsync;
         company.WorkspaceBusy = () => busy || earlierBusy?.Invoke() == true;
@@ -136,15 +136,15 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public string PrimaryState => this[IsPrimaryClosed ? "PrimaryClosedState" : "PrimaryOpenState"];
     public string PrimaryToggleLabel => this[IsPrimaryClosed ? "ReopenPrimary" : "ClosePrimary"];
     private bool CanSaveRule => CanEditConfiguration && RuleKey.HasValue && !string.IsNullOrWhiteSpace(IsExact ? RuleAccount : Prefix);
-    public bool CanAssignCoverage => CanEditConfiguration && !HasUnappliedRule;
-    public bool CanEditConfiguration => CanEdit && !keyDirty;
-    public bool CanEditKey => (Stage == AllocationStage.Secondary ? CanManageSecondary : CanEdit) && !HasUnappliedRule;
+    public bool CanAssignCoverage => CanEditConfiguration && !HasUnappliedRule && !HasCompositionChanges;
+    public bool CanEditConfiguration => CanEdit && !keyDirty && !HasCompositionChanges;
+    public bool CanEditKey => (Stage == AllocationStage.Secondary ? CanManageSecondary : CanEdit) && !HasUnappliedRule && !HasCompositionChanges;
     private bool IsKeyUsed => editingKey is not null && workspace?.UsedKeyIds.Contains(editingKey.Id) == true;
     public bool CanEditComposition => CanEditKey && !IsKeyUsed;
     public bool HasObsolete => workspace is not null && (workspace.Configuration.ExplicitAssignments.Any(a => !Parts.Any(p => p.Value == a.PartId))
         || workspace.Configuration.AbsoluteAssignments.Any(a => !Parts.Any(p => p.Value == a.PartId))
         || workspace.Configuration.Descriptions.Any(d => !workspace.Resources.Origins.Any(o => o.Code == d.Account && o.Descriptions.Contains(d.Description, StringComparer.Ordinal))));
-    public bool IsDirty => keyDirty || ruleDirty || absoluteDirty;
+    public bool IsDirty => keyDirty || ruleDirty || absoluteDirty || HasCompositionChanges;
     public bool HasUnappliedRule => ruleDirty || absoluteDirty;
     public void ExplainPendingRule() { statusKey = "ApplyRuleFirst"; Refresh(); }
     public bool IsPercentage => Mode == AllocationKeyMode.Percentage;
@@ -254,7 +254,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private void RefreshEditor()
     {
         foreach (var property in new[] { nameof(IsDirty), nameof(HasUnappliedRule), nameof(KeyState), nameof(CanEditConfiguration),
-            nameof(CanAssignCoverage), nameof(CanEditKey), nameof(CanEditComposition), nameof(CanEditWeights), nameof(IsPercentage), nameof(IsDriver), nameof(IsSecondary),
+            nameof(CanAssignCoverage), nameof(CanEditClassification), nameof(CanEditKey), nameof(CanEditComposition), nameof(CanEditWeights), nameof(IsPercentage), nameof(IsDriver), nameof(IsSecondary),
             nameof(IsExact), nameof(IsPrefix), nameof(Total), nameof(Validation) }) OnPropertyChanged(property);
         Commands();
     }
@@ -308,9 +308,21 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private EntityId previewId = new(Guid.NewGuid());
     private AllocationKeyVersion PreviewKey(bool publish) => AllocationWorkspaceRules.SaveKey(BuildKey(publish), workspace!.Resources.Model, workspace.Resources.Precision,
         workspace.Keys, UtcInstant.ParseIso("2000-01-01T00:00:00Z"), !IsKeyUsed);
-    private string? MissingKeyInput(bool publish) => string.IsNullOrWhiteSpace(Name) ? "NameRequired"
-        : IsDriver && !Unit.HasValue ? "UnitRequired"
-        : publish && !Lines.Any(l => l.Included) ? "DestinationsRequired" : null;
+    private string? MissingKeyInput(bool publish)
+    {
+        if (string.IsNullOrWhiteSpace(Name)) return "NameRequired";
+        if (IsDriver && !Unit.HasValue) return "UnitRequired";
+        if (!publish) return null;
+        if (!Lines.Any(l => l.Included)) return "DestinationsRequired";
+        try
+        {
+            var total = Lines.Where(l => l.Included).Sum(l => Mode == AllocationKeyMode.EqualShares ? 1m : Parse(l.Value));
+            if (IsPercentage && total != 100m) return "PercentageTotalRequired";
+            if (IsDriver && total <= 0m) return "PositiveTotalRequired";
+        }
+        catch (Exception ex) when (ex is ArgumentException or DomainRuleException or OverflowException) { return "CheckNumbers"; }
+        return null;
+    }
     public async Task<bool> SaveKeyAsync(bool publish)
     {
         if (!CanEditKey || workspace is null) return false;
@@ -439,8 +451,9 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         if (!IsDirty) return true;
         var choice = dialogs.ResolvePending(this["PendingTitle"], this["PendingBody"]);
         if (choice == PendingEditChoice.Cancel) return false;
-        if (choice == PendingEditChoice.Discard) { LoadKey(editingKey); ClearRule(); LoadAbsolute(); return true; }
+        if (choice == PendingEditChoice.Discard) { DiscardCompositionChanges(); LoadKey(editingKey); ClearRule(); LoadAbsolute(); return true; }
         if (HasUnappliedRule) { statusKey = "ApplyRuleFirst"; Refresh(); return false; }
+        if (HasCompositionChanges) return await SaveCompositionRowsAsync();
         return await SaveKeyAsync(false);
     }
     private void Rebuild()
@@ -525,7 +538,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public IRelayCommand DiscardCommand { get; }
     private void Commands()
     {
-        foreach (var command in new IRelayCommand?[] { DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
+        foreach (var command in new IRelayCommand?[] { SaveCompositionRowsCommand, DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
             SaveRuleCommand, RemoveRuleCommand, LoadRuleCommand, NewRuleCommand, SaveSecondaryCommand, LoadSecondaryCommand, NewSecondaryCommand,
             RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CheckReciprocalCommand, CalculateSecondaryCommand, CancelSecondaryCommand, ExplainSecondaryCommand, ToggleSecondaryCommand,
             SaveSecondaryGroupCommand, ClearObsoleteSecondaryGroupsCommand, AssignSecondaryKeyToMissingCommand,
