@@ -1029,6 +1029,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Allocation.ParentInvalid" xml:space="preserve"><value>Elige una versión publicada de esta clave como punto de partida.</value></data>
   <data name="Allocation.RuleInvalid" xml:space="preserve"><value>Completa la cuenta o prefijo y selecciona una clave. Revisa las reglas que coinciden con la misma cuenta.</value></data>
   <data name="Allocation.RuleMissing" xml:space="preserve"><value>Selecciona una clave en la cuenta o aplica una regla que la incluya.</value></data>
+  <data name="Allocation.AuxiliaryMultipleKeys" xml:space="preserve"><value>El nodo auxiliar ya tiene una clave de reparto en otro grupo. Cada auxiliar solo puede tener una clave activa; revisa o elimina la asignación anterior.</value></data>
   <data name="Allocation.RuleAmbiguous" xml:space="preserve"><value>Hay reglas que compiten por las mismas cuentas. Edita y aplica la regla que debe utilizarse o elimina la que sobra.</value></data>
   <data name="Allocation.PublicationRequired" xml:space="preserve"><value>Elige una clave guardada y completa de este modelo para el reparto correspondiente.</value></data>
   <data name="Allocation.AuxiliaryInvalid" xml:space="preserve"><value>El emisor del reparto secundario debe ser un nodo auxiliar activo del modelo.</value></data>
