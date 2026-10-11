@@ -124,5 +124,19 @@
       "CUSTOMER_SUCCESS": "6021.42857143"
     },
     "maxAbsoluteError": "0.00000002"
+  },
+  "composition": {
+    "621001": {
+      "behavior": "Fixed",
+      "variablePercentage": 0
+    },
+    "629002": {
+      "behavior": "Variable",
+      "variablePercentage": 100
+    },
+    "640001": {
+      "behavior": "Mixed",
+      "variablePercentage": 30
+    }
   }
 }
