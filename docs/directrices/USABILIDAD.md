@@ -76,3 +76,12 @@ de cambios pendientes y la validación del rango.
 - Situar cerrar/reabrir al comienzo de las pantallas 6 y 7, en el mismo lugar.
 - Suprimir la tabla «Conciliación por recurso» de la pantalla secundaria por
   decisión del propietario. Conservar las comprobaciones económicas internas.
+
+### Autoasignación de auxiliares — decisión del propietario (2026-10-11)
+
+- En el reparto **secundario**, una clave puede distribuir parte de los costes al propio nodo auxiliar **sin solicitar autorización especial**. Esto es válido tanto para claves nuevas como para versiones históricas cuya propiedad persistida `SelfAllocationPolicy` indique `Forbidden`.
+- La interfaz no expone una casilla para autorizarlo. Al crear claves secundarias nuevas, el valor serializado se establece en `Allowed` por defecto para conservar consistencia con el comportamiento. No se alteran retroactivamente los datos históricos.
+- `AllocationKeyRules.ResolveSecondary` admite esas rutas y `ReciprocalGraphBuilder` las transmite a la matriz de cálculo con `AllowSelf=true`. El servicio de reparto recíproco sigue validando porcentajes, integridad, cobertura, conectividad a nodos principales, singularidad y estabilidad numérica. **Autoasignación permitida no equivale a grafo resoluble**.
+- Para un reparto del 100 % al propio auxiliar sin salida hacia nodos principales, la validación de viabilidad del cálculo muestra `GRAPH_CLOSED_COMPONENT`; no se debe bloquear la simple elección de la clave ni prometer resultados.
+- `ReciprocalFactorization` mantiene el contrato técnico genérico `AllowSelf` para llamadas externas/fixtures explícitos, sin convertirlo en una decisión que el usuario de VALDRIO deba tomar.
+- Criterios de prueba: reparto mixto con autoprestación, clave histórica con valor `Forbidden`, circuito cerrado 100 % propio, conservación de costes y persistencia tras reabrir el estudio.
