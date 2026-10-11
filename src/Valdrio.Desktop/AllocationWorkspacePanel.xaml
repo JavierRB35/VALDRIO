@@ -45,7 +45,14 @@
      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
      <Grid>
       <Grid.ColumnDefinitions><ColumnDefinition Width="3*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-      <StackPanel Margin="0,0,8,0" IsEnabled="{Binding CanEditKey}"><TextBlock Text="{Binding [Name]}"/><TextBox x:Name="KeyNameBox" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Name]}"/></StackPanel>
+      <StackPanel Margin="0,0,8,0" IsEnabled="{Binding CanEditKey}"><TextBlock Text="{Binding [Name]}"/><TextBox x:Name="KeyNameBox" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Name]}">
+        <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}">
+         <Style.Triggers><DataTrigger Binding="{Binding KeyNameMissing}" Value="True">
+          <Setter Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
+          <Setter Property="BorderBrush" Value="{DynamicResource Brand.Red}"/>
+         </DataTrigger></Style.Triggers>
+        </Style></TextBox.Style>
+       </TextBox></StackPanel>
       <StackPanel Grid.Column="1" Margin="0,0,8,0" IsEnabled="{Binding CanEditComposition}"><TextBlock Text="{Binding [Criterion]}"/><ComboBox x:Name="ModeBox" ItemsSource="{Binding Modes}" SelectedValue="{Binding Mode}" AutomationProperties.Name="{Binding [Criterion]}"/>
        <StackPanel Visibility="{Binding IsDriver, Converter={StaticResource Visible}}"><TextBlock Text="{Binding [Unit]}"/><ComboBox ItemsSource="{Binding Units}" SelectedValue="{Binding Unit}" AutomationProperties.Name="{Binding [Unit]}" x:Name="UnitBox"/></StackPanel>
       </StackPanel>
@@ -61,7 +68,13 @@
       </DataGrid.Columns>
      </DataGrid>
      <WrapPanel Grid.Row="3" Margin="0,8,0,0"><TextBlock Text="{Binding [Total]}" Margin="0,0,8,0"/><TextBlock Text="{Binding Total}" FontWeight="Bold"/></WrapPanel>
-     <TextBlock Grid.Row="4" Text="{Binding Validation}" Margin="0,4,0,0" AutomationProperties.LiveSetting="Polite"/>
+     <TextBlock Grid.Row="4" Text="{Binding Validation}" Margin="0,4,0,0" AutomationProperties.LiveSetting="Polite">
+      <TextBlock.Style><Style TargetType="TextBlock">
+       <Style.Triggers><DataTrigger Binding="{Binding KeyValidationHasError}" Value="True">
+        <Setter Property="Foreground" Value="{DynamicResource Brand.Red}"/>
+        <Setter Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
+       </DataTrigger></Style.Triggers></Style></TextBlock.Style>
+     </TextBlock>
      </Grid></Expander>
    </Border>
 </Grid>
@@ -125,6 +138,8 @@
        <TabItem Header="{Binding [SecondaryRules]}">
      <StackPanel Margin="16">
       <TextBlock Text="{Binding [SecondaryRouteHelp]}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+      <TextBlock Text="{Binding [SecondaryNodeAssignmentsTitle]}" FontWeight="SemiBold" Margin="0,8,0,3"/>
+      <TextBlock Text="{Binding [SecondaryNodeAssignmentsHelp]}" TextWrapping="Wrap" Margin="0,0,0,6"/>
       <DataGrid x:Name="SecondaryNodeAssignmentsGrid" ItemsSource="{Binding SecondaryNodeAssignments}" IsReadOnly="True" AutoGenerateColumns="False" Height="190" CanUserAddRows="False" Margin="0,6,0,12">
        <DataGrid.Columns>
         <DataGridTextColumn Binding="{Binding Source}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
@@ -217,7 +232,8 @@
       <DataGridTextColumn ElementStyle="{StaticResource PrimaryBehavior}" Binding="{Binding Behavior}" Width="*"/>
      </DataGrid.Columns>
     </DataGrid>
-    <DataGrid x:Name="PrimaryNodeTotalsGrid" ItemsSource="{Binding PrimaryNodeTotals}" IsReadOnly="True"
+    <TextBlock Text="{Binding [PrimaryNodeTotalsTitle]}" FontWeight="SemiBold" Margin="0,12,0,6"/>
+     <DataGrid x:Name="PrimaryNodeTotalsGrid" ItemsSource="{Binding PrimaryNodeTotals}" IsReadOnly="True"
           AutoGenerateColumns="False" Height="200" CanUserSortColumns="True" Margin="0,12,0,8">
       <DataGrid.Columns>
        <DataGridTextColumn Binding="{Binding Center}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
