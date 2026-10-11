@@ -507,6 +507,7 @@ public sealed partial class AllocationWorkspaceViewModel
             });
         }
         OnPropertyChanged(nameof(SecondaryExplanation));
+        OnPropertyChanged(nameof(SecondaryExplanationTotal));
     }
 
     private async Task ToggleSecondaryAsync()
