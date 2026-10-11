@@ -22,31 +22,37 @@ public sealed class CompositionAccountRow(EntityId id, string account, string am
     public bool IsDefault { get; } = isDefault;
     public bool Selected { get => selected; set => SetProperty(ref selected, value); }
     private ResourceBehavior choice = ResourceBehavior.Fixed, savedChoice = ResourceBehavior.Fixed;
-    private string fixedPercentage = "100", variablePercentage = "0", savedFixed = "100", savedVariable = "0";
+    private string variablePercentage = "0", savedVariable = "0";
+    private System.Globalization.CultureInfo percentageCulture = System.Globalization.CultureInfo.InvariantCulture;
     public ResourceBehavior Choice
     {
         get => choice;
         set
         {
             if (!SetProperty(ref choice, value)) return;
-            if (value == ResourceBehavior.Fixed) { FixedPercentage = "100"; VariablePercentage = "0"; }
-            if (value == ResourceBehavior.Variable) { FixedPercentage = "0"; VariablePercentage = "100"; }
+            if (value == ResourceBehavior.Fixed) { VariablePercentage = "0"; }
+            if (value == ResourceBehavior.Variable) { VariablePercentage = "100"; }
             OnPropertyChanged(nameof(IsMixed)); OnPropertyChanged(nameof(IsDirty));
         }
     }
     public bool IsMixed => CanBulk && Choice == ResourceBehavior.Mixed;
-    public string FixedPercentage { get => fixedPercentage; set { if (SetProperty(ref fixedPercentage, value)) OnPropertyChanged(nameof(IsDirty)); } }
-    public string VariablePercentage { get => variablePercentage; set { if (SetProperty(ref variablePercentage, value)) OnPropertyChanged(nameof(IsDirty)); } }
-    public bool IsDirty => choice != savedChoice || fixedPercentage != savedFixed || variablePercentage != savedVariable;
+    public string FixedPercentage => decimal.TryParse(variablePercentage,
+        System.Globalization.NumberStyles.AllowLeadingSign | System.Globalization.NumberStyles.AllowDecimalPoint |
+        System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite,
+        percentageCulture, out var variable) && variable >= 0m && variable <= 100m
+        ? (100m - variable).ToString(percentageCulture) : "—";
+    public string VariablePercentage { get => variablePercentage; set { if (SetProperty(ref variablePercentage, value)) { OnPropertyChanged(nameof(FixedPercentage)); OnPropertyChanged(nameof(IsDirty)); } } }
+    public bool IsDirty => choice != savedChoice || variablePercentage != savedVariable;
     public void InitializeWeights(ResourceBehavior value, decimal? variable, System.Globalization.CultureInfo culture)
     {
+        percentageCulture = culture;
         Choice = value is ResourceBehavior.Mixed or ResourceBehavior.MixedPending ? ResourceBehavior.Mixed :
             value == ResourceBehavior.Variable ? ResourceBehavior.Variable : ResourceBehavior.Fixed;
         VariablePercentage = (variable ?? (Choice == ResourceBehavior.Variable ? 100m : 0m)).ToString(culture);
-        FixedPercentage = (100m - (variable ?? (Choice == ResourceBehavior.Variable ? 100m : 0m))).ToString(culture);
+        OnPropertyChanged(nameof(FixedPercentage));
         AcceptChanges();
     }
-    public void AcceptChanges() { savedChoice = choice; savedFixed = fixedPercentage; savedVariable = variablePercentage; OnPropertyChanged(nameof(IsDirty)); }
+    public void AcceptChanges() { savedChoice = choice; savedVariable = variablePercentage; OnPropertyChanged(nameof(IsDirty)); }
 }
 
 public sealed partial class AllocationWorkspaceViewModel
@@ -214,7 +220,9 @@ public sealed partial class AllocationWorkspaceViewModel
         {
             foreach (var row in CompositionAccounts.Where(r => r.IsDirty))
             {
-                var fixedWeight = Parse(row.FixedPercentage); var variableWeight = Parse(row.VariablePercentage);
+                var variableWeight = Parse(row.VariablePercentage);
+                if (variableWeight < 0m || variableWeight > 100m) { statusKey = "CompositionWeightsInvalid"; Refresh(); return false; }
+                var fixedWeight = 100m - variableWeight;
                 if (!row.CanBulk || fixedWeight < 0m || variableWeight < 0m || fixedWeight + variableWeight != 100m ||
                     row.IsMixed && (fixedWeight == 0m || variableWeight == 0m))
                 { statusKey = "CompositionWeightsInvalid"; Refresh(); return false; }

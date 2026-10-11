@@ -50,10 +50,11 @@ public partial class MainWindow
         behaviorCombo.SetCurrentValue(ComboBox.SelectedValueProperty, ResourceBehavior.Mixed); await Idle();
         var weightBoxes = Descendants<TextBox>(gridRow).Where(b => b.GetBindingExpression(TextBox.TextProperty) is not null).ToArray();
         Check(weightBoxes.Length == 2 && weightBoxes.All(b => b.IsVisible && b.IsEnabled), "mixed percentages editable inside row");
-        Text(weightBoxes[0], "70"); Text(weightBoxes[1], "40");
+        Check(weightBoxes[0].IsReadOnly && !weightBoxes[1].IsReadOnly, "only variable percentage is editable");
+        Text(weightBoxes[1], "140");
         await Click(AllocationPanel.SaveCompositionRowsButton);
         Check(vm.HasCompositionChanges, "invalid percentages keep table edits");
-        Text(weightBoxes[1], "30"); await Click(AllocationPanel.SaveCompositionRowsButton);
+        Text(weightBoxes[1], "30"); await Idle(); Check(weightBoxes[0].Text == "70", "fixed percentage automatically complements variable"); await Click(AllocationPanel.SaveCompositionRowsButton);
         Check(!AllocationPanel.SaveCompositionRowsButton.IsEnabled, "table save disables after persistence");
         composition = vm.CompositionAccounts.Single();
         AllocationPanel.CompositionGrid.ScrollIntoView(composition); await Idle();
@@ -64,7 +65,7 @@ public partial class MainWindow
         Check(Descendants<TextBox>(gridRow).Where(b => b.GetBindingExpression(TextBox.TextProperty) is not null).All(b => !b.IsVisible), "variable rows hide percentage inputs");
         behaviorCombo.SetCurrentValue(ComboBox.SelectedValueProperty, ResourceBehavior.Mixed); await Idle();
         weightBoxes = Descendants<TextBox>(gridRow).Where(b => b.GetBindingExpression(TextBox.TextProperty) is not null).ToArray();
-        Text(weightBoxes[0], "70"); Text(weightBoxes[1], "30"); await Idle();
+        Text(weightBoxes[1], "30"); await Idle();
         Check(!AllocationPanel.SaveCompositionRowsButton.IsEnabled, "restoring original values clears pending edits");
         Check(vm.CompositionAccounts.Single().Behavior.Contains("70"), "70 fixed and 30 variable saved by visible controls");
         ScrollToElement(AllocationPanel.CompositionSection); await Idle();

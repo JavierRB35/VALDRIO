@@ -35,3 +35,10 @@ En reparto primario: comportamiento Fijo/Variable/Mixto mediante combo por cuent
 Los porcentajes fijo y variable pertenecen a esa fila; solo se muestran como campos
 editables para Mixto. Fijo equivale a 100/0 y Variable a 0/100. Guardar confirma los
 cambios de la tabla y vuelve a desactivarse hasta la siguiente modificación.
+
+### Complemento fijo automático — 2026-10-11
+
+En una fila Mixto solo se edita el porcentaje variable. El porcentaje fijo se
+muestra como dato calculado de solo lectura: 100 menos el porcentaje variable.
+No pedir dos entradas para una misma decisión. Guardar conserva el mismo control
+de cambios pendientes y la validación del rango.

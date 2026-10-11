@@ -72,7 +72,7 @@
         </ComboBox>
        </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
        <DataGridTemplateColumn Width="110"><DataGridTemplateColumn.CellTemplate><DataTemplate>
-        <TextBox Text="{Binding FixedPercentage, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsMixed, Converter={StaticResource Visible}}" AutomationProperties.Name="{Binding DataContext[CompositionFixedWeight], RelativeSource={RelativeSource AncestorType=DataGrid}}" TextAlignment="Right">
+        <TextBox IsReadOnly="True" Text="{Binding FixedPercentage, Mode=OneWay}" Visibility="{Binding IsMixed, Converter={StaticResource Visible}}" AutomationProperties.Name="{Binding DataContext[CompositionFixedWeight], RelativeSource={RelativeSource AncestorType=DataGrid}}" TextAlignment="Right">
          <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}"><Style.Triggers><DataTrigger Binding="{Binding CanBulk}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger><DataTrigger Binding="{Binding DataContext.CanEditClassification, RelativeSource={RelativeSource AncestorType=DataGrid}}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger></Style.Triggers></Style></TextBox.Style>
         </TextBox>
        </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>

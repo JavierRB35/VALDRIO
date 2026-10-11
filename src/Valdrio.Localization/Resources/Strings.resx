@@ -1278,7 +1278,7 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.AssumedFixed" xml:space="preserve"><value>Fixed by default (unreviewed)</value></data>
   <data name="Resource.BehaviorAssumedFixed" xml:space="preserve"><value>Part {0} is fixed by default, not verified; review is required before definitive absorption.</value></data>
   <data name="AllocationUI.CompositionTitle" xml:space="preserve"><value>Cost composition and behavior</value></data>
-  <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Edit behavior directly in each row. Only Mixed allows fixed and variable percentages, which must add up to 100. Save changes before continuing. Split accounts are reviewed in their detail.</value></data>
+  <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Edit behavior in the row. For Mixed, enter only the variable percentage; fixed is calculated as 100 minus variable. Save changes before continuing. Split accounts are reviewed in their detail.</value></data>
   <data name="AllocationUI.CompositionSummary" xml:space="preserve"><value>Parts: {0} · Default fixed: {1} · Other: {2} · Mixed pending: {3}</value></data>
   <data name="AllocationUI.CompositionSelected" xml:space="preserve"><value>Selected accounts: {0}</value></data>
   <data name="AllocationUI.CompositionAccount" xml:space="preserve"><value>Account and description</value></data>

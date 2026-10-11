@@ -16,7 +16,7 @@ public sealed partial class T06ImportConfirmationTests
         await vm.EnterAsync();
         var row = vm.CompositionAccounts.Single();
         Assert.IsFalse(vm.SaveCompositionRowsCommand.CanExecute(null));
-        row.Choice = ResourceBehavior.Mixed; row.FixedPercentage = "70"; row.VariablePercentage = "40";
+        row.Choice = ResourceBehavior.Mixed; row.VariablePercentage = "140";
         Assert.IsTrue(vm.IsDirty); Assert.IsTrue(vm.SaveCompositionRowsCommand.CanExecute(null));
         var original = Hash(ui.Company.ActivePath!);
         await vm.SaveCompositionRowsCommand.ExecuteAsync(null);
@@ -24,8 +24,8 @@ public sealed partial class T06ImportConfirmationTests
         ui.Dialogs.Next = PendingEditChoice.Cancel;
         Assert.IsFalse(await vm.CanLeaveAsync());
         vm.RefreshPresentation(false);
-        Assert.AreSame(row, vm.CompositionAccounts.Single()); Assert.AreEqual("40", row.VariablePercentage);
-        row.VariablePercentage = "30";
+        Assert.AreSame(row, vm.CompositionAccounts.Single()); Assert.AreEqual("140", row.VariablePercentage);
+        row.VariablePercentage = "30"; Assert.AreEqual("70", row.FixedPercentage);
         ui.Dialogs.Next = PendingEditChoice.Save;
         Assert.IsTrue(await vm.CanLeaveAsync()); Assert.IsFalse(vm.IsDirty);
         Assert.IsFalse(vm.SaveCompositionRowsCommand.CanExecute(null));

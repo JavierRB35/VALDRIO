@@ -1278,7 +1278,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.AssumedFixed" xml:space="preserve"><value>Fijo por defecto (sin revisar)</value></data>
   <data name="Resource.BehaviorAssumedFixed" xml:space="preserve"><value>La parte {0} es fija por defecto, no verificada; necesita revisión antes de una absorción definitiva.</value></data>
   <data name="AllocationUI.CompositionTitle" xml:space="preserve"><value>Composición y comportamiento del coste</value></data>
-  <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Edita el comportamiento directamente en cada fila. Solo Mixto permite introducir los porcentajes fijo y variable, que deben sumar 100. Guarda los cambios antes de continuar. Las cuentas divididas se revisan en su detalle.</value></data>
+  <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Edita el comportamiento en la fila. En Mixto introduce solo el porcentaje variable; el fijo se calcula como 100 menos el variable. Guarda los cambios antes de continuar. Las cuentas divididas se revisan en su detalle.</value></data>
   <data name="AllocationUI.CompositionSummary" xml:space="preserve"><value>Partes: {0} · Fijas por defecto: {1} · Otras: {2} · Mixtas pendientes: {3}</value></data>
   <data name="AllocationUI.CompositionSelected" xml:space="preserve"><value>Cuentas seleccionadas: {0}</value></data>
   <data name="AllocationUI.CompositionAccount" xml:space="preserve"><value>Cuenta y descripción</value></data>
