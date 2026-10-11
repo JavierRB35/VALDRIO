@@ -1150,6 +1150,8 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.PrimaryIncomplete" xml:space="preserve"><value>Some accounts remain unallocated. Review pending rows in the account table.</value></data>
   <data name="AllocationUI.PrimarySource" xml:space="preserve"><value>Resource / account</value></data>
   <data name="AllocationUI.PrimaryDestination" xml:space="preserve"><value>Destination node</value></data>
+  <data name="AllocationUI.NodeCenter" xml:space="preserve"><value>Center</value></data>
+  <data name="AllocationUI.Node" xml:space="preserve"><value>Node</value></data>
   <data name="AllocationUI.PrimaryAmount" xml:space="preserve"><value>Posted amount</value></data>
   <data name="AllocationUI.PrimaryRule" xml:space="preserve"><value>Applied rule / key</value></data>
   <data name="AllocationUI.PrimaryAbsolute" xml:space="preserve"><value>Manual amount</value></data>
