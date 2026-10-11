@@ -1085,6 +1085,8 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.Discard" xml:space="preserve"><value>Discard unsaved changes</value></data>
   <data name="AllocationUI.Unit" xml:space="preserve"><value>Criterion unit</value></data>
   <data name="AllocationUI.NodeUnit" xml:space="preserve"><value>Unit</value></data>
+  <data name="AllocationUI.SelfAllowedHelp" xml:space="preserve"><value>Allow the auxiliary to route a share to itself when the key includes its own destination. Closed circuits without a principal exit remain unsolvable.</value></data>
+  <data name="AllocationUI.SecondaryNoPublishedKeys" xml:space="preserve"><value>No published secondary keys are available. Create and save a key in Secondary allocation before assigning it to an auxiliary.</value></data>
   <data name="AllocationUI.SelfAllowed" xml:space="preserve"><value>Allow allocation to the source auxiliary</value></data>
   <data name="AllocationUI.Include" xml:space="preserve"><value>Include</value></data>
   <data name="AllocationUI.Destination" xml:space="preserve"><value>Centre / node</value></data>
