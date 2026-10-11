@@ -222,7 +222,11 @@
               <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Brand.Red}"/>
                <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
             </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
+            <Trigger Property="Tag" Value="error">
+               <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Brand.Red}"/>
+               <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
+             </Trigger>
+             <Trigger Property="IsEnabled" Value="False">
               <Setter Property="Background" Value="{DynamicResource Surface.Disabled}"/>
               <Setter Property="BorderBrush" Value="{DynamicResource Border.Disabled}"/>
               <Setter Property="Opacity" Value="0.88"/>
