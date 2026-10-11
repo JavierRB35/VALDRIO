@@ -6,17 +6,18 @@ using Valdrio.Application;
 
 namespace Valdrio.Desktop;
 
-public sealed record ImportSelectionGroup(string Code, IReadOnlyList<int> Records, decimal Amount);
+public sealed record ImportSelectionGroup(string Code, IReadOnlyList<int> Records, decimal Amount, string Description);
 public sealed record ImportSelectionTotals(int SelectedRows, int ExcludedRows, int Groups,
     decimal Positive, decimal Negative, decimal Net, decimal ExcludedNet);
 
-public sealed class ImportAccountChoice(string account, decimal amount, int recordNumber) : ObservableObject
+public sealed class ImportAccountChoice(string account, decimal amount, int recordNumber, string description = "") : ObservableObject
 {
     private bool included;
     private string rateId = "";
     public string RateId { get => rateId; set => SetProperty(ref rateId, value); }
     private string formattedAmount = "";
     public string Account { get; } = account;
+    public string Description { get; } = description;
     public decimal Amount { get; } = amount;
     public int RecordNumber { get; } = recordNumber;
     public bool Included { get => included; set => SetProperty(ref included, value); }
@@ -34,7 +35,8 @@ public sealed partial class ImportColumnMappingViewModel
     public ImportSelectionTotals? SelectionTotals { get; private set; }
     public bool SelectionOverflow { get; private set; }
     public IReadOnlyList<ImportGroupPreview> SelectionPreview => selectionGroups.Select(g => new ImportGroupPreview(
-        g.Code, string.Join(", ", g.Records), g.Amount.ToString(CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)))).ToArray();
+        g.Code, string.Join(", ", g.Records), g.Amount.ToString(CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)), g.Description)
+        { NumericAmount = g.Amount }).ToArray();
     public string SelectionReconciliation
     {
         get
@@ -59,7 +61,7 @@ public sealed partial class ImportColumnMappingViewModel
             var groups = selected.GroupBy(c => c.Account, StringComparer.Ordinal)
                 .OrderBy(g => g.Key, StringComparer.Ordinal)
                 .Select(g => new ImportSelectionGroup(g.Key, Array.AsReadOnly(g.Select(c => c.RecordNumber).ToArray()),
-                    g.Sum(c => c.Amount))).ToArray();
+                    g.Sum(c => c.Amount), Describe(g.Select(c => c.Description)))).ToArray();
             var positive = selected.Where(c => c.Amount > 0).Sum(c => c.Amount);
             var negative = selected.Where(c => c.Amount < 0).Sum(c => c.Amount);
             var excluded = accountChoices.Where(c => !c.Included).Sum(c => c.Amount);
@@ -69,6 +71,14 @@ public sealed partial class ImportColumnMappingViewModel
         }
         catch (OverflowException) { SelectionOverflow = true; }
     }
+    // Account code remains the identity. Preserve distinct source descriptions in the review.
+    private string Describe(IEnumerable<string> values)
+    {
+        var names = values.Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.Ordinal).ToArray();
+        return names.Length == 0 ? this["DescriptionMissing"] : string.Join(" / ", names);
+    }
+    private string DescriptionForCode(string code) => Describe(accountChoices
+        .Where(row => row.Account == code).Select(row => row.Description));
     public IReadOnlyList<ImportAccountChoice> AccountChoices => accountChoices;
     public bool ImportAllAccounts
     {
@@ -105,8 +115,14 @@ public sealed partial class ImportColumnMappingViewModel
         ResetAccountChoices();
         if (!result.IsValid) return;
         var culture = CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
-        accountChoices = result.Rows.Select(r => new ImportAccountChoice(r.Account!, r.Amount!.Value, r.RecordNumber)
-            { Included = importAllAccounts }).ToArray();
+        accountChoices = result.Rows.Select(r =>
+        {
+            var sourceRow = result.Source.Rows.FirstOrDefault(row => row.RecordNumber == r.RecordNumber);
+            var description = descriptionColumn is { } column && sourceRow is not null
+                ? sourceRow.GetCell(column).TextValue ?? "" : "";
+            return new ImportAccountChoice(r.Account!, r.Amount!.Value, r.RecordNumber, description)
+                { Included = importAllAccounts };
+        }).ToArray();
         foreach (var choice in accountChoices)
         {
             choice.Reformat(culture);
