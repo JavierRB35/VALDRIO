@@ -151,6 +151,7 @@
       <TextBlock Text="{Binding [SecondaryRouteHelp]}" TextWrapping="Wrap" Margin="0,0,0,12"/>
       <TextBlock Text="{Binding [SecondaryNodeAssignmentsTitle]}" FontWeight="SemiBold" Margin="0,8,0,3"/>
       <TextBlock Text="{Binding [SecondaryNodeAssignmentsHelp]}" TextWrapping="Wrap" Margin="0,0,0,6"/>
+      <TextBlock Text="{Binding [SecondaryNoPublishedKeys]}" Foreground="{DynamicResource Brand.Red}" Margin="0,0,0,8"><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding HasPublishedSecondary}" Value="False"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
       <DataGrid x:Name="SecondaryNodeAssignmentsGrid" ItemsSource="{Binding SecondaryNodeAssignments}" IsReadOnly="True" AutoGenerateColumns="False" Height="190" CanUserAddRows="False" Margin="0,6,0,12">
        <DataGrid.Columns>
         <DataGridTextColumn Binding="{Binding Source}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
