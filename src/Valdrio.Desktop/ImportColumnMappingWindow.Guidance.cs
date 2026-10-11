@@ -15,34 +15,34 @@ public partial class ImportColumnMappingWindow
         if (!ReferenceEquals(displayedPreparation, vm.Preparation))
         {
             displayedPreparation = vm.Preparation;
-            if (displayedPreparation is not null) { ImportSteps.SelectedIndex = 4; UpdateLayout(); }
+            if (displayedPreparation is not null) { ImportSteps.SelectedIndex = 3; UpdateLayout(); }
         }
         if (!ReferenceEquals(displayedConfirmation, vm.ConfirmedImport))
         {
             displayedConfirmation = vm.ConfirmedImport;
-            if (displayedConfirmation is not null) ImportSteps.SelectedIndex = 4;
+            if (displayedConfirmation is not null) ImportSteps.SelectedIndex = 3;
         }
-        var keys = new[] { "ImportFile", "ImportColumns", "ImportRecords", "ImportMeaning", "ImportReview" };
-        for (var i = 0; i < 5; i++) ((TabItem)ImportSteps.Items[i]).Header = vm.Guide(keys[i]);
+        var keys = new[] { "ImportFile", "ImportColumns", "ImportRecords", "ImportReview" };
+        for (var i = 0; i < keys.Length; i++) ((TabItem)ImportSteps.Items[i]).Header = vm.Guide(keys[i]);
         var step = Math.Max(0, ImportSteps.SelectedIndex);
         ImportStepHelp.Text = !vm.HasImportDestination ? vm.Guide("PreviewOnly") : vm.Guide(step switch
         {
-            0 => "FileHelp", 1 => "ColumnsHelp", 2 => "RecordsHelp", 3 => "MeaningHelp",
+            0 => "FileHelp", 1 => "ColumnsHelp", 2 => "RecordsHelp",
             _ => vm.ConfirmedImport is not null ? "SavedImport" : "ReviewHelp"
         });
         ImportBack.Content = vm.Guide("Back"); ImportBack.IsEnabled = step > 0 && vm.IsIdle;
         ImportNext.Content = vm.Guide(step switch
         {
-            0 => "ReadNext", 1 => "ValidateNext", 3 => "ReviewNext",
-            4 => vm.ConfirmedImport is not null ? "Back" : "SaveImport", _ => "Next"
+            0 => "ReadNext", 1 => "ValidateNext",
+            3 => vm.ConfirmedImport is not null ? "Back" : "SaveImport", _ => "ReviewNext"
         });
-        if (step == 4 && vm.ConfirmedImport is not null) ImportNext.Content = vm.Guide("ContinueResources");
-        if (step == 4 && vm.ConfirmedImport is null && !vm.HasConfirmableReview) ImportNext.Content = vm.Guide("CorrectImport");
-        ConfirmImportButton.Visibility = step == 4 && vm.ConfirmedImport is null && vm.HasConfirmableReview
+        if (step == 3 && vm.ConfirmedImport is not null) ImportNext.Content = vm.Guide("ContinueResources");
+        if (step == 3 && vm.ConfirmedImport is null && !vm.HasConfirmableReview) ImportNext.Content = vm.Guide("CorrectImport");
+        ConfirmImportButton.Visibility = step == 3 && vm.ConfirmedImport is null && vm.HasConfirmableReview
             ? Visibility.Visible : Visibility.Collapsed;
         ImportNext.Visibility =
             step == 0 && !vm.HasFile ? Visibility.Collapsed :
-            step == 4 && vm.HasConfirmableReview && vm.ConfirmedImport is null ? Visibility.Collapsed :
+            step == 3 && vm.HasConfirmableReview && vm.ConfirmedImport is null ? Visibility.Collapsed :
             Visibility.Visible;
         // The visible primary action always remains clickable; if a requirement is missing,
         // the click explains exactly what the user needs to do instead of silently doing nothing.
@@ -52,7 +52,7 @@ public partial class ImportColumnMappingWindow
     private async void ImportStepChanged(object sender, SelectionChangedEventArgs e)
     {
         if (e.Source != ImportSteps) return;
-        if (ImportSteps.SelectedIndex == 4 && viewModel is { IsIdle: true, CanReviewInGuide: true, Preparation: null } vm)
+        if (ImportSteps.SelectedIndex == 3 && viewModel is { IsIdle: true, CanReviewInGuide: true, Preparation: null } vm)
             await vm.PrepareCommand.ExecuteAsync(null);
         lastHelpKey = null;
         RefreshGuidance();
@@ -95,17 +95,15 @@ public partial class ImportColumnMappingWindow
                 break;
             case 2:
                 if (!vm.IsAccountSelectionReady) { ImportStepHelp.Text = vm.Guide("NeedRecords"); return; }
-                ImportSteps.SelectedIndex = 3;
+                if (!vm.CanReviewInGuide) { ImportStepHelp.Text = vm.ReviewRequirement; return; }
+                if (vm.Preparation is null) await vm.PrepareCommand.ExecuteAsync(null);
+                if (vm.Preparation is not null) ImportSteps.SelectedIndex = 3;
+                else ImportStepHelp.Text = vm.ReviewRequirement;
                 break;
             case 3:
-                if (!vm.CanReviewInGuide) { ImportStepHelp.Text = vm.ReviewRequirement; return; }
-                await vm.PrepareCommand.ExecuteAsync(null);
-                if (vm.Preparation is not null) ImportSteps.SelectedIndex = 4;
-                break;
-            case 4:
                 if (vm.ConfirmedImport is not null) { Close(); return; }
                 if (!vm.ConfirmCommand.CanExecute(null))
-                { ImportSteps.SelectedIndex = !vm.IsReady ? 1 : !vm.IsAccountSelectionReady ? 2 : 3; ImportStepHelp.Text = vm.Guide("EditReview"); return; }
+                { ImportSteps.SelectedIndex = !vm.IsReady ? 1 : 2; ImportStepHelp.Text = vm.Guide("EditReview"); return; }
                 await vm.ConfirmCommand.ExecuteAsync(null);
                 break;
         }
@@ -113,7 +111,7 @@ public partial class ImportColumnMappingWindow
     }
     internal void RevealImportElement(FrameworkElement element)
     {
-        if (element == ConfirmImportButton) ImportSteps.SelectedIndex = 4;
+        if (element == ConfirmImportButton) ImportSteps.SelectedIndex = 3;
         foreach (TabItem tab in ImportSteps.Items)
             if (GuidedUi.Contains(tab, element)) { ImportSteps.SelectedItem = tab; break; }
         UpdateLayout();
