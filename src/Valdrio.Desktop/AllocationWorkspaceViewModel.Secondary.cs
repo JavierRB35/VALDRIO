@@ -227,6 +227,7 @@ public sealed partial class AllocationWorkspaceViewModel
         SecondaryExplanation = this["SecondarySelectCost"];
         if (workspace is null)
         {
+            SecondaryNodeAssignments.Clear();
             SecondarySummary = "";
             SecondaryDiagnostic = this["SecondaryNeedStudy"];
             return;
