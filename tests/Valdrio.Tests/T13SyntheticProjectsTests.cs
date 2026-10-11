@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 using Valdrio.Application;
+using Valdrio.Calculation;
 using Valdrio.Domain;
 using Valdrio.Infrastructure;
 
@@ -8,6 +9,16 @@ namespace Valdrio.Tests;
 
 public sealed partial class T06ImportConfirmationTests
 {
+    [TestMethod]
+    public void T13_ClosedSelfOnlyGraphRemainsInfeasibleAlthoughSelfAllocationIsAllowed()
+    {
+        var closed = new ReciprocalInput(["MAINTENANCE"], ["CUTTING"],
+            [[1m]], [[0m]], true);
+        var failure = Assert.ThrowsExactly<DomainRuleException>(
+            () => ReciprocalFactorization.Prepare(closed));
+        Assert.AreEqual("GRAPH_CLOSED_COMPONENT", failure.Diagnostic.Code);
+    }
+
     // T13: creates actual SQLite .valdrio files using the product's normal
     // import, model, allocation, publication and snapshot services.
     // The source fixtures and independent mathematical oracle are in
