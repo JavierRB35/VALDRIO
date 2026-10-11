@@ -8,6 +8,7 @@ from __future__ import annotations
 import csv
 import json
 import sys
+import tempfile
 from decimal import Decimal
 from fractions import Fraction
 from pathlib import Path
@@ -156,7 +157,41 @@ def main():
                 pass
             else:
                 raise AssertionError("Singular system must be rejected")
-            print("Negative singular-matrix self-test: OK")
+
+            with tempfile.TemporaryDirectory(prefix="valdrio-t13-") as scratch:
+                test_dir = Path(scratch)
+                original = ROOT / "Service Company"
+                scenario, rows = load(original)
+                content = (original / "accounts.csv").read_text(encoding="utf-8")
+
+                def rejected(label, mutated, csv_content=content):
+                    (test_dir / "scenario.json").write_text(
+                        json.dumps(mutated), encoding="utf-8")
+                    (test_dir / "accounts.csv").write_text(
+                        csv_content, encoding="utf-8")
+                    try:
+                        verify(test_dir)
+                    except (ValueError, KeyError, ArithmeticError):
+                        print(f"Negative {label}: OK")
+                    else:
+                        raise AssertionError(f"Invalid {label} was accepted")
+
+                invalid = json.loads(json.dumps(scenario))
+                invalid["primaryRules"][0]["weights"]["DELIVERY"] += 1
+                rejected("percentages", invalid)
+
+                invalid = json.loads(json.dumps(scenario))
+                invalid["secondaryRules"][0]["weights"] = {"ADMIN": 100}
+                rejected("closed auxiliary self-loop", invalid)
+
+                invalid = json.loads(json.dumps(scenario))
+                invalid["expected"]["importTotal"] = "17501.00"
+                rejected("incorrect expected money", invalid)
+
+                invalid = json.loads(json.dumps(scenario))
+                rejected("duplicate account", invalid, content + rows[0]["Amount"] +
+                         ";" + rows[0]["Description"] + ";" + rows[0]["Account"] + "\\n")
+            print("All negative verification self-tests: OK")
     except (ValueError, KeyError, OSError, ArithmeticError, AssertionError) as exc:
         print(f"T13 REJECTED: {exc}", file=sys.stderr)
         return 1
