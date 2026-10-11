@@ -1155,6 +1155,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.PrimaryDestination" xml:space="preserve"><value>Nodo de destino</value></data>
   <data name="AllocationUI.PrimaryNodeTotalsTitle" xml:space="preserve"><value>Costes acumulados por nodo</value></data>
   <data name="AllocationUI.SecondaryNodeAssignmentsTitle" xml:space="preserve"><value>Asignación de claves a nodos auxiliares</value></data>
+  <data name="AllocationUI.SecondaryAssignmentSaveFailed" xml:space="preserve"><value>No se pudo guardar la clave del auxiliar. Comprueba que sea secundaria, esté publicada y sea compatible con el nodo.</value></data>
   <data name="AllocationUI.SecondaryNodeAssignmentsHelp" xml:space="preserve"><value>Selecciona una clave secundaria publicada para cada nodo auxiliar. Se guarda directamente y sustituye la asignación anterior del grupo general.</value></data>
   <data name="AllocationUI.NodeCenter" xml:space="preserve"><value>Centro</value></data>
   <data name="AllocationUI.Node" xml:space="preserve"><value>Nodo</value></data>
