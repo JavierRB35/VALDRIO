@@ -101,6 +101,38 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     private CultureInfo Format => CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
     private string Text(string key) { var s = texts.Get(key, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)); return pseudo ? PseudoLocalization.Expand(s) : s; }
     private string MoneyText(Money m) => m.Amount.ToString("0.########", Format) + " " + m.Currency;
+    // Resource totals are derived from the current economic coverage, never from
+    // formatted table strings. Do not add balances in different original currencies.
+    private string SumResourceCoverage(Func<ResourceCoverage, Money> field)
+    {
+        var current = preview ?? workspace;
+        var coverage = current?.Preparation.Coverage;
+        if (coverage is null || coverage.Count == 0) return "";
+        var sum = coverage.Sum(row => field(row).Amount);
+        return sum.ToString("0.########", Format) + " " + field(coverage[0]).Currency;
+    }
+    public string ResourcesTotalOriginal
+    {
+        get
+        {
+            var current = preview ?? workspace;
+            if (current is null) return "";
+            return string.Join(" / ", current.Resources
+                .SelectMany(resource => ResourceWorkspaceRules.OriginalTotals(resource, current.Precision))
+                .GroupBy(m => m.Currency)
+                .OrderBy(group => group.Key.ToString(), StringComparer.Ordinal)
+                .Select(group => group.Sum(m => m.Amount).ToString("0.########", Format) + " " + group.Key));
+        }
+    }
+    public string ResourcesTotalConverted => SumResourceCoverage(c => c.ConvertedOriginal);
+    public string ResourcesTotalAdjustments => SumResourceCoverage(c => c.AdjustmentTotal);
+    public string ResourcesTotalEffective => SumResourceCoverage(c => c.Effective);
+    public string ResourcesTotalPending => SumResourceCoverage(c => c.Pending);
+    public string ResourcesTotalDifference => SumResourceCoverage(c => c.Difference);
+    // Parts and review show the same selected account, not an extra economic layer.
+    public string ResourcePartsTotal => parts.Count == 0 ? "" :
+        parts.Sum(part => part.Amount.Amount).ToString("0.########", Format) + " " + parts[0].Amount.Currency;
+
     public bool IsBusy => busy;
     public bool CanNavigate => !busy && !correctionCommitPending;
     public bool CanEditAdjustmentsAndObjects => CanEdit && !IsRevaluing;
