@@ -100,9 +100,14 @@ public partial class MainWindow
         Check(vm.Stage == AllocationStage.Secondary, "new key belongs to secondary automatically");
         Text(secondary.KeyNameBox, "Servicios auxiliares a producción");
         vm.Lines.Single(l => l.Id == principal.Node.Id).Included = true;
-        vm.Lines.Single(l => l.Id == principal.Node.Id).Value = "100";
+        vm.Lines.Single(l => l.Id == principal.Node.Id).Value = "80";
+        var auxiliarySelf = vm.Auxiliaries.First().Value;
+        vm.Lines.Single(l => l.Id == auxiliarySelf).Included = true;
+        vm.Lines.Single(l => l.Id == auxiliarySelf).Value = "20";
         await Click(secondary.SaveKeyButton);
         var key = vm.Keys.Single().Value;
+        Check(key.SelfAllocation == SelfAllocationPolicy.Allowed,
+            "new secondary key automatically permits self-service without a checkbox");
         // Enter both phases again: the first saved key must be selected and keyboard-focused.
         await NavigateWorkflow(5); await Idle();
         await NavigateWorkflow(7); await Idle();
