@@ -171,6 +171,7 @@ public partial class App : System.Windows.Application
         };
 
         MainWindow = window;
+        allocations.AfterPrimaryStateChanged = async () => { await resources.EnterAsync(true); window.UpdateWorkflow(); };
         window.Show();
         bool allowClose = false;
         window.Closing += async (_, args) =>
