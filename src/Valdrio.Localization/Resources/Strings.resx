@@ -1150,6 +1150,9 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.PrimaryIncomplete" xml:space="preserve"><value>Some accounts remain unallocated. Review pending rows in the account table.</value></data>
   <data name="AllocationUI.PrimarySource" xml:space="preserve"><value>Resource / account</value></data>
   <data name="AllocationUI.PrimaryDestination" xml:space="preserve"><value>Destination node</value></data>
+  <data name="AllocationUI.PrimaryNodeTotalsTitle" xml:space="preserve"><value>Accumulated costs by node</value></data>
+  <data name="AllocationUI.SecondaryNodeAssignmentsTitle" xml:space="preserve"><value>Secondary keys by auxiliary node</value></data>
+  <data name="AllocationUI.SecondaryNodeAssignmentsHelp" xml:space="preserve"><value>Select a published secondary key for each auxiliary node. Changes are saved directly and replace its prior default-group assignment.</value></data>
   <data name="AllocationUI.NodeCenter" xml:space="preserve"><value>Center</value></data>
   <data name="AllocationUI.Node" xml:space="preserve"><value>Node</value></data>
   <data name="AllocationUI.PrimaryAmount" xml:space="preserve"><value>Posted amount</value></data>
