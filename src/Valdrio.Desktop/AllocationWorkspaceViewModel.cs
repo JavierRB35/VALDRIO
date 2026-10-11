@@ -315,7 +315,9 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     }
     private SaveAllocationKey BuildKey(bool publish) => new(workspace!.Resources.Study.CompanyId, workspace.Resources.Model.Structure.Id,
         editingKey?.Id ?? previewId, newParent, editingKey?.Revision ?? -1, Name, Stage, Mode, IsDriver ? Unit : null,
-        SelfAllowed ? SelfAllocationPolicy.Allowed : SelfAllocationPolicy.Forbidden,
+        // All newly saved secondary keys permit self-service by definition;
+        // primary keys retain the legacy field for backwards-compatible snapshots.
+        Stage == AllocationStage.Secondary || SelfAllowed ? SelfAllocationPolicy.Allowed : SelfAllocationPolicy.Forbidden,
         Lines.Where(l => l.Included).Select(l => new AllocationKeyLine(l.Id, Mode == AllocationKeyMode.EqualShares ? 1m : Parse(l.Value))).ToArray(), publish, new(Guid.NewGuid()), "local-user")
         { ValidationStudyId = workspace.Resources.Study.Id, ValidationStudyRevision = workspace.Resources.Study.Revision };
     private EntityId previewId = new(Guid.NewGuid());
