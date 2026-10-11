@@ -2,6 +2,8 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
+using Valdrio.Domain;
 namespace Valdrio.Desktop;
 public partial class AllocationWorkspacePanel : UserControl
 {
@@ -42,6 +44,8 @@ public partial class AllocationWorkspacePanel : UserControl
     private void Headers()
     {
         if (viewModel is null) return;
+        Set(SecondaryNodeAssignmentsGrid, "Auxiliary", "PublishedKey");
+        Set(PrimaryNodeTotalsGrid, "NodeCenter", "Node", "PrimaryAmount");
         Set(KeyGrid, "Name", "State"); Set(LinesGrid, "Include", "Destination", "NodeUnit", "Weight"); Set(ReciprocalGrid, "ReciprocalGroup", "ReciprocalStatus", "ReciprocalDetail"); Set(SecondaryRulesGrid, "Auxiliary", "ReciprocalGroup", "AppliedKey"); Set(SecondaryResultsGrid, "SecondarySourceNode", "SecondaryPrincipalDestination", "PrimaryAmount", "Behavior"); Set(SecondaryCirculationGrid, "Auxiliary", "SecondaryGross");  Set(SecondaryGroupAssignmentsGrid, "SecondarySourcePart", "SecondarySelectedGroup");
         Set(PrincipalCostsGrid, "SecondaryPrincipalDestination", "PrincipalPrimary", "PrincipalAuxiliary", "PrincipalTotal");
         Set(SecondaryExplanationGrid, "PrimarySource", "ExplainPrimaryAmount", "ExplainEffectiveShare", "PrimaryAmount", "ExplainKeys");
@@ -54,6 +58,32 @@ public partial class AllocationWorkspacePanel : UserControl
         Set(CoverageGrid, "Source", "Amount", "AppliedKey", "Result"); Set(PrimaryResultsGrid, "PrimarySource", "PrimaryDestination", "PrimaryAmount", "Behavior"); Set(PrimaryGrid, "Account", "AppliedKey", "State");
         Set(AbsoluteGrid, "Include", "Destination", "Amount");
         void Set(DataGrid grid, params string[] keys) { for (var i = 0; i < keys.Length; i++) grid.Columns[i].Header = viewModel[keys[i]]; }
+    }
+    private void FocusNewKey(object sender, RoutedEventArgs e)
+    {
+        // The key editor is shared by primary and secondary pages.
+        Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(() =>
+        {
+            if (KeyNameBox.IsEnabled && KeyNameBox.IsVisible)
+            {
+                KeyNameBox.Focus();
+                KeyNameBox.SelectAll();
+            }
+        }));
+    }
+    private async void OpenKeySelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.OriginalSource == KeyGrid && KeyGrid.IsKeyboardFocusWithin &&
+            viewModel?.LoadKeyCommand.CanExecute(null) == true)
+            await viewModel.LoadKeyCommand.ExecuteAsync(null);
+    }
+    private async void SecondaryAssignmentChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is not ComboBox { IsKeyboardFocusWithin: true, DataContext: SecondaryNodeAssignmentRow row,
+                SelectedValue: EntityId keyId } box || keyId == row.SelectedKeyId || viewModel is null ||
+            !viewModel.CanShowSecondaryEditor || viewModel.IsBusy) return;
+        await viewModel.AssignSecondaryForNodeAsync(row.NodeId, keyId);
+        box.GetBindingExpression(ComboBox.SelectedValueProperty)?.UpdateTarget();
     }
     private async void OpenKeyDoubleClick(object sender, MouseButtonEventArgs e)
     {
