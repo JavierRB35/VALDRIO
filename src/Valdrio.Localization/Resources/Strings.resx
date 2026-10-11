@@ -193,6 +193,7 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Nodes" xml:space="preserve"><value>Calculation nodes</value></data>
   <data name="Model.NodeCode" xml:space="preserve"><value>Node code</value></data>
   <data name="Model.NodeDescription" xml:space="preserve"><value>Node description</value></data>
+  <data name="ImportMapping.AdvancedOptions" xml:space="preserve"><value>Advanced options: currencies, replacement and comparisons</value></data>
   <data name="Model.Physical" xml:space="preserve"><value>Physical center</value></data>
   <data name="Model.Role" xml:space="preserve"><value>Node type</value></data>
   <data name="Model.FunctionTags" xml:space="preserve"><value>Functions (optional)</value></data>
@@ -510,7 +511,7 @@ Full: {5}</value></data>
   <data name="Guide.ImportColumns" xml:space="preserve"><value>2. Identify columns</value></data>
   <data name="Guide.ImportRecords" xml:space="preserve"><value>3. Choose records</value></data>
   <data name="Guide.ImportMeaning" xml:space="preserve"><value>4. Explain the amounts</value></data>
-  <data name="Guide.ImportReview" xml:space="preserve"><value>5. Review and save</value></data>
+  <data name="Guide.ImportReview" xml:space="preserve"><value>4. Review and finish</value></data>
   <data name="Guide.ReadNext" xml:space="preserve"><value>Continue with this file</value></data>
   <data name="Guide.ValidateNext" xml:space="preserve"><value>Check and continue</value></data>
   <data name="Guide.ReviewNext" xml:space="preserve"><value>Review import</value></data>
