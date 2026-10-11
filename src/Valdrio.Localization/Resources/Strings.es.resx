@@ -1150,6 +1150,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.PrimaryIncomplete" xml:space="preserve"><value>Quedan cuentas sin repartir. Revisa las filas pendientes en la tabla de cuentas.</value></data>
   <data name="AllocationUI.PrimarySource" xml:space="preserve"><value>Recurso / cuenta</value></data>
   <data name="AllocationUI.PrimaryDestination" xml:space="preserve"><value>Nodo de destino</value></data>
+  <data name="AllocationUI.NodeCenter" xml:space="preserve"><value>Centro</value></data>
+  <data name="AllocationUI.Node" xml:space="preserve"><value>Nodo</value></data>
   <data name="AllocationUI.PrimaryAmount" xml:space="preserve"><value>Importe adjudicado</value></data>
   <data name="AllocationUI.PrimaryRule" xml:space="preserve"><value>Regla / clave aplicada</value></data>
   <data name="AllocationUI.PrimaryAbsolute" xml:space="preserve"><value>Importe manual</value></data>
