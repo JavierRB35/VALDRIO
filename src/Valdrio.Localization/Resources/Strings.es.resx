@@ -403,6 +403,7 @@ Completa: {5}</value></data>
   <data name="ImportMapping.DeselectAllRecords" xml:space="preserve"><value>Deseleccionar todos</value></data>
   <data name="ImportMapping.GroupedPreview" xml:space="preserve"><value>Registros seleccionados agrupados por código</value></data>
   <data name="ImportMapping.SelectAllRecords" xml:space="preserve"><value>Seleccionar todos</value></data>
+  <data name="ImportMapping.AccountDescriptionHeader" xml:space="preserve"><value>Descripción de cuenta</value></data>
   <data name="ImportMapping.SourceCode" xml:space="preserve"><value>Código</value></data>
   <data name="ImportMapping.SourceRecords" xml:space="preserve"><value>Filas de origen</value></data>
   <data name="Study.ChooseExisting" xml:space="preserve"><value>Selecciona un análisis guardado para retomarlo exactamente donde lo dejaste.</value></data>
