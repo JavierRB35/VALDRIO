@@ -389,7 +389,10 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         if (!Auxiliary.HasValue || !SecondaryKey.HasValue) throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
         var r = new SecondaryRule(editingSecondary ?? new(Guid.NewGuid()), workspace!.Resources.Study.CompanyId, workspace.Resources.Model.Structure.Id,
             Auxiliary.Value, string.IsNullOrWhiteSpace(GroupName) ? "all" : GroupName.Trim(), SecondaryKey.Value, true);
-        return c.WithSecondaryRules(c.SecondaryRules.Where(old => old.Id != r.Id).Append(r).ToArray());
+        // Editing or assigning a second key for the same node/group replaces the old route.
+        return c.WithSecondaryRules(c.SecondaryRules.Where(old => old.Id != r.Id &&
+            !(old.AuxiliaryNodeId == r.AuxiliaryNodeId &&
+              old.ComponentRoutingGroup == r.ComponentRoutingGroup)).Append(r).ToArray());
     }, true);
     private Task AssignAsync() => CommitConfig(c => new(c.PrimaryRules, c.SecondaryRules,
         c.ExplicitAssignments.Where(a => a.PartId != Part).Append(new(Part!.Value, PartKey!.Value)).ToArray(), c.AbsoluteAssignments.Where(a => a.PartId != Part).ToArray(), c.Descriptions));
