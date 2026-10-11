@@ -85,7 +85,11 @@ public partial class MainWindow
             .Model.Structure.Pools.Single(p => p.NodeId == principal.Node.Id).Description.Contains("revisada"), "study node change persists");
         ScrollToElement(ModelPanel.NodeSummary); await Idle();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "es-editable-nodes.png"));
-        await NavigateWorkflow(5); await Click(AllocationPanel.TogglePrimaryButton);
+        await NavigateWorkflow(5); await Idle();
+        Check(AllocationPanel.KeyGrid.Items.Count == 0 ||
+            AllocationPanel.KeyGrid.SelectedIndex == 0 && AllocationPanel.KeyGrid.IsKeyboardFocusWithin,
+            "primary allocation opens with focus on the first saved project key");
+        await Click(AllocationPanel.TogglePrimaryButton);
         Check(vm.IsPrimaryClosed, "primary closes with weighted composition");
         await NavigateWorkflow(1); await Idle(); Check(!nodes.CanEdit, "primary closure locks analysis nodes");
         await NavigateWorkflow(7); await Idle();
@@ -99,8 +103,14 @@ public partial class MainWindow
         vm.Lines.Single(l => l.Id == principal.Node.Id).Value = "100";
         await Click(secondary.SaveKeyButton);
         var key = vm.Keys.Single().Value;
-        // Regression: selecting a published secondary key directly in the table must
-        // persist and remain selected after the asynchronous model refresh.
+        // Enter both phases again: the first saved key must be selected and keyboard-focused.
+        await NavigateWorkflow(5); await Idle();
+        await NavigateWorkflow(7); await Idle();
+        Check(secondary.KeyGrid.Items.Count > 0 && secondary.KeyGrid.SelectedIndex == 0 &&
+            secondary.KeyGrid.IsKeyboardFocusWithin,
+            "secondary allocation opens with focus on the first saved project key");
+        // Regression: a pointer-driven popup selection must persist when the popup closes,
+        // even though the ComboBox itself loses keyboard focus to the popup.
         var firstAuxiliary = vm.SecondaryNodeAssignments.First();
         secondary.SecondaryNodeAssignmentsGrid.ScrollIntoView(firstAuxiliary);
         await Idle();
@@ -109,14 +119,25 @@ public partial class MainWindow
         var assignmentCombo = Descendants<ComboBox>(assignmentRow).Single();
         assignmentCombo.Focus();
         System.Windows.Input.Keyboard.Focus(assignmentCombo);
+        assignmentCombo.SetCurrentValue(ComboBox.IsDropDownOpenProperty, true);
+        await Idle();
         assignmentCombo.SetCurrentValue(ComboBox.SelectedValueProperty, key.Id);
+        await Idle();
+        Check(firstAuxiliary.PersistedKeyId is null,
+            "selection made while the popup is open has not yet been persisted");
+        assignmentCombo.SetCurrentValue(ComboBox.IsDropDownOpenProperty, false);
         await secondary.SecondaryAssignmentTask; await Idle();
-        Check(firstAuxiliary.SelectedKeyId == key.Id && firstAuxiliary.PersistedKeyId == key.Id,
-            "direct secondary table assignment remains selected after save");
+        Check(firstAuxiliary.SelectedKeyId == key.Id && firstAuxiliary.PersistedKeyId == key.Id &&
+            !firstAuxiliary.HasAssignmentError,
+            "pointer secondary table assignment remains selected after save");
         Check(company.ActiveAllocations!.ReadAllocations(studies.Current!.CompanyId, studies.Current.Id)
             .Configuration.SecondaryRules.Any(rule => rule.IsActive && rule.AuxiliaryNodeId == firstAuxiliary.NodeId &&
                 rule.KeyVersionId == key.Id),
             "direct secondary table assignment is persisted in the company file");
+        // Read again through the normal UI; this catches optimistic selection that never reached storage.
+        await vm.EnterAsync(true); await Idle();
+        Check(vm.SecondaryNodeAssignments.Single(row => row.NodeId == firstAuxiliary.NodeId).PersistedKeyId == key.Id,
+            "secondary assignment survives a clean re-read of the allocation workspace");
         foreach (var auxiliary in vm.Auxiliaries.ToArray())
         {
             vm.Auxiliary = auxiliary.Value; vm.SecondaryKey = key.Id;
