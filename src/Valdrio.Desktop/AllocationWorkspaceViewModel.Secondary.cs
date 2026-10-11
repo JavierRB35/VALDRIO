@@ -15,6 +15,7 @@ public sealed record PrincipalCostRow(string Node, string Primary, string Auxili
 public sealed record SecondarySourceDetailRow(string Account, string Primary, string Share, string Amount, string Keys) { public string TechnicalDetail { get; init; } = ""; }
 
 public sealed record SecondaryGroupRow(string Source, string Group);
+public sealed record SecondaryNodeAssignmentRow(EntityId NodeId, string Source, EntityId? SelectedKeyId);
 
 public sealed record SecondaryBridgeRow(
     string Resource, string Effective, string Direct, string Excluded, string Terminal, string Difference);
@@ -90,8 +91,11 @@ public sealed partial class AllocationWorkspaceViewModel
     public IRelayCommand CancelSecondaryCommand { get; private set; } = null!;
     public IAsyncRelayCommand ToggleSecondaryCommand { get; private set; } = null!;
     public bool IsSecondaryClosed => workspace?.Configuration.SecondaryClosed == true;
-    public bool CanManageSecondary => CanManagePrimary && !IsSecondaryClosed;
+    public bool CanManageSecondary => CanManagePrimary && IsPrimaryClosed && !IsSecondaryClosed;
     public bool CanEditSecondaryConfiguration => CanManageSecondary && !keyDirty;
+    public bool CanShowSecondaryEditor => company.CanWrite && workspace?.Resources.Study.State == StudyState.Open &&
+        IsPrimaryClosed && !IsSecondaryClosed && !keyDirty;
+    public ObservableCollection<SecondaryNodeAssignmentRow> SecondaryNodeAssignments { get; } = [];
     public string SecondaryState => this[IsSecondaryClosed ? "SecondaryClosedState" : "SecondaryOpenState"];
     public string SecondaryToggleLabel => this[IsSecondaryClosed ? "ReopenSecondary" : "CloseSecondary"];
 
@@ -127,6 +131,26 @@ public sealed partial class AllocationWorkspaceViewModel
 
     // One optional convenience operation for large models. Never overwrites
     // manual rules and validates every proposed route before a single save.
+    // One effective key per auxiliary in the default routing group. Existing explicit
+    // component groups remain intact for backwards compatibility.
+    public Task AssignSecondaryForNodeAsync(EntityId auxiliaryId, EntityId keyId)
+    {
+        if (!CanManageSecondary || workspace is null ||
+            !workspace.Resources.Model.Structure.Nodes.Any(n => n.Id == auxiliaryId && n.IsActive && n.Role == NodeRole.Auxiliary) ||
+            !workspace.Keys.Any(k => k.Id == keyId && k.Status == ModelStatus.Published && k.Stage == AllocationStage.Secondary))
+            return Task.CompletedTask;
+        return CommitConfig(configuration =>
+        {
+            var model = workspace.Resources.Model.Structure;
+            var proposed = configuration.SecondaryRules
+                .Where(rule => rule.AuxiliaryNodeId != auxiliaryId || rule.ComponentRoutingGroup != "all")
+                .Append(new SecondaryRule(new EntityId(Guid.NewGuid()), model.CompanyId, model.Id, auxiliaryId, "all", keyId, true))
+                .ToArray();
+            _ = AllocationKeyRules.ResolveSecondary(auxiliaryId, "all", proposed, workspace.Keys, model);
+            return configuration.WithSecondaryRules(proposed);
+        }, true);
+    }
+
     private Task AssignSecondaryKeyToMissingAsync() => CommitConfig(c =>
     {
         if (workspace is null || !SecondaryKey.HasValue)
@@ -190,6 +214,7 @@ public sealed partial class AllocationWorkspaceViewModel
         SecondaryExplanationDetails.Clear();
         SecondaryBridges.Clear();
         SecondaryGroupAssignments.Clear();
+        SecondaryNodeAssignments.Clear();
         SecondaryCirculation.Clear();
         SelectedSecondaryResultRow = null;
         SecondaryExplanation = this["SecondarySelectCost"];
@@ -198,6 +223,14 @@ public sealed partial class AllocationWorkspaceViewModel
             SecondarySummary = "";
             SecondaryDiagnostic = this["SecondaryNeedStudy"];
             return;
+        }
+        foreach (var node in workspace.Resources.Model.Structure.Nodes
+            .Where(n => n.IsActive && n.Role == NodeRole.Auxiliary)
+            .OrderBy(n => NodeLabel(n), StringComparer.Ordinal))
+        {
+            var route = workspace.Configuration.SecondaryRules.FirstOrDefault(rule =>
+                rule.IsActive && rule.AuxiliaryNodeId == node.Id && rule.ComponentRoutingGroup == "all");
+            SecondaryNodeAssignments.Add(new(node.Id, NodeLabel(node), route?.KeyVersionId));
         }
         foreach (var part in Parts)
         {
