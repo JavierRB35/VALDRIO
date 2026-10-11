@@ -1085,6 +1085,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.Discard" xml:space="preserve"><value>Descartar cambios sin guardar</value></data>
   <data name="AllocationUI.Unit" xml:space="preserve"><value>Unidad del criterio</value></data>
   <data name="AllocationUI.NodeUnit" xml:space="preserve"><value>Unidad</value></data>
+  <data name="AllocationUI.SelfAllowedHelp" xml:space="preserve"><value>Autoriza la prestación del auxiliar a sí mismo cuando la clave incluye un destino propio. Un circuito sin salida a nodos principales sigue sin ser resoluble.</value></data>
+  <data name="AllocationUI.SecondaryNoPublishedKeys" xml:space="preserve"><value>No hay claves secundarias publicadas para seleccionar. Crea una clave en Reparto secundario y guárdala antes de asignarla al auxiliar.</value></data>
   <data name="AllocationUI.SelfAllowed" xml:space="preserve"><value>Permitir destino al propio auxiliar</value></data>
   <data name="AllocationUI.Include" xml:space="preserve"><value>Incluir</value></data>
   <data name="AllocationUI.Destination" xml:space="preserve"><value>Centro / nodo</value></data>
