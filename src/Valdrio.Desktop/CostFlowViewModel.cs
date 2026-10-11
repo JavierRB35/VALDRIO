@@ -174,7 +174,7 @@ public sealed partial class CostFlowViewModel : ObservableObject
             {
                 var id = EntityId.Parse(group.Solution.AuxiliaryIds[i]);
                 var graphId = nodeId(2,id)+":"+group.ComponentRoutingGroup;
-                
+
                 var initial = primary!.Facts.Where(f => f.NodeId == id && (w.Configuration.SecondaryPartRoutingGroups?.FirstOrDefault(g=>g.PartId==f.PartId)?.ComponentRoutingGroup ?? "all")==group.ComponentRoutingGroup).Sum(f=>f.PostedAmount.Amount);
                 var received=output.Transfers.Where(t=>t.Internal && t.DestinationNodeId==id && t.Group==group.ComponentRoutingGroup).Sum(t=>t.Amount);
                 Nodes.Add(new(graphId,2,Node(id)+(group.ComponentRoutingGroup=="all"?"":" · "+group.ComponentRoutingGroup),

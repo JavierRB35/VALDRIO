@@ -390,7 +390,7 @@ Serie de pruebas para C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec81
   Correctas F_PathAliasesShareLockAndSymlinksAreRejected [4 s]
   Con error M01_UpgradeGenuineT03ArtifactPreservesSourceIdentityPolicyUnitsAndCompanyAudit [281 ms]
   Mensaje de error:
-   Excepción método de prueba Valdrio.Tests.T04ModelTests.M01_UpgradeGenuineT03ArtifactPreservesSourceIdentityPolicyUnitsAndCompanyAudit: 
+   Excepción método de prueba Valdrio.Tests.T04ModelTests.M01_UpgradeGenuineT03ArtifactPreservesSourceIdentityPolicyUnitsAndCompanyAudit:
 Valdrio.Application.CompanyFileException: FILE_INVALID_DATA ---> System.IO.InvalidDataException: Too many format upgrades
   Seguimiento de la pila:
      at Valdrio.Infrastructure.CompanyFiles.SqliteCompanyFileService.ValidateWorkspace(ModelDbContext db, CompanyFileSnapshot file) in C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-integration\src\Valdrio.Infrastructure\CompanyFiles\SqliteCompanyFileService.ModelValidation.cs:line 126
@@ -431,7 +431,7 @@ Valdrio.Application.CompanyFileException: FILE_INVALID_DATA ---> System.IO.Inval
   Correctas B02_JsonStoreCleansUniqueTemporaryFileAfterFailedReplacement [2 ms]
   Con error S01_UpgradeActualHistoricalFilesAndFrozenMappings (1) [273 ms]
   Mensaje de error:
-   Excepción método de prueba Valdrio.Tests.T05StudyTests.S01_UpgradeActualHistoricalFilesAndFrozenMappings: 
+   Excepción método de prueba Valdrio.Tests.T05StudyTests.S01_UpgradeActualHistoricalFilesAndFrozenMappings:
 Valdrio.Application.CompanyFileException: FILE_INVALID_DATA ---> System.IO.InvalidDataException: Too many format upgrades
   Seguimiento de la pila:
      at Valdrio.Infrastructure.CompanyFiles.SqliteCompanyFileService.ValidateWorkspace(ModelDbContext db, CompanyFileSnapshot file) in C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-integration\src\Valdrio.Infrastructure\CompanyFiles\SqliteCompanyFileService.ModelValidation.cs:line 126
@@ -448,7 +448,7 @@ Valdrio.Application.CompanyFileException: FILE_INVALID_DATA ---> System.IO.Inval
   Correctas S02_UpgradeFailuresCancellationFutureAndForeignLocksPreserveSource [521 ms]
   Con error S01_ExistingUpgradeEventIsPreservedAndNextStepUsesRevisionOne [241 ms]
   Mensaje de error:
-   Excepción método de prueba Valdrio.Tests.T05StudyTests.S01_ExistingUpgradeEventIsPreservedAndNextStepUsesRevisionOne: 
+   Excepción método de prueba Valdrio.Tests.T05StudyTests.S01_ExistingUpgradeEventIsPreservedAndNextStepUsesRevisionOne:
 Valdrio.Application.CompanyFileException: FILE_INVALID_DATA ---> System.IO.InvalidDataException: Too many format upgrades
   Seguimiento de la pila:
      at Valdrio.Infrastructure.CompanyFiles.SqliteCompanyFileService.ValidateWorkspace(ModelDbContext db, CompanyFileSnapshot file) in C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-integration\src\Valdrio.Infrastructure\CompanyFiles\SqliteCompanyFileService.ModelValidation.cs:line 126
