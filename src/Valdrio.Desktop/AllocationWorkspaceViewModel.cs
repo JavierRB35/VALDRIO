@@ -267,7 +267,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     {
         foreach (var property in new[] { nameof(IsDirty), nameof(HasUnappliedRule), nameof(KeyState), nameof(CanEditConfiguration),
             nameof(CanAssignCoverage), nameof(CanShowCoverageEditor), nameof(CanEditClassification), nameof(CanEditKey), nameof(CanEditComposition), nameof(CanEditWeights), nameof(IsPercentage), nameof(IsDriver), nameof(IsSecondary),
-            nameof(IsExact), nameof(IsPrefix), nameof(KeyNameMissing), nameof(KeyValidationHasError), nameof(Total), nameof(Validation) }) OnPropertyChanged(property);
+            nameof(IsExact), nameof(IsPrefix), nameof(KeyNameMissing), nameof(KeyValidationHasError), nameof(Total), nameof(PrimaryAbsoluteTotal), nameof(Validation) }) OnPropertyChanged(property);
         Commands();
     }
     private void LineChanged(object? sender, PropertyChangedEventArgs e)
