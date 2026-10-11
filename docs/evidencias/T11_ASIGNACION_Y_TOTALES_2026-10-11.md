@@ -14,6 +14,12 @@ La aplicación compilaba correctamente, pero en el paso de reparto secundario el
 - El método de guardado ahora devuelve `Task<bool>` para distinguir operación guardada de validación rechazada. Las comprobaciones existentes de clave secundaria publicada, permisos, fase cerrada, unicidad por auxiliar y compatibilidad de unidad siguen aplicándose.
 - `MainWindow.MethodologySmoke.cs` añade prueba de interfaz real: seleccionar una clave desde el ComboBox, esperar al commit, confirmar selección persistida en memoria y en el proyecto SQLite.
 
+## Autoasignación y claves disponibles
+
+La validación del motor no admite cuotas asignadas al propio auxiliar cuando la clave tiene `SelfAllocationPolicy.Forbidden`. El editor de clave secundaria muestra ahora la opción ya existente en el ViewModel `Permitir destino al propio auxiliar`, con ayuda contextual. Esta opción no elimina la comprobación de un circuito sin salida al principal. Si aún no existe ninguna clave secundaria publicada, aparece una explicación visible junto a la tabla (en ES/EN).
+
+Prueba funcional adicional: crear clave secundaria que se asigna parcialmente a sí misma y parcialmente a un principal; verificar que no se asigna sin autorización y sí con `SelfAllowed`. Verificar que una clave con salida única a sí misma sigue produciendo el diagnóstico específico, no un resultado económico inventado.
+
 ## Totales monetarios
 
 Las filas de pie son **de solo lectura**, situadas debajo de cada DataGrid, por lo que permanecen visibles sin falsificar filas económicas, sin alterar edición, selección, ordenación ni resultados de cálculo.
