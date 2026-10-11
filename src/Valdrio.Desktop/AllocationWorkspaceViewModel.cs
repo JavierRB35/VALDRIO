@@ -157,6 +157,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public bool IsDirty => keyDirty || ruleDirty || absoluteDirty || HasCompositionChanges;
     public bool HasUnappliedRule => ruleDirty || absoluteDirty;
     public void ExplainPendingRule() { statusKey = "ApplyRuleFirst"; Refresh(); }
+    public bool KeyNameMissing => string.IsNullOrWhiteSpace(Name);
+    public bool KeyValidationHasError => workspace is not null && MissingKeyInput(true) is not null;
     public bool IsPercentage => Mode == AllocationKeyMode.Percentage;
     public bool IsDriver => Mode == AllocationKeyMode.DriverUnits;
     public bool CanEditWeights => CanEditComposition && Mode != AllocationKeyMode.EqualShares;
@@ -265,7 +267,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     {
         foreach (var property in new[] { nameof(IsDirty), nameof(HasUnappliedRule), nameof(KeyState), nameof(CanEditConfiguration),
             nameof(CanAssignCoverage), nameof(CanShowCoverageEditor), nameof(CanEditClassification), nameof(CanEditKey), nameof(CanEditComposition), nameof(CanEditWeights), nameof(IsPercentage), nameof(IsDriver), nameof(IsSecondary),
-            nameof(IsExact), nameof(IsPrefix), nameof(Total), nameof(Validation) }) OnPropertyChanged(property);
+            nameof(IsExact), nameof(IsPrefix), nameof(KeyNameMissing), nameof(KeyValidationHasError), nameof(Total), nameof(Validation) }) OnPropertyChanged(property);
         Commands();
     }
     private void LineChanged(object? sender, PropertyChangedEventArgs e)
