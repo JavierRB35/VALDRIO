@@ -153,7 +153,7 @@
         <DataGridTextColumn Binding="{Binding Source}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
         <DataGridTemplateColumn Width="2*"><DataGridTemplateColumn.CellTemplate><DataTemplate>
          <ComboBox ItemsSource="{Binding DataContext.PublishedSecondary, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-           SelectedValue="{Binding SelectedKeyId, Mode=OneWay}" IsEnabled="{Binding DataContext.CanShowSecondaryEditor, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+           SelectedValue="{Binding SelectedKeyId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding DataContext.CanShowSecondaryEditor, RelativeSource={RelativeSource AncestorType=DataGrid}}"
            SelectionChanged="SecondaryAssignmentChanged" AutomationProperties.Name="{Binding Source}"/>
         </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
        </DataGrid.Columns>
