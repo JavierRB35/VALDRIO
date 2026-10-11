@@ -75,7 +75,7 @@
        <DataGridTemplateColumn Width="100"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right" AutomationProperties.Name="{Binding Label}"><TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}"><EventSetter Event="GotKeyboardFocus" Handler="SelectNumber"/><Style.Triggers><DataTrigger Binding="{Binding DataContext.CanEditWeights, RelativeSource={RelativeSource AncestorType=DataGrid}}" Value="False"><Setter Property="IsReadOnly" Value="True"/></DataTrigger></Style.Triggers></Style></TextBox.Style></TextBox></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
       </DataGrid.Columns>
      </DataGrid>
-     <WrapPanel Grid.Row="3" Margin="0,8,0,0"><TextBlock Text="{Binding [Total]}" Margin="0,0,8,0"/><TextBlock Text="{Binding Total}" FontWeight="Bold"/></WrapPanel>
+     <WrapPanel Grid.Row="3" Margin="0,8,0,0"><TextBlock Text="{Binding [Total]}" Margin="0,0,8,0"/><TextBlock Text="{Binding Total}" FontWeight="Bold"/><CheckBox Content="{Binding [SelfAllowed]}" IsChecked="{Binding SelfAllowed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsSecondary, Converter={StaticResource Visible}}" IsEnabled="{Binding CanEditComposition}" Margin="20,0,0,0" ToolTip="{Binding [SelfAllowedHelp]}"/></WrapPanel>
      <TextBlock Grid.Row="4" Text="{Binding Validation}" Margin="0,4,0,0" AutomationProperties.LiveSetting="Polite">
       <TextBlock.Style><Style TargetType="TextBlock">
        <Style.Triggers><DataTrigger Binding="{Binding KeyValidationHasError}" Value="True">
