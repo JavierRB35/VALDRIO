@@ -319,7 +319,7 @@
        <TextBlock Text="{Binding [SelectionPreviewTitle]}" FontWeight="SemiBold"/>
        <TextBlock Text="{Binding [SelectionPreviewHelp]}"/>
        <TextBlock x:Name="SelectionReconciliationText" Text="{Binding SelectionReconciliation}" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite"/>
-       <DataGrid x:Name="SelectionPreviewGrid" ItemsSource="{Binding SelectionPreview}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="170" FlowDirection="LeftToRight" EnableRowVirtualization="True" AutomationProperties.Name="{Binding [SelectionPreviewTitle]}">
+       <DataGrid x:Name="SelectionPreviewGrid" ColumnHeaderStyle="{StaticResource WrappedHeader}" CanUserSortColumns="True" GridLinesVisibility="Vertical" VerticalGridLinesBrush="{DynamicResource Border.Soft}" ItemsSource="{Binding SelectionPreview}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="170" FlowDirection="LeftToRight" EnableRowVirtualization="True" AutomationProperties.Name="{Binding [SelectionPreviewTitle]}">
         <DataGrid.Columns>
          <DataGridTextColumn Binding="{Binding Code}" Width="135"/>
          <DataGridTextColumn Binding="{Binding Description}" Width="2*"/>
@@ -355,7 +355,7 @@
       </StackPanel>
       <TextBlock x:Name="ConfirmationSummaryText" Text="{Binding ConfirmationSummary}" FontWeight="SemiBold"/>
       <TextBlock Text="{Binding PreparationIssues}" Foreground="{DynamicResource Brand.Red}"/>
-      <DataGrid x:Name="ComparisonGrid" CanUserSortColumns="True" GridLinesVisibility="Vertical" VerticalGridLinesBrush="{DynamicResource Border.Soft}" ItemsSource="{Binding ComparisonRows}" Visibility="{Binding HasComparisonRows,Converter={StaticResource Visible}}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="150" FlowDirection="LeftToRight">
+      <DataGrid x:Name="ComparisonGrid" ColumnHeaderStyle="{StaticResource WrappedHeader}" CanUserSortColumns="True" GridLinesVisibility="Vertical" VerticalGridLinesBrush="{DynamicResource Border.Soft}" ItemsSource="{Binding ComparisonRows}" Visibility="{Binding HasComparisonRows,Converter={StaticResource Visible}}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="150" FlowDirection="LeftToRight">
        <DataGrid.Columns>
         <DataGridTextColumn Binding="{Binding Code}" Width="*"/>
         <DataGridTextColumn Binding="{Binding Description}" Width="2*"/>
@@ -367,7 +367,7 @@
       </DataGrid>
       <StackPanel Visibility="{Binding HasPreparedGroups,Converter={StaticResource Visible}}">
        <TextBlock Text="{Binding [GroupedPreview]}" FontWeight="SemiBold"/>
-       <DataGrid x:Name="GroupedPreviewGrid" CanUserSortColumns="True" GridLinesVisibility="Vertical" VerticalGridLinesBrush="{DynamicResource Border.Soft}" ItemsSource="{Binding PreparedGroups}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="170" FlowDirection="LeftToRight" EnableRowVirtualization="True">
+       <DataGrid x:Name="GroupedPreviewGrid" ColumnHeaderStyle="{StaticResource WrappedHeader}" CanUserSortColumns="True" GridLinesVisibility="Vertical" VerticalGridLinesBrush="{DynamicResource Border.Soft}" ItemsSource="{Binding PreparedGroups}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="170" FlowDirection="LeftToRight" EnableRowVirtualization="True">
         <DataGrid.Columns>
          <DataGridTextColumn Binding="{Binding Code}" Width="135"/>
          <DataGridTextColumn Binding="{Binding Description}" Width="2*"/>
