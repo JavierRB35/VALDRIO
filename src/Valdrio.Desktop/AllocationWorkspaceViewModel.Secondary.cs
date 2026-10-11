@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Valdrio.Application;
 using Valdrio.Calculation;
 using Valdrio.Domain;
@@ -15,7 +16,13 @@ public sealed record PrincipalCostRow(string Node, string Primary, string Auxili
 public sealed record SecondarySourceDetailRow(string Account, string Primary, string Share, string Amount, string Keys) { public string TechnicalDetail { get; init; } = ""; }
 
 public sealed record SecondaryGroupRow(string Source, string Group);
-public sealed record SecondaryNodeAssignmentRow(EntityId NodeId, string Source, EntityId? SelectedKeyId);
+public sealed class SecondaryNodeAssignmentRow(EntityId nodeId, string source, EntityId? selectedKeyId) : ObservableObject
+{
+    private EntityId? selected = selectedKeyId;
+    public EntityId NodeId { get; } = nodeId;
+    public string Source { get; } = source;
+    public EntityId? SelectedKeyId { get => selected; set => SetProperty(ref selected, value); }
+}
 
 public sealed record SecondaryBridgeRow(
     string Resource, string Effective, string Direct, string Excluded, string Terminal, string Difference);
@@ -214,7 +221,7 @@ public sealed partial class AllocationWorkspaceViewModel
         SecondaryExplanationDetails.Clear();
         SecondaryBridges.Clear();
         SecondaryGroupAssignments.Clear();
-        SecondaryNodeAssignments.Clear();
+        // Preserve rows and ComboBox focus while saving; only update their selected keys.
         SecondaryCirculation.Clear();
         SelectedSecondaryResultRow = null;
         SecondaryExplanation = this["SecondarySelectCost"];
@@ -230,8 +237,14 @@ public sealed partial class AllocationWorkspaceViewModel
         {
             var route = workspace.Configuration.SecondaryRules.FirstOrDefault(rule =>
                 rule.IsActive && rule.AuxiliaryNodeId == node.Id && rule.ComponentRoutingGroup == "all");
-            SecondaryNodeAssignments.Add(new(node.Id, NodeLabel(node), route?.KeyVersionId));
+            var oldRow = SecondaryNodeAssignments.FirstOrDefault(row => row.NodeId == node.Id);
+            if (oldRow is null) SecondaryNodeAssignments.Add(new(node.Id, NodeLabel(node), route?.KeyVersionId));
+            else oldRow.SelectedKeyId = route?.KeyVersionId;
         }
+        var currentNodeIds = workspace.Resources.Model.Structure.Nodes
+            .Where(node => node.IsActive && node.Role == NodeRole.Auxiliary).Select(node => node.Id).ToHashSet();
+        foreach (var obsolete in SecondaryNodeAssignments.Where(row => !currentNodeIds.Contains(row.NodeId)).ToArray())
+            SecondaryNodeAssignments.Remove(obsolete);
         foreach (var part in Parts)
         {
             var group = workspace.Configuration.SecondaryPartRoutingGroups?
