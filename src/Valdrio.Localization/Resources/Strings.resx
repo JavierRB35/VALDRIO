@@ -403,6 +403,7 @@ Full: {5}</value></data>
   <data name="ImportMapping.DeselectAllRecords" xml:space="preserve"><value>Deselect all</value></data>
   <data name="ImportMapping.GroupedPreview" xml:space="preserve"><value>Selected records grouped by code</value></data>
   <data name="ImportMapping.SelectAllRecords" xml:space="preserve"><value>Select all</value></data>
+  <data name="ImportMapping.AccountDescriptionHeader" xml:space="preserve"><value>Account description</value></data>
   <data name="ImportMapping.SourceCode" xml:space="preserve"><value>Code</value></data>
   <data name="ImportMapping.SourceRecords" xml:space="preserve"><value>Source rows</value></data>
   <data name="Study.ChooseExisting" xml:space="preserve"><value>Select a saved analysis to resume exactly where you left it.</value></data>
