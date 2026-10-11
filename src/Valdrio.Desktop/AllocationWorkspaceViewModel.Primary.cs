@@ -26,6 +26,22 @@ public sealed partial class AllocationWorkspaceViewModel
         StudyMoney(Coverage.Sum(row => row.NumericAmount));
     public string PrimaryCompositionTotal => workspace?.Resources.Preparation.Coverage is not { Count: > 0 } coverage ? "" :
         StudyMoney(coverage.Sum(row => row.Effective.Amount));
+    public string PrimaryAbsoluteTotal
+    {
+        get
+        {
+            try
+            {
+                var selected = AbsoluteLines.Where(line => line.Included).ToArray();
+                return selected.Length == 0 ? "" : StudyMoney(selected.Sum(line => Parse(line.Value)));
+            }
+            catch (Exception ex) when (ex is DomainRuleException or ArgumentException or OverflowException)
+            {
+                return this["CheckNumbers"];
+            }
+        }
+    }
+
 
     private void RebuildPrimary()
     {
