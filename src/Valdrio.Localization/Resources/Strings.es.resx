@@ -107,7 +107,7 @@
   <data name="CompanyRestore" xml:space="preserve"><value>Restaurar una copia…</value></data>
   <data name="CompanyCancel" xml:space="preserve"><value>Cancelar operación</value></data>
   <data name="CompanyUnitLabel" xml:space="preserve"><value>Código de la unidad</value></data>
-  <data name="CompanyDimensionLabel" xml:space="preserve"><value>Tipo de medida (dimensión)</value></data>
+  <data name="CompanyDimensionLabel" xml:space="preserve"><value>Descripción de la unidad de actividad</value></data>
   <data name="CompanySymbolLabel" xml:space="preserve"><value>Símbolo visible</value></data>
   <data name="CompanyScaleLabel" xml:space="preserve"><value>Decimales permitidos (0–12)</value></data>
   <data name="CompanyDiscreteLabel" xml:space="preserve"><value>Solo admite unidades enteras</value></data>
@@ -192,6 +192,7 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.Discard" xml:space="preserve"><value>Descartar cambios no guardados</value></data>
   <data name="Model.Nodes" xml:space="preserve"><value>Nodos de cálculo</value></data>
   <data name="Model.NodeCode" xml:space="preserve"><value>Código del nodo</value></data>
+  <data name="Model.NodeDescription" xml:space="preserve"><value>Descripción del nodo</value></data>
   <data name="Model.Physical" xml:space="preserve"><value>Centro físico</value></data>
   <data name="Model.Role" xml:space="preserve"><value>Tipo de nodo</value></data>
   <data name="Model.FunctionTags" xml:space="preserve"><value>Funciones (opcional)</value></data>
