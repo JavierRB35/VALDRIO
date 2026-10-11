@@ -973,6 +973,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.ContinueStructure" xml:space="preserve"><value>Continuar: diseñar estructura</value></data>
   <data name="Guide.NeedProjectShort" xml:space="preserve"><value>Abre o crea un proyecto de costes primero.</value></data>
   <data name="Guide.NeedAnalysisForImportShort" xml:space="preserve"><value>Guarda o abre un análisis de periodo antes de importar saldos.</value></data>
+  <data name="Guide.NeedPrimaryClosedForSecondary" xml:space="preserve"><value>Cierra correctamente el reparto primario antes de acceder al reparto secundario.</value></data>
   <data name="Guide.NeedImportForResourcesShort" xml:space="preserve"><value>Guarda al menos una importación antes de preparar cuentas.</value></data>
   <data name="Guide.NeedPublishedShort" xml:space="preserve"><value>Finaliza una estructura de costes antes de crear un análisis.</value></data>
   <data name="Guide.Context" xml:space="preserve"><value>Proyecto: {0}   ·   Estructura: {1}   ·   Análisis: {2}</value></data>
