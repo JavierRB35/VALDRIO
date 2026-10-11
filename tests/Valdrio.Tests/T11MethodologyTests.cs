@@ -99,7 +99,7 @@ public sealed partial class T06ImportConfirmationTests
             var principal = w.Model.Structure.Nodes.First(n => n.Role == NodeRole.Principal);
             var primaryKey = file.Allocations.SaveAllocationKey(KeyCommand(w, lines: [new(aux.Id, 100m)])).After;
             var secondaryKey = file.Allocations.SaveAllocationKey(KeyCommand(w, stage: AllocationStage.Secondary,
-                lines: [new(aux.Id, 50m), new(principal.Id, 50m)]) with { SelfAllocation = SelfAllocationPolicy.Allowed }).After;
+                lines: [new(aux.Id, 50m), new(principal.Id, 50m)]) with { SelfAllocation = SelfAllocationPolicy.Forbidden }).After;
             var config = new AllocationConfiguration([], [new SecondaryRule(Id(), companyId, w.Model.Structure.Id, aux.Id, "all", secondaryKey.Id, true)],
                 [new ExplicitPrimaryAssignment(part.Id, primaryKey.Id)], [], []);
             file.Allocations.ChangeAllocations(AllocationCommand(w, config));
