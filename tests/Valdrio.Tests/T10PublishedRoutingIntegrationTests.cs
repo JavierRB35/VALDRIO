@@ -51,14 +51,31 @@ public sealed class T10PublishedRoutingIntegrationTests
         Assert.IsTrue(Math.Abs(finalById[principalOne.ToString()] - 20000m / 7m) < 0.00000001m);
         Assert.IsTrue(Math.Abs(finalById[principalTwo.ToString()] - 25500m / 7m) < 0.00000001m);
 
-        var bad = Key(company, modelId, [
+        // Legacy keys persisted as Forbidden must allow real secondary self-service.
+        var selfKey = Key(company, modelId, [
             new(auxiliaryA, 10m), new(principalOne, 60m), new(principalTwo, 30m)]);
-        var wrongRules = rules.Select(rule => rule.AuxiliaryNodeId == auxiliaryA
-            ? rule with { KeyVersionId = bad.Id } : rule).ToArray();
-        Assert.AreEqual("GRAPH_SELF_NOT_ALLOWED",
+        var selfRules = rules.Select(rule => rule.AuxiliaryNodeId == auxiliaryA
+            ? rule with { KeyVersionId = selfKey.Id } : rule).ToArray();
+        var selfGraph = ReciprocalGraphBuilder.FromPublishedSecondaryKeys(model,
+            [selfKey, b], selfRules, [unit], PrecisionPolicy.Pdec1Proposed);
+        var ai = Array.IndexOf(selfGraph.AuxiliaryIds, auxiliaryA.ToString());
+        Assert.IsTrue(selfGraph.AllowSelf);
+        Assert.AreEqual(0.1m, selfGraph.Q[ai][ai]);
+        var selfSolved = ReciprocalFactorization.Prepare(selfGraph).Solve(
+            new Dictionary<string, decimal> { [auxiliaryA.ToString()] = 1000m, [auxiliaryB.ToString()] = 500m },
+            new Dictionary<string, decimal> { [principalOne.ToString()] = 2000m, [principalTwo.ToString()] = 3000m });
+        Assert.IsTrue(Math.Abs(selfSolved.Final.Sum() - 6500m) <= 0.00000001m);
+
+        // A fully closed 100%-to-self route is not a forbidden allocation;
+        // it is a mathematically unsolvable graph with no path to any principal.
+        var onlySelf = Key(company, modelId, [new(auxiliaryA, 100m)]);
+        var closedRules = rules.Select(rule => rule.AuxiliaryNodeId == auxiliaryA
+            ? rule with { KeyVersionId = onlySelf.Id } : rule).ToArray();
+        var closedInput = ReciprocalGraphBuilder.FromPublishedSecondaryKeys(model,
+            [onlySelf, b], closedRules, [unit], PrecisionPolicy.Pdec1Proposed);
+        Assert.AreEqual("GRAPH_CLOSED_COMPONENT",
             Assert.ThrowsExactly<DomainRuleException>(() =>
-                ReciprocalGraphBuilder.FromPublishedSecondaryKeys(model, [bad, b], wrongRules, [unit],
-                    PrecisionPolicy.Pdec1Proposed)).Diagnostic.Code);
+                ReciprocalFactorization.Prepare(closedInput)).Diagnostic.Code);
     }
 
     private static EntityId NewId() => new(Guid.NewGuid());
