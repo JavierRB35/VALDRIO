@@ -1361,4 +1361,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.ExplainTerminalDetail" xml:space="preserve"><value>Coste final de esta cuenta en este destino (puede incluir varios nodos de origen):</value></data>
   <data name="AllocationUI.ReciprocalCalculationFailed" xml:space="preserve"><value>No se ha podido completar el cálculo</value></data>
   <data name="AllocationUI.SecondaryBehaviorAssumedFixed" xml:space="preserve"><value>Fijo por defecto</value></data>
+  <data name="Resources.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
+  <data name="AllocationUI.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
+  <data name="AllocationUI.GrossDiagnosticTotal" xml:space="preserve"><value>Total bruto (informativo, no se suma al final)</value></data>
 </root>
