@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Valdrio.Application;
@@ -31,7 +32,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     private readonly PresentationPreferencesService preferences;
     private readonly IModelEditorDialogs dialogs;
     private readonly PresentationFormatter formatter;
-    private bool busy, dirty, pseudo, nodeFormEdited;
+    private bool busy, dirty, pseudo, nodeFormEdited, nodeCodeManuallyEdited;
     private string centerCode = "", centerName = "", description = "", nodeCode = "", functionTags = "", poolDescription = "";
     private CenterOption? master, physical;
     private UnitOption? unit, unitMaster;
@@ -76,7 +77,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         SaveNodeCommand = new AsyncRelayCommand(SaveNode, () => CanEdit && nodeFormEdited);
         RemoveNodeCommand = new RelayCommand(RemoveNode, () => CanEdit && !IsPublished && SelectedNode is not null);
         DeleteNodeCommand = new AsyncRelayCommand(DeleteNode, () => CanEdit && !IsPublished && SelectedNode is not null && !nodeFormEdited);
-        NewNodeCommand = new RelayCommand(ClearNodeForm, () => CanEdit && !IsPublished);
+        NewNodeCommand = new AsyncRelayCommand(NewNode, () => CanEdit && !IsPublished);
         DiscardCommand = new RelayCommand(() =>
         {
             if (Current is not null)
@@ -111,7 +112,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public bool InputsEnabled => Ready;
     public bool HasError => diagnostic is not null;
     public bool IsEditingCenter => Master is not null;
-    public bool CanSelectNode => !busy && !nodeFormEdited;
+    public bool CanSelectNode => !busy;
     public ModelVersionSnapshot? Current { get; private set; }
     public ObservableCollection<CenterOption> Centers { get; } = [];
     public ObservableCollection<UnitOption> Units { get; } = [];
@@ -168,8 +169,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         {
             if (SetProperty(ref physical, value) && !loading && IsEditable)
             {
-                nodeFormEdited = true;
-                Refresh();
+                RefreshNodeFormState();
             }
         }
     }
@@ -191,8 +191,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         {
             if (SetProperty(ref unit, value) && !loading && IsEditable)
             {
-                nodeFormEdited = true;
-                Refresh();
+                RefreshNodeFormState();
             }
 
             RefreshCommands();
@@ -214,19 +213,81 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         get => node;
         set
         {
-            if (SetProperty(ref node, value) && value is not null && !loading)
+            if (!loading && node?.Node.Id != value?.Node.Id && nodeFormEdited)
             {
-                nodeCode = value.Node.Code;
-                functionTags = string.Join(", ", value.Node.FunctionTags);
-                poolDescription = value.Pool?.Description ?? "";
-                physical = Centers.SingleOrDefault(c => c.Value.Id == value.Node.PhysicalCenterId);
-                unit = Units.SingleOrDefault(u => u.Value.Definition.Id == value.Pool?.DriverUnitId);
-                role = Roles.Single(x => x.Value == value.Node.Role);
-                layer = Layers.Single(x => x.Value == (value.Pool?.CostLayer ?? CostLayer.Unclassified));
-                nodeFormEdited = false;
-                Refresh();
+                var decision = dialogs.ResolvePending(Text("Model.PendingTitle"), Text("Model.PendingBody"));
+                if (decision == PendingEditChoice.Cancel)
+                {
+                    OnPropertyChanged(nameof(SelectedNode));
+                    return;
+                }
+                if (decision == PendingEditChoice.Save)
+                {
+                    _ = SaveNodeThenSelect(value?.Node.Id);
+                    return;
+                }
             }
+
+            if (!SetProperty(ref node, value) || loading) return;
+            loading = true;
+            nodeCode = value?.Node.Code ?? "";
+            functionTags = value is null ? "" : string.Join(", ", value.Node.FunctionTags);
+            poolDescription = value?.Pool?.Description ?? "";
+            physical = Centers.SingleOrDefault(c => c.Value.Id == value?.Node.PhysicalCenterId);
+            unit = Units.SingleOrDefault(u => u.Value.Definition.Id == value?.Pool?.DriverUnitId);
+            role = Roles.FirstOrDefault(x => x.Value == (value?.Node.Role ?? NodeRole.Principal));
+            layer = Layers.FirstOrDefault(x => x.Value == (value?.Pool?.CostLayer ?? CostLayer.Unclassified));
+            nodeCodeManuallyEdited = value is not null;
+            loading = false;
+            nodeFormEdited = false;
+            Refresh();
         }
+    }
+
+    private async Task SaveNodeThenSelect(EntityId? selectedId)
+    {
+        await SaveNode();
+        if (nodeFormEdited || diagnostic is not null)
+        {
+            OnPropertyChanged(nameof(SelectedNode));
+            return;
+        }
+        SelectedNode = Nodes.SingleOrDefault(x => x.Node.Id == selectedId);
+    }
+
+    private bool NodeFormHasChanges()
+    {
+        if (node is null)
+            return !string.IsNullOrWhiteSpace(nodeCode) || !string.IsNullOrWhiteSpace(poolDescription) ||
+                !string.IsNullOrWhiteSpace(functionTags) || physical is not null || unit is not null ||
+                role?.Value is not (null or NodeRole.Principal);
+        return nodeCode != node.Node.Code ||
+            poolDescription != (node.Pool?.Description ?? "") ||
+            functionTags != string.Join(", ", node.Node.FunctionTags) ||
+            physical?.Value.Id != node.Node.PhysicalCenterId ||
+            unit?.Value.Definition.Id != node.Pool?.DriverUnitId ||
+            role?.Value != node.Node.Role ||
+            layer?.Value != (node.Pool?.CostLayer ?? CostLayer.Unclassified);
+    }
+
+    private void RefreshNodeFormState()
+    {
+        nodeFormEdited = NodeFormHasChanges();
+        Refresh();
+    }
+
+    private string SuggestNodeCode(string name)
+    {
+        var normalized = name.Trim().ToUpperInvariant().Normalize(NormalizationForm.FormD);
+        var plain = new string(normalized.Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+            .Select(c => char.IsLetterOrDigit(c) ? c : '-').ToArray());
+        var candidate = string.Join("-", plain.Split('-', StringSplitOptions.RemoveEmptyEntries));
+        if (candidate.Length > 32) candidate = candidate[..32].TrimEnd('-');
+        if (string.IsNullOrEmpty(candidate)) return "";
+        var original = candidate;
+        for (var suffix = 2; draftNodes.Any(n => n.Code == candidate); suffix++)
+            candidate = original + "-" + suffix.ToString(CultureInfo.InvariantCulture);
+        return candidate;
     }
 
     public RoleOption? Role
@@ -236,8 +297,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         {
             if (SetProperty(ref role, value) && !loading && IsEditable)
             {
-                nodeFormEdited = true;
-                Refresh();
+                RefreshNodeFormState();
             }
         }
     }
@@ -249,8 +309,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         {
             if (SetProperty(ref layer, value) && !loading && IsEditable)
             {
-                nodeFormEdited = true;
-                Refresh();
+                RefreshNodeFormState();
             }
         }
     }
@@ -295,8 +354,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         {
             if (SetProperty(ref nodeCode, value) && !loading && IsEditable)
             {
-                nodeFormEdited = true;
-                Refresh();
+                nodeCodeManuallyEdited = true;
+                RefreshNodeFormState();
             }
         }
     }
@@ -307,10 +366,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         set
         {
             if (SetProperty(ref functionTags, value) && !loading && IsEditable)
-            {
-                nodeFormEdited = true;
-                Refresh();
-            }
+                RefreshNodeFormState();
         }
     }
 
@@ -319,11 +375,13 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         get => poolDescription;
         set
         {
-            if (SetProperty(ref poolDescription, value) && !loading && IsEditable)
+            if (!SetProperty(ref poolDescription, value) || loading || !IsEditable) return;
+            if (node is null && !nodeCodeManuallyEdited)
             {
-                nodeFormEdited = true;
-                Refresh();
+                nodeCode = SuggestNodeCode(value);
+                OnPropertyChanged(nameof(NodeCode));
             }
+            RefreshNodeFormState();
         }
     }
 
@@ -343,7 +401,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public IAsyncRelayCommand SaveNodeCommand { get; }
     public IRelayCommand RemoveNodeCommand { get; }
     public IAsyncRelayCommand DeleteNodeCommand { get; }
-    public IRelayCommand NewNodeCommand { get; }
+    public IAsyncRelayCommand NewNodeCommand { get; }
     public IRelayCommand DiscardCommand { get; }
     public IRelayCommand CancelCommand { get; }
     public IAsyncRelayCommand RefreshCommand { get; }
@@ -441,7 +499,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string FunctionLabel => Text("Model.FunctionTags");
     public string UnitLabel => Text("Model.DriverUnit");
     public string LayerLabel => Text("Model.CostLayer");
-    public string PoolLabel => Text("Model.PoolDescription");
+    public string PoolLabel => Text("Model.NodeDescription");
     public string ApplyLabel => Text("Model.ApplyNode");
     public string NewNodeLabel => Text("Model.NewNode");
     public string RemoveLabel => Text("Model.RemoveNode");
@@ -734,6 +792,24 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         Reformat();
     }
 
+    private async Task NewNode()
+    {
+        if (nodeFormEdited)
+        {
+            var decision = dialogs.ResolvePending(Text("Model.PendingTitle"), Text("Model.PendingBody"));
+            if (decision == PendingEditChoice.Cancel) return;
+            if (decision == PendingEditChoice.Save)
+            {
+                await SaveNode();
+                if (nodeFormEdited || diagnostic is not null) return;
+            }
+        }
+        ResetNode();
+        diagnostic = null;
+        statusKey = "Model.Ready";
+        Refresh();
+    }
+
     private void ClearNodeForm()
     {
         if (nodeFormEdited)
@@ -760,6 +836,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         nodeFormEdited = false;
         node = null;
         nodeCode = "";
+        nodeCodeManuallyEdited = false;
         functionTags = "";
         poolDescription = "";
         physical = null;
@@ -970,6 +1047,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         var code = NodeCode;
         var functions = FunctionTags;
         var pool = PoolDescription;
+        var manuallyEdited = nodeCodeManuallyEdited;
         var physicalId = Physical?.Value.Id;
         var unitId = DriverUnit?.Value.Definition.Id;
         var roleValue = Role?.Value;
@@ -1000,6 +1078,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         loading = true;
         node = selectedId is null ? null : Nodes.SingleOrDefault(n => n.Node.Id == selectedId);
         nodeCode = code;
+        nodeCodeManuallyEdited = manuallyEdited;
         functionTags = functions;
         poolDescription = pool;
         physical = Centers.SingleOrDefault(c => c.Value.Id == physicalId);

@@ -2,6 +2,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 using Valdrio.Application;
 using Valdrio.Infrastructure;
@@ -12,6 +14,20 @@ namespace Valdrio.Desktop;
 
 public partial class App : System.Windows.Application
 {
+    private static void SelectEditableText(object sender, KeyboardFocusChangedEventArgs e)
+    {
+        if (sender is TextBox { IsEnabled: true, IsReadOnly: false } box && box.IsKeyboardFocusWithin)
+            box.SelectAll();
+    }
+    private static void FocusEditableTextOnFirstClick(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is TextBox { IsEnabled: true, IsReadOnly: false } box && !box.IsKeyboardFocusWithin)
+        {
+            e.Handled = true;
+            box.Focus();
+            box.SelectAll();
+        }
+    }
     private CompanyFileViewModel? company;
     private StudyWorkspaceViewModel? studies;
     private ModelWorkspaceViewModel? models;
@@ -22,6 +38,12 @@ public partial class App : System.Windows.Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        // Focused editable fields select all on both keyboard and initial mouse focus.
+        // Read-only/disabled fields are excluded; subsequent clicks keep caret editing.
+        EventManager.RegisterClassHandler(typeof(TextBox), Keyboard.GotKeyboardFocusEvent,
+            new KeyboardFocusChangedEventHandler(SelectEditableText), true);
+        EventManager.RegisterClassHandler(typeof(TextBox), UIElement.PreviewMouseLeftButtonDownEvent,
+            new MouseButtonEventHandler(FocusEditableTextOnFirstClick), true);
 
         var captureDirectory =
             ReadOption(e.Args, "--capture-dir=");
@@ -171,6 +193,7 @@ public partial class App : System.Windows.Application
         };
 
         MainWindow = window;
+        allocations.AfterPrimaryStateChanged = async () => { await resources.EnterAsync(true); window.UpdateWorkflow(); };
         window.Show();
         bool allowClose = false;
         window.Closing += async (_, args) =>

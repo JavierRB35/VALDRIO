@@ -6,6 +6,8 @@
   <SolidColorBrush x:Key="Brand.White" Color="#FFFFFF"/>
   <SolidColorBrush x:Key="Surface.Canvas" Color="#F5F8F6"/>
   <SolidColorBrush x:Key="Surface.Subtle" Color="#EFF5F1"/>
+  <SolidColorBrush x:Key="Surface.Disabled" Color="#DFE6E1"/>
+  <SolidColorBrush x:Key="Border.Disabled" Color="#9CAB9F"/>
   <SolidColorBrush x:Key="Border.Soft" Color="#DBE4DF"/>
   <SolidColorBrush x:Key="Text.Primary" Color="#213C34"/>
   <SolidColorBrush x:Key="Text.Secondary" Color="#788D85"/>
@@ -177,6 +179,16 @@
       </Setter.Value>
     </Setter>
     <Style.Triggers>
+      <Trigger Property="IsMouseOver" Value="True">
+        <Setter Property="Background" Value="{DynamicResource Accent.ActiveGreen}"/>
+      </Trigger>
+      <Trigger Property="IsKeyboardFocusWithin" Value="True">
+        <Setter Property="BorderBrush" Value="{DynamicResource Brand.Yellow}"/>
+      </Trigger>
+      <Trigger Property="IsPressed" Value="True">
+        <Setter Property="Background" Value="{DynamicResource Accent.ActiveGreen}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Brand.Yellow}"/>
+      </Trigger>
       <Trigger Property="FontWeight" Value="Bold">
         <Setter Property="Background" Value="{DynamicResource Accent.ActiveGreen}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource Brand.Yellow}"/>
@@ -204,14 +216,23 @@
             <Trigger Property="IsKeyboardFocusWithin" Value="True">
               <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Accent.ActiveGreen}"/>
               <Setter TargetName="Chrome" Property="BorderThickness" Value="2"/>
+               <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Status.WarningBg}"/>
             </Trigger>
             <Trigger Property="Validation.HasError" Value="True">
               <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Brand.Red}"/>
+               <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
             </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
-              <Setter Property="Opacity" Value="0.55"/>
+            <Trigger Property="Tag" Value="error">
+               <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Brand.Red}"/>
+               <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
+             </Trigger>
+             <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Background" Value="{DynamicResource Surface.Disabled}"/>
+              <Setter Property="BorderBrush" Value="{DynamicResource Border.Disabled}"/>
+              <Setter Property="Opacity" Value="0.88"/>
             </Trigger>
             <Trigger Property="IsReadOnly" Value="True">
+               <Setter Property="IsTabStop" Value="False"/>
               <Setter Property="Background" Value="{DynamicResource Surface.Subtle}"/>
             </Trigger>
           </ControlTemplate.Triggers>
@@ -263,9 +284,17 @@
             <Trigger Property="IsKeyboardFocusWithin" Value="True">
               <Setter Property="BorderBrush" Value="{DynamicResource Accent.ActiveGreen}"/>
               <Setter Property="BorderThickness" Value="2"/>
+               <Setter Property="Background" Value="{DynamicResource Status.WarningBg}"/>
             </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
-              <Setter Property="Opacity" Value="0.55"/>
+            <Trigger Property="Validation.HasError" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Brand.Red}"/><Setter Property="Background" Value="{DynamicResource Status.ErrorBg}"/></Trigger>
+             <Trigger Property="Tag" Value="error">
+               <Setter Property="BorderBrush" Value="{DynamicResource Brand.Red}"/>
+               <Setter Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
+             </Trigger>
+             <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Background" Value="{DynamicResource Surface.Disabled}"/>
+              <Setter Property="BorderBrush" Value="{DynamicResource Border.Disabled}"/>
+              <Setter Property="Opacity" Value="0.88"/>
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>

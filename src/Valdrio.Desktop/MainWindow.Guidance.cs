@@ -57,7 +57,8 @@ public partial class MainWindow
         ImportStep.IsEnabled = hasImportDestination;
         ResourcesStep.IsEnabled = hasImports;
         AllocationsStep.IsEnabled = hasImports;
-        SecondaryStep.IsEnabled = hasImports;
+        SecondaryStep.IsEnabled = hasImports && vm.Allocations?.IsPrimaryClosed == true;
+        SecondaryStep.ToolTip = SecondaryStep.IsEnabled ? null : vm.Guide("NeedPrimaryClosedForSecondary");
         SettingsStep.IsEnabled = true;
 
         ModelStep.ToolTip = hasProject ? null : vm.Guide("NeedProjectShort");
@@ -122,7 +123,8 @@ public partial class MainWindow
         WorkflowNext.Visibility = workflowStep is 6 or 7 ? Visibility.Collapsed : Visibility.Visible;
         WorkflowNext.IsEnabled = vm.Company?.WorkspaceIdle != false &&
             (workflowStep is not (1 or 2) || vm.Company?.CanWrite == true) &&
-            (workflowStep != 4 || vm.Resources?.CanAdvance == true);
+            (workflowStep != 4 || vm.Resources?.CanAdvance == true) &&
+            (workflowStep != 5 || vm.Allocations?.IsPrimaryClosed == true);
         FieldHelpText.Text = vm.Guide(lastHelpKey is null ? "HelpHint" : "Help." + lastHelpKey);
     }
     internal async Task NavigateWorkflow(int step)
@@ -132,6 +134,7 @@ public partial class MainWindow
         if (step == 3 && vm.Studies?.HasImportDestination != true) step = 2;
         if (step is 4 or 5 or 7 && vm.Studies?.Current is null) step = 2;
         if (step is 4 or 5 or 7 && vm.Studies?.HasConfirmedImports != true) step = 3;
+        if (step == 7 && vm.Allocations?.IsPrimaryClosed != true) step = 5;
         if (vm.Company?.WorkspaceIdle == false) return;
         if (workflowStep == 4 && step != 4 && vm.Resources is { } oldResources && !await oldResources.CanLeaveAsync())
         { ResourcePanel.ActionStatus.BringIntoView(); return; }
@@ -142,6 +145,7 @@ public partial class MainWindow
         if ((workflowStep is 5 or 7) && step != workflowStep && vm.Resources is { ShowParts: true } detail)
             await detail.CloseDestinationsAsync();
         if (workflowStep == 1 && step != 1 && vm.Models is { } modelEditor && !await modelEditor.CanLeaveAsync()) return;
+        var enteringAllocation = step is 5 or 7 && vm.Allocations?.IsDirty != true;
         lastHelpKey = null;
         workflowStep = step;
         if (step == 1 && vm.Models is { } nodes) await nodes.LoadStudyNodesAsync();
@@ -151,6 +155,11 @@ public partial class MainWindow
         if (step is 5 or 7 && vm.Allocations is { } allocations)
         { if (vm.Resources is { } source) await source.EnterAsync(); await allocations.EnterAsync(); allocations.SecondaryWorkspaceActive = step == 7; }
         UpdateWorkflow(); RootScrollViewer.ScrollToTop();
+        if (enteringAllocation)
+        {
+            if (step == 5) AllocationPanel.FocusKeyLibrary();
+            else SecondaryPanel.Workspace.FocusKeyLibrary();
+        }
     }
     private async void ChooseCompany(object sender, RoutedEventArgs e) => await NavigateWorkflow(0);
     private async void ChooseModel(object sender, RoutedEventArgs e) => await NavigateWorkflow(1);

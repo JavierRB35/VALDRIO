@@ -107,7 +107,7 @@
   <data name="CompanyRestore" xml:space="preserve"><value>Restaurar una copia…</value></data>
   <data name="CompanyCancel" xml:space="preserve"><value>Cancelar operación</value></data>
   <data name="CompanyUnitLabel" xml:space="preserve"><value>Código de la unidad</value></data>
-  <data name="CompanyDimensionLabel" xml:space="preserve"><value>Tipo de medida (dimensión)</value></data>
+  <data name="CompanyDimensionLabel" xml:space="preserve"><value>Descripción de la unidad de actividad</value></data>
   <data name="CompanySymbolLabel" xml:space="preserve"><value>Símbolo visible</value></data>
   <data name="CompanyScaleLabel" xml:space="preserve"><value>Decimales permitidos (0–12)</value></data>
   <data name="CompanyDiscreteLabel" xml:space="preserve"><value>Solo admite unidades enteras</value></data>
@@ -192,6 +192,8 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.Discard" xml:space="preserve"><value>Descartar cambios no guardados</value></data>
   <data name="Model.Nodes" xml:space="preserve"><value>Nodos de cálculo</value></data>
   <data name="Model.NodeCode" xml:space="preserve"><value>Código del nodo</value></data>
+  <data name="Model.NodeDescription" xml:space="preserve"><value>Descripción del nodo</value></data>
+  <data name="ImportMapping.AdvancedOptions" xml:space="preserve"><value>Opciones avanzadas: divisas, sustitución y comparaciones</value></data>
   <data name="Model.Physical" xml:space="preserve"><value>Centro físico</value></data>
   <data name="Model.Role" xml:space="preserve"><value>Tipo de nodo</value></data>
   <data name="Model.FunctionTags" xml:space="preserve"><value>Funciones (opcional)</value></data>
@@ -401,6 +403,7 @@ Completa: {5}</value></data>
   <data name="ImportMapping.DeselectAllRecords" xml:space="preserve"><value>Deseleccionar todos</value></data>
   <data name="ImportMapping.GroupedPreview" xml:space="preserve"><value>Registros seleccionados agrupados por código</value></data>
   <data name="ImportMapping.SelectAllRecords" xml:space="preserve"><value>Seleccionar todos</value></data>
+  <data name="ImportMapping.AccountDescriptionHeader" xml:space="preserve"><value>Descripción de cuenta</value></data>
   <data name="ImportMapping.SourceCode" xml:space="preserve"><value>Código</value></data>
   <data name="ImportMapping.SourceRecords" xml:space="preserve"><value>Filas de origen</value></data>
   <data name="Study.ChooseExisting" xml:space="preserve"><value>Selecciona un análisis guardado para retomarlo exactamente donde lo dejaste.</value></data>
@@ -509,7 +512,7 @@ Completa: {5}</value></data>
   <data name="Guide.ImportColumns" xml:space="preserve"><value>2. Indicar columnas</value></data>
   <data name="Guide.ImportRecords" xml:space="preserve"><value>3. Elegir registros</value></data>
   <data name="Guide.ImportMeaning" xml:space="preserve"><value>4. Explicar los importes</value></data>
-  <data name="Guide.ImportReview" xml:space="preserve"><value>5. Revisar y guardar</value></data>
+  <data name="Guide.ImportReview" xml:space="preserve"><value>4. Revisar y finalizar</value></data>
   <data name="Guide.ReadNext" xml:space="preserve"><value>Continuar con este archivo</value></data>
   <data name="Guide.ValidateNext" xml:space="preserve"><value>Comprobar y continuar</value></data>
   <data name="Guide.ReviewNext" xml:space="preserve"><value>Revisar importación</value></data>
@@ -970,6 +973,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.ContinueStructure" xml:space="preserve"><value>Continuar: diseñar estructura</value></data>
   <data name="Guide.NeedProjectShort" xml:space="preserve"><value>Abre o crea un proyecto de costes primero.</value></data>
   <data name="Guide.NeedAnalysisForImportShort" xml:space="preserve"><value>Guarda o abre un análisis de periodo antes de importar saldos.</value></data>
+  <data name="Guide.NeedPrimaryClosedForSecondary" xml:space="preserve"><value>Cierra correctamente el reparto primario antes de acceder al reparto secundario.</value></data>
   <data name="Guide.NeedImportForResourcesShort" xml:space="preserve"><value>Guarda al menos una importación antes de preparar cuentas.</value></data>
   <data name="Guide.NeedPublishedShort" xml:space="preserve"><value>Finaliza una estructura de costes antes de crear un análisis.</value></data>
   <data name="Guide.Context" xml:space="preserve"><value>Proyecto: {0}   ·   Estructura: {1}   ·   Análisis: {2}</value></data>
@@ -1025,6 +1029,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Allocation.ParentInvalid" xml:space="preserve"><value>Elige una versión publicada de esta clave como punto de partida.</value></data>
   <data name="Allocation.RuleInvalid" xml:space="preserve"><value>Completa la cuenta o prefijo y selecciona una clave. Revisa las reglas que coinciden con la misma cuenta.</value></data>
   <data name="Allocation.RuleMissing" xml:space="preserve"><value>Selecciona una clave en la cuenta o aplica una regla que la incluya.</value></data>
+  <data name="Allocation.AuxiliaryMultipleKeys" xml:space="preserve"><value>El nodo auxiliar ya tiene una clave de reparto en otro grupo. Cada auxiliar solo puede tener una clave activa; revisa o elimina la asignación anterior.</value></data>
   <data name="Allocation.RuleAmbiguous" xml:space="preserve"><value>Hay reglas que compiten por las mismas cuentas. Edita y aplica la regla que debe utilizarse o elimina la que sobra.</value></data>
   <data name="Allocation.PublicationRequired" xml:space="preserve"><value>Elige una clave guardada y completa de este modelo para el reparto correspondiente.</value></data>
   <data name="Allocation.AuxiliaryInvalid" xml:space="preserve"><value>El emisor del reparto secundario debe ser un nodo auxiliar activo del modelo.</value></data>
@@ -1080,6 +1085,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.Discard" xml:space="preserve"><value>Descartar cambios sin guardar</value></data>
   <data name="AllocationUI.Unit" xml:space="preserve"><value>Unidad del criterio</value></data>
   <data name="AllocationUI.NodeUnit" xml:space="preserve"><value>Unidad</value></data>
+  <data name="AllocationUI.SelfAllowedHelp" xml:space="preserve"><value>Autoriza la prestación del auxiliar a sí mismo cuando la clave incluye un destino propio. Un circuito sin salida a nodos principales sigue sin ser resoluble.</value></data>
+  <data name="AllocationUI.SecondaryNoPublishedKeys" xml:space="preserve"><value>No hay claves secundarias publicadas para seleccionar. Crea una clave en Reparto secundario y guárdala antes de asignarla al auxiliar.</value></data>
   <data name="AllocationUI.SelfAllowed" xml:space="preserve"><value>Permitir destino al propio auxiliar</value></data>
   <data name="AllocationUI.Include" xml:space="preserve"><value>Incluir</value></data>
   <data name="AllocationUI.Destination" xml:space="preserve"><value>Centro / nodo</value></data>
@@ -1146,6 +1153,12 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.PrimaryIncomplete" xml:space="preserve"><value>Quedan cuentas sin repartir. Revisa las filas pendientes en la tabla de cuentas.</value></data>
   <data name="AllocationUI.PrimarySource" xml:space="preserve"><value>Recurso / cuenta</value></data>
   <data name="AllocationUI.PrimaryDestination" xml:space="preserve"><value>Nodo de destino</value></data>
+  <data name="AllocationUI.PrimaryNodeTotalsTitle" xml:space="preserve"><value>Costes acumulados por nodo</value></data>
+  <data name="AllocationUI.SecondaryNodeAssignmentsTitle" xml:space="preserve"><value>Asignación de claves a nodos auxiliares</value></data>
+  <data name="AllocationUI.SecondaryAssignmentSaveFailed" xml:space="preserve"><value>No se pudo guardar la clave del auxiliar. Comprueba que sea secundaria, esté publicada y sea compatible con el nodo.</value></data>
+  <data name="AllocationUI.SecondaryNodeAssignmentsHelp" xml:space="preserve"><value>Selecciona una clave secundaria publicada para cada nodo auxiliar. Se guarda directamente y sustituye la asignación anterior del grupo general.</value></data>
+  <data name="AllocationUI.NodeCenter" xml:space="preserve"><value>Centro</value></data>
+  <data name="AllocationUI.Node" xml:space="preserve"><value>Nodo</value></data>
   <data name="AllocationUI.PrimaryAmount" xml:space="preserve"><value>Importe adjudicado</value></data>
   <data name="AllocationUI.PrimaryRule" xml:space="preserve"><value>Regla / clave aplicada</value></data>
   <data name="AllocationUI.PrimaryAbsolute" xml:space="preserve"><value>Importe manual</value></data>
@@ -1351,4 +1364,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.ExplainTerminalDetail" xml:space="preserve"><value>Coste final de esta cuenta en este destino (puede incluir varios nodos de origen):</value></data>
   <data name="AllocationUI.ReciprocalCalculationFailed" xml:space="preserve"><value>No se ha podido completar el cálculo</value></data>
   <data name="AllocationUI.SecondaryBehaviorAssumedFixed" xml:space="preserve"><value>Fijo por defecto</value></data>
+  <data name="Resources.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
+  <data name="AllocationUI.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
+  <data name="AllocationUI.GrossDiagnosticTotal" xml:space="preserve"><value>Total bruto (informativo, no se suma al final)</value></data>
 </root>

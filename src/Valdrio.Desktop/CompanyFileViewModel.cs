@@ -36,6 +36,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
         CreateCommand = new AsyncRelayCommand(Create, () => Available && !string.IsNullOrWhiteSpace(CompanyName));
         OpenCommand = new AsyncRelayCommand(Open, () => Available);
         CloseCommand = new AsyncRelayCommand(Close, () => Available && active is not null);
+        NewProjectCommand = new AsyncRelayCommand(NewProject, () => Available && active is not null);
         AddUnitCommand = new AsyncRelayCommand(AddUnit, () => Available && active is not null &&
             !string.IsNullOrWhiteSpace(UnitCode) && !string.IsNullOrWhiteSpace(UnitDimension));
         BackupCommand = new AsyncRelayCommand(Backup, () => Available && active is not null);
@@ -47,6 +48,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public IAsyncRelayCommand CreateCommand { get; }
     public IAsyncRelayCommand OpenCommand { get; }
     public IAsyncRelayCommand CloseCommand { get; }
+    public IAsyncRelayCommand NewProjectCommand { get; }
     public IAsyncRelayCommand AddUnitCommand { get; }
     public IAsyncRelayCommand BackupCommand { get; }
     public IAsyncRelayCommand RestoreCommand { get; }
@@ -151,7 +153,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     private void Refresh()
     {
         OnPropertyChanged(string.Empty);
-        CreateCommand.NotifyCanExecuteChanged(); OpenCommand.NotifyCanExecuteChanged(); CloseCommand.NotifyCanExecuteChanged();
+        CreateCommand.NotifyCanExecuteChanged(); OpenCommand.NotifyCanExecuteChanged(); CloseCommand.NotifyCanExecuteChanged(); NewProjectCommand.NotifyCanExecuteChanged();
         AddUnitCommand.NotifyCanExecuteChanged(); BackupCommand.NotifyCanExecuteChanged(); RestoreCommand.NotifyCanExecuteChanged(); UpgradeCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
     }
     private async Task Run(Func<CancellationToken, Task> operation)
@@ -187,6 +189,21 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
         if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
         await Run(async token => await ReplaceAsync(await Task.Run(() => files.Open(path, cancellationToken: token))));
     }
+    private async Task NewProject()
+    {
+        await Close();
+        // A refused project change leaves the current project and its data untouched.
+        if (active is not null) return;
+        CompanyName = "";
+        Currency = CurrencyOptions.Contains("EUR", StringComparer.Ordinal) ? "EUR" : CurrencyOptions.FirstOrDefault() ?? "";
+        UnitCode = "";
+        UnitDimension = "time";
+        UnitSymbol = "h";
+        UnitScale = 12;
+        UnitDiscrete = false;
+        Refresh();
+    }
+
     private async Task Close()
     {
         if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;

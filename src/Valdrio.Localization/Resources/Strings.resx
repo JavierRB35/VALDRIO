@@ -107,7 +107,7 @@
   <data name="CompanyRestore" xml:space="preserve"><value>Restore a backup…</value></data>
   <data name="CompanyCancel" xml:space="preserve"><value>Cancel operation</value></data>
   <data name="CompanyUnitLabel" xml:space="preserve"><value>Unit code</value></data>
-  <data name="CompanyDimensionLabel" xml:space="preserve"><value>Measurement type (dimension)</value></data>
+  <data name="CompanyDimensionLabel" xml:space="preserve"><value>Activity unit description</value></data>
   <data name="CompanySymbolLabel" xml:space="preserve"><value>Symbol</value></data>
   <data name="CompanyScaleLabel" xml:space="preserve"><value>Allowed decimal places (0–12)</value></data>
   <data name="CompanyDiscreteLabel" xml:space="preserve"><value>Whole units only</value></data>
@@ -192,6 +192,8 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Discard" xml:space="preserve"><value>Discard unsaved changes</value></data>
   <data name="Model.Nodes" xml:space="preserve"><value>Calculation nodes</value></data>
   <data name="Model.NodeCode" xml:space="preserve"><value>Node code</value></data>
+  <data name="Model.NodeDescription" xml:space="preserve"><value>Node description</value></data>
+  <data name="ImportMapping.AdvancedOptions" xml:space="preserve"><value>Advanced options: currencies, replacement and comparisons</value></data>
   <data name="Model.Physical" xml:space="preserve"><value>Physical center</value></data>
   <data name="Model.Role" xml:space="preserve"><value>Node type</value></data>
   <data name="Model.FunctionTags" xml:space="preserve"><value>Functions (optional)</value></data>
@@ -401,6 +403,7 @@ Full: {5}</value></data>
   <data name="ImportMapping.DeselectAllRecords" xml:space="preserve"><value>Deselect all</value></data>
   <data name="ImportMapping.GroupedPreview" xml:space="preserve"><value>Selected records grouped by code</value></data>
   <data name="ImportMapping.SelectAllRecords" xml:space="preserve"><value>Select all</value></data>
+  <data name="ImportMapping.AccountDescriptionHeader" xml:space="preserve"><value>Account description</value></data>
   <data name="ImportMapping.SourceCode" xml:space="preserve"><value>Code</value></data>
   <data name="ImportMapping.SourceRecords" xml:space="preserve"><value>Source rows</value></data>
   <data name="Study.ChooseExisting" xml:space="preserve"><value>Select a saved analysis to resume exactly where you left it.</value></data>
@@ -509,7 +512,7 @@ Full: {5}</value></data>
   <data name="Guide.ImportColumns" xml:space="preserve"><value>2. Identify columns</value></data>
   <data name="Guide.ImportRecords" xml:space="preserve"><value>3. Choose records</value></data>
   <data name="Guide.ImportMeaning" xml:space="preserve"><value>4. Explain the amounts</value></data>
-  <data name="Guide.ImportReview" xml:space="preserve"><value>5. Review and save</value></data>
+  <data name="Guide.ImportReview" xml:space="preserve"><value>4. Review and finish</value></data>
   <data name="Guide.ReadNext" xml:space="preserve"><value>Continue with this file</value></data>
   <data name="Guide.ValidateNext" xml:space="preserve"><value>Check and continue</value></data>
   <data name="Guide.ReviewNext" xml:space="preserve"><value>Review import</value></data>
@@ -970,6 +973,7 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.ContinueStructure" xml:space="preserve"><value>Continue: design structure</value></data>
   <data name="Guide.NeedProjectShort" xml:space="preserve"><value>Open or create a cost project first.</value></data>
   <data name="Guide.NeedAnalysisForImportShort" xml:space="preserve"><value>Save or open a period analysis before importing balances.</value></data>
+  <data name="Guide.NeedPrimaryClosedForSecondary" xml:space="preserve"><value>Close and validate primary allocation before entering secondary allocation.</value></data>
   <data name="Guide.NeedImportForResourcesShort" xml:space="preserve"><value>Save at least one import before preparing accounts.</value></data>
   <data name="Guide.NeedPublishedShort" xml:space="preserve"><value>Finalize a cost structure before creating an analysis.</value></data>
   <data name="Guide.Context" xml:space="preserve"><value>Project: {0}   ·   Structure: {1}   ·   Analysis: {2}</value></data>
@@ -1025,6 +1029,7 @@ Difference to distribute: {7}</value></data>
   <data name="Allocation.ParentInvalid" xml:space="preserve"><value>Choose a published version of this key as the starting point.</value></data>
   <data name="Allocation.RuleInvalid" xml:space="preserve"><value>Complete the account or prefix and select a key. Review rules matching the same account.</value></data>
   <data name="Allocation.RuleMissing" xml:space="preserve"><value>Select a key on the account or apply a rule that includes it.</value></data>
+  <data name="Allocation.AuxiliaryMultipleKeys" xml:space="preserve"><value>This auxiliary already has an allocation key in another group. Only one active key is allowed per auxiliary; review or remove the previous assignment.</value></data>
   <data name="Allocation.RuleAmbiguous" xml:space="preserve"><value>Rules compete for the same accounts. Edit and apply the rule to use or remove the unwanted one.</value></data>
   <data name="Allocation.PublicationRequired" xml:space="preserve"><value>Choose a complete saved key from this model for the corresponding allocation.</value></data>
   <data name="Allocation.AuxiliaryInvalid" xml:space="preserve"><value>The secondary allocation source must be an active auxiliary node in the model.</value></data>
@@ -1080,6 +1085,8 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.Discard" xml:space="preserve"><value>Discard unsaved changes</value></data>
   <data name="AllocationUI.Unit" xml:space="preserve"><value>Criterion unit</value></data>
   <data name="AllocationUI.NodeUnit" xml:space="preserve"><value>Unit</value></data>
+  <data name="AllocationUI.SelfAllowedHelp" xml:space="preserve"><value>Allow the auxiliary to route a share to itself when the key includes its own destination. Closed circuits without a principal exit remain unsolvable.</value></data>
+  <data name="AllocationUI.SecondaryNoPublishedKeys" xml:space="preserve"><value>No published secondary keys are available. Create and save a key in Secondary allocation before assigning it to an auxiliary.</value></data>
   <data name="AllocationUI.SelfAllowed" xml:space="preserve"><value>Allow allocation to the source auxiliary</value></data>
   <data name="AllocationUI.Include" xml:space="preserve"><value>Include</value></data>
   <data name="AllocationUI.Destination" xml:space="preserve"><value>Centre / node</value></data>
@@ -1146,6 +1153,12 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.PrimaryIncomplete" xml:space="preserve"><value>Some accounts remain unallocated. Review pending rows in the account table.</value></data>
   <data name="AllocationUI.PrimarySource" xml:space="preserve"><value>Resource / account</value></data>
   <data name="AllocationUI.PrimaryDestination" xml:space="preserve"><value>Destination node</value></data>
+  <data name="AllocationUI.PrimaryNodeTotalsTitle" xml:space="preserve"><value>Accumulated costs by node</value></data>
+  <data name="AllocationUI.SecondaryNodeAssignmentsTitle" xml:space="preserve"><value>Secondary keys by auxiliary node</value></data>
+  <data name="AllocationUI.SecondaryAssignmentSaveFailed" xml:space="preserve"><value>Could not save the auxiliary key. Check that it is a published secondary key compatible with the node.</value></data>
+  <data name="AllocationUI.SecondaryNodeAssignmentsHelp" xml:space="preserve"><value>Select a published secondary key for each auxiliary node. Changes are saved directly and replace its prior default-group assignment.</value></data>
+  <data name="AllocationUI.NodeCenter" xml:space="preserve"><value>Center</value></data>
+  <data name="AllocationUI.Node" xml:space="preserve"><value>Node</value></data>
   <data name="AllocationUI.PrimaryAmount" xml:space="preserve"><value>Posted amount</value></data>
   <data name="AllocationUI.PrimaryRule" xml:space="preserve"><value>Applied rule / key</value></data>
   <data name="AllocationUI.PrimaryAbsolute" xml:space="preserve"><value>Manual amount</value></data>
@@ -1351,4 +1364,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.ExplainTerminalDetail" xml:space="preserve"><value>Final cost of this account at this destination (may include several source nodes):</value></data>
   <data name="AllocationUI.ReciprocalCalculationFailed" xml:space="preserve"><value>Calculation could not be completed</value></data>
   <data name="AllocationUI.SecondaryBehaviorAssumedFixed" xml:space="preserve"><value>Fixed by default</value></data>
+  <data name="Resources.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
+  <data name="AllocationUI.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
+  <data name="AllocationUI.GrossDiagnosticTotal" xml:space="preserve"><value>Gross total (informational, excluded from final costs)</value></data>
 </root>

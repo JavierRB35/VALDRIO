@@ -18,7 +18,13 @@ public sealed partial class AllocationLineEditor(EntityId id, string label, stri
     [ObservableProperty] private bool included = included;
     [ObservableProperty] private string value = value;
 }
-public sealed record AllocationKeyRow(AllocationKeyVersion Value, string Name, string Criterion, string Stage, string State);
+public sealed record AllocationKeyRow(AllocationKeyVersion Value, string Name, string Criterion, string Stage, string State)
+{
+    // A draft may be persisted for later correction but is never eligible for allocation.
+    public bool IsInvalid => Value.Status != ModelStatus.Published ||
+        Value.Mode == AllocationKeyMode.Percentage &&
+        (Value.Lines.Count == 0 || Value.Lines.Sum(line => line.Value) != 100m);
+}
 public sealed record AllocationRuleRow(EntityId Id, string Account, string Key, string Priority, string State);
 public sealed record AllocationSecondaryRow(EntityId Id, string Source, string Group, string Key);
 public sealed partial class AllocationCoverageRow(EntityId id, string source, string amount, string key, string status, EntityId? selectedKeyId) : ObservableObject
@@ -100,7 +106,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         ClearObsoleteSecondaryGroupsCommand = new AsyncRelayCommand(ClearObsoleteSecondaryGroupsAsync, () => CanEditSecondaryConfiguration && !HasUnappliedRule && HasObsoleteSecondaryGroups);
         SaveRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(false), () => CanSaveRule);
         ApplyRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(true), () => CanSaveRule);
-        SaveKeyCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey && MissingKeyInput(true) is null);
+        SaveKeyCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(MissingKeyInput(true) is null), () => CanEditKey && MissingKeyInput(false) is null);
         RemoveRuleCommand = new AsyncRelayCommand(() => CommitConfig(c => new(c.PrimaryRules.Where(r => r.Id != SelectedRule!.Id).ToArray(), c.SecondaryRules, c.ExplicitAssignments, c.AbsoluteAssignments, c.Descriptions)), () => CanEditConfiguration && !HasUnappliedRule && SelectedRule is not null);
         LoadRuleCommand = new RelayCommand(LoadRule, () => CanEdit && SelectedRule is not null && !ruleDirty);
         NewRuleCommand = new RelayCommand(ClearRule, () => CanEditConfiguration && !HasUnappliedRule);
@@ -137,6 +143,10 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public string PrimaryToggleLabel => this[IsPrimaryClosed ? "ReopenPrimary" : "ClosePrimary"];
     private bool CanSaveRule => CanEditConfiguration && RuleKey.HasValue && !string.IsNullOrWhiteSpace(IsExact ? RuleAccount : Prefix);
     public bool CanAssignCoverage => CanEditConfiguration && !HasUnappliedRule && !HasCompositionChanges;
+    // Keep the editor visually stable while an asynchronous save is in flight.
+    // Command guards still reject concurrent writes; phase closure disables editing.
+    public bool CanShowCoverageEditor => company.CanWrite && workspace?.Resources.Study.State == StudyState.Open &&
+        !IsPrimaryClosed && !keyDirty && !HasUnappliedRule && !HasCompositionChanges;
     public bool CanEditConfiguration => CanEdit && !keyDirty && !HasCompositionChanges;
     public bool CanEditKey => (Stage == AllocationStage.Secondary ? CanManageSecondary : CanEdit) && !HasUnappliedRule && !HasCompositionChanges;
     private bool IsKeyUsed => editingKey is not null && workspace?.UsedKeyIds.Contains(editingKey.Id) == true;
@@ -147,6 +157,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public bool IsDirty => keyDirty || ruleDirty || absoluteDirty || HasCompositionChanges;
     public bool HasUnappliedRule => ruleDirty || absoluteDirty;
     public void ExplainPendingRule() { statusKey = "ApplyRuleFirst"; Refresh(); }
+    public bool KeyNameMissing => string.IsNullOrWhiteSpace(Name);
+    public bool KeyValidationHasError => workspace is not null && MissingKeyInput(true) is not null;
     public bool IsPercentage => Mode == AllocationKeyMode.Percentage;
     public bool IsDriver => Mode == AllocationKeyMode.DriverUnits;
     public bool CanEditWeights => CanEditComposition && Mode != AllocationKeyMode.EqualShares;
@@ -225,6 +237,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public IReadOnlyList<ResourceChoice<UnitId>> Units => choices.Get<ResourceChoice<UnitId>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => workspace?.Resources.Model.DriverUnits.Select(u => new ResourceChoice<UnitId>(u.Id, u.Code + " · " + u.Symbol)).ToArray() ?? []);
     public IReadOnlyList<ResourceChoice<EntityId>> PublishedPrimary => choices.Get<ResourceChoice<EntityId>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => Published(AllocationStage.Primary));
     public IReadOnlyList<ResourceChoice<EntityId>> PublishedSecondary => choices.Get<ResourceChoice<EntityId>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => Published(AllocationStage.Secondary));
+    public bool HasPublishedSecondary => PublishedSecondary.Count > 0;
     private IReadOnlyList<ResourceChoice<EntityId>> Published(AllocationStage type) => workspace?.Keys.Where(k => k.Stage == type && k.Status == ModelStatus.Published).Select(k => new ResourceChoice<EntityId>(k.Id, KeyLabel(k))).ToArray() ?? [];
     public IReadOnlyList<ResourceChoice<string>> Accounts => choices.Get<ResourceChoice<string>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => workspace?.Resources.Origins.Select(o => new ResourceChoice<string>(o.Code, AccountLabel(o))).ToArray() ?? []);
     public IReadOnlyList<ResourceChoice<EntityId>> Auxiliaries => choices.Get<ResourceChoice<EntityId>>((workspace, preferences.Current.UiLanguageTag, preferences.Current.FormatCultureTag, pseudo), () => workspace?.Resources.Model.Structure.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary).Select(n => new ResourceChoice<EntityId>(n.Id, NodeLabel(n))).ToArray() ?? []);
@@ -254,8 +267,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private void RefreshEditor()
     {
         foreach (var property in new[] { nameof(IsDirty), nameof(HasUnappliedRule), nameof(KeyState), nameof(CanEditConfiguration),
-            nameof(CanAssignCoverage), nameof(CanEditClassification), nameof(CanEditKey), nameof(CanEditComposition), nameof(CanEditWeights), nameof(IsPercentage), nameof(IsDriver), nameof(IsSecondary),
-            nameof(IsExact), nameof(IsPrefix), nameof(Total), nameof(Validation) }) OnPropertyChanged(property);
+            nameof(CanAssignCoverage), nameof(CanShowCoverageEditor), nameof(CanEditClassification), nameof(CanEditKey), nameof(CanEditComposition), nameof(CanEditWeights), nameof(IsPercentage), nameof(IsDriver), nameof(IsSecondary),
+            nameof(IsExact), nameof(IsPrefix), nameof(KeyNameMissing), nameof(KeyValidationHasError), nameof(Total), nameof(PrimaryAbsoluteTotal), nameof(Validation) }) OnPropertyChanged(property);
         Commands();
     }
     private void LineChanged(object? sender, PropertyChangedEventArgs e)
@@ -302,7 +315,9 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     }
     private SaveAllocationKey BuildKey(bool publish) => new(workspace!.Resources.Study.CompanyId, workspace.Resources.Model.Structure.Id,
         editingKey?.Id ?? previewId, newParent, editingKey?.Revision ?? -1, Name, Stage, Mode, IsDriver ? Unit : null,
-        SelfAllowed ? SelfAllocationPolicy.Allowed : SelfAllocationPolicy.Forbidden,
+        // All newly saved secondary keys permit self-service by definition;
+        // primary keys retain the legacy field for backwards-compatible snapshots.
+        Stage == AllocationStage.Secondary || SelfAllowed ? SelfAllocationPolicy.Allowed : SelfAllocationPolicy.Forbidden,
         Lines.Where(l => l.Included).Select(l => new AllocationKeyLine(l.Id, Mode == AllocationKeyMode.EqualShares ? 1m : Parse(l.Value))).ToArray(), publish, new(Guid.NewGuid()), "local-user")
         { ValidationStudyId = workspace.Resources.Study.Id, ValidationStudyRevision = workspace.Resources.Study.Revision };
     private EntityId previewId = new(Guid.NewGuid());
@@ -379,7 +394,13 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         if (!Auxiliary.HasValue || !SecondaryKey.HasValue) throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
         var r = new SecondaryRule(editingSecondary ?? new(Guid.NewGuid()), workspace!.Resources.Study.CompanyId, workspace.Resources.Model.Structure.Id,
             Auxiliary.Value, string.IsNullOrWhiteSpace(GroupName) ? "all" : GroupName.Trim(), SecondaryKey.Value, true);
-        return c.WithSecondaryRules(c.SecondaryRules.Where(old => old.Id != r.Id).Append(r).ToArray());
+        // Editing or assigning a second key for the same node/group replaces the old route.
+        if (c.SecondaryRules.Any(old => old.IsActive && old.AuxiliaryNodeId == r.AuxiliaryNodeId &&
+                old.ComponentRoutingGroup != r.ComponentRoutingGroup))
+            throw AllocationDiagnostics.Error("KEY_AUXILIARY_MULTIPLE_KEYS", "Allocation.AuxiliaryMultipleKeys", r.AuxiliaryNodeId);
+        return c.WithSecondaryRules(c.SecondaryRules.Where(old => old.Id != r.Id &&
+            !(old.AuxiliaryNodeId == r.AuxiliaryNodeId &&
+              old.ComponentRoutingGroup == r.ComponentRoutingGroup)).Append(r).ToArray());
     }, true);
     private Task AssignAsync() => CommitConfig(c => new(c.PrimaryRules, c.SecondaryRules,
         c.ExplicitAssignments.Where(a => a.PartId != Part).Append(new(Part!.Value, PartKey!.Value)).ToArray(), c.AbsoluteAssignments.Where(a => a.PartId != Part).ToArray(), c.Descriptions));

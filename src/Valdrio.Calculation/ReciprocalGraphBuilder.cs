@@ -34,14 +34,15 @@ public static class ReciprocalGraphBuilder
             .ToDictionary(pair => pair.Id, pair => pair.index);
         var q = Enumerable.Range(0, auxiliary.Length).Select(_ => new decimal[auxiliary.Length]).ToArray();
         var b = Enumerable.Range(0, auxiliary.Length).Select(_ => new decimal[principal.Length]).ToArray();
-        var allowSelf = false;
+        // Business rule: every secondary key may allocate to its own auxiliary.
+        // Preserve legacy serialized SelfAllocation values but do not treat them as permissions.
 
         for (var i = 0; i < auxiliary.Length; i++)
         {
             var source = auxiliary[i].Id;
             var key = AllocationKeyRules.ResolveSecondary(source, componentRoutingGroup, rules, keys, model);
             AllocationKeyRules.Validate(key, model, units, precision, true);
-            allowSelf |= key.SelfAllocation == SelfAllocationPolicy.Allowed;
+
 
             // A key's relative weights are normalized once in ID order. Its
             // final route receives the decimal division remainder; nothing is
@@ -67,6 +68,6 @@ public static class ReciprocalGraphBuilder
         }
         return new ReciprocalInput(
             auxiliary.Select(n => n.Id.ToString()).ToArray(),
-            principal.Select(n => n.Id.ToString()).ToArray(), q, b, allowSelf);
+            principal.Select(n => n.Id.ToString()).ToArray(), q, b, true);
     }
 }

@@ -85,7 +85,11 @@ public partial class MainWindow
             .Model.Structure.Pools.Single(p => p.NodeId == principal.Node.Id).Description.Contains("revisada"), "study node change persists");
         ScrollToElement(ModelPanel.NodeSummary); await Idle();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "es-editable-nodes.png"));
-        await NavigateWorkflow(5); await Click(AllocationPanel.TogglePrimaryButton);
+        await NavigateWorkflow(5); await Idle();
+        Check(AllocationPanel.KeyGrid.Items.Count == 0 ||
+            AllocationPanel.KeyGrid.SelectedIndex == 0 && AllocationPanel.KeyGrid.IsKeyboardFocusWithin,
+            "primary allocation opens with focus on the first saved project key");
+        await Click(AllocationPanel.TogglePrimaryButton);
         Check(vm.IsPrimaryClosed, "primary closes with weighted composition");
         await NavigateWorkflow(1); await Idle(); Check(!nodes.CanEdit, "primary closure locks analysis nodes");
         await NavigateWorkflow(7); await Idle();
@@ -96,9 +100,49 @@ public partial class MainWindow
         Check(vm.Stage == AllocationStage.Secondary, "new key belongs to secondary automatically");
         Text(secondary.KeyNameBox, "Servicios auxiliares a producción");
         vm.Lines.Single(l => l.Id == principal.Node.Id).Included = true;
-        vm.Lines.Single(l => l.Id == principal.Node.Id).Value = "100";
+        vm.Lines.Single(l => l.Id == principal.Node.Id).Value = "80";
+        var auxiliarySelf = vm.Auxiliaries.First().Value;
+        vm.Lines.Single(l => l.Id == auxiliarySelf).Included = true;
+        vm.Lines.Single(l => l.Id == auxiliarySelf).Value = "20";
         await Click(secondary.SaveKeyButton);
         var key = vm.Keys.Single().Value;
+        Check(key.SelfAllocation == SelfAllocationPolicy.Allowed,
+            "new secondary key automatically permits self-service without a checkbox");
+        // Enter both phases again: the first saved key must be selected and keyboard-focused.
+        await NavigateWorkflow(5); await Idle();
+        await NavigateWorkflow(7); await Idle();
+        Check(secondary.KeyGrid.Items.Count > 0 && secondary.KeyGrid.SelectedIndex == 0 &&
+            secondary.KeyGrid.IsKeyboardFocusWithin,
+            "secondary allocation opens with focus on the first saved project key");
+        // Regression: a pointer-driven popup selection must persist when the popup closes,
+        // even though the ComboBox itself loses keyboard focus to the popup.
+        var firstAuxiliary = vm.SecondaryNodeAssignments.First();
+        secondary.SecondaryNodeAssignmentsGrid.ScrollIntoView(firstAuxiliary);
+        await Idle();
+        var assignmentRow = secondary.SecondaryNodeAssignmentsGrid.ItemContainerGenerator.ContainerFromItem(firstAuxiliary) as DataGridRow
+            ?? throw new InvalidOperationException("Auxiliary assignment row is not visible");
+        var assignmentCombo = Descendants<ComboBox>(assignmentRow).Single();
+        assignmentCombo.Focus();
+        System.Windows.Input.Keyboard.Focus(assignmentCombo);
+        assignmentCombo.SetCurrentValue(ComboBox.IsDropDownOpenProperty, true);
+        await Idle();
+        assignmentCombo.SetCurrentValue(ComboBox.SelectedValueProperty, key.Id);
+        await Idle();
+        Check(firstAuxiliary.PersistedKeyId is null,
+            "selection made while the popup is open has not yet been persisted");
+        assignmentCombo.SetCurrentValue(ComboBox.IsDropDownOpenProperty, false);
+        await secondary.SecondaryAssignmentTask; await Idle();
+        Check(firstAuxiliary.SelectedKeyId == key.Id && firstAuxiliary.PersistedKeyId == key.Id &&
+            !firstAuxiliary.HasAssignmentError,
+            "pointer secondary table assignment remains selected after save");
+        Check(company.ActiveAllocations!.ReadAllocations(studies.Current!.CompanyId, studies.Current.Id)
+            .Configuration.SecondaryRules.Any(rule => rule.IsActive && rule.AuxiliaryNodeId == firstAuxiliary.NodeId &&
+                rule.KeyVersionId == key.Id),
+            "direct secondary table assignment is persisted in the company file");
+        // Read again through the normal UI; this catches optimistic selection that never reached storage.
+        await vm.EnterAsync(true); await Idle();
+        Check(vm.SecondaryNodeAssignments.Single(row => row.NodeId == firstAuxiliary.NodeId).PersistedKeyId == key.Id,
+            "secondary assignment survives a clean re-read of the allocation workspace");
         foreach (var auxiliary in vm.Auxiliaries.ToArray())
         {
             vm.Auxiliary = auxiliary.Value; vm.SecondaryKey = key.Id;
@@ -106,6 +150,10 @@ public partial class MainWindow
         }
         await Click(secondary.CalculateSecondaryButton);
         Check(vm.SecondaryResults.Count == 2, "secondary preserves both fixed and variable components");
+        Check(vm.SecondaryResults.Sum(row => row.PostedAmount) ==
+            vm.PrincipalCosts.Sum(row => row.TotalAmount), "secondary contribution footer reconciles with final principal costs");
+        Check(vm.PrincipalCosts.All(row => row.PrimaryAmount + row.AuxiliaryAmount == row.TotalAmount),
+            "terminal totals keep primary and auxiliary components distinct");
         vm.SelectedSecondaryResultRow = vm.SecondaryResults.First();
         await Idle();
         Check(!string.IsNullOrWhiteSpace(vm.SecondaryExplanation), "component explanation selects the matching fact");
@@ -122,6 +170,11 @@ public partial class MainWindow
         studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == studyId); await studies.LoadCommand.ExecuteAsync(null);
         await NavigateWorkflow(7); await Idle();
         Check(vm.IsSecondaryClosed && vm.SecondaryResults.Count == 2, "published mixed result survives reopen");
+        Check(vm.SecondaryNodeAssignments.Single(row => row.NodeId == firstAuxiliary.NodeId).PersistedKeyId == key.Id,
+            "auxiliary key assignment survives closing and reopening the entire project");
+        Check(secondary.KeyGrid.Items.Count > 0 && secondary.KeyGrid.SelectedIndex == 0 &&
+            secondary.KeyGrid.IsKeyboardFocusWithin,
+            "secondary key library refocuses the first row after reopening the project");
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }, new JsonSerializerOptions { WriteIndented = true }));
     }
 }

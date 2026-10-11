@@ -226,6 +226,8 @@
           <ColumnDefinition Width="*"/>
          </Grid.ColumnDefinitions>
          <StackPanel>
+          <TextBlock Text="{Binding PoolLabel}"/>
+          <TextBox x:Name="PoolBox" Text="{Binding PoolDescription,UpdateSourceTrigger=PropertyChanged}" TabIndex="40" AutomationProperties.Name="{Binding PoolLabel}" local:FieldHelp.Key="PoolDescription"/>
           <TextBlock Text="{Binding NodeCodeLabel}"/>
           <TextBox x:Name="NodeCodeBox" Text="{Binding NodeCode,UpdateSourceTrigger=PropertyChanged}" TabIndex="41" FlowDirection="LeftToRight" AutomationProperties.Name="{Binding NodeCodeLabel}" local:FieldHelp.Key="NodeCode"/>
          </StackPanel>
@@ -253,9 +255,7 @@
 
         </Grid>
 
-        <TextBlock Text="{Binding PoolLabel}"/>
         <TextBlock Text="{Binding PoolHelp}" Style="{StaticResource FieldHint}"/>
-        <TextBox x:Name="PoolBox" Text="{Binding PoolDescription,UpdateSourceTrigger=PropertyChanged}" TabIndex="47" AutomationProperties.Name="{Binding PoolLabel}" local:FieldHelp.Key="PoolDescription"/>
 
         <Expander x:Name="NodeUnitCreator" Header="{Binding CreateUnitHereLabel}" Margin="0,4,0,8">
          <StackPanel Margin="8,4,0,4">

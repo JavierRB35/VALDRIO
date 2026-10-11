@@ -7,11 +7,21 @@
   <Style x:Key="ContributionNumber" TargetType="TextBlock" BasedOn="{StaticResource Text.TableNumber}"><Setter Property="ToolTip" Value="{Binding TechnicalDetail}"/></Style>
   <Style x:Key="PrimaryBehavior" TargetType="TextBlock" BasedOn="{StaticResource Text.TableText}"><Setter Property="ToolTip" Value="{Binding AppliedRule}"/></Style>
   <Style x:Key="ViabilityText" TargetType="TextBlock" BasedOn="{StaticResource Text.TableText}"><Setter Property="ToolTip" Value="{Binding TechnicalDetail}"/><Style.Triggers><DataTrigger Binding="{Binding HasError}" Value="True"><Setter Property="Foreground" Value="{DynamicResource Brand.Red}"/></DataTrigger></Style.Triggers></Style>
-  <Style x:Key="KeyStateCell" TargetType="TextBlock" BasedOn="{StaticResource Text.TableText}"><Setter Property="TextWrapping" Value="NoWrap"/></Style>
+  <Style x:Key="KeyStateCell" TargetType="TextBlock" BasedOn="{StaticResource Text.TableText}">
+   <Setter Property="TextWrapping" Value="NoWrap"/>
+   <Style.Triggers><DataTrigger Binding="{Binding IsInvalid}" Value="True">
+     <Setter Property="Foreground" Value="{DynamicResource Brand.Red}"/>
+     <Setter Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
+   </DataTrigger></Style.Triggers>
+  </Style>
   <Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}"><EventSetter Event="GotKeyboardFocus" Handler="SelectNumber"/></Style>
   <Style TargetType="ComboBox" BasedOn="{StaticResource Input.Combo}"><Setter Property="DisplayMemberPath" Value="Label"/><Setter Property="SelectedValuePath" Value="Value"/></Style>
  </UserControl.Resources>
  <StackPanel local:FieldHelp.Key="AllocationInput">
+  <StackPanel.Style><Style TargetType="StackPanel"><Style.Triggers>
+    <DataTrigger Binding="{Binding IsBusy}" Value="True"><Setter Property="Cursor" Value="Wait"/></DataTrigger>
+  </Style.Triggers></Style></StackPanel.Style>
+  <ProgressBar Height="5" Margin="0,0,0,8" IsIndeterminate="True" Visibility="{Binding IsBusy, Converter={StaticResource Visible}}"/>
   <Border Style="{StaticResource Diagnostic}" Margin="0,0,0,16"><TextBlock x:Name="ActionStatus" Text="{Binding Status}" AutomationProperties.LiveSetting="Polite"/></Border>
   <Border Style="{StaticResource Card}" Margin="0,0,0,16"><DockPanel LastChildFill="True"><Button x:Name="TogglePrimaryButton" DockPanel.Dock="Right" Content="{Binding PrimaryToggleLabel}" Command="{Binding TogglePrimaryCommand}"/><TextBlock Text="{Binding PrimaryState}" VerticalAlignment="Center" Margin="0,0,12,0" AutomationProperties.LiveSetting="Polite"/></DockPanel></Border>
   <Border x:Name="SecondaryPhaseBar" Style="{StaticResource Card}" Margin="0,0,0,16"><DockPanel LastChildFill="True"><Button x:Name="ToggleSecondaryButton" DockPanel.Dock="Right" Content="{Binding SecondaryToggleLabel}" Command="{Binding ToggleSecondaryCommand}"/><TextBlock Text="{Binding SecondaryState}" VerticalAlignment="Center" Margin="0,0,12,0" AutomationProperties.LiveSetting="Polite"/></DockPanel></Border>
@@ -19,9 +29,16 @@
    <Grid.ColumnDefinitions><ColumnDefinition Width="2*" MinWidth="320"/><ColumnDefinition Width="5*" MinWidth="460"/></Grid.ColumnDefinitions>
    <Border Style="{StaticResource Card}" Margin="0,0,12,16">
     <Expander x:Name="LibrarySection" Header="{Binding [Library]}" IsExpanded="True" VerticalContentAlignment="Stretch"><Grid Margin="0,8,0,0"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-     <WrapPanel><Button Content="{Binding [NewKey]}" Command="{Binding NewKeyCommand}" x:Name="NewKeyButton"/><Button Content="{Binding [DeleteKey]}" Command="{Binding DeleteKeyCommand}" x:Name="DeleteKeyButton"/><Button Content="{Binding [Refresh]}" Command="{Binding RefreshCommand}" x:Name="RefreshButton"/></WrapPanel>
-     <DataGrid Grid.Row="1" x:Name="KeyGrid" MouseDoubleClick="OpenKeyDoubleClick" KeyDown="OpenKeyKeyDown" ItemsSource="{Binding Keys}" SelectedItem="{Binding SelectedKey}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" Margin="0,12,0,8">
-      <DataGrid.Columns>
+     <WrapPanel><Button Content="{Binding [NewKey]}" Command="{Binding NewKeyCommand}" x:Name="NewKeyButton" Click="FocusNewKey"/><Button Content="{Binding [DeleteKey]}" Command="{Binding DeleteKeyCommand}" x:Name="DeleteKeyButton"/><Button Content="{Binding [Refresh]}" Command="{Binding RefreshCommand}" x:Name="RefreshButton"/></WrapPanel>
+     <DataGrid Grid.Row="1" x:Name="KeyGrid" SelectionChanged="OpenKeySelectionChanged" MouseDoubleClick="OpenKeyDoubleClick" KeyDown="OpenKeyKeyDown" ItemsSource="{Binding Keys}" SelectedItem="{Binding SelectedKey}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" Margin="0,12,0,8">
+      <DataGrid.RowStyle>
+       <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+        <Style.Triggers><DataTrigger Binding="{Binding IsInvalid}" Value="True">
+         <Setter Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
+        </DataTrigger></Style.Triggers>
+       </Style>
+      </DataGrid.RowStyle>
+     <DataGrid.Columns>
        <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Name}" Width="*" MinWidth="130"/>
        <DataGridTextColumn ElementStyle="{StaticResource KeyStateCell}" Binding="{Binding State}" Width="120" MinWidth="120"/>
       </DataGrid.Columns>
@@ -35,7 +52,15 @@
      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
      <Grid>
       <Grid.ColumnDefinitions><ColumnDefinition Width="3*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-      <StackPanel Margin="0,0,8,0" IsEnabled="{Binding CanEditKey}"><TextBlock Text="{Binding [Name]}"/><TextBox x:Name="KeyNameBox" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Name]}"/></StackPanel>
+      <StackPanel Margin="0,0,8,0" IsEnabled="{Binding CanEditKey}"><TextBlock Text="{Binding [Name]}"/><TextBox x:Name="KeyNameBox" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Name]}">
+        <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}">
+         <Style.Triggers><DataTrigger Binding="{Binding KeyNameMissing}" Value="True">
+          <Setter Property="Tag" Value="error"/>
+          <Setter Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
+          <Setter Property="BorderBrush" Value="{DynamicResource Brand.Red}"/>
+         </DataTrigger></Style.Triggers>
+        </Style></TextBox.Style>
+       </TextBox></StackPanel>
       <StackPanel Grid.Column="1" Margin="0,0,8,0" IsEnabled="{Binding CanEditComposition}"><TextBlock Text="{Binding [Criterion]}"/><ComboBox x:Name="ModeBox" ItemsSource="{Binding Modes}" SelectedValue="{Binding Mode}" AutomationProperties.Name="{Binding [Criterion]}"/>
        <StackPanel Visibility="{Binding IsDriver, Converter={StaticResource Visible}}"><TextBlock Text="{Binding [Unit]}"/><ComboBox ItemsSource="{Binding Units}" SelectedValue="{Binding Unit}" AutomationProperties.Name="{Binding [Unit]}" x:Name="UnitBox"/></StackPanel>
       </StackPanel>
@@ -51,7 +76,13 @@
       </DataGrid.Columns>
      </DataGrid>
      <WrapPanel Grid.Row="3" Margin="0,8,0,0"><TextBlock Text="{Binding [Total]}" Margin="0,0,8,0"/><TextBlock Text="{Binding Total}" FontWeight="Bold"/></WrapPanel>
-     <TextBlock Grid.Row="4" Text="{Binding Validation}" Margin="0,4,0,0" AutomationProperties.LiveSetting="Polite"/>
+     <TextBlock Grid.Row="4" Text="{Binding Validation}" Margin="0,4,0,0" AutomationProperties.LiveSetting="Polite">
+      <TextBlock.Style><Style TargetType="TextBlock">
+       <Style.Triggers><DataTrigger Binding="{Binding KeyValidationHasError}" Value="True">
+        <Setter Property="Foreground" Value="{DynamicResource Brand.Red}"/>
+        <Setter Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
+       </DataTrigger></Style.Triggers></Style></TextBlock.Style>
+     </TextBlock>
      </Grid></Expander>
    </Border>
 </Grid>
@@ -93,19 +124,15 @@
        <DataGridTextColumn Binding="{Binding Review}" ElementStyle="{StaticResource Text.TableText}" Width="2*" MinWidth="130"/>
       </DataGrid.Columns>
      </DataGrid>
+<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="3*"/><ColumnDefinition Width="125"/><ColumnDefinition Width="150"/><ColumnDefinition Width="110"/><ColumnDefinition Width="110"/><ColumnDefinition Width="2*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="1" Text="{Binding PrimaryCompositionTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+
      <Button x:Name="SaveCompositionRowsButton" Content="{Binding [SaveCompositionRows]}" Command="{Binding SaveCompositionRowsCommand}" Style="{StaticResource Button.Primary}" HorizontalAlignment="Right" Margin="0,8,0,0"/>
      <TextBlock Text="{Binding [CompositionCloseHelp]}" TextWrapping="Wrap" Margin="0,12,0,0"/>
     </StackPanel>
    </Expander>
   </Border>
-<Border Style="{StaticResource Card}" Margin="0,0,0,16">
-   <Expander x:Name="AccountsSection" Header="{Binding [Coverage]}" IsExpanded="True"><StackPanel Margin="0,8,0,0"><TextBlock Text="{Binding CoverageSummary}" Margin="0,0,0,8"/>
-    <DataGrid x:Name="CoverageGrid" ItemsSource="{Binding Coverage}" CanUserSortColumns="True" IsReadOnly="True" AutoGenerateColumns="False" Height="420" MinRowHeight="32">
-     <DataGrid.Columns><DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" SortMemberPath="Source" Binding="{Binding Source}" Width="2*"/><DataGridTextColumn SortMemberPath="NumericAmount" Binding="{Binding Amount}" HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Width="110"/><DataGridTemplateColumn SortMemberPath="Key" CanUserSort="True" Width="2*" MinWidth="180"><DataGridTemplateColumn.CellTemplate><DataTemplate><ComboBox ItemsSource="{Binding DataContext.PublishedPrimary, RelativeSource={RelativeSource AncestorType=DataGrid}}" SelectedValue="{Binding SelectedKeyId, Mode=OneWay}" IsEnabled="{Binding DataContext.CanAssignCoverage, RelativeSource={RelativeSource AncestorType=DataGrid}}" SelectionChanged="CoverageKeyChanged" AutomationProperties.Name="{Binding Source}" ToolTip="{Binding Key}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn><DataGridTextColumn SortMemberPath="Status" Binding="{Binding Status}" Width="2*" ElementStyle="{StaticResource {x:Type TextBlock}}"/></DataGrid.Columns>
-    </DataGrid>
-   </StackPanel></Expander>
-  </Border>
-  <Expander x:Name="RulesSection" Header="{Binding [RulesAndAssignments]}" IsExpanded="False" Margin="0,0,0,16"><TabControl x:Name="RuleTabs" SelectionChanged="RuleTabChanged" Margin="0,0,0,16">
+<Expander x:Name="RulesSection" Header="{Binding [RulesAndAssignments]}" IsExpanded="False" Margin="0,0,0,16"><TabControl x:Name="RuleTabs" SelectionChanged="RuleTabChanged" Margin="0,0,0,16">
    <TabItem Header="{Binding [Rules]}" IsEnabled="{Binding CanEditConfiguration}">
     <StackPanel Margin="16">
      <TextBlock Text="{Binding [RuleHelp]}" Margin="0,0,0,12"/>
@@ -122,6 +149,27 @@
        <TabItem Header="{Binding [SecondaryRules]}">
      <StackPanel Margin="16">
       <TextBlock Text="{Binding [SecondaryRouteHelp]}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+      <TextBlock Text="{Binding [SecondaryNodeAssignmentsTitle]}" FontWeight="SemiBold" Margin="0,8,0,3"/>
+      <TextBlock Text="{Binding [SecondaryNodeAssignmentsHelp]}" TextWrapping="Wrap" Margin="0,0,0,6"/>
+      <TextBlock Text="{Binding [SecondaryNoPublishedKeys]}" Foreground="{DynamicResource Brand.Red}" Margin="0,0,0,8"><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding HasPublishedSecondary}" Value="False"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+      <DataGrid x:Name="SecondaryNodeAssignmentsGrid" ItemsSource="{Binding SecondaryNodeAssignments}" IsReadOnly="True" AutoGenerateColumns="False" Height="190" CanUserAddRows="False" Margin="0,6,0,12">
+       <DataGrid.Columns>
+        <DataGridTextColumn Binding="{Binding Source}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
+        <DataGridTemplateColumn Width="2*"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+         <StackPanel>
+          <ComboBox ItemsSource="{Binding DataContext.PublishedSecondary, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+           DisplayMemberPath="Label" SelectedValuePath="Value"
+           SelectedValue="{Binding SelectedKeyId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+           IsEnabled="{Binding DataContext.CanShowSecondaryEditor, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+           SelectionChanged="SecondaryAssignmentChanged" DropDownClosed="SecondaryAssignmentDropDownClosed"
+           AutomationProperties.Name="{Binding Source}" ToolTip="{Binding AssignmentError}"/>
+          <TextBlock Text="{Binding AssignmentError}" Foreground="{DynamicResource Brand.Red}"
+           Visibility="{Binding HasAssignmentError, Converter={StaticResource Visible}}"
+           TextWrapping="Wrap" Margin="6,3,3,4" AutomationProperties.LiveSetting="Polite"/>
+         </StackPanel>
+        </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+       </DataGrid.Columns>
+      </DataGrid>
       <DataGrid x:Name="SecondaryRulesGrid" ItemsSource="{Binding SecondaryRules}" SelectedItem="{Binding SelectedSecondary}" IsReadOnly="True" AutoGenerateColumns="False" Height="155">
        <DataGrid.Columns>
         <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Source}" Width="2*"/>
@@ -129,7 +177,7 @@
         <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Key}" Width="2*"/>
        </DataGrid.Columns>
       </DataGrid>
-      <StackPanel IsEnabled="{Binding CanEditSecondaryConfiguration}">
+      <StackPanel IsEnabled="{Binding CanShowSecondaryEditor}">
       <WrapPanel Margin="0,8,0,12">
        <Button x:Name="LoadSecondaryButton" Content="{Binding [EditRule]}" Command="{Binding LoadSecondaryCommand}"/>
        <Button x:Name="NewSecondaryButton" Content="{Binding [NewRule]}" Command="{Binding NewSecondaryCommand}"/>
@@ -176,7 +224,11 @@
      <TextBlock Text="{Binding [PublishedKey]}" Margin="0,8,0,0"/><ComboBox ItemsSource="{Binding PublishedPrimary}" SelectedValue="{Binding PartKey}" IsEnabled="{Binding CanEdit}" x:Name="PartKeyBox"/>
      <WrapPanel Margin="0,8,0,12"><Button Content="{Binding [Assign]}" Command="{Binding AssignCommand}" Style="{StaticResource Button.Primary}" x:Name="AssignButton"/><Button Content="{Binding [Automatic]}" Command="{Binding AutomaticCommand}" x:Name="AutomaticButton"/></WrapPanel>
      <Expander Header="{Binding [Absolute]}"><StackPanel Margin="0,12,0,0"><TextBlock Text="{Binding [AbsoluteHelp]}"/><TextBlock Text="{Binding Currency}" FontWeight="Bold" Margin="0,4,0,8"/>
-      <DataGrid x:Name="AbsoluteGrid" ItemsSource="{Binding AbsoluteLines}" AutoGenerateColumns="False" CanUserAddRows="False" Height="220" IsEnabled="{Binding CanEdit}"><DataGrid.Columns><DataGridTemplateColumn Width="56" MinWidth="52"><DataGridTemplateColumn.CellTemplate><DataTemplate><CheckBox IsChecked="{Binding Included, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding Label}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn><DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Label}" Width="*" MinWidth="180" IsReadOnly="True"/><DataGridTemplateColumn Width="160"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right" AutomationProperties.Name="{Binding Label}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn></DataGrid.Columns></DataGrid>
+      <DataGrid x:Name="AbsoluteGrid" ItemsSource="{Binding AbsoluteLines}" AutoGenerateColumns="False" CanUserAddRows="False" Height="220" IsEnabled="{Binding CanEdit}"><DataGrid.Columns><DataGridTemplateColumn Width="56" MinWidth="52"><DataGridTemplateColumn.CellTemplate><DataTemplate><CheckBox IsChecked="{Binding Included, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding Label}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn><DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Label}" Width="*" MinWidth="180" IsReadOnly="True"/><DataGridTemplateColumn Width="160"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right" AutomationProperties.Name="{Binding Label}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn></DataGrid.Columns></DataGrid><Grid Background="{DynamicResource Surface.Subtle}" MinHeight="32" Margin="0,-4,0,8">
+ <Grid.ColumnDefinitions><ColumnDefinition Width="56"/><ColumnDefinition Width="*"/><ColumnDefinition Width="160"/></Grid.ColumnDefinitions>
+ <TextBlock Grid.Column="1" Text="{Binding [TableTotal]}" FontWeight="SemiBold" Margin="9,8"/>
+ <TextBlock Grid.Column="2" Text="{Binding PrimaryAbsoluteTotal}" TextAlignment="Right" FontWeight="SemiBold" Margin="6,8"/>
+ </Grid>
       <Button Content="{Binding [SaveAbsolute]}" Command="{Binding SaveAbsoluteCommand}" HorizontalAlignment="Left" Margin="0,8,0,0" x:Name="SaveAbsoluteButton"/></StackPanel></Expander>
     </StackPanel>
    </TabItem>
@@ -184,6 +236,17 @@
     <StackPanel Margin="16"><TextBlock Text="{Binding [NamesHelp]}" Margin="0,0,0,12"/><TextBlock Text="{Binding [Account]}"/><ComboBox x:Name="NameAccountBox" ItemsSource="{Binding Accounts}" SelectedValue="{Binding Account}" AutomationProperties.Name="{Binding [Account]}"/><TextBlock Text="{Binding [VisibleName]}" Margin="0,8,0,0"/><ComboBox x:Name="DescriptionBox" ItemsSource="{Binding DescriptionOptions}" SelectedItem="{Binding ChosenDescription}" DisplayMemberPath="" SelectedValuePath="" IsEnabled="{Binding CanEdit}" AutomationProperties.Name="{Binding [VisibleName]}"/><Button Content="{Binding [ChooseName]}" Command="{Binding ChooseDescriptionCommand}" HorizontalAlignment="Left" Margin="0,8,0,12" x:Name="ChooseDescriptionButton"/><TextBlock Text="{Binding [Provenance]}" FontWeight="SemiBold"/><TextBlock Text="{Binding DescriptionProvenance}"/></StackPanel>
    </TabItem>
   </TabControl></Expander>
+<Border Style="{StaticResource Card}" Margin="0,0,0,16">
+   <Expander x:Name="AccountsSection" Header="{Binding [Coverage]}" IsExpanded="True"><StackPanel Margin="0,8,0,0"><TextBlock Text="{Binding CoverageSummary}" Margin="0,0,0,8"/>
+    <DataGrid x:Name="CoverageGrid" ItemsSource="{Binding Coverage}" CanUserSortColumns="True" IsReadOnly="True" AutoGenerateColumns="False" Height="420" MinRowHeight="32">
+     <DataGrid.Columns><DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" SortMemberPath="Source" Binding="{Binding Source}" Width="2*"/><DataGridTextColumn SortMemberPath="NumericAmount" Binding="{Binding Amount}" HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Width="110"/><DataGridTemplateColumn SortMemberPath="Key" CanUserSort="True" Width="2*" MinWidth="180"><DataGridTemplateColumn.CellTemplate><DataTemplate><ComboBox ItemsSource="{Binding DataContext.PublishedPrimary, RelativeSource={RelativeSource AncestorType=DataGrid}}" SelectedValue="{Binding SelectedKeyId, Mode=OneWay}" IsEnabled="{Binding DataContext.CanShowCoverageEditor, RelativeSource={RelativeSource AncestorType=DataGrid}}" SelectionChanged="CoverageKeyChanged" AutomationProperties.Name="{Binding Source}" ToolTip="{Binding Key}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn><DataGridTextColumn SortMemberPath="Status" Binding="{Binding Status}" Width="2*" ElementStyle="{StaticResource {x:Type TextBlock}}"/></DataGrid.Columns>
+    </DataGrid>
+<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="110"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="1" Text="{Binding PrimaryCoverageTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+
+   </StackPanel></Expander>
+  </Border>
+  
   <Border Style="{StaticResource Card}" Margin="0,0,0,16">
    <Expander x:Name="ResultsSection" Header="{Binding [PrimaryTitle]}" IsExpanded="False"><StackPanel Margin="0,8,0,0">
     <TextBlock Text="{Binding PrimarySummary}" Margin="0,4,0,8" AutomationProperties.LiveSetting="Polite"/>
@@ -196,7 +259,22 @@
       <DataGridTextColumn ElementStyle="{StaticResource PrimaryBehavior}" Binding="{Binding Behavior}" Width="*"/>
      </DataGrid.Columns>
     </DataGrid>
-    <TextBlock Text="{Binding PrimaryDiagnostic}" Margin="0,8,0,0" TextWrapping="Wrap"
+<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="120"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="2" Text="{Binding PrimaryResultsTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+
+    <TextBlock Text="{Binding [PrimaryNodeTotalsTitle]}" FontWeight="SemiBold" Margin="0,12,0,6"/>
+     <DataGrid x:Name="PrimaryNodeTotalsGrid" ItemsSource="{Binding PrimaryNodeTotals}" IsReadOnly="True"
+          AutoGenerateColumns="False" Height="200" CanUserSortColumns="True" Margin="0,12,0,8">
+      <DataGrid.Columns>
+       <DataGridTextColumn Binding="{Binding Center}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
+       <DataGridTextColumn Binding="{Binding Node}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
+       <DataGridTextColumn Binding="{Binding Amount}" SortMemberPath="NumericAmount" HeaderStyle="{StaticResource NumberHeader}" Width="150" ElementStyle="{StaticResource Text.TableNumber}"/>
+      </DataGrid.Columns>
+     </DataGrid>
+<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="150"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="2" Text="{Binding PrimaryNodeTotalsTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+
+     <TextBlock Text="{Binding PrimaryDiagnostic}" Margin="0,8,0,0" TextWrapping="Wrap"
                AutomationProperties.LiveSetting="Polite"/>
    </StackPanel></Expander>
   </Border>
@@ -239,6 +317,11 @@
        <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Total}" Width="*" MinWidth="150"/>
       </DataGrid.Columns>
      </DataGrid>
+<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="3*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="1" Text="{Binding PrincipalCostsPrimaryTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="2" Text="{Binding PrincipalCostsAuxiliaryTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="3" Text="{Binding PrincipalCostsFinalTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+
      <TextBlock Text="{Binding [SecondaryContributionsTitle]}" FontWeight="SemiBold" Margin="0,16,0,8"/>
      <TextBlock Text="{Binding [SecondaryContributionsHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
      <DataGrid x:Name="SecondaryResultsGrid" ItemsSource="{Binding SecondaryResults}" SelectionMode="Single" SelectionUnit="FullRow" SelectedItem="{Binding SelectedSecondaryResultRow, Mode=TwoWay}" IsReadOnly="True" AutoGenerateColumns="False" Height="215">
@@ -249,6 +332,9 @@
        <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Behavior}" Width="*"/>
       </DataGrid.Columns>
      </DataGrid>
+<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="2" Text="{Binding SecondaryResultsTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+
      <Expander Header="{Binding [SecondaryExplanationTitle]}" IsExpanded="True" Margin="0,8,0,0">
       <StackPanel>
        <TextBlock Text="{Binding SecondaryExplanation}" Height="72" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding SecondaryExplanation}" Margin="8"/>
@@ -261,15 +347,23 @@
          <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Keys}" Width="2*"/>
         </DataGrid.Columns>
        </DataGrid>
+<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="2*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="3" Text="{Binding SecondaryExplanationTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+
       </StackPanel>
      </Expander>
      <Expander Header="{Binding [SecondaryGross]}" Margin="0,8,0,0">
+      <StackPanel>
       <DataGrid x:Name="SecondaryCirculationGrid" ItemsSource="{Binding SecondaryCirculation}" IsReadOnly="True" AutoGenerateColumns="False" Height="135">
        <DataGrid.Columns>
         <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Group}" Width="2*"/>
         <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Detail}" Width="*"/>
        </DataGrid.Columns>
       </DataGrid>
+<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [GrossDiagnosticTotal]}" Margin="9,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="1" Text="{Binding SecondaryGrossTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+
+      </StackPanel>
      </Expander>
     </StackPanel>
    </Expander>

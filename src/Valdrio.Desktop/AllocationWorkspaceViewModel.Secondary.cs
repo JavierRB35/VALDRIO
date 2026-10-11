@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Valdrio.Application;
 using Valdrio.Calculation;
 using Valdrio.Domain;
@@ -15,6 +16,30 @@ public sealed record PrincipalCostRow(string Node, string Primary, string Auxili
 public sealed record SecondarySourceDetailRow(string Account, string Primary, string Share, string Amount, string Keys) { public string TechnicalDetail { get; init; } = ""; }
 
 public sealed record SecondaryGroupRow(string Source, string Group);
+public sealed class SecondaryNodeAssignmentRow(EntityId nodeId, string source, EntityId? selectedKeyId) : ObservableObject
+{
+    private EntityId? selected = selectedKeyId;
+    private string assignmentError = "";
+    public string AssignmentError
+    {
+        get => assignmentError;
+        set { if (SetProperty(ref assignmentError, value)) OnPropertyChanged(nameof(HasAssignmentError)); }
+    }
+    public bool HasAssignmentError => !string.IsNullOrWhiteSpace(AssignmentError);
+    public EntityId NodeId { get; } = nodeId;
+    public string Source { get; } = source;
+    // Keep the committed selection separate from the ComboBox's editable value.
+    // On a failed save the control returns to the last persisted key, never a blank.
+    public EntityId? PersistedKeyId { get; private set; } = selectedKeyId;
+    public EntityId? SelectedKeyId { get => selected; set => SetProperty(ref selected, value); }
+    public void AcceptCommitted(EntityId? keyId)
+    {
+        PersistedKeyId = keyId;
+        SelectedKeyId = keyId;
+        AssignmentError = "";
+    }
+    public void RestoreCommitted() => SelectedKeyId = PersistedKeyId;
+}
 
 public sealed record SecondaryBridgeRow(
     string Resource, string Effective, string Direct, string Excluded, string Terminal, string Difference);
@@ -73,6 +98,19 @@ public sealed partial class AllocationWorkspaceViewModel
         SecondaryGroupChoices.Any(g => g.Value == SecondaryGroupName);
 
     public ObservableCollection<ReciprocalCheckRow> SecondaryCirculation { get; } = [];
+    private decimal secondaryGrossTotal;
+    public string PrincipalCostsPrimaryTotal => PrincipalCosts.Count == 0 ? "" :
+        StudyMoney(PrincipalCosts.Sum(row => row.PrimaryAmount));
+    public string PrincipalCostsAuxiliaryTotal => PrincipalCosts.Count == 0 ? "" :
+        StudyMoney(PrincipalCosts.Sum(row => row.AuxiliaryAmount));
+    public string PrincipalCostsFinalTotal => PrincipalCosts.Count == 0 ? "" :
+        StudyMoney(PrincipalCosts.Sum(row => row.TotalAmount));
+    public string SecondaryResultsTotal => SecondaryResults.Count == 0 ? "" :
+        StudyMoney(SecondaryResults.Sum(row => row.PostedAmount));
+    public string SecondaryExplanationTotal => SecondaryExplanationDetails.Count == 0 ||
+        SelectedSecondaryResultRow is null ? "" : StudyMoney(SelectedSecondaryResultRow.PostedAmount);
+    // The gross internal circulation is diagnostic only, never added to terminal costs.
+    public string SecondaryGrossTotal => SecondaryCirculation.Count == 0 ? "" : StudyMoney(secondaryGrossTotal);
     public string SecondarySummary { get; private set; } = "";
     public string SecondaryDiagnostic { get; private set; } = "";
     public string SecondaryExplanation { get; private set; } = "";
@@ -90,8 +128,13 @@ public sealed partial class AllocationWorkspaceViewModel
     public IRelayCommand CancelSecondaryCommand { get; private set; } = null!;
     public IAsyncRelayCommand ToggleSecondaryCommand { get; private set; } = null!;
     public bool IsSecondaryClosed => workspace?.Configuration.SecondaryClosed == true;
-    public bool CanManageSecondary => CanManagePrimary && !IsSecondaryClosed;
+    public bool CanManageSecondary => CanManagePrimary && IsPrimaryClosed && !IsSecondaryClosed;
     public bool CanEditSecondaryConfiguration => CanManageSecondary && !keyDirty;
+    public bool CanShowSecondaryEditor => company.CanWrite && workspace?.Resources.Study.State == StudyState.Open &&
+        IsPrimaryClosed && !IsSecondaryClosed && !IsDirty;
+    public ObservableCollection<SecondaryNodeAssignmentRow> SecondaryNodeAssignments { get; } = [];
+    public string SecondaryAssignmentFailure =>
+        diagnostic is null ? this["SecondaryAssignmentSaveFailed"] : Status;
     public string SecondaryState => this[IsSecondaryClosed ? "SecondaryClosedState" : "SecondaryOpenState"];
     public string SecondaryToggleLabel => this[IsSecondaryClosed ? "ReopenSecondary" : "CloseSecondary"];
 
@@ -127,6 +170,29 @@ public sealed partial class AllocationWorkspaceViewModel
 
     // One optional convenience operation for large models. Never overwrites
     // manual rules and validates every proposed route before a single save.
+    // One effective key per auxiliary in the default routing group. Existing explicit
+    // component groups remain intact for backwards compatibility.
+    public Task<bool> AssignSecondaryForNodeAsync(EntityId auxiliaryId, EntityId keyId)
+    {
+        if (!CanManageSecondary || workspace is null ||
+            !workspace.Resources.Model.Structure.Nodes.Any(n => n.Id == auxiliaryId && n.IsActive && n.Role == NodeRole.Auxiliary) ||
+            !workspace.Keys.Any(k => k.Id == keyId && k.Status == ModelStatus.Published && k.Stage == AllocationStage.Secondary) || IsDirty)
+            return Task.FromResult(false);
+        return CommitConfig(configuration =>
+        {
+            var model = workspace.Resources.Model.Structure;
+            if (configuration.SecondaryRules.Any(rule => rule.IsActive && rule.AuxiliaryNodeId == auxiliaryId &&
+                    rule.ComponentRoutingGroup != "all"))
+                throw AllocationDiagnostics.Error("KEY_AUXILIARY_MULTIPLE_KEYS", "Allocation.AuxiliaryMultipleKeys", auxiliaryId);
+            var proposed = configuration.SecondaryRules
+                .Where(rule => rule.AuxiliaryNodeId != auxiliaryId || rule.ComponentRoutingGroup != "all")
+                .Append(new SecondaryRule(new EntityId(Guid.NewGuid()), model.CompanyId, model.Id, auxiliaryId, "all", keyId, true))
+                .ToArray();
+            _ = AllocationKeyRules.ResolveSecondary(auxiliaryId, "all", proposed, workspace.Keys, model);
+            return configuration.WithSecondaryRules(proposed);
+        }, true);
+    }
+
     private Task AssignSecondaryKeyToMissingAsync() => CommitConfig(c =>
     {
         if (workspace is null || !SecondaryKey.HasValue)
@@ -141,6 +207,10 @@ public sealed partial class AllocationWorkspaceViewModel
                 StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, group)))
             .OrderBy(n => n.Id).ToArray();
         if (missing.Length == 0) return c;
+        foreach (var node in missing)
+            if (c.SecondaryRules.Any(rule => rule.IsActive && rule.AuxiliaryNodeId == node.Id &&
+                rule.ComponentRoutingGroup != group))
+                throw AllocationDiagnostics.Error("KEY_AUXILIARY_MULTIPLE_KEYS", "Allocation.AuxiliaryMultipleKeys", node.Id);
         // Driver mode cannot be copied to auxiliaries with different units.
         foreach (var node in missing)
             if (key.Mode == AllocationKeyMode.DriverUnits &&
@@ -190,15 +260,32 @@ public sealed partial class AllocationWorkspaceViewModel
         SecondaryExplanationDetails.Clear();
         SecondaryBridges.Clear();
         SecondaryGroupAssignments.Clear();
+        // Preserve rows and ComboBox focus while saving; only update their selected keys.
         SecondaryCirculation.Clear();
+        secondaryGrossTotal = 0m;
         SelectedSecondaryResultRow = null;
         SecondaryExplanation = this["SecondarySelectCost"];
         if (workspace is null)
         {
+            SecondaryNodeAssignments.Clear();
             SecondarySummary = "";
             SecondaryDiagnostic = this["SecondaryNeedStudy"];
             return;
         }
+        foreach (var node in workspace.Resources.Model.Structure.Nodes
+            .Where(n => n.IsActive && n.Role == NodeRole.Auxiliary)
+            .OrderBy(n => NodeLabel(n), StringComparer.Ordinal))
+        {
+            var route = workspace.Configuration.SecondaryRules.FirstOrDefault(rule =>
+                rule.IsActive && rule.AuxiliaryNodeId == node.Id && rule.ComponentRoutingGroup == "all");
+            var oldRow = SecondaryNodeAssignments.FirstOrDefault(row => row.NodeId == node.Id);
+            if (oldRow is null) SecondaryNodeAssignments.Add(new(node.Id, NodeLabel(node), route?.KeyVersionId));
+            else oldRow.AcceptCommitted(route?.KeyVersionId);
+        }
+        var currentNodeIds = workspace.Resources.Model.Structure.Nodes
+            .Where(node => node.IsActive && node.Role == NodeRole.Auxiliary).Select(node => node.Id).ToHashSet();
+        foreach (var obsolete in SecondaryNodeAssignments.Where(row => !currentNodeIds.Contains(row.NodeId)).ToArray())
+            SecondaryNodeAssignments.Remove(obsolete);
         foreach (var part in Parts)
         {
             var group = workspace.Configuration.SecondaryPartRoutingGroups?
@@ -242,6 +329,7 @@ public sealed partial class AllocationWorkspaceViewModel
         PopulateSecondaryResults(published.Facts, published.ExplanationLinks);
         PresentReciprocal(published.GroupCirculations);
         PopulateSecondaryBridges(published.ResourceBridges);
+        secondaryGrossTotal = published.AuxiliaryGrossFlows.Sum(flow => flow.GrossAmount);
         foreach (var flow in published.AuxiliaryGrossFlows)
         {
             var name = nodes.Values.FirstOrDefault(n => n.Id.ToString() == flow.AuxiliaryId);
@@ -260,6 +348,7 @@ public sealed partial class AllocationWorkspaceViewModel
             PopulateSecondaryResults(result.Facts, result.ExplanationLinks);
             PresentReciprocal(result.GroupCirculations);
             PopulateSecondaryBridges(result.ResourceBridges);
+            secondaryGrossTotal = result.Circulation.Gross.Sum();
             for (var i = 0; i < result.Circulation.AuxiliaryIds.Count; i++)
             {
                 var id = result.Circulation.AuxiliaryIds[i];
@@ -287,6 +376,7 @@ public sealed partial class AllocationWorkspaceViewModel
         SecondaryExplanationDetails.Clear();
         SecondaryBridges.Clear();
         SecondaryCirculation.Clear();
+        secondaryGrossTotal = 0m;
         SelectedSecondaryResultRow = null;
         SecondaryExplanation = this["SecondarySelectCost"];
         SecondarySummary = "";
@@ -390,6 +480,7 @@ public sealed partial class AllocationWorkspaceViewModel
         {
             SecondaryExplanation = this["SecondarySelectCost"];
             OnPropertyChanged(nameof(SecondaryExplanation));
+            OnPropertyChanged(nameof(SecondaryExplanationTotal));
             return;
         }
         var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
@@ -426,6 +517,7 @@ public sealed partial class AllocationWorkspaceViewModel
             });
         }
         OnPropertyChanged(nameof(SecondaryExplanation));
+        OnPropertyChanged(nameof(SecondaryExplanationTotal));
     }
 
     private async Task ToggleSecondaryAsync()

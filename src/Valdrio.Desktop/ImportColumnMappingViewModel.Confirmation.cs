@@ -5,9 +5,12 @@ using Valdrio.Domain;
 
 namespace Valdrio.Desktop;
 
-public sealed record ImportGroupPreview(string Code, string Records, string Amount);
+public sealed record ImportGroupPreview(string Code, string Records, string Amount, string Description = "")
+{
+    public decimal NumericAmount { get; init; }
+}
 public sealed record ImportBatchOption(EntityId Id, string Label);
-public sealed record ImportComparisonPreview(string Code, string Earlier, string Current, string Difference, string EarlierRecords);
+public sealed record ImportComparisonPreview(string Code, string Earlier, string Current, string Difference, string EarlierRecords, string Description = "");
 
 public sealed partial class ImportColumnMappingViewModel
 {
@@ -24,7 +27,7 @@ public sealed partial class ImportColumnMappingViewModel
     public IReadOnlyList<ImportComparisonPreview> ComparisonRows => preparedImport?.ComparisonRows?.Select(r =>
         new ImportComparisonPreview(r.Code, r.Earlier.Amount.ToString(CultureInfo.GetCultureInfo(DateLanguageTag)),
             r.Current.Amount.ToString(CultureInfo.GetCultureInfo(DateLanguageTag)), r.Difference.Amount.ToString(CultureInfo.GetCultureInfo(DateLanguageTag)),
-            string.Join(", ", r.EarlierRecords))).ToArray() ?? [];
+            string.Join(", ", r.EarlierRecords), DescriptionForCode(r.Code))).ToArray() ?? [];
     public IReadOnlyList<ImportBatchOption> ExistingBatches { get; private set; } = [];
     public void SetExistingBatches(IReadOnlyList<ImportedBatch> batches)
     {
@@ -101,7 +104,8 @@ public sealed partial class ImportColumnMappingViewModel
     public bool HasPreparedReview => preparedImport is not null || confirmedImport is not null;
     public bool HasPreparedGroups => preparedImport?.Groups is { Count: > 0 };
     public IReadOnlyList<ImportGroupPreview> PreparedGroups => preparedImport?.Groups?.Select(g => new ImportGroupPreview(
-        g.Code, string.Join(", ", g.Records), g.Amount.Amount.ToString(CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)) + (international ? " " + g.Amount.Currency : "")))
+        g.Code, string.Join(", ", g.Records), g.Amount.Amount.ToString(CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)) + (international ? " " + g.Amount.Currency : ""), DescriptionForCode(g.Code))
+        { NumericAmount = g.Amount.Amount })
         .ToArray() ?? [];
     public string SourceCurrency
     {
