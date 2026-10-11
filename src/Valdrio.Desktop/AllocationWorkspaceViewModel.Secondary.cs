@@ -19,6 +19,13 @@ public sealed record SecondaryGroupRow(string Source, string Group);
 public sealed class SecondaryNodeAssignmentRow(EntityId nodeId, string source, EntityId? selectedKeyId) : ObservableObject
 {
     private EntityId? selected = selectedKeyId;
+    private string assignmentError = "";
+    public string AssignmentError
+    {
+        get => assignmentError;
+        set { if (SetProperty(ref assignmentError, value)) OnPropertyChanged(nameof(HasAssignmentError)); }
+    }
+    public bool HasAssignmentError => !string.IsNullOrWhiteSpace(AssignmentError);
     public EntityId NodeId { get; } = nodeId;
     public string Source { get; } = source;
     // Keep the committed selection separate from the ComboBox's editable value.
@@ -29,6 +36,7 @@ public sealed class SecondaryNodeAssignmentRow(EntityId nodeId, string source, E
     {
         PersistedKeyId = keyId;
         SelectedKeyId = keyId;
+        AssignmentError = "";
     }
     public void RestoreCommitted() => SelectedKeyId = PersistedKeyId;
 }
@@ -125,6 +133,8 @@ public sealed partial class AllocationWorkspaceViewModel
     public bool CanShowSecondaryEditor => company.CanWrite && workspace?.Resources.Study.State == StudyState.Open &&
         IsPrimaryClosed && !IsSecondaryClosed && !IsDirty;
     public ObservableCollection<SecondaryNodeAssignmentRow> SecondaryNodeAssignments { get; } = [];
+    public string SecondaryAssignmentFailure =>
+        diagnostic is null ? this["SecondaryAssignmentSaveFailed"] : Status;
     public string SecondaryState => this[IsSecondaryClosed ? "SecondaryClosedState" : "SecondaryOpenState"];
     public string SecondaryToggleLabel => this[IsSecondaryClosed ? "ReopenSecondary" : "CloseSecondary"];
 
