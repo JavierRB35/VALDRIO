@@ -165,6 +165,11 @@ public partial class MainWindow
         studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == studyId); await studies.LoadCommand.ExecuteAsync(null);
         await NavigateWorkflow(7); await Idle();
         Check(vm.IsSecondaryClosed && vm.SecondaryResults.Count == 2, "published mixed result survives reopen");
+        Check(vm.SecondaryNodeAssignments.Single(row => row.NodeId == firstAuxiliary.NodeId).PersistedKeyId == key.Id,
+            "auxiliary key assignment survives closing and reopening the entire project");
+        Check(secondary.KeyGrid.Items.Count > 0 && secondary.KeyGrid.SelectedIndex == 0 &&
+            secondary.KeyGrid.IsKeyboardFocusWithin,
+            "secondary key library refocuses the first row after reopening the project");
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }, new JsonSerializerOptions { WriteIndented = true }));
     }
 }
