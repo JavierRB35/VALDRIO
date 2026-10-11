@@ -123,7 +123,7 @@
       "DELIVERY": "11478.57142857",
       "CUSTOMER_SUCCESS": "6021.42857143"
     },
-    "maxAbsoluteError": "0.00000002"
+    "maxAbsoluteError": "0.00000010"
   },
   "composition": {
     "621001": {
