@@ -77,13 +77,25 @@ public partial class AllocationWorkspacePanel : UserControl
             viewModel?.LoadKeyCommand.CanExecute(null) == true)
             await viewModel.LoadKeyCommand.ExecuteAsync(null);
     }
+    internal Task SecondaryAssignmentTask { get; private set; } = Task.CompletedTask;
     private async void SecondaryAssignmentChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (sender is not ComboBox { IsKeyboardFocusWithin: true, DataContext: SecondaryNodeAssignmentRow row,
-                SelectedValue: EntityId keyId } box || keyId == row.SelectedKeyId || viewModel is null ||
-            !viewModel.CanShowSecondaryEditor || viewModel.IsBusy) return;
-        await viewModel.AssignSecondaryForNodeAsync(row.NodeId, keyId);
-        box.GetBindingExpression(ComboBox.SelectedValueProperty)?.UpdateTarget();
+        // WPF can fire SelectionChanged while binding or recycling a grid row.
+        // Only respond to an actual user edit, not a model -> view refresh.
+        if (sender is not ComboBox { DataContext: SecondaryNodeAssignmentRow row, SelectedValue: EntityId keyId } box ||
+            viewModel is null || viewModel.IsBusy || !viewModel.CanShowSecondaryEditor ||
+            !box.IsLoaded || (!box.IsKeyboardFocusWithin && !box.IsDropDownOpen) ||
+            row.PersistedKeyId == keyId) return;
+
+        // Commit first and retain the optimistic value while the asynchronous save runs.
+        row.SelectedKeyId = keyId;
+        async Task Save()
+        {
+            var saved = await viewModel.AssignSecondaryForNodeAsync(row.NodeId, keyId);
+            if (!saved) row.RestoreCommitted();
+        }
+        SecondaryAssignmentTask = Save();
+        await SecondaryAssignmentTask;
     }
     private async void OpenKeyDoubleClick(object sender, MouseButtonEventArgs e)
     {
