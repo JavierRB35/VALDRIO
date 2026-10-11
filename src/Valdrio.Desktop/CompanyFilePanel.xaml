@@ -50,7 +50,7 @@
     <TextBlock Text="{Binding ActiveCompanyLabel}" FontWeight="SemiBold"/>
     <TextBlock x:Name="ActiveCompanyNameText" Text="{Binding ActiveCompanyName}" FontSize="22" FontWeight="SemiBold" Margin="0,4,0,6"/>
     <TextBlock Text="{Binding ProjectReadyHelp}" Margin="0,0,0,10"/>
-    <Button x:Name="NewProjectButton" Content="{Binding NewProjectTitle}" Command="{Binding CloseCommand}" Style="{StaticResource Button.Primary}" HorizontalAlignment="Left" TabIndex="11" ToolTip="{Binding NewProjectHelp}"/>
+    <Button x:Name="NewProjectButton" Content="{Binding NewProjectTitle}" Command="{Binding NewProjectCommand}" Style="{StaticResource Button.Primary}" HorizontalAlignment="Left" TabIndex="11" ToolTip="{Binding NewProjectHelp}"/>
    </StackPanel>
 
    <TextBlock Text="{Binding Status}" Margin="0,4,0,8" AutomationProperties.LiveSetting="Assertive"/>
