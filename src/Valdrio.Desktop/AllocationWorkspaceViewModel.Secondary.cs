@@ -123,7 +123,7 @@ public sealed partial class AllocationWorkspaceViewModel
     public bool CanManageSecondary => CanManagePrimary && IsPrimaryClosed && !IsSecondaryClosed;
     public bool CanEditSecondaryConfiguration => CanManageSecondary && !keyDirty;
     public bool CanShowSecondaryEditor => company.CanWrite && workspace?.Resources.Study.State == StudyState.Open &&
-        IsPrimaryClosed && !IsSecondaryClosed && !keyDirty;
+        IsPrimaryClosed && !IsSecondaryClosed && !IsDirty;
     public ObservableCollection<SecondaryNodeAssignmentRow> SecondaryNodeAssignments { get; } = [];
     public string SecondaryState => this[IsSecondaryClosed ? "SecondaryClosedState" : "SecondaryOpenState"];
     public string SecondaryToggleLabel => this[IsSecondaryClosed ? "ReopenSecondary" : "CloseSecondary"];
