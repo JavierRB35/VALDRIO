@@ -1,4 +1,4 @@
-# Usabilidad — decisión permanente del propietario (2026-10-07)
+﻿# Usabilidad — decisión permanente del propietario (2026-10-07)
 
 «Una aplicación de este tipo ya es lo suficientemente compleja en su metodología
 como para complicarla en su uso y funcionamiento».
@@ -61,3 +61,18 @@ de cambios pendientes y la validación del rango.
 - La viabilidad debe explicar si las rutas permiten que el coste llegue a nodos
   principales. Los indicadores matemáticos permanecen como detalle técnico, no
   como la explicación principal del resultado.
+
+### Claves y resultados automáticos — 2026-10-11
+
+- En primario y secundario, agrupar nombre, criterio y guardar en una fila.
+  Las tablas de claves y destinos deben aprovechar la altura de la ventana;
+  evitar alturas fijas pequeñas y grandes espacios vacíos en la cabecera.
+- «Asignar claves a cuentas» permite ordenar cada columna en ambos sentidos.
+  Los importes se ordenan por valor numérico, incluidos los abonos negativos.
+- Mostrar la viabilidad automáticamente con el cálculo secundario y al consultar
+  un cierre guardado. No exigir una comprobación adicional. Si el cálculo falla,
+  mostrar el diagnóstico en rojo; no confundir cualquier error con falta de
+  viabilidad matemática de las rutas. Invalidar la información al cambiar datos.
+- Situar cerrar/reabrir al comienzo de las pantallas 6 y 7, en el mismo lugar.
+- Suprimir la tabla «Conciliación por recurso» de la pantalla secundaria por
+  decisión del propietario. Conservar las comprobaciones económicas internas.

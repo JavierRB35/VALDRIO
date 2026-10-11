@@ -1197,10 +1197,10 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Reciprocal.RhsInvalid" xml:space="preserve"><value>Los orígenes de coste no corresponden a los identificadores auxiliares y finales.</value></data>
   <data name="Reciprocal.AmplificationWarning" xml:space="preserve"><value>La elevada circulación interna amplifica los valores por {0}.</value></data>
   <data name="AllocationUI.ReciprocalTitle" xml:space="preserve"><value>Viabilidad de los repartos recíprocos</value></data>
-  <data name="AllocationUI.ReciprocalHelp" xml:space="preserve"><value>Comprueba las rutas secundarias publicadas por grupo. Es una verificación de viabilidad de solo lectura, no un reparto de costes.</value></data>
+  <data name="AllocationUI.ReciprocalHelp" xml:space="preserve"><value>El cálculo comprueba si los costes auxiliares pueden llegar a nodos principales. Su resultado aparece aquí automáticamente.</value></data>
   <data name="AllocationUI.CheckReciprocal" xml:space="preserve"><value>Comprobar viabilidad</value></data>
   <data name="AllocationUI.ReciprocalNeedStudy" xml:space="preserve"><value>Abre un estudio para comprobar las rutas recíprocas.</value></data>
-  <data name="AllocationUI.ReciprocalNotChecked" xml:space="preserve"><value>No se ha comprobado la viabilidad de la configuración guardada actual.</value></data>
+  <data name="AllocationUI.ReciprocalNotChecked" xml:space="preserve"><value>La viabilidad aparecerá al calcular el reparto secundario.</value></data>
   <data name="AllocationUI.ReciprocalNoAuxiliaries" xml:space="preserve"><value>Este modelo no tiene nodos auxiliares activos que comprobar.</value></data>
   <data name="AllocationUI.ReciprocalSummary" xml:space="preserve"><value>Grupos con rutas viables: {0} de {1}.</value></data>
   <data name="AllocationUI.ReciprocalGroup" xml:space="preserve"><value>Grupo de reparto</value></data>
@@ -1210,7 +1210,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.ReciprocalBlocked" xml:space="preserve"><value>Bloqueado</value></data>
   <data name="AllocationUI.ReciprocalInvalid" xml:space="preserve"><value>No se pueden comprobar las rutas: datos del grafo o importes numéricos no válidos.</value></data>
   <data name="AllocationUI.ReciprocalMetrics" xml:space="preserve"><value>Detalle técnico — pivote relativo mínimo: {0:0.####}; factor máximo de circulación: {1:0.####}. El factor mide circulación interna, no un aumento del coste final.</value></data>
-  <data name="AllocationUI.ReciprocalNoPosting" xml:space="preserve"><value>Solo se comprueban las versiones de reparto guardadas y publicadas. Aquí no se redistribuyen ni publican costes.</value></data>
+  <data name="AllocationUI.ReciprocalNoPosting" xml:space="preserve"><value>Esta información corresponde al cálculo mostrado. Si cambias el reparto, debes volver a calcular.</value></data>
   <data name="Reciprocal.SensitivePivot" xml:space="preserve"><value>El sistema recíproco es inestable cerca del auxiliar {0}; pivote normalizado: {1}.</value></data>
   <data name="Reciprocal.SensitiveAmplification" xml:space="preserve"><value>El sistema recíproco es inestable; amplificación de circulación: {0}.</value></data>
   <data name="Secondary.PrimaryIncomplete" xml:space="preserve"><value>Completa todas las asignaciones primarias antes de calcular el reparto secundario.</value></data>
@@ -1346,7 +1346,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.ExplainPrimaryAmount" xml:space="preserve"><value>Coste en nodo de origen</value></data>
   <data name="AllocationUI.ExplainEffectiveShare" xml:space="preserve"><value>Porcentaje efectivo %</value></data>
   <data name="AllocationUI.ExplainKeys" xml:space="preserve"><value>Claves de reparto</value></data>
-  <data name="AllocationUI.ReciprocalViableMeaning" xml:space="preserve"><value>Todos los auxiliares tienen una salida hacia un nodo principal. Los costes pueden salir de los circuitos recíprocos y se puede calcular el reparto secundario. Esta comprobación no calcula ni cierra los costes.</value></data>
+  <data name="AllocationUI.ReciprocalViableMeaning" xml:space="preserve"><value>El cálculo ha resuelto las rutas recíprocas: todos los auxiliares tienen salida hacia nodos principales. Revisa los costes adjudicados antes de cerrar.</value></data>
   <data name="AllocationUI.ExplainContributionAdjustment" xml:space="preserve"><value>Aportación sin ajustar: {0}. Ajuste atribuido a este origen: {1}.</value></data>
   <data name="AllocationUI.ExplainTerminalDetail" xml:space="preserve"><value>Coste final de esta cuenta en este destino (puede incluir varios nodos de origen):</value></data>
+  <data name="AllocationUI.ReciprocalCalculationFailed" xml:space="preserve"><value>No se ha podido completar el cálculo</value></data>
 </root>

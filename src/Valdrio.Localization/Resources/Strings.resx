@@ -1197,10 +1197,10 @@ Difference to distribute: {7}</value></data>
   <data name="Reciprocal.RhsInvalid" xml:space="preserve"><value>The cost origins do not match the auxiliary and terminal IDs.</value></data>
   <data name="Reciprocal.AmplificationWarning" xml:space="preserve"><value>High internal circulation amplifies values by {0}.</value></data>
   <data name="AllocationUI.ReciprocalTitle" xml:space="preserve"><value>Reciprocal routing viability</value></data>
-  <data name="AllocationUI.ReciprocalHelp" xml:space="preserve"><value>Check published secondary routes per group. This is a read-only feasibility check, not a cost allocation.</value></data>
+  <data name="AllocationUI.ReciprocalHelp" xml:space="preserve"><value>The calculation checks whether auxiliary costs can reach principal nodes. Its result appears here automatically.</value></data>
   <data name="AllocationUI.CheckReciprocal" xml:space="preserve"><value>Check viability</value></data>
   <data name="AllocationUI.ReciprocalNeedStudy" xml:space="preserve"><value>Open a study to inspect its reciprocal routing.</value></data>
-  <data name="AllocationUI.ReciprocalNotChecked" xml:space="preserve"><value>Viability has not been checked for the current saved configuration.</value></data>
+  <data name="AllocationUI.ReciprocalNotChecked" xml:space="preserve"><value>Feasibility will appear after calculating the secondary allocation.</value></data>
   <data name="AllocationUI.ReciprocalNoAuxiliaries" xml:space="preserve"><value>This model has no active auxiliary nodes to check.</value></data>
   <data name="AllocationUI.ReciprocalSummary" xml:space="preserve"><value>Viable routing groups: {0} of {1}.</value></data>
   <data name="AllocationUI.ReciprocalGroup" xml:space="preserve"><value>Routing group</value></data>
@@ -1210,7 +1210,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.ReciprocalBlocked" xml:space="preserve"><value>Blocked</value></data>
   <data name="AllocationUI.ReciprocalInvalid" xml:space="preserve"><value>Cannot validate these routes: invalid graph or numeric inputs.</value></data>
   <data name="AllocationUI.ReciprocalMetrics" xml:space="preserve"><value>Technical detail — minimum relative pivot: {0:0.####}; maximum circulation factor: {1:0.####}. The factor measures internal circulation, not an increase in final cost.</value></data>
-  <data name="AllocationUI.ReciprocalNoPosting" xml:space="preserve"><value>Only saved, published routing versions are checked. No costs are redistributed or published here.</value></data>
+  <data name="AllocationUI.ReciprocalNoPosting" xml:space="preserve"><value>This information belongs to the displayed calculation. Changing the allocation requires a new calculation.</value></data>
   <data name="Reciprocal.SensitivePivot" xml:space="preserve"><value>The reciprocal system is unstable near auxiliary {0}; normalized pivot: {1}.</value></data>
   <data name="Reciprocal.SensitiveAmplification" xml:space="preserve"><value>The reciprocal system is unstable; circulation amplification: {0}.</value></data>
   <data name="Secondary.PrimaryIncomplete" xml:space="preserve"><value>Finish all primary assignments before calculating the secondary allocation.</value></data>
@@ -1346,7 +1346,8 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.ExplainPrimaryAmount" xml:space="preserve"><value>Cost at source node</value></data>
   <data name="AllocationUI.ExplainEffectiveShare" xml:space="preserve"><value>Effective share %</value></data>
   <data name="AllocationUI.ExplainKeys" xml:space="preserve"><value>Allocation keys</value></data>
-  <data name="AllocationUI.ReciprocalViableMeaning" xml:space="preserve"><value>All auxiliaries have a route to a principal node. Costs can leave reciprocal loops and the secondary allocation can be calculated. This check does not calculate or close costs.</value></data>
+  <data name="AllocationUI.ReciprocalViableMeaning" xml:space="preserve"><value>The calculation resolved the reciprocal routes: all auxiliaries have a path to principal nodes. Review the assigned costs before closing.</value></data>
   <data name="AllocationUI.ExplainContributionAdjustment" xml:space="preserve"><value>Raw contribution: {0}. Adjustment attributed to this origin: {1}.</value></data>
   <data name="AllocationUI.ExplainTerminalDetail" xml:space="preserve"><value>Final cost of this account at this destination (may include several source nodes):</value></data>
+  <data name="AllocationUI.ReciprocalCalculationFailed" xml:space="preserve"><value>Calculation could not be completed</value></data>
 </root>

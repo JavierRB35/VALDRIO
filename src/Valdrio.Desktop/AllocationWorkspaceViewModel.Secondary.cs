@@ -235,10 +235,12 @@ public sealed partial class AllocationWorkspaceViewModel
         {
             SecondarySummary = "";
             SecondaryDiagnostic = this["SecondaryPublishedMissing"];
+            PresentReciprocalFailure(SecondaryDiagnostic);
             return;
         }
         var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
         PopulateSecondaryResults(published.Facts, published.ExplanationLinks);
+        PresentReciprocal(published.GroupCirculations);
         PopulateSecondaryBridges(published.ResourceBridges);
         foreach (var flow in published.AuxiliaryGrossFlows)
         {
@@ -256,6 +258,7 @@ public sealed partial class AllocationWorkspaceViewModel
             if (workspace is null) return;
             var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
             PopulateSecondaryResults(result.Facts, result.ExplanationLinks);
+            PresentReciprocal(result.GroupCirculations);
             PopulateSecondaryBridges(result.ResourceBridges);
             for (var i = 0; i < result.Circulation.AuxiliaryIds.Count; i++)
             {
@@ -288,6 +291,8 @@ public sealed partial class AllocationWorkspaceViewModel
         SecondaryExplanation = this["SecondarySelectCost"];
         SecondarySummary = "";
         SecondaryDiagnostic = this["SecondaryCalculating"];
+        ResetReciprocal();
+        ReciprocalSummary = SecondaryDiagnostic;
         company.NotifyWorkspaceStateChanged();
         Refresh();
         try
@@ -301,6 +306,7 @@ public sealed partial class AllocationWorkspaceViewModel
             if (!ReferenceEquals(workspace, input))
             {
                 SecondaryDiagnostic = this["SecondaryResultStale"];
+                ReciprocalSummary = SecondaryDiagnostic;
                 return;
             }
             secondaryPreview = result;
@@ -310,6 +316,7 @@ public sealed partial class AllocationWorkspaceViewModel
         catch (OperationCanceledException)
         {
             SecondaryDiagnostic = this["SecondaryCancelled"];
+            ReciprocalSummary = SecondaryDiagnostic;
         }
         catch (DomainRuleException ex)
         {
@@ -317,11 +324,13 @@ public sealed partial class AllocationWorkspaceViewModel
             var diagnostic = MakeReciprocalDiagnosticReadable(ex.Diagnostic);
             SecondaryDiagnostic = new DomainDiagnosticFormatter(texts)
                 .Format(diagnostic, System.Globalization.CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message;
+            PresentReciprocalFailure(SecondaryDiagnostic);
         }
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or OverflowException)
         {
             SecondarySummary = "";
             SecondaryDiagnostic = this["SecondaryInvalid"];
+            PresentReciprocalFailure(SecondaryDiagnostic);
         }
         finally
         {

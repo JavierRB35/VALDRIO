@@ -26,6 +26,7 @@ public sealed partial class AllocationCoverageRow(EntityId id, string source, st
     public EntityId Id { get; } = id;
     [ObservableProperty] private string source = source;
     [ObservableProperty] private string amount = amount;
+    [ObservableProperty] private decimal numericAmount;
     [ObservableProperty] private string key = key;
     [ObservableProperty] private string status = status;
     [ObservableProperty] private EntityId? selectedKeyId = selectedKeyId;
@@ -88,7 +89,6 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         SaveDraftCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(false), () => CanEditKey && MissingKeyInput(false) is null);
         PublishCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey && MissingKeyInput(true) is null);
         RefreshCommand = new AsyncRelayCommand(async () => { if (await CanLeaveAsync()) await EnterAsync(true); }, () => !busy);
-        CheckReciprocalCommand = new RelayCommand(CheckReciprocal, () => workspace is not null && !busy);
         CalculateSecondaryCommand = new AsyncRelayCommand(CalculateSecondaryAsync, () => CanCalculateSecondary);
         CancelSecondaryCommand = new RelayCommand(CancelSecondary,
             () => secondaryCalculationCts is { IsCancellationRequested: false });
@@ -477,7 +477,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
                 if (resource?.Parts.Count > 1) source += " · " + this["Part"] + " " + (resource.Parts.ToList().FindIndex(p => p.Id == c.SourceId) + 1).ToString(Format);
                 if (string.IsNullOrWhiteSpace(source)) source = this["ChangedPart"];
                 var status = c.Diagnostic is null ? this["Covered"] : new DomainDiagnosticFormatter(texts).Format(c.Diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message;
-                nextCoverage.Add(new(c.SourceId, source, item is null ? "" : MoneyText(item.Amount), c.KeyId is { } id ? KeyLabel(workspace.Keys.Single(k => k.Id == id)) : c.Diagnostic is null ? this["Absolute"] : "—", status, c.KeyId));
+                nextCoverage.Add(new(c.SourceId, source, item is null ? "" : MoneyText(item.Amount), c.KeyId is { } id ? KeyLabel(workspace.Keys.Single(k => k.Id == id)) : c.Diagnostic is null ? this["Absolute"] : "—", status, c.KeyId) { NumericAmount = item?.Amount.Amount ?? 0m });
             }
         }
         // Keep row identity and collection order so WPF preserves selection, sorting and scroll.
@@ -487,12 +487,12 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         {
             var old = Coverage.FirstOrDefault(r => r.Id == next.Id);
             if (old is null) Coverage.Add(next);
-            else { old.Source = next.Source; old.Amount = next.Amount; old.Key = next.Key; old.Status = next.Status; old.SelectedKeyId = next.SelectedKeyId; }
+            else { old.Source = next.Source; old.Amount = next.Amount; old.NumericAmount = next.NumericAmount; old.Key = next.Key; old.Status = next.Status; old.SelectedKeyId = next.SelectedKeyId; }
         }
         RebuildComposition();
         RebuildPrimary();
-        RebuildSecondary();
         ResetReciprocal();
+        RebuildSecondary();
         SelectedKey = Keys.FirstOrDefault(k => k.Value.Id == keyId); Refresh();
     }
     private async Task<bool> Run(Func<Task> work)
@@ -540,7 +540,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     {
         foreach (var command in new IRelayCommand?[] { SaveCompositionRowsCommand, DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
             SaveRuleCommand, RemoveRuleCommand, LoadRuleCommand, NewRuleCommand, SaveSecondaryCommand, LoadSecondaryCommand, NewSecondaryCommand,
-            RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CheckReciprocalCommand, CalculateSecondaryCommand, CancelSecondaryCommand, ExplainSecondaryCommand, ToggleSecondaryCommand,
+            RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CalculateSecondaryCommand, CancelSecondaryCommand, ExplainSecondaryCommand, ToggleSecondaryCommand,
             SaveSecondaryGroupCommand, ClearObsoleteSecondaryGroupsCommand, AssignSecondaryKeyToMissingCommand,
             CompositionFixedCommand, CompositionVariableCommand, CompositionReviewedFixedCommand, CompositionMixedCommand, CompositionApplyWeightsCommand,
             CompositionSelectVisibleCommand, CompositionClearSelectionCommand }) command?.NotifyCanExecuteChanged();
