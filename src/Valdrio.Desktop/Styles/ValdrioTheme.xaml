@@ -216,9 +216,11 @@
             <Trigger Property="IsKeyboardFocusWithin" Value="True">
               <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Accent.ActiveGreen}"/>
               <Setter TargetName="Chrome" Property="BorderThickness" Value="2"/>
+               <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Status.WarningBg}"/>
             </Trigger>
             <Trigger Property="Validation.HasError" Value="True">
               <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Brand.Red}"/>
+               <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
               <Setter Property="Background" Value="{DynamicResource Surface.Disabled}"/>
@@ -226,6 +228,7 @@
               <Setter Property="Opacity" Value="0.88"/>
             </Trigger>
             <Trigger Property="IsReadOnly" Value="True">
+               <Setter Property="IsTabStop" Value="False"/>
               <Setter Property="Background" Value="{DynamicResource Surface.Subtle}"/>
             </Trigger>
           </ControlTemplate.Triggers>
@@ -277,8 +280,10 @@
             <Trigger Property="IsKeyboardFocusWithin" Value="True">
               <Setter Property="BorderBrush" Value="{DynamicResource Accent.ActiveGreen}"/>
               <Setter Property="BorderThickness" Value="2"/>
+               <Setter Property="Background" Value="{DynamicResource Status.WarningBg}"/>
             </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
+            <Trigger Property="Validation.HasError" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Brand.Red}"/><Setter Property="Background" Value="{DynamicResource Status.ErrorBg}"/></Trigger>
+             <Trigger Property="IsEnabled" Value="False">
               <Setter Property="Background" Value="{DynamicResource Surface.Disabled}"/>
               <Setter Property="BorderBrush" Value="{DynamicResource Border.Disabled}"/>
               <Setter Property="Opacity" Value="0.88"/>
