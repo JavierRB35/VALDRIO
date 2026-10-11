@@ -11,6 +11,9 @@ if ((args.Length == 2 || args.Length == 3) && args[0] == "--reciprocal-input")
 if ((args.Length == 2 || args.Length == 3) && args[0] == "--reciprocal-study-snapshot")
     return T10ReciprocalRunner.RunStudy(args);
 
+if ((args.Length == 2 || args.Length == 3) && args[0] == "--secondary-study-snapshot")
+    return T11SecondaryRunner.RunStudy(args);
+
 
 if ((args.Length == 2 || args.Length == 3) && args[0] == "--primary-snapshot")
 {
@@ -166,6 +169,6 @@ if (args.Contains("--verify-t02a-fx", StringComparer.Ordinal))
 }
 
 Console.WriteLine(
-    "VALDRIO Runner ready. Use --primary-snapshot <receipt.json> [output.json] for a read-only T09 primary allocation. Durable economic execution is not implemented yet.");
+    "VALDRIO Runner ready. Use --primary-snapshot or --secondary-study-snapshot <receipt.json> [output.json] for read-only allocations. Durable T11 closure is performed in the company workspace.");
 
 return 0;

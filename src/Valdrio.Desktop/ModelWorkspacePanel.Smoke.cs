@@ -140,12 +140,38 @@ public partial class ModelWorkspacePanel
         Select(MasterBox, vm.Centers.Single(x => x.Value.Code == "PRENSA-001"));
         await Click(ToggleCenterButton);
         Check(vm.Current.PublishedCanonicalJson == originalJson && vm.HistoricalDefinitions.Contains("Prensa 日本", StringComparison.Ordinal), "master rename and deactivation preserve historical names");
-        await Click(CloneModelButton);
+        ModelSteps.SelectedIndex = 2;
+        UpdateLayout();
+        Check(vm.IsPublished && CloneToEditNodesButton.IsVisible && CloneToEditNodesButton.IsEnabled &&
+            !RoleBox.IsEnabled && !PoolBox.IsEnabled,
+            "published node editor explains lock and offers a visible editable copy in the same tab");
+        await Click(CloneToEditNodesButton);
         Check(vm.Current!.Status == ModelStatus.Draft && vm.Current.Structure.ParentVersionId == original.Structure.Id, "duplicate is editable with lineage");
         Check(!vm.Current.Structure.Nodes.Any(n => original.Structure.Nodes.Any(old => old.Id == n.Id)) && vm.Current.Structure.Pools.All(p => vm.Current.Structure.Nodes.Any(n => n.Id == p.NodeId)), "clone node IDs remapped");
+        Check(RoleBox.IsEnabled && PoolBox.IsEnabled && !CloneToEditNodesButton.IsVisible,
+            "draft clone unlocks both principal/auxiliary and pool description");
         // Reactivate the master; its current name remains distinct from frozen publication.
         Select(MasterBox, vm.Centers.Single(x => x.Value.Code == "PRENSA-001"));
         await Click(ToggleCenterButton);
+        var clonedMaintenance = vm.Nodes.Single(n => n.Node.Code == "MANT");
+        NodeSummary.SetCurrentValue(DataGrid.SelectedItemProperty, clonedMaintenance);
+        NodeSummary.GetBindingExpression(DataGrid.SelectedItemProperty)!.UpdateSource();
+        Check(vm.Role?.Value == NodeRole.Auxiliary && PoolBox.Text == "MANT driver h",
+            "selected existing node loads role and pool description");
+        Select(RoleBox, vm.Roles.Single(r => r.Value == NodeRole.Principal));
+        Text(PoolBox, "Shared service cost pool");
+        Check(vm.Role?.Value == NodeRole.Principal &&
+            vm.PoolDescription == "Shared service cost pool",
+            "principal/auxiliary and pool description can both be edited");
+        await Click(ApplyNodeButton);
+        Check(vm.Current!.Structure.Nodes.Single(n => n.Code == "MANT").Role == NodeRole.Principal &&
+            vm.Current.Structure.Pools.Single(p =>
+                p.NodeId == vm.Current.Structure.Nodes.Single(n => n.Code == "MANT").Id).Description == "Shared service cost pool",
+            "role and pool description persist in editable model without changing published version");
+        Check(original.Structure.Nodes.Single(n => n.Code == "MANT").Role == NodeRole.Auxiliary &&
+            original.Structure.Pools.Single(p =>
+                p.NodeId == original.Structure.Nodes.Single(n => n.Code == "MANT").Id).Description == "MANT driver h",
+            "original published role and pool description remain frozen");
         Text(DescriptionBox, "Clone editable");
         pending.Choices.Enqueue(PendingEditChoice.Cancel);
         files.Paths.Enqueue(path);
@@ -158,7 +184,11 @@ public partial class ModelWorkspacePanel
         await Click(companyPanel.OpenButton);
         Select(ModelBox, vm.Models.Single(x => x.Value.Status == ModelStatus.Draft));
         await Click(LoadModelButton);
-        Check(vm.Current!.Structure.Description == "Clone editable" && vm.Current.Revision == 1, "reopened clone contains saved edits");
+        Check(vm.Current!.Structure.Description == "Clone editable" && vm.Current.Revision >= 2 &&
+            vm.Current.Structure.Nodes.Single(n => n.Code == "MANT").Role == NodeRole.Principal &&
+            vm.Current.Structure.Pools.Single(p =>
+                p.NodeId == vm.Current.Structure.Nodes.Single(n => n.Code == "MANT").Id).Description == "Shared service cost pool",
+            "reopened clone persists both role and pool description after native UI editing");
         Text(DescriptionBox, "Discarded edit");
         pending.Choices.Enqueue(PendingEditChoice.Discard);
         await Click(companyPanel.CloseButton);

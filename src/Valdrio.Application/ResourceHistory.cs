@@ -5,7 +5,12 @@ public static class ResourceHistory
 {
     public static long EconomicRevision(StudyDefinition study, IEnumerable<ImportedBatch> imports, IEnumerable<ResourceMutationReceipt> history) =>
         imports.Where(b => b.ConfirmedStudy.Revision <= study.Revision).Select(b => b.ConfirmedStudy.Revision)
-            .Concat(history.Where(h => h.ConfirmedStudy.Revision <= study.Revision).Select(h => h.ConfirmedStudy.Revision)).DefaultIfEmpty(0).Max();
+            // Classification-only changes preserve every amount and destination. Do not invalidate
+            // published absolute allocations tied to these parts; canonical history and study revision
+            // still record the behavioral change for downstream costing and audit.
+            .Concat(history.Where(h => h.ConfirmedStudy.Revision <= study.Revision &&
+                h.Request.Kind is not (ResourceMutationKind.ClassifyBatch or ResourceMutationKind.EditStudyNodes)).Select(h => h.ConfirmedStudy.Revision))
+            .DefaultIfEmpty(0).Max();
     public static ResourceLedger Replay(StudyDefinition study, PrecisionPolicy precision, PublishedModelStructure model,
         IReadOnlyList<ImportedBatch> imports, IReadOnlyList<ResourceMutationReceipt> history)
     {

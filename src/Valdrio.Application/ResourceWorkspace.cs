@@ -20,7 +20,9 @@ public sealed record ResourceAdjustmentRequest(EntityId Id, Money? OriginalDelta
     string Type, string Reason, EntityId? ReversalOfId, CurrencyMetadataSnapshot? CurrencyMetadata);
 public sealed record ResourceRateChoice(EntityId ValueId, FxRateId RateId);
 public sealed record ResourcePartReplacement(EntityId ResourceId, IReadOnlyList<ResourcePartDraft> Parts);
-public enum ResourceMutationKind { EditResource, PutObject, ResetPreparation, Revalue }
+public enum ResourceMutationKind { EditResource, PutObject, ResetPreparation, Revalue, ClassifyBatch, EditStudyNodes }
+
+public sealed record StudyNodeEdits(IReadOnlyList<CalculationNodeDefinition> Nodes, IReadOnlyList<CostPoolDefinition> Pools);
 
 // A request freezes the user's choices; the application reconstructs every economic result.
 public sealed class ResourceMutation
@@ -51,20 +53,25 @@ public sealed class ResourceMutation
     public FxRateSetVersion? RateSet { get; }
     public IReadOnlyList<ResourceRateChoice> RateChoices { get; }
     public IReadOnlyList<ResourcePartReplacement> Replacements { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public StudyNodeEdits? NodeEdits { get; init; }
 }
 
 public sealed class ResourceLedger
 {
-    public ResourceLedger(IReadOnlyList<ResourceDraft> entries, IReadOnlyList<ResourceCostObject> objects)
+    public ResourceLedger(IReadOnlyList<ResourceDraft> entries, IReadOnlyList<ResourceCostObject> objects, StudyNodeEdits? nodeEdits = null)
     {
         Entries = FrozenList.Copy(entries.OrderBy(e => e.Id).Select(e => new ResourceDraft(e.Id,
             e.Sources.OrderBy(s => s.SourceRowId).ToArray(), e.Adjustments.OrderBy(a => a.Id).ToArray(),
             e.Parts.OrderBy(p => p.Id).Select(p => new ResourcePartDraft(p.Id, p.Amount, p.Routing,
                 p.DirectAssignments.OrderBy(a => a.ObjectId).ToArray(), p.PoolId, p.ExclusionReason, p.Classification)).ToArray())));
         Objects = FrozenList.Copy(objects.OrderBy(o => o.Id));
+        NodeEdits = nodeEdits is null ? null : new(FrozenList.Copy(nodeEdits.Nodes.OrderBy(n => n.Id)), FrozenList.Copy(nodeEdits.Pools.OrderBy(p => p.Id)));
     }
     public IReadOnlyList<ResourceDraft> Entries { get; }
     public IReadOnlyList<ResourceCostObject> Objects { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public StudyNodeEdits? NodeEdits { get; }
     public static ResourceLedger Empty => new([], []);
 }
 
@@ -83,7 +90,7 @@ public sealed class ResourceWorkspaceSnapshot
     public ResourceWorkspaceSnapshot(StudyDefinition study, PrecisionPolicy precision, PublishedModelStructure model,
         IReadOnlyList<ResourceOrigin> origins, ResourceLedger ledger, long economicRevision = -1)
     {
-        Study = study; Precision = precision; Model = model; Origins = FrozenList.Copy(origins); Ledger = ledger;
+        Study = study; Precision = precision; Model = ResourceWorkspaceRules.ApplyStudyNodes(model, ledger.NodeEdits); Origins = FrozenList.Copy(origins); Ledger = ledger;
         EconomicRevision = economicRevision < 0 ? study.Revision : economicRevision;
         if (study.CompanyId != model.Structure.CompanyId || study.SelectedModelVersionId != model.Structure.Id ||
             precision.Version != model.Structure.PrecisionPolicyVersion)

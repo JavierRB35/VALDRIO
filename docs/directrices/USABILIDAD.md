@@ -1,4 +1,4 @@
-# Usabilidad — decisión permanente del propietario (2026-10-07)
+﻿# Usabilidad — decisión permanente del propietario (2026-10-07)
 
 «Una aplicación de este tipo ya es lo suficientemente compleja en su metodología
 como para complicarla en su uso y funcionamiento».
@@ -23,3 +23,56 @@ reglas económicas, sin obligar a conocer la arquitectura interna para trabajar.
 T07 fue autorizada para implementación completa el 2026-10-07; el recorrido añade
 Recursos después de Importación. Esta prioridad no elimina funcionalidades
 ni sustituye las validaciones del dominio; reorganiza cómo se presentan y ejecutan.
+
+## Edición directa en tablas — decisión del propietario (2026-10-09)
+
+Todo lo que pueda consultarse o modificarse en una tabla se hará en la propia tabla.
+No duplicar campos en formularios externos ni añadir paneles de edición para datos
+que ya aparecen en filas. Priorizar simplicidad, controles por celda y un guardado
+inequívoco que solo se habilite cuando existan cambios pendientes.
+
+En reparto primario: comportamiento Fijo/Variable/Mixto mediante combo por cuenta.
+Los porcentajes fijo y variable pertenecen a esa fila; solo se muestran como campos
+editables para Mixto. Fijo equivale a 100/0 y Variable a 0/100. Guardar confirma los
+cambios de la tabla y vuelve a desactivarse hasta la siguiente modificación.
+
+### Complemento fijo automático — 2026-10-11
+
+En una fila Mixto solo se edita el porcentaje variable. El porcentaje fijo se
+muestra como dato calculado de solo lectura: 100 menos el porcentaje variable.
+No pedir dos entradas para una misma decisión. Guardar conserva el mismo control
+de cambios pendientes y la validación del rango.
+
+### Consulta de resultados y desplazamiento — 2026-10-11
+
+- Un cierre bloquea la edición, pero conserva selección, copia y desplazamiento
+  en las tablas. Deshabilitar los editores, no la tabla completa.
+- La rueda desplaza la página hasta entrar en una tabla con clic o teclado. En
+  esa tabla, llegar a un extremo no transfiere el movimiento a la página. Un clic
+  o foco fuera devuelve el desplazamiento a la página. Mantener estable la altura
+  de la ayuda contextual para que pasar por campos no cambie el espacio visible.
+- Seleccionar una aportación secundaria muestra su explicación automáticamente;
+  la fila debe seguir resaltada aunque el usuario consulte el detalle.
+- Primario: cuenta/recurso, nodo destino, importe adjudicado y comportamiento.
+- Secundario: nodo de origen, nodo principal destino, importe adjudicado y
+  comportamiento. Acompañarlo con el total por principal y la separación entre
+  coste que conserva del primario y coste recibido de auxiliares. El detalle por
+  cuenta se consulta en la tabla de explicación, conservando sus claves.
+- La viabilidad debe explicar si las rutas permiten que el coste llegue a nodos
+  principales. Los indicadores matemáticos permanecen como detalle técnico, no
+  como la explicación principal del resultado.
+
+### Claves y resultados automáticos — 2026-10-11
+
+- En primario y secundario, agrupar nombre, criterio y guardar en una fila.
+  Las tablas de claves y destinos deben aprovechar la altura de la ventana;
+  evitar alturas fijas pequeñas y grandes espacios vacíos en la cabecera.
+- «Asignar claves a cuentas» permite ordenar cada columna en ambos sentidos.
+  Los importes se ordenan por valor numérico, incluidos los abonos negativos.
+- Mostrar la viabilidad automáticamente con el cálculo secundario y al consultar
+  un cierre guardado. No exigir una comprobación adicional. Si el cálculo falla,
+  mostrar el diagnóstico en rojo; no confundir cualquier error con falta de
+  viabilidad matemática de las rutas. Invalidar la información al cambiar datos.
+- Situar cerrar/reabrir al comienzo de las pantallas 6 y 7, en el mismo lugar.
+- Suprimir la tabla «Conciliación por recurso» de la pantalla secundaria por
+  decisión del propietario. Conservar las comprobaciones económicas internas.

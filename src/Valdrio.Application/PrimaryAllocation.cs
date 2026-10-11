@@ -125,6 +125,20 @@ public static class PrimaryAllocationService
                 }
                 var staged = new List<PrimaryAllocationFact>();
                 var total = new Money(0m, currency, precision);
+                Dictionary<string, decimal>? variableAmounts = null;
+                if (part.Classification.Behavior == ResourceBehavior.Mixed)
+                {
+                    var fraction = part.Classification.VariablePercentage!.Value / 100m;
+                    var rounder = new BalancedRounder(precision);
+                    var composition = rounder.Round(part.Amount.Amount,
+                        [new(new StableRoundingId("fixed"), part.Amount.Amount * (1m - fraction)),
+                         new(new StableRoundingId("variable"), part.Amount.Amount * fraction)], precision.InternalLedgerQuantum);
+                    var variableTotal = composition.Lines.Single(l => l.DestinationId.Value == "variable").PostedAmount;
+                    // Round the component across all destinations, preserving its account-level total.
+                    variableAmounts = rounder.Round(variableTotal, lines.Select(l => new RoundingContribution(
+                        new StableRoundingId(l.Node.ToString()), part.Amount.Amount == 0m ? 0m : variableTotal * (l.Line.PostedAmount / part.Amount.Amount))).ToArray(),
+                        precision.InternalLedgerQuantum).Lines.ToDictionary(l => l.DestinationId.Value, l => l.PostedAmount);
+                }
                 foreach (var item in lines)
                 {
                     if (!nodePools.TryGetValue(item.Node, out var pool) ||
@@ -135,10 +149,28 @@ public static class PrimaryAllocationService
                         throw AllocationDiagnostics.Error("RES_CAPACITY_OWNER_INVALID", "Resource.CapacityOwnerInvalid", part.Id);
                     var posted = new Money(item.Line.PostedAmount, currency, precision);
                     total += posted;
-                    staged.Add(new(resource.Id, part.Id, account, item.Node, pool.Id,
+                    var fact = new PrimaryAllocationFact(resource.Id, part.Id, account, item.Node, pool.Id,
                         key?.Id, rule?.Id, selection, part.Classification.Behavior, part.Classification.Layer,
                         part.Classification.CapacityTreatment, item.Weight, item.Share, item.Line.RawAmount,
-                        item.Line.NumericAdjustment, item.Line.RoundingAdjustment, posted));
+                        item.Line.NumericAdjustment, item.Line.RoundingAdjustment, posted);
+                    if (part.Classification.Behavior != ResourceBehavior.Mixed)
+                        staged.Add(fact);
+                    else
+                    {
+                        var variableShare = part.Classification.VariablePercentage!.Value / 100m;
+                        var variableAmount = variableAmounts![item.Node.ToString()];
+                        foreach (var variable in new[] { false, true })
+                        {
+                            var componentAmount = variable ? variableAmount : posted.Amount - variableAmount;
+                            var fraction = variable ? variableShare : 1m - variableShare;
+                            var raw = fact.RawAmount * fraction;
+                            var numeric = fact.NumericAdjustment * fraction;
+                            staged.Add(fact with { Behavior = variable ? ResourceBehavior.Variable : ResourceBehavior.Fixed,
+                                RawAmount = raw, NumericAdjustment = numeric,
+                                RoundingAdjustment = componentAmount - raw - numeric,
+                                PostedAmount = new Money(componentAmount, currency, precision) });
+                        }
+                    }
                 }
                 var difference = part.Amount - total;
                 if (difference.Amount != 0m)

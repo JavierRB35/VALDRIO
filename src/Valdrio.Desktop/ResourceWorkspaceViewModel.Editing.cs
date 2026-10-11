@@ -5,6 +5,7 @@ namespace Valdrio.Desktop;
 
 public sealed partial class ResourceWorkspaceViewModel
 {
+    private decimal? partVariablePercentage;
     private IReadOnlyList<DirectResourceAssignment>? multipleAssignments;
     public bool HasMultipleAssignments => multipleAssignments?.Count > 1;
     public string FunctionalCurrency => workspace?.Study.Currency.FunctionalCurrencyCode.ToString() ?? "";
@@ -25,7 +26,7 @@ public sealed partial class ResourceWorkspaceViewModel
         loading = true;
         try
         {
-            partId = null; multipleAssignments = null;
+            partId = null; multipleAssignments = null; partVariablePercentage = null;
             foreach (var key in new[] { "Amount", "Exclusion", "Minimum", "Maximum", "Theoretical", "Practical", "Normal", "Actual" }) PartForm[key] = "";
             PartForm.Route = ResourceRoutingKind.Pending; PartForm.Behavior = ResourceBehavior.Unclassified; PartForm.Layer = ResourceCostLayer.Unclassified;
             PartForm.Capacity = ResourceCapacityTreatment.None; PartForm.PoolId = PartForm.ObjectId = null; PartForm.UnitId = null;
@@ -63,6 +64,7 @@ public sealed partial class ResourceWorkspaceViewModel
         var p = selected.Value; ClearPart(); loading = true;
         try
         {
+            partVariablePercentage = p.Classification.VariablePercentage;
             partId = p.Id; PartForm["Amount"] = p.Amount.Amount.ToString("0.########", Format); PartForm.Route = p.Routing;
             PartForm.PoolId = p.PoolId; PartForm.ObjectId = p.DirectAssignments.Count == 1 ? p.DirectAssignments[0].ObjectId : null;
             multipleAssignments = p.DirectAssignments.Count > 1 ? p.DirectAssignments : null;
@@ -87,7 +89,8 @@ public sealed partial class ResourceWorkspaceViewModel
     {
         var f = PartForm; var amount = Functional(Number(f, "Amount"));
         ResourceBehaviorContext? context = null;
-        if (f.Behavior is ResourceBehavior.Fixed or ResourceBehavior.Variable || f.UnitId.HasValue)
+        var percentage = partVariablePercentage is null ? (decimal?)null : f.Behavior == ResourceBehavior.Fixed ? 0m : f.Behavior == ResourceBehavior.Variable ? 100m : f.Behavior == ResourceBehavior.Mixed ? partVariablePercentage : null;
+        if (percentage is null && f.Behavior is ResourceBehavior.Fixed or ResourceBehavior.Variable || f.UnitId.HasValue)
         {
             var unit = f.UnitId ?? throw ResourceWorkspaceRules.Error("RES_UNIT_SCOPE", "Resource.UnitScope");
             context = new(unit, Date(f.Start).Value, Date(f.End).Value,
@@ -107,7 +110,7 @@ public sealed partial class ResourceWorkspaceViewModel
         return new(partId ?? new(Guid.NewGuid()), amount, f.Route, direct,
             f.Route == ResourceRoutingKind.AllocationPool ? f.PoolId : null,
             f.Route == ResourceRoutingKind.Excluded ? f["Exclusion"] : null,
-            new(f.Behavior, context, f.Layer, f.Capacity, capacity));
+            new(f.Behavior, context, f.Layer, f.Capacity, capacity) { VariablePercentage = percentage });
     }
     private void ApplyPart()
     {

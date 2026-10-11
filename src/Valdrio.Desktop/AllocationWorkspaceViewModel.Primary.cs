@@ -4,7 +4,7 @@ using Valdrio.Domain;
 
 namespace Valdrio.Desktop;
 
-public sealed record PrimaryAllocationRow(string Source, string Destination, string Amount, string AppliedRule);
+public sealed record PrimaryAllocationRow(string Source, string Destination, string Amount, string AppliedRule, string Behavior);
 
 // The preview belongs to the T08 workspace: never invent a second, editable set of rules.
 public sealed partial class AllocationWorkspaceViewModel
@@ -46,7 +46,7 @@ public sealed partial class AllocationWorkspaceViewModel
                     var applied = workspace.Keys.Single(k => k.Id == key);
                     rule += ": " + KeyLabel(applied);
                 }
-                PrimaryResults.Add(new(source, destination, MoneyText(fact.PostedAmount), rule));
+                PrimaryResults.Add(new(source, destination, MoneyText(fact.PostedAmount), rule, this["SecondaryBehavior" + fact.Behavior]));
             }
             PrimarySummary = string.Format(Format, this["PrimarySummary"], primary.Facts.Count,
                 primary.Gaps.Count, primary.Pools.Count, primary.Currency);

@@ -61,7 +61,8 @@ public partial class MainWindow
         await Click(panel.DeleteKeyButton); Check(vm.Keys.Count == 0, "unused key is deleted through the visible action");
         Text(panel.KeyNameBox, "Consumos de oficina");
         var line = vm.Lines.Single(l => l.Id == principal.Id); line.Included = true; line.Value = "80";
-        await Click(panel.SaveKeyButton); Check(vm.Keys.Count == 0 && vm.CanEditKey, "80 percent is rejected without losing editing");
+        await Idle(); Check(!panel.SaveKeyButton.IsEnabled && vm.Validation.Contains("100"), "80 percent disables saving with an actionable explanation");
+        Check(vm.Keys.Count == 0 && vm.CanEditKey, "incomplete percentages preserve editing");
         line.Value = "100";
         await Click(panel.SaveKeyButton); var primaryKey = vm.Keys.Single().Value;
         Check(primaryKey.Status == ModelStatus.Published && panel.KeyNameBox.IsEnabled && vm.CanEditComposition, "unused saved key remains fully editable");

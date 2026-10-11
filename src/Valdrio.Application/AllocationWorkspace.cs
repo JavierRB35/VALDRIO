@@ -11,6 +11,10 @@ public sealed record SaveAllocationKey(EntityId CompanyId, EntityId ModelVersion
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool Delete { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public EntityId? ValidationStudyId { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public long? ValidationStudyRevision { get; init; }
     private IReadOnlyList<AllocationKeyLine> lines = FrozenList.Copy(Lines);
     public IReadOnlyList<AllocationKeyLine> Lines { get => lines; init => lines = FrozenList.Copy(value); }
 }
@@ -21,13 +25,26 @@ public sealed class AllocationConfiguration
 {
     public AllocationConfiguration(IReadOnlyList<PrimaryRule> primaryRules, IReadOnlyList<SecondaryRule> secondaryRules,
         IReadOnlyList<ExplicitPrimaryAssignment> explicitAssignments, IReadOnlyList<AbsolutePartAllocation> absoluteAssignments,
-        IReadOnlyList<AccountDescriptionChoice> descriptions, bool primaryClosed = false)
+        IReadOnlyList<AccountDescriptionChoice> descriptions, bool primaryClosed = false,
+        bool secondaryClosed = false, string? secondaryCalculationHash = null,
+        IReadOnlyList<SecondaryPartRoutingGroup>? secondaryPartRoutingGroups = null)
     {
         if (primaryRules is null || secondaryRules is null || explicitAssignments is null || absoluteAssignments is null || descriptions is null ||
             primaryRules.Any(r => r is null) || secondaryRules.Any(r => r is null) || explicitAssignments.Any(r => r is null) ||
-            absoluteAssignments.Any(r => r is null) || descriptions.Any(r => r is null))
+            absoluteAssignments.Any(r => r is null) || descriptions.Any(r => r is null) ||
+            (secondaryPartRoutingGroups is { } groups && (
+                groups.Any(g => g is null || !g.PartId.IsValid ||
+                    string.IsNullOrWhiteSpace(g.ComponentRoutingGroup) ||
+                    g.ComponentRoutingGroup != g.ComponentRoutingGroup.Trim()) ||
+                groups.Select(g => g.PartId).Distinct().Count() != groups.Count)))
             throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
+        if (secondaryClosed && (!primaryClosed || string.IsNullOrWhiteSpace(secondaryCalculationHash)))
+            throw AllocationDiagnostics.Error("SECONDARY_CLOSE_INVALID", "Secondary.CloseInvalid");
         PrimaryClosed = primaryClosed;
+        SecondaryClosed = secondaryClosed;
+        SecondaryCalculationHash = secondaryClosed ? secondaryCalculationHash : null;
+        SecondaryPartRoutingGroups = secondaryPartRoutingGroups is null ? null :
+            FrozenList.Copy(secondaryPartRoutingGroups.OrderBy(g => g.PartId));
         PrimaryRules = FrozenList.Copy(primaryRules.OrderBy(r => r.Id));
         SecondaryRules = FrozenList.Copy(secondaryRules.OrderBy(r => r.Id));
         ExplicitAssignments = FrozenList.Copy(explicitAssignments.OrderBy(r => r.PartId));
@@ -36,7 +53,25 @@ public sealed class AllocationConfiguration
     }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool PrimaryClosed { get; }
-    public AllocationConfiguration WithPrimaryClosed(bool closed) => new(PrimaryRules, SecondaryRules, ExplicitAssignments, AbsoluteAssignments, Descriptions, closed);
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool SecondaryClosed { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? SecondaryCalculationHash { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<SecondaryPartRoutingGroup>? SecondaryPartRoutingGroups { get; }
+    // Reopening primary necessarily invalidates a previously closed secondary run.
+    public AllocationConfiguration WithPrimaryClosed(bool closed) =>
+        new(PrimaryRules, SecondaryRules, ExplicitAssignments, AbsoluteAssignments, Descriptions,
+            closed, secondaryPartRoutingGroups: SecondaryPartRoutingGroups);
+    public AllocationConfiguration WithSecondaryClosed(bool closed, string? calculationHash = null) =>
+        new(PrimaryRules, SecondaryRules, ExplicitAssignments, AbsoluteAssignments, Descriptions,
+            PrimaryClosed || closed, closed, closed ? calculationHash : null, SecondaryPartRoutingGroups);
+    public AllocationConfiguration WithSecondaryRules(IReadOnlyList<SecondaryRule> rules) =>
+        new(PrimaryRules, rules, ExplicitAssignments, AbsoluteAssignments, Descriptions,
+            PrimaryClosed, secondaryPartRoutingGroups: SecondaryPartRoutingGroups);
+    public AllocationConfiguration WithSecondaryPartRoutingGroups(IReadOnlyList<SecondaryPartRoutingGroup> groups) =>
+        new(PrimaryRules, SecondaryRules, ExplicitAssignments, AbsoluteAssignments, Descriptions,
+            PrimaryClosed, secondaryPartRoutingGroups: groups);
     public IReadOnlyList<PrimaryRule> PrimaryRules { get; }
     public IReadOnlyList<SecondaryRule> SecondaryRules { get; }
     public IReadOnlyList<ExplicitPrimaryAssignment> ExplicitAssignments { get; }
@@ -49,6 +84,8 @@ public sealed record ChangeAllocations(EntityId CompanyId, EntityId StudyId, lon
 public sealed record AllocationChangeReceipt(ChangeAllocations Request, StudyDefinition PreviousStudy,
     StudyDefinition ConfirmedStudy, IReadOnlyList<AllocationKeyVersion> ReferencedKeys, UtcInstant AtUtc)
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public SecondaryCalculationPublication? SecondaryPublication { get; init; }
     private IReadOnlyList<AllocationKeyVersion> referencedKeys = FrozenList.Copy(ReferencedKeys.OrderBy(k => k.Id));
     public IReadOnlyList<AllocationKeyVersion> ReferencedKeys { get => referencedKeys; init => referencedKeys = FrozenList.Copy(value.OrderBy(k => k.Id)); }
 }
@@ -67,12 +104,13 @@ public sealed class AllocationWorkspaceSnapshot
 {
     public AllocationWorkspaceSnapshot(ResourceWorkspaceSnapshot resources, IReadOnlyList<AllocationKeyVersion> keys,
         AllocationConfiguration configuration, long configurationRevision, bool includeUnroutedAccounts = true,
-        IReadOnlyList<EntityId>? usedKeyIds = null)
+        IReadOnlyList<EntityId>? usedKeyIds = null, SecondaryCalculationPublication? secondaryPublication = null)
     {
         Resources = resources; Keys = FrozenList.Copy(keys.OrderBy(k => k.Id));
         Configuration = configuration; ConfigurationRevision = configurationRevision;
         IncludeUnroutedAccounts = includeUnroutedAccounts;
         UsedKeyIds = FrozenList.Copy(usedKeyIds ?? []);
+        SecondaryPublication = configuration.SecondaryClosed ? secondaryPublication : null;
     }
     public ResourceWorkspaceSnapshot Resources { get; }
     public IReadOnlyList<AllocationKeyVersion> Keys { get; }
@@ -80,6 +118,7 @@ public sealed class AllocationWorkspaceSnapshot
     public long ConfigurationRevision { get; }
     public bool IncludeUnroutedAccounts { get; }
     [JsonIgnore] public IReadOnlyList<EntityId> UsedKeyIds { get; }
+    [JsonIgnore] public SecondaryCalculationPublication? SecondaryPublication { get; }
     [JsonIgnore] public IReadOnlyList<AllocationCoverage> Coverage => AllocationWorkspaceRules.Coverage(this);
 }
 
@@ -127,6 +166,9 @@ public static class AllocationWorkspaceRules
         void Invalid(bool test) { if (test) throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid"); }
         Invalid(config.PrimaryRules.Select(r => r.Id).Distinct().Count() != config.PrimaryRules.Count ||
             config.SecondaryRules.Select(r => r.Id).Distinct().Count() != config.SecondaryRules.Count ||
+            (config.SecondaryPartRoutingGroups is { } groups && (
+                groups.Any(g => !g.PartId.IsValid || string.IsNullOrWhiteSpace(g.ComponentRoutingGroup)) ||
+                groups.Select(g => g.PartId).Distinct().Count() != groups.Count)) ||
             config.ExplicitAssignments.Select(a => a.PartId).Distinct().Count() != config.ExplicitAssignments.Count ||
             config.AbsoluteAssignments.Select(a => a.PartId).Distinct().Count() != config.AbsoluteAssignments.Count ||
             config.Descriptions.Select(d => d.Account).Distinct(StringComparer.Ordinal).Count() != config.Descriptions.Count);
@@ -155,6 +197,8 @@ public static class AllocationWorkspaceRules
             if (rule.IsActive) _ = AllocationKeyRules.ResolveSecondary(rule.AuxiliaryNodeId, rule.ComponentRoutingGroup, config.SecondaryRules, keys, model);
         }
         var eligible = resources.Resources.SelectMany(r => r.Parts).Where(p => p.Routing is ResourceRoutingKind.AllocationPool or ResourceRoutingKind.Pending).ToDictionary(p => p.Id);
+        foreach (var group in config.SecondaryPartRoutingGroups ?? [])
+            Invalid(!eligible.ContainsKey(group.PartId) || group.ComponentRoutingGroup != group.ComponentRoutingGroup.Trim());
         foreach (var item in config.ExplicitAssignments)
         {
             Invalid(!eligible.ContainsKey(item.PartId) || config.AbsoluteAssignments.Any(a => a.PartId == item.PartId));

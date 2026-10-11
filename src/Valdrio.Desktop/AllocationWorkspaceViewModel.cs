@@ -26,6 +26,7 @@ public sealed partial class AllocationCoverageRow(EntityId id, string source, st
     public EntityId Id { get; } = id;
     [ObservableProperty] private string source = source;
     [ObservableProperty] private string amount = amount;
+    [ObservableProperty] private decimal numericAmount;
     [ObservableProperty] private string key = key;
     [ObservableProperty] private string status = status;
     [ObservableProperty] private EntityId? selectedKeyId = selectedKeyId;
@@ -43,6 +44,18 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private readonly Func<bool>? earlierBusy;
     private readonly Func<Task<bool>>? earlierBefore;
     private readonly Func<Task>? earlierAfter;
+    private AllocationStage? workspaceStage;
+    public bool SecondaryWorkspaceActive
+    {
+        get => workspaceStage == AllocationStage.Secondary;
+        set
+        {
+            var next = value ? AllocationStage.Secondary : AllocationStage.Primary;
+            if (workspaceStage == next) return;
+            workspaceStage = next;
+            LoadKey(null); ClearRule(); Rebuild();
+        }
+    }
     private AllocationWorkspaceSnapshot? workspace;
     private AllocationKeyVersion? editingKey;
     private EntityId? newParent, editingRule, editingSecondary;
@@ -64,29 +77,37 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     {
         this.company = company; this.studies = studies; this.texts = texts; this.preferences = preferences; this.dialogs = dialogs;
         numbers = new(Format);
-        NewKeyCommand = new AsyncRelayCommand(async () => { if (await CanLeaveAsync()) LoadKey(null); }, () => CanEdit);
+        NewKeyCommand = new AsyncRelayCommand(async () => { if (await CanLeaveAsync()) { LoadKey(null); if (workspaceStage is null && IsPrimaryClosed) Stage = AllocationStage.Secondary; } }, () => workspaceStage is null ? CanEdit || CanManageSecondary : SecondaryWorkspaceActive ? CanManageSecondary : CanEdit);
         LoadKeyCommand = new AsyncRelayCommand(async () => { if (SelectedKey is { } row && await CanLeaveAsync()) LoadKey(row.Value); }, () => !busy && SelectedKey is not null);
         NewVersionCommand = new AsyncRelayCommand(async () =>
         {
             if (SelectedKey?.Value is not { Status: ModelStatus.Published } source || !await CanLeaveAsync()) return;
             LoadKey(source); editingKey = null; newParent = source.Id; keyDirty = true; Refresh();
-        }, () => CanEdit && SelectedKey?.Value.Status == ModelStatus.Published);
-        DeleteKeyCommand = new AsyncRelayCommand(DeleteKeyAsync, () => CanEdit && !IsDirty && SelectedKey is { } row && !workspace!.UsedKeyIds.Contains(row.Value.Id));
-        TogglePrimaryCommand = new AsyncRelayCommand(TogglePrimaryAsync, () => CanManagePrimary && !IsDirty && (IsPrimaryClosed || primaryComplete));
+        }, () => (CanEdit || CanManageSecondary && SelectedKey?.Value.Stage == AllocationStage.Secondary) && SelectedKey?.Value.Status == ModelStatus.Published);
+        DeleteKeyCommand = new AsyncRelayCommand(DeleteKeyAsync, () => (CanEdit || CanManageSecondary && SelectedKey?.Value.Stage == AllocationStage.Secondary) && !IsDirty && SelectedKey is { } row && !workspace!.UsedKeyIds.Contains(row.Value.Id));
+        TogglePrimaryCommand = new AsyncRelayCommand(TogglePrimaryAsync, () => CanManagePrimary && !IsSecondaryClosed && !IsDirty && (IsPrimaryClosed || primaryComplete));
         SaveDraftCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(false), () => CanEditKey && MissingKeyInput(false) is null);
         PublishCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey && MissingKeyInput(true) is null);
         RefreshCommand = new AsyncRelayCommand(async () => { if (await CanLeaveAsync()) await EnterAsync(true); }, () => !busy);
-        CheckReciprocalCommand = new RelayCommand(CheckReciprocal, () => workspace is not null && !busy);
+        CalculateSecondaryCommand = new AsyncRelayCommand(CalculateSecondaryAsync, () => CanCalculateSecondary);
+        CancelSecondaryCommand = new RelayCommand(CancelSecondary,
+            () => secondaryCalculationCts is { IsCancellationRequested: false });
+        ExplainSecondaryCommand = new RelayCommand(ShowSecondaryExplanation, () => SelectedSecondaryResultRow is not null);
+        ToggleSecondaryCommand = new AsyncRelayCommand(ToggleSecondaryAsync,
+            () => !busy && CanManagePrimary && !IsDirty && (IsSecondaryClosed || secondaryCalculated));
+        SaveSecondaryGroupCommand = new AsyncRelayCommand(SaveSecondaryPartGroupAsync, () => CanSaveSecondaryGroup);
+        AssignSecondaryKeyToMissingCommand = new AsyncRelayCommand(AssignSecondaryKeyToMissingAsync, () => CanAssignSecondaryKeyToMissing);
+        ClearObsoleteSecondaryGroupsCommand = new AsyncRelayCommand(ClearObsoleteSecondaryGroupsAsync, () => CanEditSecondaryConfiguration && !HasUnappliedRule && HasObsoleteSecondaryGroups);
         SaveRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(false), () => CanSaveRule);
         ApplyRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(true), () => CanSaveRule);
         SaveKeyCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey && MissingKeyInput(true) is null);
         RemoveRuleCommand = new AsyncRelayCommand(() => CommitConfig(c => new(c.PrimaryRules.Where(r => r.Id != SelectedRule!.Id).ToArray(), c.SecondaryRules, c.ExplicitAssignments, c.AbsoluteAssignments, c.Descriptions)), () => CanEditConfiguration && !HasUnappliedRule && SelectedRule is not null);
         LoadRuleCommand = new RelayCommand(LoadRule, () => CanEdit && SelectedRule is not null && !ruleDirty);
         NewRuleCommand = new RelayCommand(ClearRule, () => CanEditConfiguration && !HasUnappliedRule);
-        SaveSecondaryCommand = new AsyncRelayCommand(SaveSecondaryAsync, () => CanEdit);
-        LoadSecondaryCommand = new RelayCommand(LoadSecondary, () => CanEdit && SelectedSecondary is not null && !ruleDirty);
-        RemoveSecondaryCommand = new AsyncRelayCommand(() => CommitConfig(c => new(c.PrimaryRules, c.SecondaryRules.Where(r => r.Id != SelectedSecondary!.Id).ToArray(), c.ExplicitAssignments, c.AbsoluteAssignments, c.Descriptions)), () => CanEditConfiguration && !HasUnappliedRule && SelectedSecondary is not null);
-        NewSecondaryCommand = new RelayCommand(ClearRule, () => CanEditConfiguration && !HasUnappliedRule);
+        SaveSecondaryCommand = new AsyncRelayCommand(SaveSecondaryAsync, () => CanEditSecondaryConfiguration && Auxiliary.HasValue && SecondaryKey.HasValue);
+        LoadSecondaryCommand = new RelayCommand(LoadSecondary, () => CanEditSecondaryConfiguration && SelectedSecondary is not null && !ruleDirty);
+        RemoveSecondaryCommand = new AsyncRelayCommand(() => CommitConfig(c => c.WithSecondaryRules(c.SecondaryRules.Where(r => r.Id != SelectedSecondary!.Id).ToArray()), true), () => CanEditSecondaryConfiguration && !HasUnappliedRule && SelectedSecondary is not null);
+        NewSecondaryCommand = new RelayCommand(ClearRule, () => CanEditSecondaryConfiguration && !HasUnappliedRule);
         AssignCommand = new AsyncRelayCommand(AssignAsync, () => CanEditConfiguration && !absoluteDirty && Part.HasValue && PartKey.HasValue);
         AutomaticCommand = new AsyncRelayCommand(() => CommitConfig(c => new(c.PrimaryRules, c.SecondaryRules, c.ExplicitAssignments.Where(a => a.PartId != Part).ToArray(), c.AbsoluteAssignments.Where(a => a.PartId != Part).ToArray(), c.Descriptions)), () => CanEditConfiguration && !absoluteDirty && Part.HasValue);
         ClearObsoleteCommand = new AsyncRelayCommand(() => CommitConfig(c => new(c.PrimaryRules, c.SecondaryRules,
@@ -96,7 +117,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         SaveAbsoluteCommand = new AsyncRelayCommand(SaveAbsoluteAsync, () => CanEditConfiguration && Part.HasValue);
         ChooseDescriptionCommand = new AsyncRelayCommand(() => CommitConfig(c => new(c.PrimaryRules, c.SecondaryRules, c.ExplicitAssignments, c.AbsoluteAssignments,
             c.Descriptions.Where(d => d.Account != Account).Append(new(Account!, ChosenDescription)).ToArray())), () => CanEdit && Account is not null && DescriptionOptions.Contains(ChosenDescription, StringComparer.Ordinal));
-        DiscardCommand = new RelayCommand(() => { LoadKey(editingKey); ClearRule(); LoadAbsolute(); statusKey = "Discarded"; Refresh(); }, () => !busy && IsDirty);
+        DiscardCommand = new RelayCommand(() => { DiscardCompositionChanges(); LoadKey(editingKey); ClearRule(); LoadAbsolute(); statusKey = "Discarded"; Refresh(); }, () => !busy && IsDirty);
+        InitializeCompositionCommands();
         earlierBusy = company.WorkspaceBusy; earlierBefore = studies.BeforeChangeAsync; earlierAfter = company.AfterChangeAsync;
         company.WorkspaceBusy = () => busy || earlierBusy?.Invoke() == true;
         studies.BeforeChangeAsync = async () => await CanLeaveAsync() && (earlierBefore is null || await earlierBefore());
@@ -114,15 +136,15 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public string PrimaryState => this[IsPrimaryClosed ? "PrimaryClosedState" : "PrimaryOpenState"];
     public string PrimaryToggleLabel => this[IsPrimaryClosed ? "ReopenPrimary" : "ClosePrimary"];
     private bool CanSaveRule => CanEditConfiguration && RuleKey.HasValue && !string.IsNullOrWhiteSpace(IsExact ? RuleAccount : Prefix);
-    public bool CanAssignCoverage => CanEditConfiguration && !HasUnappliedRule;
-    public bool CanEditConfiguration => CanEdit && !keyDirty;
-    public bool CanEditKey => CanEdit && !HasUnappliedRule;
+    public bool CanAssignCoverage => CanEditConfiguration && !HasUnappliedRule && !HasCompositionChanges;
+    public bool CanEditConfiguration => CanEdit && !keyDirty && !HasCompositionChanges;
+    public bool CanEditKey => (Stage == AllocationStage.Secondary ? CanManageSecondary : CanEdit) && !HasUnappliedRule && !HasCompositionChanges;
     private bool IsKeyUsed => editingKey is not null && workspace?.UsedKeyIds.Contains(editingKey.Id) == true;
     public bool CanEditComposition => CanEditKey && !IsKeyUsed;
     public bool HasObsolete => workspace is not null && (workspace.Configuration.ExplicitAssignments.Any(a => !Parts.Any(p => p.Value == a.PartId))
         || workspace.Configuration.AbsoluteAssignments.Any(a => !Parts.Any(p => p.Value == a.PartId))
         || workspace.Configuration.Descriptions.Any(d => !workspace.Resources.Origins.Any(o => o.Code == d.Account && o.Descriptions.Contains(d.Description, StringComparer.Ordinal))));
-    public bool IsDirty => keyDirty || ruleDirty || absoluteDirty;
+    public bool IsDirty => keyDirty || ruleDirty || absoluteDirty || HasCompositionChanges;
     public bool HasUnappliedRule => ruleDirty || absoluteDirty;
     public void ExplainPendingRule() { statusKey = "ApplyRuleFirst"; Refresh(); }
     public bool IsPercentage => Mode == AllocationKeyMode.Percentage;
@@ -232,7 +254,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private void RefreshEditor()
     {
         foreach (var property in new[] { nameof(IsDirty), nameof(HasUnappliedRule), nameof(KeyState), nameof(CanEditConfiguration),
-            nameof(CanAssignCoverage), nameof(CanEditKey), nameof(CanEditComposition), nameof(CanEditWeights), nameof(IsPercentage), nameof(IsDriver), nameof(IsSecondary),
+            nameof(CanAssignCoverage), nameof(CanEditClassification), nameof(CanEditKey), nameof(CanEditComposition), nameof(CanEditWeights), nameof(IsPercentage), nameof(IsDriver), nameof(IsSecondary),
             nameof(IsExact), nameof(IsPrefix), nameof(Total), nameof(Validation) }) OnPropertyChanged(property);
         Commands();
     }
@@ -245,7 +267,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private void LoadKey(AllocationKeyVersion? key)
     {
         loading = true; editingKey = key; newParent = key?.ParentVersionId; numbers = new(Format);
-        name = key?.Name ?? ""; mode = key?.Mode ?? AllocationKeyMode.Percentage; stage = key?.Stage ?? AllocationStage.Primary;
+        name = key?.Name ?? ""; mode = key?.Mode ?? AllocationKeyMode.Percentage; stage = key?.Stage ?? workspaceStage ?? AllocationStage.Primary;
         unit = key?.UnitId; selfAllowed = key?.SelfAllocation == SelfAllocationPolicy.Allowed;
         foreach (var line in Lines) line.PropertyChanged -= LineChanged;
         Lines.Clear();
@@ -281,13 +303,26 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private SaveAllocationKey BuildKey(bool publish) => new(workspace!.Resources.Study.CompanyId, workspace.Resources.Model.Structure.Id,
         editingKey?.Id ?? previewId, newParent, editingKey?.Revision ?? -1, Name, Stage, Mode, IsDriver ? Unit : null,
         SelfAllowed ? SelfAllocationPolicy.Allowed : SelfAllocationPolicy.Forbidden,
-        Lines.Where(l => l.Included).Select(l => new AllocationKeyLine(l.Id, Mode == AllocationKeyMode.EqualShares ? 1m : Parse(l.Value))).ToArray(), publish, new(Guid.NewGuid()), "local-user");
+        Lines.Where(l => l.Included).Select(l => new AllocationKeyLine(l.Id, Mode == AllocationKeyMode.EqualShares ? 1m : Parse(l.Value))).ToArray(), publish, new(Guid.NewGuid()), "local-user")
+        { ValidationStudyId = workspace.Resources.Study.Id, ValidationStudyRevision = workspace.Resources.Study.Revision };
     private EntityId previewId = new(Guid.NewGuid());
     private AllocationKeyVersion PreviewKey(bool publish) => AllocationWorkspaceRules.SaveKey(BuildKey(publish), workspace!.Resources.Model, workspace.Resources.Precision,
         workspace.Keys, UtcInstant.ParseIso("2000-01-01T00:00:00Z"), !IsKeyUsed);
-    private string? MissingKeyInput(bool publish) => string.IsNullOrWhiteSpace(Name) ? "NameRequired"
-        : IsDriver && !Unit.HasValue ? "UnitRequired"
-        : publish && !Lines.Any(l => l.Included) ? "DestinationsRequired" : null;
+    private string? MissingKeyInput(bool publish)
+    {
+        if (string.IsNullOrWhiteSpace(Name)) return "NameRequired";
+        if (IsDriver && !Unit.HasValue) return "UnitRequired";
+        if (!publish) return null;
+        if (!Lines.Any(l => l.Included)) return "DestinationsRequired";
+        try
+        {
+            var total = Lines.Where(l => l.Included).Sum(l => Mode == AllocationKeyMode.EqualShares ? 1m : Parse(l.Value));
+            if (IsPercentage && total != 100m) return "PercentageTotalRequired";
+            if (IsDriver && total <= 0m) return "PositiveTotalRequired";
+        }
+        catch (Exception ex) when (ex is ArgumentException or DomainRuleException or OverflowException) { return "CheckNumbers"; }
+        return null;
+    }
     public async Task<bool> SaveKeyAsync(bool publish)
     {
         if (!CanEditKey || workspace is null) return false;
@@ -299,7 +334,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         {
             var command = BuildKey(publish || editingKey?.Status == ModelStatus.Published); var port = company.ActiveAllocations!;
             var receipt = await Task.Run(() => port.SaveAllocationKey(command));
-            workspace = new(workspace.Resources, workspace.Keys.Where(k => k.Id != receipt.After.Id).Append(receipt.After).ToArray(), workspace.Configuration, workspace.ConfigurationRevision, usedKeyIds: workspace.UsedKeyIds);
+            workspace = new(workspace.Resources, workspace.Keys.Where(k => k.Id != receipt.After.Id).Append(receipt.After).ToArray(), workspace.Configuration, workspace.ConfigurationRevision, includeUnroutedAccounts: workspace.IncludeUnroutedAccounts,
+                usedKeyIds: workspace.UsedKeyIds, secondaryPublication: workspace.SecondaryPublication);
             LoadKey(receipt.After); previewId = new(Guid.NewGuid()); Rebuild(); statusKey = publish ? "PublishedSaved" : "DraftSaved";
         });
     }
@@ -343,8 +379,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         if (!Auxiliary.HasValue || !SecondaryKey.HasValue) throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
         var r = new SecondaryRule(editingSecondary ?? new(Guid.NewGuid()), workspace!.Resources.Study.CompanyId, workspace.Resources.Model.Structure.Id,
             Auxiliary.Value, string.IsNullOrWhiteSpace(GroupName) ? "all" : GroupName.Trim(), SecondaryKey.Value, true);
-        return new(c.PrimaryRules, c.SecondaryRules.Where(old => old.Id != r.Id).Append(r).ToArray(), c.ExplicitAssignments, c.AbsoluteAssignments, c.Descriptions);
-    });
+        return c.WithSecondaryRules(c.SecondaryRules.Where(old => old.Id != r.Id).Append(r).ToArray());
+    }, true);
     private Task AssignAsync() => CommitConfig(c => new(c.PrimaryRules, c.SecondaryRules,
         c.ExplicitAssignments.Where(a => a.PartId != Part).Append(new(Part!.Value, PartKey!.Value)).ToArray(), c.AbsoluteAssignments.Where(a => a.PartId != Part).ToArray(), c.Descriptions));
     private Task SaveAbsoluteAsync() => CommitConfig(c =>
@@ -359,11 +395,23 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         if ((!CanEdit && !(allowClosed && CanManagePrimary)) || workspace is null) return false;
         return await Run(async () =>
         {
-            var study = workspace.Resources.Study; var config = change(workspace.Configuration); var port = company.ActiveAllocations!;
+            var study = workspace.Resources.Study;
+            var previous = workspace.Configuration;
+            var config = change(previous);
+            // Legacy primary editor commands rebuild only the original five
+            // fields. Never silently drop an explicit T11 group assignment.
+            if (previous.SecondaryPartRoutingGroups is not null &&
+                config.SecondaryPartRoutingGroups is null)
+                config = new AllocationConfiguration(config.PrimaryRules, config.SecondaryRules,
+                    config.ExplicitAssignments, config.AbsoluteAssignments, config.Descriptions,
+                    config.PrimaryClosed, config.SecondaryClosed, config.SecondaryCalculationHash,
+                    previous.SecondaryPartRoutingGroups);
+            var port = company.ActiveAllocations!;
             var receipt = await Task.Run(() => port.ChangeAllocations(new(study.CompanyId, study.Id, study.Revision, new(Guid.NewGuid()), "local-user", config)));
             // Retain the committed revision even if a dependent refresh fails.
             var r = workspace.Resources;
-            workspace = new(new(receipt.ConfirmedStudy, r.Precision, r.Model, r.Origins, r.Ledger, r.EconomicRevision), workspace.Keys, config, receipt.ConfirmedStudy.Revision, usedKeyIds: workspace.UsedKeyIds.Concat(receipt.ReferencedKeys.Where(k => config.ExplicitAssignments.Any(a => a.KeyVersionId == k.Id) || config.PrimaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id) || config.SecondaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id)).Select(k => k.Id)).Distinct().ToArray());
+            workspace = new(new(receipt.ConfirmedStudy, r.Precision, r.Model, r.Origins, r.Ledger, r.EconomicRevision), workspace.Keys, config, receipt.ConfirmedStudy.Revision, includeUnroutedAccounts: workspace.IncludeUnroutedAccounts,
+                usedKeyIds: workspace.UsedKeyIds.Concat(receipt.ReferencedKeys.Where(k => config.ExplicitAssignments.Any(a => a.KeyVersionId == k.Id) || config.PrimaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id) || config.SecondaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id)).Select(k => k.Id)).Distinct().ToArray(), secondaryPublication: receipt.SecondaryPublication);
             ClearRule(); LoadAbsolute(); Rebuild(); statusKey = "Saved";
             try { await studies.ApplyResourceReceiptAsync(receipt.ConfirmedStudy); }
             catch (Exception ex) when (ex is IOException or CompanyFileException or InvalidOperationException) { statusKey = "SavedRefreshPending"; }
@@ -374,12 +422,15 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     {
         if (!CanManagePrimary || IsDirty || earlierBefore is not null && !await earlierBefore()) return;
         await EnterAsync(true);
+        if (!CanManagePrimary || IsDirty) return;
+        if (!IsPrimaryClosed && !await ConfirmCompositionDefaultsAsync()) return;
+        await EnterAsync(true);
         if (await CommitConfig(c => c.WithPrimaryClosed(!c.PrimaryClosed), true))
         { statusKey = IsPrimaryClosed ? "PrimaryClosedState" : "PrimaryOpenState"; Refresh(); if (AfterPrimaryStateChanged is not null) await AfterPrimaryStateChanged(); }
     }
     private async Task DeleteKeyAsync()
     {
-        if (!CanEdit || IsDirty || SelectedKey is not { } row) return;
+        if ((!CanEdit && !(CanManageSecondary && SelectedKey?.Value.Stage == AllocationStage.Secondary)) || IsDirty || SelectedKey is not { } row) return;
         await Run(async () =>
         {
             var k = row.Value;
@@ -388,7 +439,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
                 new(Guid.NewGuid()), "local-user") { Delete = true };
             await Task.Run(() => company.ActiveAllocations!.SaveAllocationKey(command));
             workspace = new(workspace!.Resources, workspace.Keys.Where(key => key.Id != k.Id).ToArray(),
-                workspace.Configuration, workspace.ConfigurationRevision, usedKeyIds: workspace.UsedKeyIds);
+                workspace.Configuration, workspace.ConfigurationRevision, includeUnroutedAccounts: workspace.IncludeUnroutedAccounts,
+                usedKeyIds: workspace.UsedKeyIds, secondaryPublication: workspace.SecondaryPublication);
             if (editingKey?.Id == k.Id) LoadKey(null);
             Rebuild(); statusKey = "KeyDeleted";
         });
@@ -399,8 +451,9 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         if (!IsDirty) return true;
         var choice = dialogs.ResolvePending(this["PendingTitle"], this["PendingBody"]);
         if (choice == PendingEditChoice.Cancel) return false;
-        if (choice == PendingEditChoice.Discard) { LoadKey(editingKey); ClearRule(); LoadAbsolute(); return true; }
+        if (choice == PendingEditChoice.Discard) { DiscardCompositionChanges(); LoadKey(editingKey); ClearRule(); LoadAbsolute(); return true; }
         if (HasUnappliedRule) { statusKey = "ApplyRuleFirst"; Refresh(); return false; }
+        if (HasCompositionChanges) return await SaveCompositionRowsAsync();
         return await SaveKeyAsync(false);
     }
     private void Rebuild()
@@ -409,7 +462,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         var nextCoverage = new List<AllocationCoverageRow>();
         if (workspace is not null)
         {
-            foreach (var k in workspace.Keys.Where(k => k.Stage == AllocationStage.Primary).OrderBy(k => k.Name, StringComparer.Ordinal).ThenBy(k => k.VersionNumber)) Keys.Add(new(k, KeyLabel(k), this[k.Mode.ToString()], this[k.Stage.ToString()], this[k.Status == ModelStatus.Published ? "AvailableKey" : "IncompleteKey"]));
+            foreach (var k in workspace.Keys.Where(k => workspaceStage is null || k.Stage == workspaceStage).OrderBy(k => k.Stage).ThenBy(k => k.Name, StringComparer.Ordinal).ThenBy(k => k.VersionNumber)) Keys.Add(new(k, KeyLabel(k), this[k.Mode.ToString()], this[k.Stage.ToString()], this[k.Status == ModelStatus.Published ? "AvailableKey" : "IncompleteKey"]));
             foreach (var r in workspace.Configuration.PrimaryRules) PrimaryRules.Add(new(r.Id, r.SelectorKind == AccountSelectorKind.Exact ? Accounts.FirstOrDefault(a => a.Value == r.SelectorValue)?.Label ?? r.SelectorValue : this["Prefix"] + ": " + r.SelectorValue, KeyLabel(workspace.Keys.Single(k => k.Id == r.KeyVersionId)), r.Priority.ToString(Format), this[r.IsActive ? "RuleActive" : "RulePending"]));
             foreach (var r in workspace.Configuration.SecondaryRules) SecondaryRules.Add(new(r.Id, NodeLabel(workspace.Resources.Model.Structure.Nodes.Single(n => n.Id == r.AuxiliaryNodeId)), r.ComponentRoutingGroup == "all" ? this["AllComponents"] : r.ComponentRoutingGroup, KeyLabel(workspace.Keys.Single(k => k.Id == r.KeyVersionId))));
             var partIds = Parts.Select(p => p.Value).ToHashSet();
@@ -424,7 +477,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
                 if (resource?.Parts.Count > 1) source += " · " + this["Part"] + " " + (resource.Parts.ToList().FindIndex(p => p.Id == c.SourceId) + 1).ToString(Format);
                 if (string.IsNullOrWhiteSpace(source)) source = this["ChangedPart"];
                 var status = c.Diagnostic is null ? this["Covered"] : new DomainDiagnosticFormatter(texts).Format(c.Diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message;
-                nextCoverage.Add(new(c.SourceId, source, item is null ? "" : MoneyText(item.Amount), c.KeyId is { } id ? KeyLabel(workspace.Keys.Single(k => k.Id == id)) : c.Diagnostic is null ? this["Absolute"] : "—", status, c.KeyId));
+                nextCoverage.Add(new(c.SourceId, source, item is null ? "" : MoneyText(item.Amount), c.KeyId is { } id ? KeyLabel(workspace.Keys.Single(k => k.Id == id)) : c.Diagnostic is null ? this["Absolute"] : "—", status, c.KeyId) { NumericAmount = item?.Amount.Amount ?? 0m });
             }
         }
         // Keep row identity and collection order so WPF preserves selection, sorting and scroll.
@@ -434,10 +487,12 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         {
             var old = Coverage.FirstOrDefault(r => r.Id == next.Id);
             if (old is null) Coverage.Add(next);
-            else { old.Source = next.Source; old.Amount = next.Amount; old.Key = next.Key; old.Status = next.Status; old.SelectedKeyId = next.SelectedKeyId; }
+            else { old.Source = next.Source; old.Amount = next.Amount; old.NumericAmount = next.NumericAmount; old.Key = next.Key; old.Status = next.Status; old.SelectedKeyId = next.SelectedKeyId; }
         }
+        RebuildComposition();
         RebuildPrimary();
         ResetReciprocal();
+        RebuildSecondary();
         SelectedKey = Keys.FirstOrDefault(k => k.Value.Id == keyId); Refresh();
     }
     private async Task<bool> Run(Func<Task> work)
@@ -483,12 +538,29 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public IRelayCommand DiscardCommand { get; }
     private void Commands()
     {
-        foreach (var command in new IRelayCommand?[] { DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
+        foreach (var command in new IRelayCommand?[] { SaveCompositionRowsCommand, DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
             SaveRuleCommand, RemoveRuleCommand, LoadRuleCommand, NewRuleCommand, SaveSecondaryCommand, LoadSecondaryCommand, NewSecondaryCommand,
-            RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CheckReciprocalCommand }) command?.NotifyCanExecuteChanged();
+            RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CalculateSecondaryCommand, CancelSecondaryCommand, ExplainSecondaryCommand, ToggleSecondaryCommand,
+            SaveSecondaryGroupCommand, ClearObsoleteSecondaryGroupsCommand, AssignSecondaryKeyToMissingCommand,
+            CompositionFixedCommand, CompositionVariableCommand, CompositionReviewedFixedCommand, CompositionMixedCommand, CompositionApplyWeightsCommand,
+            CompositionSelectVisibleCommand, CompositionClearSelectionCommand }) command?.NotifyCanExecuteChanged();
     }
     private void Refresh() { OnPropertyChanged(string.Empty); Commands(); }
-    public void RefreshPresentation(bool value) { pseudo = value; Rebuild(); }
-    private void PreferencesChanged(object? sender, PresentationPreferencesChangedEventArgs e) { if (!IsDirty) { LoadKey(editingKey); LoadAbsolute(); } Rebuild(); }
+    public void RefreshPresentation(bool value) { pseudo = value; RebuildPresentation(); }
+    private void RebuildPresentation()
+    {
+        var selection = SelectedSecondaryResultRow;
+        var preview = secondaryPreview; var calculated = secondaryCalculated;
+        Rebuild();
+        if (preview is not null && calculated && !IsSecondaryClosed)
+        {
+            secondaryPreview = preview; secondaryCalculated = true;
+            PresentSecondaryPreview(preview); Refresh();
+        }
+        if (selection is not null)
+            SelectedSecondaryResultRow = SecondaryResults.FirstOrDefault(r => r.PrimaryNodeId == selection.PrimaryNodeId &&
+                r.TerminalNodeId == selection.TerminalNodeId && r.SourceBehavior == selection.SourceBehavior);
+    }
+    private void PreferencesChanged(object? sender, PresentationPreferencesChangedEventArgs e) { if (!IsDirty) { LoadKey(editingKey); LoadAbsolute(); } RebuildPresentation(); }
     public void Dispose() { preferences.Changed -= PreferencesChanged; company.WorkspaceBusy = earlierBusy; studies.BeforeChangeAsync = earlierBefore; company.AfterChangeAsync = earlierAfter; }
 }

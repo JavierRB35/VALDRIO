@@ -20,6 +20,7 @@ public partial class MainWindow
         if (viewModel is null) return;
         foreach (var source in new INotifyPropertyChanged?[] { viewModel, viewModel.Company, viewModel.Models, viewModel.Studies, viewModel.Resources, viewModel.Allocations })
             if (source is not null) { workflowSources.Add(source); source.PropertyChanged += WorkflowChanged; }
+        if (viewModel.Models is { } models && viewModel.Studies is { } studies) models.AttachStudyNodes(studies);
         UpdateWorkflow();
     }
     private void WorkflowChanged(object? sender, PropertyChangedEventArgs e)
@@ -37,8 +38,8 @@ public partial class MainWindow
         if (viewModel is not { } vm) return;
         if (workflowStep == 4 && lastResourceStage != vm.Resources?.Stage) { lastHelpKey = null; lastResourceStage = vm.Resources?.Stage ?? -1; }
         NavigationGroupLabel.Text = vm.Guide("WorkspaceNavigation");
-        var keys = new[] { "Company", "Model", "Study", "Import", "Resources", "Allocations", "Settings" };
-        Button[] buttons = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, AllocationsStep, SettingsStep];
+        var keys = new[] { "Company", "Model", "Study", "Import", "Resources", "Allocations", "Settings", "SecondaryAllocations" };
+        Button[] buttons = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, AllocationsStep, SettingsStep, SecondaryStep];
         for (var i = 0; i < buttons.Length; i++)
         {
             buttons[i].Content = vm.Guide(keys[i]);
@@ -56,6 +57,7 @@ public partial class MainWindow
         ImportStep.IsEnabled = hasImportDestination;
         ResourcesStep.IsEnabled = hasImports;
         AllocationsStep.IsEnabled = hasImports;
+        SecondaryStep.IsEnabled = hasImports;
         SettingsStep.IsEnabled = true;
 
         ModelStep.ToolTip = hasProject ? null : vm.Guide("NeedProjectShort");
@@ -67,6 +69,7 @@ public partial class MainWindow
         StudyPanel.Visibility = workflowStep == 2 ? Visibility.Visible : Visibility.Collapsed;
         ResourcePanel.Visibility = workflowStep == 4 ? Visibility.Visible : Visibility.Collapsed;
         AllocationPanel.Visibility = workflowStep == 5 ? Visibility.Visible : Visibility.Collapsed;
+        SecondaryPanel.Visibility = workflowStep == 7 ? Visibility.Visible : Visibility.Collapsed;
         DistributionDetails.Visibility = workflowStep == 5 ? Visibility.Visible : Visibility.Collapsed;
         AllocationPanel.IsEnabled = !DistributionDetails.IsExpanded;
         ImportHome.Visibility = workflowStep == 3 ? Visibility.Visible : Visibility.Collapsed;
@@ -78,6 +81,7 @@ public partial class MainWindow
             1 => vm.Models?.NextRequirement ?? vm.Guide("NeedCompany"),
             2 or 3 => vm.Studies?.NextRequirement ?? vm.Guide("NeedCompany"),
             4 => vm.Resources?.Requirement ?? vm.Guide("NeedCompany"),
+            7 => vm.Allocations?.SecondaryDiagnostic ?? vm.Guide("HelpHint"),
             5 => vm.Allocations?.Requirement ?? vm.Guide("NeedCompany"),
             _ => vm.Guide("HelpHint")
         };
@@ -111,10 +115,11 @@ public partial class MainWindow
             2 when vm.Company?.CanWrite == false => "ReadOnlyAction",
             2 => vm.Studies?.HasImportDestination == true ? "ContinueImport" : "SaveAndImport",
             3 => vm.Studies?.HasConfirmedImports == true ? "ContinueResources" : "OpenImport",
+            5 => "ContinueSecondary",
             _ => "Next"
         });
         if (workflowStep == 4 && vm.Resources is { } resources) WorkflowNext.Content = resources.ShowParts ? resources.NextAction : vm.Guide("ContinueAllocations");
-        WorkflowNext.Visibility = workflowStep >= 5 ? Visibility.Collapsed : Visibility.Visible;
+        WorkflowNext.Visibility = workflowStep is 6 or 7 ? Visibility.Collapsed : Visibility.Visible;
         WorkflowNext.IsEnabled = vm.Company?.WorkspaceIdle != false &&
             (workflowStep is not (1 or 2) || vm.Company?.CanWrite == true) &&
             (workflowStep != 4 || vm.Resources?.CanAdvance == true);
@@ -123,26 +128,28 @@ public partial class MainWindow
     internal async Task NavigateWorkflow(int step)
     {
         if (viewModel is not { } vm) return;
-        if (step is > 0 and < 6 && vm.Company?.Snapshot is null) step = 0;
+        if (step is > 0 and not 6 && vm.Company?.Snapshot is null) step = 0;
         if (step == 3 && vm.Studies?.HasImportDestination != true) step = 2;
-        if (step is 4 or 5 && vm.Studies?.Current is null) step = 2;
-        if (step is 4 or 5 && vm.Studies?.HasConfirmedImports != true) step = 3;
+        if (step is 4 or 5 or 7 && vm.Studies?.Current is null) step = 2;
+        if (step is 4 or 5 or 7 && vm.Studies?.HasConfirmedImports != true) step = 3;
         if (vm.Company?.WorkspaceIdle == false) return;
         if (workflowStep == 4 && step != 4 && vm.Resources is { } oldResources && !await oldResources.CanLeaveAsync())
         { ResourcePanel.ActionStatus.BringIntoView(); return; }
-        if (workflowStep == 5 && step != 5 && vm.Allocations is { } oldAllocations && !await oldAllocations.CanLeaveAsync())
+        if ((workflowStep is 5 or 7) && step != workflowStep && vm.Allocations is { } oldAllocations && !await oldAllocations.CanLeaveAsync())
         { AllocationPanel.ActionStatus.BringIntoView(); return; }
-        if (workflowStep == 5 && step != 5 && vm.Resources is { } distribution && !await distribution.CanLeaveAsync())
+        if ((workflowStep is 5 or 7) && step != workflowStep && vm.Resources is { } distribution && !await distribution.CanLeaveAsync())
         { DistributionResourcePanel.ActionStatus.BringIntoView(); return; }
-        if (workflowStep == 5 && step != 5 && vm.Resources is { ShowParts: true } detail)
+        if ((workflowStep is 5 or 7) && step != workflowStep && vm.Resources is { ShowParts: true } detail)
             await detail.CloseDestinationsAsync();
+        if (workflowStep == 1 && step != 1 && vm.Models is { } modelEditor && !await modelEditor.CanLeaveAsync()) return;
         lastHelpKey = null;
         workflowStep = step;
+        if (step == 1 && vm.Models is { } nodes) await nodes.LoadStudyNodesAsync();
         if (step == 2 && vm.Studies?.RefreshCommand.CanExecute(null) == true)
             await vm.Studies.RefreshCommand.ExecuteAsync(null);
         if (step == 4 && vm.Resources is { } resources) await resources.EnterAsync();
-        if (step == 5 && vm.Allocations is { } allocations)
-        { if (vm.Resources is { } source) await source.EnterAsync(); await allocations.EnterAsync(); }
+        if (step is 5 or 7 && vm.Allocations is { } allocations)
+        { if (vm.Resources is { } source) await source.EnterAsync(); await allocations.EnterAsync(); allocations.SecondaryWorkspaceActive = step == 7; }
         UpdateWorkflow(); RootScrollViewer.ScrollToTop();
     }
     private async void ChooseCompany(object sender, RoutedEventArgs e) => await NavigateWorkflow(0);
@@ -151,6 +158,7 @@ public partial class MainWindow
     private async void ChooseImport(object sender, RoutedEventArgs e) => await NavigateWorkflow(3);
     private async void ChooseResources(object sender, RoutedEventArgs e) => await NavigateWorkflow(4);
     private async void ChooseAllocations(object sender, RoutedEventArgs e) => await NavigateWorkflow(5);
+    private async void ChooseSecondary(object sender, RoutedEventArgs e) => await NavigateWorkflow(7);
     private async void ChooseSettings(object sender, RoutedEventArgs e) => await NavigateWorkflow(6);
     private bool changingDistributionDetails;
     private async void OpenDistributionDetails(object sender, RoutedEventArgs e)
@@ -197,7 +205,7 @@ public partial class MainWindow
         if (workflowStep == 1 && ModelPanel.PreviousModelStep()) { UpdateWorkflow(); return; }
         if (workflowStep == 4 && viewModel?.Resources is { ShowParts: true } resources)
         { await resources.CloseDestinationsAsync(); UpdateWorkflow(); RootScrollViewer.ScrollToTop(); return; }
-        await NavigateWorkflow(Math.Max(0, workflowStep - 1));
+        await NavigateWorkflow(workflowStep == 7 ? 5 : Math.Max(0, workflowStep - 1));
     }
     private async void ContinueWorkflow(object sender, RoutedEventArgs e) => await AdvanceWorkflow();
     internal async Task AdvanceWorkflow()
@@ -226,7 +234,7 @@ public partial class MainWindow
             if (company.CreateCommand.CanExecute(null)) await company.CreateCommand.ExecuteAsync(null);
             if (company.Snapshot is not null) await NavigateWorkflow(1);
         }
-        else await NavigateWorkflow(workflowStep + 1);
+        else await NavigateWorkflow(workflowStep == 5 ? 7 : workflowStep + 1);
     }
     internal async Task OpenGuidedImport()
     {
@@ -257,6 +265,7 @@ public partial class MainWindow
         else if (element == ResourcePanel || GuidedUi.Contains(ResourcePanel, element)) workflowStep = 4;
         else if (element == DistributionDetails || GuidedUi.Contains(DistributionDetails, element)) { workflowStep = 5; DistributionDetails.IsExpanded = true; }
         else if (element == AllocationPanel || GuidedUi.Contains(AllocationPanel, element)) workflowStep = 5;
+        else if (element == SecondaryPanel || GuidedUi.Contains(SecondaryPanel, element)) workflowStep = 7;
         else workflowStep = 6;
         UpdateWorkflow(); UpdateLayout();
     }

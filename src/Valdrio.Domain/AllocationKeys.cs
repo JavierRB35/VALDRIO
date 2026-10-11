@@ -56,6 +56,10 @@ public sealed record PrimaryRule(EntityId Id, EntityId CompanyId, EntityId Model
 }
 public sealed record SecondaryRule(EntityId Id, EntityId CompanyId, EntityId ModelVersionId,
     EntityId AuxiliaryNodeId, string ComponentRoutingGroup, EntityId KeyVersionId, bool IsActive);
+// An explicit T11 mapping from a T09 economic origin (resource part) to
+// a secondary routing graph. Absence means the historical 'all' group.
+public sealed record SecondaryPartRoutingGroup(EntityId PartId, string ComponentRoutingGroup);
+
 public sealed record ExplicitPrimaryAssignment(EntityId PartId, EntityId KeyVersionId);
 public sealed record AbsoluteAllocationLine(EntityId DestinationNodeId, Money Amount);
 public sealed class AbsolutePartAllocation

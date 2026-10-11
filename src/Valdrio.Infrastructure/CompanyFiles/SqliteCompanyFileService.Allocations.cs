@@ -5,6 +5,21 @@ namespace Valdrio.Infrastructure.CompanyFiles;
 
 public sealed partial class SqliteCompanyFileService
 {
+    private static PublishedModelStructure KeyValidationModel(AllocationDbContext db, EntityId companyId,
+        SaveAllocationKey request, bool current)
+    {
+        var model = RequiredPublication(db, companyId, request.ModelVersionId);
+        if (request.ValidationStudyId is not { } studyId)
+        {
+            if (request.ValidationStudyRevision is not null) throw AllocationDiagnostics.Error("KEY_SCOPE_INVALID", "Allocation.ScopeInvalid");
+            return model;
+        }
+        var study = Study(RequiredStudy(db, companyId, studyId));
+        if (study.SelectedModelVersionId != request.ModelVersionId || request.ValidationStudyRevision is not { } revision ||
+            revision < 0 || revision > study.Revision || current && revision != study.Revision)
+            throw AllocationDiagnostics.Error("KEY_SCOPE_INVALID", "Allocation.ScopeInvalid");
+        return ResourceWorkspaceRules.ApplyStudyNodes(model, LedgerAt(db, companyId, studyId, revision).NodeEdits);
+    }
     private static AllocationKeyReceipt KeyEvent(AllocationKeyEventRow row)
     {
         var value = CanonicalSnapshotJson.Deserialize<AllocationKeyReceipt>(row.CanonicalJson);
@@ -40,7 +55,8 @@ public sealed partial class SqliteCompanyFileService
         return new(ResourceWorkspace(db, file, study), AllocationKeys(db, file.Id, study.SelectedModelVersionId),
             last?.Request.Configuration ?? AllocationConfiguration.Empty, last?.ConfirmedStudy.Revision ?? -1,
             usedKeyIds: db.AllocationChanges.AsNoTracking().ToArray().Select(AllocationChange)
-                .SelectMany(UsedKeys).Select(k => k.Id).Distinct().ToArray());
+                .SelectMany(UsedKeys).Select(k => k.Id).Distinct().ToArray(),
+            secondaryPublication: last?.SecondaryPublication);
     }
     private static void EnsurePrimaryOpen(AllocationDbContext db, EntityId companyId, EntityId studyId)
     {
@@ -80,7 +96,7 @@ public sealed partial class SqliteCompanyFileService
                     if (Json(receipt.Request) != Json(request)) throw AllocationDiagnostics.Error("KEY_REQUEST_REUSED", "Allocation.RequestReused");
                     return receipt;
                 }
-                var model = RequiredPublication(db, file.Id, request.ModelVersionId);
+                var model = KeyValidationModel(db, file.Id, request, true);
                 var keys = AllocationKeys(db, file.Id, request.ModelVersionId, true);
                 var before = keys.SingleOrDefault(k => k.Id == request.KeyId);
                 if (request.Delete && (db.AllocationChanges.AsNoTracking().ToArray().Select(AllocationChange).Any(c => c.ReferencedKeys.Any(k => k.Id == request.KeyId))
@@ -112,15 +128,46 @@ public sealed partial class SqliteCompanyFileService
                 var row = RequiredStudy(db, file.Id, request.StudyId); var before = Study(row);
                 var current = AllocationWorkspace(db, file, before);
                 var config = request.Configuration;
-                if (current.Configuration.PrimaryClosed && (config.PrimaryClosed || Json(config) != Json(current.Configuration.WithPrimaryClosed(false))))
-                    throw AllocationDiagnostics.Error("PRIMARY_CLOSED", "Allocation.PrimaryClosed");
+                var existing = current.Configuration;
+                if (existing.SecondaryClosed)
+                {
+                    // Reopen secondary first. No simultaneous edit and no implicit reopening primary.
+                    if (Json(config) != Json(existing.WithSecondaryClosed(false)))
+                        throw AllocationDiagnostics.Error("SECONDARY_CLOSED", "Secondary.Closed");
+                }
+                else if (existing.PrimaryClosed)
+                {
+                    if (!config.PrimaryClosed)
+                    {
+                        if (Json(config) != Json(existing.WithPrimaryClosed(false)))
+                            throw AllocationDiagnostics.Error("PRIMARY_CLOSED", "Allocation.PrimaryClosed");
+                    }
+                    else if (Json(new { existing.PrimaryRules, existing.ExplicitAssignments, existing.AbsoluteAssignments,
+                        existing.Descriptions }) != Json(new { config.PrimaryRules, config.ExplicitAssignments,
+                        config.AbsoluteAssignments, config.Descriptions }))
+                        throw AllocationDiagnostics.Error("PRIMARY_CLOSED", "Allocation.PrimaryClosed");
+                }
                 var referenced = AllocationWorkspaceRules.ValidateConfiguration(current.Resources, current.Keys, request);
+                SecondaryCalculationPublication? publication = null;
+                if (config.SecondaryClosed)
+                {
+                    if (!config.PrimaryClosed || existing.SecondaryClosed)
+                        throw AllocationDiagnostics.Error("SECONDARY_CLOSE_INVALID", "Secondary.CloseInvalid");
+                    var proposed = new AllocationWorkspaceSnapshot(current.Resources, current.Keys,
+                        config, current.ConfigurationRevision);
+                    var calculated = Valdrio.Application.SecondaryAllocationService.Calculate(proposed, token);
+                    var expected = Valdrio.Application.SecondaryAllocationService.ResultFingerprint(calculated, config);
+                    if (!StringComparer.Ordinal.Equals(config.SecondaryCalculationHash, expected))
+                        throw AllocationDiagnostics.Error("SECONDARY_RESULT_STALE", "Secondary.ResultStale");
+                    publication = SecondaryAllocationService.Publish(calculated, config, before.Revision);
+                }
                 if (config.PrimaryClosed && (current.Resources.Origins.Count == 0 ||
                     !Valdrio.Application.PrimaryAllocationService.Calculate(new AllocationWorkspaceSnapshot(current.Resources, current.Keys, config, current.ConfigurationRevision)).IsComplete))
                     throw AllocationDiagnostics.Error("PRIMARY_INCOMPLETE", "AllocationUI.PrimaryIncomplete");
                 var after = Changed(before, before.Name, before.PeriodStart, before.PeriodEnd, before.Purpose, before.ScenarioKind,
                     before.SelectedModelVersionId, before.Currency, before.State);
-                var result = new AllocationChangeReceipt(request, before, after, referenced, owner.time.GetUtcNow());
+                var result = new AllocationChangeReceipt(request, before, after, referenced, owner.time.GetUtcNow())
+                { SecondaryPublication = publication };
                 db.AllocationChanges.Add(new() { Id = request.RequestId.ToString(), CompanyId = file.Id.ToString(), StudyId = before.Id.ToString(),
                     ExpectedRevision = before.Revision, ConfirmedRevision = after.Revision, CanonicalJson = Json(result) });
                 FirstWrite(db); Apply(row, after);
@@ -141,7 +188,7 @@ public sealed partial class SqliteCompanyFileService
         {
             keys.TryGetValue(e.After.Id, out var before);
             Invalid((e.Before is null ? "null" : Json(e.Before)) != (before is null ? "null" : Json(before)), "Key history chain differs");
-            var after = AllocationWorkspaceRules.SaveKey(e.Request, RequiredPublication(db, file.Id, e.Request.ModelVersionId),
+            var after = AllocationWorkspaceRules.SaveKey(e.Request, KeyValidationModel(db, file.Id, e.Request, false),
                 file.PrecisionPolicy, keys.Values.ToArray(), e.AtUtc,
                 !changes.Any(c => UsedKeys(c).Any(k => k.Id == e.After.Id && k.Revision <= (before?.Revision ?? -1))));
             Invalid(Json(after) != Json(e.After), "Key history replay differs");
@@ -163,6 +210,21 @@ public sealed partial class SqliteCompanyFileService
                 Invalid(!events.Any(e => e.After.Id == key.Id && e.After.Revision == key.Revision && Json(e.After) == Json(key)), "Referenced key revision missing");
             var referenced = AllocationWorkspaceRules.ValidateConfiguration(resources, change.ReferencedKeys, c);
             Invalid(Json(referenced) != Json(change.ReferencedKeys), "Referenced immutable keys differ");
+            if (c.Configuration.SecondaryClosed)
+            {
+                // Historic posted ledger is an economic receipt, not a cache:
+                // replay it from the exact source revision and published keys.
+                var replayWorkspace = new AllocationWorkspaceSnapshot(resources, change.ReferencedKeys,
+                    c.Configuration, change.PreviousStudy.Revision);
+                var replayResult = SecondaryAllocationService.Calculate(replayWorkspace);
+                var replayPublication = SecondaryAllocationService.Publish(replayResult,
+                    c.Configuration, change.PreviousStudy.Revision);
+                Invalid(change.SecondaryPublication is null ||
+                    Json(replayPublication) != Json(change.SecondaryPublication) ||
+                    !StringComparer.Ordinal.Equals(c.Configuration.SecondaryCalculationHash,
+                        replayPublication.CalculationFingerprint), "Secondary published receipt differs");
+            }
+            else Invalid(change.SecondaryPublication is not null, "Unexpected secondary receipt");
             var matches = audits.Where(a => a.Type == "AllocationChange" && a.Id == c.RequestId.ToString()).ToArray();
             Invalid(matches.Length != 1, "Allocation audit missing"); var a = matches[0];
             Invalid(a.Row.Revision != 0 || a.Request != c.RequestId.ToString() || a.Row.Operation != "ChangeAllocations" ||

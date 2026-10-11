@@ -5,6 +5,24 @@ namespace Valdrio.Application;
 
 public static class ResourceWorkspaceRules
 {
+    public static PublishedModelStructure ApplyStudyNodes(PublishedModelStructure model, StudyNodeEdits? edits)
+    {
+        if (edits is null) return model;
+        var original = model.Structure;
+        // Editing an analysis preserves identities used by keys, resources and historical snapshots.
+        if (!original.Nodes.Select(n => n.Id).Order().SequenceEqual(edits.Nodes.Select(n => n.Id).Order()) ||
+            !original.Pools.Select(p => p.Id).Order().SequenceEqual(edits.Pools.Select(p => p.Id).Order()) ||
+            edits.Pools.Any(p => original.Pools.Single(o => o.Id == p.Id).NodeId != p.NodeId))
+            throw Error("MODEL_STUDY_NODE_IDENTITY", "Model.StudyNodeIdentity");
+        var structure = new ModelStructure(original.Id, original.CompanyId, original.FamilyId,
+            original.VersionNumber, original.ParentVersionId, original.Description, original.PrecisionPolicyVersion,
+            original.MethodPolicy, edits.Nodes, edits.Pools);
+        var diagnostics = ModelRules.ValidateStructure(structure, model.PhysicalCenters,
+            model.DriverUnits.Select(u => new DriverUnitState(u, true, 0)).ToArray());
+        var error = diagnostics.FirstOrDefault();
+        if (error is not null) throw new DomainRuleException(error);
+        return new(structure, model.PhysicalCenters, model.DriverUnits);
+    }
     public static IReadOnlyList<Money> OriginalTotals(ResourceDraft resource, PrecisionPolicy precision) => FrozenList.Copy(
         resource.Sources.GroupBy(s => s.Conversion.OriginalMoney.Currency).OrderBy(g => g.Key.Value, StringComparer.Ordinal)
             .Select(g => new Money(g.Aggregate(0m, (sum, s) => checked(sum + s.Conversion.OriginalMoney.Amount)), g.Key, precision)));
@@ -102,9 +120,19 @@ public static class ResourceWorkspaceRules
         StudyRules.CheckRevision(command.ExpectedRevision, before.Study.Revision, before.Study.Id);
         if (before.Study.State != StudyState.Open) throw StudyRules.Error("STUDY_CLOSED", "Study.ClosedDiagnostic", before.Study.Id);
         var entries = before.Ledger.Entries.ToList(); var objects = before.Ledger.Objects.ToList();
+        var nodeEdits = before.Ledger.NodeEdits;
+        if (command.Kind != ResourceMutationKind.EditStudyNodes && command.NodeEdits is not null)
+            throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
         var currency = before.Study.Currency.FunctionalCurrencyCode;
         switch (command.Kind)
         {
+            case ResourceMutationKind.EditStudyNodes:
+                RequireSimple(command);
+                if (command.NodeEdits is null || command.CostObject is not null)
+                    throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
+                _ = ApplyStudyNodes(before.Model, command.NodeEdits);
+                nodeEdits = command.NodeEdits;
+                break;
             case ResourceMutationKind.EditResource:
                 if (command.ResourceId is not { } id || command.CostObject is not null || command.RateSet is not null ||
                     command.RateChoices.Count != 0 || command.Replacements.Count != 0) throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
@@ -142,13 +170,46 @@ public static class ResourceWorkspaceRules
                 if (command.CostObject is not null) throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
                 entries.Clear(); // Explicit, reasoned operation. The immutable history retains every previous state.
                 break;
+            case ResourceMutationKind.ClassifyBatch:
+                // One auditable, atomic classification-only update over several accounts.
+                // No source, amount, route, direct assignment, FX, layer or capacity ownership may change.
+                if (command.ResourceId is not null || command.CostObject is not null ||
+                    command.Parts.Count != 0 || command.Adjustments.Count != 0 ||
+                    command.RateSet is not null || command.RateChoices.Count != 0 ||
+                    command.Replacements.Count == 0 ||
+                    command.Replacements.Select(r => r.ResourceId).Distinct().Count() != command.Replacements.Count)
+                    throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
+                foreach (var replacement in command.Replacements)
+                {
+                    var source = before.Resources.SingleOrDefault(r => r.Id == replacement.ResourceId)
+                        ?? throw Error("RES_NOT_FOUND", "Resource.NotFound");
+                    if (source.Parts.Count != replacement.Parts.Count ||
+                        replacement.Parts.Select(p => p.Id).Distinct().Count() != replacement.Parts.Count)
+                        throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
+                    foreach (var candidate in replacement.Parts)
+                    {
+                        var original = source.Parts.SingleOrDefault(p => p.Id == candidate.Id)
+                            ?? throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
+                        if (original.Amount != candidate.Amount || original.Routing != candidate.Routing ||
+                            original.PoolId != candidate.PoolId || original.ExclusionReason != candidate.ExclusionReason ||
+                            !original.DirectAssignments.SequenceEqual(candidate.DirectAssignments) ||
+                            original.Classification.Layer != candidate.Classification.Layer ||
+                            original.Classification.CapacityTreatment != candidate.Classification.CapacityTreatment ||
+                            original.Classification.CapacityOwner != candidate.Classification.CapacityOwner)
+                            throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
+                        candidate.Classification.EnsureValid(candidate);
+                    }
+                    entries.RemoveAll(r => r.Id == source.Id);
+                    entries.Add(new ResourceDraft(source.Id, source.Sources, source.Adjustments, replacement.Parts));
+                }
+                break;
             case ResourceMutationKind.Revalue:
                 if (command.ResourceId is not null || command.CostObject is not null || command.Parts.Count != 0 || command.Adjustments.Count != 0 ||
                     command.RateSet is null) throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
                 entries = Revalue(before, command);
                 break;
         }
-        var ledger = new ResourceLedger(entries, objects);
+        var ledger = new ResourceLedger(entries, objects, nodeEdits);
         var result = new ResourceWorkspaceSnapshot(before.Study, before.Precision, before.Model, before.Origins, ledger);
         if (requireBalanced && !result.Preparation.IsValid) throw new DomainRuleException(result.Preparation.Diagnostics[0]);
         return ledger;

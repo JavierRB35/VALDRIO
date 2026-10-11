@@ -639,7 +639,7 @@ Completa: {5}</value></data>
 <data name="Resource.SplitMismatch" xml:space="preserve"><value>Las partes de sustitución deben sumar exactamente el importe de la parte original.</value></data>
 <data name="Resource.PartNotFound" xml:space="preserve"><value>Selecciona una parte existente y única de este recurso.</value></data>
   <data name="Resources.Title" xml:space="preserve"><value>Recursos</value></data>
-  <data name="Resources.Introduction" xml:space="preserve"><value>Revisa los saldos importados y ajusta Correcciones (por ejemplo, amortización técnica o ajustes extracontables). Cada celda confirmada se guarda automáticamente. El importe efectivo se distribuye a los nodos en 6. Claves y reglas.</value></data>
+  <data name="Resources.Introduction" xml:space="preserve"><value>Revisa los saldos importados y ajusta Correcciones (por ejemplo, amortización técnica o ajustes extracontables). Cada celda confirmada se guarda automáticamente. El importe efectivo se distribuye a los nodos en 6. Reparto primario.</value></data>
   <data name="Resources.Ready" xml:space="preserve"><value>Correcciones se guarda al confirmar cada celda. La distribución se configura en Claves y reglas.</value></data>
   <data name="Resources.NeedStudy" xml:space="preserve"><value>Guarda o carga un estudio en el paso 3 para preparar sus recursos.</value></data>
   <data name="Resources.NeedImport" xml:space="preserve"><value>Primero importa y guarda datos contables en el análisis. Al terminar la importación, VALDRIO te traerá directamente aquí.</value></data>
@@ -1038,7 +1038,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Allocation.HistoryInvalid" xml:space="preserve"><value>El historial de repartos no coincide con los datos guardados. Revisa el archivo de proyecto.</value></data>
   <data name="Allocation.NumberInvalid" xml:space="preserve"><value>Escribe un número válido usando el separador decimal indicado en el editor.</value></data>
   <data name="Allocation.InputInvalid" xml:space="preserve"><value>No se ha guardado. Revisa los campos y vuelve a intentarlo; si el archivo no está disponible, ábrelo de nuevo.</value></data>
-  <data name="Guide.Allocations" xml:space="preserve"><value>6. Claves y reglas</value></data>
+  <data name="Guide.Allocations" xml:space="preserve"><value>6. Reparto primario</value></data>
   <data name="Guide.ContinueAllocations" xml:space="preserve"><value>Continuar a claves y reglas</value></data>
   <data name="Guide.Help.AllocationInput" xml:space="preserve"><value>Guarda una clave con sus destinos y asígnala a las cuentas. Guardar regla no reparte; Aplicar regla actualiza el reparto.</value></data>
   <data name="AllocationUI.Ready" xml:space="preserve"><value>Elige una clave o crea una nueva. Guarda sus destinos y asígnala a las cuentas.</value></data>
@@ -1197,10 +1197,10 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Reciprocal.RhsInvalid" xml:space="preserve"><value>Los orígenes de coste no corresponden a los identificadores auxiliares y finales.</value></data>
   <data name="Reciprocal.AmplificationWarning" xml:space="preserve"><value>La elevada circulación interna amplifica los valores por {0}.</value></data>
   <data name="AllocationUI.ReciprocalTitle" xml:space="preserve"><value>Viabilidad de los repartos recíprocos</value></data>
-  <data name="AllocationUI.ReciprocalHelp" xml:space="preserve"><value>Comprueba las rutas secundarias publicadas por grupo. Es una verificación de viabilidad de solo lectura, no un reparto de costes.</value></data>
+  <data name="AllocationUI.ReciprocalHelp" xml:space="preserve"><value>El cálculo comprueba si los costes auxiliares pueden llegar a nodos principales. Su resultado aparece aquí automáticamente.</value></data>
   <data name="AllocationUI.CheckReciprocal" xml:space="preserve"><value>Comprobar viabilidad</value></data>
   <data name="AllocationUI.ReciprocalNeedStudy" xml:space="preserve"><value>Abre un estudio para comprobar las rutas recíprocas.</value></data>
-  <data name="AllocationUI.ReciprocalNotChecked" xml:space="preserve"><value>No se ha comprobado la viabilidad de la configuración guardada actual.</value></data>
+  <data name="AllocationUI.ReciprocalNotChecked" xml:space="preserve"><value>La viabilidad aparecerá al calcular el reparto secundario.</value></data>
   <data name="AllocationUI.ReciprocalNoAuxiliaries" xml:space="preserve"><value>Este modelo no tiene nodos auxiliares activos que comprobar.</value></data>
   <data name="AllocationUI.ReciprocalSummary" xml:space="preserve"><value>Grupos con rutas viables: {0} de {1}.</value></data>
   <data name="AllocationUI.ReciprocalGroup" xml:space="preserve"><value>Grupo de reparto</value></data>
@@ -1209,8 +1209,145 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.ReciprocalViable" xml:space="preserve"><value>Viable</value></data>
   <data name="AllocationUI.ReciprocalBlocked" xml:space="preserve"><value>Bloqueado</value></data>
   <data name="AllocationUI.ReciprocalInvalid" xml:space="preserve"><value>No se pueden comprobar las rutas: datos del grafo o importes numéricos no válidos.</value></data>
-  <data name="AllocationUI.ReciprocalMetrics" xml:space="preserve"><value>Pivote relativo mínimo: {0:0.############################}; circulación máxima: {1:0.############################}.</value></data>
-  <data name="AllocationUI.ReciprocalNoPosting" xml:space="preserve"><value>Solo se comprueban las versiones de reparto guardadas y publicadas. Aquí no se redistribuyen ni publican costes.</value></data>
+  <data name="AllocationUI.ReciprocalMetrics" xml:space="preserve"><value>Detalle técnico — pivote relativo mínimo: {0:0.####}; factor máximo de circulación: {1:0.####}. El factor mide circulación interna, no un aumento del coste final.</value></data>
+  <data name="AllocationUI.ReciprocalNoPosting" xml:space="preserve"><value>Esta información corresponde al cálculo mostrado. Si cambias el reparto, debes volver a calcular.</value></data>
   <data name="Reciprocal.SensitivePivot" xml:space="preserve"><value>El sistema recíproco es inestable cerca del auxiliar {0}; pivote normalizado: {1}.</value></data>
   <data name="Reciprocal.SensitiveAmplification" xml:space="preserve"><value>El sistema recíproco es inestable; amplificación de circulación: {0}.</value></data>
+  <data name="Secondary.PrimaryIncomplete" xml:space="preserve"><value>Completa todas las asignaciones primarias antes de calcular el reparto secundario.</value></data>
+  <data name="Secondary.GroupMappingRequired" xml:space="preserve"><value>Estos grupos secundarios no tienen definida la correspondencia con los componentes de coste primario: {0}. Asigna las claves auxiliares al grupo «all» o define dicha correspondencia antes de calcular.</value></data>
+  <data name="Secondary.SourceInconsistent" xml:space="preserve"><value>El origen {0} mezcla clasificaciones económicas incompatibles en la misma parte de recurso.</value></data>
+  <data name="Secondary.PrimaryNodeInvalid" xml:space="preserve"><value>El reparto primario contiene un nodo de destino desconocido o inactivo: {0}.</value></data>
+  <data name="Secondary.NumericOverflow" xml:space="preserve"><value>El cálculo secundario ha superado el rango decimal admitido. Revisa los importes y la amplificación recíproca.</value></data>
+  <data name="Secondary.CloseInvalid" xml:space="preserve"><value>No se puede cerrar el reparto secundario sin un cálculo reproducible y la fase primaria bloqueada.</value></data>
+  <data name="Secondary.Closed" xml:space="preserve"><value>El reparto secundario está cerrado. Reábrelo antes de cambiar las reglas o el cálculo.</value></data>
+  <data name="Secondary.ResultStale" xml:space="preserve"><value>El resultado secundario ya no coincide con las asignaciones guardadas. Reabre el secundario y vuelve a calcular.</value></data>
+  <data name="AllocationUI.SecondaryTitle" xml:space="preserve"><value>Reparto secundario — nodos principales</value></data>
+  <data name="AllocationUI.SecondaryHelp" xml:space="preserve"><value>Define una clave secundaria publicada para cada auxiliar. Cuando estén todas las asignaciones, calcula y revisa los costes efectivos. Cierra la fase después de comprobar los resultados. La circulación bruta se muestra aparte.</value></data>
+  <data name="AllocationUI.SecondaryRouteHelp" xml:space="preserve"><value>Asigna a cada auxiliar una clave secundaria publicada; sus destinos pueden ser nodos principales u otros auxiliares. El grupo «all» se aplica al cálculo completo.</value></data>
+  <data name="AllocationUI.SecondaryNeedStudy" xml:space="preserve"><value>Selecciona un estudio para calcular los costes secundarios.</value></data>
+  <data name="AllocationUI.SecondaryOpenState" xml:space="preserve"><value>El reparto secundario está abierto para edición.</value></data>
+  <data name="AllocationUI.SecondaryClosedState" xml:space="preserve"><value>El reparto secundario está cerrado; la edición del primario está bloqueada.</value></data>
+  <data name="AllocationUI.SecondaryPrimaryIncomplete" xml:space="preserve"><value>Completa primero el reparto primario.</value></data>
+  <data name="AllocationUI.SecondaryReady" xml:space="preserve"><value>Todas las asignaciones secundarias están definidas. Ya puedes realizar el cálculo.</value></data>
+  <data name="AllocationUI.SecondaryMissingAssignments" xml:space="preserve"><value>Faltan claves secundarias publicadas para estos auxiliares: {0}.</value></data>
+  <data name="AllocationUI.SecondaryTotals" xml:space="preserve"><value>{0} contribuciones · {1} nodos principales · {2}</value></data>
+  <data name="AllocationUI.SecondaryCalculationReady" xml:space="preserve"><value>Cálculo finalizado. Revisa los resultados y cierra el reparto secundario para bloquear el primario.</value></data>
+  <data name="AllocationUI.SecondaryInvalid" xml:space="preserve"><value>No se puede completar el cálculo. Revisa los datos y las reglas de reparto.</value></data>
+  <data name="AllocationUI.SecondaryGross" xml:space="preserve"><value>Circulación bruta de auxiliares (informativa, no se suma al coste final)</value></data>
+  <data name="AllocationUI.CalculateSecondary" xml:space="preserve"><value>Realizar cálculo</value></data>
+  <data name="AllocationUI.CloseSecondary" xml:space="preserve"><value>Cerrar reparto secundario</value></data>
+  <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reabrir reparto secundario</value></data>
+  <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explicar coste seleccionado</value></data>
+  <data name="AllocationUI.Behavior" xml:space="preserve"><value>Comportamiento</value></data>
+  <data name="AllocationUI.SecondaryBehaviorUnclassified" xml:space="preserve"><value>Sin clasificar</value></data>
+  <data name="AllocationUI.SecondaryBehaviorFixed" xml:space="preserve"><value>Fijo</value></data>
+  <data name="AllocationUI.SecondaryBehaviorVariable" xml:space="preserve"><value>Variable</value></data>
+  <data name="AllocationUI.SecondaryBehaviorMixedPending" xml:space="preserve"><value>Mixto — pendiente de clasificación</value></data>
+  <data name="AllocationUI.SecondaryPublishedMissing" xml:space="preserve"><value>El reparto secundario cerrado no tiene un libro de resultados publicado válido. Revisa el historial del estudio antes de utilizar estos totales.</value></data>
+  <data name="Secondary.MissingAssignments" xml:space="preserve"><value>Estos nodos auxiliares no tienen una clave de reparto secundario publicada para el grupo «all»: {0}. Asigna una clave a cada auxiliar indicado.</value></data>
+  <data name="Secondary.PrecisionMismatch" xml:space="preserve"><value>Las políticas de precisión del reparto primario y secundario son distintas. Recalcula el primario con la política vigente del estudio antes de continuar.</value></data>
+  <data name="Secondary.ResourceBridgeInvalid" xml:space="preserve"><value>El recurso {0} no concilia: los costes finales, imputaciones directas, exclusiones y pendientes no suman su importe efectivo. Revisa el reparto primario y la preparación del recurso.</value></data>
+  <data name="AllocationUI.SecondaryBridgeTitle" xml:space="preserve"><value>Conciliación por recurso</value></data>
+  <data name="AllocationUI.SecondaryBridgeHelp" xml:space="preserve"><value>Coste efectivo = imputaciones directas + exclusiones + costes finales + importes pendientes. La diferencia final debe ser cero. La circulación bruta entre auxiliares es solo informativa.</value></data>
+  <data name="AllocationUI.SecondaryBridgeEffective" xml:space="preserve"><value>Coste efectivo</value></data>
+  <data name="AllocationUI.SecondaryBridgeDirect" xml:space="preserve"><value>Directo a objetos</value></data>
+  <data name="AllocationUI.SecondaryBridgeExcluded" xml:space="preserve"><value>Excluido</value></data>
+  <data name="AllocationUI.SecondaryBridgeTerminal" xml:space="preserve"><value>A nodos principales</value></data>
+  <data name="AllocationUI.SecondaryBridgeDifference" xml:space="preserve"><value>Diferencia</value></data>
+  <data name="AllocationUI.SecondarySourceGroupsTitle" xml:space="preserve"><value>Grupo de reparto por origen económico</value></data>
+  <data name="AllocationUI.SecondarySourceGroupsHelp" xml:space="preserve"><value>Una parte de recurso utiliza el grupo «Todos» salvo que le asignes expresamente otro. Para cada grupo utilizado, todos los auxiliares necesitan una clave secundaria publicada. Selecciona «Todos» para quitar una asignación anterior.</value></data>
+  <data name="AllocationUI.SecondarySourcePart" xml:space="preserve"><value>Parte de recurso</value></data>
+  <data name="AllocationUI.SecondarySelectedGroup" xml:space="preserve"><value>Grupo de reparto</value></data>
+  <data name="AllocationUI.SecondaryAssignGroup" xml:space="preserve"><value>Asignar grupo</value></data>
+  <data name="Secondary.GroupSourceInvalid" xml:space="preserve"><value>Las asignaciones de grupos secundarios hacen referencia a partes sin cobertura en el reparto primario: {0}. Elimina las asignaciones obsoletas y vuelve a calcular.</value></data>
+  <data name="Secondary.GraphInconsistent" xml:space="preserve"><value>Los grupos secundarios no coinciden en la estructura de nodos auxiliares y principales. Revisa el modelo seleccionado y las reglas por grupo.</value></data>
+  <data name="AllocationUI.SecondaryObsoleteGroup" xml:space="preserve"><value>Parte obsoleta</value></data>
+  <data name="AllocationUI.SecondaryClearObsoleteGroups" xml:space="preserve"><value>Eliminar asignaciones obsoletas de grupos</value></data>
+  <data name="AllocationUI.SecondaryFillMissing" xml:space="preserve"><value>Aplicar esta clave a los auxiliares sin asignar</value></data>
+  <data name="AllocationUI.SecondaryFillMissingHelp" xml:space="preserve"><value>Utiliza la clave publicada y el grupo seleccionados. Conserva todas las reglas manuales existentes y comprueba cada auxiliar antes de guardar las asignaciones en una sola operación.</value></data>
+  <data name="Secondary.BatchUnitMismatch" xml:space="preserve"><value>No se puede aplicar esta clave por unidades de actividad al auxiliar {0} porque su unidad de actividad es distinta. Selecciona una clave compatible o asigna este auxiliar manualmente.</value></data>
+  <data name="AllocationUI.SecondaryExplainAmounts" xml:space="preserve"><value>Adjudicado: {0}. Bruto: {1}. Ajuste numérico: {2}. Redondeo: {3}.</value></data>
+  <data name="AllocationUI.SecondaryCancel" xml:space="preserve"><value>Cancelar cálculo</value></data>
+  <data name="AllocationUI.SecondaryCalculating" xml:space="preserve"><value>Calculando los costes secundarios. Puedes cancelar la operación; no se guardarán resultados económicos hasta que cierres la fase.</value></data>
+  <data name="AllocationUI.SecondaryCancelled" xml:space="preserve"><value>Cálculo secundario cancelado. Los resultados publicados y las reglas guardadas no se han modificado.</value></data>
+  <data name="AllocationUI.SecondaryResultStale" xml:space="preserve"><value>El estudio ha cambiado durante el cálculo. Se ha descartado el resultado. Revisa las asignaciones y vuelve a calcular.</value></data>
+  <data name="AllocationUI.SecondaryObsoleteMappingsBlock" xml:space="preserve"><value>Existen asignaciones obsoletas entre partes y grupos. Elimínalas o corrígelas antes de calcular los costes secundarios.</value></data>
+  <data name="Model.NodeEditorPublishedHelp" xml:space="preserve"><value>Este modelo está publicado y no se puede editar. Para cambiar el tipo de nodo (Principal/Auxiliar) o la descripción del grupo de costes, crea una versión editable. La versión publicada permanecerá intacta.</value></data>
+  <data name="Model.NodeEditorMissingModelHelp" xml:space="preserve"><value>No hay ningún modelo seleccionado. Primero crea o carga una estructura en preparación en Modelos y vuelve aquí para definir los nodos.</value></data>
+  <data name="Model.NodeClassificationHelp" xml:space="preserve"><value>El nodo define su función principal o auxiliar. La composición fija y variable de las cuentas se configura en el paso 6, Claves y reglas de reparto primario.</value></data>
+  <data name="Resources.AssumedFixed" xml:space="preserve"><value>Fijo por defecto (sin revisar)</value></data>
+  <data name="Resource.BehaviorAssumedFixed" xml:space="preserve"><value>La parte {0} es fija por defecto, no verificada; necesita revisión antes de una absorción definitiva.</value></data>
+  <data name="AllocationUI.CompositionTitle" xml:space="preserve"><value>Composición y comportamiento del coste</value></data>
+  <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Edita el comportamiento en la fila. En Mixto introduce solo el porcentaje variable; el fijo se calcula como 100 menos el variable. Guarda los cambios antes de continuar. Las cuentas divididas se revisan en su detalle.</value></data>
+  <data name="AllocationUI.CompositionSummary" xml:space="preserve"><value>Partes: {0} · Fijas por defecto: {1} · Otras: {2} · Mixtas pendientes: {3}</value></data>
+  <data name="AllocationUI.CompositionSelected" xml:space="preserve"><value>Cuentas seleccionadas: {0}</value></data>
+  <data name="AllocationUI.CompositionAccount" xml:space="preserve"><value>Cuenta y descripción</value></data>
+  <data name="AllocationUI.CompositionAmount" xml:space="preserve"><value>Importe efectivo</value></data>
+  <data name="AllocationUI.CompositionBehavior" xml:space="preserve"><value>Comportamiento</value></data>
+  <data name="AllocationUI.CompositionReview" xml:space="preserve"><value>Estado</value></data>
+  <data name="AllocationUI.CompositionSplit" xml:space="preserve"><value>Varios componentes</value></data>
+  <data name="AllocationUI.CompositionDetail" xml:space="preserve"><value>Editar en detalle</value></data>
+  <data name="AllocationUI.CompositionFixedDefault" xml:space="preserve"><value>Fijo por defecto</value></data>
+  <data name="AllocationUI.CompositionFixedReviewed" xml:space="preserve"><value>Fijo revisado</value></data>
+  <data name="AllocationUI.CompositionVariable" xml:space="preserve"><value>Variable</value></data>
+  <data name="AllocationUI.CompositionMixed" xml:space="preserve"><value>Mixto sin desglosar</value></data>
+  <data name="AllocationUI.CompositionUnreviewed" xml:space="preserve"><value>Hipótesis sin revisar</value></data>
+  <data name="AllocationUI.CompositionReviewed" xml:space="preserve"><value>Clasificación editada</value></data>
+  <data name="AllocationUI.CompositionMarkFixed" xml:space="preserve"><value>Volver a fijo por defecto</value></data>
+  <data name="AllocationUI.CompositionMarkVariable" xml:space="preserve"><value>Marcar variables</value></data>
+  <data name="AllocationUI.CompositionMarkMixed" xml:space="preserve"><value>Marcar mixtas</value></data>
+  <data name="AllocationUI.CompositionVariableHelp" xml:space="preserve"><value>Para marcar costes como fijos revisados o variables, indique una misma unidad y un rango de actividad válido. Se utiliza el periodo del estudio; no se infiere la unidad del nodo.</value></data>
+  <data name="AllocationUI.CompositionUnit" xml:space="preserve"><value>Unidad de actividad</value></data>
+  <data name="AllocationUI.CompositionMinimum" xml:space="preserve"><value>Actividad mínima</value></data>
+  <data name="AllocationUI.CompositionMaximum" xml:space="preserve"><value>Actividad máxima</value></data>
+  <data name="AllocationUI.CompositionCloseHelp" xml:space="preserve"><value>Los cambios quedan guardados. El cierre del reparto primario bloquea la composición y los nodos del análisis; reabrirlo permite corregirlos.</value></data>
+  <data name="AllocationUI.CompositionContextRequired" xml:space="preserve"><value>Indique unidad y rango de actividad válidos antes de marcar fijos revisados o variables.</value></data>
+  <data name="AllocationUI.CompositionSaved" xml:space="preserve"><value>Clasificación guardada. Puede volver a modificar las mismas cuentas.</value></data>
+  <data name="AllocationUI.CompositionUnchanged" xml:space="preserve"><value>Las cuentas ya tienen esta clasificación.</value></data>
+  <data name="AllocationUI.CompositionMixedBlock" xml:space="preserve"><value>Desglose los costes mixtos pendientes antes del cierre.</value></data>
+  <data name="AllocationUI.CompositionEditReason" xml:space="preserve"><value>Clasificación masiva editable de costes</value></data>
+  <data name="AllocationUI.CompositionCloseReason" xml:space="preserve"><value>Confirmación de hipótesis fijas por defecto</value></data>
+  <data name="AllocationUI.CompositionMarkReviewedFixed" xml:space="preserve"><value>Marcar fijo revisado</value></data>
+  <data name="AllocationUI.CompositionSearch" xml:space="preserve"><value>Buscar cuenta, descripción o estado</value></data>
+  <data name="AllocationUI.CompositionOnlyExceptions" xml:space="preserve"><value>Solo clasificadas o mixtas</value></data>
+  <data name="AllocationUI.CompositionSelectVisible" xml:space="preserve"><value>Seleccionar todas las visibles</value></data>
+  <data name="AllocationUI.CompositionClearSelection" xml:space="preserve"><value>Quitar selección</value></data>
+  <data name="AllocationUI.CompositionApplyWeights" xml:space="preserve"><value>Guardar composición</value></data>
+  <data name="AllocationUI.CompositionWeightsSummary" xml:space="preserve"><value>{0} % fijo / {1} % variable</value></data>
+  <data name="Guide.SecondaryAllocations" xml:space="preserve"><value>7. Reparto secundario y cierre</value></data>
+  <data name="AllocationUI.CompositionVariableWeight" xml:space="preserve"><value>Componente variable (%)</value></data>
+  <data name="AllocationUI.CompositionWeightsInvalid" xml:space="preserve"><value>En Mixto, ambos porcentajes deben ser mayores que 0 y sumar 100. Para 100/0 o 0/100 selecciona Fijo o Variable.</value></data>
+  <data name="Resources.EditStudyNodes" xml:space="preserve"><value>Nodos del análisis actualizados</value></data>
+  <data name="Guide.ContinueSecondary" xml:space="preserve"><value>Continuar al reparto secundario</value></data>
+  <data name="Model.StudyNodesSaved" xml:space="preserve"><value>Nodos guardados para este análisis. Puedes modificarlos hasta cerrar el reparto primario.</value></data>
+  <data name="Resources.Mixed" xml:space="preserve"><value>Mixto con porcentajes</value></data>
+  <data name="AllocationUI.CompositionAdvanced" xml:space="preserve"><value>Contexto de actividad y clasificación anterior</value></data>
+  <data name="Model.StudyNodeIdentity" xml:space="preserve"><value>En este análisis puedes editar los nodos existentes. Para añadir o eliminar nodos, crea una nueva versión de la estructura.</value></data>
+  <data name="AllocationUI.CompositionWeightsHelp" xml:space="preserve"><value>Cada cuenta comienza con 100 % fijo. Define 100 % variable o una combinación fija y variable que sume 100 %. Los importes y destinos se conservan.</value></data>
+  <data name="AllocationUI.SecondaryBehaviorMixed" xml:space="preserve"><value>Mixto</value></data>
+  <data name="Resources.ClassifyBatch" xml:space="preserve"><value>Composición de costes actualizada</value></data>
+  <data name="AllocationUI.CompositionFixedWeight" xml:space="preserve"><value>Componente fijo (%)</value></data>
+  <data name="Model.StudyNodesClosedHelp" xml:space="preserve"><value>El reparto primario está cerrado. Reábrelo en el paso 6 para modificar los nodos de este análisis.</value></data>
+  <data name="AllocationUI.PositiveTotalRequired" xml:space="preserve"><value>Introduce pesos positivos en los destinos antes de guardar.</value></data>
+  <data name="AllocationUI.PercentageTotalRequired" xml:space="preserve"><value>Los porcentajes de los destinos deben sumar 100. Completa los valores de la tabla antes de guardar.</value></data>
+  <data name="AllocationUI.SaveCompositionRows" xml:space="preserve"><value>Guardar cambios</value></data>
+  <data name="AllocationUI.PrincipalCostsTitle" xml:space="preserve"><value>Coste final de cada nodo principal</value></data>
+  <data name="AllocationUI.PrincipalPrimary" xml:space="preserve"><value>Del reparto primario</value></data>
+  <data name="AllocationUI.PrincipalAuxiliary" xml:space="preserve"><value>Recibido de auxiliares</value></data>
+  <data name="AllocationUI.PrincipalTotal" xml:space="preserve"><value>Total final</value></data>
+  <data name="AllocationUI.SecondaryContributionsTitle" xml:space="preserve"><value>Aportaciones por nodo de origen</value></data>
+  <data name="AllocationUI.SecondaryContributionsHelp" xml:space="preserve"><value>Selecciona una fila para ver sus cuentas y claves de reparto. Un nodo principal conserva su coste del primario; un auxiliar aporta el coste que llega finalmente a cada principal, incluidas las rutas recíprocas. Son aportaciones netas, no movimientos brutos.</value></data>
+  <data name="AllocationUI.SecondarySourceNode" xml:space="preserve"><value>Nodo de origen</value></data>
+  <data name="AllocationUI.SecondaryPrincipalDestination" xml:space="preserve"><value>Nodo principal destino</value></data>
+  <data name="AllocationUI.SecondaryExplanationTitle" xml:space="preserve"><value>Origen del coste seleccionado</value></data>
+  <data name="AllocationUI.SecondarySelectCost" xml:space="preserve"><value>Selecciona una aportación para ver las cuentas de origen, el porcentaje que llega al destino y el importe adjudicado.</value></data>
+  <data name="AllocationUI.SecondaryExplainAuxiliary" xml:space="preserve"><value>{0} aporta {2} a {1}, con comportamiento {3}. Las cuentas de abajo originaron este coste en el auxiliar durante el primario. El porcentaje efectivo incluye rutas indirectas y recíprocas. Se incluye el ajuste de redondeo del destino para que el detalle cuadre con el coste final.</value></data>
+  <data name="AllocationUI.SecondaryExplainDirect" xml:space="preserve"><value>{1} conserva {2} del reparto primario, con comportamiento {3}. Las cuentas de abajo se asignaron directamente a este nodo principal; esta aportación no pasa por auxiliares.</value></data>
+  <data name="AllocationUI.ExplainPrimaryAmount" xml:space="preserve"><value>Coste en nodo de origen</value></data>
+  <data name="AllocationUI.ExplainEffectiveShare" xml:space="preserve"><value>Porcentaje efectivo %</value></data>
+  <data name="AllocationUI.ExplainKeys" xml:space="preserve"><value>Claves de reparto</value></data>
+  <data name="AllocationUI.ReciprocalViableMeaning" xml:space="preserve"><value>El cálculo ha resuelto las rutas recíprocas: todos los auxiliares tienen salida hacia nodos principales. Revisa los costes adjudicados antes de cerrar.</value></data>
+  <data name="AllocationUI.ExplainContributionAdjustment" xml:space="preserve"><value>Aportación sin ajustar: {0}. Ajuste atribuido a este origen: {1}.</value></data>
+  <data name="AllocationUI.ExplainTerminalDetail" xml:space="preserve"><value>Coste final de esta cuenta en este destino (puede incluir varios nodos de origen):</value></data>
+  <data name="AllocationUI.ReciprocalCalculationFailed" xml:space="preserve"><value>No se ha podido completar el cálculo</value></data>
 </root>
