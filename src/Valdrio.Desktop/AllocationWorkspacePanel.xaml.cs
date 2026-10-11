@@ -59,6 +59,17 @@ public partial class AllocationWorkspacePanel : UserControl
         Set(AbsoluteGrid, "Include", "Destination", "Amount");
         void Set(DataGrid grid, params string[] keys) { for (var i = 0; i < keys.Length; i++) grid.Columns[i].Header = viewModel[keys[i]]; }
     }
+    internal void FocusKeyLibrary()
+    {
+        // Called only on entry into primary/secondary allocation, never after each save.
+        LibrarySection.IsExpanded = true;
+        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+        {
+            if (!KeyGrid.IsVisible || !KeyGrid.IsEnabled) return;
+            KeyGrid.Focus();
+            Keyboard.Focus(KeyGrid);
+        }));
+    }
     private void FocusNewKey(object sender, RoutedEventArgs e)
     {
         // The key editor is shared by primary and secondary pages.
@@ -78,25 +89,56 @@ public partial class AllocationWorkspacePanel : UserControl
             await viewModel.LoadKeyCommand.ExecuteAsync(null);
     }
     internal Task SecondaryAssignmentTask { get; private set; } = Task.CompletedTask;
+
+    // WPF Popups hold focus outside the ComboBox visual tree. SelectionChanged
+    // therefore cannot use IsKeyboardFocusWithin as the sole indication of a
+    // mouse selection. Persist pointer choices when the dropdown closes.
+    private async void SecondaryAssignmentDropDownClosed(object sender, EventArgs e)
+    {
+        if (sender is ComboBox combo) await PersistSecondaryAssignment(combo);
+    }
+
+    // Keyboard arrows can select a value without opening the popup. A dropdown
+    // choice is handled only on DropDownClosed to avoid duplicate commits.
     private async void SecondaryAssignmentChanged(object sender, SelectionChangedEventArgs e)
     {
-        // WPF can fire SelectionChanged while binding or recycling a grid row.
-        // Only respond to an actual user edit, not a model -> view refresh.
-        if (sender is not ComboBox { DataContext: SecondaryNodeAssignmentRow row, SelectedValue: EntityId keyId } box ||
-            viewModel is null || viewModel.IsBusy || !viewModel.CanShowSecondaryEditor ||
-            !box.IsLoaded || (!box.IsKeyboardFocusWithin && !box.IsDropDownOpen) ||
-            row.PersistedKeyId == keyId) return;
+        if (e.OriginalSource is ComboBox combo && combo.IsLoaded &&
+            !combo.IsDropDownOpen && combo.IsKeyboardFocusWithin)
+            await PersistSecondaryAssignment(combo);
+    }
 
-        // Commit first and retain the optimistic value while the asynchronous save runs.
+    private async Task PersistSecondaryAssignment(ComboBox combo)
+    {
+        if (combo.DataContext is not SecondaryNodeAssignmentRow row ||
+            combo.SelectedValue is not EntityId keyId || viewModel is not { } vm ||
+            !combo.IsLoaded || vm.IsBusy || !vm.CanShowSecondaryEditor) return;
+
+        if (row.PersistedKeyId == keyId)
+        {
+            row.AssignmentError = "";
+            return;
+        }
+
         row.SelectedKeyId = keyId;
+        row.AssignmentError = "";
         async Task Save()
         {
-            var saved = await viewModel.AssignSecondaryForNodeAsync(row.NodeId, keyId);
-            if (!saved) row.RestoreCommitted();
+            var saved = await vm.AssignSecondaryForNodeAsync(row.NodeId, keyId);
+            if (saved)
+            {
+                // The persisted configuration has already rebuilt the row.
+                row.AcceptCommitted(keyId);
+            }
+            else
+            {
+                row.RestoreCommitted();
+                row.AssignmentError = vm.SecondaryAssignmentFailure;
+            }
         }
         SecondaryAssignmentTask = Save();
         await SecondaryAssignmentTask;
     }
+
     private async void OpenKeyDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (ItemsControl.ContainerFromElement(KeyGrid, e.OriginalSource as DependencyObject) is DataGridRow && viewModel?.LoadKeyCommand.CanExecute(null) == true)
