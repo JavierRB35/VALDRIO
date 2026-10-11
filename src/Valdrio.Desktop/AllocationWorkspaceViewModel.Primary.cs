@@ -16,9 +16,21 @@ public sealed partial class AllocationWorkspaceViewModel
     public string PrimaryDiagnostic { get; private set; } = "";
 
     private bool primaryComplete;
+    private decimal primaryPostedTotal;
+    private string StudyMoney(decimal amount) => workspace is null ? "" :
+        amount.ToString("0.########", Format) + " " + workspace.Resources.Study.Currency.FunctionalCurrencyCode;
+    public string PrimaryResultsTotal => PrimaryResults.Count == 0 ? "" : StudyMoney(primaryPostedTotal);
+    public string PrimaryNodeTotalsTotal => PrimaryNodeTotals.Count == 0 ? "" :
+        StudyMoney(PrimaryNodeTotals.Sum(row => row.NumericAmount));
+    public string PrimaryCoverageTotal => Coverage.Count == 0 ? "" :
+        StudyMoney(Coverage.Sum(row => row.NumericAmount));
+    public string PrimaryCompositionTotal => workspace?.Resources.Preparation.Coverage is not { Count: > 0 } coverage ? "" :
+        StudyMoney(coverage.Sum(row => row.Effective.Amount));
+
     private void RebuildPrimary()
     {
         primaryComplete = false;
+        primaryPostedTotal = 0m;
         PrimaryResults.Clear();
         PrimaryNodeTotals.Clear();
         if (workspace is null)
@@ -32,6 +44,7 @@ public sealed partial class AllocationWorkspaceViewModel
         {
             var primary = PrimaryAllocationService.Calculate(workspace);
             primaryComplete = workspace.Resources.Origins.Count > 0 && primary.IsComplete;
+            primaryPostedTotal = primary.Facts.Sum(f => f.PostedAmount.Amount);
             var nodeById = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
             var resourceById = workspace.Resources.Origins.ToDictionary(o => o.Id);
             foreach (var fact in primary.Facts)
