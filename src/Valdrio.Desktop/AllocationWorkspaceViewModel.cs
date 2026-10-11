@@ -18,7 +18,13 @@ public sealed partial class AllocationLineEditor(EntityId id, string label, stri
     [ObservableProperty] private bool included = included;
     [ObservableProperty] private string value = value;
 }
-public sealed record AllocationKeyRow(AllocationKeyVersion Value, string Name, string Criterion, string Stage, string State);
+public sealed record AllocationKeyRow(AllocationKeyVersion Value, string Name, string Criterion, string Stage, string State)
+{
+    // A draft may be persisted for later correction but is never eligible for allocation.
+    public bool IsInvalid => Value.Status != ModelStatus.Published ||
+        Value.Mode == AllocationKeyMode.Percentage &&
+        (Value.Lines.Count == 0 || Value.Lines.Sum(line => line.Value) != 100m);
+}
 public sealed record AllocationRuleRow(EntityId Id, string Account, string Key, string Priority, string State);
 public sealed record AllocationSecondaryRow(EntityId Id, string Source, string Group, string Key);
 public sealed partial class AllocationCoverageRow(EntityId id, string source, string amount, string key, string status, EntityId? selectedKeyId) : ObservableObject
@@ -100,7 +106,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         ClearObsoleteSecondaryGroupsCommand = new AsyncRelayCommand(ClearObsoleteSecondaryGroupsAsync, () => CanEditSecondaryConfiguration && !HasUnappliedRule && HasObsoleteSecondaryGroups);
         SaveRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(false), () => CanSaveRule);
         ApplyRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(true), () => CanSaveRule);
-        SaveKeyCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey && MissingKeyInput(true) is null);
+        SaveKeyCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(MissingKeyInput(true) is null), () => CanEditKey && MissingKeyInput(false) is null);
         RemoveRuleCommand = new AsyncRelayCommand(() => CommitConfig(c => new(c.PrimaryRules.Where(r => r.Id != SelectedRule!.Id).ToArray(), c.SecondaryRules, c.ExplicitAssignments, c.AbsoluteAssignments, c.Descriptions)), () => CanEditConfiguration && !HasUnappliedRule && SelectedRule is not null);
         LoadRuleCommand = new RelayCommand(LoadRule, () => CanEdit && SelectedRule is not null && !ruleDirty);
         NewRuleCommand = new RelayCommand(ClearRule, () => CanEditConfiguration && !HasUnappliedRule);
@@ -137,6 +143,10 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public string PrimaryToggleLabel => this[IsPrimaryClosed ? "ReopenPrimary" : "ClosePrimary"];
     private bool CanSaveRule => CanEditConfiguration && RuleKey.HasValue && !string.IsNullOrWhiteSpace(IsExact ? RuleAccount : Prefix);
     public bool CanAssignCoverage => CanEditConfiguration && !HasUnappliedRule && !HasCompositionChanges;
+    // Keep the editor visually stable while an asynchronous save is in flight.
+    // Command guards still reject concurrent writes; phase closure disables editing.
+    public bool CanShowCoverageEditor => company.CanWrite && workspace?.Resources.Study.State == StudyState.Open &&
+        !IsPrimaryClosed && !keyDirty && !HasUnappliedRule && !HasCompositionChanges;
     public bool CanEditConfiguration => CanEdit && !keyDirty && !HasCompositionChanges;
     public bool CanEditKey => (Stage == AllocationStage.Secondary ? CanManageSecondary : CanEdit) && !HasUnappliedRule && !HasCompositionChanges;
     private bool IsKeyUsed => editingKey is not null && workspace?.UsedKeyIds.Contains(editingKey.Id) == true;
@@ -254,7 +264,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private void RefreshEditor()
     {
         foreach (var property in new[] { nameof(IsDirty), nameof(HasUnappliedRule), nameof(KeyState), nameof(CanEditConfiguration),
-            nameof(CanAssignCoverage), nameof(CanEditClassification), nameof(CanEditKey), nameof(CanEditComposition), nameof(CanEditWeights), nameof(IsPercentage), nameof(IsDriver), nameof(IsSecondary),
+            nameof(CanAssignCoverage), nameof(CanShowCoverageEditor), nameof(CanEditClassification), nameof(CanEditKey), nameof(CanEditComposition), nameof(CanEditWeights), nameof(IsPercentage), nameof(IsDriver), nameof(IsSecondary),
             nameof(IsExact), nameof(IsPrefix), nameof(Total), nameof(Validation) }) OnPropertyChanged(property);
         Commands();
     }
