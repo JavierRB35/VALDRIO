@@ -102,6 +102,25 @@ public sealed partial class T06ImportConfirmationTests
             Assert.IsTrue(prepared.CanConfirm, "T13 source is approved, valid and confirmable");
             file.Imports.ConfirmImport(Command(prepared));
             var resources = file.Resources.ReadResources(companyId, studyId);
+            // Exercise fixed, variable and mixed composition with the production
+            // resource mutation API, including revision/persistence transitions.
+            foreach (var composition in caseData.GetProperty("composition").EnumerateObject())
+            {
+                var sourceId = resources.Origins.Single(origin =>
+                    origin.Code == composition.Name).Id;
+                var resource = resources.Resources.Single(item => item.Id == sourceId);
+                var behavior = Enum.Parse<ResourceBehavior>(
+                    Read(composition.Value, "behavior"), false);
+                var variable = composition.Value.GetProperty("variablePercentage").GetDecimal();
+                var parts = resource.Parts.Select(part =>
+                    part.WithClassification(part.Classification with
+                    { Behavior = behavior, VariablePercentage = variable })).ToArray();
+                file.Resources.ChangeResources(Mutation(resources, ResourceMutationKind.ClassifyBatch,
+                    replacements: [new(resource.Id, parts)]));
+                resources = file.Resources.ReadResources(companyId, studyId);
+                Assert.AreEqual(behavior, resources.Resources.Single(item => item.Id == sourceId)
+                    .Parts.Single().Classification.Behavior);
+            }
             var expected = caseData.GetProperty("expected");
             Assert.AreEqual(Number(expected, "importTotal"),
                 resources.Preparation.Coverage.Sum(c => c.Effective.Amount));
@@ -148,6 +167,10 @@ public sealed partial class T06ImportConfirmationTests
                     "Primary allocation mismatch at " + entry.Name);
             Assert.AreEqual(Number(expected, "importTotal"),
                 primary.Facts.Sum(f => f.PostedAmount.Amount));
+            Assert.IsTrue(primary.Facts.Any(f => f.Behavior == ResourceBehavior.Fixed),
+                "T13 scenario must exercise fixed costs");
+            Assert.IsTrue(primary.Facts.Any(f => f.Behavior == ResourceBehavior.Variable),
+                "T13 scenario must exercise variable costs");
 
             file.Allocations.ChangeAllocations(
                 AllocationCommand(live.Resources, configuration.WithPrimaryClosed(true)));
