@@ -973,6 +973,7 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.ContinueStructure" xml:space="preserve"><value>Continue: design structure</value></data>
   <data name="Guide.NeedProjectShort" xml:space="preserve"><value>Open or create a cost project first.</value></data>
   <data name="Guide.NeedAnalysisForImportShort" xml:space="preserve"><value>Save or open a period analysis before importing balances.</value></data>
+  <data name="Guide.NeedPrimaryClosedForSecondary" xml:space="preserve"><value>Close and validate primary allocation before entering secondary allocation.</value></data>
   <data name="Guide.NeedImportForResourcesShort" xml:space="preserve"><value>Save at least one import before preparing accounts.</value></data>
   <data name="Guide.NeedPublishedShort" xml:space="preserve"><value>Finalize a cost structure before creating an analysis.</value></data>
   <data name="Guide.Context" xml:space="preserve"><value>Project: {0}   ·   Structure: {1}   ·   Analysis: {2}</value></data>
