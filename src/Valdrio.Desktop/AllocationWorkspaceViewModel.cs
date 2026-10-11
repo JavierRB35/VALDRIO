@@ -392,6 +392,9 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         var r = new SecondaryRule(editingSecondary ?? new(Guid.NewGuid()), workspace!.Resources.Study.CompanyId, workspace.Resources.Model.Structure.Id,
             Auxiliary.Value, string.IsNullOrWhiteSpace(GroupName) ? "all" : GroupName.Trim(), SecondaryKey.Value, true);
         // Editing or assigning a second key for the same node/group replaces the old route.
+        if (c.SecondaryRules.Any(old => old.IsActive && old.AuxiliaryNodeId == r.AuxiliaryNodeId &&
+                old.ComponentRoutingGroup != r.ComponentRoutingGroup))
+            throw AllocationDiagnostics.Error("KEY_AUXILIARY_MULTIPLE_KEYS", "Allocation.AuxiliaryMultipleKeys", r.AuxiliaryNodeId);
         return c.WithSecondaryRules(c.SecondaryRules.Where(old => old.Id != r.Id &&
             !(old.AuxiliaryNodeId == r.AuxiliaryNodeId &&
               old.ComponentRoutingGroup == r.ComponentRoutingGroup)).Append(r).ToArray());
