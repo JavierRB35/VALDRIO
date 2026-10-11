@@ -61,11 +61,27 @@ public partial class AllocationWorkspacePanel : UserControl
     }
     internal void FocusKeyLibrary()
     {
-        // Called only on entry into primary/secondary allocation, never after each save.
+        // Only when entering a phase. Preserve editor focus during saving/rebuilding.
         LibrarySection.IsExpanded = true;
         Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
         {
             if (!KeyGrid.IsVisible || !KeyGrid.IsEnabled) return;
+
+            if (KeyGrid.Items.Count > 0)
+            {
+                var first = KeyGrid.Items[0];
+                KeyGrid.SelectedItem = first;
+                KeyGrid.CurrentCell = new DataGridCellInfo(first, KeyGrid.Columns[0]);
+                KeyGrid.ScrollIntoView(first);
+                KeyGrid.UpdateLayout();
+                if (KeyGrid.ItemContainerGenerator.ContainerFromItem(first) is DataGridRow row)
+                {
+                    row.Focus();
+                    Keyboard.Focus(row);
+                    return;
+                }
+            }
+
             KeyGrid.Focus();
             Keyboard.Focus(KeyGrid);
         }));
