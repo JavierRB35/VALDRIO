@@ -41,3 +41,16 @@ Las filas de pie son **de solo lectura**, situadas debajo de cada DataGrid, por 
 ## Restricción contable
 
 Los movimientos brutos entre auxiliares no son costes terminales adicionales. La única reconciliación contable válida compara hechos terminales publicados contra la suma final por nodos principales. Las filas de total no escriben hechos, no publican resultados y no modifican el algoritmo de reparto.
+
+## Corrección crítica posterior — 11/10/2026, selección con ratón
+
+**Causa exacta adicional localizada:** el code-behind ya contenía `SecondaryAssignmentDropDownClosed`, pero el ComboBox de `SecondaryNodeAssignmentsGrid` no estaba suscrito al evento `DropDownClosed`. El evento `SelectionChanged` rechazaba intencionadamente las selecciones mientras `IsDropDownOpen == true` (para evitar doble escritura), así que las selecciones habituales con ratón nunca llegaban a ejecutar `PersistSecondaryAssignment`. Cambiar solo el binding a `TwoWay` no resolvía ese defecto.
+
+**Arreglo:** conectado `DropDownClosed` en el ComboBox, mantenido `SelectionChanged` para teclado, explicitados `DisplayMemberPath="Label"` y `SelectedValuePath="Value"`. Si el guardado falla por publicación, fase, autoasignación, unidad o restricciones de reglas, se restaura el último valor confirmado y aparece una explicación roja en esa misma fila. Se añadió el recurso de error en ES/EN.
+
+**Foco al abrir fases:** `MainWindow.NavigateWorkflow` invoca `AllocationWorkspacePanel.FocusKeyLibrary()` al entrar/abrir Primario o Secundario sin cambios pendientes, después de actualizar la visibilidad. Se selecciona y enfoca la primera fila de la biblioteca si existe; si está vacía, se enfoca la tabla. Los guardados no ejecutan este salto de foco.
+
+**Cobertura de regresión añadida:** el smoke WPF de metodología abre el desplegable, selecciona con él abierto, confirma que todavía no se ha guardado, lo cierra y espera el guardado; comprueba selección visible, la regla persistida en SQLite, lectura fresca del workspace y reapertura del proyecto. Además comprueba el foco en la primera fila al abrir cada fase.
+
+**Estado:** revisión estática de XAML, nombres de handlers y claves de localización ES/EN completada sin incidencias. **Pendiente de compilar y ejecutar la prueba de integración WPF en Visual Studio Windows del usuario.** No fusionar ni dar por solucionado en ejecución hasta completar dichas pruebas.
+
