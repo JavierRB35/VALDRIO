@@ -89,11 +89,10 @@ public static class AllocationKeyRules
         var key = RequiredKey(matched[0].KeyVersionId, AllocationStage.Secondary, keys, model);
         if (key.Mode == AllocationKeyMode.DriverUnits && model.Pools.Single(p => p.NodeId == sourceNode).DriverUnitId != key.UnitId)
             throw AllocationDiagnostics.Error("KEY_UNIT_INVALID", "Allocation.UnitInvalid", key.Id);
-        var self = key.Lines.SingleOrDefault(l => l.DestinationNodeId == sourceNode)?.Value ?? 0;
-        if (self > 0 && key.SelfAllocation == SelfAllocationPolicy.Forbidden)
-            throw AllocationDiagnostics.Error("GRAPH_SELF_NOT_ALLOWED", "Allocation.SelfForbidden", sourceNode);
-        if (self > 0 && key.Lines.All(l => l.DestinationNodeId == sourceNode || l.Value == 0))
-            throw AllocationDiagnostics.Error("KEY_SELF_ONLY", "Allocation.SelfOnly", sourceNode);
+        // Secondary self-services are always a valid routing choice, including keys
+        // persisted before this policy change with SelfAllocationPolicy.Forbidden.
+        // Reachability / closed-component checks belong to the reciprocal solver.
+        // A 100% self-loop is rejected later as GRAPH_CLOSED_COMPONENT.
         return key;
     }
 
