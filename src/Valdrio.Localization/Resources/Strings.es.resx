@@ -193,6 +193,7 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.Nodes" xml:space="preserve"><value>Nodos de cálculo</value></data>
   <data name="Model.NodeCode" xml:space="preserve"><value>Código del nodo</value></data>
   <data name="Model.NodeDescription" xml:space="preserve"><value>Descripción del nodo</value></data>
+  <data name="ImportMapping.AdvancedOptions" xml:space="preserve"><value>Opciones avanzadas: divisas, sustitución y comparaciones</value></data>
   <data name="Model.Physical" xml:space="preserve"><value>Centro físico</value></data>
   <data name="Model.Role" xml:space="preserve"><value>Tipo de nodo</value></data>
   <data name="Model.FunctionTags" xml:space="preserve"><value>Funciones (opcional)</value></data>
@@ -510,7 +511,7 @@ Completa: {5}</value></data>
   <data name="Guide.ImportColumns" xml:space="preserve"><value>2. Indicar columnas</value></data>
   <data name="Guide.ImportRecords" xml:space="preserve"><value>3. Elegir registros</value></data>
   <data name="Guide.ImportMeaning" xml:space="preserve"><value>4. Explicar los importes</value></data>
-  <data name="Guide.ImportReview" xml:space="preserve"><value>5. Revisar y guardar</value></data>
+  <data name="Guide.ImportReview" xml:space="preserve"><value>4. Revisar y finalizar</value></data>
   <data name="Guide.ReadNext" xml:space="preserve"><value>Continuar con este archivo</value></data>
   <data name="Guide.ValidateNext" xml:space="preserve"><value>Comprobar y continuar</value></data>
   <data name="Guide.ReviewNext" xml:space="preserve"><value>Revisar importación</value></data>
