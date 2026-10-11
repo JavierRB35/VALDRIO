@@ -54,3 +54,15 @@ Los movimientos brutos entre auxiliares no son costes terminales adicionales. La
 
 **Estado:** revisión estática de XAML, nombres de handlers y claves de localización ES/EN completada sin incidencias. **Pendiente de compilar y ejecutar la prueba de integración WPF en Visual Studio Windows del usuario.** No fusionar ni dar por solucionado en ejecución hasta completar dichas pruebas.
 
+
+## Política posterior — autoasignación siempre permitida (2026-10-11)
+
+Tras la prueba visual el propietario confirma que **todas las autoprestaciones deben estar permitidas**. Esto sustituye la propuesta anterior de exigir autorización de autoasignación por versión.
+
+Se ha eliminado el veto `GRAPH_SELF_NOT_ALLOWED` de `AllocationKeyRules.ResolveSecondary` y el bloqueo anticipado `KEY_SELF_ONLY`; el grafo secundario pasa siempre `AllowSelf=true` al solver, incluso con claves previamente guardadas como `SelfAllocationPolicy.Forbidden`. Las claves secundarias nuevas serializan `SelfAllocationPolicy.Allowed` automáticamente. Se retira del editor la casilla adicional de permiso.
+
+**No se elimina la comprobación matemática:** claves cuyo coste nunca puede salir hacia nodos principales provocan `GRAPH_CLOSED_COMPONENT` durante la factorización. Las claves con salida parcial y autoasignación deben poder asignarse y resolverse. No se cambian ni fuerzan los datos históricos, ni se altera el contrato de entradas `ReciprocalInput` directamente invocadas con `AllowSelf=false`.
+
+Cobertura de regresión: `T10PublishedRoutingIntegrationTests` usa una clave histórica `Forbidden` con autoasignación parcial y verifica conservación y un circuito cerrado; `T11MethodologyTests` prueba reconstitución de costes con clave `Forbidden`; el smoke WPF crea y aplica una clave secundaria con autoasignación y comprueba que las nuevas se guardan como `Allowed`.
+
+Pendiente: compilación/pruebas .NET Windows en Visual Studio y reproducción con el archivo real del usuario. GitHub Actions no se ha ejecutado ni solicitado.
