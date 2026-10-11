@@ -48,6 +48,7 @@
       <StackPanel Margin="0,0,8,0" IsEnabled="{Binding CanEditKey}"><TextBlock Text="{Binding [Name]}"/><TextBox x:Name="KeyNameBox" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Name]}">
         <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}">
          <Style.Triggers><DataTrigger Binding="{Binding KeyNameMissing}" Value="True">
+          <Setter Property="Tag" Value="error"/>
           <Setter Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
           <Setter Property="BorderBrush" Value="{DynamicResource Brand.Red}"/>
          </DataTrigger></Style.Triggers>
