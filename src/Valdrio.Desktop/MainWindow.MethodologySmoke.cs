@@ -99,6 +99,24 @@ public partial class MainWindow
         vm.Lines.Single(l => l.Id == principal.Node.Id).Value = "100";
         await Click(secondary.SaveKeyButton);
         var key = vm.Keys.Single().Value;
+        // Regression: selecting a published secondary key directly in the table must
+        // persist and remain selected after the asynchronous model refresh.
+        var firstAuxiliary = vm.SecondaryNodeAssignments.First();
+        secondary.SecondaryNodeAssignmentsGrid.ScrollIntoView(firstAuxiliary);
+        await Idle();
+        var assignmentRow = secondary.SecondaryNodeAssignmentsGrid.ItemContainerGenerator.ContainerFromItem(firstAuxiliary) as DataGridRow
+            ?? throw new InvalidOperationException("Auxiliary assignment row is not visible");
+        var assignmentCombo = Descendants<ComboBox>(assignmentRow).Single();
+        assignmentCombo.Focus();
+        System.Windows.Input.Keyboard.Focus(assignmentCombo);
+        assignmentCombo.SetCurrentValue(ComboBox.SelectedValueProperty, key.Id);
+        await secondary.SecondaryAssignmentTask; await Idle();
+        Check(firstAuxiliary.SelectedKeyId == key.Id && firstAuxiliary.PersistedKeyId == key.Id,
+            "direct secondary table assignment remains selected after save");
+        Check(company.ActiveAllocations!.ReadAllocations(studies.Current!.CompanyId, studies.Current.Id)
+            .Configuration.SecondaryRules.Any(rule => rule.IsActive && rule.AuxiliaryNodeId == firstAuxiliary.NodeId &&
+                rule.KeyVersionId == key.Id),
+            "direct secondary table assignment is persisted in the company file");
         foreach (var auxiliary in vm.Auxiliaries.ToArray())
         {
             vm.Auxiliary = auxiliary.Value; vm.SecondaryKey = key.Id;
@@ -106,6 +124,10 @@ public partial class MainWindow
         }
         await Click(secondary.CalculateSecondaryButton);
         Check(vm.SecondaryResults.Count == 2, "secondary preserves both fixed and variable components");
+        Check(vm.SecondaryResults.Sum(row => row.PostedAmount) ==
+            vm.PrincipalCosts.Sum(row => row.TotalAmount), "secondary contribution footer reconciles with final principal costs");
+        Check(vm.PrincipalCosts.All(row => row.PrimaryAmount + row.AuxiliaryAmount == row.TotalAmount),
+            "terminal totals keep primary and auxiliary components distinct");
         vm.SelectedSecondaryResultRow = vm.SecondaryResults.First();
         await Idle();
         Check(!string.IsNullOrWhiteSpace(vm.SecondaryExplanation), "component explanation selects the matching fact");
