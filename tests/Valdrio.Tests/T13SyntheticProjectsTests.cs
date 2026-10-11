@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 using Valdrio.Application;
 using Valdrio.Domain;
+using Valdrio.Infrastructure;
 
 namespace Valdrio.Tests;
 
