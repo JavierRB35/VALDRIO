@@ -6,7 +6,7 @@ using Valdrio.Application;
 
 namespace Valdrio.Desktop;
 
-public sealed record ImportSelectionGroup(string Code, IReadOnlyList<int> Records, decimal Amount, string Description);
+public sealed record ImportSelectionGroup(string Code, IReadOnlyList<int> Records, decimal Amount, string Description = "");
 public sealed record ImportSelectionTotals(int SelectedRows, int ExcludedRows, int Groups,
     decimal Positive, decimal Negative, decimal Net, decimal ExcludedNet);
 
