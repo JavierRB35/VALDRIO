@@ -145,6 +145,7 @@ public partial class MainWindow
         if ((workflowStep is 5 or 7) && step != workflowStep && vm.Resources is { ShowParts: true } detail)
             await detail.CloseDestinationsAsync();
         if (workflowStep == 1 && step != 1 && vm.Models is { } modelEditor && !await modelEditor.CanLeaveAsync()) return;
+        var enteringAllocation = step is 5 or 7 && workflowStep != step;
         lastHelpKey = null;
         workflowStep = step;
         if (step == 1 && vm.Models is { } nodes) await nodes.LoadStudyNodesAsync();
@@ -154,6 +155,11 @@ public partial class MainWindow
         if (step is 5 or 7 && vm.Allocations is { } allocations)
         { if (vm.Resources is { } source) await source.EnterAsync(); await allocations.EnterAsync(); allocations.SecondaryWorkspaceActive = step == 7; }
         UpdateWorkflow(); RootScrollViewer.ScrollToTop();
+        if (enteringAllocation)
+        {
+            if (step == 5) AllocationPanel.FocusKeyLibrary();
+            else SecondaryPanel.Workspace.FocusKeyLibrary();
+        }
     }
     private async void ChooseCompany(object sender, RoutedEventArgs e) => await NavigateWorkflow(0);
     private async void ChooseModel(object sender, RoutedEventArgs e) => await NavigateWorkflow(1);
