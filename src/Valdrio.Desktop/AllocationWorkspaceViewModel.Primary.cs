@@ -5,11 +5,13 @@ using Valdrio.Domain;
 namespace Valdrio.Desktop;
 
 public sealed record PrimaryAllocationRow(string Source, string Destination, string Amount, string AppliedRule, string Behavior);
+public sealed record PrimaryNodeTotalRow(string Center, string Node, string Amount, decimal NumericAmount);
 
 // The preview belongs to the T08 workspace: never invent a second, editable set of rules.
 public sealed partial class AllocationWorkspaceViewModel
 {
     public ObservableCollection<PrimaryAllocationRow> PrimaryResults { get; } = [];
+    public ObservableCollection<PrimaryNodeTotalRow> PrimaryNodeTotals { get; } = [];
     public string PrimarySummary { get; private set; } = "";
     public string PrimaryDiagnostic { get; private set; } = "";
 
@@ -18,6 +20,7 @@ public sealed partial class AllocationWorkspaceViewModel
     {
         primaryComplete = false;
         PrimaryResults.Clear();
+        PrimaryNodeTotals.Clear();
         if (workspace is null)
         {
             PrimarySummary = "";
@@ -47,6 +50,18 @@ public sealed partial class AllocationWorkspaceViewModel
                     rule += ": " + KeyLabel(applied);
                 }
                 PrimaryResults.Add(new(source, destination, MoneyText(fact.PostedAmount), rule, this["SecondaryBehavior" + fact.Behavior]));
+            }
+            // Group published primary facts by node, not by account, without changing the ledger.
+            var centers = workspace.Resources.Model.PhysicalCenters.ToDictionary(center => center.Id);
+            foreach (var group in primary.Facts.GroupBy(fact => fact.NodeId)
+                .OrderBy(group => centers[nodeById[group.Key].PhysicalCenterId].Code, StringComparer.Ordinal)
+                .ThenBy(group => nodeById[group.Key].Code, StringComparer.Ordinal))
+            {
+                var node = nodeById[group.Key];
+                var center = centers[node.PhysicalCenterId];
+                var total = group.Sum(fact => fact.PostedAmount.Amount);
+                PrimaryNodeTotals.Add(new(center.Code + " · " + center.Name, node.Code,
+                    total.ToString("0.########", Format) + " " + primary.Currency, total));
             }
             PrimarySummary = string.Format(Format, this["PrimarySummary"], primary.Facts.Count,
                 primary.Gaps.Count, primary.Pools.Count, primary.Currency);
