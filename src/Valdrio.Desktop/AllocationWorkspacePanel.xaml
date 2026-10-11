@@ -340,6 +340,7 @@
       </StackPanel>
      </Expander>
      <Expander Header="{Binding [SecondaryGross]}" Margin="0,8,0,0">
+      <StackPanel>
       <DataGrid x:Name="SecondaryCirculationGrid" ItemsSource="{Binding SecondaryCirculation}" IsReadOnly="True" AutoGenerateColumns="False" Height="135">
        <DataGrid.Columns>
         <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Group}" Width="2*"/>
@@ -349,6 +350,7 @@
 <Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [GrossDiagnosticTotal]}" Margin="9,8" FontWeight="SemiBold"/>
 <TextBlock Grid.Column="1" Text="{Binding SecondaryGrossTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
 
+      </StackPanel>
      </Expander>
     </StackPanel>
    </Expander>
