@@ -90,6 +90,19 @@ public sealed partial class AllocationWorkspaceViewModel
         SecondaryGroupChoices.Any(g => g.Value == SecondaryGroupName);
 
     public ObservableCollection<ReciprocalCheckRow> SecondaryCirculation { get; } = [];
+    private decimal secondaryGrossTotal;
+    public string PrincipalCostsPrimaryTotal => PrincipalCosts.Count == 0 ? "" :
+        StudyMoney(PrincipalCosts.Sum(row => row.PrimaryAmount));
+    public string PrincipalCostsAuxiliaryTotal => PrincipalCosts.Count == 0 ? "" :
+        StudyMoney(PrincipalCosts.Sum(row => row.AuxiliaryAmount));
+    public string PrincipalCostsFinalTotal => PrincipalCosts.Count == 0 ? "" :
+        StudyMoney(PrincipalCosts.Sum(row => row.TotalAmount));
+    public string SecondaryResultsTotal => SecondaryResults.Count == 0 ? "" :
+        StudyMoney(SecondaryResults.Sum(row => row.PostedAmount));
+    public string SecondaryExplanationTotal => SecondaryExplanationDetails.Count == 0 ||
+        SelectedSecondaryResultRow is null ? "" : StudyMoney(SelectedSecondaryResultRow.PostedAmount);
+    // The gross internal circulation is diagnostic only, never added to terminal costs.
+    public string SecondaryGrossTotal => SecondaryCirculation.Count == 0 ? "" : StudyMoney(secondaryGrossTotal);
     public string SecondarySummary { get; private set; } = "";
     public string SecondaryDiagnostic { get; private set; } = "";
     public string SecondaryExplanation { get; private set; } = "";
@@ -239,6 +252,7 @@ public sealed partial class AllocationWorkspaceViewModel
         SecondaryGroupAssignments.Clear();
         // Preserve rows and ComboBox focus while saving; only update their selected keys.
         SecondaryCirculation.Clear();
+        secondaryGrossTotal = 0m;
         SelectedSecondaryResultRow = null;
         SecondaryExplanation = this["SecondarySelectCost"];
         if (workspace is null)
@@ -305,6 +319,7 @@ public sealed partial class AllocationWorkspaceViewModel
         PopulateSecondaryResults(published.Facts, published.ExplanationLinks);
         PresentReciprocal(published.GroupCirculations);
         PopulateSecondaryBridges(published.ResourceBridges);
+        secondaryGrossTotal = published.AuxiliaryGrossFlows.Sum(flow => flow.GrossAmount);
         foreach (var flow in published.AuxiliaryGrossFlows)
         {
             var name = nodes.Values.FirstOrDefault(n => n.Id.ToString() == flow.AuxiliaryId);
@@ -323,6 +338,7 @@ public sealed partial class AllocationWorkspaceViewModel
             PopulateSecondaryResults(result.Facts, result.ExplanationLinks);
             PresentReciprocal(result.GroupCirculations);
             PopulateSecondaryBridges(result.ResourceBridges);
+            secondaryGrossTotal = result.Circulation.Gross.Sum();
             for (var i = 0; i < result.Circulation.AuxiliaryIds.Count; i++)
             {
                 var id = result.Circulation.AuxiliaryIds[i];
@@ -350,6 +366,7 @@ public sealed partial class AllocationWorkspaceViewModel
         SecondaryExplanationDetails.Clear();
         SecondaryBridges.Clear();
         SecondaryCirculation.Clear();
+        secondaryGrossTotal = 0m;
         SelectedSecondaryResultRow = null;
         SecondaryExplanation = this["SecondarySelectCost"];
         SecondarySummary = "";
@@ -453,6 +470,7 @@ public sealed partial class AllocationWorkspaceViewModel
         {
             SecondaryExplanation = this["SecondarySelectCost"];
             OnPropertyChanged(nameof(SecondaryExplanation));
+            OnPropertyChanged(nameof(SecondaryExplanationTotal));
             return;
         }
         var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
