@@ -156,9 +156,17 @@
        <DataGrid.Columns>
         <DataGridTextColumn Binding="{Binding Source}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
         <DataGridTemplateColumn Width="2*"><DataGridTemplateColumn.CellTemplate><DataTemplate>
-         <ComboBox ItemsSource="{Binding DataContext.PublishedSecondary, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-           SelectedValue="{Binding SelectedKeyId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding DataContext.CanShowSecondaryEditor, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-           SelectionChanged="SecondaryAssignmentChanged" AutomationProperties.Name="{Binding Source}"/>
+         <StackPanel>
+          <ComboBox ItemsSource="{Binding DataContext.PublishedSecondary, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+           DisplayMemberPath="Label" SelectedValuePath="Value"
+           SelectedValue="{Binding SelectedKeyId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+           IsEnabled="{Binding DataContext.CanShowSecondaryEditor, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+           SelectionChanged="SecondaryAssignmentChanged" DropDownClosed="SecondaryAssignmentDropDownClosed"
+           AutomationProperties.Name="{Binding Source}" ToolTip="{Binding AssignmentError}"/>
+          <TextBlock Text="{Binding AssignmentError}" Foreground="{DynamicResource Brand.Red}"
+           Visibility="{Binding HasAssignmentError, Converter={StaticResource Visible}}"
+           TextWrapping="Wrap" Margin="6,3,3,4" AutomationProperties.LiveSetting="Polite"/>
+         </StackPanel>
         </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
        </DataGrid.Columns>
       </DataGrid>
