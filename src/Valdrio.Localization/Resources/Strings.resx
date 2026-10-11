@@ -1029,6 +1029,7 @@ Difference to distribute: {7}</value></data>
   <data name="Allocation.ParentInvalid" xml:space="preserve"><value>Choose a published version of this key as the starting point.</value></data>
   <data name="Allocation.RuleInvalid" xml:space="preserve"><value>Complete the account or prefix and select a key. Review rules matching the same account.</value></data>
   <data name="Allocation.RuleMissing" xml:space="preserve"><value>Select a key on the account or apply a rule that includes it.</value></data>
+  <data name="Allocation.AuxiliaryMultipleKeys" xml:space="preserve"><value>This auxiliary already has an allocation key in another group. Only one active key is allowed per auxiliary; review or remove the previous assignment.</value></data>
   <data name="Allocation.RuleAmbiguous" xml:space="preserve"><value>Rules compete for the same accounts. Edit and apply the rule to use or remove the unwanted one.</value></data>
   <data name="Allocation.PublicationRequired" xml:space="preserve"><value>Choose a complete saved key from this model for the corresponding allocation.</value></data>
   <data name="Allocation.AuxiliaryInvalid" xml:space="preserve"><value>The secondary allocation source must be an active auxiliary node in the model.</value></data>
