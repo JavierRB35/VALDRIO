@@ -21,7 +21,16 @@ public sealed class SecondaryNodeAssignmentRow(EntityId nodeId, string source, E
     private EntityId? selected = selectedKeyId;
     public EntityId NodeId { get; } = nodeId;
     public string Source { get; } = source;
+    // Keep the committed selection separate from the ComboBox's editable value.
+    // On a failed save the control returns to the last persisted key, never a blank.
+    public EntityId? PersistedKeyId { get; private set; } = selectedKeyId;
     public EntityId? SelectedKeyId { get => selected; set => SetProperty(ref selected, value); }
+    public void AcceptCommitted(EntityId? keyId)
+    {
+        PersistedKeyId = keyId;
+        SelectedKeyId = keyId;
+    }
+    public void RestoreCommitted() => SelectedKeyId = PersistedKeyId;
 }
 
 public sealed record SecondaryBridgeRow(
@@ -140,12 +149,12 @@ public sealed partial class AllocationWorkspaceViewModel
     // manual rules and validates every proposed route before a single save.
     // One effective key per auxiliary in the default routing group. Existing explicit
     // component groups remain intact for backwards compatibility.
-    public Task AssignSecondaryForNodeAsync(EntityId auxiliaryId, EntityId keyId)
+    public Task<bool> AssignSecondaryForNodeAsync(EntityId auxiliaryId, EntityId keyId)
     {
         if (!CanManageSecondary || workspace is null ||
             !workspace.Resources.Model.Structure.Nodes.Any(n => n.Id == auxiliaryId && n.IsActive && n.Role == NodeRole.Auxiliary) ||
-            !workspace.Keys.Any(k => k.Id == keyId && k.Status == ModelStatus.Published && k.Stage == AllocationStage.Secondary))
-            return Task.CompletedTask;
+            !workspace.Keys.Any(k => k.Id == keyId && k.Status == ModelStatus.Published && k.Stage == AllocationStage.Secondary) || IsDirty)
+            return Task.FromResult(false);
         return CommitConfig(configuration =>
         {
             var model = workspace.Resources.Model.Structure;
@@ -247,7 +256,7 @@ public sealed partial class AllocationWorkspaceViewModel
                 rule.IsActive && rule.AuxiliaryNodeId == node.Id && rule.ComponentRoutingGroup == "all");
             var oldRow = SecondaryNodeAssignments.FirstOrDefault(row => row.NodeId == node.Id);
             if (oldRow is null) SecondaryNodeAssignments.Add(new(node.Id, NodeLabel(node), route?.KeyVersionId));
-            else oldRow.SelectedKeyId = route?.KeyVersionId;
+            else oldRow.AcceptCommitted(route?.KeyVersionId);
         }
         var currentNodeIds = workspace.Resources.Model.Structure.Nodes
             .Where(node => node.IsActive && node.Role == NodeRole.Auxiliary).Select(node => node.Id).ToHashSet();
