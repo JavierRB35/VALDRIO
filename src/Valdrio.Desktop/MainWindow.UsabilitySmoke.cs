@@ -138,11 +138,13 @@ public partial class MainWindow
         Audit(vm.AccountChoices.SequenceEqual(selectedRows) && vm.SelectionTotals?.SelectedRows == 2,
             "explicit validation of unchanged columns preserves the selection");
         selectedRows[0].RateId = "";
-        await wizard.AdvanceImport();
-        Check(wizard.ImportSteps.SelectedIndex == 3 && vm.SelectionGroups.Single().Amount == 358.35m, "all except one retains grouping by code independent of descriptions");
+        Check(vm.SelectionGroups.Single().Amount == 358.35m,
+            "all except one retains grouping by code independent of descriptions");
         vm.SourceCurrency = "EUR"; vm.AmountMeaningSelection = "closing-full";
         vm.ApprovalReference = ""; vm.InterpretationApproved = false;
         Audit(wizard.NumberFormatPanel.IsExpanded, "manual decimal and thousands separators are visible by default");
+        wizard.ImportSteps.SelectedIndex = 0;
+        wizard.ImportAdvancedOptions.IsExpanded = true;
         wizard.Activate(); wizard.UpdateLayout(); wizard.SourceCurrencyBox.BringIntoView();
         await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         System.Windows.Input.Keyboard.Focus(wizard.SourceCurrencyBox);
@@ -156,11 +158,12 @@ public partial class MainWindow
             busyLocked |= !wizard.ImportSteps.IsEnabled && !wizard.SourceCurrencyBox.IsEnabled;
         }
         vm.PropertyChanged += ObserveBusy;
+        wizard.ImportSteps.SelectedIndex = 2;
         await wizard.AdvanceImport();
         vm.PropertyChanged -= ObserveBusy;
         Audit(busyLocked && wizard.ImportSteps.IsEnabled, "source and meaning fields are locked during preparation and enabled afterwards");
-        Check(wizard.ImportSteps.SelectedIndex == 4 && vm.HasConfirmableReview && vm.Preparation?.CanConfirm == false && vm.ConfirmedImport is null, "review is accessible without earlier-step approval or example");
-        Audit(GuidedUi.Contains(wizard.ImportTab4, wizard.ApproveInterpretationBox) && !wizard.ConfirmImportButton.IsEnabled,
+        Check(wizard.ImportSteps.SelectedIndex == 3 && vm.HasConfirmableReview && vm.Preparation?.CanConfirm == false && vm.ConfirmedImport is null, "review is accessible without earlier-step approval or example");
+        Audit(GuidedUi.Contains(wizard.ImportTab3, wizard.ApproveInterpretationBox) && !wizard.ConfirmImportButton.IsEnabled,
             "single approval belongs to the final review and guards saving");
         wizard.ApproveInterpretationBox.SetCurrentValue(CheckBox.IsCheckedProperty, true);
         wizard.ApproveInterpretationBox.GetBindingExpression(CheckBox.IsCheckedProperty)!.UpdateSource();
@@ -169,7 +172,7 @@ public partial class MainWindow
         wizard.ImportSteps.SelectedIndex = 0; await wizard.AdvanceImport(); await wizard.AdvanceImport();
         Audit(ReferenceEquals(reviewed, vm.Preparation) && vm.InterpretationApproved && vm.SelectionTotals?.SelectedRows == 2,
             "back and forward leaves unchanged approval and prepared totals intact");
-        wizard.ImportSteps.SelectedIndex = 4;
+        wizard.ImportSteps.SelectedIndex = 3;
         Audit(wizard.ImportFieldHelp.Text == vm.Guide("HelpHint"), "changing import steps clears help from the previous form");
         VisualEvidenceCapture.Capture(wizard, Path.Combine(output, "review-es.png"));
         main.ApplyPresentationPreset("en", "en-US", "UTC", true, true); wizard.FlowDirection = FlowDirection.RightToLeft;
@@ -177,8 +180,8 @@ public partial class MainWindow
         main.ApplyPresentationPreset("es", "es-ES", "Europe/Madrid", false, false); wizard.FlowDirection = FlowDirection.LeftToRight;
         await wizard.AdvanceImport();
         Check(vm.ConfirmedImport?.Resources.Single().Functional.Amount == 358.35m && wizard.ImportStepHelp.Text == vm.Guide("SavedImport"), "save action persists and shows unambiguous saved confirmation");
-        wizard.ImportSteps.SelectedIndex = 3;
-        Audit(wizard.ImportSteps.SelectedIndex == 3, "saved import can be inspected by going back without a navigation trap");
+        wizard.ImportSteps.SelectedIndex = 2;
+        Audit(wizard.ImportSteps.SelectedIndex == 2, "saved import can be inspected by going back without a navigation trap");
         vm.ApprovalReference += " revisado";
         Audit(vm.ConfirmedImport is null && vm.Status == vm["ReviewChanged"] && !vm.ConfirmCommand.CanExecute(null),
             "editing a saved review removes stale saved status and requires preparation again");
