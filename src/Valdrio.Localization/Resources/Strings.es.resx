@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+﻿<?xml version='1.0' encoding='UTF-8'?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -1350,4 +1350,5 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.ExplainContributionAdjustment" xml:space="preserve"><value>Aportación sin ajustar: {0}. Ajuste atribuido a este origen: {1}.</value></data>
   <data name="AllocationUI.ExplainTerminalDetail" xml:space="preserve"><value>Coste final de esta cuenta en este destino (puede incluir varios nodos de origen):</value></data>
   <data name="AllocationUI.ReciprocalCalculationFailed" xml:space="preserve"><value>No se ha podido completar el cálculo</value></data>
+  <data name="AllocationUI.SecondaryBehaviorAssumedFixed" xml:space="preserve"><value>Fijo por defecto</value></data>
 </root>

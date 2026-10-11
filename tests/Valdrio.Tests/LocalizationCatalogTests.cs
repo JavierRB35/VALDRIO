@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text.RegularExpressions;
 using Valdrio.Localization;
 
@@ -45,6 +45,16 @@ public sealed partial class LocalizationCatalogTests
                     $"Resource '{pair.Key}' is empty for '{language.Tag}'.");
             }
         }
+    }
+
+    [TestMethod]
+    public void AllocationResults_HaveLabelsForEveryResourceBehavior()
+    {
+        var catalog = new UiTextCatalog();
+        foreach (var language in new[] { "en", "es" })
+        foreach (var behavior in Enum.GetValues<Valdrio.Domain.ResourceBehavior>())
+            Assert.IsFalse(string.IsNullOrWhiteSpace(catalog.Get(
+                "AllocationUI.SecondaryBehavior" + behavior, CultureInfo.GetCultureInfo(language))));
     }
 
     private static string[] PlaceholderIndexes(string value) =>
