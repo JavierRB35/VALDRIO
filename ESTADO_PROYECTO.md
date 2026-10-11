@@ -1,3 +1,20 @@
+# Actualización vigente — 2026-10-11
+
+T11 y las mejoras de interfaz previas están integradas en `main@e888693`,
+tras compilación local sin errores/avisos y 627/627 pruebas.
+Las entradas inferiores se conservan como historial; sus pendientes de compilación
+T09–T11 están superados por esa validación local.
+
+T12 se desarrolla desde esa base en `feature/t12-cost-flow-history`: historial
+persistido de ejecuciones, publicación atómica y paso 8 de flujos de costes.
+Validación local T12: build sin errores/avisos, 634/634 pruebas y 28/28
+comprobaciones WPF en ES/EN. No se ha fusionado T12 ni se presume aceptación metodológica A05.
+Ver [ficha T12](docs/tareas/T12.md), [ADR-0015](docs/adr/ADR-0015-ejecuciones-y-flujos-persistidos.md)
+y [evidencia](docs/evidencias/t12-flujos-20261011/README.md).
+No se han iniciado GitHub Actions.
+
+---
+
 
 ### Actualización de supervisión sénior T11 (2026-10-09)
 

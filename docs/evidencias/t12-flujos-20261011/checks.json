@@ -1,0 +1,33 @@
+{
+  "Status": "passed",
+  "Checks": [
+    "four stages es",
+    "four secondary arrows es",
+    "reciprocal arrows es",
+    "final 6500 es",
+    "current revision es",
+    "explicit calculation enabled es",
+    "UI calculates and publishes es",
+    "older execution marked historical es",
+    "older execution identical es",
+    "query leaves execution unchanged es",
+    "source trace table es",
+    "arrow detail es",
+    "narrow details accessible es",
+    "graph keyboard focus es",
+    "four stages en",
+    "four secondary arrows en",
+    "reciprocal arrows en",
+    "final 6500 en",
+    "current revision en",
+    "explicit calculation enabled en",
+    "UI calculates and publishes en",
+    "older execution marked historical en",
+    "older execution identical en",
+    "query leaves execution unchanged en",
+    "source trace table en",
+    "arrow detail en",
+    "narrow details accessible en",
+    "graph keyboard focus en"
+  ]
+}

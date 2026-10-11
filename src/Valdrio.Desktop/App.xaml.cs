@@ -139,7 +139,7 @@ public partial class App : System.Windows.Application
                 currencyMetadataExampleService,
                 temporalContractExampleService,
                 fxConversionExampleService,
-                preferencesPersistence) { Company = company, Models = models, Studies = studies, Resources = resources, Allocations = allocations };
+                preferencesPersistence) { Company = company, Models = models, Studies = studies, Resources = resources, Allocations = allocations, CostFlows = new CostFlowViewModel(company, studies, texts, preferences) };
 
         if (!viewModel.TryLoadDevelopmentSample(
                 samplePath,
@@ -175,9 +175,9 @@ public partial class App : System.Windows.Application
         bool allowClose = false;
         window.Closing += async (_, args) =>
         {
-            if (!company.IsIdle || models.IsBusy || studies.IsBusy || resources.IsBusy || allocations.IsBusy)
+            if (!company.IsIdle || models.IsBusy || studies.IsBusy || resources.IsBusy || allocations.IsBusy || viewModel.CostFlows?.CalculateCommand.IsRunning == true)
             {
-                args.Cancel = true; company.CancelCommand.Execute(null); models.CancelCommand.Execute(null); studies.CancelCommand.Execute(null); resources.CancelCommand.Execute(null); return;
+                args.Cancel = true; company.CancelCommand.Execute(null); models.CancelCommand.Execute(null); studies.CancelCommand.Execute(null); resources.CancelCommand.Execute(null); viewModel.CostFlows?.CancelCommand.Execute(null); return;
             }
             if (!allowClose && (models.IsDirty || studies.IsDirty || resources.IsDirty || allocations.IsDirty))
             {
@@ -197,6 +197,11 @@ public partial class App : System.Windows.Application
                     {
                         try
                         {
+                        if (e.Args.Contains("--cost-flow-only", StringComparer.Ordinal))
+                        {
+                            if(requestedPath is null) throw new InvalidOperationException("Cost flow smoke requires persisted fixture.");
+                            await company.OpenPath(requestedPath);await window.RunCostFlowChecks(captureDirectory);Shutdown(0);return;
+                        }
                         if (e.Args.Contains("--results-scroll-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("Results checks require a disposable demo file.");

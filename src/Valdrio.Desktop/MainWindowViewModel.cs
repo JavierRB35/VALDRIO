@@ -92,6 +92,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public StudyWorkspaceViewModel? Studies { get; init; }
     public ResourceWorkspaceViewModel? Resources { get; init; }
     public AllocationWorkspaceViewModel? Allocations { get; init; }
+    public CostFlowViewModel? CostFlows { get; init; }
 
     public IReadOnlyList<string> UiLanguageOptions { get; }
     public IReadOnlyList<string> FormatCultureOptions { get; }

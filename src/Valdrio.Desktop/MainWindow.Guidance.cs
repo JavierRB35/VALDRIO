@@ -38,8 +38,8 @@ public partial class MainWindow
         if (viewModel is not { } vm) return;
         if (workflowStep == 4 && lastResourceStage != vm.Resources?.Stage) { lastHelpKey = null; lastResourceStage = vm.Resources?.Stage ?? -1; }
         NavigationGroupLabel.Text = vm.Guide("WorkspaceNavigation");
-        var keys = new[] { "Company", "Model", "Study", "Import", "Resources", "Allocations", "Settings", "SecondaryAllocations" };
-        Button[] buttons = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, AllocationsStep, SettingsStep, SecondaryStep];
+        var keys = new[] { "Company", "Model", "Study", "Import", "Resources", "Allocations", "Settings", "SecondaryAllocations", "CostFlows" };
+        Button[] buttons = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, AllocationsStep, SettingsStep, SecondaryStep, CostFlowStep];
         for (var i = 0; i < buttons.Length; i++)
         {
             buttons[i].Content = vm.Guide(keys[i]);
@@ -58,6 +58,7 @@ public partial class MainWindow
         ResourcesStep.IsEnabled = hasImports;
         AllocationsStep.IsEnabled = hasImports;
         SecondaryStep.IsEnabled = hasImports;
+        CostFlowStep.IsEnabled = hasImports;
         SettingsStep.IsEnabled = true;
 
         ModelStep.ToolTip = hasProject ? null : vm.Guide("NeedProjectShort");
@@ -70,6 +71,7 @@ public partial class MainWindow
         ResourcePanel.Visibility = workflowStep == 4 ? Visibility.Visible : Visibility.Collapsed;
         AllocationPanel.Visibility = workflowStep == 5 ? Visibility.Visible : Visibility.Collapsed;
         SecondaryPanel.Visibility = workflowStep == 7 ? Visibility.Visible : Visibility.Collapsed;
+        CostFlowsPanel.Visibility = workflowStep == 8 ? Visibility.Visible : Visibility.Collapsed;
         DistributionDetails.Visibility = workflowStep == 5 ? Visibility.Visible : Visibility.Collapsed;
         AllocationPanel.IsEnabled = !DistributionDetails.IsExpanded;
         ImportHome.Visibility = workflowStep == 3 ? Visibility.Visible : Visibility.Collapsed;
@@ -119,7 +121,7 @@ public partial class MainWindow
             _ => "Next"
         });
         if (workflowStep == 4 && vm.Resources is { } resources) WorkflowNext.Content = resources.ShowParts ? resources.NextAction : vm.Guide("ContinueAllocations");
-        WorkflowNext.Visibility = workflowStep is 6 or 7 ? Visibility.Collapsed : Visibility.Visible;
+        WorkflowNext.Visibility = workflowStep is 6 or 7 or 8 ? Visibility.Collapsed : Visibility.Visible;
         WorkflowNext.IsEnabled = vm.Company?.WorkspaceIdle != false &&
             (workflowStep is not (1 or 2) || vm.Company?.CanWrite == true) &&
             (workflowStep != 4 || vm.Resources?.CanAdvance == true);
@@ -130,8 +132,8 @@ public partial class MainWindow
         if (viewModel is not { } vm) return;
         if (step is > 0 and not 6 && vm.Company?.Snapshot is null) step = 0;
         if (step == 3 && vm.Studies?.HasImportDestination != true) step = 2;
-        if (step is 4 or 5 or 7 && vm.Studies?.Current is null) step = 2;
-        if (step is 4 or 5 or 7 && vm.Studies?.HasConfirmedImports != true) step = 3;
+        if (step is 4 or 5 or 7 or 8 && vm.Studies?.Current is null) step = 2;
+        if (step is 4 or 5 or 7 or 8 && vm.Studies?.HasConfirmedImports != true) step = 3;
         if (vm.Company?.WorkspaceIdle == false) return;
         if (workflowStep == 4 && step != 4 && vm.Resources is { } oldResources && !await oldResources.CanLeaveAsync())
         { ResourcePanel.ActionStatus.BringIntoView(); return; }
@@ -150,6 +152,7 @@ public partial class MainWindow
         if (step == 4 && vm.Resources is { } resources) await resources.EnterAsync();
         if (step is 5 or 7 && vm.Allocations is { } allocations)
         { if (vm.Resources is { } source) await source.EnterAsync(); await allocations.EnterAsync(); allocations.SecondaryWorkspaceActive = step == 7; }
+        if (step == 8 && vm.CostFlows is { } flows) await flows.EnterAsync();
         UpdateWorkflow(); RootScrollViewer.ScrollToTop();
     }
     private async void ChooseCompany(object sender, RoutedEventArgs e) => await NavigateWorkflow(0);
@@ -159,6 +162,7 @@ public partial class MainWindow
     private async void ChooseResources(object sender, RoutedEventArgs e) => await NavigateWorkflow(4);
     private async void ChooseAllocations(object sender, RoutedEventArgs e) => await NavigateWorkflow(5);
     private async void ChooseSecondary(object sender, RoutedEventArgs e) => await NavigateWorkflow(7);
+    private async void ChooseCostFlows(object sender, RoutedEventArgs e) => await NavigateWorkflow(8);
     private async void ChooseSettings(object sender, RoutedEventArgs e) => await NavigateWorkflow(6);
     private bool changingDistributionDetails;
     private async void OpenDistributionDetails(object sender, RoutedEventArgs e)

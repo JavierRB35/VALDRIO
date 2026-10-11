@@ -1351,4 +1351,58 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.ExplainTerminalDetail" xml:space="preserve"><value>Final cost of this account at this destination (may include several source nodes):</value></data>
   <data name="AllocationUI.ReciprocalCalculationFailed" xml:space="preserve"><value>Calculation could not be completed</value></data>
   <data name="AllocationUI.SecondaryBehaviorAssumedFixed" xml:space="preserve"><value>Fixed by default</value></data>
+  <data name="Run.Help" xml:space="preserve"><value>Saved cost flows. Calculate explicitly to create a new execution; opening a saved execution never recalculates it.</value></data>
+  <data name="Run.OriginStage" xml:space="preserve"><value>1 · Source accounts</value></data>
+  <data name="Run.PrimaryStage" xml:space="preserve"><value>2 · Primary allocation</value></data>
+  <data name="Run.SecondaryStage" xml:space="preserve"><value>3 · Auxiliary circulation</value></data>
+  <data name="Run.FinalStage" xml:space="preserve"><value>4 · Final principal costs</value></data>
+  <data name="Run.Calculate" xml:space="preserve"><value>Calculate and save execution</value></data>
+  <data name="Run.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Run.Refresh" xml:space="preserve"><value>Reload saved executions</value></data>
+  <data name="Run.Execution" xml:space="preserve"><value>Execution history</value></data>
+  <data name="Run.Graph" xml:space="preserve"><value>Cost flow diagram</value></data>
+  <data name="Run.GrossHelp" xml:space="preserve"><value>Auxiliary transfers are gross internal movements, not new costs. Do not add them to final costs. Amounts retain calculation precision; tables provide the exact values.</value></data>
+  <data name="Run.ClearSelection" xml:space="preserve"><value>Show all details</value></data>
+  <data name="Run.Details" xml:space="preserve"><value>Verifiable detail</value></data>
+  <data name="Run.Reconciliation" xml:space="preserve"><value>Source reconciliation</value></data>
+  <data name="Run.ReconcileHelp" xml:space="preserve"><value>Effective = direct to objects + excluded + pending + final principal costs. The difference must be zero; gross auxiliary transfers are excluded from this sum.</value></data>
+  <data name="Run.Stage" xml:space="preserve"><value>Stage</value></data>
+  <data name="Run.Resource" xml:space="preserve"><value>Resource / account</value></data>
+  <data name="Run.Source" xml:space="preserve"><value>Source centre / account</value></data>
+  <data name="Run.Destination" xml:space="preserve"><value>Destination centre</value></data>
+  <data name="Run.Rule" xml:space="preserve"><value>Applied key / rule</value></data>
+  <data name="Run.Assigned" xml:space="preserve"><value>Assigned amount</value></data>
+  <data name="Run.Received" xml:space="preserve"><value>Received amount</value></data>
+  <data name="Run.Terminal" xml:space="preserve"><value>Final destination / amount</value></data>
+  <data name="Run.Effective" xml:space="preserve"><value>Effective cost</value></data>
+  <data name="Run.Direct" xml:space="preserve"><value>Direct to objects</value></data>
+  <data name="Run.Excluded" xml:space="preserve"><value>Excluded</value></data>
+  <data name="Run.Pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="Run.Difference" xml:space="preserve"><value>Difference</value></data>
+  <data name="Run.NoRuns" xml:space="preserve"><value>No saved executions. Calculate to create the first one. Previous T11 closures remain in step 7; they are not converted into executions automatically.</value></data>
+  <data name="Run.ReadOnlyResults" xml:space="preserve"><value>Showing persisted results. Selecting an execution does not calculate or change it.</value></data>
+  <data name="Run.LoadFailed" xml:space="preserve"><value>The operation could not be completed. Reload saved executions to verify their status.</value></data>
+  <data name="Run.Started" xml:space="preserve"><value>Started</value></data>
+  <data name="Run.Completed" xml:space="preserve"><value>Completed</value></data>
+  <data name="Run.Failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="Run.Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Run.Revision" xml:space="preserve"><value>Revision</value></data>
+  <data name="Run.Preparing" xml:space="preserve"><value>Preparing frozen input…</value></data>
+  <data name="Run.Calculating" xml:space="preserve"><value>Calculating primary and secondary allocation…</value></data>
+  <data name="Run.Publishing" xml:space="preserve"><value>Saving execution and explanation…</value></data>
+  <data name="Run.SelectHint" xml:space="preserve"><value>Select a node or arrow to inspect its detail below. Use Tab and Enter with the keyboard.</value></data>
+  <data name="Run.Current" xml:space="preserve"><value>Current completed execution for this study revision.</value></data>
+  <data name="Run.Historical" xml:space="preserve"><value>Historical or unfinished execution; it is not the current result of the study.</value></data>
+  <data name="Run.Principal" xml:space="preserve"><value>Principal</value></data>
+  <data name="Run.Auxiliary" xml:space="preserve"><value>Auxiliary</value></data>
+  <data name="Run.AllResources" xml:space="preserve"><value>All resources in the routing group</value></data>
+  <data name="Run.Adjustments" xml:space="preserve"><value>Numeric and rounding adjustments</value></data>
+  <data name="Run.Summary" xml:space="preserve"><value>Source: {0} · Final principal costs: {1} · Reconciliation difference: {2}</value></data>
+  <data name="Run.Interrupted" xml:space="preserve"><value>This attempt did not finish. Its input is preserved, but no final results were published. Create a new execution to retry.</value></data>
+  <data name="Run.InputRequired" xml:space="preserve"><value>Configure primary allocation keys and rules before creating an execution.</value></data>
+  <data name="Run.Incomplete" xml:space="preserve"><value>Primary allocation is incomplete. Review pending resources and missing assignments; no final costs were published.</value></data>
+  <data name="Run.Overflow" xml:space="preserve"><value>A calculation exceeded the supported numeric range. No final costs were published.</value></data>
+  <data name="Guide.CostFlows" xml:space="preserve"><value>8. Cost flows and executions</value></data>
+  <data name="Run.Available" xml:space="preserve"><value>{0} + {1} received = {2}</value></data>
+  <data name="Run.PanGraph" xml:space="preserve"><value>Move diagram horizontally</value></data>
 </root>

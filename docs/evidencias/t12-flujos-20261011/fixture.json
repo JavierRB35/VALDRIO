@@ -1,0 +1,11 @@
+{
+  "file": "VALDRIO_T12_Demo_6500.valdrio",
+  "location": "Downloads (local delivery, not committed)",
+  "sha256": "2143a318af2eee9d65a57f8118dcc2cd025b70dd7bfda716374559d269c9ce84",
+  "study": "T12 DEMO — FICTICIA",
+  "origin": "Synthetic test fixture; no owner data",
+  "schema": 10,
+  "sourceEUR": 6500,
+  "terminalEUR": 6500,
+  "internalCirculationEUR": 960
+}

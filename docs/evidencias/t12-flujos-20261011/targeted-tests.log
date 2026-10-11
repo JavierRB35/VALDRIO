@@ -1,0 +1,16 @@
+Serie de pruebas para C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-integration\tests\Valdrio.Tests\bin\Release\net10.0-windows\Valdrio.Tests.dll (.NETCoreApp,Version=v10.0)
+1 archivos de prueba en total coincidieron con el patrón especificado.
+  Correctas T12_6500FlowsPersistAndHistoricalReadDoesNotRecalculate [7 s]
+  Correctas T12_RevisionChangeWhileCalculatingPublishesHistoryOnly [3 s]
+  Correctas T12_ClosedLoopIsPersistedAsFailureWithoutInventedFinalFacts [2 s]
+  Correctas T12_CancellationBeforePublishLeavesNoPartialResultsAndPriorRunSurvives [2 s]
+  Correctas T12_PublishFailureRollsBackPersistedOutput (AfterFirstWrite) [2 s]
+  Correctas T12_PublishFailureRollsBackPersistedOutput (BeforeCommit) [2 s]
+  Correctas T12_CultureDoesNotChangeHashesOrLedgerAndFinalRunsAreImmutable [1 s]
+  Correctas M01_UpgradeGenuineT03ArtifactPreservesSourceIdentityPolicyUnitsAndCompanyAudit [535 ms]
+  Correctas S01_ExistingUpgradeEventIsPreservedAndNextStepUsesRevisionOne [426 ms]
+
+La serie de pruebas se ejecutó correctamente.
+Pruebas totales: 9
+     Correcto: 9
+ Tiempo total: 22,8947 Segundos
