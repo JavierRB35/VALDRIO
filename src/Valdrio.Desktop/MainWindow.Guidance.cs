@@ -145,7 +145,7 @@ public partial class MainWindow
         if ((workflowStep is 5 or 7) && step != workflowStep && vm.Resources is { ShowParts: true } detail)
             await detail.CloseDestinationsAsync();
         if (workflowStep == 1 && step != 1 && vm.Models is { } modelEditor && !await modelEditor.CanLeaveAsync()) return;
-        var enteringAllocation = step is 5 or 7 && workflowStep != step;
+        var enteringAllocation = step is 5 or 7 && vm.Allocations?.IsDirty != true;
         lastHelpKey = null;
         workflowStep = step;
         if (step == 1 && vm.Models is { } nodes) await nodes.LoadStudyNodesAsync();
