@@ -107,7 +107,7 @@ public partial class MainWindow
         await Click(secondary.CalculateSecondaryButton);
         Check(vm.SecondaryResults.Count == 2, "secondary preserves both fixed and variable components");
         vm.SelectedSecondaryResultRow = vm.SecondaryResults.First();
-        await Click(secondary.ExplainSecondaryButton);
+        await Idle();
         Check(!string.IsNullOrWhiteSpace(vm.SecondaryExplanation), "component explanation selects the matching fact");
         foreach (var language in new[] { "es", "en" })
         {

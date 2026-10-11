@@ -30,6 +30,28 @@ public sealed class T11SecondaryAllocationTests
         [[0m, 0.1m], [0.2m, 0m]], [[0.6m, 0.3m], [0.3m, 0.5m]], false);
 
     [TestMethod]
+    [DataRow(1)]
+    [DataRow(-1)]
+    [DataRow(0)]
+    public void PresentedOriginsReconcileWithPostedTerminalCostsIncludingCreditsAndRounding(int sign)
+    {
+        var nodes = new[] { A, B, P1, P2 }.Select(id => new CalculationNodeDefinition(id,
+            Id("000000000010"), Id("000000000011"), "N" + id.ToString(),
+            id == A || id == B ? NodeRole.Auxiliary : NodeRole.Principal, [], true)).ToDictionary(n => n.Id);
+        var result = SecondaryAllocationService.Calculate(Source(
+            Primary(1, A, sign * 0.01m), Primary(1, B, sign * 0.02m), Primary(1, P1, sign * 0.03m),
+            Primary(2, A, sign * 1.01m, ResourceBehavior.Variable)), Graph(), Precision);
+        var rows = Valdrio.Desktop.SecondaryResultPresentation.Build(result.Facts, result.ExplanationLinks, nodes);
+        Assert.AreEqual(result.Facts.Sum(f => f.PostedAmount.Amount), rows.Sum(r => r.PostedAmount));
+        foreach (var fact in result.Facts)
+            Assert.AreEqual(fact.PostedAmount.Amount, rows.Where(r => r.Fact == fact).Sum(r => r.PostedAmount));
+        Assert.AreEqual(sign * 0.03m, rows.Where(r => r.PrimaryNodeId == P1).Sum(r => r.PostedAmount));
+        var reversed = Valdrio.Desktop.SecondaryResultPresentation.Build(result.Facts, result.ExplanationLinks.Reverse().ToArray(), nodes);
+        CollectionAssert.AreEqual(rows.Select(r => (r.PrimaryNodeId, r.Fact, r.PostedAmount)).ToArray(),
+            reversed.Select(r => (r.PrimaryNodeId, r.Fact, r.PostedAmount)).ToArray());
+    }
+
+    [TestMethod]
     public void C09EffectiveTerminalLedgerBalancesExactlyByPart_AndByPrincipal()
     {
         var result = SecondaryAllocationService.Calculate(Source(

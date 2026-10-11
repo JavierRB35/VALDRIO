@@ -35,7 +35,7 @@
     </StackPanel>
    </Border>
   <StackPanel x:Name="ActionFooter" Margin="{StaticResource Space.Page}" DockPanel.Dock="Bottom">
-   <TextBlock TextWrapping="Wrap" MinHeight="32" AutomationProperties.LiveSetting="Polite" x:Name="FieldHelpText" />
+   <TextBlock TextWrapping="Wrap" Height="48" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" AutomationProperties.LiveSetting="Polite" x:Name="FieldHelpText" />
    <WrapPanel>
     <Button Click="PreviousStep" Padding="14,7" Margin="0,4,8,0" ContentTemplate="{StaticResource Button.WrappedText}" MaxWidth="{Binding ActualWidth, ElementName=ActionFooter}" x:Name="WorkflowBack" />
     <Button Style="{StaticResource Button.Primary}" Click="ContinueWorkflow" Padding="14,7" Margin="0,4,8,0" ContentTemplate="{StaticResource Button.WrappedText}" MaxWidth="{Binding ActualWidth, ElementName=ActionFooter}" x:Name="WorkflowNext" />

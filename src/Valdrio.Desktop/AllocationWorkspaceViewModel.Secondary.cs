@@ -8,8 +8,11 @@ using Valdrio.Localization;
 namespace Valdrio.Desktop;
 
 public sealed record SecondaryAllocationRow(
-    EntityId ResourceId, EntityId PartId, EntityId TerminalNodeId,
-    string Source, string Destination, string Amount, string Behavior) { public ResourceBehavior SourceBehavior { get; init; } }
+    EntityId PrimaryNodeId, EntityId TerminalNodeId, ResourceBehavior SourceBehavior,
+    string Source, string Destination, string Amount, string Behavior, decimal PostedAmount);
+public sealed record PrincipalCostRow(string Node, string Primary, string Auxiliary, string Total,
+    decimal PrimaryAmount, decimal AuxiliaryAmount, decimal TotalAmount);
+public sealed record SecondarySourceDetailRow(string Account, string Primary, string Share, string Amount, string Keys) { public string TechnicalDetail { get; init; } = ""; }
 
 public sealed record SecondaryGroupRow(string Source, string Group);
 
@@ -25,6 +28,9 @@ public sealed partial class AllocationWorkspaceViewModel
     private bool secondaryCalculated;
     private CancellationTokenSource? secondaryCalculationCts;
     public ObservableCollection<SecondaryAllocationRow> SecondaryResults { get; } = [];
+    public ObservableCollection<PrincipalCostRow> PrincipalCosts { get; } = [];
+    public ObservableCollection<SecondarySourceDetailRow> SecondaryExplanationDetails { get; } = [];
+    private readonly List<SecondaryPresentedContribution> secondaryContributions = [];
     public ObservableCollection<SecondaryBridgeRow> SecondaryBridges { get; } = [];
     public ObservableCollection<SecondaryGroupRow> SecondaryGroupAssignments { get; } = [];
     private EntityId? secondaryGroupPart;
@@ -75,7 +81,7 @@ public sealed partial class AllocationWorkspaceViewModel
         get => selectedSecondaryResult;
         set
         {
-            if (SetProperty(ref selectedSecondaryResult, value)) { SecondaryExplanation = ""; OnPropertyChanged(nameof(SecondaryExplanation)); ExplainSecondaryCommand.NotifyCanExecuteChanged(); }
+            if (SetProperty(ref selectedSecondaryResult, value)) { ShowSecondaryExplanation(); ExplainSecondaryCommand.NotifyCanExecuteChanged(); }
         }
     }
     private SecondaryAllocationRow? selectedSecondaryResult;
@@ -179,11 +185,14 @@ public sealed partial class AllocationWorkspaceViewModel
         secondaryPreview = null;
         secondaryCalculated = false;
         SecondaryResults.Clear();
+        PrincipalCosts.Clear();
+        secondaryContributions.Clear();
+        SecondaryExplanationDetails.Clear();
         SecondaryBridges.Clear();
         SecondaryGroupAssignments.Clear();
         SecondaryCirculation.Clear();
         SelectedSecondaryResultRow = null;
-        SecondaryExplanation = "";
+        SecondaryExplanation = this["SecondarySelectCost"];
         if (workspace is null)
         {
             SecondarySummary = "";
@@ -229,14 +238,7 @@ public sealed partial class AllocationWorkspaceViewModel
             return;
         }
         var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
-        var origins = workspace.Resources.Origins.ToDictionary(o => o.Id);
-        foreach (var fact in published.Facts)
-        {
-            SecondaryResults.Add(new(fact.ResourceId, fact.PartId, fact.TerminalNodeId,
-                origins.TryGetValue(fact.ResourceId, out var origin) ? AccountLabel(origin) : fact.Account,
-                nodes.TryGetValue(fact.TerminalNodeId, out var node) ? NodeLabel(node) : fact.TerminalNodeId.ToString(),
-                MoneyText(fact.PostedAmount), this["SecondaryBehavior" + fact.Behavior]) { SourceBehavior = fact.Behavior });
-        }
+        PopulateSecondaryResults(published.Facts, published.ExplanationLinks);
         PopulateSecondaryBridges(published.ResourceBridges);
         foreach (var flow in published.AuxiliaryGrossFlows)
         {
@@ -245,7 +247,7 @@ public sealed partial class AllocationWorkspaceViewModel
                 this["SecondaryGross"], flow.GrossAmount.ToString("0.########", Format)));
         }
         SecondarySummary = string.Format(Format, this["SecondaryTotals"],
-            published.Facts.Count, published.Totals.Count, workspace.Resources.Study.Currency.FunctionalCurrencyCode);
+            SecondaryResults.Count, PrincipalCosts.Count, workspace.Resources.Study.Currency.FunctionalCurrencyCode);
         SecondaryDiagnostic = this["SecondaryClosedState"];
     }
 
@@ -253,13 +255,7 @@ public sealed partial class AllocationWorkspaceViewModel
     {
             if (workspace is null) return;
             var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
-            var origins = workspace.Resources.Origins.ToDictionary(o => o.Id);
-            foreach (var fact in result.Facts)
-            {
-                SecondaryResults.Add(new(fact.ResourceId, fact.PartId, fact.TerminalNodeId,
-                    AccountLabel(origins[fact.ResourceId]), NodeLabel(nodes[fact.TerminalNodeId]),
-                    MoneyText(fact.PostedAmount), this["SecondaryBehavior" + fact.Behavior]) { SourceBehavior = fact.Behavior });
-            }
+            PopulateSecondaryResults(result.Facts, result.ExplanationLinks);
             PopulateSecondaryBridges(result.ResourceBridges);
             for (var i = 0; i < result.Circulation.AuxiliaryIds.Count; i++)
             {
@@ -269,7 +265,7 @@ public sealed partial class AllocationWorkspaceViewModel
                     this["SecondaryGross"], result.Circulation.Gross[i].ToString("0.########", Format)));
             }
             SecondarySummary = string.Format(Format, this["SecondaryTotals"],
-                result.Facts.Count, result.Totals.Count, result.Primary.Currency);
+                SecondaryResults.Count, PrincipalCosts.Count, result.Primary.Currency);
             SecondaryDiagnostic = this["SecondaryCalculationReady"];
     }
 
@@ -283,10 +279,13 @@ public sealed partial class AllocationWorkspaceViewModel
         secondaryPreview = null;
         secondaryCalculated = false;
         SecondaryResults.Clear();
+        PrincipalCosts.Clear();
+        secondaryContributions.Clear();
+        SecondaryExplanationDetails.Clear();
         SecondaryBridges.Clear();
         SecondaryCirculation.Clear();
         SelectedSecondaryResultRow = null;
-        SecondaryExplanation = "";
+        SecondaryExplanation = this["SecondarySelectCost"];
         SecondarySummary = "";
         SecondaryDiagnostic = this["SecondaryCalculating"];
         company.NotifyWorkspaceStateChanged();
@@ -346,42 +345,77 @@ public sealed partial class AllocationWorkspaceViewModel
                 MoneyText(b.Terminal), MoneyText(b.Difference)));
     }
 
+    private void PopulateSecondaryResults(IReadOnlyList<SecondaryAllocationFact> facts,
+        IReadOnlyList<SecondaryExplanationLink> links)
+    {
+        if (workspace is null) return;
+        var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
+        secondaryContributions.AddRange(SecondaryResultPresentation.Build(facts, links, nodes));
+        string Amount(decimal value) => MoneyText(new Money(value,
+            workspace.Resources.Study.Currency.FunctionalCurrencyCode, workspace.Resources.Precision));
+        foreach (var group in secondaryContributions.GroupBy(c =>
+            (c.PrimaryNodeId, c.Fact.TerminalNodeId, c.Fact.Behavior))
+            .OrderBy(g => nodes[g.Key.TerminalNodeId].Code, StringComparer.Ordinal)
+            .ThenBy(g => nodes[g.Key.PrimaryNodeId].Code, StringComparer.Ordinal).ThenBy(g => g.Key.Behavior))
+        {
+            var amount = group.Sum(c => c.PostedAmount);
+            SecondaryResults.Add(new(group.Key.PrimaryNodeId, group.Key.TerminalNodeId, group.Key.Behavior,
+                NodeLabel(nodes[group.Key.PrimaryNodeId]), NodeLabel(nodes[group.Key.TerminalNodeId]),
+                Amount(amount), this["SecondaryBehavior" + group.Key.Behavior], amount));
+        }
+        foreach (var node in nodes.Values.Where(n => n.IsActive && n.Role == NodeRole.Principal)
+            .OrderBy(n => n.Code, StringComparer.Ordinal))
+        {
+            var rows = secondaryContributions.Where(c => c.Fact.TerminalNodeId == node.Id).ToArray();
+            var primary = rows.Where(c => nodes[c.PrimaryNodeId].Role == NodeRole.Principal).Sum(c => c.PostedAmount);
+            var auxiliary = rows.Where(c => nodes[c.PrimaryNodeId].Role == NodeRole.Auxiliary).Sum(c => c.PostedAmount);
+            PrincipalCosts.Add(new(NodeLabel(node), Amount(primary), Amount(auxiliary), Amount(primary + auxiliary),
+                primary, auxiliary, primary + auxiliary));
+        }
+    }
+
     private void ShowSecondaryExplanation()
     {
-        if (SelectedSecondaryResultRow is not { } row || workspace is null ||
-            (secondaryPreview is null && workspace.SecondaryPublication is null))
+        SecondaryExplanationDetails.Clear();
+        if (SelectedSecondaryResultRow is not { } row || workspace is null)
         {
-            SecondaryExplanation = "";
+            SecondaryExplanation = this["SecondarySelectCost"];
             OnPropertyChanged(nameof(SecondaryExplanation));
             return;
         }
         var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
-        var links = (secondaryPreview?.ExplanationLinks ??
-            workspace.SecondaryPublication!.ExplanationLinks).Where(l =>
-            l.ResourceId == row.ResourceId && l.PartId == row.PartId &&
-            l.TerminalNodeId == row.TerminalNodeId && (l.SourceBehavior is null || l.SourceBehavior == row.SourceBehavior));
-        var finalFacts = secondaryPreview?.Facts ?? workspace.SecondaryPublication!.Facts;
-        var selectedFact = finalFacts.SingleOrDefault(f => f.ResourceId == row.ResourceId &&
-            f.PartId == row.PartId && f.TerminalNodeId == row.TerminalNodeId && f.Behavior == row.SourceBehavior);
-        var amountDetail = selectedFact is null ? "" :
-            string.Format(Format, this["SecondaryExplainAmounts"],
-                MoneyText(selectedFact.PostedAmount),
-                selectedFact.RawAmount.ToString("0.########", Format) + " " + Currency,
-                selectedFact.NumericAdjustment.ToString("0.########", Format) + " " + Currency,
-                selectedFact.RoundingAdjustment.ToString("0.########", Format) + " " + Currency);
-        SecondaryExplanation = amountDetail + Environment.NewLine +
-            string.Join(Environment.NewLine, links.Select(l =>
+        var origins = workspace.Resources.Origins.ToDictionary(o => o.Id);
+        var auxiliary = nodes[row.PrimaryNodeId].Role == NodeRole.Auxiliary;
+        SecondaryExplanation = string.Format(Format, this[auxiliary ? "SecondaryExplainAuxiliary" : "SecondaryExplainDirect"],
+            row.Source, row.Destination, row.Amount, row.Behavior);
+        foreach (var contribution in secondaryContributions.Where(c => c.PrimaryNodeId == row.PrimaryNodeId &&
+            c.Fact.TerminalNodeId == row.TerminalNodeId && c.Fact.Behavior == row.SourceBehavior)
+            .OrderBy(c => c.Fact.Account, StringComparer.Ordinal))
         {
-            var keys = (l.SecondaryKeyVersionIds ?? []).Select(id =>
-                workspace.Keys.FirstOrDefault(k => k.Id == id)).Where(k => k is not null)
-                .Select(k => k!.Name + " v" + k.VersionNumber.ToString(Format));
-            var group = l.ComponentRoutingGroup == "all" ?
-                this["AllComponents"] : l.ComponentRoutingGroup;
-            return NodeLabel(nodes[l.PrimaryNodeId]) + " → " + NodeLabel(nodes[l.TerminalNodeId]) +
-                " · " + l.RawContribution.ToString("0.########", Format) + " " + Currency +
-                " · " + l.EffectiveShare.ToString("0.########", Format) +
-                " · " + group + " · " + string.Join(", ", keys);
-        }));
+            var fact = contribution.Fact;
+            var initial = contribution.Links.Sum(l => l.PrimaryPostedAmount);
+            var raw = contribution.Links.Sum(l => l.RawContribution);
+            var keys = contribution.Links.SelectMany(l => (l.SecondaryKeyVersionIds ?? [])
+                .Concat(l.PrimaryKeyVersionId is { } id ? new[] { id } : Array.Empty<EntityId>()))
+                .Distinct().Select(id => workspace.Keys.FirstOrDefault(k => k.Id == id))
+                .Where(k => k is not null).Select(k => KeyLabel(k!));
+            SecondaryExplanationDetails.Add(new(
+                origins.TryGetValue(fact.ResourceId, out var origin) ? AccountLabel(origin) : fact.Account,
+                MoneyText(new Money(initial, fact.PostedAmount.Currency, fact.PostedAmount.PrecisionPolicy)),
+                initial == 0m ? "—" : (raw / initial * 100m).ToString("0.####", Format) + " %",
+                MoneyText(new Money(contribution.PostedAmount, fact.PostedAmount.Currency, fact.PostedAmount.PrecisionPolicy)),
+                string.Join(", ", keys))
+            {
+                TechnicalDetail = string.Format(Format, this["ExplainContributionAdjustment"],
+                    raw.ToString("0.########", Format) + " " + Currency,
+                    (contribution.PostedAmount - raw).ToString("0.########", Format) + " " + Currency)
+                    + Environment.NewLine + this["ExplainTerminalDetail"] + " " +
+                    string.Format(Format, this["SecondaryExplainAmounts"], MoneyText(fact.PostedAmount),
+                        fact.RawAmount.ToString("0.########", Format) + " " + Currency,
+                        fact.NumericAdjustment.ToString("0.########", Format) + " " + Currency,
+                        fact.RoundingAdjustment.ToString("0.########", Format) + " " + Currency)
+            });
+        }
         OnPropertyChanged(nameof(SecondaryExplanation));
     }
 

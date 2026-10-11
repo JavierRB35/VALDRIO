@@ -6,7 +6,7 @@ using Valdrio.Localization;
 
 namespace Valdrio.Desktop;
 
-public sealed record ReciprocalCheckRow(string Group, string State, string Detail);
+public sealed record ReciprocalCheckRow(string Group, string State, string Detail) { public string TechnicalDetail { get; init; } = ""; }
 
 // Read-only feasibility diagnostic over persisted/published T08 routing keys.
 // This never posts a secondary allocation or alters the economic snapshot.
@@ -55,12 +55,13 @@ public sealed partial class AllocationWorkspaceViewModel
                 var report = factor.Solve(
                     routes.AuxiliaryIds.ToDictionary(id => id, _ => 0m, StringComparer.Ordinal),
                     routes.TerminalIds.ToDictionary(id => id, _ => 0m, StringComparer.Ordinal));
-                var details = string.Format(Format, this["ReciprocalMetrics"],
+                var metrics = string.Format(Format, this["ReciprocalMetrics"],
                     report.MinNormalizedPivot, report.MaxCirculationAmplification);
+                var details = this["ReciprocalViableMeaning"];
                 if (report.Warnings.Count != 0)
                     details += " · " + string.Join("; ", report.Warnings.Select(d =>
                         formatter.Format(d, ui, Format).Message));
-                ReciprocalChecks.Add(new(display, this["ReciprocalViable"], details));
+                ReciprocalChecks.Add(new(display, this["ReciprocalViable"], details) { TechnicalDetail = metrics });
                 valid++;
             }
             catch (DomainRuleException ex)

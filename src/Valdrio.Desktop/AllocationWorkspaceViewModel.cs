@@ -549,6 +549,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public void RefreshPresentation(bool value) { pseudo = value; RebuildPresentation(); }
     private void RebuildPresentation()
     {
+        var selection = SelectedSecondaryResultRow;
         var preview = secondaryPreview; var calculated = secondaryCalculated;
         Rebuild();
         if (preview is not null && calculated && !IsSecondaryClosed)
@@ -556,6 +557,9 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             secondaryPreview = preview; secondaryCalculated = true;
             PresentSecondaryPreview(preview); Refresh();
         }
+        if (selection is not null)
+            SelectedSecondaryResultRow = SecondaryResults.FirstOrDefault(r => r.PrimaryNodeId == selection.PrimaryNodeId &&
+                r.TerminalNodeId == selection.TerminalNodeId && r.SourceBehavior == selection.SourceBehavior);
     }
     private void PreferencesChanged(object? sender, PresentationPreferencesChangedEventArgs e) { if (!IsDirty) { LoadKey(editingKey); LoadAbsolute(); } RebuildPresentation(); }
     public void Dispose() { preferences.Changed -= PreferencesChanged; company.WorkspaceBusy = earlierBusy; studies.BeforeChangeAsync = earlierBefore; company.AfterChangeAsync = earlierAfter; }

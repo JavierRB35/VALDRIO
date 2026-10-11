@@ -42,3 +42,22 @@ En una fila Mixto solo se edita el porcentaje variable. El porcentaje fijo se
 muestra como dato calculado de solo lectura: 100 menos el porcentaje variable.
 No pedir dos entradas para una misma decisión. Guardar conserva el mismo control
 de cambios pendientes y la validación del rango.
+
+### Consulta de resultados y desplazamiento — 2026-10-11
+
+- Un cierre bloquea la edición, pero conserva selección, copia y desplazamiento
+  en las tablas. Deshabilitar los editores, no la tabla completa.
+- La rueda desplaza la página hasta entrar en una tabla con clic o teclado. En
+  esa tabla, llegar a un extremo no transfiere el movimiento a la página. Un clic
+  o foco fuera devuelve el desplazamiento a la página. Mantener estable la altura
+  de la ayuda contextual para que pasar por campos no cambie el espacio visible.
+- Seleccionar una aportación secundaria muestra su explicación automáticamente;
+  la fila debe seguir resaltada aunque el usuario consulte el detalle.
+- Primario: cuenta/recurso, nodo destino, importe adjudicado y comportamiento.
+- Secundario: nodo de origen, nodo principal destino, importe adjudicado y
+  comportamiento. Acompañarlo con el total por principal y la separación entre
+  coste que conserva del primario y coste recibido de auxiliares. El detalle por
+  cuenta se consulta en la tabla de explicación, conservando sus claves.
+- La viabilidad debe explicar si las rutas permiten que el coste llegue a nodos
+  principales. Los indicadores matemáticos permanecen como detalle técnico, no
+  como la explicación principal del resultado.

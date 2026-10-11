@@ -197,6 +197,13 @@ public partial class App : System.Windows.Application
                     {
                         try
                         {
+                        if (e.Args.Contains("--results-scroll-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("Results checks require a disposable demo file.");
+                            await company.OpenPath(requestedPath);
+                            await window.RunResultsScrollChecks(captureDirectory);
+                            Shutdown(0); return;
+                        }
                         if (e.Args.Contains("--allocation-only", StringComparer.Ordinal) || e.Args.Contains("--workspace-fixes-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("Allocation capture requires a disposable project copy.");
