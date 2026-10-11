@@ -149,6 +149,9 @@ public sealed partial class AllocationWorkspaceViewModel
         return CommitConfig(configuration =>
         {
             var model = workspace.Resources.Model.Structure;
+            if (configuration.SecondaryRules.Any(rule => rule.IsActive && rule.AuxiliaryNodeId == auxiliaryId &&
+                    rule.ComponentRoutingGroup != "all"))
+                throw AllocationDiagnostics.Error("KEY_AUXILIARY_MULTIPLE_KEYS", "Allocation.AuxiliaryMultipleKeys", auxiliaryId);
             var proposed = configuration.SecondaryRules
                 .Where(rule => rule.AuxiliaryNodeId != auxiliaryId || rule.ComponentRoutingGroup != "all")
                 .Append(new SecondaryRule(new EntityId(Guid.NewGuid()), model.CompanyId, model.Id, auxiliaryId, "all", keyId, true))
@@ -172,6 +175,10 @@ public sealed partial class AllocationWorkspaceViewModel
                 StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, group)))
             .OrderBy(n => n.Id).ToArray();
         if (missing.Length == 0) return c;
+        foreach (var node in missing)
+            if (c.SecondaryRules.Any(rule => rule.IsActive && rule.AuxiliaryNodeId == node.Id &&
+                rule.ComponentRoutingGroup != group))
+                throw AllocationDiagnostics.Error("KEY_AUXILIARY_MULTIPLE_KEYS", "Allocation.AuxiliaryMultipleKeys", node.Id);
         // Driver mode cannot be copied to auxiliaries with different units.
         foreach (var node in missing)
             if (key.Mode == AllocationKeyMode.DriverUnits &&
