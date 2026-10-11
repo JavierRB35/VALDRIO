@@ -5,7 +5,7 @@
    <Setter Property="ContentTemplate">
     <Setter.Value>
      <DataTemplate>
-      <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="4"/>
+      <TextBlock Text="{Binding}" TextWrapping="Wrap" TextAlignment="Center" Margin="4"/>
      </DataTemplate>
     </Setter.Value>
    </Setter>
@@ -260,7 +260,7 @@
 
       <TextBlock Text="{Binding FriendlySummary}" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite"/>
       <TextBlock Text="{Binding [PreviewHelp]}"/>
-      <DataGrid x:Name="PreviewGrid" ItemsSource="{Binding Preview}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="230" FlowDirection="LeftToRight" EnableRowVirtualization="True">
+      <DataGrid x:Name="PreviewGrid" ItemsSource="{Binding Preview}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="Auto" MinHeight="280" MaxHeight="590" FlowDirection="LeftToRight" EnableRowVirtualization="True">
        <DataGrid.ColumnHeaderStyle>
         <Style TargetType="DataGridColumnHeader">
          <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -300,7 +300,7 @@
         <Button x:Name="SelectAllRecordsButton" Content="{Binding [SelectAllRecords]}" Command="{Binding SelectAllRecordsCommand}"/>
         <Button x:Name="DeselectAllRecordsButton" Content="{Binding [DeselectAllRecords]}" Command="{Binding DeselectAllRecordsCommand}"/>
        </WrapPanel>
-       <DataGrid local:FieldHelp.Key="Records" x:Name="AccountSelectionGrid" ItemsSource="{Binding AccountChoices}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Height="190" FlowDirection="LeftToRight" EnableRowVirtualization="True" AutomationProperties.Name="{Binding [SelectAccounts]}">
+       <DataGrid local:FieldHelp.Key="Records" x:Name="AccountSelectionGrid" ItemsSource="{Binding AccountChoices}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Height="230" FlowDirection="LeftToRight" EnableRowVirtualization="True" AutomationProperties.Name="{Binding [SelectAccounts]}">
         <DataGrid.Columns>
          <DataGridTemplateColumn Width="95">
           <DataGridTemplateColumn.CellTemplate>
@@ -310,8 +310,9 @@
           </DataGridTemplateColumn.CellTemplate>
          </DataGridTemplateColumn>
          <DataGridTextColumn Binding="{Binding RecordNumber}" IsReadOnly="True" Width="70"/>
-         <DataGridTextColumn Binding="{Binding Account}" IsReadOnly="True" Width="*"/>
-         <DataGridTextColumn Binding="{Binding FormattedAmount}" IsReadOnly="True" Width="*"/>
+         <DataGridTextColumn Binding="{Binding Account}" IsReadOnly="True" Width="135"/>
+         <DataGridTextColumn Binding="{Binding Description}" IsReadOnly="True" Width="2*"/>
+         <DataGridTextColumn Binding="{Binding FormattedAmount}" IsReadOnly="True" Width="*" ElementStyle="{StaticResource Text.TableNumber}" SortMemberPath="Amount"/>
         </DataGrid.Columns>
        </DataGrid>
        <TextBlock Text="{Binding AccountSelectionSummary}" FontWeight="SemiBold"/>
@@ -320,9 +321,10 @@
        <TextBlock x:Name="SelectionReconciliationText" Text="{Binding SelectionReconciliation}" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite"/>
        <DataGrid x:Name="SelectionPreviewGrid" ItemsSource="{Binding SelectionPreview}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="170" FlowDirection="LeftToRight" EnableRowVirtualization="True" AutomationProperties.Name="{Binding [SelectionPreviewTitle]}">
         <DataGrid.Columns>
-         <DataGridTextColumn Binding="{Binding Code}" Width="*"/>
-         <DataGridTextColumn Binding="{Binding Records}" Width="*"/>
-         <DataGridTextColumn Binding="{Binding Amount}" Width="*" ElementStyle="{StaticResource Text.TableNumber}"/>
+         <DataGridTextColumn Binding="{Binding Code}" Width="135"/>
+         <DataGridTextColumn Binding="{Binding Description}" Width="2*"/>
+          <DataGridTextColumn Binding="{Binding Records}" Width="*"/>
+         <DataGridTextColumn Binding="{Binding Amount}" SortMemberPath="NumericAmount" Width="*" ElementStyle="{StaticResource Text.TableNumber}"/>
         </DataGrid.Columns>
        </DataGrid>
       </StackPanel>
@@ -353,10 +355,11 @@
       </StackPanel>
       <TextBlock x:Name="ConfirmationSummaryText" Text="{Binding ConfirmationSummary}" FontWeight="SemiBold"/>
       <TextBlock Text="{Binding PreparationIssues}" Foreground="{DynamicResource Brand.Red}"/>
-      <DataGrid x:Name="ComparisonGrid" ItemsSource="{Binding ComparisonRows}" Visibility="{Binding HasComparisonRows,Converter={StaticResource Visible}}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="150" FlowDirection="LeftToRight">
+      <DataGrid x:Name="ComparisonGrid" CanUserSortColumns="True" GridLinesVisibility="Vertical" VerticalGridLinesBrush="{DynamicResource Border.Soft}" ItemsSource="{Binding ComparisonRows}" Visibility="{Binding HasComparisonRows,Converter={StaticResource Visible}}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="150" FlowDirection="LeftToRight">
        <DataGrid.Columns>
         <DataGridTextColumn Binding="{Binding Code}" Width="*"/>
-        <DataGridTextColumn Binding="{Binding Earlier}" Width="*"/>
+        <DataGridTextColumn Binding="{Binding Description}" Width="2*"/>
+         <DataGridTextColumn Binding="{Binding Earlier}" Width="*"/>
         <DataGridTextColumn Binding="{Binding Current}" Width="*" ElementStyle="{StaticResource Text.TableNumber}"/>
         <DataGridTextColumn Binding="{Binding Difference}" Width="*" ElementStyle="{StaticResource Text.TableNumber}"/>
         <DataGridTextColumn Binding="{Binding EarlierRecords}" Width="*"/>
@@ -364,11 +367,12 @@
       </DataGrid>
       <StackPanel Visibility="{Binding HasPreparedGroups,Converter={StaticResource Visible}}">
        <TextBlock Text="{Binding [GroupedPreview]}" FontWeight="SemiBold"/>
-       <DataGrid x:Name="GroupedPreviewGrid" ItemsSource="{Binding PreparedGroups}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="170" FlowDirection="LeftToRight" EnableRowVirtualization="True">
+       <DataGrid x:Name="GroupedPreviewGrid" CanUserSortColumns="True" GridLinesVisibility="Vertical" VerticalGridLinesBrush="{DynamicResource Border.Soft}" ItemsSource="{Binding PreparedGroups}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="170" FlowDirection="LeftToRight" EnableRowVirtualization="True">
         <DataGrid.Columns>
-         <DataGridTextColumn Binding="{Binding Code}" Width="*"/>
+         <DataGridTextColumn Binding="{Binding Code}" Width="135"/>
+         <DataGridTextColumn Binding="{Binding Description}" Width="2*"/>
          <DataGridTextColumn Binding="{Binding Records}" Width="*"/>
-         <DataGridTextColumn Binding="{Binding Amount}" Width="*" ElementStyle="{StaticResource Text.TableNumber}"/>
+         <DataGridTextColumn Binding="{Binding Amount}" SortMemberPath="NumericAmount" Width="*" ElementStyle="{StaticResource Text.TableNumber}"/>
         </DataGrid.Columns>
        </DataGrid>
       </StackPanel>
