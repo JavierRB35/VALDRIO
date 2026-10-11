@@ -1361,4 +1361,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.ExplainTerminalDetail" xml:space="preserve"><value>Final cost of this account at this destination (may include several source nodes):</value></data>
   <data name="AllocationUI.ReciprocalCalculationFailed" xml:space="preserve"><value>Calculation could not be completed</value></data>
   <data name="AllocationUI.SecondaryBehaviorAssumedFixed" xml:space="preserve"><value>Fixed by default</value></data>
+  <data name="Resources.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
+  <data name="AllocationUI.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
+  <data name="AllocationUI.GrossDiagnosticTotal" xml:space="preserve"><value>Gross total (informational, excluded from final costs)</value></data>
 </root>
