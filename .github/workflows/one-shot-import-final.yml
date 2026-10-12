@@ -33,3 +33,5 @@ jobs:
 # One-time retry: fix test assembly path net10.0-windows.
 
 # Verify every new import resets the legacy international mode.
+
+# Acceptance replay after T08 draft-vs-publish WPF regression adjustment.
