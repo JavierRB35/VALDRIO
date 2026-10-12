@@ -8,6 +8,7 @@ namespace Valdrio.Desktop;
 public partial class AllocationWorkspacePanel : UserControl
 {
     private AllocationWorkspaceViewModel? viewModel;
+    private bool secondaryPage;
     public AllocationWorkspacePanel()
     {
         InitializeComponent();
@@ -23,6 +24,7 @@ public partial class AllocationWorkspacePanel : UserControl
     public bool SecondaryOnly { set => ConfigurePage(value); }
     private void ConfigurePage(bool secondary)
     {
+        secondaryPage = secondary;
         // Each page has its own visual tree; shared controls retain the same commands and validation.
         static void Card(FrameworkElement section, bool visible) =>
             ((FrameworkElement)section.Parent).Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
@@ -58,6 +60,60 @@ public partial class AllocationWorkspacePanel : UserControl
         Set(CoverageGrid, "Source", "Amount", "AppliedKey", "Result"); Set(PrimaryResultsGrid, "PrimarySource", "PrimaryDestination", "PrimaryAmount", "Behavior"); Set(PrimaryGrid, "Account", "AppliedKey", "State");
         Set(AbsoluteGrid, "Include", "Destination", "Amount");
         void Set(DataGrid grid, params string[] keys) { for (var i = 0; i < keys.Length; i++) grid.Columns[i].Header = viewModel[keys[i]]; }
+    }
+    internal void PresentEntry()
+    {
+        if (viewModel is null) return;
+        var closed = secondaryPage ? viewModel.IsSecondaryClosed : viewModel.IsPrimaryClosed;
+        if (!closed)
+        {
+            LibrarySection.IsExpanded = true;
+            DefinitionSection.IsExpanded = true;
+            RulesSection.IsExpanded = true;
+            if (!secondaryPage) { CompositionSection.IsExpanded = true; AccountsSection.IsExpanded = true; }
+            FocusKeyLibrary();
+            return;
+        }
+        // Collapsing is not hiding: every library, rule and editor remains accessible.
+        LibrarySection.IsExpanded = false;
+        DefinitionSection.IsExpanded = false;
+        RulesSection.IsExpanded = false;
+        if (secondaryPage)
+        {
+            SecondaryResultsSection.IsExpanded = true;
+            ReciprocalSection.IsExpanded = false;
+        }
+        else
+        {
+            CompositionSection.IsExpanded = false;
+            AccountsSection.IsExpanded = false;
+            ResultsSection.IsExpanded = true;
+        }
+        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+        {
+            var table = secondaryPage ? PrincipalCostsGrid : PrimaryResultsGrid;
+            if (table.IsVisible) table.BringIntoView();
+        }));
+    }
+    private async void ShowResultsAfterClosure(object sender, RoutedEventArgs e)
+    {
+        await Dispatcher.Yield(DispatcherPriority.Background);
+        var work = secondaryPage ? viewModel?.ToggleSecondaryCommand.ExecutionTask
+                                 : viewModel?.TogglePrimaryCommand.ExecutionTask;
+        if (work is not null) await work;
+        PresentEntry();
+    }
+    private async void ShowSecondaryResultsOnCalculate(object sender, RoutedEventArgs e)
+    {
+        await Dispatcher.Yield(DispatcherPriority.Background);
+        if (viewModel?.CalculateSecondaryCommand.ExecutionTask is { } work) await work;
+        if (viewModel?.SecondaryResults.Count > 0)
+        {
+            SecondaryResultsSection.IsExpanded = true;
+            ReciprocalSection.IsExpanded = false;
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
+                new Action(() => { if (PrincipalCostsGrid.IsVisible) PrincipalCostsGrid.BringIntoView(); }));
+        }
     }
     internal void FocusKeyLibrary()
     {

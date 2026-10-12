@@ -157,8 +157,8 @@ public partial class MainWindow
         UpdateWorkflow(); RootScrollViewer.ScrollToTop();
         if (enteringAllocation)
         {
-            if (step == 5) AllocationPanel.FocusKeyLibrary();
-            else SecondaryPanel.Workspace.FocusKeyLibrary();
+            if (step == 5) AllocationPanel.PresentEntry();
+            else SecondaryPanel.Workspace.PresentEntry();
         }
     }
     private async void ChooseCompany(object sender, RoutedEventArgs e) => await NavigateWorkflow(0);
