@@ -390,7 +390,7 @@ try {
     Write-Host "Company WPF checks passed: $($companyChecks.PassedChecks.Count)."
 
     $modelChecks = Get-Content -LiteralPath (Join-Path $captureDir "models/interaction.json") -Raw | ConvertFrom-Json
-    if ($modelChecks.Status -ne "passed" -or $modelChecks.PassedChecks.Count -ne 57) { throw "Model WPF interaction evidence is incomplete." }
+    if ($modelChecks.Status -ne "passed" -or $modelChecks.PassedChecks.Count -ne 64) { throw "Model WPF interaction evidence is incomplete." }
     Write-Host "Model WPF checks passed: $($modelChecks.PassedChecks.Count)."
     $importChecks = Get-Content -LiteralPath (Join-Path $captureDir "import-columns/interaction.json") -Raw | ConvertFrom-Json
     if ($importChecks.Status -ne "passed" -or $importChecks.PassedChecks.Count -ne 18) {
@@ -481,8 +481,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Runner could not verify comparison/replacement snapshot." }
     $resourceFolder = Join-Path $captureDir "t07-resources"
     $resourceChecks = Get-Content -LiteralPath (Join-Path $resourceFolder "interaction.json") -Raw | ConvertFrom-Json
-    if ($resourceChecks.Status -ne "passed" -or $resourceChecks.SchemaVersion -ne 9 -or $resourceChecks.PassedChecks.Count -ne 45) {
-        throw "Expected all 45 T07 resource WPF checks."
+    if ($resourceChecks.Status -ne "passed" -or $resourceChecks.SchemaVersion -ne 9 -or $resourceChecks.PassedChecks.Count -ne 49) {
+        throw "Expected all 49 T07 resource WPF checks."
     }
     foreach ($imageName in @("review-es.png", "review-pseudo-rtl.png", "saved-en.png")) {
         if (-not (Test-Path -LiteralPath (Join-Path $resourceFolder $imageName))) { throw "Missing T07 screenshot: $imageName" }
@@ -495,7 +495,7 @@ try {
     $internationalFolder = Join-Path $captureDir "import-international"
     $allocationFolder = Join-Path $captureDir "t08-allocations"
     $allocationChecks = Get-Content -LiteralPath (Join-Path $allocationFolder "interaction.json") -Raw | ConvertFrom-Json
-    if ($allocationChecks.Status -ne "passed" -or $allocationChecks.PassedChecks.Count -ne 31) { throw "Expected all 31 T08 allocation checks." }
+    if ($allocationChecks.Status -ne "passed" -or $allocationChecks.PassedChecks.Count -ne 36) { throw "Expected all 36 T08 allocation checks." }
     foreach ($imageName in @("es-keys.png", "es-rules.png", "en-keys.png", "en-rules.png", "pseudo-rtl.png")) {
         $null = Get-RequiredSha256 (Join-Path $allocationFolder $imageName)
     }
@@ -505,7 +505,7 @@ try {
     if ($visualChecks.Status -ne "passed" -or $visualChecks.PassedChecks.Count -ne 67) { throw "Expected all 67 seven-step visual shell checks." }
     $guidedFolder = Join-Path $captureDir "guided-workflow"
     $guidedChecks = Get-Content -LiteralPath (Join-Path $guidedFolder "interaction.json") -Raw | ConvertFrom-Json
-    if ($guidedChecks.Status -ne "passed" -or $guidedChecks.PassedChecks.Count -ne 20) { throw "Expected all 20 guided workflow checks." }
+    if ($guidedChecks.Status -ne "passed" -or $guidedChecks.PassedChecks.Count -ne 21) { throw "Expected all 21 guided workflow checks." }
     foreach ($imageName in @("structure-es.png", "destination-es.png", "review-es.png", "review-pseudo-rtl.png")) {
         if (-not (Test-Path -LiteralPath (Join-Path $guidedFolder $imageName))) { throw "Missing guided workflow screenshot: $imageName" }
     }

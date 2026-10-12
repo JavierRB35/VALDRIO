@@ -35,3 +35,5 @@ jobs:
 # Verify every new import resets the legacy international mode.
 
 # Acceptance replay after T08 draft-vs-publish WPF regression adjustment.
+
+# Acceptance counts refreshed using real Windows-produced interaction receipts (64, 49, 36, 21).
