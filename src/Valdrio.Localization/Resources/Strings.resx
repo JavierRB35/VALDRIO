@@ -1369,4 +1369,7 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.GrossDiagnosticTotal" xml:space="preserve"><value>Gross total (informational, excluded from final costs)</value></data>
+  <data name="AllocationUI.BulkAssignHelp" xml:space="preserve"><value>Select multiple account rows (Ctrl or Shift), choose a published key and apply once. Advanced rules remain available.</value></data>
+  <data name="AllocationUI.BulkAssignKey" xml:space="preserve"><value>Key for selected accounts</value></data>
+  <data name="AllocationUI.BulkAssignAction" xml:space="preserve"><value>Apply to selected accounts</value></data>
 </root>

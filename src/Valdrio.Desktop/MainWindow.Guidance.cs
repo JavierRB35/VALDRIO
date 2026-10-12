@@ -12,6 +12,9 @@ public partial class MainWindow
     {
         ModelPanel.AttachUnitCreationPanel(CompanyPanel);
         Closed += (_, _) => { foreach (var source in workflowSources) source.PropertyChanged -= WorkflowChanged; };
+        // Visible "Open analysis" must restore persisted closure state for direct
+        // access to the secondary results, without visiting primary first.
+        StudyPanel.LoadStudyButton.Click += LoadedStoredStudy;
     }
     private void BindGuidance()
     {
@@ -21,6 +24,16 @@ public partial class MainWindow
         foreach (var source in new INotifyPropertyChanged?[] { viewModel, viewModel.Company, viewModel.Models, viewModel.Studies, viewModel.Resources, viewModel.Allocations })
             if (source is not null) { workflowSources.Add(source); source.PropertyChanged += WorkflowChanged; }
         if (viewModel.Models is { } models && viewModel.Studies is { } studies) models.AttachStudyNodes(studies);
+        UpdateWorkflow();
+    }
+    private async void LoadedStoredStudy(object sender, RoutedEventArgs e)
+    {
+        await Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.Background);
+        if (viewModel?.Studies?.LoadCommand.ExecutionTask is { } load) await load;
+        if (viewModel is not { } vm || vm.Studies?.Current is null ||
+            vm.Studies.HasConfirmedImports != true || vm.Allocations is null || vm.Allocations.IsDirty)
+            return;
+        await vm.Allocations.EnterAsync();
         UpdateWorkflow();
     }
     private void WorkflowChanged(object? sender, PropertyChangedEventArgs e)

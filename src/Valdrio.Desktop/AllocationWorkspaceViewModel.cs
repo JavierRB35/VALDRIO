@@ -537,6 +537,25 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public IAsyncRelayCommand SaveRuleCommand { get; }
     public IAsyncRelayCommand ApplyRuleCommand { get; }
     public IAsyncRelayCommand SaveKeyCommand { get; }
+    // One atomic save for all selected rows, without duplicating an edit form.
+    // Advanced exact/prefix rules and per-row assignments remain available.
+    public async Task AssignCoverageBatchAsync(IReadOnlyList<EntityId> partIds, EntityId keyId)
+    {
+        if (!CanShowCoverageEditor || !CanEditConfiguration || workspace is null || partIds.Count == 0)
+            return;
+        var selected = partIds.ToHashSet();
+        var eligible = workspace.Resources.Resources.SelectMany(resource => resource.Parts)
+            .Select(part => part.Id).ToHashSet();
+        if (!selected.IsSubsetOf(eligible) || !workspace.Keys.Any(key =>
+                key.Id == keyId && key.Stage == AllocationStage.Primary && key.Status == ModelStatus.Published))
+            return;
+        await CommitConfig(config => new(config.PrimaryRules, config.SecondaryRules,
+            config.ExplicitAssignments.Where(assignment => !selected.Contains(assignment.PartId))
+                .Concat(selected.OrderBy(id => id.ToString(), StringComparer.Ordinal)
+                    .Select(id => new ExplicitPartAllocation(id, keyId))).ToArray(),
+            config.AbsoluteAssignments.Where(assignment => !selected.Contains(assignment.PartId)).ToArray(),
+            config.Descriptions));
+    }
     public async Task AssignCoverageAsync(EntityId partId, EntityId keyId)
     {
         if (!CanEditConfiguration || HasUnappliedRule) return;

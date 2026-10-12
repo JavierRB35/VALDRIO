@@ -19,6 +19,7 @@ public partial class AllocationWorkspacePanel : UserControl
             viewModel = e.NewValue as AllocationWorkspaceViewModel;
             if (viewModel is not null) viewModel.PropertyChanged += Changed;
             Headers();
+            UpdateBatchState();
         };
     }
     public bool SecondaryOnly { set => ConfigurePage(value); }
@@ -42,6 +43,7 @@ public partial class AllocationWorkspacePanel : UserControl
     private void Changed(object? sender, PropertyChangedEventArgs e)
     {
         if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == "Item[]") Headers();
+        UpdateBatchState();
     }
     private void Headers()
     {
@@ -114,6 +116,21 @@ public partial class AllocationWorkspacePanel : UserControl
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
                 new Action(() => { if (PrincipalCostsGrid.IsVisible) PrincipalCostsGrid.BringIntoView(); }));
         }
+    }
+    private void BatchSelectionChanged(object sender, SelectionChangedEventArgs e) => UpdateBatchState();
+    private void UpdateBatchState()
+    {
+        if (BatchApplyButton is null || CoverageGrid is null || BatchKeyBox is null) return;
+        BatchApplyButton.IsEnabled = viewModel?.CanShowCoverageEditor == true
+            && CoverageGrid.SelectedItems.Count > 0 && BatchKeyBox.SelectedValue is EntityId;
+    }
+    private async void ApplyBatchToSelectedRows(object sender, RoutedEventArgs e)
+    {
+        if (viewModel is not { } vm || BatchKeyBox.SelectedValue is not EntityId keyId) return;
+        var ids = CoverageGrid.SelectedItems.OfType<AllocationCoverageRow>().Select(row => row.Id).ToArray();
+        if (ids.Length == 0) return;
+        await vm.AssignCoverageBatchAsync(ids, keyId);
+        UpdateBatchState();
     }
     internal void FocusKeyLibrary()
     {

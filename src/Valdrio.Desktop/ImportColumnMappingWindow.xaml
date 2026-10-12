@@ -93,6 +93,8 @@
       <StackPanel IsEnabled="{Binding HasFile}">
        <TextBlock Text="{Binding [AmountMode]}" FontWeight="SemiBold" Margin="0,10,0,0"/>
        <ComboBox x:Name="AmountModeBox" ItemsSource="{Binding AmountModes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding AmountMeaningSelection,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [AmountMode]}" local:FieldHelp.Key="AmountMode" SelectionChanged="AmountMeaningChanged" MinWidth="300" HorizontalAlignment="Left"/>
+       <TextBlock Text="{Binding FileStepRequirement}" Style="{StaticResource Requirement}"
+                  TextWrapping="Wrap" Margin="0,5,0,2" AutomationProperties.LiveSetting="Polite"/>
       </StackPanel>
 
       <Expander Header="{Binding [FileAdvanced]}" IsEnabled="{Binding HasFile}" Margin="0,8,0,4">
