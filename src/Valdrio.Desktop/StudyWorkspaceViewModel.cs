@@ -340,11 +340,15 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         Reformat();
         Refresh();
     }
+    // A loaded analysis may restore its read-only allocation navigation only after
+    // all study/import refresh work completes; never trigger this during import writes.
+    public Func<Task>? AfterStudyLoaded { get; set; }
     private async Task Load()
     {
         var id = StudyChoice?.Value.Id;
         if (id is null || !await CanLeaveAsync()) return;
         await Run(async token => { await Reload(token); SetCurrent(studyValues.Single(s => s.Id == id)); await Reload(token); SnapshotChoice = Snapshots.LastOrDefault(); });
+        if (Current?.Id == id && AfterStudyLoaded is not null) await AfterStudyLoaded();
     }
     private BusinessDate Date(DateTime? value)
     {

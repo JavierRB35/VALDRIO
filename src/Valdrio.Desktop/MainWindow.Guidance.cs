@@ -7,8 +7,6 @@ namespace Valdrio.Desktop;
 public partial class MainWindow
 {
     private int workflowStep;
-    private string? preloadedAllocationContext;
-    private bool loadingAllocationNavigation;
     private readonly List<INotifyPropertyChanged> workflowSources = [];
     private void InitializeGuidance()
     {
@@ -23,7 +21,13 @@ public partial class MainWindow
         foreach (var source in new INotifyPropertyChanged?[] { viewModel, viewModel.Company, viewModel.Models, viewModel.Studies, viewModel.Resources, viewModel.Allocations })
             if (source is not null) { workflowSources.Add(source); source.PropertyChanged += WorkflowChanged; }
         if (viewModel.Models is { } models && viewModel.Studies is { } studies) models.AttachStudyNodes(studies);
-        preloadedAllocationContext=null;
+        if (viewModel.Studies is { } studies)
+            studies.AfterStudyLoaded = async () =>
+            {
+                if (studies.HasConfirmedImports && viewModel?.Allocations is { } allocations)
+                    await allocations.EnterAsync(true);
+                UpdateWorkflow();
+            };
         UpdateWorkflow();
     }
     private void WorkflowChanged(object? sender, PropertyChangedEventArgs e)
@@ -31,38 +35,6 @@ public partial class MainWindow
         if (sender is ResourceWorkspaceViewModel or AllocationWorkspaceViewModel && !string.IsNullOrEmpty(e.PropertyName)
             && e.PropertyName is not ("Stage" or "IsBusy" or "CanAdvance" or "CanNavigate" or "Requirement" or "ShowParts")) return;
         UpdateWorkflow();
-        RequestAllocationNavigationState(sender);
-    }
-    private void RequestAllocationNavigationState(object? sender)
-    {
-        if (sender is not StudyWorkspaceViewModel || viewModel is not { } vm) return;
-        // Closing a company and reopening the very same file/study must reload
-        // its published primary state, even though the path and study ID match.
-        if (vm.Studies is not { Current: { }, HasConfirmedImports: true })
-        {
-            preloadedAllocationContext = null;
-            return;
-        }
-        if (vm.Studies is not { Current: { } study, HasConfirmedImports: true, IsBusy: false } ||
-            vm.Allocations is null || vm.Company?.ActivePath is not { } path) return;
-        var context=path+"|"+study.Id;
-        if (context==preloadedAllocationContext || loadingAllocationNavigation) return;
-        preloadedAllocationContext=context;
-        loadingAllocationNavigation=true;
-        _=ReloadAllocationNavigationState();
-    }
-    private async Task ReloadAllocationNavigationState()
-    {
-        try
-        {
-            if (viewModel?.Allocations is { } allocations) await allocations.EnterAsync(true);
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Trace.TraceWarning("Cannot restore allocation navigation: {0}",ex);
-            preloadedAllocationContext=null;
-        }
-        finally { loadingAllocationNavigation=false; UpdateWorkflow(); }
     }
     private string? lastHelpKey;
     private int lastResourceStage = -1;
