@@ -42,6 +42,12 @@
     <ProjectReference Include="../../src/Valdrio.Localization/Valdrio.Localization.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="../../Synthetic Projects/**/*.csv"
+             Link="Synthetic Projects/%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../Synthetic Projects/**/*.json"
+             Link="Synthetic Projects/%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../../reference/t02-rounding-cases.json"
              Link="reference/t02-rounding-cases.json"
              CopyToOutputDirectory="PreserveNewest" />

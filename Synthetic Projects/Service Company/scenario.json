@@ -1,0 +1,142 @@
+{
+  "schema": "T13/SyntheticProject/v1",
+  "id": "SERVICES",
+  "companyName": "Northstar Professional Services Ltd.",
+  "studyName": "September 2026 - Service operations",
+  "periodStart": "2026-09-01",
+  "periodEnd": "2026-09-30",
+  "currency": "EUR",
+  "centers": [
+    {
+      "code": "SRV-DEL",
+      "name": "Delivery Office"
+    },
+    {
+      "code": "SRV-CS",
+      "name": "Customer Experience"
+    },
+    {
+      "code": "SRV-ADM",
+      "name": "Administration"
+    },
+    {
+      "code": "SRV-IT",
+      "name": "Information Technology"
+    }
+  ],
+  "nodes": [
+    {
+      "code": "DELIVERY",
+      "center": "SRV-DEL",
+      "role": "Principal",
+      "unit": "hour"
+    },
+    {
+      "code": "CUSTOMER_SUCCESS",
+      "center": "SRV-CS",
+      "role": "Principal",
+      "unit": "hour"
+    },
+    {
+      "code": "ADMIN",
+      "center": "SRV-ADM",
+      "role": "Auxiliary",
+      "unit": "hour"
+    },
+    {
+      "code": "IT",
+      "center": "SRV-IT",
+      "role": "Auxiliary",
+      "unit": "hour"
+    }
+  ],
+  "primaryRules": [
+    {
+      "account": "640001",
+      "weights": {
+        "DELIVERY": 70,
+        "CUSTOMER_SUCCESS": 20,
+        "ADMIN": 10
+      }
+    },
+    {
+      "account": "621001",
+      "weights": {
+        "ADMIN": 100
+      }
+    },
+    {
+      "account": "629001",
+      "weights": {
+        "DELIVERY": 50,
+        "IT": 50
+      }
+    },
+    {
+      "account": "629002",
+      "weights": {
+        "CUSTOMER_SUCCESS": 100
+      }
+    },
+    {
+      "account": "708001",
+      "weights": {
+        "DELIVERY": 100
+      }
+    },
+    {
+      "account": "629099",
+      "weights": {
+        "DELIVERY": 100
+      }
+    }
+  ],
+  "secondaryRules": [
+    {
+      "auxiliary": "ADMIN",
+      "weights": {
+        "ADMIN": 20,
+        "IT": 10,
+        "DELIVERY": 40,
+        "CUSTOMER_SUCCESS": 30
+      }
+    },
+    {
+      "auxiliary": "IT",
+      "weights": {
+        "IT": 10,
+        "ADMIN": 20,
+        "DELIVERY": 40,
+        "CUSTOMER_SUCCESS": 30
+      }
+    }
+  ],
+  "expected": {
+    "importTotal": "17500.00",
+    "primaryTotals": {
+      "DELIVERY": "8650",
+      "CUSTOMER_SUCCESS": "3900",
+      "ADMIN": "4200",
+      "IT": "750"
+    },
+    "terminalTotals": {
+      "DELIVERY": "11478.57142857",
+      "CUSTOMER_SUCCESS": "6021.42857143"
+    },
+    "maxAbsoluteError": "0.00000010"
+  },
+  "composition": {
+    "621001": {
+      "behavior": "Fixed",
+      "variablePercentage": 0
+    },
+    "629002": {
+      "behavior": "Variable",
+      "variablePercentage": 100
+    },
+    "640001": {
+      "behavior": "Mixed",
+      "variablePercentage": 30
+    }
+  }
+}

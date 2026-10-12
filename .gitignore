@@ -9,3 +9,6 @@ artifacts/
 *.creating-*
 *_wpftmp.csproj
 /.vs
+
+# T13 generated local projects and frozen receipts; the reference CSV/JSON remain versioned.
+Synthetic Projects/Generated/

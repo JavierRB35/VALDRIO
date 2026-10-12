@@ -1,0 +1,8 @@
+Amount;Description;Account
+20000,00;Raw material consumption;600001
+8000,00;Direct production labour;640001
+4000,00;Equipment depreciation;681001
+3000,00;Electricity and gas;628001
+2000,00;Maintenance contracts;622001
+-1000,00;Supplier rebate;609001
+0,00;Zero-value control row;629099

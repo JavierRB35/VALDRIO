@@ -1,0 +1,160 @@
+{
+  "schema": "T13/SyntheticProject/v1",
+  "id": "INDUSTRIAL",
+  "companyName": "Riverton Precision Manufacturing Ltd.",
+  "studyName": "September 2026 - Production cost",
+  "periodStart": "2026-09-01",
+  "periodEnd": "2026-09-30",
+  "currency": "EUR",
+  "centers": [
+    {
+      "code": "MFG-CUT",
+      "name": "Cutting Hall"
+    },
+    {
+      "code": "MFG-ASSY",
+      "name": "Assembly Line"
+    },
+    {
+      "code": "MFG-FIN",
+      "name": "Finishing Hall"
+    },
+    {
+      "code": "MFG-MNT",
+      "name": "Maintenance"
+    },
+    {
+      "code": "MFG-ENG",
+      "name": "Utilities"
+    }
+  ],
+  "nodes": [
+    {
+      "code": "CUTTING",
+      "center": "MFG-CUT",
+      "role": "Principal",
+      "unit": "lot"
+    },
+    {
+      "code": "ASSEMBLY",
+      "center": "MFG-ASSY",
+      "role": "Principal",
+      "unit": "hour"
+    },
+    {
+      "code": "FINISHING",
+      "center": "MFG-FIN",
+      "role": "Principal",
+      "unit": "hour"
+    },
+    {
+      "code": "MAINTENANCE",
+      "center": "MFG-MNT",
+      "role": "Auxiliary",
+      "unit": "hour"
+    },
+    {
+      "code": "ENERGY",
+      "center": "MFG-ENG",
+      "role": "Auxiliary",
+      "unit": "hour"
+    }
+  ],
+  "primaryRules": [
+    {
+      "account": "600001",
+      "weights": {
+        "CUTTING": 60,
+        "ASSEMBLY": 40
+      }
+    },
+    {
+      "account": "640001",
+      "weights": {
+        "CUTTING": 40,
+        "ASSEMBLY": 40,
+        "FINISHING": 20
+      }
+    },
+    {
+      "account": "681001",
+      "weights": {
+        "CUTTING": 100
+      }
+    },
+    {
+      "account": "628001",
+      "weights": {
+        "ENERGY": 100
+      }
+    },
+    {
+      "account": "622001",
+      "weights": {
+        "MAINTENANCE": 100
+      }
+    },
+    {
+      "account": "609001",
+      "weights": {
+        "CUTTING": 100
+      }
+    },
+    {
+      "account": "629099",
+      "weights": {
+        "CUTTING": 100
+      }
+    }
+  ],
+  "secondaryRules": [
+    {
+      "auxiliary": "MAINTENANCE",
+      "weights": {
+        "MAINTENANCE": 10,
+        "ENERGY": 20,
+        "CUTTING": 40,
+        "ASSEMBLY": 30
+      }
+    },
+    {
+      "auxiliary": "ENERGY",
+      "weights": {
+        "ENERGY": 15,
+        "MAINTENANCE": 25,
+        "ASSEMBLY": 30,
+        "FINISHING": 30
+      }
+    }
+  ],
+  "expected": {
+    "importTotal": "36000.00",
+    "primaryTotals": {
+      "CUTTING": "18200",
+      "ASSEMBLY": "11200",
+      "FINISHING": "1600",
+      "MAINTENANCE": "2000",
+      "ENERGY": "3000"
+    },
+    "terminalTotals": {
+      "CUTTING": "19570.62937063",
+      "ASSEMBLY": "13528.67132867",
+      "FINISHING": "2900.69930070"
+    },
+    "maxAbsoluteError": "0.00000010"
+  },
+  "composition": {
+    "628001": {
+      "behavior": "Variable",
+      "variablePercentage": 100
+    },
+    "640001": {
+      "behavior": "Mixed",
+      "variablePercentage": 40
+    },
+    "681001": {
+      "behavior": "Fixed",
+      "variablePercentage": 0
+    }
+  }
+}
