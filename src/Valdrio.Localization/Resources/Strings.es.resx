@@ -1369,4 +1369,11 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.GrossDiagnosticTotal" xml:space="preserve"><value>Total bruto (informativo, no se suma al final)</value></data>
+  <data name="AllocationUI.BulkSelect" xml:space="preserve"><value>Seleccionar</value></data>
+  <data name="AllocationUI.BulkHelp" xml:space="preserve"><value>Selecciona varias cuentas y aplica una misma clave con una sola confirmación. Las asignaciones de las demás cuentas se mantienen.</value></data>
+  <data name="AllocationUI.BulkSelectUnassigned" xml:space="preserve"><value>Seleccionar sin clave</value></data>
+  <data name="AllocationUI.BulkApply" xml:space="preserve"><value>Aplicar clave a seleccionadas</value></data>
+  <data name="AllocationUI.BulkSelectionSummary" xml:space="preserve"><value>{0} seleccionadas · {1}</value></data>
+  <data name="AllocationUI.ViewFullResults" xml:space="preserve"><value>Ver detalle de resultados</value></data>
+  <data name="ImportMapping.AmountModeChoiceHint" xml:space="preserve"><value>Antes de continuar, elige si tus importes son movimientos del periodo, saldos de cierre o acumulados. Esta elección determina cómo se interpretan las cuentas.</value></data>
 </root>

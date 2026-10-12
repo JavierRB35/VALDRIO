@@ -1369,4 +1369,11 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.GrossDiagnosticTotal" xml:space="preserve"><value>Gross total (informational, excluded from final costs)</value></data>
+  <data name="AllocationUI.BulkSelect" xml:space="preserve"><value>Select</value></data>
+  <data name="AllocationUI.BulkHelp" xml:space="preserve"><value>Select several account rows and apply the same key in one operation. Assignments outside the selection stay unchanged.</value></data>
+  <data name="AllocationUI.BulkSelectUnassigned" xml:space="preserve"><value>Select unassigned</value></data>
+  <data name="AllocationUI.BulkApply" xml:space="preserve"><value>Apply key to selected</value></data>
+  <data name="AllocationUI.BulkSelectionSummary" xml:space="preserve"><value>{0} selected · {1}</value></data>
+  <data name="AllocationUI.ViewFullResults" xml:space="preserve"><value>See detailed results</value></data>
+  <data name="ImportMapping.AmountModeChoiceHint" xml:space="preserve"><value>Before continuing, choose whether amounts are period transactions, closing balances, or cumulative balances. This choice controls account interpretation.</value></data>
 </root>

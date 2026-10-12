@@ -30,6 +30,8 @@ public partial class AllocationWorkspacePanel : UserControl
         Card(AccountsSection, !secondary);
         Card(ResultsSection, !secondary);
         Card(SecondaryResultsSection, secondary);
+        PrimarySummaryWrapper.Visibility = secondary ? Visibility.Collapsed : Visibility.Visible;
+        SecondarySummaryWrapper.Visibility = secondary ? Visibility.Visible : Visibility.Collapsed;
         SecondaryPhaseBar.Visibility = secondary ? Visibility.Visible : Visibility.Collapsed;
         ((FrameworkElement)((FrameworkElement)TogglePrimaryButton.Parent).Parent).Visibility = secondary ? Visibility.Collapsed : Visibility.Visible;
         for (var i = 0; i < RuleTabs.Items.Count; i++)
@@ -55,7 +57,7 @@ public partial class AllocationWorkspacePanel : UserControl
         CompositionGrid.Columns[3].Header = viewModel["CompositionFixedWeight"];
         CompositionGrid.Columns[4].Header = viewModel["CompositionVariableWeight"];
         CompositionGrid.Columns[5].Header = viewModel["CompositionReview"];
-        Set(CoverageGrid, "Source", "Amount", "AppliedKey", "Result"); Set(PrimaryResultsGrid, "PrimarySource", "PrimaryDestination", "PrimaryAmount", "Behavior"); Set(PrimaryGrid, "Account", "AppliedKey", "State");
+        Set(CoverageGrid, "BulkSelect", "Source", "Amount", "AppliedKey", "Result"); Set(PrimaryResultsGrid, "PrimarySource", "PrimaryDestination", "PrimaryAmount", "Behavior"); Set(PrimaryGrid, "Account", "AppliedKey", "State");
         Set(AbsoluteGrid, "Include", "Destination", "Amount");
         void Set(DataGrid grid, params string[] keys) { for (var i = 0; i < keys.Length; i++) grid.Columns[i].Header = viewModel[keys[i]]; }
     }
@@ -85,6 +87,13 @@ public partial class AllocationWorkspacePanel : UserControl
             KeyGrid.Focus();
             Keyboard.Focus(KeyGrid);
         }));
+    }
+    private void ViewPrimaryResults(object sender, RoutedEventArgs e) => RevealResults(ResultsSection);
+    private void ViewSecondaryResults(object sender, RoutedEventArgs e) => RevealResults(SecondaryResultsSection);
+    private void RevealResults(Expander expander)
+    {
+        expander.IsExpanded = true;
+        Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => expander.BringIntoView()));
     }
     private void FocusNewKey(object sender, RoutedEventArgs e)
     {
