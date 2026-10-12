@@ -1376,4 +1376,5 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.BulkSelectionSummary" xml:space="preserve"><value>{0} selected · {1}</value></data>
   <data name="AllocationUI.ViewFullResults" xml:space="preserve"><value>See detailed results</value></data>
   <data name="ImportMapping.AmountModeChoiceHint" xml:space="preserve"><value>Before continuing, choose whether amounts are period transactions, closing balances, or cumulative balances. This choice controls account interpretation.</value></data>
+  <data name="AllocationUI.AccountDetailEditingHint" xml:space="preserve"><value>While account details are open, key editing is paused. Collapse this section to return to key editing.</value></data>
 </root>

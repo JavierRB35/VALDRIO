@@ -1376,4 +1376,5 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.BulkSelectionSummary" xml:space="preserve"><value>{0} seleccionadas · {1}</value></data>
   <data name="AllocationUI.ViewFullResults" xml:space="preserve"><value>Ver detalle de resultados</value></data>
   <data name="ImportMapping.AmountModeChoiceHint" xml:space="preserve"><value>Antes de continuar, elige si tus importes son movimientos del periodo, saldos de cierre o acumulados. Esta elección determina cómo se interpretan las cuentas.</value></data>
+  <data name="AllocationUI.AccountDetailEditingHint" xml:space="preserve"><value>Mientras está abierto el detalle de cuentas, la edición de claves queda en pausa. Cierra este panel para volver a las claves.</value></data>
 </root>

@@ -164,7 +164,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public bool IsDirty => keyDirty || ruleDirty || absoluteDirty || HasCompositionChanges;
     public bool HasUnappliedRule => ruleDirty || absoluteDirty;
     public void ExplainPendingRule() { statusKey = "ApplyRuleFirst"; Refresh(); }
-    public bool KeyNameMissing => string.IsNullOrWhiteSpace(Name);
+    public bool KeyNameMissing => CanEditKey && string.IsNullOrWhiteSpace(Name);
     public bool KeyValidationHasError => workspace is not null && MissingKeyInput(true) is not null;
     public bool IsPercentage => Mode == AllocationKeyMode.Percentage;
     public bool IsDriver => Mode == AllocationKeyMode.DriverUnits;

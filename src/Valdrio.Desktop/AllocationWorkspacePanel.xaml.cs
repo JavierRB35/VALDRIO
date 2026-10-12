@@ -80,6 +80,9 @@ public partial class AllocationWorkspacePanel : UserControl
                 {
                     row.Focus();
                     Keyboard.Focus(row);
+                    // A highlighted key must agree with its visible detail editor.
+                    if (viewModel?.LoadKeyCommand.CanExecute(null)==true)
+                        _=viewModel.LoadKeyCommand.ExecuteAsync(null);
                     return;
                 }
             }
