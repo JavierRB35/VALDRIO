@@ -17,11 +17,12 @@ public sealed partial class AllocationWorkspaceViewModel
 
     private bool primaryComplete;
     private decimal primaryPostedTotal;
+    private decimal primaryShownTotal;
     private string StudyMoney(decimal amount) => workspace is null ? "" :
         amount.ToString("0.########", Format) + " " + workspace.Resources.Study.Currency.FunctionalCurrencyCode;
-    public string PrimaryResultsTotal => PrimaryResults.Count == 0 ? "" : StudyMoney(primaryPostedTotal);
+    public string PrimaryResultsTotal => PrimaryResults.Count == 0 ? "" : DisplayStudyMoney(primaryShownTotal);
     public string PrimaryNodeTotalsTotal => PrimaryNodeTotals.Count == 0 ? "" :
-        StudyMoney(PrimaryNodeTotals.Sum(row => row.NumericAmount));
+        DisplayStudyMoney(primaryShownTotal);
     public string PrimaryCoverageTotal => Coverage.Count == 0 ? "" :
         StudyMoney(Coverage.Sum(row => row.NumericAmount));
     public string PrimaryCompositionTotal => workspace?.Resources.Preparation.Coverage is not { Count: > 0 } coverage ? "" :
@@ -43,10 +44,15 @@ public sealed partial class AllocationWorkspaceViewModel
     }
 
 
+    private string DisplayStudyMoney(decimal amount) => workspace is null ? "" :
+        FinancialDisplayProjection.Format(amount, workspace.Resources.Study.Currency.FunctionalCurrencyCode.ToString(),
+            workspace.Resources.Study.Currency.CurrencyMetadataSnapshot.ReportQuantum, Format);
+
     private void RebuildPrimary()
     {
         primaryComplete = false;
         primaryPostedTotal = 0m;
+        primaryShownTotal = 0m;
         PrimaryResults.Clear();
         PrimaryNodeTotals.Clear();
         if (workspace is null)
@@ -61,10 +67,14 @@ public sealed partial class AllocationWorkspaceViewModel
             var primary = PrimaryAllocationService.Calculate(workspace);
             primaryComplete = workspace.Resources.Origins.Count > 0 && primary.IsComplete;
             primaryPostedTotal = primary.Facts.Sum(f => f.PostedAmount.Amount);
+            var projection = FinancialDisplayProjection.Project(primary.Facts.Select(f => f.PostedAmount.Amount).ToArray(),
+                workspace.Resources.Study.Currency.CurrencyMetadataSnapshot.ReportQuantum);
+            primaryShownTotal = projection.Sum();
             var nodeById = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
             var resourceById = workspace.Resources.Origins.ToDictionary(o => o.Id);
-            foreach (var fact in primary.Facts)
+            for (var index=0; index<primary.Facts.Count; index++)
             {
+                var fact=primary.Facts[index];
                 var source = AccountLabel(resourceById[fact.ResourceId]);
                 var destination = NodeLabel(nodeById[fact.NodeId]);
                 var rule = fact.Selection switch
@@ -78,19 +88,20 @@ public sealed partial class AllocationWorkspaceViewModel
                     var applied = workspace.Keys.Single(k => k.Id == key);
                     rule += ": " + KeyLabel(applied);
                 }
-                PrimaryResults.Add(new(source, destination, MoneyText(fact.PostedAmount), rule, this["SecondaryBehavior" + fact.Behavior]));
+                PrimaryResults.Add(new(source, destination, DisplayStudyMoney(projection[index]), rule, this["SecondaryBehavior" + fact.Behavior]));
             }
             // Group published primary facts by node, not by account, without changing the ledger.
             var centers = workspace.Resources.Model.PhysicalCenters.ToDictionary(center => center.Id);
-            foreach (var group in primary.Facts.GroupBy(fact => fact.NodeId)
+            foreach (var group in primary.Facts.Select((fact,index) => (fact,index)).GroupBy(item => item.fact.NodeId)
                 .OrderBy(group => centers[nodeById[group.Key].PhysicalCenterId].Code, StringComparer.Ordinal)
                 .ThenBy(group => nodeById[group.Key].Code, StringComparer.Ordinal))
             {
                 var node = nodeById[group.Key];
                 var center = centers[node.PhysicalCenterId];
-                var total = group.Sum(fact => fact.PostedAmount.Amount);
+                var total = group.Sum(item => item.fact.PostedAmount.Amount);
+                var presented = group.Sum(item => projection[item.index]);
                 PrimaryNodeTotals.Add(new(center.Code + " · " + center.Name, node.Code,
-                    total.ToString("0.########", Format) + " " + primary.Currency, total));
+                    DisplayStudyMoney(presented), total));
             }
             PrimarySummary = string.Format(Format, this["PrimarySummary"], primary.Facts.Count,
                 primary.Gaps.Count, primary.Pools.Count, primary.Currency);
