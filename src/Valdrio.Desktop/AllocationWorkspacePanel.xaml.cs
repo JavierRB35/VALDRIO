@@ -240,7 +240,7 @@ public partial class AllocationWorkspacePanel : UserControl
         // In a previously closed phase the results-first presentation collapses
         // the editor. Opening a key is an explicit user request to inspect/edit it.
         DefinitionSection.IsExpanded = true;
-        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+        _ = Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
         {
             if (KeyNameBox.IsVisible && KeyNameBox.IsEnabled) KeyNameBox.BringIntoView();
         }));
