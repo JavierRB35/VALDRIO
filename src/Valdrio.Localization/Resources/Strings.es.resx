@@ -1369,4 +1369,9 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.GrossDiagnosticTotal" xml:space="preserve"><value>Total bruto (informativo, no se suma al final)</value></data>
+  <data name="AllocationUI.BulkApplyTitle" xml:space="preserve"><value>Asignar una clave a las cuentas pendientes</value></data>
+  <data name="AllocationUI.BulkApplyHelp" xml:space="preserve"><value>Elige una clave publicada. Se aplicará de una sola vez a las cuentas importadas sin regla ni asignación manual, sin modificar las existentes.</value></data>
+  <data name="AllocationUI.BulkApplyButton" xml:space="preserve"><value>Aplicar a cuentas pendientes</value></data>
+  <data name="AllocationUI.BulkMissingCount" xml:space="preserve"><value>Cuentas disponibles sin regla: {0}</value></data>
+  <data name="AllocationUI.BulkApplied" xml:space="preserve"><value>Clave aplicada a las cuentas pendientes. Comprueba la cobertura antes de cerrar.</value></data>
 </root>

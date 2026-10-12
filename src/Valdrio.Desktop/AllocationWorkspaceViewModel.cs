@@ -73,6 +73,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private AllocationStage stage;
     private AllocationKeyMode mode;
     private string name = "", ruleAccount = "", prefix = "", priority = "0", groupName = "", chosenDescription = "";
+    private EntityId? bulkPrimaryKey;
     private UnitId? unit;
     private bool selfAllowed;
     private AccountSelectorKind selectorKind;
@@ -106,6 +107,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         ClearObsoleteSecondaryGroupsCommand = new AsyncRelayCommand(ClearObsoleteSecondaryGroupsAsync, () => CanEditSecondaryConfiguration && !HasUnappliedRule && HasObsoleteSecondaryGroups);
         SaveRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(false), () => CanSaveRule);
         ApplyRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(true), () => CanSaveRule);
+        BulkApplyPrimaryKeyCommand = new AsyncRelayCommand(BulkApplyPrimaryKeyAsync, () => CanBulkApplyPrimaryKey);
         SaveKeyCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(MissingKeyInput(true) is null), () => CanEditKey && MissingKeyInput(false) is null);
         RemoveRuleCommand = new AsyncRelayCommand(() => CommitConfig(c => new(c.PrimaryRules.Where(r => r.Id != SelectedRule!.Id).ToArray(), c.SecondaryRules, c.ExplicitAssignments, c.AbsoluteAssignments, c.Descriptions)), () => CanEditConfiguration && !HasUnappliedRule && SelectedRule is not null);
         LoadRuleCommand = new RelayCommand(LoadRule, () => CanEdit && SelectedRule is not null && !ruleDirty);
@@ -170,6 +172,51 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public bool IsDriver => Mode == AllocationKeyMode.DriverUnits;
     public bool CanEditWeights => CanEditComposition && Mode != AllocationKeyMode.EqualShares;
     public bool IsSecondary => Stage == AllocationStage.Secondary;
+    public EntityId? BulkPrimaryKey
+    {
+        get => bulkPrimaryKey;
+        set { if (SetProperty(ref bulkPrimaryKey, value)) Commands(); }
+    }
+    public int UnassignedAccountCount => MissingAccountCodes().Count;
+    public string BulkMissingDescription => string.Format(Format, this["BulkMissingCount"], UnassignedAccountCount);
+    public bool CanBulkApplyPrimaryKey => CanEditConfiguration && !HasUnappliedRule &&
+        BulkPrimaryKey.HasValue && PublishedPrimary.Any(k => k.Value == BulkPrimaryKey.Value) &&
+        MissingAccountCodes().Count > 0;
+    // Only unconfigured, imported account codes. An existing exact/prefix rule,
+    // a part override or an absolute assignment is never changed by bulk apply.
+    private IReadOnlyList<string> MissingAccountCodes()
+    {
+        if (workspace is null) return [];
+        var rules = workspace.Configuration.PrimaryRules.Where(r => r.IsActive).ToArray();
+        var manualParts = workspace.Configuration.ExplicitAssignments.Select(a => a.PartId)
+            .Concat(workspace.Configuration.AbsoluteAssignments.Select(a => a.PartId)).ToHashSet();
+        return workspace.Resources.Origins.Select(o => o.Code).Distinct(StringComparer.Ordinal)
+            .Where(code => workspace.Coverage.Any(row => row.Account == code)
+                && !rules.Any(rule => rule.SelectorKind == AccountSelectorKind.Exact
+                    ? StringComparer.Ordinal.Equals(rule.SelectorValue, code)
+                    : code.StartsWith(rule.SelectorValue, StringComparison.Ordinal))
+                && !workspace.Coverage.Any(row => row.Account == code &&
+                    (row.KeyId.HasValue || manualParts.Contains(row.SourceId))))
+            .Order(StringComparer.Ordinal).ToArray();
+    }
+    private async Task BulkApplyPrimaryKeyAsync()
+    {
+        if (!CanBulkApplyPrimaryKey || workspace is null || BulkPrimaryKey is not { } selected) return;
+        var codes = MissingAccountCodes();
+        if (codes.Count == 0) return;
+        // One atomic configuration commit, not N separate saves. Existing rules
+        // remain untouched, even when a user later retries the action.
+        if (await CommitConfig(c => new(
+            c.PrimaryRules.Concat(codes.Select(code => new PrimaryRule(
+                new(Guid.NewGuid()), workspace.Resources.Study.CompanyId,
+                workspace.Resources.Model.Structure.Id, AccountSelectorKind.Exact,
+                code, 0, selected, true))).ToArray(),
+            c.SecondaryRules, c.ExplicitAssignments, c.AbsoluteAssignments, c.Descriptions)))
+        {
+            statusKey = "BulkApplied";
+            Refresh();
+        }
+    }
     public bool IsExact => SelectorKind == AccountSelectorKind.Exact;
     public bool IsPrefix => !IsExact;
     public string Requirement => this[workspace is null ? "NeedStudy" : !company.CanWrite ? "ReadOnly" : workspace.Resources.Study.State == StudyState.Closed ? "Closed" : "Help"];
@@ -543,6 +590,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public IAsyncRelayCommand RefreshCommand { get; }
     public IAsyncRelayCommand SaveRuleCommand { get; }
     public IAsyncRelayCommand ApplyRuleCommand { get; }
+    public IAsyncRelayCommand BulkApplyPrimaryKeyCommand { get; }
     public IAsyncRelayCommand SaveKeyCommand { get; }
     public async Task AssignCoverageAsync(EntityId partId, EntityId keyId)
     {
@@ -566,7 +614,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public IRelayCommand DiscardCommand { get; }
     private void Commands()
     {
-        foreach (var command in new IRelayCommand?[] { SaveCompositionRowsCommand, DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
+        foreach (var command in new IRelayCommand?[] { SaveCompositionRowsCommand, DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, BulkApplyPrimaryKeyCommand, RefreshCommand,
             SaveRuleCommand, RemoveRuleCommand, LoadRuleCommand, NewRuleCommand, SaveSecondaryCommand, LoadSecondaryCommand, NewSecondaryCommand,
             RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CalculateSecondaryCommand, CancelSecondaryCommand, ExplainSecondaryCommand, ToggleSecondaryCommand,
             SaveSecondaryGroupCommand, ClearObsoleteSecondaryGroupsCommand, AssignSecondaryKeyToMissingCommand,

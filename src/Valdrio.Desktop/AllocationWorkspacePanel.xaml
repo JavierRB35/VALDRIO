@@ -268,6 +268,20 @@
       <StackPanel Width="260"><TextBlock Text="{Binding [PublishedKey]}"/><ComboBox ItemsSource="{Binding PublishedPrimary}" SelectedValue="{Binding RuleKey}" AutomationProperties.Name="{Binding [PublishedKey]}" x:Name="RuleKeyBox"/></StackPanel>
      </WrapPanel>
      <WrapPanel><Button Content="{Binding [SaveRule]}" Command="{Binding SaveRuleCommand}" x:Name="SaveRuleButton"/><Button Style="{StaticResource Button.Primary}" Content="{Binding [ApplyRule]}" Command="{Binding ApplyRuleCommand}" x:Name="ApplyRuleButton"/></WrapPanel>
+     <Border Background="{DynamicResource Surface.Subtle}" Margin="0,16,0,0" Padding="12">
+      <StackPanel>
+       <TextBlock Text="{Binding [BulkApplyTitle]}" FontWeight="SemiBold" Margin="0,0,0,6"/>
+       <TextBlock Text="{Binding [BulkApplyHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+       <WrapPanel>
+        <ComboBox x:Name="BulkPrimaryKeyBox" ItemsSource="{Binding PublishedPrimary}"
+                  SelectedValue="{Binding BulkPrimaryKey, Mode=TwoWay}" SelectedValuePath="Value" DisplayMemberPath="Label"
+                  MinWidth="240" Margin="0,0,10,4" AutomationProperties.Name="{Binding [PublishedKey]}"/>
+        <Button x:Name="BulkApplyPrimaryKeyButton" Content="{Binding [BulkApplyButton]}"
+                Command="{Binding BulkApplyPrimaryKeyCommand}" Style="{StaticResource Button.Primary}"/>
+       </WrapPanel>
+       <TextBlock Text="{Binding BulkMissingDescription}" Margin="0,8,0,0" AutomationProperties.LiveSetting="Polite"/>
+      </StackPanel>
+     </Border>
     </StackPanel>
    </TabItem>
        <TabItem Header="{Binding [SecondaryRules]}">

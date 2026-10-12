@@ -1369,4 +1369,9 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.GrossDiagnosticTotal" xml:space="preserve"><value>Gross total (informational, excluded from final costs)</value></data>
+  <data name="AllocationUI.BulkApplyTitle" xml:space="preserve"><value>Assign one key to unconfigured accounts</value></data>
+  <data name="AllocationUI.BulkApplyHelp" xml:space="preserve"><value>Choose a published key. It will be applied in one operation to imported accounts with no rule or manual assignment. Existing choices will not be overwritten.</value></data>
+  <data name="AllocationUI.BulkApplyButton" xml:space="preserve"><value>Apply to unconfigured accounts</value></data>
+  <data name="AllocationUI.BulkMissingCount" xml:space="preserve"><value>Accounts without an assigned rule: {0}</value></data>
+  <data name="AllocationUI.BulkApplied" xml:space="preserve"><value>Key applied to unconfigured accounts. Review coverage before closing.</value></data>
 </root>

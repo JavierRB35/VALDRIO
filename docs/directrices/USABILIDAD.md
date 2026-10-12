@@ -124,3 +124,8 @@ de cambios pendientes y la validación del rango.
   del primario para que se habilite el secundario.
 - Estas modificaciones no cambian reglas de asignación ni metodología;
   requieren compilación Windows y pruebas de aceptación visual antes de fusionar.
+
+- Cuando varias cuentas carecen de clave primaria, permitir aplicar una única
+  clave publicada a **todas las cuentas aún sin regla** en una operación atómica.
+  Respetar reglas exactas o por prefijo existentes, asignaciones manuales y
+  repartos absolutos; conservar la revisión de cobertura previa al cierre.
