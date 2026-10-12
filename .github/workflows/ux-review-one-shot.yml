@@ -18,3 +18,5 @@ jobs:
       - name: Validate VALDRIO
         shell: pwsh
         run: ./.github/scripts/Verify-Windows.ps1
+
+# Re-run after including shared financial projection source in test harness.

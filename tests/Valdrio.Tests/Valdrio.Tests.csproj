@@ -25,6 +25,7 @@
     <Compile Include="../../src/Valdrio.Desktop/ImportColumnMappingViewModel.Accounts.cs" Link="Desktop/ImportColumnMappingViewModel.Accounts.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ResourceEditorForm.cs" Link="Desktop/ResourceEditorForm.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.cs" Link="Desktop/AllocationWorkspaceViewModel.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/FinancialDisplayProjection.cs" Link="Desktop/FinancialDisplayProjection.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Primary.cs" Link="Desktop/AllocationWorkspaceViewModel.Primary.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Reciprocal.cs" Link="Desktop/AllocationWorkspaceViewModel.Reciprocal.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Secondary.cs" Link="Desktop/AllocationWorkspaceViewModel.Secondary.cs" />
