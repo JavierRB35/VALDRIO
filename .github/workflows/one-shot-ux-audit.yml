@@ -36,3 +36,5 @@ jobs:
 # Final UX review including no-count-increase batch UI regression on current PR head.
 
 # Acceptance rerun after awaiting saved-study allocation restoration in the load command.
+
+# Verify used-key editor remains accessible after results-first navigation.
