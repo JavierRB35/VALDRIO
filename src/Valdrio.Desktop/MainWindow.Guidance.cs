@@ -35,8 +35,15 @@ public partial class MainWindow
     }
     private void RequestAllocationNavigationState(object? sender)
     {
-        if (sender is not StudyWorkspaceViewModel || viewModel is not { } vm ||
-            vm.Studies is not { Current: { } study, HasConfirmedImports: true, IsBusy: false } ||
+        if (sender is not StudyWorkspaceViewModel || viewModel is not { } vm) return;
+        // Closing a company and reopening the very same file/study must reload
+        // its published primary state, even though the path and study ID match.
+        if (vm.Studies is not { Current: { }, HasConfirmedImports: true })
+        {
+            preloadedAllocationContext = null;
+            return;
+        }
+        if (vm.Studies is not { Current: { } study, HasConfirmedImports: true, IsBusy: false } ||
             vm.Allocations is null || vm.Company?.ActivePath is not { } path) return;
         var context=path+"|"+study.Id;
         if (context==preloadedAllocationContext || loadingAllocationNavigation) return;
