@@ -74,7 +74,7 @@ public partial class MainWindow
         panel.RuleTabs.SelectedIndex = 0; await Idle(); Select(panel.RuleAccountBox, "6005"); Select(panel.RuleKeyBox, primaryKey.Id);
         await Click(panel.SaveRuleButton); Check(vm.PrimaryRules.Count == 1 && vm.PrimaryResults.Count == 0, "save rule persists without applying");
         await Click(panel.ApplyRuleButton);
-        Check(vm.PrimaryResults.Count == 1 && vm.PrimaryResults.Single().Amount == "1000 EUR", "apply rule distributes prepared account");
+        Check(vm.PrimaryResults.Count == 1 && vm.PrimaryResults.Single().Amount == "1.000,00 EUR", "apply rule distributes prepared account");
         panel.RuleTabs.SelectedIndex = 2; await Idle(); Select(panel.NameAccountBox, "6005");
         panel.DescriptionBox.SetCurrentValue(ComboBox.SelectedItemProperty, "Papelería"); panel.DescriptionBox.GetBindingExpression(ComboBox.SelectedItemProperty)!.UpdateSource();
         await Click(panel.ChooseDescriptionButton); Check(vm.Accounts.Single().Label == "6005 — Papelería", "chosen description replaces the conflict label without changing the account code");
