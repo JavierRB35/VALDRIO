@@ -240,6 +240,17 @@ public partial class App : System.Windows.Application
                                 await window.RunWorkspaceEditingChecks(captureDirectory, (QueuedModelEditorDialogs)modelDialogs);
                             Shutdown(0); return;
                         }
+                        if (e.Args.Contains("--t08-foundations-only", StringComparer.Ordinal))
+                        {
+                            await window.CompanyPanel.RunCompanyInteractionChecks(captureDirectory,
+                                (QueuedCompanyFileDialogs)companyDialogs, viewModel);
+                            await window.ModelPanel.RunModelInteractionChecks(captureDirectory,
+                                (QueuedCompanyFileDialogs)companyDialogs, (QueuedModelEditorDialogs)modelDialogs, viewModel);
+                            await window.StudyPanel.RunStudyInteractionChecks(captureDirectory,
+                                (QueuedCompanyFileDialogs)companyDialogs, (QueuedModelEditorDialogs)modelDialogs, viewModel);
+                            await window.RunAllocationChecks(captureDirectory);
+                            Shutdown(0); return;
+                        }
                         await window.CompanyPanel.RunCompanyInteractionChecks(captureDirectory,
                             (QueuedCompanyFileDialogs)companyDialogs, viewModel);
                         await window.ModelPanel.RunModelInteractionChecks(captureDirectory,
