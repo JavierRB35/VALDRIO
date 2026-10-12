@@ -20,3 +20,5 @@ jobs:
         run: ./.github/scripts/Verify-Windows.ps1
 
 # Re-run after including shared financial projection source in test harness.
+
+# Full regression after explicit finished-study callback and WPF locale assertions.
