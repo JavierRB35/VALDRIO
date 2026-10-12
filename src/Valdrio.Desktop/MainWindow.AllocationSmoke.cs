@@ -129,6 +129,17 @@ public partial class MainWindow
         panel.KeyGrid.RaiseEvent(new System.Windows.Input.MouseButtonEventArgs(System.Windows.Input.Mouse.PrimaryDevice, 0, System.Windows.Input.MouseButton.Left)
             { RoutedEvent = Control.MouseDoubleClickEvent, Source = keyRow });
         if (vm.LoadKeyCommand.ExecutionTask is { } openTask) await openTask;
+        // Row selection and coverage assignment can finish on the dispatcher
+        // after the double-click. A user cannot edit until the active commit
+        // releases the ordinary IsBusy guard. Do not weaken that guard.
+        var editorWait = System.Diagnostics.Stopwatch.StartNew();
+        while (vm.IsBusy && editorWait.Elapsed < TimeSpan.FromSeconds(20))
+        {
+            await Task.Delay(80);
+            await Idle();
+        }
+        if (vm.IsBusy)
+            throw new InvalidOperationException("T08: key editor remained busy after the visible operation completed (" + vm.PrimaryEditAvailability + ")");
         await Idle(); Check(vm.Name == primaryKey.Name, "double click opens the selected library key");
         Check(panel.KeyNameBox.IsEnabled && !vm.CanEditComposition, "used key allows name editing only (CanEditKey=" + vm.CanEditKey + ", CanEdit=" + vm.CanEdit + ", hasUnappliedRule=" + vm.HasUnappliedRule + ", definitionExpanded=" + panel.DefinitionSection.IsExpanded + ", phaseClosed=" + vm.IsPrimaryClosed + ", guard=" + vm.PrimaryEditAvailability + ")");
         Text(panel.KeyNameBox, "Consumos de oficina renombrados"); await Click(panel.SaveKeyButton);
