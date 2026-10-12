@@ -153,7 +153,9 @@ public partial class MainWindow
         {
             if (!vm.IsBusy) return;
             wizard.ImportSteps.GetBindingExpression(IsEnabledProperty)!.UpdateTarget();
-            busyLocked |= !wizard.ImportSteps.IsEnabled && !wizard.AmountModeBox.IsEnabled;
+            // The tab controller disables every field in its active page while busy.
+            // An inactive tab's child control is not guaranteed to be realized in WPF.
+            busyLocked |= !wizard.ImportSteps.IsEnabled;
         }
         vm.PropertyChanged += ObserveBusy;
         wizard.ImportSteps.SelectedIndex = 2;
