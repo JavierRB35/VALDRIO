@@ -139,6 +139,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public bool CanManagePrimary => !busy && earlierBusy?.Invoke() != true && company.CanWrite && workspace?.Resources.Study.State == StudyState.Open;
     public bool IsPrimaryClosed => workspace?.Configuration.PrimaryClosed == true;
     public bool CanEdit => CanManagePrimary && !IsPrimaryClosed;
+    internal string PrimaryEditAvailability => $"busy={busy}, externalBusy={earlierBusy?.Invoke()}, canWrite={company.CanWrite}, studyState={workspace?.Resources.Study.State}, companyOpen={(company.Snapshot is not null)}";
     public string PrimaryState => this[IsPrimaryClosed ? "PrimaryClosedState" : "PrimaryOpenState"];
     public string PrimaryToggleLabel => this[IsPrimaryClosed ? "ReopenPrimary" : "ClosePrimary"];
     private bool CanSaveRule => CanEditConfiguration && RuleKey.HasValue && !string.IsNullOrWhiteSpace(IsExact ? RuleAccount : Prefix);
