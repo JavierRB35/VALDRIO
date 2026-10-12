@@ -22,3 +22,5 @@ jobs:
 # Re-run after including shared financial projection source in test harness.
 
 # Full regression after explicit finished-study callback and WPF locale assertions.
+
+# Retry after correcting WPF study callback declaration scope.
