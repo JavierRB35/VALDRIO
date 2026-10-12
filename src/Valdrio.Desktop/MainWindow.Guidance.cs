@@ -21,10 +21,10 @@ public partial class MainWindow
         foreach (var source in new INotifyPropertyChanged?[] { viewModel, viewModel.Company, viewModel.Models, viewModel.Studies, viewModel.Resources, viewModel.Allocations })
             if (source is not null) { workflowSources.Add(source); source.PropertyChanged += WorkflowChanged; }
         if (viewModel.Models is { } models && viewModel.Studies is { } studies) models.AttachStudyNodes(studies);
-        if (viewModel.Studies is { } studies)
-            studies.AfterStudyLoaded = async () =>
+        if (viewModel.Studies is { } loadedStudies)
+            loadedStudies.AfterStudyLoaded = async () =>
             {
-                if (studies.HasConfirmedImports && viewModel?.Allocations is { } allocations)
+                if (loadedStudies.HasConfirmedImports && viewModel?.Allocations is { } allocations)
                     await allocations.EnterAsync(true);
                 UpdateWorkflow();
             };
