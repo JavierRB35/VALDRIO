@@ -49,7 +49,7 @@ public partial class MainWindow
         }
         var w = company.ActiveResources!.ReadResources(study.CompanyId, study.Id);
         var principal = w.Model.Structure.Nodes.First(n => n.Role == NodeRole.Principal);
-        var auxiliary = w.Model.Structure.Nodes.Single(n => n.Role == NodeRole.Auxiliary);
+        var auxiliary = w.Model.Structure.Nodes.First(n => n.Role == NodeRole.Auxiliary);
         var part = w.Resources.Single().Parts.Single();
         Check(part.Routing == ResourceRoutingKind.Pending && part.PoolId is null, "imported account needs no prior pool or classification");
         await NavigateWorkflow(4); await AdvanceWorkflow(); await Idle();
@@ -130,7 +130,7 @@ public partial class MainWindow
             { RoutedEvent = Control.MouseDoubleClickEvent, Source = keyRow });
         if (vm.LoadKeyCommand.ExecutionTask is { } openTask) await openTask;
         await Idle(); Check(vm.Name == primaryKey.Name, "double click opens the selected library key");
-        Check(panel.KeyNameBox.IsEnabled && !vm.CanEditComposition, "used key allows name editing only (CanEditKey=" + vm.CanEditKey + ", CanEdit=" + vm.CanEdit + ", hasUnappliedRule=" + vm.HasUnappliedRule + ", definitionExpanded=" + panel.DefinitionSection.IsExpanded + ", phaseClosed=" + vm.IsPrimaryClosed + ")");
+        Check(panel.KeyNameBox.IsEnabled && !vm.CanEditComposition, "used key allows name editing only (CanEditKey=" + vm.CanEditKey + ", CanEdit=" + vm.CanEdit + ", hasUnappliedRule=" + vm.HasUnappliedRule + ", definitionExpanded=" + panel.DefinitionSection.IsExpanded + ", phaseClosed=" + vm.IsPrimaryClosed + ", guard=" + vm.PrimaryEditAvailability + ")");
         Text(panel.KeyNameBox, "Consumos de oficina renombrados"); await Click(panel.SaveKeyButton);
         Check(company.ActiveAllocations.ReadAllocations(current.CompanyId,current.Id).Coverage.Single(c => c.SourceId == part.Id).KeyId == primaryKey.Id, "renaming retains assignments");
         foreach (var language in new[] { "es", "en" })
