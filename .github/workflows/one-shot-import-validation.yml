@@ -35,3 +35,5 @@ jobs:
           retention-days: 2
 
 # Authorized follow-up validation after T11 draft/publication regression correction.
+
+# Re-run Windows acceptance with WPF resource-lookup scanner regression fixture.

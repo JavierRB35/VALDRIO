@@ -12,6 +12,8 @@ status.StartsWith(
     "Model.Node", StringComparison.Ordinal);
 Text("Resource.RealMissing");
 Text("Resource.RealMissing");
+var brush = FindResource("Brand.Red");
+var brush2 = TryFindResource("Brand.Red");
 '@
     Set-Content -LiteralPath (Join-Path $fixtureRoot 'src/Valdrio.Desktop/Fixture.cs') -Value $source
     $keys = @(& (Join-Path $PSScriptRoot 'Get-ProductionMessageKeys.ps1') -RepositoryRoot $fixtureRoot)
