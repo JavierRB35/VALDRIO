@@ -109,7 +109,10 @@ public partial class MainWindow
         panel.CoverageGrid.SelectedItem = vm.Coverage.Single();
         panel.BatchKeyBox.SelectedValue = primaryKey.Id;
         await Idle();
-        await Click(panel.BatchApplyButton);
+        if (!panel.BatchApplyButton.IsEnabled)
+            throw new InvalidOperationException("Batch assignment should be enabled for selected account and published key");
+        ((IInvokeProvider)new ButtonAutomationPeer(panel.BatchApplyButton)
+            .GetPattern(PatternInterface.Invoke)).Invoke();
         await panel.BatchAssignmentTask; await Idle();
         var bulkPersisted = company.ActiveAllocations!.ReadAllocations(study.CompanyId, study.Id)
             .Configuration.ExplicitAssignments.Single().KeyVersionId == primaryKey.Id;
