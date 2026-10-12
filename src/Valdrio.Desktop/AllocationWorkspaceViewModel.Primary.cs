@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using Valdrio.Application;
+using Valdrio.Calculation;
 using Valdrio.Domain;
 
 namespace Valdrio.Desktop;
@@ -17,8 +18,26 @@ public sealed partial class AllocationWorkspaceViewModel
 
     private bool primaryComplete;
     private decimal primaryPostedTotal;
-    private string StudyMoney(decimal amount) => workspace is null ? "" :
-        amount.ToString("0.########", Format) + " " + workspace.Resources.Study.Currency.FunctionalCurrencyCode;
+    // Currency presentation never alters the stored eight-decimal economic ledger.
+    private string StudyMoney(decimal amount) => DisplayedMoney(amount);
+    private string DisplayedMoney(decimal amount)
+    {
+        if (workspace is null) return "";
+        var currency = workspace.Resources.Study.Currency;
+        return amount.ToString("N" + currency.CurrencyMetadataSnapshot.MinorUnitDigits, Format)
+            + " " + currency.FunctionalCurrencyCode;
+    }
+    private decimal[] ProjectForDisplay(IReadOnlyList<decimal> values)
+    {
+        if (values.Count == 0) return [];
+        var entries = values.Select((value, i) => new CurrencyProjectionInputLine(
+            new StableRoundingId("view-" + i.ToString("D8", System.Globalization.CultureInfo.InvariantCulture)), value)).ToArray();
+        var projected = new CurrencyProjector().Project(values.Sum(), entries,
+            workspace!.Resources.Study.Currency.CurrencyMetadataSnapshot.ReportQuantum);
+        var byId = projected.Lines.ToDictionary(line => line.DestinationId.Value, line => line.ProjectedAmount, StringComparer.Ordinal);
+        return Enumerable.Range(0, values.Count)
+            .Select(i => byId["view-" + i.ToString("D8", System.Globalization.CultureInfo.InvariantCulture)]).ToArray();
+    }
     public string PrimaryResultsTotal => PrimaryResults.Count == 0 ? "" : StudyMoney(primaryPostedTotal);
     public string PrimaryNodeTotalsTotal => PrimaryNodeTotals.Count == 0 ? "" :
         StudyMoney(PrimaryNodeTotals.Sum(row => row.NumericAmount));
@@ -63,8 +82,10 @@ public sealed partial class AllocationWorkspaceViewModel
             primaryPostedTotal = primary.Facts.Sum(f => f.PostedAmount.Amount);
             var nodeById = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
             var resourceById = workspace.Resources.Origins.ToDictionary(o => o.Id);
-            foreach (var fact in primary.Facts)
+            var presentedFacts = ProjectForDisplay(primary.Facts.Select(f => f.PostedAmount.Amount).ToArray());
+            for (var i = 0; i < primary.Facts.Count; i++)
             {
+                var fact = primary.Facts[i];
                 var source = AccountLabel(resourceById[fact.ResourceId]);
                 var destination = NodeLabel(nodeById[fact.NodeId]);
                 var rule = fact.Selection switch
@@ -78,7 +99,7 @@ public sealed partial class AllocationWorkspaceViewModel
                     var applied = workspace.Keys.Single(k => k.Id == key);
                     rule += ": " + KeyLabel(applied);
                 }
-                PrimaryResults.Add(new(source, destination, MoneyText(fact.PostedAmount), rule, this["SecondaryBehavior" + fact.Behavior]));
+                PrimaryResults.Add(new(source, destination, DisplayedMoney(presentedFacts[i]), rule, this["SecondaryBehavior" + fact.Behavior]));
             }
             // Group published primary facts by node, not by account, without changing the ledger.
             var centers = workspace.Resources.Model.PhysicalCenters.ToDictionary(center => center.Id);
@@ -89,8 +110,11 @@ public sealed partial class AllocationWorkspaceViewModel
                 var node = nodeById[group.Key];
                 var center = centers[node.PhysicalCenterId];
                 var total = group.Sum(fact => fact.PostedAmount.Amount);
+                var displayed = primary.Facts.Select((fact, index) => (fact, index))
+                    .Where(x => x.fact.NodeId == group.Key)
+                    .Sum(x => presentedFacts[x.index]);
                 PrimaryNodeTotals.Add(new(center.Code + " · " + center.Name, node.Code,
-                    total.ToString("0.########", Format) + " " + primary.Currency, total));
+                    DisplayedMoney(displayed), total));
             }
             PrimarySummary = string.Format(Format, this["PrimarySummary"], primary.Facts.Count,
                 primary.Gaps.Count, primary.Pools.Count, primary.Currency);
