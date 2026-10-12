@@ -43,3 +43,5 @@ jobs:
           path: artifacts/visual
           if-no-files-found: ignore
           retention-days: 2
+
+# Targeted T08 smoke regression: incomplete percentage permits draft, never publication.
