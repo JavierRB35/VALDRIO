@@ -1,0 +1,20 @@
+name: ux-review-one-shot
+on:
+  push:
+    branches: [feature/ux-real-user-audit-20261012]
+    paths:
+      - .github/workflows/ux-review-one-shot.yml
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.401
+      - name: Validate VALDRIO
+        shell: pwsh
+        run: ./.github/scripts/Verify-Windows.ps1
