@@ -38,3 +38,5 @@ jobs:
 # Acceptance rerun after awaiting saved-study allocation restoration in the load command.
 
 # Verify used-key editor remains accessible after results-first navigation.
+
+# Replay Windows acceptance after repairing WPF async dispatcher warning.
