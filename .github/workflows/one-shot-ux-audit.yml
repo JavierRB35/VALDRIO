@@ -28,3 +28,5 @@ jobs:
             tests/Valdrio.Tests/TestResults/*.trx
           if-no-files-found: ignore
           retention-days: 4
+
+# Re-run after bulk allocation command and import interpretation improvements.
