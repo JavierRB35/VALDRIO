@@ -124,12 +124,14 @@ public partial class AllocationWorkspacePanel : UserControl
         BatchApplyButton.IsEnabled = viewModel?.CanShowCoverageEditor == true
             && CoverageGrid.SelectedItems.Count > 0 && BatchKeyBox.SelectedValue is EntityId;
     }
+    internal Task BatchAssignmentTask { get; private set; } = Task.CompletedTask;
     private async void ApplyBatchToSelectedRows(object sender, RoutedEventArgs e)
     {
         if (viewModel is not { } vm || BatchKeyBox.SelectedValue is not EntityId keyId) return;
         var ids = CoverageGrid.SelectedItems.OfType<AllocationCoverageRow>().Select(row => row.Id).ToArray();
         if (ids.Length == 0) return;
-        await vm.AssignCoverageBatchAsync(ids, keyId);
+        BatchAssignmentTask = vm.AssignCoverageBatchAsync(ids, keyId);
+        await BatchAssignmentTask;
         UpdateBatchState();
     }
     internal void FocusKeyLibrary()

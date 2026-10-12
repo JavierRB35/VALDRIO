@@ -103,7 +103,18 @@ public partial class MainWindow
         System.Windows.Input.Keyboard.Focus(directCombo);
         directCombo.SetCurrentValue(ComboBox.SelectedValueProperty, otherKey);
         await panel.CoverageAssignmentTask; await Idle();
-        Check(vm.Coverage.Single().SelectedKeyId == otherKey, "table combo persists a direct assignment");
+        var directAssignmentPersisted = vm.Coverage.Single().SelectedKeyId == otherKey;
+        // Exercise the new visible multi-row action on this one-account baseline.
+        // The five-row user audit exercises its principal use case.
+        panel.CoverageGrid.SelectedItem = vm.Coverage.Single();
+        panel.BatchKeyBox.SelectedValue = primaryKey.Id;
+        await Idle();
+        await Click(panel.BatchApplyButton);
+        await panel.BatchAssignmentTask; await Idle();
+        var bulkPersisted = company.ActiveAllocations!.ReadAllocations(study.CompanyId, study.Id)
+            .Configuration.ExplicitAssignments.Single().KeyVersionId == primaryKey.Id;
+        Check(directAssignmentPersisted && bulkPersisted,
+            "individual combo and batch selected-account action both persist through visible controls");
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "es-direct-assignment.png"));
         vm.Part = part.Id; await vm.AutomaticCommand.ExecuteAsync(null); await Idle();
         Check(vm.Coverage.Single().SelectedKeyId == primaryKey.Id, "removing manual choice restores the rule");
