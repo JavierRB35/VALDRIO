@@ -1,0 +1,54 @@
+name: one-shot-T13-integrated-Windows-acceptance
+
+on:
+  push:
+    branches: [feature/t13-synthetic-projects-20261011]
+    paths: [.github/workflows/one-shot-t13-integrated.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.401
+      - name: Check independent scenarios and negative controls
+        shell: pwsh
+        run: python "Synthetic Projects/verify_scenarios.py" --self-test
+      - name: Validate committed native SQLite company files
+        shell: pwsh
+        run: |
+          @'
+          import sqlite3
+          from pathlib import Path
+          for path in [Path("Synthetic Projects/Service Company/services.valdrio"), Path("Synthetic Projects/Industrial Company/industrial.valdrio")]:
+              assert path.exists(), f"Missing native company: {path}"
+              conn = sqlite3.connect(f"file:{path.as_posix()}?mode=ro", uri=True)
+              try:
+                  integrity = conn.execute("PRAGMA integrity_check").fetchone()[0]
+                  assert integrity == "ok", f"{path}: {integrity}"
+                  tables = {row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+                  assert len(tables) >= 5, f"{path}: insufficient SQLite business tables: {tables}"
+                  print(f"{path}: integrity OK, {len(tables)} tables, {path.stat().st_size} bytes")
+              finally:
+                  conn.close()
+          '@ | python -
+      - name: Full Windows build, 632 tests, WPF workflow and receipts
+        shell: pwsh
+        run: ./.github/scripts/Verify-Windows.ps1
+      - name: Retain acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: t13-combined-main-acceptance
+          path: |
+            artifacts/visual
+            artifacts/acceptance-build.json
+            tests/Valdrio.Tests/TestResults/*.trx
+          if-no-files-found: ignore
+          retention-days: 3
