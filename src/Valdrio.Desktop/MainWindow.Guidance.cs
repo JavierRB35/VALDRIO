@@ -14,7 +14,8 @@ public partial class MainWindow
         Closed += (_, _) => { foreach (var source in workflowSources) source.PropertyChanged -= WorkflowChanged; };
         // Visible "Open analysis" must restore persisted closure state for direct
         // access to the secondary results, without visiting primary first.
-        StudyPanel.LoadStudyButton.Click += LoadedStoredStudy;
+        // StudyWorkspaceViewModel.Load awaits the restoration callback before
+        // the button becomes idle, avoiding a disabled Backup/secondary sidebar race.
     }
     private void BindGuidance()
     {
@@ -23,13 +24,15 @@ public partial class MainWindow
         if (viewModel is null) return;
         foreach (var source in new INotifyPropertyChanged?[] { viewModel, viewModel.Company, viewModel.Models, viewModel.Studies, viewModel.Resources, viewModel.Allocations })
             if (source is not null) { workflowSources.Add(source); source.PropertyChanged += WorkflowChanged; }
-        if (viewModel.Models is { } models && viewModel.Studies is { } studies) models.AttachStudyNodes(studies);
+        if (viewModel.Models is { } models && viewModel.Studies is { } studies)
+        {
+            models.AttachStudyNodes(studies);
+            studies.AfterLoadedAsync = RestoreAllocationNavigation;
+        }
         UpdateWorkflow();
     }
-    private async void LoadedStoredStudy(object sender, RoutedEventArgs e)
+    private async Task RestoreAllocationNavigation()
     {
-        await System.Windows.Threading.Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.Background);
-        if (viewModel?.Studies?.LoadCommand.ExecutionTask is { } load) await load;
         if (viewModel is not { } vm || vm.Studies?.Current is null ||
             vm.Studies.HasConfirmedImports != true || vm.Allocations is null || vm.Allocations.IsDirty)
             return;
