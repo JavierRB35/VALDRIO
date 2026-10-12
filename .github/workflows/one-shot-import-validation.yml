@@ -33,3 +33,5 @@ jobs:
             tests/Valdrio.Tests/TestResults/*.trx
           if-no-files-found: ignore
           retention-days: 2
+
+# Authorized follow-up validation after T11 draft/publication regression correction.
