@@ -99,7 +99,7 @@ public partial class AllocationWorkspacePanel : UserControl
     }
     private async void ShowResultsAfterClosure(object sender, RoutedEventArgs e)
     {
-        await Dispatcher.Yield(DispatcherPriority.Background);
+        await System.Windows.Threading.Dispatcher.Yield(DispatcherPriority.Background);
         var work = secondaryPage ? viewModel?.ToggleSecondaryCommand.ExecutionTask
                                  : viewModel?.TogglePrimaryCommand.ExecutionTask;
         if (work is not null) await work;
@@ -107,13 +107,13 @@ public partial class AllocationWorkspacePanel : UserControl
     }
     private async void ShowSecondaryResultsOnCalculate(object sender, RoutedEventArgs e)
     {
-        await Dispatcher.Yield(DispatcherPriority.Background);
+        await System.Windows.Threading.Dispatcher.Yield(DispatcherPriority.Background);
         if (viewModel?.CalculateSecondaryCommand.ExecutionTask is { } work) await work;
         if (viewModel?.SecondaryResults.Count > 0)
         {
             SecondaryResultsSection.IsExpanded = true;
             ReciprocalSection.IsExpanded = false;
-            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
+            _ = Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
                 new Action(() => { if (PrincipalCostsGrid.IsVisible) PrincipalCostsGrid.BringIntoView(); }));
         }
     }

@@ -28,7 +28,7 @@ public partial class MainWindow
     }
     private async void LoadedStoredStudy(object sender, RoutedEventArgs e)
     {
-        await Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.Background);
+        await System.Windows.Threading.Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.Background);
         if (viewModel?.Studies?.LoadCommand.ExecutionTask is { } load) await load;
         if (viewModel is not { } vm || vm.Studies?.Current is null ||
             vm.Studies.HasConfirmedImports != true || vm.Allocations is null || vm.Allocations.IsDirty)

@@ -28,3 +28,5 @@ jobs:
             tests/Valdrio.Tests/TestResults/*.trx
           if-no-files-found: ignore
           retention-days: 3
+
+# Re-run after correcting WPF warning-as-error and Dispatcher.Yield qualification.
