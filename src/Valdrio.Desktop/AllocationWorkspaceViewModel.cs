@@ -36,6 +36,7 @@ public sealed partial class AllocationCoverageRow(EntityId id, string source, st
     [ObservableProperty] private string key = key;
     [ObservableProperty] private string status = status;
     [ObservableProperty] private EntityId? selectedKeyId = selectedKeyId;
+    [ObservableProperty] private bool selectedForBulk;
 }
 public sealed record AllocationPartChoice(EntityId Value, string Label, Money Amount);
 
@@ -76,7 +77,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private UnitId? unit;
     private bool selfAllowed;
     private AccountSelectorKind selectorKind;
-    private EntityId? ruleKey, auxiliary, secondaryKey, part, partKey;
+    private EntityId? ruleKey, auxiliary, secondaryKey, part, partKey, bulkKey;
     private string? account;
     public AllocationWorkspaceViewModel(CompanyFileViewModel company, StudyWorkspaceViewModel studies,
         UiTextCatalog texts, PresentationPreferencesService preferences, IModelEditorDialogs dialogs)
@@ -104,6 +105,12 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         SaveSecondaryGroupCommand = new AsyncRelayCommand(SaveSecondaryPartGroupAsync, () => CanSaveSecondaryGroup);
         AssignSecondaryKeyToMissingCommand = new AsyncRelayCommand(AssignSecondaryKeyToMissingAsync, () => CanAssignSecondaryKeyToMissing);
         ClearObsoleteSecondaryGroupsCommand = new AsyncRelayCommand(ClearObsoleteSecondaryGroupsAsync, () => CanEditSecondaryConfiguration && !HasUnappliedRule && HasObsoleteSecondaryGroups);
+        BulkApplyCommand = new AsyncRelayCommand(ApplyBulkCoverageAsync, () => CanApplyBulk);
+        BulkSelectUnassignedCommand = new RelayCommand(() =>
+        {
+            foreach (var row in Coverage) row.SelectedForBulk = row.SelectedKeyId is null;
+            RefreshBulkSelection();
+        }, () => CanEditConfiguration && Coverage.Count>0);
         SaveRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(false), () => CanSaveRule);
         ApplyRuleCommand = new AsyncRelayCommand(() => SaveRuleAsync(true), () => CanSaveRule);
         SaveKeyCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(MissingKeyInput(true) is null), () => CanEditKey && MissingKeyInput(false) is null);
@@ -217,6 +224,22 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public string Prefix { get => prefix; set { if (SetProperty(ref prefix, value)) RuleEdited(); } }
     public string Priority { get => priority; set { if (SetProperty(ref priority, value)) RuleEdited(); } }
     public EntityId? RuleKey { get => ruleKey; set { if (SetProperty(ref ruleKey, value)) RuleEdited(); } }
+    public EntityId? BulkKey { get => bulkKey; set { if (SetProperty(ref bulkKey, value)) BulkApplyCommand.NotifyCanExecuteChanged(); } }
+    public string BulkSelectionSummary
+    {
+        get
+        {
+            var selected=Coverage.Where(row=>row.SelectedForBulk).ToArray();
+            var total=selected.Sum(row=>row.NumericAmount);
+            var amount=workspace is null ? "" : DisplayStudyMoney(CurrencyProjector.RoundToQuantum(total,
+                workspace.Resources.Study.Currency.CurrencyMetadataSnapshot.ReportQuantum));
+            return string.Format(Format, this["BulkSelectionSummary"], selected.Length, amount);
+        }
+    }
+    public IAsyncRelayCommand BulkApplyCommand { get; }
+    public IRelayCommand BulkSelectUnassignedCommand { get; }
+    public bool CanApplyBulk => CanEditConfiguration && !HasUnappliedRule && BulkKey.HasValue &&
+        PublishedPrimary.Any(k=>k.Value==BulkKey.Value) && Coverage.Any(c=>c.SelectedForBulk);
     public EntityId? Auxiliary { get => auxiliary; set { if (SetProperty(ref auxiliary, value)) RuleEdited(); } }
     public EntityId? SecondaryKey { get => secondaryKey; set { if (SetProperty(ref secondaryKey, value)) RuleEdited(); } }
     public string GroupName { get => groupName; set { if (SetProperty(ref groupName, value)) RuleEdited(); } }
@@ -503,13 +526,15 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         }
         // Keep row identity and collection order so WPF preserves selection, sorting and scroll.
         var ids = nextCoverage.Select(r => r.Id).ToHashSet();
-        foreach (var old in Coverage.Where(r => !ids.Contains(r.Id)).ToArray()) Coverage.Remove(old);
+        foreach (var old in Coverage.Where(r => !ids.Contains(r.Id)).ToArray())
+        { old.PropertyChanged -= BulkRowChanged; Coverage.Remove(old); }
         foreach (var next in nextCoverage)
         {
             var old = Coverage.FirstOrDefault(r => r.Id == next.Id);
-            if (old is null) Coverage.Add(next);
+            if (old is null) { next.PropertyChanged += BulkRowChanged; Coverage.Add(next); }
             else { old.Source = next.Source; old.Amount = next.Amount; old.NumericAmount = next.NumericAmount; old.Key = next.Key; old.Status = next.Status; old.SelectedKeyId = next.SelectedKeyId; }
         }
+        RefreshBulkSelection();
         RebuildComposition();
         RebuildPrimary();
         ResetReciprocal();
@@ -537,6 +562,31 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public IAsyncRelayCommand SaveRuleCommand { get; }
     public IAsyncRelayCommand ApplyRuleCommand { get; }
     public IAsyncRelayCommand SaveKeyCommand { get; }
+    private void BulkRowChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(AllocationCoverageRow.SelectedForBulk)) RefreshBulkSelection();
+    }
+    private void RefreshBulkSelection()
+    {
+        OnPropertyChanged(nameof(BulkSelectionSummary));
+        BulkApplyCommand?.NotifyCanExecuteChanged();
+        BulkSelectUnassignedCommand?.NotifyCanExecuteChanged();
+    }
+    private async Task ApplyBulkCoverageAsync()
+    {
+        if (!CanApplyBulk || BulkKey is not { } key) return;
+        var selected = Coverage.Where(row=>row.SelectedForBulk).Select(row=>row.Id).ToHashSet();
+        // A single atomic write: keep all unselected rules, replace just the chosen parts.
+        var saved = await CommitConfig(c=>new(c.PrimaryRules,c.SecondaryRules,
+            c.ExplicitAssignments.Where(a=>!selected.Contains(a.PartId))
+                .Concat(selected.OrderBy(id=>id.ToString(),StringComparer.Ordinal)
+                    .Select(id=>new ExplicitPrimaryAssignment(id,key))).ToArray(),
+            c.AbsoluteAssignments.Where(a=>!selected.Contains(a.PartId)).ToArray(),c.Descriptions));
+        if (!saved) return;
+        foreach (var row in Coverage) row.SelectedForBulk=false;
+        BulkKey=null;
+        RefreshBulkSelection();
+    }
     public async Task AssignCoverageAsync(EntityId partId, EntityId keyId)
     {
         if (!CanEditConfiguration || HasUnappliedRule) return;
@@ -559,7 +609,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public IRelayCommand DiscardCommand { get; }
     private void Commands()
     {
-        foreach (var command in new IRelayCommand?[] { SaveCompositionRowsCommand, DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
+        foreach (var command in new IRelayCommand?[] { BulkApplyCommand, BulkSelectUnassignedCommand, SaveCompositionRowsCommand, DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
             SaveRuleCommand, RemoveRuleCommand, LoadRuleCommand, NewRuleCommand, SaveSecondaryCommand, LoadSecondaryCommand, NewSecondaryCommand,
             RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CalculateSecondaryCommand, CancelSecondaryCommand, ExplainSecondaryCommand, ToggleSecondaryCommand,
             SaveSecondaryGroupCommand, ClearObsoleteSecondaryGroupsCommand, AssignSecondaryKeyToMissingCommand,
