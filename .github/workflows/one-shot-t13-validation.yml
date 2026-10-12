@@ -1,0 +1,41 @@
+name: one-shot-t13-windows-validation
+
+on:
+  push:
+    branches:
+      - feature/t13-synthetic-projects-20261011
+    paths:
+      - .github/workflows/one-shot-t13-validation.yml
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: windows-latest
+    timeout-minutes: 55
+    env:
+      VALDRIO_T13_EXPORT_DIR: ${{ github.workspace }}/Synthetic Projects/Generated
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.401
+      - name: Check synthetic mathematical reference and negative scenarios
+        shell: pwsh
+        run: python 'Synthetic Projects/verify_scenarios.py' --self-test
+      - name: Full VALDRIO Windows acceptance and native projects
+        shell: pwsh
+        run: ./.github/scripts/Verify-Windows.ps1
+      - name: Export synthetic projects and evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: t13-synthetic-native-projects
+          path: |
+            Synthetic Projects/Generated/
+            artifacts/visual/
+            artifacts/acceptance-build.json
+            tests/Valdrio.Tests/TestResults/*.trx
+          if-no-files-found: ignore
+          retention-days: 3
