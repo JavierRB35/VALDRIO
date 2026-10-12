@@ -29,3 +29,5 @@ jobs:
             tests/Valdrio.Tests/TestResults/*.trx
           if-no-files-found: ignore
           retention-days: 3
+
+# One-time retry: fix test assembly path net10.0-windows.

@@ -34,7 +34,7 @@ try {
         return [ordered]@{
             DesktopExe = "artifacts/desktop/Valdrio.Desktop.exe"
             RunnerDll = "src/Valdrio.Runner/bin/Release/net10.0/Valdrio.Runner.dll"
-            TestAssembly = "tests/Valdrio.Tests/bin/Release/net10.0/Valdrio.Tests.dll"
+            TestAssembly = "tests/Valdrio.Tests/bin/Release/net10.0-windows/Valdrio.Tests.dll"
             Trx = "tests/Valdrio.Tests/TestResults/valdrio-tests.trx"
         }
     }
@@ -43,7 +43,7 @@ try {
         return [ordered]@{
             DesktopPublish = "artifacts/desktop"
             RunnerOutput = "src/Valdrio.Runner/bin/Release/net10.0"
-            TestOutput = "tests/Valdrio.Tests/bin/Release/net10.0"
+            TestOutput = "tests/Valdrio.Tests/bin/Release/net10.0-windows"
         }
     }
 
