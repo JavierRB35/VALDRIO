@@ -62,6 +62,7 @@ public sealed partial class ImportColumnMappingViewModel
     public string Guide(string key) => Text("Guide." + key);
     public bool HasImportDestination => targetStudy?.State == StudyState.Open && importPort is not null && writable;
     public string MeaningChosenLabel => Guide("MeaningChosen");
+    public string MeaningRequiredMessage => Guide("NeedMeaning");
     private bool hasAmountMeaning;
     public bool HasAmountMeaning
     {
