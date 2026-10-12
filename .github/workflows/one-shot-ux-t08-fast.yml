@@ -23,12 +23,11 @@ jobs:
           $exe = (Resolve-Path 'artifacts/desktop/Valdrio.Desktop.exe').Path
           $base = (Get-Location).Path
           New-Item -ItemType Directory -Force -Path 'artifacts/t08-quick' | Out-Null
-          $testCompany=Join-Path $base 'artifacts/t08-quick/fixture.valdrio'
-          Copy-Item -LiteralPath 'Synthetic Projects/Service Company/services.valdrio' -Destination $testCompany -Force
+          $testCompany=(Resolve-Path 'samples/t01-smoke.valdrio-dev.json').Path
           $dir=Join-Path $base 'artifacts/t08-quick/visual'
           New-Item -ItemType Directory -Force -Path $dir | Out-Null
           $process=Start-Process -FilePath $exe -ArgumentList @(
-            $testCompany, '--allocation-only', "--capture-dir=$dir"
+            $testCompany, '--t08-foundations-only', "--capture-dir=$dir"
           ) -PassThru -Wait -WindowStyle Hidden
           if ($process.ExitCode -ne 0) {
             if(Test-Path "$dir/company-failure.txt"){Get-Content "$dir/company-failure.txt" | Write-Host}
