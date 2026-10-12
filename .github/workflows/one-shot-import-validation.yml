@@ -37,3 +37,5 @@ jobs:
 # Authorized follow-up validation after T11 draft/publication regression correction.
 
 # Re-run Windows acceptance with WPF resource-lookup scanner regression fixture.
+
+# Final Windows validation with corrected scanner implementation.
