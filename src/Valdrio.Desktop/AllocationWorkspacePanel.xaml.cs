@@ -233,15 +233,26 @@ public partial class AllocationWorkspacePanel : UserControl
         await SecondaryAssignmentTask;
     }
 
+    private async Task OpenSelectedKeyForEditing()
+    {
+        if (viewModel?.LoadKeyCommand.CanExecute(null) != true) return;
+        await viewModel.LoadKeyCommand.ExecuteAsync(null);
+        // In a previously closed phase the results-first presentation collapses
+        // the editor. Opening a key is an explicit user request to inspect/edit it.
+        DefinitionSection.IsExpanded = true;
+        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+        {
+            if (KeyNameBox.IsVisible && KeyNameBox.IsEnabled) KeyNameBox.BringIntoView();
+        }));
+    }
     private async void OpenKeyDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (ItemsControl.ContainerFromElement(KeyGrid, e.OriginalSource as DependencyObject) is DataGridRow && viewModel?.LoadKeyCommand.CanExecute(null) == true)
-            await viewModel.LoadKeyCommand.ExecuteAsync(null);
+        if (ItemsControl.ContainerFromElement(KeyGrid, e.OriginalSource as DependencyObject) is DataGridRow)
+            await OpenSelectedKeyForEditing();
     }
     private async void OpenKeyKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Enter && viewModel?.LoadKeyCommand.CanExecute(null) == true)
-        { e.Handled = true; await viewModel.LoadKeyCommand.ExecuteAsync(null); }
+        if (e.Key == Key.Enter) { e.Handled = true; await OpenSelectedKeyForEditing(); }
     }
     internal Task CoverageAssignmentTask { get; private set; } = Task.CompletedTask;
     private async void CoverageKeyChanged(object sender, SelectionChangedEventArgs e)
