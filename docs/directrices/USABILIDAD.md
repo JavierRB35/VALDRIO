@@ -85,3 +85,25 @@ de cambios pendientes y la validación del rango.
 - Para un reparto del 100 % al propio auxiliar sin salida hacia nodos principales, la validación de viabilidad del cálculo muestra `GRAPH_CLOSED_COMPONENT`; no se debe bloquear la simple elección de la clave ni prometer resultados.
 - `ReciprocalFactorization` mantiene el contrato técnico genérico `AllowSelf` para llamadas externas/fixtures explícitos, sin convertirlo en una decisión que el usuario de VALDRIO deba tomar.
 - Criterios de prueba: reparto mixto con autoprestación, clave histórica con valor `Forbidden`, circuito cerrado 100 % propio, conservación de costes y persistencia tras reabrir el estudio.
+
+## Importación de saldos en una única moneda — decisión del propietario (2026-10-12)
+
+- Toda importación normal de saldos usa exclusivamente la moneda funcional del análisis.
+  La moneda propuesta a nivel de proyecto solo sirve para crear análisis; una vez
+  elegido el análisis, la importación no permite cambiar la moneda.
+- Retirar de la pantalla de importación los controles de moneda de origen,
+  columnas de divisas, fechas de cotización, RateSet, tipos manuales e ID de tipo
+  por fila. No esconderlos bajo otro desplegable.
+- No obtener, inferir, calcular ni aplicar tipos de cambio durante la importación.
+  Si los importes no están expresados en la moneda del análisis, el usuario debe
+  normalizarlos previamente en su sistema de origen.
+- Mostrar la moneda del análisis y esa condición de forma explícita. Un archivo
+  sin metadatos de moneda no permite verificar por sí solo la divisa real de sus
+  importes; no afirmar que se ha detectado una moneda inexistente en el archivo.
+- Conservar la lectura y auditoría de lotes internacionales históricos (T06A)
+  y sus conversiones congeladas. La compatibilidad de esos proyectos no convierte
+  el flujo internacional antiguo en una opción disponible para nuevas importaciones.
+- Mantener la regla de validación existente: un perfil normal con moneda distinta
+  de la funcional no puede confirmarse sin puente FX; la interfaz nueva no permite
+  crear ese perfil. Cualquier futura eliminación del motor heredado requerirá una
+  migración auditada por separado.

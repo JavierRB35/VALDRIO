@@ -64,7 +64,11 @@ public partial class ImportColumnMappingWindow
         await Click(ConfirmImportButton); var first = vm.ConfirmedImport!; await Click(panel.CaptureStudyButton);
         var oldPhoto = studies.SnapshotChoice!.Value;
         Check(oldPhoto.PayloadSchema == ImportedStudySnapshotInput.InternationalSchema && oldPhoto.Input.AppliedFx.Count == 2, "snapshot v5 freezes conversions and identity");
-        await studies.AttachImportTarget(); vm.ReplaceBatch = true; vm.Replacement = vm.ExistingBatches.Single(b => b.Id == first.Id);
+        await studies.AttachImportTarget();
+        // Compatibility-only regression: an explicit internal opt-in is required
+        // again after attaching a source; normal end users have no FX controls.
+        vm.International = true; vm.CurrencyFromColumn = true;
+        vm.ReplaceBatch = true; vm.Replacement = vm.ExistingBatches.Single(b => b.Id == first.Id);
         rate.Quote = "0.95"; Check(vm.Preparation is null && !vm.InterpretationApproved, "rate edit clears preparation and approval");
         vm.ApprovalReference = "Synthetic replacement 100 USD x 0.95 + 20 EUR = 115 EUR";
         vm.InterpretationApproved = true; await PrepareForSmoke(); await Click(ConfirmImportButton); await Click(panel.CaptureStudyButton);

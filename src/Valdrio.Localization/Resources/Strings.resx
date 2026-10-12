@@ -193,7 +193,7 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Nodes" xml:space="preserve"><value>Calculation nodes</value></data>
   <data name="Model.NodeCode" xml:space="preserve"><value>Node code</value></data>
   <data name="Model.NodeDescription" xml:space="preserve"><value>Node description</value></data>
-  <data name="ImportMapping.AdvancedOptions" xml:space="preserve"><value>Advanced options: currencies, replacement and comparisons</value></data>
+  <data name="ImportMapping.AdvancedOptions" xml:space="preserve"><value>Advanced options: replacement and comparisons</value></data>
   <data name="Model.Physical" xml:space="preserve"><value>Physical center</value></data>
   <data name="Model.Role" xml:space="preserve"><value>Node type</value></data>
   <data name="Model.FunctionTags" xml:space="preserve"><value>Functions (optional)</value></data>
@@ -362,6 +362,8 @@ Full: {5}</value></data>
   <data name="ImportMapping.Scope" xml:space="preserve"><value>Saving preserves the source file, chosen interpretation, amounts and provenance so the analysis remains traceable.</value></data>
   <data name="ImportMapping.NoStudy" xml:space="preserve"><value>File preview. To save these data you first need to open or create a cost analysis.</value></data>
   <data name="ImportMapping.Target" xml:space="preserve"><value>Destination analysis: {0} · period {1} to {2} · currency {3}</value></data>
+  <data name="ImportMapping.CurrencyImportNotice" xml:space="preserve"><value>Balances will be imported in {0}, without currency conversion. If the file uses another currency, convert it in your accounting system first.</value></data>
+  <data name="ImportMapping.CurrencyImportNoStudy" xml:space="preserve"><value>Balances will be imported in the analysis currency. Open an analysis first to determine it.</value></data>
   <data name="ImportMapping.SourceCurrency" xml:space="preserve"><value>Currency of the amounts (for example EUR)</value></data>
   <data name="ImportMapping.ApprovalReference" xml:space="preserve"><value>Optional review note</value></data>
   <data name="ImportMapping.ApproveInterpretation" xml:space="preserve"><value>I approve the period movements shown in this review. Original amounts, signs and provenance will be retained.</value></data>

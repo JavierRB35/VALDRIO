@@ -76,7 +76,7 @@ public partial class ImportColumnMappingWindow
             "CSV arbitrary debit credit columns preserve originals and signed differences");
         Select(CreditColumnBox, 4); await vm.ValidateCommand.ExecuteAsync(null);
         Check(!vm.IsReady && vm.Status.StartsWith("IMP_COLUMN_SELECTION", StringComparison.Ordinal), "same debit and credit column blocked");
-        Select(CreditColumnBox, 1); await vm.ValidateCommand.ExecuteAsync(null); SetText(SourceCurrencyBox, "EUR");
+        Select(CreditColumnBox, 1); await vm.ValidateCommand.ExecuteAsync(null);
         var before = Hash(path); await PrepareForSmoke();
         Check(vm.Preparation is { CanConfirm: false } && !ConfirmImportButton.IsEnabled && Hash(path) == before,
             "debit credit approval required before company mutation");
@@ -130,7 +130,7 @@ public partial class ImportColumnMappingWindow
         await vm.ReadCommand.ExecuteAsync(null); Select(AccountColumnBox, 3); Select(DebitColumnBox, 4); Select(CreditColumnBox, 1); await vm.ValidateCommand.ExecuteAsync(null);
         Check(vm.IsReady && vm.ValidatedSelection!.Rows[0].Amount == 160m && vm.ValidatedSelection.Source.SheetName == "Selected" &&
             vm.ValidatedSelection.Source.Rows[0].GetCell(4).RawLexical == "180.00", "Excel selected worksheet uses exact stored debit and cached credit");
-        SetText(SourceCurrencyBox, "EUR"); Approve(); await PrepareForSmoke(); await Capture("xlsx-prepared-es.png");
+        Approve(); await PrepareForSmoke(); await Capture("xlsx-prepared-es.png");
         await Click(ConfirmImportButton); var xlsxBatch = vm.ConfirmedImport ?? throw new InvalidOperationException(vm.Status);
         Check(xlsxBatch.Resources.Count == 1 && xlsxBatch.Resources[0].Functional.Amount == 160m && studies.Current?.Revision == 2 && Hash(xlsx) == xlsxHash,
             "native Excel confirmation appends identified batch and revision");
