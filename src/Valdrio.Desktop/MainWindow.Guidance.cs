@@ -27,7 +27,7 @@ public partial class MainWindow
             {
                 // On reopening a saved analysis, the primary-closed flag must be
                 // read before enabling the Secondary navigation entry.
-                if (viewModel?.Allocations is { } allocations)
+                if (studies.HasConfirmedImports && viewModel?.Allocations is { } allocations)
                     await allocations.EnterAsync();
                 UpdateWorkflow();
             };
