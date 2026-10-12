@@ -147,6 +147,9 @@ public partial class AllocationWorkspacePanel : UserControl
                 KeyGrid.CurrentCell = new DataGridCellInfo(first, KeyGrid.Columns[0]);
                 KeyGrid.ScrollIntoView(first);
                 KeyGrid.UpdateLayout();
+                // Selection and editor must agree: avoid a selected key beside a blank form.
+                if (viewModel?.LoadKeyCommand.CanExecute(null) == true)
+                    _ = viewModel.LoadKeyCommand.ExecuteAsync(null);
                 if (KeyGrid.ItemContainerGenerator.ContainerFromItem(first) is DataGridRow row)
                 {
                     row.Focus();

@@ -154,6 +154,11 @@ public partial class MainWindow
             vm.PrincipalCosts.Sum(row => row.TotalAmount), "secondary contribution footer reconciles with final principal costs");
         Check(vm.PrincipalCosts.All(row => row.PrimaryAmount + row.AuxiliaryAmount == row.TotalAmount),
             "terminal totals keep primary and auxiliary components distinct");
+        Check(vm.PrincipalCosts.All(row => row.PresentedPrimary + row.PresentedAuxiliary == row.PresentedTotal),
+            "displayed primary + auxiliary amounts equal the visible final cost in minor currency units");
+        Check(vm.PrincipalCosts.Sum(row => row.PresentedTotal) ==
+            decimal.Round(vm.PrincipalCosts.Sum(row => row.TotalAmount), 2, MidpointRounding.ToEven),
+            "visible terminal amounts reconcile to the EUR-cent total without changing ledger amounts");
         vm.SelectedSecondaryResultRow = vm.SecondaryResults.First();
         await Idle();
         Check(!string.IsNullOrWhiteSpace(vm.SecondaryExplanation), "component explanation selects the matching fact");
@@ -172,9 +177,9 @@ public partial class MainWindow
         Check(vm.IsSecondaryClosed && vm.SecondaryResults.Count == 2, "published mixed result survives reopen");
         Check(vm.SecondaryNodeAssignments.Single(row => row.NodeId == firstAuxiliary.NodeId).PersistedKeyId == key.Id,
             "auxiliary key assignment survives closing and reopening the entire project");
-        Check(secondary.KeyGrid.Items.Count > 0 && secondary.KeyGrid.SelectedIndex == 0 &&
-            secondary.KeyGrid.IsKeyboardFocusWithin,
-            "secondary key library refocuses the first row after reopening the project");
+        Check(secondary.SecondaryResultsSection.IsExpanded && !secondary.LibrarySection.IsExpanded &&
+            secondary.PrincipalCostsGrid.IsVisible,
+            "published secondary opens directly at visible final results, while key library remains accessible");
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }, new JsonSerializerOptions { WriteIndented = true }));
     }
 }
