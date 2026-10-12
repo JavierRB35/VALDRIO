@@ -1,0 +1,32 @@
+name: one-shot-ux-audit-fast-tests
+on:
+  push:
+    branches: [feature/ux-audit-improvements-20261012]
+    paths: [.github/workflows/one-shot-ux-fast.yml]
+permissions:
+  contents: read
+jobs:
+  fast:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.401
+      - name: Build desktop and test dependencies
+        shell: pwsh
+        run: |
+          dotnet restore Valdrio.slnx
+          dotnet build Valdrio.slnx -c Release --no-restore
+      - name: Run UX regression test
+        shell: pwsh
+        run: dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj -c Release --no-build --filter "FullyQualifiedName~Audit_BulkPrimaryAssignmentIsAtomic" --logger "trx;LogFileName=ux-regression.trx"
+      - name: Preserve test result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-regression-test
+          path: tests/Valdrio.Tests/TestResults/*.trx
+          if-no-files-found: ignore
+          retention-days: 2
