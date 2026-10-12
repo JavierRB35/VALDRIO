@@ -193,7 +193,7 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.Nodes" xml:space="preserve"><value>Nodos de cálculo</value></data>
   <data name="Model.NodeCode" xml:space="preserve"><value>Código del nodo</value></data>
   <data name="Model.NodeDescription" xml:space="preserve"><value>Descripción del nodo</value></data>
-  <data name="ImportMapping.AdvancedOptions" xml:space="preserve"><value>Opciones avanzadas: divisas, sustitución y comparaciones</value></data>
+  <data name="ImportMapping.AdvancedOptions" xml:space="preserve"><value>Opciones avanzadas: sustitución y comparaciones</value></data>
   <data name="Model.Physical" xml:space="preserve"><value>Centro físico</value></data>
   <data name="Model.Role" xml:space="preserve"><value>Tipo de nodo</value></data>
   <data name="Model.FunctionTags" xml:space="preserve"><value>Funciones (opcional)</value></data>
@@ -362,6 +362,8 @@ Completa: {5}</value></data>
   <data name="ImportMapping.Scope" xml:space="preserve"><value>Al guardar se conserva el archivo de origen, la interpretación elegida, los importes y su procedencia para que el análisis sea trazable.</value></data>
   <data name="ImportMapping.NoStudy" xml:space="preserve"><value>Vista previa del archivo. Para guardar estos datos necesitas abrir o crear antes un análisis de costes.</value></data>
   <data name="ImportMapping.Target" xml:space="preserve"><value>Análisis de destino: {0} · periodo {1} a {2} · moneda {3}</value></data>
+  <data name="ImportMapping.CurrencyImportNotice" xml:space="preserve"><value>Los saldos se importarán en {0}, sin cambio de divisa. Si el archivo utiliza otra moneda, conviértelo previamente en tu sistema contable.</value></data>
+  <data name="ImportMapping.CurrencyImportNoStudy" xml:space="preserve"><value>Los saldos se importarán en la moneda del análisis. Abre primero un análisis para establecerla.</value></data>
   <data name="ImportMapping.SourceCurrency" xml:space="preserve"><value>Moneda de los importes (por ejemplo EUR)</value></data>
   <data name="ImportMapping.ApprovalReference" xml:space="preserve"><value>Nota opcional de la revisión</value></data>
   <data name="ImportMapping.ApproveInterpretation" xml:space="preserve"><value>Confirmo los movimientos del periodo mostrados en esta revisión. Se conservarán los originales, sus signos y su origen.</value></data>

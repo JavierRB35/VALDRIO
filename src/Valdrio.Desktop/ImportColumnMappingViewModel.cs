@@ -108,6 +108,10 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
     public IReadOnlyList<string> Worksheets => session?.WorksheetNames ?? [];
     public string this[string key] => Text("ImportMapping." + key);
     public string Title => this["Title"];
+    // New imports always use the functional currency selected for the analysis.
+    public string CurrencyImportNotice => targetStudy is { } study
+        ? string.Format(Ui, this["CurrencyImportNotice"], study.Currency.FunctionalCurrencyCode)
+        : this["CurrencyImportNoStudy"];
     public string Worksheet { get => worksheet ?? ""; set { if (SetProperty(ref worksheet, value)) InvalidateSource(); } }
     public string HeaderRow { get => headerRow; set { if (SetProperty(ref headerRow, value)) InvalidateSource(); } }
     public string FirstDataRow { get => firstDataRow; set { if (SetProperty(ref firstDataRow, value)) InvalidateSource(); } }

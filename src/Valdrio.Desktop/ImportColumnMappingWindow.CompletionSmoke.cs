@@ -36,7 +36,7 @@ public partial class ImportColumnMappingWindow
         void Select(ComboBox box, object value) { box.SetCurrentValue(ComboBox.SelectedValueProperty, value); box.GetBindingExpression(ComboBox.SelectedValueProperty)!.UpdateSource(); }
         void Approve()
         {
-            Text(SourceCurrencyBox, "EUR"); Text(ApprovalReferenceBox, "Synthetic matched scope: 160 - 100 = 60; corrected 190 - 100 = 90");
+            Text(ApprovalReferenceBox, "Synthetic matched scope: 160 - 100 = 60; corrected 190 - 100 = 90");
             ApproveInterpretationBox.SetCurrentValue(CheckBox.IsCheckedProperty, true); ApproveInterpretationBox.GetBindingExpression(CheckBox.IsCheckedProperty)!.UpdateSource();
         }
         async Task Read(string file)

@@ -121,47 +121,45 @@ public partial class MainWindow
         var vm = studies.ImportColumns!; sources.Paths.Enqueue(csv); await vm.OpenCommand.ExecuteAsync(null);
         await wizard.AdvanceImport();
         Check(wizard.ImportSteps.SelectedIndex == 1, "read and continue advances to column mapping");
-        vm.International = false; vm.CurrencyFromColumn = false; vm.AmountLayout = "amount"; vm.AccountColumn = 1; vm.AmountColumn = 3; vm.DecimalSeparator = ","; vm.GroupSeparator = "";
+        Check(!vm.International && vm.SourceCurrency == "EUR", "ordinary import inherits EUR without currency conversion");
+        vm.AmountLayout = "amount"; vm.AccountColumn = 1; vm.AmountColumn = 3; vm.DecimalSeparator = ","; vm.GroupSeparator = "";
         await wizard.AdvanceImport();
         Check(wizard.ImportSteps.SelectedIndex == 2, "validated columns advance to record selection");
         vm.DeselectAllRecordsCommand.Execute(null); await wizard.AdvanceImport();
         Check(wizard.ImportSteps.SelectedIndex == 2 && wizard.ImportStepHelp.Text == vm.Guide("NeedRecords"), "empty selection stays in records and explains how to proceed");
         vm.SelectAllRecordsCommand.Execute(null); vm.AccountChoices.Single(r => r.Account == "7000").Included = false;
         var selectedRows = vm.AccountChoices.ToArray();
-        selectedRows[0].RateId = "manual-rate-reference";
         wizard.ImportSteps.SelectedIndex = 0;
         await wizard.AdvanceImport(); await wizard.AdvanceImport();
         Audit(wizard.ImportSteps.SelectedIndex == 2 && vm.AccountChoices.SequenceEqual(selectedRows) &&
-            vm.SelectionTotals?.SelectedRows == 2 && selectedRows[0].RateId == "manual-rate-reference",
-            "back through file and columns preserves record choices and manual rate assignments");
+            vm.SelectionTotals?.SelectedRows == 2,
+            "back through file and columns preserves record choices");
         await vm.ValidateCommand.ExecuteAsync(null);
         Audit(vm.AccountChoices.SequenceEqual(selectedRows) && vm.SelectionTotals?.SelectedRows == 2,
             "explicit validation of unchanged columns preserves the selection");
-        selectedRows[0].RateId = "";
         Check(vm.SelectionGroups.Single().Amount == 358.35m,
             "all except one retains grouping by code independent of descriptions");
-        vm.SourceCurrency = "EUR"; vm.AmountMeaningSelection = "closing-full";
+        vm.AmountMeaningSelection = "closing-full";
         vm.ApprovalReference = ""; vm.InterpretationApproved = false;
         Audit(wizard.NumberFormatPanel.IsExpanded, "manual decimal and thousands separators are visible by default");
         wizard.ImportSteps.SelectedIndex = 0;
-        wizard.ImportAdvancedOptions.IsExpanded = true;
-        wizard.Activate(); wizard.UpdateLayout(); wizard.SourceCurrencyBox.BringIntoView();
+        wizard.Activate(); wizard.UpdateLayout(); wizard.AmountModeBox.BringIntoView();
         await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
-        System.Windows.Input.Keyboard.Focus(wizard.SourceCurrencyBox);
-        Check(!string.IsNullOrEmpty(AutomationProperties.GetHelpText(wizard.SourceCurrencyBox)) &&
-            wizard.ImportFieldHelp.Text == vm.Guide("Help." + nameof(vm.SourceCurrency)), "field explanation is available to keyboard and assistive technology");
+        System.Windows.Input.Keyboard.Focus(wizard.AmountModeBox);
+        Check(!string.IsNullOrEmpty(AutomationProperties.GetHelpText(wizard.AmountModeBox)) &&
+            wizard.ImportFieldHelp.Text == vm.Guide("Help." + "AmountMode"), "field explanation is available to keyboard and assistive technology");
         var busyLocked = false;
         void ObserveBusy(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (!vm.IsBusy) return;
             wizard.ImportSteps.GetBindingExpression(IsEnabledProperty)!.UpdateTarget();
-            busyLocked |= !wizard.ImportSteps.IsEnabled && !wizard.SourceCurrencyBox.IsEnabled;
+            busyLocked |= !wizard.ImportSteps.IsEnabled && !wizard.AmountModeBox.IsEnabled;
         }
         vm.PropertyChanged += ObserveBusy;
         wizard.ImportSteps.SelectedIndex = 2;
         await wizard.AdvanceImport();
         vm.PropertyChanged -= ObserveBusy;
-        Audit(busyLocked && wizard.ImportSteps.IsEnabled, "source and meaning fields are locked during preparation and enabled afterwards");
+        Audit(busyLocked && wizard.ImportSteps.IsEnabled, "wizard fields are locked during preparation and enabled afterwards");
         Check(wizard.ImportSteps.SelectedIndex == 3 && vm.HasConfirmableReview && vm.Preparation?.CanConfirm == false && vm.ConfirmedImport is null, "review is accessible without earlier-step approval or example");
         Audit(GuidedUi.Contains(wizard.ImportTab3, wizard.ApproveInterpretationBox) && !wizard.ConfirmImportButton.IsEnabled,
             "single approval belongs to the final review and guards saving");

@@ -85,13 +85,13 @@ public partial class ImportColumnMappingWindow
         await ToggleAccount("00123"); await ToggleAccount("ZERO");
         Check(vm.AccountChoices.Count(c => c.Included) == 2 && !vm.AccountChoices.Single(c => c.Account == "BALANCE").Included,
             "native account checkboxes select costs and retain balance exclusion");
-        SetText(SourceCurrencyBox, "EUR"); var companyHash = Hash(path); await PrepareForSmoke();
+        var companyHash = Hash(path); await PrepareForSmoke();
         Check(vm.Preparation is { CanConfirm: false } && !ConfirmImportButton.IsEnabled && Hash(path) == companyHash,
             "approval required and preparation preserves company bytes");
-        SetText(SourceCurrencyBox, "USD"); Approve(); await PrepareForSmoke();
+        vm.SourceCurrency = "USD"; Approve(); await PrepareForSmoke();
         Check(vm.Preparation!.Diagnostics.Any(d => d.Diagnostic.Code == "IMP_FX_REQUIRED") && !ConfirmImportButton.IsEnabled,
-            "foreign currency blocked without FX bridge");
-        SetText(SourceCurrencyBox, "EUR"); Approve(); await PrepareForSmoke();
+            "defensive API rejects a non-functional currency even though the UI no longer offers it");
+        vm.SourceCurrency = "EUR"; Approve(); await PrepareForSmoke();
         Check(vm.Preparation is { CanConfirm: true } prepared && prepared.Reconciliation.NetAmount == 1250.5m &&
             prepared.Reconciliation.ZeroRows == 1 && ConfirmImportButton.IsEnabled && ConfirmationSummaryText.Text == vm.ConfirmationSummary &&
             ConfirmationSummaryText.TranslatePoint(new Point(), this).Y < ConfirmImportButton.TranslatePoint(new Point(), this).Y,
