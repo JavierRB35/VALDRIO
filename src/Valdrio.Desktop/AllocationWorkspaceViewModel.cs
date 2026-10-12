@@ -552,7 +552,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         await CommitConfig(config => new(config.PrimaryRules, config.SecondaryRules,
             config.ExplicitAssignments.Where(assignment => !selected.Contains(assignment.PartId))
                 .Concat(selected.OrderBy(id => id.ToString(), StringComparer.Ordinal)
-                    .Select(id => new ExplicitPartAllocation(id, keyId))).ToArray(),
+                    .Select(id => new ExplicitPrimaryAssignment(id, keyId))).ToArray(),
             config.AbsoluteAssignments.Where(assignment => !selected.Contains(assignment.PartId)).ToArray(),
             config.Descriptions));
     }
