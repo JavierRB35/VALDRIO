@@ -1,0 +1,42 @@
+name: one-shot-ux-audit-visual-only
+on:
+  push:
+    branches: [feature/ux-audit-improvements-20261012]
+    paths: [.github/workflows/one-shot-ux-visual.yml]
+permissions:
+  contents: read
+jobs:
+  visual:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.401
+      - name: Publish Windows desktop
+        shell: pwsh
+        run: dotnet publish src/Valdrio.Desktop/Valdrio.Desktop.csproj -c Release -r win-x64 --self-contained true --output artifacts/desktop
+      - name: Execute actual WPF interaction and visual screenshots
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path 'artifacts/desktop/Valdrio.Desktop.exe').Path
+          $sample = (Resolve-Path 'samples/t01-smoke.valdrio-dev.json').Path
+          $capture = Join-Path (Get-Location).Path 'artifacts/visual'
+          New-Item -Force -ItemType Directory -Path $capture | Out-Null
+          $p = Start-Process -FilePath $exe -WindowStyle Hidden -ArgumentList @($sample, "--capture-dir=$capture") -PassThru -Wait
+          if ($p.ExitCode -ne 0) {
+            if (Test-Path 'artifacts/visual/company-failure.txt') {
+              Get-Content 'artifacts/visual/company-failure.txt' | Write-Host
+            }
+            throw "Full WPF visual smoke failed with code $($p.ExitCode)"
+          }
+          Write-Host 'All WPF visual smoke checks completed successfully.'
+      - name: Upload screenshots and interaction evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-audit-visual-evidence
+          path: artifacts/visual
+          if-no-files-found: ignore
+          retention-days: 3
