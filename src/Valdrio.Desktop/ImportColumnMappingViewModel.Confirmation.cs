@@ -151,8 +151,13 @@ public sealed partial class ImportColumnMappingViewModel
     public void BindTarget(IImportWorkspace? port, StudyDefinition? study, bool canWrite, Func<ImportedBatch, Task>? onConfirmed)
     {
         if (busy) throw new InvalidOperationException("Import is busy.");
-        var changed = !ReferenceEquals(importPort, port) || targetStudy != study;
+        // Every newly attached import defaults to the analysis currency. This
+        // prevents a prior legacy international batch from leaking its hidden
+        // conversion mode into an ordinary balance import.
+        var changed = !ReferenceEquals(importPort, port) || targetStudy != study || international || currencyFromColumn;
         importPort = port; targetStudy = study; afterConfirmed = onConfirmed; writable = canWrite;
+        international = false;
+        currencyFromColumn = false;
         if (changed)
         {
             sourceCurrency = study?.Currency.FunctionalCurrencyCode.ToString() ?? "";

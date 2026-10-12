@@ -31,3 +31,5 @@ jobs:
           retention-days: 3
 
 # One-time retry: fix test assembly path net10.0-windows.
+
+# Verify every new import resets the legacy international mode.
