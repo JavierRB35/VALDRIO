@@ -15,7 +15,7 @@ $pattern = '"(?<key>[A-Z][A-Za-z0-9]*(?:\.[A-Z][A-Za-z0-9]*)+)"'
             # Match the call context, including line breaks, rather than allowlisting keys.
             if ($source.Substring(0, $match.Index) -match '\.StartsWith\s*\(\s*$') { continue }
             # WPF visual resource lookups are not localized business messages.
-            if ($source.Substring(0, $match.Index) -match '\.(FindResource|TryFindResource)\s*\(\s*$') { continue }
+            if ($source.Substring(0, $match.Index) -match '(FindResource|TryFindResource)\s*\(\s*$') { continue }
             $match.Groups['key'].Value
         }
     }
