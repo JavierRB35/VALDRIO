@@ -30,3 +30,5 @@ jobs:
           retention-days: 3
 
 # Re-run after correcting WPF warning-as-error and Dispatcher.Yield qualification.
+
+# Verify current UX corrections including batch WPF acceptance and currency projection.
