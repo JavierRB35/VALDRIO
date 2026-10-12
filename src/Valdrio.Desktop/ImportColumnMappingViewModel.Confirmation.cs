@@ -55,7 +55,7 @@ public sealed partial class ImportColumnMappingViewModel
                 selected.Settings.HeaderRow, selected.Settings.FirstDataRow, selected.Columns, selected.Settings.Csv,
                 selected.NumberFormat, international ? datePattern : "yyyy-MM-dd", ImportAmountMode.ClosingBalanceAsStudyAmount,
                 selected.Columns.Debit.HasValue ? ImportSignConvention.DebitMinusCredit : ImportSignConvention.SignedAmount,
-                new(DateOnly.FromDateTime(fiscalStart!.Value)), new(DateOnly.FromDateTime(previousEnd!.Value)), international && currencyFromColumn ? null : new CurrencyCode(sourceCurrency), international && currencyFromColumn ? currencyColumn : null,
+                new(DateOnly.FromDateTime(fiscalStart!.Value)), new(DateOnly.FromDateTime(previousEnd!.Value)), international && currencyFromColumn ? null : international ? new CurrencyCode(sourceCurrency) : targetStudy!.Currency.FunctionalCurrencyCode, international && currencyFromColumn ? currencyColumn : null,
                 ImportDuplicatePolicy.AggregateWithProvenance, ImportZeroPolicy.Keep, ImportAccountSelection.All,
                 new(ImportProfileApprovalState.ApprovedBusiness, "Earlier source retained explicitly: " + comparisonScope), true,
                 xlsxNumericAccountPolicy: selected.NumericAccountPolicy, grouping: SelectedRecords(), conversion: international ? BuildConversion() : null);
@@ -109,8 +109,14 @@ public sealed partial class ImportColumnMappingViewModel
         .ToArray() ?? [];
     public string SourceCurrency
     {
-        get => sourceCurrency;
-        set { if (SetProperty(ref sourceCurrency, value)) { InvalidatePreparation(true); Refresh(); } }
+        get => !international && targetStudy is { } study ? study.Currency.FunctionalCurrencyCode.ToString() : sourceCurrency;
+        set
+        {
+            // Legacy/programmatic FX support is retained for historical regression checks.
+            // In the ordinary balance-import workflow the study currency is immutable.
+            if (!international && targetStudy is not null) return;
+            if (SetProperty(ref sourceCurrency, value)) { InvalidatePreparation(true); Refresh(); }
+        }
     }
     public string ApprovalReference
     {
@@ -169,7 +175,7 @@ public sealed partial class ImportColumnMappingViewModel
         preparedImport = null; confirmedImport = null;
         await Run(async token =>
         {
-            var selected = validation!; var study = targetStudy!; CurrencyCode? currency = international && currencyFromColumn ? null : new CurrencyCode(sourceCurrency);
+            var selected = validation!; var study = targetStudy!; CurrencyCode? currency = international && currencyFromColumn ? null : international ? new CurrencyCode(sourceCurrency) : study.Currency.FunctionalCurrencyCode;
             var approved = interpretationApproved;
             if (amountMode == "cumulative" && comparison is null) throw ImportRules.Error("IMP_COMPARISON_INVALID", "Import.ComparisonInvalid");
             if (replaceBatch && replacement is null) throw ImportRules.Error("IMP_REPLACEMENT_INVALID", "Import.ReplacementInvalid");

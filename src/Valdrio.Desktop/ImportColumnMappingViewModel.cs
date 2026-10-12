@@ -67,7 +67,7 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         DeselectAllRecordsCommand = new RelayCommand(() => ImportAllAccounts = false, () => !busy && HasAccountChoices);
         FreezeComparisonCommand = new RelayCommand(FreezeComparison, () => !busy && IsReady && IsAccountSelectionReady &&
             fiscalStart.HasValue && fiscalEnd.HasValue && previousEnd.HasValue && !string.IsNullOrWhiteSpace(comparisonScope) &&
-            (international && currencyFromColumn || !string.IsNullOrWhiteSpace(sourceCurrency)));
+            targetStudy is not null);
         ClearComparisonCommand = new RelayCommand(ClearComparison, () => !busy && comparison is not null);
         InitializeConversion();
         preferences.Changed += PreferencesChanged;

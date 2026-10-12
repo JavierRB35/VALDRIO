@@ -88,10 +88,9 @@ public partial class ImportColumnMappingWindow
         var companyHash = Hash(path); await PrepareForSmoke();
         Check(vm.Preparation is { CanConfirm: false } && !ConfirmImportButton.IsEnabled && Hash(path) == companyHash,
             "approval required and preparation preserves company bytes");
-        vm.SourceCurrency = "USD"; Approve(); await PrepareForSmoke();
-        Check(vm.Preparation!.Diagnostics.Any(d => d.Diagnostic.Code == "IMP_FX_REQUIRED") && !ConfirmImportButton.IsEnabled,
-            "defensive API rejects a non-functional currency even though the UI no longer offers it");
-        vm.SourceCurrency = "EUR"; Approve(); await PrepareForSmoke();
+        vm.SourceCurrency = "USD";
+        Check(vm.SourceCurrency == "EUR", "ordinary import prevents changing the analysis currency");
+        Approve(); await PrepareForSmoke();
         Check(vm.Preparation is { CanConfirm: true } prepared && prepared.Reconciliation.NetAmount == 1250.5m &&
             prepared.Reconciliation.ZeroRows == 1 && ConfirmImportButton.IsEnabled && ConfirmationSummaryText.Text == vm.ConfirmationSummary &&
             ConfirmationSummaryText.TranslatePoint(new Point(), this).Y < ConfirmImportButton.TranslatePoint(new Point(), this).Y,
