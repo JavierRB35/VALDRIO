@@ -20,7 +20,18 @@ public partial class MainWindow
         if (viewModel is null) return;
         foreach (var source in new INotifyPropertyChanged?[] { viewModel, viewModel.Company, viewModel.Models, viewModel.Studies, viewModel.Resources, viewModel.Allocations })
             if (source is not null) { workflowSources.Add(source); source.PropertyChanged += WorkflowChanged; }
-        if (viewModel.Models is { } models && viewModel.Studies is { } studies) models.AttachStudyNodes(studies);
+        if (viewModel.Models is { } models && viewModel.Studies is { } studies)
+        {
+            models.AttachStudyNodes(studies);
+            studies.AfterStudyLoadedAsync = async () =>
+            {
+                // On reopening a saved analysis, the primary-closed flag must be
+                // read before enabling the Secondary navigation entry.
+                if (viewModel?.Allocations is { } allocations)
+                    await allocations.EnterAsync();
+                UpdateWorkflow();
+            };
+        }
         UpdateWorkflow();
     }
     private void WorkflowChanged(object? sender, PropertyChangedEventArgs e)

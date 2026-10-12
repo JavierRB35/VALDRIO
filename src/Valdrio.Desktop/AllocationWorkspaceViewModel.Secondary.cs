@@ -99,6 +99,7 @@ public sealed partial class AllocationWorkspaceViewModel
 
     public ObservableCollection<ReciprocalCheckRow> SecondaryCirculation { get; } = [];
     private decimal secondaryGrossTotal;
+    public bool HasSecondaryResults => PrincipalCosts.Count > 0;
     public string PrincipalCostsPrimaryTotal => PrincipalCosts.Count == 0 ? "" :
         StudyMoney(PrincipalCosts.Sum(row => row.PrimaryAmount));
     public string PrincipalCostsAuxiliaryTotal => PrincipalCosts.Count == 0 ? "" :
@@ -334,7 +335,7 @@ public sealed partial class AllocationWorkspaceViewModel
         {
             var name = nodes.Values.FirstOrDefault(n => n.Id.ToString() == flow.AuxiliaryId);
             SecondaryCirculation.Add(new(name is null ? flow.AuxiliaryId : NodeLabel(name),
-                this["SecondaryGross"], flow.GrossAmount.ToString("0.########", Format)));
+                this["SecondaryGross"], DisplayAmount(flow.GrossAmount)));
         }
         SecondarySummary = string.Format(Format, this["SecondaryTotals"],
             SecondaryResults.Count, PrincipalCosts.Count, workspace.Resources.Study.Currency.FunctionalCurrencyCode);
@@ -354,7 +355,7 @@ public sealed partial class AllocationWorkspaceViewModel
                 var id = result.Circulation.AuxiliaryIds[i];
                 var name = nodes.Values.FirstOrDefault(n => n.Id.ToString() == id);
                 SecondaryCirculation.Add(new(name is null ? id : NodeLabel(name),
-                    this["SecondaryGross"], result.Circulation.Gross[i].ToString("0.########", Format)));
+                    this["SecondaryGross"], DisplayAmount(result.Circulation.Gross[i])));
             }
             SecondarySummary = string.Format(Format, this["SecondaryTotals"],
                 SecondaryResults.Count, PrincipalCosts.Count, result.Primary.Currency);

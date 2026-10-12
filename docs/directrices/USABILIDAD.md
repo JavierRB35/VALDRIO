@@ -107,3 +107,20 @@ de cambios pendientes y la validación del rango.
   de la funcional no puede confirmarse sin puente FX; la interfaz nueva no permite
   crear ese perfil. Cualquier futura eliminación del motor heredado requerirá una
   migración auditada por separado.
+
+## UX tras auditoría de usuario real — 2026-10-12
+
+- Los importes **mostrados** en repartos usan la precisión de presentación de la
+  moneda funcional conservada en el análisis (EUR: 2, JPY: 0, KWD: 3). La
+  precisión económica almacenada y el cálculo **no se alteran**; no redondear
+  hechos, asientos ni snapshots por una necesidad de presentación.
+- El botón **Guardar clave** estará en una fila propia para evitar quedar
+  recortado cuando se reduce el espacio disponible del editor.
+- Cuando un reparto está cerrado, mostrar la sección de resultados por delante
+  de las herramientas de edición. Cuando el secundario acaba de calcularse,
+  desplegar también sus resultados sin exigir ir hasta el pie de la pantalla.
+- Al reabrir un análisis con reparto primario ya cerrado, la navegación debe
+  reconocer ese estado leyendo el workspace; **no** obligar a visitar la pantalla
+  del primario para que se habilite el secundario.
+- Estas modificaciones no cambian reglas de asignación ni metodología;
+  requieren compilación Windows y pruebas de aceptación visual antes de fusionar.

@@ -18,7 +18,7 @@ public sealed partial class AllocationWorkspaceViewModel
     private bool primaryComplete;
     private decimal primaryPostedTotal;
     private string StudyMoney(decimal amount) => workspace is null ? "" :
-        amount.ToString("0.########", Format) + " " + workspace.Resources.Study.Currency.FunctionalCurrencyCode;
+        DisplayAmount(amount) + " " + workspace.Resources.Study.Currency.FunctionalCurrencyCode;
     public string PrimaryResultsTotal => PrimaryResults.Count == 0 ? "" : StudyMoney(primaryPostedTotal);
     public string PrimaryNodeTotalsTotal => PrimaryNodeTotals.Count == 0 ? "" :
         StudyMoney(PrimaryNodeTotals.Sum(row => row.NumericAmount));
@@ -90,7 +90,7 @@ public sealed partial class AllocationWorkspaceViewModel
                 var center = centers[node.PhysicalCenterId];
                 var total = group.Sum(fact => fact.PostedAmount.Amount);
                 PrimaryNodeTotals.Add(new(center.Code + " · " + center.Name, node.Code,
-                    total.ToString("0.########", Format) + " " + primary.Currency, total));
+                    StudyMoney(total), total));
             }
             PrimarySummary = string.Format(Format, this["PrimarySummary"], primary.Facts.Count,
                 primary.Gaps.Count, primary.Pools.Count, primary.Currency);

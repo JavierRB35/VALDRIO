@@ -298,6 +298,9 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         studyChoice = Studies.SingleOrDefault(s => s.Value.Id == value?.Id); loading = false; Refresh();
     }
     public Func<Task<bool>>? BeforeChangeAsync { get; set; }
+    // Refresh dependent allocation state after an existing study is loaded.
+    // This is a read-only operation and does not change accounting results.
+    public Func<Task>? AfterStudyLoadedAsync { get; set; }
     public bool HasConfirmedImports => importValues.Count > 0;
     public int ConfirmedImportCount => importValues.Count;
     public Task ApplyResourceReceiptAsync(StudyDefinition confirmed) => ApplyConfirmedThenReload(confirmed, ApplyConfirmedStudy);
@@ -345,6 +348,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         var id = StudyChoice?.Value.Id;
         if (id is null || !await CanLeaveAsync()) return;
         await Run(async token => { await Reload(token); SetCurrent(studyValues.Single(s => s.Id == id)); await Reload(token); SnapshotChoice = Snapshots.LastOrDefault(); });
+        if (Current?.Id == id && AfterStudyLoadedAsync is not null) await AfterStudyLoadedAsync();
     }
     private BusinessDate Date(DateTime? value)
     {

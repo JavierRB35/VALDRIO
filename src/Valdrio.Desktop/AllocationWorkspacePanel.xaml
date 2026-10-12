@@ -25,6 +25,129 @@
   <Border Style="{StaticResource Diagnostic}" Margin="0,0,0,16"><TextBlock x:Name="ActionStatus" Text="{Binding Status}" AutomationProperties.LiveSetting="Polite"/></Border>
   <Border Style="{StaticResource Card}" Margin="0,0,0,16"><DockPanel LastChildFill="True"><Button x:Name="TogglePrimaryButton" DockPanel.Dock="Right" Content="{Binding PrimaryToggleLabel}" Command="{Binding TogglePrimaryCommand}"/><TextBlock Text="{Binding PrimaryState}" VerticalAlignment="Center" Margin="0,0,12,0" AutomationProperties.LiveSetting="Polite"/></DockPanel></Border>
   <Border x:Name="SecondaryPhaseBar" Style="{StaticResource Card}" Margin="0,0,0,16"><DockPanel LastChildFill="True"><Button x:Name="ToggleSecondaryButton" DockPanel.Dock="Right" Content="{Binding SecondaryToggleLabel}" Command="{Binding ToggleSecondaryCommand}"/><TextBlock Text="{Binding SecondaryState}" VerticalAlignment="Center" Margin="0,0,12,0" AutomationProperties.LiveSetting="Polite"/></DockPanel></Border>
+  <!-- Closed or calculated results appear before the editors; during editing these are collapsed. -->
+  <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+   <Expander x:Name="ResultsSection" Header="{Binding [PrimaryTitle]}" IsExpanded="{Binding IsPrimaryClosed, Mode=OneWay}"><StackPanel Margin="0,8,0,0">
+    <TextBlock Text="{Binding PrimarySummary}" Margin="0,4,0,8" AutomationProperties.LiveSetting="Polite"/>
+    <DataGrid x:Name="PrimaryResultsGrid" ItemsSource="{Binding PrimaryResults}" IsReadOnly="True" AutoGenerateColumns="False" Height="210"
+              SelectionMode="Single" AutomationProperties.Name="{Binding [PrimaryTitle]}">
+     <DataGrid.Columns>
+      <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Source}" Width="2*"/>
+      <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Destination}" Width="2*"/>
+      <DataGridTextColumn Binding="{Binding Amount}" HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Width="120"/>
+      <DataGridTextColumn ElementStyle="{StaticResource PrimaryBehavior}" Binding="{Binding Behavior}" Width="*"/>
+     </DataGrid.Columns>
+    </DataGrid>
+<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="120"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="2" Text="{Binding PrimaryResultsTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+
+    <TextBlock Text="{Binding [PrimaryNodeTotalsTitle]}" FontWeight="SemiBold" Margin="0,12,0,6"/>
+     <DataGrid x:Name="PrimaryNodeTotalsGrid" ItemsSource="{Binding PrimaryNodeTotals}" IsReadOnly="True"
+          AutoGenerateColumns="False" Height="200" CanUserSortColumns="True" Margin="0,12,0,8">
+      <DataGrid.Columns>
+       <DataGridTextColumn Binding="{Binding Center}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
+       <DataGridTextColumn Binding="{Binding Node}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
+       <DataGridTextColumn Binding="{Binding Amount}" SortMemberPath="NumericAmount" HeaderStyle="{StaticResource NumberHeader}" Width="150" ElementStyle="{StaticResource Text.TableNumber}"/>
+      </DataGrid.Columns>
+     </DataGrid>
+<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="150"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="2" Text="{Binding PrimaryNodeTotalsTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+
+     <TextBlock Text="{Binding PrimaryDiagnostic}" Margin="0,8,0,0" TextWrapping="Wrap"
+               AutomationProperties.LiveSetting="Polite"/>
+   </StackPanel></Expander>
+  </Border>
+
+  <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+   <Expander x:Name="SecondaryResultsSection" Header="{Binding [SecondaryTitle]}" IsExpanded="{Binding HasSecondaryResults, Mode=OneWay}">
+    <StackPanel Margin="0,8,0,0">
+     <TextBlock Text="{Binding [SecondaryHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+     <WrapPanel>
+      <Button x:Name="CalculateSecondaryButton" Style="{StaticResource Button.Primary}" Content="{Binding [CalculateSecondary]}" Command="{Binding CalculateSecondaryCommand}"/>
+      <Button x:Name="CancelSecondaryButton" Content="{Binding [SecondaryCancel]}" Command="{Binding CancelSecondaryCommand}"
+              Margin="8,0,0,0"/>
+     </WrapPanel>
+     <TextBlock Text="{Binding SecondarySummary}" Margin="0,8,0,4" AutomationProperties.LiveSetting="Polite"/>
+     <TextBlock Text="{Binding SecondaryDiagnostic}" TextWrapping="Wrap" Margin="0,4,0,8" AutomationProperties.LiveSetting="Polite"/>
+   <Expander x:Name="ReciprocalSection" Header="{Binding [ReciprocalTitle]}" IsExpanded="True">
+    <StackPanel Margin="0,8,0,0">
+     <TextBlock Text="{Binding [ReciprocalHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+     <TextBlock Text="{Binding ReciprocalSummary}" Margin="0,8,0,8" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}"><Style.Triggers><DataTrigger Binding="{Binding ReciprocalHasError}" Value="True"><Setter Property="Foreground" Value="{DynamicResource Brand.Red}"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+     <DataGrid x:Name="ReciprocalGrid" ItemsSource="{Binding ReciprocalChecks}" IsReadOnly="True"
+               AutoGenerateColumns="False" MaxHeight="220" MinRowHeight="32"
+               AutomationProperties.Name="{Binding [ReciprocalTitle]}">
+      <DataGrid.Columns>
+       <DataGridTextColumn ElementStyle="{StaticResource ViabilityText}" Binding="{Binding Group}" Width="2*"/>
+       <DataGridTextColumn ElementStyle="{StaticResource ViabilityText}" Binding="{Binding State}" Width="*"/>
+       <DataGridTextColumn Binding="{Binding Detail}" Width="3*"><DataGridTextColumn.ElementStyle><Style TargetType="TextBlock" BasedOn="{StaticResource ViabilityText}"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="ToolTip" Value="{Binding TechnicalDetail}"/></Style></DataGridTextColumn.ElementStyle></DataGridTextColumn>
+      </DataGrid.Columns>
+     </DataGrid>
+     <TextBlock Text="{Binding [ReciprocalNoPosting]}" TextWrapping="Wrap" Margin="0,8,0,0"
+                Foreground="{DynamicResource Text.Primary}"/>
+    </StackPanel>
+   </Expander>
+
+     <TextBlock Text="{Binding [PrincipalCostsTitle]}" FontWeight="SemiBold" Margin="0,8,0,8"/>
+     <DataGrid x:Name="PrincipalCostsGrid" ItemsSource="{Binding PrincipalCosts}" IsReadOnly="True" AutoGenerateColumns="False" Height="185" CanUserAddRows="False">
+      <DataGrid.Columns>
+       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Node}" Width="3*"/>
+       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Primary}" Width="*" MinWidth="150"/>
+       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Auxiliary}" Width="*" MinWidth="150"/>
+       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Total}" Width="*" MinWidth="150"/>
+      </DataGrid.Columns>
+     </DataGrid>
+<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="3*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="1" Text="{Binding PrincipalCostsPrimaryTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="2" Text="{Binding PrincipalCostsAuxiliaryTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="3" Text="{Binding PrincipalCostsFinalTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+
+     <TextBlock Text="{Binding [SecondaryContributionsTitle]}" FontWeight="SemiBold" Margin="0,16,0,8"/>
+     <TextBlock Text="{Binding [SecondaryContributionsHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+     <DataGrid x:Name="SecondaryResultsGrid" ItemsSource="{Binding SecondaryResults}" SelectionMode="Single" SelectionUnit="FullRow" SelectedItem="{Binding SelectedSecondaryResultRow, Mode=TwoWay}" IsReadOnly="True" AutoGenerateColumns="False" Height="215">
+      <DataGrid.Columns>
+       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Source}" Width="2*"/>
+       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Destination}" Width="2*"/>
+       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Amount}" Width="*" MinWidth="160"/>
+       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Behavior}" Width="*"/>
+      </DataGrid.Columns>
+     </DataGrid>
+<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="2" Text="{Binding SecondaryResultsTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+
+     <Expander Header="{Binding [SecondaryExplanationTitle]}" IsExpanded="True" Margin="0,8,0,0">
+      <StackPanel>
+       <TextBlock Text="{Binding SecondaryExplanation}" Height="72" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding SecondaryExplanation}" Margin="8"/>
+       <DataGrid x:Name="SecondaryExplanationGrid" ItemsSource="{Binding SecondaryExplanationDetails}" IsReadOnly="True" AutoGenerateColumns="False" Height="170" CanUserAddRows="False">
+        <DataGrid.Columns>
+         <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Account}" Width="2*"/>
+         <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Primary}" Width="*" MinWidth="150"/>
+         <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Share}" Width="*" MinWidth="110"/>
+         <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource ContributionNumber}" Binding="{Binding Amount}" Width="*" MinWidth="150"/>
+         <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Keys}" Width="2*"/>
+        </DataGrid.Columns>
+       </DataGrid>
+<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="2*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="3" Text="{Binding SecondaryExplanationTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+
+      </StackPanel>
+     </Expander>
+     <Expander Header="{Binding [SecondaryGross]}" Margin="0,8,0,0">
+      <StackPanel>
+      <DataGrid x:Name="SecondaryCirculationGrid" ItemsSource="{Binding SecondaryCirculation}" IsReadOnly="True" AutoGenerateColumns="False" Height="135">
+       <DataGrid.Columns>
+        <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Group}" Width="2*"/>
+        <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Detail}" Width="*"/>
+       </DataGrid.Columns>
+      </DataGrid>
+<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [GrossDiagnosticTotal]}" Margin="9,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="1" Text="{Binding SecondaryGrossTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+
+      </StackPanel>
+     </Expander>
+    </StackPanel>
+   </Expander>
+  </Border>
+
   <Grid x:Name="KeyWorkspaceLayout" Height="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}, Converter={StaticResource KeyWorkspaceHeight}}">
    <Grid.ColumnDefinitions><ColumnDefinition Width="2*" MinWidth="320"/><ColumnDefinition Width="5*" MinWidth="460"/></Grid.ColumnDefinitions>
    <Border Style="{StaticResource Card}" Margin="0,0,12,16">
@@ -51,7 +174,8 @@
     <Expander x:Name="DefinitionSection" Header="{Binding [Definition]}" IsExpanded="True" VerticalContentAlignment="Stretch"><Grid Margin="0,8,0,0">
      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
      <Grid>
-      <Grid.ColumnDefinitions><ColumnDefinition Width="3*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+      <Grid.ColumnDefinitions><ColumnDefinition Width="3*"/><ColumnDefinition Width="2*"/></Grid.ColumnDefinitions>
       <StackPanel Margin="0,0,8,0" IsEnabled="{Binding CanEditKey}"><TextBlock Text="{Binding [Name]}"/><TextBox x:Name="KeyNameBox" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Name]}">
         <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}">
          <Style.Triggers><DataTrigger Binding="{Binding KeyNameMissing}" Value="True">
@@ -64,7 +188,7 @@
       <StackPanel Grid.Column="1" Margin="0,0,8,0" IsEnabled="{Binding CanEditComposition}"><TextBlock Text="{Binding [Criterion]}"/><ComboBox x:Name="ModeBox" ItemsSource="{Binding Modes}" SelectedValue="{Binding Mode}" AutomationProperties.Name="{Binding [Criterion]}"/>
        <StackPanel Visibility="{Binding IsDriver, Converter={StaticResource Visible}}"><TextBlock Text="{Binding [Unit]}"/><ComboBox ItemsSource="{Binding Units}" SelectedValue="{Binding Unit}" AutomationProperties.Name="{Binding [Unit]}" x:Name="UnitBox"/></StackPanel>
       </StackPanel>
-      <Button Grid.Column="2" Style="{StaticResource Button.Primary}" Content="{Binding [SaveKey]}" Command="{Binding SaveKeyCommand}" x:Name="SaveKeyButton" VerticalAlignment="Bottom"/>
+      <Button Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource Button.Primary}" Content="{Binding [SaveKey]}" Command="{Binding SaveKeyCommand}" x:Name="SaveKeyButton" HorizontalAlignment="Right" Margin="0,10,0,2"/>
      </Grid>
      <TextBlock Grid.Row="1" Text="{Binding NumberFormatHelp}" Margin="0,4,0,8"/>
      <DataGrid Grid.Row="2" x:Name="LinesGrid" ItemsSource="{Binding Lines}" AutoGenerateColumns="False" CanUserAddRows="False" MinHeight="200" IsReadOnly="True" SelectionMode="Single">
@@ -247,128 +371,6 @@
    </StackPanel></Expander>
   </Border>
   
-  <Border Style="{StaticResource Card}" Margin="0,0,0,16">
-   <Expander x:Name="ResultsSection" Header="{Binding [PrimaryTitle]}" IsExpanded="False"><StackPanel Margin="0,8,0,0">
-    <TextBlock Text="{Binding PrimarySummary}" Margin="0,4,0,8" AutomationProperties.LiveSetting="Polite"/>
-    <DataGrid x:Name="PrimaryResultsGrid" ItemsSource="{Binding PrimaryResults}" IsReadOnly="True" AutoGenerateColumns="False" Height="210"
-              SelectionMode="Single" AutomationProperties.Name="{Binding [PrimaryTitle]}">
-     <DataGrid.Columns>
-      <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Source}" Width="2*"/>
-      <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Destination}" Width="2*"/>
-      <DataGridTextColumn Binding="{Binding Amount}" HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Width="120"/>
-      <DataGridTextColumn ElementStyle="{StaticResource PrimaryBehavior}" Binding="{Binding Behavior}" Width="*"/>
-     </DataGrid.Columns>
-    </DataGrid>
-<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="120"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
-<TextBlock Grid.Column="2" Text="{Binding PrimaryResultsTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
-
-    <TextBlock Text="{Binding [PrimaryNodeTotalsTitle]}" FontWeight="SemiBold" Margin="0,12,0,6"/>
-     <DataGrid x:Name="PrimaryNodeTotalsGrid" ItemsSource="{Binding PrimaryNodeTotals}" IsReadOnly="True"
-          AutoGenerateColumns="False" Height="200" CanUserSortColumns="True" Margin="0,12,0,8">
-      <DataGrid.Columns>
-       <DataGridTextColumn Binding="{Binding Center}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
-       <DataGridTextColumn Binding="{Binding Node}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
-       <DataGridTextColumn Binding="{Binding Amount}" SortMemberPath="NumericAmount" HeaderStyle="{StaticResource NumberHeader}" Width="150" ElementStyle="{StaticResource Text.TableNumber}"/>
-      </DataGrid.Columns>
-     </DataGrid>
-<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="150"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
-<TextBlock Grid.Column="2" Text="{Binding PrimaryNodeTotalsTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
-
-     <TextBlock Text="{Binding PrimaryDiagnostic}" Margin="0,8,0,0" TextWrapping="Wrap"
-               AutomationProperties.LiveSetting="Polite"/>
-   </StackPanel></Expander>
-  </Border>
-
-  <Border Style="{StaticResource Card}" Margin="0,0,0,16">
-   <Expander x:Name="SecondaryResultsSection" Header="{Binding [SecondaryTitle]}" IsExpanded="True">
-    <StackPanel Margin="0,8,0,0">
-     <TextBlock Text="{Binding [SecondaryHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
-     <WrapPanel>
-      <Button x:Name="CalculateSecondaryButton" Style="{StaticResource Button.Primary}" Content="{Binding [CalculateSecondary]}" Command="{Binding CalculateSecondaryCommand}"/>
-      <Button x:Name="CancelSecondaryButton" Content="{Binding [SecondaryCancel]}" Command="{Binding CancelSecondaryCommand}"
-              Margin="8,0,0,0"/>
-     </WrapPanel>
-     <TextBlock Text="{Binding SecondarySummary}" Margin="0,8,0,4" AutomationProperties.LiveSetting="Polite"/>
-     <TextBlock Text="{Binding SecondaryDiagnostic}" TextWrapping="Wrap" Margin="0,4,0,8" AutomationProperties.LiveSetting="Polite"/>
-   <Expander x:Name="ReciprocalSection" Header="{Binding [ReciprocalTitle]}" IsExpanded="True">
-    <StackPanel Margin="0,8,0,0">
-     <TextBlock Text="{Binding [ReciprocalHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
-     <TextBlock Text="{Binding ReciprocalSummary}" Margin="0,8,0,8" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}"><Style.Triggers><DataTrigger Binding="{Binding ReciprocalHasError}" Value="True"><Setter Property="Foreground" Value="{DynamicResource Brand.Red}"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
-     <DataGrid x:Name="ReciprocalGrid" ItemsSource="{Binding ReciprocalChecks}" IsReadOnly="True"
-               AutoGenerateColumns="False" MaxHeight="220" MinRowHeight="32"
-               AutomationProperties.Name="{Binding [ReciprocalTitle]}">
-      <DataGrid.Columns>
-       <DataGridTextColumn ElementStyle="{StaticResource ViabilityText}" Binding="{Binding Group}" Width="2*"/>
-       <DataGridTextColumn ElementStyle="{StaticResource ViabilityText}" Binding="{Binding State}" Width="*"/>
-       <DataGridTextColumn Binding="{Binding Detail}" Width="3*"><DataGridTextColumn.ElementStyle><Style TargetType="TextBlock" BasedOn="{StaticResource ViabilityText}"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="ToolTip" Value="{Binding TechnicalDetail}"/></Style></DataGridTextColumn.ElementStyle></DataGridTextColumn>
-      </DataGrid.Columns>
-     </DataGrid>
-     <TextBlock Text="{Binding [ReciprocalNoPosting]}" TextWrapping="Wrap" Margin="0,8,0,0"
-                Foreground="{DynamicResource Text.Primary}"/>
-    </StackPanel>
-   </Expander>
-
-     <TextBlock Text="{Binding [PrincipalCostsTitle]}" FontWeight="SemiBold" Margin="0,8,0,8"/>
-     <DataGrid x:Name="PrincipalCostsGrid" ItemsSource="{Binding PrincipalCosts}" IsReadOnly="True" AutoGenerateColumns="False" Height="185" CanUserAddRows="False">
-      <DataGrid.Columns>
-       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Node}" Width="3*"/>
-       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Primary}" Width="*" MinWidth="150"/>
-       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Auxiliary}" Width="*" MinWidth="150"/>
-       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Total}" Width="*" MinWidth="150"/>
-      </DataGrid.Columns>
-     </DataGrid>
-<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="3*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
-<TextBlock Grid.Column="1" Text="{Binding PrincipalCostsPrimaryTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/>
-<TextBlock Grid.Column="2" Text="{Binding PrincipalCostsAuxiliaryTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/>
-<TextBlock Grid.Column="3" Text="{Binding PrincipalCostsFinalTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
-
-     <TextBlock Text="{Binding [SecondaryContributionsTitle]}" FontWeight="SemiBold" Margin="0,16,0,8"/>
-     <TextBlock Text="{Binding [SecondaryContributionsHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
-     <DataGrid x:Name="SecondaryResultsGrid" ItemsSource="{Binding SecondaryResults}" SelectionMode="Single" SelectionUnit="FullRow" SelectedItem="{Binding SelectedSecondaryResultRow, Mode=TwoWay}" IsReadOnly="True" AutoGenerateColumns="False" Height="215">
-      <DataGrid.Columns>
-       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Source}" Width="2*"/>
-       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Destination}" Width="2*"/>
-       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Amount}" Width="*" MinWidth="160"/>
-       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Behavior}" Width="*"/>
-      </DataGrid.Columns>
-     </DataGrid>
-<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
-<TextBlock Grid.Column="2" Text="{Binding SecondaryResultsTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
-
-     <Expander Header="{Binding [SecondaryExplanationTitle]}" IsExpanded="True" Margin="0,8,0,0">
-      <StackPanel>
-       <TextBlock Text="{Binding SecondaryExplanation}" Height="72" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding SecondaryExplanation}" Margin="8"/>
-       <DataGrid x:Name="SecondaryExplanationGrid" ItemsSource="{Binding SecondaryExplanationDetails}" IsReadOnly="True" AutoGenerateColumns="False" Height="170" CanUserAddRows="False">
-        <DataGrid.Columns>
-         <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Account}" Width="2*"/>
-         <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Primary}" Width="*" MinWidth="150"/>
-         <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Share}" Width="*" MinWidth="110"/>
-         <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource ContributionNumber}" Binding="{Binding Amount}" Width="*" MinWidth="150"/>
-         <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Keys}" Width="2*"/>
-        </DataGrid.Columns>
-       </DataGrid>
-<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="2*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
-<TextBlock Grid.Column="3" Text="{Binding SecondaryExplanationTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
-
-      </StackPanel>
-     </Expander>
-     <Expander Header="{Binding [SecondaryGross]}" Margin="0,8,0,0">
-      <StackPanel>
-      <DataGrid x:Name="SecondaryCirculationGrid" ItemsSource="{Binding SecondaryCirculation}" IsReadOnly="True" AutoGenerateColumns="False" Height="135">
-       <DataGrid.Columns>
-        <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Group}" Width="2*"/>
-        <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Detail}" Width="*"/>
-       </DataGrid.Columns>
-      </DataGrid>
-<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [GrossDiagnosticTotal]}" Margin="9,8" FontWeight="SemiBold"/>
-<TextBlock Grid.Column="1" Text="{Binding SecondaryGrossTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
-
-      </StackPanel>
-     </Expander>
-    </StackPanel>
-   </Expander>
-  </Border>
-
   <WrapPanel><Button Content="{Binding [Discard]}" Command="{Binding DiscardCommand}" x:Name="DiscardButton"/></WrapPanel>
   <TextBlock Text="{Binding Status}" AutomationProperties.LiveSetting="Polite" Margin="0,8,0,0"/>
  </StackPanel>
