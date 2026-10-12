@@ -32,3 +32,5 @@ jobs:
 # Re-run after correcting WPF warning-as-error and Dispatcher.Yield qualification.
 
 # Verify current UX corrections including batch WPF acceptance and currency projection.
+
+# Final UX review including no-count-increase batch UI regression on current PR head.
