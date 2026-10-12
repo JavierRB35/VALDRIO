@@ -130,7 +130,7 @@ public partial class MainWindow
             { RoutedEvent = Control.MouseDoubleClickEvent, Source = keyRow });
         if (vm.LoadKeyCommand.ExecutionTask is { } openTask) await openTask;
         await Idle(); Check(vm.Name == primaryKey.Name, "double click opens the selected library key");
-        Check(panel.KeyNameBox.IsEnabled && !vm.CanEditComposition, "used key allows name editing only");
+        Check(panel.KeyNameBox.IsEnabled && !vm.CanEditComposition, "used key allows name editing only (CanEditKey=" + vm.CanEditKey + ", CanEdit=" + vm.CanEdit + ", hasUnappliedRule=" + vm.HasUnappliedRule + ", definitionExpanded=" + panel.DefinitionSection.IsExpanded + ", phaseClosed=" + vm.IsPrimaryClosed + ")");
         Text(panel.KeyNameBox, "Consumos de oficina renombrados"); await Click(panel.SaveKeyButton);
         Check(company.ActiveAllocations.ReadAllocations(current.CompanyId,current.Id).Coverage.Single(c => c.SourceId == part.Id).KeyId == primaryKey.Id, "renaming retains assignments");
         foreach (var language in new[] { "es", "en" })
