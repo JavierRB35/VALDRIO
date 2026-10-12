@@ -42,3 +42,5 @@ jobs:
           path: artifacts/t08-quick/visual
           if-no-files-found: ignore
           retention-days: 2
+
+# Retry after correctly waiting for the asynchronous key editor to become idle.
