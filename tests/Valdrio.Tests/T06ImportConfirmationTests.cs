@@ -347,6 +347,7 @@ public sealed partial class T06ImportConfirmationTests
             new PresentationPreferencesService(new LanguageCatalog(), UserPresentationPreferences.Default));
         vm.BindTarget(port ?? file.Imports, study, true, refreshed); await vm.OpenCommand.ExecuteAsync(null); await vm.ReadCommand.ExecuteAsync(null);
         vm.AccountColumn = 3; vm.AmountColumn = 1; vm.GroupSeparator = "."; await vm.ValidateCommand.ExecuteAsync(null);
+        Assert.AreEqual(study.Currency.FunctionalCurrencyCode.ToString(), vm.SourceCurrency, "The study currency is the sole default for the import.");
         vm.SourceCurrency = "EUR"; vm.ApprovalReference = "Synthetic checked 00123=1250.5 and ZERO=0"; vm.InterpretationApproved = true;
         await vm.PrepareCommand.ExecuteAsync(null); return vm;
     }

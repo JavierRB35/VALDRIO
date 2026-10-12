@@ -48,10 +48,20 @@ public sealed partial class T06ImportConfirmationTests
         using var vm = new AllocationWorkspaceViewModel(ui.Company, ui.Studies, new UiTextCatalog(), ui.Preferences, ui.Dialogs);
         await vm.EnterAsync(); vm.Name = "Percentage validation"; vm.Mode = AllocationKeyMode.Percentage;
         var line = vm.Lines.First(); line.Included = true; line.Value = "0";
-        Assert.IsFalse(vm.SaveKeyCommand.CanExecute(null)); Assert.IsFalse(await vm.SaveKeyAsync(true));
+        // An incomplete percentage may be saved as a draft, but it must never
+        // become a published/assignable allocation key until it totals 100%.
+        Assert.IsTrue(vm.SaveKeyCommand.CanExecute(null));
+        Assert.IsFalse(await vm.SaveKeyAsync(true));
         Assert.IsTrue(vm.Status.Contains("100"));
-        line.Value = "100"; Assert.IsTrue(vm.SaveKeyCommand.CanExecute(null));
+        Assert.IsTrue(await vm.SaveKeyAsync(false));
+        var draft = vm.Keys.Single(k => k.Name == "Percentage validation");
+        Assert.AreEqual(ModelStatus.Draft, draft.Value.Status);
+        Assert.IsFalse(vm.PublishedPrimary.Any(k => k.Value == draft.Value.Id));
+        line = vm.Lines.First();
+        line.Value = "100";
+        Assert.IsTrue(vm.SaveKeyCommand.CanExecute(null));
         Assert.IsTrue(await vm.SaveKeyAsync(true));
+        Assert.IsTrue(vm.PublishedPrimary.Any(k => k.Value == draft.Value.Id));
     }
 
     [TestMethod]

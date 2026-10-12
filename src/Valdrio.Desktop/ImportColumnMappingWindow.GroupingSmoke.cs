@@ -85,7 +85,7 @@ public partial class ImportColumnMappingWindow
         Check(!vm.AccountChoices.Any(r => r.Included) && !vm.PrepareCommand.CanExecute(null) &&
             vm.SelectionTotals?.Net == 0m && vm.SelectionTotals.ExcludedNet == 353.35m && SelectionPreviewGrid.Items.Count == 0,
             "deselect all blocks empty import and reconciles all excluded amounts");
-        await Toggle(3); SetText(SourceCurrencyBox, "EUR"); Select(AmountModeBox, "closing-full"); Approve(); await PrepareForSmoke();
+        await Toggle(3); Select(AmountModeBox, "closing-full"); Approve(); await PrepareForSmoke();
         Check(vm.Preparation is { CanConfirm: true } && vm.Preparation.Groups!.Single().Amount.Amount == 78.35m,
             "only one of the duplicate records can be selected");
         await Click(SelectAllRecordsButton);

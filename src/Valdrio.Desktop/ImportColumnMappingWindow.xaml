@@ -48,6 +48,7 @@
  <DockPanel Margin="14">
   <StackPanel DockPanel.Dock="Top">
    <TextBlock Text="{Binding Target}" FontWeight="SemiBold"/>
+   <TextBlock Text="{Binding CurrencyImportNotice}" TextWrapping="Wrap" Foreground="{DynamicResource Text.Secondary}" Margin="0,4,0,6"/>
    <TextBlock TextWrapping="Wrap" Margin="0,4,0,6" AutomationProperties.LiveSetting="Polite" x:Name="ImportStepHelp"/>
   </StackPanel>
   <StackPanel DockPanel.Dock="Bottom">
@@ -132,45 +133,6 @@
 
 
       <TextBlock Text="{Binding AmountBasis}" TextWrapping="Wrap" FontWeight="SemiBold"/>
-      <TextBlock Text="{Binding [SourceCurrency]}" FontWeight="SemiBold"/>
-      <TextBox x:Name="SourceCurrencyBox" Text="{Binding SourceCurrency,UpdateSourceTrigger=PropertyChanged}" Width="100" HorizontalAlignment="Left" MaxLength="3" AutomationProperties.Name="{Binding [SourceCurrency]}" local:FieldHelp.Key="SourceCurrency"/>
-      <TextBlock Text="{Binding [SourceCurrencyHelp]}" Style="{StaticResource StepHelp}"/>
-      <CheckBox Content="{Binding [International]}" IsChecked="{Binding International}" local:FieldHelp.Key="International"/>
-      <StackPanel Visibility="{Binding International,Converter={StaticResource Visible}}">
-       <TextBlock Text="{Binding [ConversionHelp]}"/>
-       <CheckBox Content="{Binding [CurrencyFromColumn]}" IsChecked="{Binding CurrencyFromColumn}" local:FieldHelp.Key="CurrencyFromColumn"/>
-       <ComboBox ItemsSource="{Binding Columns}" DisplayMemberPath="Label" SelectedValuePath="Index" SelectedValue="{Binding CurrencyColumn}" IsEnabled="{Binding CurrencyFromColumn}" AutomationProperties.Name="{Binding [CurrencyFromColumn]}" local:FieldHelp.Key="CurrencyColumn"/>
-       <TextBlock Text="{Binding [DocumentDateColumn]}"/>
-       <ComboBox ItemsSource="{Binding Columns}" DisplayMemberPath="Label" SelectedValuePath="Index" SelectedValue="{Binding DateColumn}" AutomationProperties.Name="{Binding [DocumentDateColumn]}" local:FieldHelp.Key="DateColumn"/>
-       <TextBlock Text="{Binding [DatePattern]}"/>
-       <TextBox Text="{Binding DatePattern,UpdateSourceTrigger=PropertyChanged}" local:FieldHelp.Key="DatePattern"/>
-       <TextBlock Text="{Binding [RateSet]}"/>
-       <TextBox Text="{Binding RateSetName,UpdateSourceTrigger=PropertyChanged}" local:FieldHelp.Key="RateSetName"/>
-       <TextBlock Text="{Binding [AllowedRateStart]}"/>
-       <local:CalendarDatePicker SelectedDate="{Binding AllowedRateStart}" Language="{Binding DateLanguageTag,ConverterCulture=en-US}" local:FieldHelp.Key="AllowedRateStart"/>
-       <TextBlock Text="{Binding [AllowedRateEnd]}"/>
-       <local:CalendarDatePicker SelectedDate="{Binding AllowedRateEnd}" Language="{Binding DateLanguageTag,ConverterCulture=en-US}" local:FieldHelp.Key="AllowedRateEnd"/>
-       <Button Content="{Binding [AddRate]}" Command="{Binding AddRateCommand}"/>
-       <DataGrid local:FieldHelp.Key="Rates" x:Name="RatesGrid" ItemsSource="{Binding Rates}" AutoGenerateColumns="False" ColumnHeaderStyle="{StaticResource WrappedHeader}" CanUserAddRows="False" Height="140" FlowDirection="LeftToRight">
-        <DataGrid.Columns>
-         <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Id,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
-         <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Currency,UpdateSourceTrigger=PropertyChanged}" Width="80"/>
-         <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Quote,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
-         <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Date,UpdateSourceTrigger=PropertyChanged}" Width="130"/>
-         <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Source,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
-        </DataGrid.Columns>
-       </DataGrid>
-       <TextBlock Text="{Binding [RateSelectionHelp]}"/>
-       <TextBox Text="{Binding RateToApply,UpdateSourceTrigger=PropertyChanged}" local:FieldHelp.Key="RateToApply"/>
-       <Button Content="{Binding [ApplyRate]}" Command="{Binding ApplyRateCommand}"/>
-       <DataGrid local:FieldHelp.Key="RateSelections" x:Name="RateSelectionsGrid" ItemsSource="{Binding AccountChoices}" AutoGenerateColumns="False" ColumnHeaderStyle="{StaticResource WrappedHeader}" CanUserAddRows="False" CanUserDeleteRows="False" Height="150" FlowDirection="LeftToRight">
-        <DataGrid.Columns>
-         <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding RecordNumber}" IsReadOnly="True" Width="80"/>
-         <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Account}" IsReadOnly="True" Width="*"/>
-         <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding RateId,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
-        </DataGrid.Columns>
-       </DataGrid>
-      </StackPanel>
       <Expander x:Name="ComparisonPanel" Header="{Binding [ComparisonTitle]}" Visibility="{Binding IsCumulativeMode,Converter={StaticResource Visible}}">
        <StackPanel>
         <TextBlock Text="{Binding [ComparisonHelp]}"/>

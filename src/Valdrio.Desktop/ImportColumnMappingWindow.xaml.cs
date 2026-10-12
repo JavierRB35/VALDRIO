@@ -45,10 +45,6 @@ public partial class ImportColumnMappingWindow : Window
         for (var i = 0; i < comparisonKeys.Length; i++) ComparisonGrid.Columns[i].Header = viewModel[comparisonKeys[i]];
         var fxKeys = new[] { "Row", "DocumentDateColumn", "Original", "Converted", "RateId", "RateDate", "RateSource", "RoundingAdjustment" };
         for (var i = 0; i < fxKeys.Length; i++) ConversionGrid.Columns[i].Header = viewModel[fxKeys[i]];
-        var rateKeys = new[] { "RateId", "SourceCurrency", "Quote", "RateDate", "RateSource" };
-        for (var i = 0; i < rateKeys.Length; i++) RatesGrid.Columns[i].Header = viewModel[rateKeys[i]];
-        RateSelectionsGrid.Columns[0].Header = viewModel["Row"]; RateSelectionsGrid.Columns[1].Header = viewModel["SourceCode"];
-        RateSelectionsGrid.Columns[2].Header = viewModel["RateId"];
         var keys = new[] { "Row", "AccountColumn", "Original", "OriginalDebit", "OriginalCredit", "Parsed", "Issues", "DescriptionColumn" };
         for (var i = 0; i < keys.Length; i++) PreviewGrid.Columns[i].Header = viewModel[keys[i]];
         PreviewGrid.Columns[2].Visibility = viewModel.IsSignedAmount ? Visibility.Visible : Visibility.Collapsed;

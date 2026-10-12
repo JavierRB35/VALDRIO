@@ -56,18 +56,19 @@ public sealed partial class T06ImportConfirmationTests
     }
 
     [TestMethod]
-    public async Task ReviewKeepsEconomicErrorsBlockingAndCumulativeRequiresComparison()
+    public async Task ReviewRequiresApprovalUsesStudyCurrencyAndCumulativeRequiresComparison()
     {
         using var file = Baseline(); var study = Study(file); using var vm = await Vm(file, study);
         vm.InterpretationApproved = false; vm.ApprovalReference = ""; vm.AmountMeaningSelection = "cumulative";
         Assert.IsFalse(vm.CanReviewInGuide);
         Assert.AreEqual(vm.Guide("NeedComparison"), vm.ReviewRequirement);
         vm.AmountMeaningSelection = "period"; vm.SourceCurrency = "USD";
+        Assert.AreEqual(study.Currency.FunctionalCurrencyCode.ToString(), vm.SourceCurrency,
+            "Ordinary imports cannot override the study currency.");
         await vm.PrepareCommand.ExecuteAsync(null);
-        Assert.IsFalse(vm.HasConfirmableReview);
-        Assert.IsTrue(vm.Preparation!.Diagnostics.Any(d => d.Diagnostic.Code == "IMP_FX_REQUIRED"));
-        vm.InterpretationApproved = true;
-        Assert.IsFalse(vm.ConfirmCommand.CanExecute(null));
+        Assert.IsTrue(vm.HasConfirmableReview);
+        Assert.AreEqual(study.Currency.FunctionalCurrencyCode, vm.Preparation!.Profile.FixedCurrency);
+        Assert.IsFalse(vm.ConfirmCommand.CanExecute(null), "Final review approval is still mandatory.");
         Assert.AreEqual(0, file.Imports.ReadImports(study.CompanyId, study.Id).Count);
     }
     [TestMethod]
