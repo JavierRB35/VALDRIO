@@ -1,0 +1,45 @@
+name: one-shot-ux-T08-fast
+on:
+  push:
+    branches: [fix/ux-real-user-audit-20261012]
+    paths: [.github/workflows/one-shot-ux-t08-fast.yml]
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.401
+      - name: Compile UX desktop on Windows
+        shell: pwsh
+        run: dotnet publish src/Valdrio.Desktop/Valdrio.Desktop.csproj -c Release -r win-x64 --self-contained true -o artifacts/desktop
+      - name: Run T08 key library regression on writable T13 company copy
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path 'artifacts/desktop/Valdrio.Desktop.exe').Path
+          $base = (Get-Location).Path
+          New-Item -ItemType Directory -Force -Path 'artifacts/t08-quick' | Out-Null
+          $testCompany=Join-Path $base 'artifacts/t08-quick/fixture.valdrio'
+          Copy-Item -LiteralPath 'Synthetic Projects/Service Company/services.valdrio' -Destination $testCompany -Force
+          $dir=Join-Path $base 'artifacts/t08-quick/visual'
+          New-Item -ItemType Directory -Force -Path $dir | Out-Null
+          $process=Start-Process -FilePath $exe -ArgumentList @(
+            $testCompany, '--allocation-only', "--capture-dir=$dir"
+          ) -PassThru -Wait -WindowStyle Hidden
+          if ($process.ExitCode -ne 0) {
+            if(Test-Path "$dir/company-failure.txt"){Get-Content "$dir/company-failure.txt" | Write-Host}
+            throw "T08 smoke failed: $($process.ExitCode)"
+          }
+          if(-not(Test-Path "$dir/t08-allocations/interaction.json")){throw "Missing T08 interaction evidence"}
+      - name: Save WPF evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: t08-quick-writable-company
+          path: artifacts/t08-quick/visual
+          if-no-files-found: ignore
+          retention-days: 2
