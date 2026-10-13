@@ -1264,6 +1264,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.SecondaryRepairHelp" xml:space="preserve"><value>The current rules cannot produce a valid result. You can remove the selected secondary assignment and replace it with another key. If the published key is already referenced, create a new version rather than overwriting or deleting its history.</value></data>
   <data name="AllocationUI.SecondaryRepairAction" xml:space="preserve"><value>Repair secondary key or assignment</value></data>
   <data name="AllocationUI.SecondaryRepairVersionHelp" xml:space="preserve"><value>Creates an editable new version of a published key. Referenced versions are retained for traceability.</value></data>
+  <data name="AllocationUI.PrincipalOriginMoreKeys" xml:space="preserve"><value>(+{0} more)</value></data>
   <data name="AllocationUI.PrincipalOriginTitle" xml:space="preserve"><value>Cost origin for the selected principal centre</value></data>
   <data name="AllocationUI.PrincipalOriginOverviewHelp" xml:space="preserve"><value>Select a principal centre in the summary table: the panel on the right shows cost origins, and the flow below shows their route. Amounts reconcile; internal circulation among auxiliaries is not added to final cost.</value></data>
   <data name="AllocationUI.PrincipalOriginSelect" xml:space="preserve"><value>Select a principal centre to inspect where its costs came from.</value></data>
