@@ -5,140 +5,190 @@ using System.Windows.Shapes;
 
 namespace Valdrio.Desktop;
 
-// A legible summary of terminal contributions by the node that initially
-// received each resource. The adjacent table remains the exhaustive
-// resource-to-initial-node breakdown; internal reciprocal hops aren't invented.
+// Complete, read-only secondary network: every primary-entry node, every
+// reciprocal auxiliary transfer (including cycles/self-service), every
+// auxiliary-to-principal transfer, and all reconciled terminal totals.
+// Each arrow is an individual directed lane to avoid unreadable crossings.
 public partial class AllocationWorkspacePanel
 {
-    private sealed record SummaryOrigin(string Name, decimal Amount, int Count);
-
     private void PrincipalFlowChanged(object? sender, EventArgs e) => RedrawPrincipalCostFlow();
+    private void CompleteFlowChanged(object? sender, EventArgs e) => RedrawPrincipalCostFlow();
 
     private void RedrawPrincipalCostFlow()
     {
         if (PrincipalFlowCanvas is null) return;
         PrincipalFlowCanvas.Children.Clear();
-        if (!secondaryOnly || viewModel is not { SelectedPrincipalCostRow: { } centre } vm) return;
+        if (!secondaryOnly || viewModel is not { } vm) return;
 
-        var sources = vm.PrincipalOriginRows
-            .GroupBy(row => row.PrimaryNode)
-            .Select(group => new SummaryOrigin(group.Key, group.Sum(row => row.NumericAmount), group.Count()))
-            .OrderByDescending(group => Math.Abs(group.Amount))
-            .ThenBy(group => group.Name, StringComparer.CurrentCulture)
-            .ToArray();
-        if (sources.Length == 0) return;
-
-        const int limit = 8;
-        var shown = sources.Take(limit - 1).ToList();
-        if (sources.Length > limit - 1)
-        {
-            var rest = sources.Skip(limit - 1).ToArray();
-            shown.Add(new SummaryOrigin(string.Format(vm["PrincipalFlowOtherNodes"], rest.Length),
-                rest.Sum(item => item.Amount), rest.Sum(item => item.Count)));
-        }
-
-        const double sourceX = 20, sourceWidth = 385, trackStart = 421, trunkX = 806;
-        const double top = 155, step = 85, boxHeight = 64;
-        var canvasHeight = Math.Max(550d, top + step * shown.Count + 28d);
-        PrincipalFlowCanvas.Width = 1160;
-        PrincipalFlowCanvas.Height = canvasHeight;
-
+        const double width = 1190d, rowHeight = 75d, left = 18d;
+        const double sourceX = left, sourceWidth = 330d, targetX = 835d;
+        const double targetWidth = 331d;
         var ink = TryFindResource("Brand.DeepGreen") as Brush ?? Brushes.DarkGreen;
-        var text = TryFindResource("Text.Primary") as Brush ?? Brushes.Black;
-        var background = TryFindResource("Surface.Subtle") as Brush ?? Brushes.WhiteSmoke;
-        var selected = TryFindResource("Status.SuccessBg") as Brush ?? Brushes.Honeydew;
-
-        AddFlowHeading(vm["PrincipalFlowPrimary"], sourceX, 17, ink);
-        AddFlowHeading(vm["PrincipalFlowContribution"], trackStart, 17, ink);
-        AddFlowHeading(vm["PrincipalFlowDestination"], 829, 17, ink);
-        AddFlowCard(centre.Node, centre.Total, 831, 54, 302, 78, selected, text, ink);
-
-        var magnitude = Math.Max(0.00000001m, sources.Sum(x => Math.Abs(x.Amount)));
-        var firstY = top + boxHeight / 2;
-        var lastY = top + step * (shown.Count - 1) + boxHeight / 2;
-        // One vertical receiver spine plus separate horizontal lanes; there are
-        // no intersecting Bezier curves or overlapping many-to-many pathways.
-        var connector = new Line
+        var muted = TryFindResource("Text.Primary") as Brush ?? Brushes.Black;
+        var panel = TryFindResource("Surface.Subtle") as Brush ?? Brushes.WhiteSmoke;
+        var auxiliary = TryFindResource("Status.SuccessBg") as Brush ?? Brushes.Honeydew;
+        var routes = vm.SecondaryFlowArcs.ToArray();
+        PrincipalFlowCanvas.Width = width;
+        if (routes.Length == 0)
         {
-            X1 = trunkX, X2 = trunkX, Y1 = 135, Y2 = lastY,
-            Stroke = ink, StrokeThickness = 2.5, Opacity = .6,
-            ToolTip = centre.Node + " — " + centre.Total
-        };
-        PrincipalFlowCanvas.Children.Add(connector);
-
-        for (var i = 0; i < shown.Count; i++)
-        {
-            var item = shown[i];
-            var y = top + i * step;
-            var laneY = y + boxHeight / 2;
-            var amount = vm.FormatBatchAmount(item.Amount);
-            AddFlowCard(item.Name, amount, sourceX, y,
-                sourceWidth, boxHeight, background, text, ink);
-            var thickness = 2d + 11d * (double)(Math.Abs(item.Amount) / magnitude);
-            var track = new Line
-            {
-                X1 = trackStart, X2 = trunkX, Y1 = laneY, Y2 = laneY,
-                Stroke = ink, StrokeThickness = thickness,
-                Opacity = .68, StrokeStartLineCap = PenLineCap.Round,
-                StrokeEndLineCap = PenLineCap.Round,
-                ToolTip = item.Name + " → " + centre.Node + ": " + amount
-            };
-            PrincipalFlowCanvas.Children.Add(track);
-            var figure = new TextBlock
-            {
-                Text = amount, Foreground = text, FontWeight = FontWeights.SemiBold,
-                Background = background, Padding = new Thickness(6, 2, 6, 2)
-            };
-            Canvas.SetLeft(figure, 568);
-            Canvas.SetTop(figure, laneY - 28);
-            PrincipalFlowCanvas.Children.Add(figure);
+            PrincipalFlowCanvas.Height = 140;
+            DrawLabel(vm.SecondaryFlowNotice, 20, 25, muted, 1100, false);
+            return;
         }
 
-        var note = new TextBlock
+        var y = 18d;
+        DrawLabel(vm["SecondaryFlowFullTitle"], 20, y, ink, 1100, true);
+        y += 48;
+        foreach (var stage in new[] {
+            SecondaryFlowStage.Primary, SecondaryFlowStage.Reciprocal, SecondaryFlowStage.Final })
         {
-            Text = vm["PrincipalFlowSummaryHelp"],
-            TextWrapping = TextWrapping.Wrap, Foreground = text,
-            MaxWidth = 1105
-        };
-        Canvas.SetLeft(note, sourceX);
-        Canvas.SetTop(note, canvasHeight - 33);
-        PrincipalFlowCanvas.Children.Add(note);
+            var edges = routes.Where(route => route.Stage == stage)
+                .OrderBy(route => route.Group, StringComparer.Ordinal)
+                .ThenBy(route => route.Source, StringComparer.Ordinal)
+                .ThenBy(route => route.Target, StringComparer.Ordinal).ToArray();
+
+            var heading = stage switch
+            {
+                SecondaryFlowStage.Primary => vm["SecondaryFlowStagePrimary"],
+                SecondaryFlowStage.Reciprocal => vm["SecondaryFlowStageReciprocal"],
+                _ => vm["SecondaryFlowStageFinal"]
+            };
+            DrawSectionHeading(heading, y, ink, panel, width - 36);
+            y += 48;
+            if (edges.Length == 0)
+            {
+                DrawLabel(vm["SecondaryFlowNoRoutesStage"], left + 16, y + 2, muted, 1050, false);
+                y += 40;
+                continue;
+            }
+            var magnitude = Math.Max(0.0000000001m, edges.Max(edge => Math.Abs(edge.NumericAmount)));
+            foreach (var route in edges)
+            {
+                var tooltip = route.SourceFull + " → " + route.TargetFull + "\n" +
+                    route.Amount + "\n" + vm["ReciprocalGroup"] + ": " + route.Group +
+                    "\n" + route.NumericAmount.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                var targetLabel = stage == SecondaryFlowStage.Primary ?
+                    (route.TargetAuxiliary ? vm["SecondaryFlowInitialAux"] :
+                        vm["SecondaryFlowInitialPrincipal"]) + "\n" + route.Target : route.Target;
+                DrawFlowCard(route.Source, stage == SecondaryFlowStage.Primary ? route.Amount : "",
+                    sourceX, y + 4, sourceWidth, 61d, panel, muted, ink,
+                    route.SourceFull);
+                DrawFlowCard(targetLabel, stage == SecondaryFlowStage.Primary ? "" : route.Amount,
+                    targetX, y + 4, targetWidth, 61d,
+                    route.TargetAuxiliary ? panel : auxiliary, muted, ink, route.TargetFull);
+
+                var midline = y + 34.5;
+                var thickness = 2.0 + 10d * (double)(Math.Abs(route.NumericAmount) / magnitude);
+                var stroke = new Line
+                {
+                    X1 = sourceX + sourceWidth + 12, X2 = targetX - 13,
+                    Y1 = midline, Y2 = midline,
+                    Stroke = ink, StrokeThickness = thickness,
+                    StrokeStartLineCap = PenLineCap.Round,
+                    StrokeEndLineCap = PenLineCap.Round,
+                    Opacity = stage == SecondaryFlowStage.Reciprocal ? 0.85 : 0.63,
+                    ToolTip = tooltip
+                };
+                PrincipalFlowCanvas.Children.Add(stroke);
+                var arrow = new Polygon
+                {
+                    Points = new PointCollection([
+                        new(targetX - 21, midline - 5),
+                        new(targetX - 12, midline),
+                        new(targetX - 21, midline + 5)]),
+                    Fill = ink, ToolTip = tooltip
+                };
+                PrincipalFlowCanvas.Children.Add(arrow);
+
+                var amount = new TextBlock
+                {
+                    Text = route.Amount,
+                    FontWeight = FontWeights.SemiBold,
+                    TextAlignment = TextAlignment.Center,
+                    Foreground = muted,
+                    Background = panel,
+                    Padding = new Thickness(4, 2, 4, 2),
+                    MinWidth = 145, ToolTip = tooltip
+                };
+                Canvas.SetLeft(amount, 560);
+                Canvas.SetTop(amount, y + 4);
+                PrincipalFlowCanvas.Children.Add(amount);
+                y += rowHeight;
+            }
+            y += 30;
+        }
+        // Principal totals are from the final T11 ledger and include direct
+        // primary plus net secondary absorption. Gross reciprocal flows are
+        // intentionally not added to these amounts.
+        DrawSectionHeading(vm["SecondaryFlowTotalsTitle"], y, ink, panel, width - 36);
+        y += 50;
+        foreach (var centre in vm.PrincipalCosts.OrderBy(c => c.Node, StringComparer.Ordinal))
+        {
+            DrawFlowCard(centre.Node, centre.Primary,
+                sourceX, y, sourceWidth, 62, panel, muted, ink, centre.Node);
+            DrawLabel("+ " + centre.Auxiliary, 490, y + 17, muted, 280, true);
+            DrawFlowCard(centre.Node, centre.Total, targetX, y, targetWidth, 62,
+                auxiliary, muted, ink, centre.Node);
+            y += rowHeight;
+        }
+        y += 8;
+        DrawLabel(vm.SecondaryFlowNotice, left, y, muted, 1125, false);
+        y += 45;
+        PrincipalFlowCanvas.Height = y;
     }
 
-    private void AddFlowHeading(string title, double x, double y, Brush ink)
+    private void DrawSectionHeading(string title, double y, Brush ink, Brush background, double width)
     {
-        var header = new TextBlock
+        var box = new Border
         {
-            Text = title, FontSize = 15, FontWeight = FontWeights.SemiBold,
-            Foreground = ink
+            Width = width, Height = 35, Background = background,
+            Padding = new Thickness(9, 7, 9, 5),
+            Child = new TextBlock { Text = title, Foreground = ink,
+                FontSize = 15, FontWeight = FontWeights.SemiBold }
         };
-        Canvas.SetLeft(header, x);
-        Canvas.SetTop(header, y);
-        PrincipalFlowCanvas.Children.Add(header);
+        Canvas.SetLeft(box, 18);
+        Canvas.SetTop(box, y);
+        PrincipalFlowCanvas.Children.Add(box);
     }
 
-    private void AddFlowCard(string title, string amount, double x, double y,
-        double width, double height, Brush background, Brush text, Brush border)
+    private void DrawLabel(string title, double x, double y, Brush ink, double width, bool strong)
+    {
+        var label = new TextBlock
+        {
+            Text = title, TextWrapping = TextWrapping.Wrap,
+            Width = width, Foreground = ink,
+            FontWeight = strong ? FontWeights.SemiBold : FontWeights.Normal,
+            FontSize = strong ? 15 : 12
+        };
+        Canvas.SetLeft(label, x);
+        Canvas.SetTop(label, y);
+        PrincipalFlowCanvas.Children.Add(label);
+    }
+
+    private void DrawFlowCard(string title, string amount, double x, double y,
+        double width, double height, Brush background, Brush text, Brush border, string tooltip)
     {
         var panel = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
         panel.Children.Add(new TextBlock
         {
             Text = title, TextWrapping = TextWrapping.Wrap,
-            TextTrimming = TextTrimming.CharacterEllipsis, TextAlignment = TextAlignment.Center,
-            Foreground = text, MaxHeight = 34, ToolTip = title
+            TextTrimming = TextTrimming.CharacterEllipsis,
+            TextAlignment = TextAlignment.Center,
+            Foreground = text, MaxHeight = 39, ToolTip = tooltip
         });
-        panel.Children.Add(new TextBlock
-        {
-            Text = amount, TextAlignment = TextAlignment.Center,
-            FontWeight = FontWeights.SemiBold, Foreground = text,
-            Margin = new Thickness(0, 3, 0, 0)
-        });
+        if (!string.IsNullOrWhiteSpace(amount))
+            panel.Children.Add(new TextBlock
+            {
+                Text = amount, TextAlignment = TextAlignment.Center,
+                FontWeight = FontWeights.SemiBold, Foreground = text,
+                Margin = new Thickness(0, 3, 0, 0)
+            });
         var card = new Border
         {
             Width = width, Height = height, Padding = new Thickness(5),
             Background = background, BorderBrush = border,
-            BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(7),
-            Child = panel, ToolTip = title + " — " + amount
+            BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(6),
+            Child = panel, ToolTip = tooltip
         };
         Canvas.SetLeft(card, x);
         Canvas.SetTop(card, y);
