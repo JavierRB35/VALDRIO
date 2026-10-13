@@ -20,6 +20,34 @@ internal static class AllocationCurrencyDisplay
         return lines.Select(line => projected[line.DestinationId.Value]).ToArray();
     }
 
+    // Some totals have already been projected in another table. Match that same
+    // presented total without ever mutating or reposting the input ledger lines.
+    internal static IReadOnlyList<decimal> ProjectToTarget(
+        IReadOnlyList<decimal> ledgerAmounts, decimal displayedTarget,
+        decimal reportQuantum, PrecisionPolicy precision)
+    {
+        if (ledgerAmounts.Count == 0)
+        {
+            if (displayedTarget != 0m) throw new ArgumentException("A nonzero total needs rows.");
+            return [];
+        }
+        var displayed = Project(ledgerAmounts, reportQuantum, precision).ToArray();
+        var outstanding = checked((displayedTarget - displayed.Sum()) / reportQuantum);
+        if (outstanding != decimal.Truncate(outstanding))
+            throw new InvalidOperationException("Display projection is not in whole currency units.");
+        while (outstanding != 0m)
+        {
+            var step = outstanding > 0m ? reportQuantum : -reportQuantum;
+            var index = Enumerable.Range(0, displayed.Length)
+                .OrderBy(i => Math.Abs(displayed[i] + step - ledgerAmounts[i])
+                    - Math.Abs(displayed[i] - ledgerAmounts[i]))
+                .ThenBy(i => i).First();
+            displayed[index] = checked(displayed[index] + step);
+            outstanding += outstanding > 0m ? -1m : 1m;
+        }
+        return displayed;
+    }
+
     // Reconcile both the displayed rows (direct + auxiliary = final) and columns
     // (sum direct, sum auxiliary and sum final), in integer currency minor units.
     // Stable input order breaks equally good ties. The projection is not a posting.
