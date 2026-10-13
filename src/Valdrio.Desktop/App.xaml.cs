@@ -141,6 +141,13 @@ public partial class App : System.Windows.Application
             : new QueuedCompanyFileDialogs();
         company = new CompanyFileViewModel(new SqliteCompanyFileService(currencyCatalog, new SystemClock()),
             companyDialogs, currencyCatalog, texts, preferences, formatter);
+        if (captureDirectory is null)
+        {
+            company.OpenFailure = message =>
+                MessageBox.Show(message,
+                    texts.Get("CompanyOpenFailureTitle", CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)),
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
         var modelDialogs = captureDirectory is null ? (IModelEditorDialogs)new ModelEditorDialogs() : new QueuedModelEditorDialogs();
         models = new ModelWorkspaceViewModel(company, texts, preferences, modelDialogs, formatter);
         var importDialogs = captureDirectory is null ? (IImportSourceDialogs)new ImportSourceDialogs() : new QueuedImportSourceDialogs();

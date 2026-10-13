@@ -6,6 +6,7 @@ using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Data.Sqlite;
 using Valdrio.Application;
 using Valdrio.Infrastructure;
 using Valdrio.Infrastructure.CompanyFiles;
@@ -55,6 +56,28 @@ public partial class CompanyFilePanel
         var bad = Path.Combine(output, "bad.fixture"); File.WriteAllText(bad, "corrupt");
         dialogs.Paths.Enqueue(bad); await Click(OpenButton);
         Check(vm.Snapshot?.Id == id && vm.DiagnosticCode?.StartsWith("FILE_", StringComparison.Ordinal) == true, "failed open preserves active company");
+        // Simulate a previous-format file on a disposable copy. Schema rejection must
+        // not crash WPF, mutate the source or replace the active company session.
+        var older = Path.Combine(output, "older-schema.valdrio");
+        File.Copy(path, older);
+        using (var connection = new SqliteConnection(new SqliteConnectionStringBuilder
+               { DataSource = older, Pooling = false }.ToString()))
+        {
+            connection.Open();
+            using var command = connection.CreateCommand();
+            command.CommandText = "UPDATE FileMetadata SET SchemaVersion=8";
+            Check(command.ExecuteNonQuery() == 1, "previous format test fixture prepared");
+        }
+        var oldHash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(older)));
+        string? alert = null;
+        vm.OpenFailure = message => alert = message;
+        dialogs.Paths.Enqueue(older); await Click(OpenButton);
+        Check(vm.DiagnosticCode == "FILE_UPGRADE_REQUIRED" && !string.IsNullOrWhiteSpace(alert),
+            "previous format raises an actionable warning without ending the WPF session");
+        Check(vm.Snapshot?.Id == id && vm.ActivePath == path &&
+              Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(older))) == oldHash,
+            "previous format leaves active project and source file untouched");
+        vm.OpenFailure = null;
         dialogs.Paths.Enqueue(path); await Click(CreateButton);
         Check(vm.Snapshot?.Id == id && Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))) == hash,
             "failed creation never overwrites");

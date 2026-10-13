@@ -92,6 +92,8 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public Func<bool>? WorkspaceBusy { get; set; }
     public Func<Task<bool>>? BeforeChangeAsync { get; set; }
     public Func<Task>? AfterChangeAsync { get; set; }
+    // A recoverable file-open error is surfaced visibly without failing the UI dispatcher.
+    public Action<string>? OpenFailure { get; set; }
     public IModelWorkspace? ActiveModels => active?.Models;
     public IStudyWorkspace? ActiveStudies => active?.Studies;
     public IImportWorkspace? ActiveImports => active?.Imports;
@@ -172,8 +174,28 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     {
         CompanyFileSnapshot snapshot;
         try { snapshot = await Task.Run(() => candidate.Read()); } catch { candidate.Dispose(); throw; }
-        var old = active; active = candidate; Snapshot = snapshot; old?.Dispose();
-        if (AfterChangeAsync is not null) await AfterChangeAsync();
+        var old = active;
+        var previousSnapshot = Snapshot;
+        active = candidate;
+        Snapshot = snapshot;
+        try
+        {
+            if (AfterChangeAsync is not null) await AfterChangeAsync();
+        }
+        catch
+        {
+            // Keep the previous session usable if a dependent workspace rejects the switch.
+            active = old;
+            Snapshot = previousSnapshot;
+            candidate.Dispose();
+            if (AfterChangeAsync is not null)
+            {
+                try { await AfterChangeAsync(); }
+                catch (Exception rollbackError) { Trace.TraceError("Workspace restoration after failed open: {0}", rollbackError); }
+            }
+            throw;
+        }
+        old?.Dispose();
     }
     private async Task Create()
     {
@@ -183,11 +205,55 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
         await Run(async token => await ReplaceAsync(await Task.Run(() => files.Create(
             new(path, name, new CurrencyCode(selectedCurrency), PrecisionPolicy.Pdec1Proposed), token))));
     }
-    private async Task Open() { var path = dialogs.SelectFile(); if (path is not null) await OpenPath(path); }
+    private async Task Open()
+    {
+        try
+        {
+            var path = dialogs.SelectFile();
+            if (path is not null) await OpenPath(path);
+        }
+        catch (Exception ex)
+        {
+            SetUnexpectedOpenFailure(ex);
+            ReportOpenFailure();
+        }
+    }
     public async Task OpenPath(string path)
     {
-        if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
-        await Run(async token => await ReplaceAsync(await Task.Run(() => files.Open(path, cancellationToken: token))));
+        try
+        {
+            if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
+            await Run(async token => await ReplaceAsync(await Task.Run(() => files.Open(path, cancellationToken: token))));
+        }
+        catch (OperationCanceledException)
+        {
+            diagnostic = null;
+            statusKey = "CompanyCancelled";
+            Refresh();
+        }
+        catch (Exception ex)
+        {
+            // Includes failures from pending-edit coordination outside Run().
+            SetUnexpectedOpenFailure(ex);
+        }
+        ReportOpenFailure();
+    }
+    private void SetUnexpectedOpenFailure(Exception ex)
+    {
+        Trace.TraceError("Opening company failed: {0}", ex);
+        diagnostic = ex switch
+        {
+            CompanyFileException file => file.Diagnostic,
+            DomainRuleException domain => domain.Diagnostic,
+            _ => new DomainDiagnostic("FILE_IO_FAILED", "File.IoFailed", [])
+        };
+        Refresh();
+    }
+    private void ReportOpenFailure()
+    {
+        if (diagnostic is null) return;
+        try { OpenFailure?.Invoke(Status); }
+        catch (Exception ex) { Trace.TraceError("Company open alert failed: {0}", ex); }
     }
     private async Task NewProject()
     {
