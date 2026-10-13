@@ -83,7 +83,7 @@ public partial class AllocationWorkspacePanel : UserControl
         vm.SelectSecondaryRepairKey();
         if (vm.LoadKeyCommand.CanExecute(null))
             await vm.LoadKeyCommand.ExecuteAsync(null);
-        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+        await Dispatcher.InvokeAsync(new Action(() =>
         {
             if (SecondaryRulesGrid.IsVisible && vm.SelectedSecondary is not null)
             {
