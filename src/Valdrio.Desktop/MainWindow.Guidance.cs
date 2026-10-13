@@ -83,7 +83,9 @@ public partial class MainWindow
             2 or 3 => vm.Studies?.NextRequirement ?? vm.Guide("NeedCompany"),
             4 => vm.Resources?.Requirement ?? vm.Guide("NeedCompany"),
             7 => vm.Allocations?.SecondaryDiagnostic ?? vm.Guide("HelpHint"),
-            5 => vm.Allocations?.Requirement ?? vm.Guide("NeedCompany"),
+            5 => DistributionDetails.IsExpanded
+                ? vm.Guide("CloseAccountDetailsForKeys")
+                : vm.Allocations?.Requirement ?? vm.Guide("NeedCompany"),
             _ => vm.Guide("HelpHint")
         };
         SaveLocation.Text = vm.Company?.ActivePath is { Length: > 0 } path ? vm.Guide("StoredAt") + path : "";
