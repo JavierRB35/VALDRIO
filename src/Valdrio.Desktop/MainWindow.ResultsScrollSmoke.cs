@@ -222,8 +222,8 @@ public partial class MainWindow
         Check(vm.SecondaryCalculationFailed && vm.SelectedSecondary is not null &&
             SecondaryPanel.Workspace.RemoveSecondaryButton.IsEnabled,
             "impossible graph exposes selected repairable route without altering the saved key");
-        Check(vm.PrincipalOriginRows.Count == 0 && SecondaryPanel.Workspace.PrincipalFlowCanvas.Children.Count == 0 && vm.AuxiliarySettlements.Count == 0,
-            "failed calculation does not show stale or invented costs or auxiliary liquidation");
+        Check(vm.PrincipalOriginRows.Count == 0 && vm.SecondaryFlowArcs.Count == 0 && vm.AuxiliarySettlements.Count == 0,
+            "failed calculation shows no stale or invented reciprocal links or auxiliary liquidation");
         ScrollToElement(SecondaryPanel.Workspace.ReciprocalGrid); await Idle();
         var errorText = Descendants<TextBlock>(SecondaryPanel.Workspace.ReciprocalGrid)
             .Where(t => t.DataContext is ReciprocalCheckRow { HasError: true }).ToArray();
