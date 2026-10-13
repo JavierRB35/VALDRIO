@@ -164,11 +164,13 @@ public partial class MainWindow
             if (step == 5 && opened.IsPrimaryClosed)
             {
                 AllocationPanel.ResultsSection.IsExpanded = true;
+                AllocationPanel.RestoreClosedKeyDetails();
                 ScrollToElement(AllocationPanel.ResultsSection);
             }
             else if (step == 7 && opened.IsSecondaryClosed)
             {
                 SecondaryPanel.Workspace.SecondaryResultsSection.IsExpanded = true;
+                SecondaryPanel.Workspace.RestoreClosedKeyDetails();
                 ScrollToElement(SecondaryPanel.Workspace.SecondaryResultsSection);
             }
             else if (step == 5) AllocationPanel.FocusKeyLibrary();
