@@ -1326,6 +1326,11 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.SecondaryFlowInitialPrincipal" xml:space="preserve"><value>Principal primary cost</value></data>
   <data name="AllocationUI.SecondaryFlowCompleteNotice" xml:space="preserve"><value>Complete view of {0} links. Total cost of final principal nodes: {1}. Internal circulation is shown separately and must NOT be added again. Arrow amounts are gross projections from published coefficients; final economic amounts are verified in the tables.</value></data>
   <data name="AllocationUI.SecondaryFlowUnavailable" xml:space="preserve"><value>The complete reciprocal network cannot be rendered safely from saved keys. The underlying economic results are unchanged.</value></data>
+  <data name="AllocationUI.PrincipalOriginAccountHeader" xml:space="preserve"><value>Original account</value></data>
+  <data name="AllocationUI.PrincipalOriginInitialNodeHeader" xml:space="preserve"><value>Initial primary node</value></data>
+  <data name="AllocationUI.PrincipalOriginRouteHeader" xml:space="preserve"><value>Route</value></data>
+  <data name="AllocationUI.PrincipalOriginAmountHeader" xml:space="preserve"><value>Attributed cost</value></data>
+  <data name="AllocationUI.PrincipalOriginKeysHeader" xml:space="preserve"><value>Applied keys</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reopen secondary allocation</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explain selected cost</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Behavior</value></data>

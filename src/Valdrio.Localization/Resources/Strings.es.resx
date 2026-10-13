@@ -1326,6 +1326,11 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.SecondaryFlowInitialPrincipal" xml:space="preserve"><value>Coste primario principal</value></data>
   <data name="AllocationUI.SecondaryFlowCompleteNotice" xml:space="preserve"><value>Vista completa de {0} tramos. Total final de los principales: {1}. La circulación interna se indica de forma separada y NO debe sumarse de nuevo. Los importes de las flechas son proyecciones brutas de los coeficientes publicados; los importes económicos finales se comprueban en las tablas.</value></data>
   <data name="AllocationUI.SecondaryFlowUnavailable" xml:space="preserve"><value>No se puede representar con seguridad la red recíproca completa con las claves guardadas. Los resultados económicos originales no han cambiado.</value></data>
+  <data name="AllocationUI.PrincipalOriginAccountHeader" xml:space="preserve"><value>Cuenta de origen</value></data>
+  <data name="AllocationUI.PrincipalOriginInitialNodeHeader" xml:space="preserve"><value>Nodo primario inicial</value></data>
+  <data name="AllocationUI.PrincipalOriginRouteHeader" xml:space="preserve"><value>Vía</value></data>
+  <data name="AllocationUI.PrincipalOriginAmountHeader" xml:space="preserve"><value>Coste atribuido</value></data>
+  <data name="AllocationUI.PrincipalOriginKeysHeader" xml:space="preserve"><value>Claves utilizadas</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reabrir reparto secundario</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explicar coste seleccionado</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Comportamiento</value></data>
