@@ -63,7 +63,7 @@ public partial class AllocationWorkspacePanel : UserControl
     {
         // Only when entering a phase. Preserve editor focus during saving/rebuilding.
         LibrarySection.IsExpanded = true;
-        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(async () =>
         {
             if (!KeyGrid.IsVisible || !KeyGrid.IsEnabled) return;
 
@@ -71,6 +71,11 @@ public partial class AllocationWorkspacePanel : UserControl
             {
                 var first = KeyGrid.Items[0];
                 KeyGrid.SelectedItem = first;
+                // A saved, closed phase cannot leave a highlighted key next to a
+                // blank invalid editor. Load its read-only composition immediately.
+                if (viewModel is { } vm && (vm.IsPrimaryClosed || vm.IsSecondaryClosed) &&
+                    vm.LoadKeyCommand.CanExecute(null))
+                    await vm.LoadKeyCommand.ExecuteAsync(null);
                 KeyGrid.CurrentCell = new DataGridCellInfo(first, KeyGrid.Columns[0]);
                 KeyGrid.ScrollIntoView(first);
                 KeyGrid.UpdateLayout();
