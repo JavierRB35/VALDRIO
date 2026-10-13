@@ -1305,6 +1305,15 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.PrimaryNodeKindAuxiliary" xml:space="preserve"><value>Auxiliary</value></data>
   <data name="AllocationUI.PrimaryFlowSelectionTitle" xml:space="preserve"><value>Flow from the selected account</value></data>
   <data name="AllocationUI.PrimaryFlowSelectionHelp" xml:space="preserve"><value>Read-only explanation of posted primary allocation amounts; not a new allocation or an invented reconstruction of auxiliary services.</value></data>
+  <data name="AllocationUI.AuxiliarySettlementTitle" xml:space="preserve"><value>Auxiliary node cost settlement</value></data>
+  <data name="AllocationUI.AuxiliarySettlementNotAvailable" xml:space="preserve"><value>No valid settlement is available. Calculate secondary allocation first.</value></data>
+  <data name="AllocationUI.AuxiliarySettlementExplanation" xml:space="preserve"><value>By routing group: initial primary costs + net reciprocal receipts = gross distributed cost. The ending balance is theoretical after complete distribution; internal receipts are not added again to final costs. The engine does not record fictitious per-account intermediate movements.</value></data>
+  <data name="AllocationUI.AuxiliarySettlementInitial" xml:space="preserve"><value>Primary cost</value></data>
+  <data name="AllocationUI.AuxiliarySettlementIncoming" xml:space="preserve"><value>Received (net)</value></data>
+  <data name="AllocationUI.AuxiliarySettlementGross" xml:space="preserve"><value>Gross allocated out</value></data>
+  <data name="AllocationUI.AuxiliarySettlementBalance" xml:space="preserve"><value>Theoretical balance</value></data>
+  <data name="AllocationUI.AuxiliarySettlementTheoreticalZero" xml:space="preserve"><value>0 (theoretical)</value></data>
+  <data name="AllocationUI.AuxiliarySettlementSolverResidual" xml:space="preserve"><value>Maximum mathematical residual across groups: {0} {1}. Not an individual accounting balance.</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reopen secondary allocation</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explain selected cost</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Behavior</value></data>

@@ -278,6 +278,7 @@ public sealed partial class AllocationWorkspaceViewModel
         secondaryCalculated = false;
         secondaryCalculationFailed = false;
         SecondaryResults.Clear();
+        ClearAuxiliarySettlement();
         PrincipalCosts.Clear();
         SelectedPrincipalCostRow = null;
         secondaryContributions.Clear();
@@ -352,6 +353,7 @@ public sealed partial class AllocationWorkspaceViewModel
         var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
         PopulateSecondaryResults(published.Facts, published.ExplanationLinks);
         PresentReciprocal(published.GroupCirculations);
+        BuildAuxiliarySettlement(published.GroupCirculations);
         PopulateSecondaryBridges(published.ResourceBridges);
         secondaryGrossTotal = published.AuxiliaryGrossFlows.Sum(flow => flow.GrossAmount);
         foreach (var flow in published.AuxiliaryGrossFlows)
@@ -371,6 +373,7 @@ public sealed partial class AllocationWorkspaceViewModel
             var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
             PopulateSecondaryResults(result.Facts, result.ExplanationLinks);
             PresentReciprocal(result.GroupCirculations);
+            BuildAuxiliarySettlement(result.GroupCirculations);
             PopulateSecondaryBridges(result.ResourceBridges);
             secondaryGrossTotal = result.Circulation.Gross.Sum();
             for (var i = 0; i < result.Circulation.AuxiliaryIds.Count; i++)
@@ -396,6 +399,7 @@ public sealed partial class AllocationWorkspaceViewModel
         secondaryCalculated = false;
         secondaryCalculationFailed = false;
         SecondaryResults.Clear();
+        ClearAuxiliarySettlement();
         PrincipalCosts.Clear();
         SelectedPrincipalCostRow = null;
         secondaryContributions.Clear();

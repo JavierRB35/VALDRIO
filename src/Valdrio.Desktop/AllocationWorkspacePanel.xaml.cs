@@ -109,6 +109,8 @@ public partial class AllocationWorkspacePanel : UserControl
     {
         if (viewModel is null) return;
         Set(SecondaryNodeAssignmentsGrid, "Auxiliary", "PublishedKey");
+        Set(AuxiliarySettlementGrid, "Auxiliary", "ReciprocalGroup", "AuxiliarySettlementInitial",
+            "AuxiliarySettlementIncoming", "AuxiliarySettlementGross", "AuxiliarySettlementBalance");
         Set(PrimaryNodeTotalsGrid, "NodeCenter", "Node", "PrimaryAmount");
         Set(PrimaryAccountGrid, "Account", "PrimaryRepartibleHeader", "PrimaryAuxiliaryHeader",
             "PrimaryMainHeader", "PrimaryAssignedHeader", "PrimaryPendingHeader", "PrimaryPercentHeader");

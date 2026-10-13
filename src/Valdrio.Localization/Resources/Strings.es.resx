@@ -1305,6 +1305,15 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.PrimaryNodeKindAuxiliary" xml:space="preserve"><value>Auxiliar</value></data>
   <data name="AllocationUI.PrimaryFlowSelectionTitle" xml:space="preserve"><value>Flujo desde la cuenta seleccionada</value></data>
   <data name="AllocationUI.PrimaryFlowSelectionHelp" xml:space="preserve"><value>Representación explicativa de importes del reparto primario, no una nueva imputación ni una reconstrucción de servicios auxiliares.</value></data>
+  <data name="AllocationUI.AuxiliarySettlementTitle" xml:space="preserve"><value>Liquidación de costes de nodos auxiliares</value></data>
+  <data name="AllocationUI.AuxiliarySettlementNotAvailable" xml:space="preserve"><value>Sin liquidación válida. Calcula el reparto secundario antes de consultar estos saldos.</value></data>
+  <data name="AllocationUI.AuxiliarySettlementExplanation" xml:space="preserve"><value>Por grupo de reparto: coste primario inicial + recepción recíproca neta = circulación bruta distribuida. El saldo es teórico una vez realizado el reparto completo; las recepciones no se vuelven a sumar al coste final. No se imputan movimientos internos por cuenta que el motor no registra.</value></data>
+  <data name="AllocationUI.AuxiliarySettlementInitial" xml:space="preserve"><value>Coste primario</value></data>
+  <data name="AllocationUI.AuxiliarySettlementIncoming" xml:space="preserve"><value>Recibido (neto)</value></data>
+  <data name="AllocationUI.AuxiliarySettlementGross" xml:space="preserve"><value>Distribuido (bruto)</value></data>
+  <data name="AllocationUI.AuxiliarySettlementBalance" xml:space="preserve"><value>Saldo teórico</value></data>
+  <data name="AllocationUI.AuxiliarySettlementTheoreticalZero" xml:space="preserve"><value>0 (teórico)</value></data>
+  <data name="AllocationUI.AuxiliarySettlementSolverResidual" xml:space="preserve"><value>Máximo residuo matemático global de los grupos: {0} {1}. No representa un saldo contable individual.</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reabrir reparto secundario</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explicar coste seleccionado</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Comportamiento</value></data>

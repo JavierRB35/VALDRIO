@@ -401,6 +401,24 @@
     </StackPanel>
    </Expander>
 
+     <Expander x:Name="AuxiliarySettlementSection" Header="{Binding [AuxiliarySettlementTitle]}" IsExpanded="True" Margin="0,8,0,14">
+       <StackPanel Margin="0,8,0,0">
+         <TextBlock Text="{Binding AuxiliarySettlementHelp}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+         <DataGrid x:Name="AuxiliarySettlementGrid" ItemsSource="{Binding AuxiliarySettlements}" IsReadOnly="True"
+                   AutoGenerateColumns="False" CanUserAddRows="False" Height="175">
+           <DataGrid.Columns>
+             <DataGridTextColumn Binding="{Binding Auxiliary}" ElementStyle="{StaticResource Text.TableText}" Width="2*" MinWidth="175"/>
+             <DataGridTextColumn Binding="{Binding Group}" ElementStyle="{StaticResource Text.TableText}" Width="*" MinWidth="80"/>
+             <DataGridTextColumn Binding="{Binding Initial}" ElementStyle="{StaticResource Text.TableNumber}" Width="*" MinWidth="125" HeaderStyle="{StaticResource NumberHeader}"/>
+             <DataGridTextColumn Binding="{Binding Incoming}" ElementStyle="{StaticResource Text.TableNumber}" Width="*" MinWidth="125" HeaderStyle="{StaticResource NumberHeader}"/>
+             <DataGridTextColumn Binding="{Binding GrossOut}" ElementStyle="{StaticResource Text.TableNumber}" Width="*" MinWidth="125" HeaderStyle="{StaticResource NumberHeader}"/>
+             <DataGridTextColumn Binding="{Binding MathematicalBalance}" ElementStyle="{StaticResource Text.TableNumber}" Width="*" MinWidth="105" HeaderStyle="{StaticResource NumberHeader}"/>
+           </DataGrid.Columns>
+         </DataGrid>
+         <TextBlock Text="{Binding AuxiliarySettlementResidual}" TextWrapping="Wrap" Margin="0,8,0,2"/>
+       </StackPanel>
+     </Expander>
+
      <TextBlock Text="{Binding [PrincipalCostsTitle]}" FontWeight="SemiBold" Margin="0,8,0,8"/>
      <TextBlock Text="{Binding [PrincipalOriginOverviewHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
      <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="0,0,0,12">
