@@ -1309,7 +1309,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.AuxiliarySettlementNotAvailable" xml:space="preserve"><value>Sin liquidación válida. Calcula el reparto secundario antes de consultar estos saldos.</value></data>
   <data name="AllocationUI.AuxiliarySettlementExplanation" xml:space="preserve"><value>Por grupo de reparto: coste primario inicial + recepción recíproca neta = circulación bruta distribuida. El saldo es teórico una vez realizado el reparto completo; las recepciones no se vuelven a sumar al coste final. No se imputan movimientos internos por cuenta que el motor no registra.</value></data>
   <data name="AllocationUI.AuxiliarySettlementInitial" xml:space="preserve"><value>Coste primario</value></data>
-  <data name="AllocationUI.AuxiliarySettlementIncoming" xml:space="preserve"><value>Recibido (neto)</value></data>
+  <data name="AllocationUI.AuxiliarySettlementIncoming" xml:space="preserve"><value>Recibido neto (deducido)</value></data>
   <data name="AllocationUI.AuxiliarySettlementGross" xml:space="preserve"><value>Distribuido (bruto)</value></data>
   <data name="AllocationUI.AuxiliarySettlementBalance" xml:space="preserve"><value>Saldo teórico</value></data>
   <data name="AllocationUI.AuxiliarySettlementTheoreticalZero" xml:space="preserve"><value>0 (teórico)</value></data>

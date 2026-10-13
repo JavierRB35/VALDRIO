@@ -276,7 +276,7 @@
     <DataGrid x:Name="PrimaryAccountGrid" ItemsSource="{Binding PrimaryAccounts}"
               SelectedItem="{Binding SelectedPrimaryAccount, Mode=TwoWay}" RowDetailsVisibilityMode="VisibleWhenSelected"
               SelectionMode="Single" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
-              Height="275" HorizontalScrollBarVisibility="Auto">
+              Height="275" ScrollViewer.HorizontalScrollBarVisibility="Auto">
       <DataGrid.Columns>
         <DataGridTextColumn Binding="{Binding Account}" Width="2*" MinWidth="180" ElementStyle="{StaticResource Text.TableText}"/>
         <DataGridTextColumn Binding="{Binding Repartible}" Width="*" MinWidth="125" ElementStyle="{StaticResource Text.TableNumber}" HeaderStyle="{StaticResource NumberHeader}"/>

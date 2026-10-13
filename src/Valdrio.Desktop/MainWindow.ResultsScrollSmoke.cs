@@ -51,6 +51,14 @@ public partial class MainWindow
             var primaryToggleY = AllocationPanel.TogglePrimaryButton.TranslatePoint(new Point(), this).Y;
             Check(AllocationPanel.LinesGrid.ActualHeight > 300, "primary destinations use available height " + language);
             Check(vm.IsPrimaryClosed && vm.PrimaryResults.All(r => !string.IsNullOrWhiteSpace(r.Behavior)), "closed primary shows behavior " + language);
+            Check(vm.PrimaryAccounts.Count > 0 && vm.PrimaryAccounts.Sum(row => row.PresentedAssigned) == vm.PrimaryNodeTotals.Sum(row => row.PresentedAmount),
+                "primary grouped-account assignments reconcile to the primary node totals " + language);
+            Check(vm.PrimaryAccounts.All(row => row.PresentedBase - row.PresentedAssigned == row.PresentedPending),
+                "primary account-level pending values reconcile exactly " + language);
+            Check(vm.SelectedPrimaryAccount is not null && AllocationPanel.PrimaryFlowCanvas.Children.Count > 0,
+                "primary account selection draws original ledger source-to-node flow " + language);
+            ScrollToElement(AllocationPanel.PrimaryFlowSection); await Idle();
+            VisualEvidenceCapture.Capture(this, Path.Combine(directory, language + "-primary-account-flow.png"));
             vm.SelectedKey = vm.Keys.First(); await vm.LoadKeyCommand.ExecuteAsync(null); await Idle();
             Check(AllocationPanel.LinesGrid.IsEnabled && !vm.CanEditComposition, "closed primary key remains navigable " + language);
             Check(Descendants<TextBox>(AllocationPanel.LinesGrid).All(b => b.IsReadOnly), "primary weights are read-only " + language);
@@ -84,6 +92,10 @@ public partial class MainWindow
             var snapshot = company.ActiveAllocations!.ReadAllocations(studies.Current!.CompanyId, studies.Current.Id);
             var publication = snapshot.SecondaryPublication!;
             Check(vm.PrincipalCosts.Sum(r => r.TotalAmount) == publication.Facts.Sum(f => f.PostedAmount.Amount), "principal totals equal posted ledger " + language);
+            Check(vm.AuxiliarySettlements.Count > 0 && vm.AuxiliarySettlements.All(row => row.InitialAmount + row.IncomingAmount == row.GrossAmount),
+                "auxiliary liquidation displays signed mathematically reconciled primary and reciprocal inputs " + language);
+            ScrollToElement(panel.AuxiliarySettlementSection); await Idle();
+            VisualEvidenceCapture.Capture(this, Path.Combine(directory, language + "-auxiliary-settlement.png"));
             Check(vm.PrincipalCosts.All(r => r.PrimaryAmount + r.AuxiliaryAmount == r.TotalAmount), "primary plus auxiliary reconciles per principal " + language);
             Check(vm.SecondaryResults.Sum(r => r.PostedAmount) == vm.PrincipalCosts.Sum(r => r.TotalAmount), "contributions reconcile with principal totals " + language);
             Check(vm.SelectedPrincipalCostRow is not null && panel.PrincipalOriginGrid.Items.Count > 0,
@@ -199,8 +211,8 @@ public partial class MainWindow
         Check(vm.SecondaryCalculationFailed && vm.SelectedSecondary is not null &&
             SecondaryPanel.Workspace.RemoveSecondaryButton.IsEnabled,
             "impossible graph exposes selected repairable route without altering the saved key");
-        Check(vm.PrincipalOriginRows.Count == 0 && SecondaryPanel.Workspace.PrincipalFlowCanvas.Children.Count == 0,
-            "failed calculation does not show stale or invented cost flows");
+        Check(vm.PrincipalOriginRows.Count == 0 && SecondaryPanel.Workspace.PrincipalFlowCanvas.Children.Count == 0 && vm.AuxiliarySettlements.Count == 0,
+            "failed calculation does not show stale or invented costs or auxiliary liquidation");
         ScrollToElement(SecondaryPanel.Workspace.ReciprocalGrid); await Idle();
         var errorText = Descendants<TextBlock>(SecondaryPanel.Workspace.ReciprocalGrid)
             .Where(t => t.DataContext is ReciprocalCheckRow { HasError: true }).ToArray();

@@ -1309,7 +1309,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.AuxiliarySettlementNotAvailable" xml:space="preserve"><value>No valid settlement is available. Calculate secondary allocation first.</value></data>
   <data name="AllocationUI.AuxiliarySettlementExplanation" xml:space="preserve"><value>By routing group: initial primary costs + net reciprocal receipts = gross distributed cost. The ending balance is theoretical after complete distribution; internal receipts are not added again to final costs. The engine does not record fictitious per-account intermediate movements.</value></data>
   <data name="AllocationUI.AuxiliarySettlementInitial" xml:space="preserve"><value>Primary cost</value></data>
-  <data name="AllocationUI.AuxiliarySettlementIncoming" xml:space="preserve"><value>Received (net)</value></data>
+  <data name="AllocationUI.AuxiliarySettlementIncoming" xml:space="preserve"><value>Net receipts (derived)</value></data>
   <data name="AllocationUI.AuxiliarySettlementGross" xml:space="preserve"><value>Gross allocated out</value></data>
   <data name="AllocationUI.AuxiliarySettlementBalance" xml:space="preserve"><value>Theoretical balance</value></data>
   <data name="AllocationUI.AuxiliarySettlementTheoreticalZero" xml:space="preserve"><value>0 (theoretical)</value></data>
