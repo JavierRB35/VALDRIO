@@ -77,6 +77,11 @@
    <TextBlock Text="{Binding Notes}" Margin="0,8,0,0" Foreground="{DynamicResource Text.Primary}"/>
 
    <StackPanel x:Name="UnitCreationPanel">
+    <TextBlock Text="{Binding DefaultUnitsHelp}" Margin="0,4,0,4"/>
+    <Button x:Name="InstallDefaultUnitsButton" Content="{Binding AddDefaultUnitsLabel}"
+            Command="{Binding AddDefaultUnitsCommand}"
+            Visibility="{Binding MissingDefaultUnits,Converter={StaticResource BoolVis}}"
+            HorizontalAlignment="Left" TabIndex="24" Style="{StaticResource Button.Secondary}"/>
     <TextBlock Text="{Binding UnitCreationHelp}" Margin="0,4,0,4"/>
     <TextBlock Text="{Binding UnitRequiredHelp}" Foreground="{DynamicResource Text.Primary}" FontSize="11" Margin="0,0,0,8"/>
     <Grid IsEnabled="{Binding IsIdle}">

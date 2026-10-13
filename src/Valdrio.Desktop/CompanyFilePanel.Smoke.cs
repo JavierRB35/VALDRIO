@@ -47,15 +47,18 @@ public partial class CompanyFilePanel
         SetText(NameBox, "Draft for another company");
         Check(ActiveCompanyNameText.Text == "VALDRIO synthetic factory 日本", "new company draft does not rename active company");
         var id = vm.Snapshot!.Id;
+        Check(vm.Snapshot.Units.Count == DefaultActivityUnitCatalog.All.Count &&
+              vm.Snapshot.Units.Any(u => u.Code == "machine_hour"), "new project contains standard units");
         SetText(UnitCodeBox, "00123"); await Click(AddUnitButton);
-        Check(vm.Snapshot.Units.Single().Code == "00123", "bound unit saved");
+        Check(vm.Snapshot.Units.Any(u => u.Code == "00123"), "bound custom unit saved");
         dialogs.Paths.Enqueue(backup); await Click(BackupButton);
         Check(File.Exists(backup), "live backup created");
         await Click(CloseButton); Check(vm.Snapshot is null, "close removes active session");
         Check(ActiveCompanyNameText.Text == vm.ActiveCompanyName && !ActiveCompanyNameText.Text.Contains("synthetic factory", StringComparison.Ordinal), "closing clears active company label");
         dialogs.Paths.Enqueue(path); await Click(OpenButton);
         Check(ActiveCompanyNameText.Text == "VALDRIO synthetic factory 日本", "reopening shows persisted company name");
-        Check(vm.Snapshot?.Id == id && vm.Snapshot.Units.Count == 1, "real reopen retains identity and unit");
+        Check(vm.Snapshot?.Id == id && vm.Snapshot.Units.Count == DefaultActivityUnitCatalog.All.Count + 1,
+            "real reopen retains identity and standard plus custom units");
         var hash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)));
         var bad = Path.Combine(output, "bad.fixture"); File.WriteAllText(bad, "corrupt");
         dialogs.Paths.Enqueue(bad); await Click(OpenButton);
@@ -102,7 +105,9 @@ public partial class CompanyFilePanel
         // Query independently using the same public storage port; UI text alone is not persistence evidence.
         var catalog = new JsonCurrencyCatalog(Path.Combine(AppContext.BaseDirectory, "reference", "currency-catalog-example.json"));
         using (var independent = new SqliteCompanyFileService(catalog, new SystemClock()).Open(path, CompanyFileOpenMode.ReadOnly))
-            Check(independent.Read().Id == id && independent.Read().Units.Single().Code == "00123", "independent read of UI-created SQLite");
+            Check(independent.Read().Id == id && independent.Read().Units.Any(u => u.Code == "00123")
+                && independent.Read().Units.Count == DefaultActivityUnitCatalog.All.Count + 1,
+                "independent read of UI-created SQLite");
         var window = (MainWindow)System.Windows.Window.GetWindow(this);
         window.ResetScrollForCapture();
         VisualEvidenceCapture.Capture(window, Path.Combine(output, "company-panel.png"));

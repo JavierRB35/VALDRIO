@@ -870,7 +870,7 @@ Difference to distribute: {7}</value></data>
   <data name="Model.ModelStepHelp" xml:space="preserve"><value>The cost structure defines how allocation is organised: centres, nodes, units and rules. Reuse the same structure across many analyses. When it is complete, finalize it to make that version available and protected from changes.</value></data>
   <data name="Model.ExistingModelHelp" xml:space="preserve"><value>Open an existing cost structure</value></data>
   <data name="Model.NewModelHelp" xml:space="preserve"><value>Create a new cost structure</value></data>
-  <data name="Model.UnitSectionHelp" xml:space="preserve"><value>Activity units describe how node work is measured, for example hours, batches or items. You can create them here as a reusable catalogue, but you do not have to define them in advance: you can also create one directly while configuring a node.</value></data>
+  <data name="Model.UnitSectionHelp" xml:space="preserve"><value>Choose an activity unit from the included catalogue (hours, batches, orders, etc.), or create a custom unit while configuring a node.</value></data>
   <data name="Model.ReviewModelHelp" xml:space="preserve"><value>Review the structure. Save preserves work in progress; Check finds inconsistencies; Finalize creates a fixed version ready for cost analyses. Nothing is published outside VALDRIO.</value></data>
   <data name="Model.CenterSectionHelp" xml:space="preserve"><value>A physical centre is a recognisable area of the business, such as Press, Maintenance or Administration. Add centres one by one; saved centres remain visible in the table.</value></data>
   <data name="Model.CenterListTitle" xml:space="preserve"><value>Saved centres</value></data>
@@ -918,7 +918,7 @@ Difference to distribute: {7}</value></data>
   <data name="Model.CreateUnitHere" xml:space="preserve"><value>Can't find the unit you need? Create one here</value></data>
   <data name="Model.CreateUnitHereHelp" xml:space="preserve"><value>Create the unit without leaving the node. It is saved as a reusable company unit and, after a successful save, VALDRIO automatically selects it for this node.</value></data>
   <data name="Model.UnitCatalogTitle" xml:space="preserve"><value>Manage reusable activity-unit catalogue (optional)</value></data>
-  <data name="CompanyUnitCreationHelp" xml:space="preserve"><value>Define how activity is measured. For example: code HOURS, measurement type time. The unit is saved once and can be reused by different nodes.</value></data>
+  <data name="CompanyUnitCreationHelp" xml:space="preserve"><value>Need a different measure? Create a custom activity unit to reuse across nodes.</value></data>
   <data name="CompanyUnitRequiredHelp" xml:space="preserve"><value>Required: unit code and measurement type. Symbol, decimal places and whole-unit behavior are additional options.</value></data>
   <data name="CompanyUnitAdvanced" xml:space="preserve"><value>Additional unit options</value></data>
   <data name="ImportMapping.FileStepTitle" xml:space="preserve"><value>Select the source file</value></data>
@@ -1463,4 +1463,27 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.GrossDiagnosticTotal" xml:space="preserve"><value>Gross total (informational, excluded from final costs)</value></data>
   <data name="Guide.CloseAccountDetailsForKeys" xml:space="preserve"><value>Account details are open. Close “Account details” to return to the allocation-key editor.</value></data>
+  <data name="CompanyDefaultsHelp" xml:space="preserve"><value>New projects include 20 standard activity units. For existing projects, add the missing standard units without changing the ones already saved.</value></data>
+  <data name="CompanyInstallDefaults" xml:space="preserve"><value>Add missing standard units</value></data>
+  <data name="CompanyDefaultsInstalled" xml:space="preserve"><value>Missing standard activity units added successfully.</value></data>
+  <data name="ActivityUnit.unit" xml:space="preserve"><value>Unit</value></data>
+  <data name="ActivityUnit.labor_hour" xml:space="preserve"><value>Labor hour</value></data>
+  <data name="ActivityUnit.machine_hour" xml:space="preserve"><value>Machine hour</value></data>
+  <data name="ActivityUnit.minute" xml:space="preserve"><value>Minute</value></data>
+  <data name="ActivityUnit.batch" xml:space="preserve"><value>Batch</value></data>
+  <data name="ActivityUnit.kilogram" xml:space="preserve"><value>Kilogram</value></data>
+  <data name="ActivityUnit.liter" xml:space="preserve"><value>Liter</value></data>
+  <data name="ActivityUnit.meter" xml:space="preserve"><value>Meter</value></data>
+  <data name="ActivityUnit.square_meter" xml:space="preserve"><value>Square meter</value></data>
+  <data name="ActivityUnit.cubic_meter" xml:space="preserve"><value>Cubic meter</value></data>
+  <data name="ActivityUnit.kilometer" xml:space="preserve"><value>Kilometer</value></data>
+  <data name="ActivityUnit.kilowatt_hour" xml:space="preserve"><value>Kilowatt-hour</value></data>
+  <data name="ActivityUnit.order" xml:space="preserve"><value>Order</value></data>
+  <data name="ActivityUnit.operation" xml:space="preserve"><value>Operation</value></data>
+  <data name="ActivityUnit.service" xml:space="preserve"><value>Service</value></data>
+  <data name="ActivityUnit.delivery" xml:space="preserve"><value>Delivery</value></data>
+  <data name="ActivityUnit.transaction" xml:space="preserve"><value>Transaction</value></data>
+  <data name="ActivityUnit.setup" xml:space="preserve"><value>Setup</value></data>
+  <data name="ActivityUnit.pallet" xml:space="preserve"><value>Pallet</value></data>
+  <data name="ActivityUnit.cycle" xml:space="preserve"><value>Cycle</value></data>
 </root>

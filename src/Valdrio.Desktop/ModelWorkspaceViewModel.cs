@@ -551,6 +551,16 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             target.Add(value);
     }
 
+    private string ActivityUnitName(UnitDefinition definition)
+    {
+        var name = DefaultActivityUnitCatalog.IsPreset(definition)
+            ? Text("ActivityUnit." + definition.Code)
+            : definition.Code;
+        return string.IsNullOrWhiteSpace(definition.Symbol)
+            ? name
+            : name + " (" + definition.Symbol + ")";
+    }
+
     private void Reformat()
     {
         loading = true;
@@ -568,7 +578,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             c,
             c.Code + " · " + c.Name + " · " + Text(c.IsActive ? "Model.Active" : "Model.Inactive"),
             Text(c.IsActive ? "Model.Active" : "Model.Inactive"))));
-        Replace(Units, unitValues.Select(u => new UnitOption(u, u.Definition.Code + " · " + u.Definition.Dimension + " · " + Text(u.IsActive ? "Model.Active" : "Model.Inactive"))));
+        Replace(Units, unitValues.Select(u => new UnitOption(u, ActivityUnitName(u.Definition) + " · " + Text(u.IsActive ? "Model.Active" : "Model.Inactive"))));
         Replace(Models, modelValues.Select(m => new ModelOption(m, m.Structure.Description + " · " + Text(m.Status == ModelStatus.Draft ? "Model.Draft" : "Model.Published") + " · " + m.Structure.VersionNumber.ToString(Format))));
         Replace(Roles, Enum.GetValues<NodeRole>().Select(r => new RoleOption(r, Text(r == NodeRole.Principal ? "Model.Principal" : "Model.Auxiliary"))));
         Replace(Layers, Enum.GetValues<CostLayer>().Select(l => new LayerOption(l, Text(l switch
@@ -581,7 +591,9 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         Replace(Nodes, draftNodes.OrderBy(n => Current?.Publication?.PhysicalCenters.SingleOrDefault(c => c.Id == n.PhysicalCenterId)?.Code ?? centerValues.SingleOrDefault(c => c.Id == n.PhysicalCenterId)?.Code, StringComparer.Ordinal).ThenBy(n => n.Code, StringComparer.Ordinal).ThenBy(n => n.Role == NodeRole.Principal ? 0 : 1).Select(n =>
         {
             var p = draftPools.SingleOrDefault(p => p.NodeId == n.Id);
-            var unitName = Current?.Publication?.DriverUnits.SingleOrDefault(u => u.Id == p?.DriverUnitId)?.Code ?? unitValues.SingleOrDefault(u => u.Definition.Id == p?.DriverUnitId)?.Definition.Code ?? "—";
+            var unitDefinition = Current?.Publication?.DriverUnits.SingleOrDefault(u => u.Id == p?.DriverUnitId)
+                ?? unitValues.SingleOrDefault(u => u.Definition.Id == p?.DriverUnitId)?.Definition;
+            var unitName = unitDefinition is null ? "—" : ActivityUnitName(unitDefinition);
             var frozenCenter = Current?.Publication?.PhysicalCenters.SingleOrDefault(c => c.Id == n.PhysicalCenterId);
             var liveCenter = centerValues.SingleOrDefault(c => c.Id == n.PhysicalCenterId);
             var centerName = frozenCenter is not null ? frozenCenter.Code + " · " + frozenCenter.Name : liveCenter is not null ? liveCenter.Code + " · " + liveCenter.Name : "—";

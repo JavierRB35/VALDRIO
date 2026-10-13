@@ -39,6 +39,8 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
         NewProjectCommand = new AsyncRelayCommand(NewProject, () => Available && active is not null);
         AddUnitCommand = new AsyncRelayCommand(AddUnit, () => Available && active is not null &&
             !string.IsNullOrWhiteSpace(UnitCode) && !string.IsNullOrWhiteSpace(UnitDimension));
+        AddDefaultUnitsCommand = new AsyncRelayCommand(AddDefaultUnits,
+            () => Available && CanWrite && Snapshot is not null && DefaultActivityUnitCatalog.HasMissing(Snapshot.Units));
         BackupCommand = new AsyncRelayCommand(Backup, () => Available && active is not null);
         RestoreCommand = new AsyncRelayCommand(Restore, () => Available);
         UpgradeCommand = new AsyncRelayCommand(Upgrade, () => Available);
@@ -50,6 +52,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public IAsyncRelayCommand CloseCommand { get; }
     public IAsyncRelayCommand NewProjectCommand { get; }
     public IAsyncRelayCommand AddUnitCommand { get; }
+    public IAsyncRelayCommand AddDefaultUnitsCommand { get; }
     public IAsyncRelayCommand BackupCommand { get; }
     public IAsyncRelayCommand RestoreCommand { get; }
     public IAsyncRelayCommand UpgradeCommand { get; }
@@ -130,6 +133,9 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public string CancelLabel => Text("CompanyCancel");
     public string UnitLabel => Text("CompanyUnitLabel");
     public string UnitCreationHelp => Text("CompanyUnitCreationHelp");
+    public string DefaultUnitsHelp => Text("CompanyDefaultsHelp");
+    public string AddDefaultUnitsLabel => Text("CompanyInstallDefaults");
+    public bool MissingDefaultUnits => CanWrite && Snapshot is not null && DefaultActivityUnitCatalog.HasMissing(Snapshot.Units);
     public string UnitRequiredHelp => Text("CompanyUnitRequiredHelp");
     public string UnitAdvancedLabel => Text("CompanyUnitAdvanced");
     public string DimensionLabel => Text("CompanyDimensionLabel");
@@ -157,7 +163,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     {
         OnPropertyChanged(string.Empty);
         CreateCommand.NotifyCanExecuteChanged(); OpenCommand.NotifyCanExecuteChanged(); CloseCommand.NotifyCanExecuteChanged(); NewProjectCommand.NotifyCanExecuteChanged();
-        AddUnitCommand.NotifyCanExecuteChanged(); BackupCommand.NotifyCanExecuteChanged(); RestoreCommand.NotifyCanExecuteChanged(); UpgradeCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
+        AddUnitCommand.NotifyCanExecuteChanged(); AddDefaultUnitsCommand.NotifyCanExecuteChanged(); BackupCommand.NotifyCanExecuteChanged(); RestoreCommand.NotifyCanExecuteChanged(); UpgradeCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
     }
     private async Task Run(Func<CancellationToken, Task> operation)
     {
@@ -203,8 +209,28 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
         if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
         var name = CompanyName; var selectedCurrency = Currency;
         var path = dialogs.SelectNewFile(name); if (path is null) return;
-        await Run(async token => await ReplaceAsync(await Task.Run(() => files.Create(
-            new(path, name, new CurrencyCode(selectedCurrency), PrecisionPolicy.Pdec1Proposed), token))));
+        await Run(async token =>
+        {
+            var candidate = await Task.Run(() =>
+            {
+                var session = files.Create(
+                    new(path, name, new CurrencyCode(selectedCurrency), PrecisionPolicy.Pdec1Proposed), token);
+                try
+                {
+                    var created = session.Read(token);
+                    var defaults = DefaultActivityUnitCatalog.Missing(created.Units);
+                    if (defaults.Count != 0)
+                        session.AddUnits(defaults, created.Revision, "system-defaults", token);
+                    return session;
+                }
+                catch
+                {
+                    session.Dispose();
+                    throw;
+                }
+            }, token);
+            await ReplaceAsync(candidate);
+        });
     }
     private async Task Open()
     {
@@ -277,6 +303,24 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
         active?.Dispose(); active = null; Snapshot = null; diagnostic = null; statusKey = "CompanyNoFile";
         if (AfterChangeAsync is not null) await AfterChangeAsync(); Refresh();
     }
+    private async Task AddDefaultUnits()
+    {
+        await Run(async token =>
+        {
+            var before = Snapshot!;
+            var missing = DefaultActivityUnitCatalog.Missing(before.Units);
+            if (missing.Count == 0) return;
+            Snapshot = await Task.Run(() =>
+                active!.AddUnits(missing, before.Revision, "local-user", token), token);
+            if (AfterChangeAsync is not null) await AfterChangeAsync();
+        });
+        if (diagnostic is null && statusKey == "CompanyCompleted")
+        {
+            statusKey = "CompanyDefaultsInstalled";
+            Refresh();
+        }
+    }
+
     private async Task AddUnit()
     {
         await Run(async token =>

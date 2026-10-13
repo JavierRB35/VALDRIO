@@ -870,7 +870,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.ModelStepHelp" xml:space="preserve"><value>La estructura de costes define cómo se organiza el reparto: centros, nodos, unidades y reglas. Puedes reutilizar la misma estructura en muchos análisis. Cuando esté terminada, finalízala para dejar esa versión disponible y protegida frente a cambios.</value></data>
   <data name="Model.ExistingModelHelp" xml:space="preserve"><value>Abrir una estructura existente</value></data>
   <data name="Model.NewModelHelp" xml:space="preserve"><value>Crear una estructura nueva</value></data>
-  <data name="Model.UnitSectionHelp" xml:space="preserve"><value>Las unidades de actividad indican cómo se medirá el trabajo de los nodos, por ejemplo horas, lotes o unidades. Puedes crearlas aquí como catálogo reutilizable, pero no es obligatorio hacerlo por adelantado: también podrás crear una nueva directamente al configurar un nodo.</value></data>
+  <data name="Model.UnitSectionHelp" xml:space="preserve"><value>Elige una unidad de actividad del catálogo incluido (horas, lotes, pedidos, etc.) o crea una propia al configurar un nodo.</value></data>
   <data name="Model.ReviewModelHelp" xml:space="preserve"><value>Revisa la estructura. Guardar conserva el trabajo en preparación; Comprobar detecta incoherencias; Finalizar crea una versión fija y lista para usar en análisis. No se envía ni publica nada fuera de VALDRIO.</value></data>
   <data name="Model.CenterSectionHelp" xml:space="preserve"><value>Un centro físico representa un área reconocible de la empresa, como Prensa, Mantenimiento o Administración. Añade los centros uno a uno; los ya guardados permanecen visibles en la tabla.</value></data>
   <data name="Model.CenterListTitle" xml:space="preserve"><value>Centros ya guardados</value></data>
@@ -918,7 +918,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.CreateUnitHere" xml:space="preserve"><value>¿No aparece la unidad que necesitas? Crear una aquí</value></data>
   <data name="Model.CreateUnitHereHelp" xml:space="preserve"><value>Crea la unidad sin salir del nodo. Se guardará como unidad reutilizable de la empresa y, si el alta termina correctamente, VALDRIO la seleccionará automáticamente en este nodo.</value></data>
   <data name="Model.UnitCatalogTitle" xml:space="preserve"><value>Gestionar catálogo de unidades de actividad (opcional)</value></data>
-  <data name="CompanyUnitCreationHelp" xml:space="preserve"><value>Define cómo se medirá la actividad. Por ejemplo: código HORAS, tipo de medida time. La unidad se guarda una sola vez y puede reutilizarse en distintos nodos.</value></data>
+  <data name="CompanyUnitCreationHelp" xml:space="preserve"><value>¿Necesitas otra medida? Crea una unidad de actividad personalizada para reutilizarla en distintos nodos.</value></data>
   <data name="CompanyUnitRequiredHelp" xml:space="preserve"><value>Obligatorio: código de unidad y tipo de medida. Símbolo, decimales y unidades enteras son opciones adicionales.</value></data>
   <data name="CompanyUnitAdvanced" xml:space="preserve"><value>Opciones adicionales de la unidad</value></data>
   <data name="ImportMapping.FileStepTitle" xml:space="preserve"><value>Selecciona el archivo de origen</value></data>
@@ -1463,4 +1463,27 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.GrossDiagnosticTotal" xml:space="preserve"><value>Total bruto (informativo, no se suma al final)</value></data>
   <data name="Guide.CloseAccountDetailsForKeys" xml:space="preserve"><value>Está abierto «Detalle de cuentas». Cierra ese panel para volver al editor de claves de reparto.</value></data>
+  <data name="CompanyDefaultsHelp" xml:space="preserve"><value>Los proyectos nuevos incluyen 20 unidades de actividad habituales. En los existentes puedes añadir las que falten sin modificar las guardadas.</value></data>
+  <data name="CompanyInstallDefaults" xml:space="preserve"><value>Añadir unidades habituales que faltan</value></data>
+  <data name="CompanyDefaultsInstalled" xml:space="preserve"><value>Unidades de actividad habituales añadidas correctamente.</value></data>
+  <data name="ActivityUnit.unit" xml:space="preserve"><value>Unidad</value></data>
+  <data name="ActivityUnit.labor_hour" xml:space="preserve"><value>Hora de mano de obra</value></data>
+  <data name="ActivityUnit.machine_hour" xml:space="preserve"><value>Hora de máquina</value></data>
+  <data name="ActivityUnit.minute" xml:space="preserve"><value>Minuto</value></data>
+  <data name="ActivityUnit.batch" xml:space="preserve"><value>Lote</value></data>
+  <data name="ActivityUnit.kilogram" xml:space="preserve"><value>Kilogramo</value></data>
+  <data name="ActivityUnit.liter" xml:space="preserve"><value>Litro</value></data>
+  <data name="ActivityUnit.meter" xml:space="preserve"><value>Metro</value></data>
+  <data name="ActivityUnit.square_meter" xml:space="preserve"><value>Metro cuadrado</value></data>
+  <data name="ActivityUnit.cubic_meter" xml:space="preserve"><value>Metro cúbico</value></data>
+  <data name="ActivityUnit.kilometer" xml:space="preserve"><value>Kilómetro</value></data>
+  <data name="ActivityUnit.kilowatt_hour" xml:space="preserve"><value>Kilovatio hora</value></data>
+  <data name="ActivityUnit.order" xml:space="preserve"><value>Pedido</value></data>
+  <data name="ActivityUnit.operation" xml:space="preserve"><value>Operación</value></data>
+  <data name="ActivityUnit.service" xml:space="preserve"><value>Servicio</value></data>
+  <data name="ActivityUnit.delivery" xml:space="preserve"><value>Entrega</value></data>
+  <data name="ActivityUnit.transaction" xml:space="preserve"><value>Transacción</value></data>
+  <data name="ActivityUnit.setup" xml:space="preserve"><value>Preparación</value></data>
+  <data name="ActivityUnit.pallet" xml:space="preserve"><value>Palé</value></data>
+  <data name="ActivityUnit.cycle" xml:space="preserve"><value>Ciclo</value></data>
 </root>
