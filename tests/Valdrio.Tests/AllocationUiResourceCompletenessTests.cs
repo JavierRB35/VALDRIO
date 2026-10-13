@@ -31,6 +31,18 @@ public sealed class AllocationUiResourceCompletenessTests
     }
 
     [TestMethod]
+    public void GlobalBusyIndicatorHasAccessibleLabelsInBothLanguages()
+    {
+        var catalog = new UiTextCatalog();
+        foreach (var culture in UiTextCatalog.SupportedUiCultures)
+        {
+            var label = catalog.Get("GlobalProcessing", culture);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(label),
+                "Global busy indicator must have an accessible label in " + culture.Name);
+        }
+    }
+
+    [TestMethod]
     public void PrincipalOriginSeveralKeysCanBeFormattedWithoutException()
     {
         var catalog = new UiTextCatalog();

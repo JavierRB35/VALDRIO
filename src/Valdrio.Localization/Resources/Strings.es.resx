@@ -114,6 +114,7 @@
   <data name="CompanyAddUnit" xml:space="preserve"><value>Guardar unidad de actividad</value></data>
   <data name="CompanyNotes" xml:space="preserve"><value>El proyecto se guarda en un único archivo local que reúne la estructura de costes, los análisis por periodo, las importaciones y la preparación de cuentas. La moneda indicada aquí sirve como valor inicial y puede cambiarse en cada análisis.</value></data>
   <data name="CompanyNoFile" xml:space="preserve"><value>No hay ningún proyecto de costes abierto.</value></data>
+  <data name="GlobalProcessing" xml:space="preserve"><value>Procesando. VALDRIO está realizando una operación.</value></data>
   <data name="CompanyWorking" xml:space="preserve"><value>Operación en curso. Cancelar tiene efecto antes de la confirmación.</value></data>
   <data name="CompanyCompleted" xml:space="preserve"><value>Operación completada.</value></data>
   <data name="CompanyCancelled" xml:space="preserve"><value>Operación cancelada antes de confirmar. Los datos previos del archivo se conservan.</value></data>

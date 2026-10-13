@@ -109,7 +109,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     // workflows call NotifyWorkspaceStateChanged at start/end, so the shell
     // indicator follows file, model, study, import, resources and allocation.
     public bool IsProcessing => !WorkspaceIdle;
-    public string WorkingLabel => Text("CompanyWorking");
+    public string WorkingLabel => Text("GlobalProcessing");
     private bool Available => !busy && WorkspaceBusy?.Invoke() != true;
     public void NotifyWorkspaceStateChanged() => Refresh();
     public CompanyFileSnapshot? Snapshot { get; private set; }

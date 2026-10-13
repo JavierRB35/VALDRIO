@@ -114,6 +114,7 @@
   <data name="CompanyAddUnit" xml:space="preserve"><value>Save activity unit</value></data>
   <data name="CompanyNotes" xml:space="preserve"><value>The project is stored in one local file containing the cost structure, period analyses, imports and account preparation. The currency entered here is only a starting value and can be changed in each analysis.</value></data>
   <data name="CompanyNoFile" xml:space="preserve"><value>No cost project is open.</value></data>
+  <data name="GlobalProcessing" xml:space="preserve"><value>Processing. VALDRIO is working on an operation.</value></data>
   <data name="CompanyWorking" xml:space="preserve"><value>Operation in progress. Cancel takes effect before confirmation.</value></data>
   <data name="CompanyCompleted" xml:space="preserve"><value>Operation completed.</value></data>
   <data name="CompanyCancelled" xml:space="preserve"><value>Operation cancelled before confirmation. The previous file data remains intact.</value></data>
