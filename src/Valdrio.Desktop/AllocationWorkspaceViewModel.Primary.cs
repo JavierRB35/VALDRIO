@@ -19,6 +19,7 @@ public sealed partial class AllocationWorkspaceViewModel
     public string PrimaryDiagnostic { get; private set; } = "";
 
     private bool primaryComplete;
+    private PrimaryAllocationResult? primaryForOverview;
     private decimal primaryPostedTotal;
     private string StudyMoney(decimal amount) => workspace is null ? "" :
         DisplayMoney(amount, workspace.Resources.Study.Currency.FunctionalCurrencyCode);
@@ -49,6 +50,8 @@ public sealed partial class AllocationWorkspaceViewModel
     private void RebuildPrimary()
     {
         primaryComplete = false;
+        primaryForOverview = null;
+        ClearPrimaryAccountOverview();
         primaryPostedTotal = 0m;
         PrimaryResults.Clear();
         PrimaryNodeTotals.Clear();
@@ -62,6 +65,7 @@ public sealed partial class AllocationWorkspaceViewModel
         try
         {
             var primary = PrimaryAllocationService.Calculate(workspace);
+            primaryForOverview = primary;
             primaryComplete = workspace.Resources.Origins.Count > 0 && primary.IsComplete;
             primaryPostedTotal = primary.Facts.Sum(f => f.PostedAmount.Amount);
             var nodeById = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
@@ -71,6 +75,7 @@ public sealed partial class AllocationWorkspaceViewModel
                 facts.Select(fact => fact.PostedAmount.Amount).ToArray(),
                 DisplayCurrencyQuantum, workspace.Resources.Precision);
             var displayed = facts.Select((fact, i) => (Fact: fact, Amount: shown[i])).ToArray();
+            BuildPrimaryAccountOverview(primary, displayed);
             foreach (var (fact, displayAmount) in displayed)
             {
                 var source = AccountLabel(resourceById[fact.ResourceId]);

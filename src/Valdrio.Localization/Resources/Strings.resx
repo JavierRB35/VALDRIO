@@ -1284,6 +1284,27 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.DeleteHistoricUse" xml:space="preserve"><value>Protected key: at least one historical assignment references it, even if it is not used now. It cannot be deleted without losing traceability.</value></data>
   <data name="AllocationUI.DeleteHasVersions" xml:space="preserve"><value>This key has later versions and is retained as their ancestor.</value></data>
   <data name="AllocationUI.DeleteReady" xml:space="preserve"><value>This key has no historical references or dependent versions and can be deleted.</value></data>
+  <data name="AllocationUI.PrimaryAccountOverviewTitle" xml:space="preserve"><value>Primary allocation by account (select a row to inspect destinations)</value></data>
+  <data name="AllocationUI.PrimaryAccountOverviewHelp" xml:space="preserve"><value>Allocatable base means resource parts destined to allocation pools, not all accounting expenditure. Direct-to-object amounts, exclusions and pending balances are reported separately. Details retain the actual key, criterion, units and posted primary share.</value></data>
+  <data name="AllocationUI.PrimaryKpiEffectiveLabel" xml:space="preserve"><value>Effective resources</value></data>
+  <data name="AllocationUI.PrimaryKpiRepartibleLabel" xml:space="preserve"><value>Allocatable base</value></data>
+  <data name="AllocationUI.PrimaryKpiAssignedLabel" xml:space="preserve"><value>Allocated to nodes</value></data>
+  <data name="AllocationUI.PrimaryKpiPendingLabel" xml:space="preserve"><value>Pending</value></data>
+  <data name="AllocationUI.PrimaryKpiExcludedLabel" xml:space="preserve"><value>Excluded</value></data>
+  <data name="AllocationUI.PrimaryKpiDirectObjectLabel" xml:space="preserve"><value>Direct to objects</value></data>
+  <data name="AllocationUI.PrimaryRepartibleHeader" xml:space="preserve"><value>Allocatable</value></data>
+  <data name="AllocationUI.PrimaryAuxiliaryHeader" xml:space="preserve"><value>To auxiliaries</value></data>
+  <data name="AllocationUI.PrimaryMainHeader" xml:space="preserve"><value>To principals</value></data>
+  <data name="AllocationUI.PrimaryAssignedHeader" xml:space="preserve"><value>Allocated</value></data>
+  <data name="AllocationUI.PrimaryPendingHeader" xml:space="preserve"><value>Difference</value></data>
+  <data name="AllocationUI.PrimaryPercentHeader" xml:space="preserve"><value>% allocated</value></data>
+  <data name="AllocationUI.PrimaryDriverDetailHeader" xml:space="preserve"><value>Criterion / units</value></data>
+  <data name="AllocationUI.PrimaryShareDetailHeader" xml:space="preserve"><value>% share</value></data>
+  <data name="AllocationUI.PrimarySelectionDetailHeader" xml:space="preserve"><value>Assignment / key</value></data>
+  <data name="AllocationUI.PrimaryNodeKindPrincipal" xml:space="preserve"><value>Principal</value></data>
+  <data name="AllocationUI.PrimaryNodeKindAuxiliary" xml:space="preserve"><value>Auxiliary</value></data>
+  <data name="AllocationUI.PrimaryFlowSelectionTitle" xml:space="preserve"><value>Flow from the selected account</value></data>
+  <data name="AllocationUI.PrimaryFlowSelectionHelp" xml:space="preserve"><value>Read-only explanation of posted primary allocation amounts; not a new allocation or an invented reconstruction of auxiliary services.</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reopen secondary allocation</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explain selected cost</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Behavior</value></data>
