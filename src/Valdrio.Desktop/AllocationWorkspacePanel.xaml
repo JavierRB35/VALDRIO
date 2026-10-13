@@ -493,10 +493,13 @@
      <Expander x:Name="PrincipalCostFlowSection" Header="{Binding [PrincipalFlowTitle]}" IsExpanded="True" Margin="0,0,0,12">
       <StackPanel Margin="0,8,0,0">
        <TextBlock Text="{Binding [PrincipalFlowHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
-       <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
-                     Height="{Binding ElementName=PrincipalFlowCanvas, Path=Height}">
-        <Canvas x:Name="PrincipalFlowCanvas" Width="1780" Height="760" Background="Transparent"/>
-       </ScrollViewer>
+       <!-- Viewbox scales the full diagram to the available panel width without
+            clipping final principal nodes or introducing horizontal scrolling.
+            Height follows the canvas, so the page remains the only vertical scroller. -->
+       <Viewbox x:Name="PrincipalFlowViewport" Stretch="Uniform"
+                StretchDirection="DownOnly" HorizontalAlignment="Stretch">
+        <Canvas x:Name="PrincipalFlowCanvas" Width="1320" Height="760" Background="Transparent"/>
+       </Viewbox>
       </StackPanel>
      </Expander>
 

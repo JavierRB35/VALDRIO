@@ -26,7 +26,7 @@ public partial class AllocationWorkspacePanel
                 StringComparer.Ordinal.Equals(arc.TargetId, nodeId);
             var opacity = nodeId is null ? arc.BaseOpacity : visible ? 1d : .08d;
             arc.Curve.Opacity = opacity;
-            arc.Arrow.Opacity = opacity;
+            arc.Arrow.Opacity = nodeId is null ? .98d : visible ? 1d : .08d;
         }
     }
 
@@ -40,9 +40,9 @@ public partial class AllocationWorkspacePanel
         drawnNetworkArcs.Clear();
         if (!secondaryOnly || viewModel is not { } vm) return;
 
-        const double width = 1780d, top = 270d, rowStep = 140d;
-        const double cardHeight = 112d, cardWidth = 344d;
-        const double originX = 24d, auxiliaryX = 696d, principalX = 1405d;
+        const double width = 1320d, top = 255d, rowStep = 136d;
+        const double cardHeight = 106d, cardWidth = 282d;
+        const double originX = 20d, auxiliaryX = 495d, principalX = 1016d;
 
         PrincipalFlowCanvas.Width = width;
         var nodes = vm.SecondaryFlowNodes.ToArray();
@@ -115,14 +115,15 @@ public partial class AllocationWorkspacePanel
                 .OrderBy(x => x.Group, StringComparer.Ordinal)
                 .Select(x => x.Group + ": " + x.Amount));
             var amount = vm.FormatBatchAmount(link.Amount);
-            var stroke = 1.7d + 8.2d * (double)(Math.Abs(link.Amount) / maxMagnitude);
+            // Thin, bounded links convey relative magnitude without hiding arrows or cards.
+            var stroke = 1.25d + 2.75d * (double)(Math.Abs(link.Amount) / maxMagnitude);
             if (link.Stage == SecondaryFlowStage.Primary)
             {
                 if (!originalCards.TryGetValue(link.SourceId, out var from)) continue;
                 if (auxiliaryCards.TryGetValue(link.TargetId, out var toAux))
                 {
                     DrawGraphCurve(new(from.Position.X + cardWidth, from.Position.Y + 54),
-                        new(toAux.Position.X, toAux.Position.Y + 54),
+                        new(toAux.Position.X - 13d, toAux.Position.Y + 54),
                         edgeInk, stroke, amount + "\n" + detail, 0,
                         link.SourceId, link.TargetId);
                 }
@@ -130,11 +131,11 @@ public partial class AllocationWorkspacePanel
                 {
                     // Primary cost already absorbed by a principal bypasses
                     // auxiliary nodes along a distinctive top corridor.
-                    var laneY = 228d - (directIndex++ % 6) * 10d;
+                    var laneY = 220d - (directIndex++ % 5) * 9d;
                     DrawGraphDirectCurve(
                         new(from.Position.X + cardWidth, from.Position.Y + 44),
-                        new(toPrincipal.Position.X, toPrincipal.Position.Y + 43),
-                        laneY, directInk, Math.Max(1.7, stroke * .6),
+                        new(toPrincipal.Position.X - 13d, toPrincipal.Position.Y + 43),
+                        laneY, directInk, Math.Max(1.25d, stroke * .66d),
                         amount + "\n" + detail, link.SourceId, link.TargetId);
                 }
             }
@@ -143,7 +144,7 @@ public partial class AllocationWorkspacePanel
                 if (!auxiliaryCards.TryGetValue(link.SourceId, out var from) ||
                     !principalCards.TryGetValue(link.TargetId, out var to)) continue;
                 DrawGraphCurve(new(from.Position.X + cardWidth, from.Position.Y + 77),
-                    new(to.Position.X, to.Position.Y + 77),
+                    new(to.Position.X - 13d, to.Position.Y + 77),
                     edgeInk, stroke, amount + "\n" + detail, 1,
                     link.SourceId, link.TargetId);
             }
@@ -153,11 +154,11 @@ public partial class AllocationWorkspacePanel
                     !auxiliaryCards.TryGetValue(link.TargetId, out var to)) continue;
                 // The directed loop lives in the aux/principal corridor.
                 // Separate lanes make A->B and B->A visible as distinct arrows.
-                var laneX = auxiliaryX + cardWidth + 65d +
-                    (reciprocalIndex++ % 10) * 17d;
+                var laneX = auxiliaryX + cardWidth + 46d +
+                    (reciprocalIndex++ % 9) * 15d;
                 DrawGraphReciprocalCurve(
-                    new(from.Position.X + cardWidth, from.Position.Y + 28),
-                    new(to.Position.X + cardWidth, to.Position.Y + 87),
+                    new(from.Position.X + cardWidth + 13d, from.Position.Y + 28),
+                    new(to.Position.X + cardWidth + 13d, to.Position.Y + 87),
                     laneX, reciprocalInk, stroke, amount + "\n" + detail,
                     link.SourceId, link.TargetId);
             }
@@ -219,26 +220,27 @@ public partial class AllocationWorkspacePanel
             new PathFigure(from, [new BezierSegment(
                 new(from.X + dx, from.Y), new(to.X - dx, to.Y), to, true)], false)]);
         DrawGraphLink(geometry, to, true, brush, thickness, tooltip,
-            variant == 1 ? .68d : .50d, false, sourceId, targetId);
+            variant == 1 ? .78d : .70d, false, sourceId, targetId);
     }
 
     private void DrawGraphDirectCurve(Point from, Point to,
         double laneY, Brush brush, double thickness, string tooltip,
         string sourceId, string targetId)
     {
-        var hubLeft = new Point(515, laneY);
-        var hubRight = new Point(1274, laneY);
+        // Keep the bypass corridor inside the compact three-column canvas.
+        var hubLeft = new Point(392d, laneY);
+        var hubRight = new Point(912d, laneY);
         var geometry = new PathGeometry([
             new PathFigure(from, [
                 new BezierSegment(new(from.X + 70, from.Y),
                     new(hubLeft.X - 100, hubLeft.Y), hubLeft, true),
-                new BezierSegment(new(740, laneY), new(1100, laneY),
+                new BezierSegment(new(550d, laneY), new(790d, laneY),
                     hubRight, true),
                 new BezierSegment(new(hubRight.X + 55, hubRight.Y),
                     new(to.X - 75, to.Y), to, true)
             ], false)]);
         DrawGraphLink(geometry, to, true, brush, thickness, tooltip,
-            .57d, true, sourceId, targetId);
+            .70d, true, sourceId, targetId);
     }
 
     private void DrawGraphReciprocalCurve(Point from, Point to,
@@ -252,7 +254,7 @@ public partial class AllocationWorkspacePanel
             new PathFigure(from, [new BezierSegment(
                 new(laneX, from.Y), new(laneX, to.Y), to, true)], false)]);
         DrawGraphLink(geometry, to, false, brush, thickness, tooltip,
-            .75d, true, sourceId, targetId);
+            .87d, true, sourceId, targetId);
     }
 
     private void DrawGraphLink(PathGeometry geometry, Point end,
@@ -268,15 +270,19 @@ public partial class AllocationWorkspacePanel
             IsHitTestVisible = true
         };
         if (dashed) path.StrokeDashArray = new DoubleCollection([4d, 2d]);
-        var dx = rightward ? -9d : 9d;
+        // Tip sits clear of the destination card. The arrow is deliberately
+        // more opaque than the line, so the direction is visible at any scale.
+        var arrowSize = Math.Max(13d, thickness * 3.2d);
+        var dx = rightward ? -arrowSize : arrowSize;
         var arrow = new Polygon
         {
             Points = new PointCollection([
-                new(end.X + dx, end.Y - 5),
+                new(end.X + dx, end.Y - arrowSize * .64d),
                 end,
-                new(end.X + dx, end.Y + 5)
+                new(end.X + dx, end.Y + arrowSize * .64d)
             ]),
-            Fill = brush, Opacity = opacity, ToolTip = tooltip
+            Fill = brush, Stroke = brush, StrokeThickness = .8d,
+            Opacity = .98d, ToolTip = tooltip
         };
         PrincipalFlowCanvas.Children.Add(path);
         PrincipalFlowCanvas.Children.Add(arrow);

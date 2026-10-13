@@ -121,6 +121,19 @@ public partial class MainWindow
                 "secondary node graph has real Bezier connectors rather than row-by-row straight lines " + language);
             Check(panel.PrincipalFlowCanvas.Height > 410,
                 "complete secondary graph has full content-driven page height " + language);
+            Check(panel.PrincipalFlowCanvas.Width == 1320d &&
+                panel.PrincipalFlowViewport.Stretch == Stretch.Uniform &&
+                panel.PrincipalFlowViewport.StretchDirection == StretchDirection.DownOnly,
+                "three-column graph scales to panel width instead of forcing horizontal scrolling " + language);
+            var graphArrows = panel.PrincipalFlowCanvas.Children
+                .OfType<System.Windows.Shapes.Polygon>().ToArray();
+            Check(graphArrows.Length > 0 &&
+                graphArrows.All(arrow => arrow.Opacity >= .98d &&
+                    arrow.Points.Count == 3 && arrow.Points[0].Y != arrow.Points[2].Y),
+                "direction arrows stay large, filled and visually prominent " + language);
+            Check(panel.PrincipalFlowCanvas.Children.OfType<System.Windows.Shapes.Path>()
+                .All(line => line.StrokeThickness <= 4.01d),
+                "cost links use bounded thin strokes rather than large overlapping bands " + language);
             var priorCentre = vm.SelectedPrincipalCostRow;
             var globalArcCount = vm.SecondaryFlowArcs.Count;
             vm.SelectedPrincipalCostRow = null; await Idle();
