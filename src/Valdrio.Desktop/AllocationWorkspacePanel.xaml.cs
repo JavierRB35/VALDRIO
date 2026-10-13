@@ -21,6 +21,7 @@ public partial class AllocationWorkspacePanel : UserControl
             viewModel = e.NewValue as AllocationWorkspaceViewModel;
             if (viewModel is not null) viewModel.PropertyChanged += Changed;
             Headers();
+            UpdateBatchState();
         };
     }
     public bool SecondaryOnly { set => ConfigurePage(value); }
@@ -44,6 +45,7 @@ public partial class AllocationWorkspacePanel : UserControl
     private void Changed(object? sender, PropertyChangedEventArgs e)
     {
         if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == "Item[]") Headers();
+        UpdateBatchState();
         if (viewModel is not { } vm || !string.IsNullOrEmpty(e.PropertyName)) return;
         if (secondaryOnly)
         {
@@ -209,6 +211,48 @@ public partial class AllocationWorkspacePanel : UserControl
     {
         if (e.Key == Key.Enter && viewModel?.LoadKeyCommand.CanExecute(null) == true)
         { e.Handled = true; await viewModel.LoadKeyCommand.ExecuteAsync(null); }
+    }
+    private void BatchSelectionChanged(object sender, SelectionChangedEventArgs e) => UpdateBatchState();
+    private void UpdateBatchState()
+    {
+        if (BatchApplyButton is null || BatchPreviewText is null || BatchKeyBox is null || CoverageGrid is null) return;
+        if (viewModel is not { } vm || BatchKeyBox.SelectedValue is not EntityId keyId)
+        {
+            BatchApplyButton.IsEnabled = false;
+            BatchPreviewText.Text = viewModel?["BulkAssignSelectKey"] ?? "";
+            return;
+        }
+        var ids = CoverageGrid.SelectedItems.OfType<AllocationCoverageRow>().Select(row => row.Id).ToArray();
+        var preview = vm.PreviewCoverageBatch(ids, keyId);
+        BatchApplyButton.IsEnabled = preview.EligibleCount > 0 && !vm.IsBusy;
+        BatchPreviewText.Text = string.Format(System.Globalization.CultureInfo.CurrentCulture,
+            vm["BulkAssignPreview"], preview.SelectedCount, preview.EligibleCount,
+            preview.SkippedCount, preview.EligibleAmount.ToString("N2", System.Globalization.CultureInfo.CurrentCulture), vm.Currency);
+    }
+    internal Task BatchAssignmentTask { get; private set; } = Task.CompletedTask;
+    private async void ApplyBatchToSelectedRows(object sender, RoutedEventArgs e)
+    {
+        if (viewModel is not { } vm || BatchKeyBox.SelectedValue is not EntityId keyId) return;
+        var ids = CoverageGrid.SelectedItems.OfType<AllocationCoverageRow>().Select(row => row.Id).ToArray();
+        var preview = vm.PreviewCoverageBatch(ids, keyId);
+        if (preview.EligibleCount == 0) return;
+        var message = string.Format(System.Globalization.CultureInfo.CurrentCulture, vm["BulkAssignConfirm"],
+            preview.EligibleCount, preview.EligibleAmount.ToString("N2", System.Globalization.CultureInfo.CurrentCulture), vm.Currency, preview.SkippedCount);
+        if (MessageBox.Show(Window.GetWindow(this), message, vm["BulkAssignTitle"], MessageBoxButton.YesNo,
+                MessageBoxImage.Question, MessageBoxResult.No) != MessageBoxResult.Yes) return;
+        try
+        {
+            var operation = vm.AssignCoverageBatchAsync(ids, keyId);
+            BatchAssignmentTask = operation;
+            await operation;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Trace.TraceError("Primary batch assignment failed: {0}", ex);
+            MessageBox.Show(Window.GetWindow(this), vm["BulkAssignError"], vm["BulkAssignTitle"],
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+        finally { UpdateBatchState(); }
     }
     internal Task CoverageAssignmentTask { get; private set; } = Task.CompletedTask;
     private async void CoverageKeyChanged(object sender, SelectionChangedEventArgs e)

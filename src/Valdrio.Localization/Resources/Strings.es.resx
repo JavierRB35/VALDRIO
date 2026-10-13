@@ -1099,6 +1099,14 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.NumberFormat" xml:space="preserve"><value>Formato de edición: {0}. Separador decimal: «{1}». Se conserva mientras editas.</value></data>
   <data name="AllocationUI.CheckNumbers" xml:space="preserve"><value>Revisa los valores introducidos.</value></data>
   <data name="AllocationUI.Complete" xml:space="preserve"><value>Clave válida: puede guardarse y utilizarse.</value></data>
+  <data name="AllocationUI.BulkAssignHelp" xml:space="preserve"><value>Selecciona las partes pendientes en la tabla (Ctrl o Mayús para varias). Solo se asignarán las que no estén cubiertas: no se sobrescriben reglas ni asignaciones manuales o absolutas.</value></data>
+  <data name="AllocationUI.BulkAssignKey" xml:space="preserve"><value>Clave primaria publicada</value></data>
+  <data name="AllocationUI.BulkAssignAction" xml:space="preserve"><value>Asignar clave a las seleccionadas</value></data>
+  <data name="AllocationUI.BulkAssignSelectKey" xml:space="preserve"><value>Selecciona una clave primaria publicada y las filas pendientes.</value></data>
+  <data name="AllocationUI.BulkAssignPreview" xml:space="preserve"><value>Seleccionadas: {0} · pendientes aplicables: {1} · omitidas: {2} · importe: {3} {4}.</value></data>
+  <data name="AllocationUI.BulkAssignConfirm" xml:space="preserve"><value>Se asignará la clave a {0} partes pendientes, por {1} {2}. Se omitirán {3} filas ya cubiertas o protegidas. No se cambiarán asignaciones anteriores. ¿Confirmar?</value></data>
+  <data name="AllocationUI.BulkAssignTitle" xml:space="preserve"><value>Confirmar asignación múltiple</value></data>
+  <data name="AllocationUI.BulkAssignError" xml:space="preserve"><value>No se ha podido completar la asignación múltiple. Revisa el estado y vuelve a intentarlo.</value></data>
   <data name="AllocationUI.Coverage" xml:space="preserve"><value>Asignar claves a las cuentas</value></data>
   <data name="AllocationUI.CoverageSummary" xml:space="preserve"><value>{0} de {1} partes asignadas. Selecciona una clave en la tabla para asignarla directamente.</value></data>
   <data name="AllocationUI.Covered" xml:space="preserve"><value>Reparto definido</value></data>
