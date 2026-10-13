@@ -88,6 +88,20 @@ public partial class MainWindow
             buttons[i].Content = vm.Guide(keys[i]);
             buttons[i].FontWeight = i == workflowStep ? FontWeights.Bold : FontWeights.Normal;
         }
+        // Connected step numbers are navigational indicators, not completion claims.
+        Border[] markers = [CompanyStepMarker, ModelStepMarker, StudyStepMarker,
+            ImportStepMarker, ResourcesStepMarker, AllocationsStepMarker, SecondaryStepMarker];
+        int[] markerSteps = [0, 1, 2, 3, 4, 5, 7];
+        for (var i = 0; i < markers.Length; i++)
+        {
+            var active = markerSteps[i] == workflowStep;
+            markers[i].Background = active
+                ? (System.Windows.Media.Brush)FindResource("Brand.White")
+                : System.Windows.Media.Brushes.Transparent;
+            if (markers[i].Child is TextBlock number)
+                number.Foreground = (System.Windows.Media.Brush)FindResource(active ? "Brand.DeepGreen" : "Brand.White");
+        }
+
 
         var hasProject = vm.Company?.Snapshot is not null;
         var hasAnalysis = vm.Studies?.Current is not null;
