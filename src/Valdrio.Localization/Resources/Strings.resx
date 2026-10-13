@@ -1099,12 +1099,13 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.NumberFormat" xml:space="preserve"><value>Editing format: {0}. Decimal separator: “{1}”. Kept while you edit.</value></data>
   <data name="AllocationUI.CheckNumbers" xml:space="preserve"><value>Check the entered values.</value></data>
   <data name="AllocationUI.Complete" xml:space="preserve"><value>Valid key: ready to save and use.</value></data>
+  <data name="AllocationUI.BackToKeys" xml:space="preserve"><value>Back to allocation keys and rules</value></data>
   <data name="AllocationUI.BulkAssignHelp" xml:space="preserve"><value>Select unassigned parts in the table (Ctrl or Shift for multiple rows). Only uncovered parts are assigned; existing rules, manual assignments and absolute allocations are preserved.</value></data>
   <data name="AllocationUI.BulkAssignKey" xml:space="preserve"><value>Published primary key</value></data>
   <data name="AllocationUI.BulkAssignAction" xml:space="preserve"><value>Assign key to selected parts</value></data>
   <data name="AllocationUI.BulkAssignSelectKey" xml:space="preserve"><value>Select a published primary key and the unassigned rows.</value></data>
-  <data name="AllocationUI.BulkAssignPreview" xml:space="preserve"><value>Selected: {0} · eligible unassigned: {1} · skipped: {2} · amount: {3} {4}.</value></data>
-  <data name="AllocationUI.BulkAssignConfirm" xml:space="preserve"><value>Assign the key to {0} unassigned parts totaling {1} {2}. {3} already covered or protected rows will be skipped. No previous assignments will be changed. Continue?</value></data>
+  <data name="AllocationUI.BulkAssignPreview" xml:space="preserve"><value>Selected: {0} · eligible unassigned: {1} · skipped: {2} · amount: {3}.</value></data>
+  <data name="AllocationUI.BulkAssignConfirm" xml:space="preserve"><value>Assign the key to {0} unassigned parts totaling {1}. {2} already covered or protected rows will be skipped. No previous assignments will be changed. Continue?</value></data>
   <data name="AllocationUI.BulkAssignTitle" xml:space="preserve"><value>Confirm batch assignment</value></data>
   <data name="AllocationUI.BulkAssignError" xml:space="preserve"><value>The batch assignment could not be completed. Check the current status before retrying.</value></data>
   <data name="AllocationUI.Coverage" xml:space="preserve"><value>Assign keys to accounts</value></data>

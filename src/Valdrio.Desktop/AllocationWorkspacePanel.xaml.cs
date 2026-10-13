@@ -227,7 +227,7 @@ public partial class AllocationWorkspacePanel : UserControl
         BatchApplyButton.IsEnabled = preview.EligibleCount > 0 && !vm.IsBusy;
         BatchPreviewText.Text = string.Format(System.Globalization.CultureInfo.CurrentCulture,
             vm["BulkAssignPreview"], preview.SelectedCount, preview.EligibleCount,
-            preview.SkippedCount, preview.EligibleAmount.ToString("N2", System.Globalization.CultureInfo.CurrentCulture), vm.Currency);
+            preview.SkippedCount, vm.FormatBatchAmount(preview.EligibleAmount));
     }
     internal Task BatchAssignmentTask { get; private set; } = Task.CompletedTask;
     private async void ApplyBatchToSelectedRows(object sender, RoutedEventArgs e)
@@ -237,7 +237,7 @@ public partial class AllocationWorkspacePanel : UserControl
         var preview = vm.PreviewCoverageBatch(ids, keyId);
         if (preview.EligibleCount == 0) return;
         var message = string.Format(System.Globalization.CultureInfo.CurrentCulture, vm["BulkAssignConfirm"],
-            preview.EligibleCount, preview.EligibleAmount.ToString("N2", System.Globalization.CultureInfo.CurrentCulture), vm.Currency, preview.SkippedCount);
+            preview.EligibleCount, vm.FormatBatchAmount(preview.EligibleAmount), preview.SkippedCount);
         if (MessageBox.Show(Window.GetWindow(this), message, vm["BulkAssignTitle"], MessageBoxButton.YesNo,
                 MessageBoxImage.Question, MessageBoxResult.No) != MessageBoxResult.Yes) return;
         try

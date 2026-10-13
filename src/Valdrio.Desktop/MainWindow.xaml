@@ -91,6 +91,8 @@
     <Expander x:Name="DistributionDetails" Grid.Row="9" Header="{Binding Allocations[AccountDetails]}" Expanded="OpenDistributionDetails" Collapsed="CloseDistributionDetails">
      <StackPanel>
       <TextBlock Text="{Binding Allocations[AccountDetailsHelp]}" Margin="0,8,0,12"/>
+      <Button x:Name="BackToAllocationKeysButton" Content="{Binding Allocations[BackToKeys]}"
+              Click="BackToAllocationKeys" HorizontalAlignment="Left" Margin="0,0,0,10"/>
       <local:ResourceWorkspacePanel x:Name="DistributionResourcePanel" DataContext="{Binding Resources}"/>
       <Button x:Name="SaveDistributionButton" Content="{Binding Resources.NextAction}" Click="SaveDistributionDetails" Visibility="{Binding Resources.ShowParts, Converter={StaticResource BooleanVisibility}}" IsEnabled="{Binding Resources.CanEdit}" Style="{StaticResource Button.Primary}" HorizontalAlignment="Left"/>
      </StackPanel>

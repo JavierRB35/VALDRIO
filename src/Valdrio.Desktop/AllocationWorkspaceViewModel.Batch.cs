@@ -14,6 +14,8 @@ public sealed record CoverageBatchPreview(
 
 public sealed partial class AllocationWorkspaceViewModel
 {
+    public string FormatBatchAmount(decimal amount) => StudyMoney(amount);
+
     public CoverageBatchPreview PreviewCoverageBatch(IReadOnlyList<EntityId> partIds, EntityId keyId)
     {
         var selected = partIds.Distinct().ToHashSet();

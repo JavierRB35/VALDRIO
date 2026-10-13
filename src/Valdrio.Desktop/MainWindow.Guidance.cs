@@ -194,6 +194,22 @@ public partial class MainWindow
         if (viewModel.Resources is { } resources) await resources.EnterAsync();
         UpdateWorkflow();
     }
+    private async void BackToAllocationKeys(object sender, RoutedEventArgs e)
+    {
+        if (viewModel?.Resources is { } resources && !await resources.CanLeaveAsync())
+        {
+            DistributionResourcePanel.ActionStatus.BringIntoView();
+            return;
+        }
+        changingDistributionDetails = true;
+        DistributionDetails.IsExpanded = false;
+        changingDistributionDetails = false;
+        if (viewModel?.Allocations is { } allocations) await allocations.EnterAsync(true);
+        UpdateWorkflow();
+        AllocationPanel.IsEnabled = true;
+        AllocationPanel.FocusKeyLibrary();
+        ScrollToElement(AllocationPanel.LibrarySection);
+    }
     private async void CloseDistributionDetails(object sender, RoutedEventArgs e)
     {
         if (e.OriginalSource != DistributionDetails || changingDistributionDetails || viewModel?.Resources is not { } resources) return;

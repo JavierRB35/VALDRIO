@@ -54,6 +54,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public IAsyncRelayCommand RestoreCommand { get; }
     public IAsyncRelayCommand UpgradeCommand { get; }
     public string UpgradeLabel => Text("CompanyUpgrade");
+    public bool UpgradeSuggested => diagnostic?.Code == "FILE_UPGRADE_REQUIRED";
     public IRelayCommand CancelCommand { get; }
     public IReadOnlyList<string> CurrencyOptions { get; }
     public IReadOnlyList<int> ScaleOptions { get; } = Enumerable.Range(0,13).ToArray();

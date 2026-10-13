@@ -54,6 +54,9 @@
    </StackPanel>
 
    <TextBlock Text="{Binding Status}" Margin="0,4,0,8" AutomationProperties.LiveSetting="Assertive"/>
+   <Button x:Name="UpgradeSuggestionButton" Content="{Binding UpgradeLabel}" Command="{Binding UpgradeCommand}"
+           Visibility="{Binding UpgradeSuggested, Converter={StaticResource BoolVis}}"
+           HorizontalAlignment="Left" Margin="0,2,8,12" Style="{StaticResource Button.Primary}"/>
 
    <Expander Header="{Binding FileOperationsLabel}" Margin="0,6,0,10">
     <StackPanel Margin="8,6,0,0">
