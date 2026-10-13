@@ -475,13 +475,13 @@ public sealed partial class AllocationWorkspaceViewModel
                     .Sum(c => c.PostedAmount));
         }).ToArray();
         var presented = AllocationCurrencyDisplay.ProjectBreakdown(ledger, quantum, precision);
-        var finalByNode = new Dictionary<EntityId, decimal>();
+        var shownByNode = new Dictionary<EntityId, (decimal Direct, decimal Auxiliary)>();
         for (var i = 0; i < principals.Length; i++)
         {
             var original = ledger[i];
             var shown = presented[i];
             var originalTotal = checked(original.Direct + original.Auxiliary);
-            finalByNode.Add(principals[i].Id, shown.Final);
+            shownByNode.Add(principals[i].Id, (shown.Direct, shown.Auxiliary));
             PrincipalCosts.Add(new(NodeLabel(principals[i]),
                 DisplayMoney(shown.Direct, currency), DisplayMoney(shown.Auxiliary, currency),
                 DisplayMoney(shown.Final, currency), original.Direct, original.Auxiliary, originalTotal)
@@ -498,23 +498,32 @@ public sealed partial class AllocationWorkspaceViewModel
             .ThenBy(g => nodes[g.Key.PrimaryNodeId].Code, StringComparer.Ordinal)
             .ThenBy(g => g.Key.Behavior)
             .Select(g => (g.Key, LedgerAmount: g.Sum(c => c.PostedAmount))).ToArray();
+        var shownByGroup = new Dictionary<(EntityId PrimaryNodeId, EntityId TerminalNodeId,
+            ResourceBehavior Behavior), decimal>();
         foreach (var terminalGroup in resultGroups.GroupBy(g => g.Key.TerminalNodeId))
         {
-            var contributions = terminalGroup.ToArray();
-            var shown = AllocationCurrencyDisplay.ProjectToTarget(
-                contributions.Select(group => group.LedgerAmount).ToArray(),
-                finalByNode[terminalGroup.Key], quantum, precision);
-            for (var i = 0; i < contributions.Length; i++)
+            var totals = shownByNode[terminalGroup.Key];
+            foreach (var isDirect in new[] { true, false })
             {
-                var group = contributions[i];
-                SecondaryResults.Add(new(group.Key.PrimaryNodeId, group.Key.TerminalNodeId,
-                    group.Key.Behavior, NodeLabel(nodes[group.Key.PrimaryNodeId]),
-                    NodeLabel(nodes[group.Key.TerminalNodeId]), DisplayMoney(shown[i], currency),
-                    this["SecondaryBehavior" + group.Key.Behavior], group.LedgerAmount)
-                {
-                    PresentedAmount = shown[i]
-                });
+                var groups = terminalGroup.Where(g =>
+                    (nodes[g.Key.PrimaryNodeId].Role == NodeRole.Principal) == isDirect).ToArray();
+                var target = isDirect ? totals.Direct : totals.Auxiliary;
+                var projected = AllocationCurrencyDisplay.ProjectToTarget(
+                    groups.Select(g => g.LedgerAmount).ToArray(), target, quantum, precision);
+                for (var i = 0; i < groups.Length; i++)
+                    shownByGroup.Add(groups[i].Key, projected[i]);
             }
+        }
+        foreach (var group in resultGroups)
+        {
+            var shown = shownByGroup[group.Key];
+            SecondaryResults.Add(new(group.Key.PrimaryNodeId, group.Key.TerminalNodeId,
+                group.Key.Behavior, NodeLabel(nodes[group.Key.PrimaryNodeId]),
+                NodeLabel(nodes[group.Key.TerminalNodeId]), DisplayMoney(shown, currency),
+                this["SecondaryBehavior" + group.Key.Behavior], group.LedgerAmount)
+            {
+                PresentedAmount = shown
+            });
         }
     }
 
