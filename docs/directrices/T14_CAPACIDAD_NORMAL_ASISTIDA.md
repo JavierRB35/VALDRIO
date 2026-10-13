@@ -31,6 +31,73 @@ Métodos disponibles:
 
 Para cualquiera de los métodos: la fuente y calidad del dato son obligatorias para **adoptar** una propuesta; la adopción no implica publicar un estudio ni aprobar D04.
 
+## 2A. Requisito prioritario: comprender cada campo y simplificar
+
+**Decisión explícita del propietario (2026-10-13).** En T14, y como principio transversal de VALDRIO, cada campo debe entenderse sin conocimientos de programación ni de terminología contable avanzada; antes de añadir una opción hay que comprobar si puede eliminarse, calcularse, reutilizarse o mostrarse únicamente cuando sea necesaria. **La simplicidad es del recorrido, nunca una excusa para perder exactitud, datos de origen ni auditoría.**
+
+### Regla de los cuatro interrogantes
+
+Para cada campo que deba ver el analista, proporcionar de forma accesible:
+1. **Qué es:** definición breve sin jerga.
+2. **Qué tengo que poner:** magnitud, unidad, periodo y ejemplo concreto.
+3. **De dónde sale:** origen o método para obtenerlo, incluida indicación si se calcula automáticamente.
+4. **Para qué sirve:** decisión o etapa posterior que utilizará ese valor.
+
+Presentar **una frase junto al campo** durante la primera configuración y una ayuda contextual completa accesible con ratón y teclado. No relegar requisitos críticos a un tooltip; en mensajes de error explicar qué falta y cómo arreglarlo. Textos localizables ES/EN.
+
+### Diccionario obligatorio de la tabla
+
+| Campo de pantalla | Explicación para el analista | Entrada / simplificación |
+| --- | --- | --- |
+| **Centro / Actividad** | «En qué parte de la empresa medimos el trabajo. Por ejemplo, Mecanizado dentro de Producción». | Recuperar del modelo; no volver a pedir código de nodo/pool. |
+| **Unidad** | «Cómo contamos el trabajo: horas máquina, horas de personal, lotes…». | Recuperar del pool; no sumar unidades diferentes. |
+| **Capacidad normal** | «Cuánto esperamos trabajar habitualmente en este periodo bajo condiciones normales. No es la actividad de este mes ni el máximo que permite el calendario». Ejemplo: **160 horas/mes**. Sirve de posible referencia para tarifas fijas en T15, sujeto a la política adoptada. | Una única celda editable; «Cómo calcularla» es opcional y devuelve la propuesta a la misma celda. |
+| **Actividad real** | «Cuánto trabajo se ha realizado de verdad durante el periodo». Ejemplo: **120 horas trabajadas**, aunque la máquina estuviera disponible durante más horas. | Importar o editar una vez, aportando fuente. |
+| **Utilización** | «Qué porcentaje de la actividad normal hemos realizado: actividad real / capacidad normal × 100». Ejemplo: **120 / 160 = 75 %**. **No es una medida directa de eficiencia ni equivale al coste de ociosidad**. | Calculado por VALDRIO, **solo lectura**. Si no hay normal positiva o actividad real comparable: «No calculable», no 0 %. |
+| **Estado / aviso** | «Qué dato falta o qué comparación debe revisarse». Ejemplo: «Falta actividad real de octubre: introdúcela o selecciona un archivo». | Calculado por VALDRIO; no pedir al usuario que elija «válido». |
+| **Origen y calidad** | «De dónde procede y cómo se obtuvo el dato: medido, calculado con registros o estimado». Ejemplo: «Partes de máquina, octubre, medido». | Captura contextual al importar/editar o columna desplegable; no obligar a repetir igual fuente en cuatro campos del mismo lote. |
+| **Periodo** | «De qué fechas son los datos». Ejemplo: 1–31 octubre de 2026. | Recuperar del estudio; si se usa referencia histórica diferente, mostrar equivalencia y exigir revisión. |
+
+**Datos avanzados, no obligatorios universalmente:**
+
+- **Capacidad teórica:** «Máximo ideal según el calendario que has definido, antes de descontar paradas». Ejemplo: 22 días × 8 horas = **176 horas** de una máquina. No equivale siempre a 24 × 7.
+- **Capacidad práctica:** «Tiempo que el equipo podría estar disponible una vez descontadas paradas habituales inevitables». Ejemplo: 176 − 8 h de mantenimiento = **168 horas**.
+- **Actividad sin orden/producto:** «Trabajo realizado que todavía no sabemos asociar a una orden concreta». Ejemplo: 120 horas reales, 100 identificadas: **20 horas sin objeto**. No denominar «ociosidad».
+
+### Asistente opcional: vocabulario de las tres alternativas
+
+**A. «Usar periodos anteriores» (histórico).**
+- **Meses o periodos:** «Qué periodos queremos comparar». Requiere misma unidad y duración homogénea o una normalización explícita.
+- **Actividad de cada periodo:** «Cuánto se trabajó realmente entonces»; todavía no es capacidad normal.
+- **¿Hubo algo excepcional?:** «Señala situaciones que no deberían representar un periodo habitual». Ejemplos: avería extraordinaria, caída puntual de pedidos, cambio permanente de turnos.
+- **Incluir/excluir y motivo:** «¿Debe participar esta observación en la propuesta? ¿Por qué?». Las exclusiones requieren confirmación y no borran originales.
+- **Media propuesta:** «Promedio calculado solo con los periodos seleccionados y comparables». Mostrar cuántos se usaron y por qué; **no equiparar promedio con referencia aprobada**.
+
+**B. «Calcular desde el calendario».**
+- **Días de funcionamiento:** «En cuántos días está previsto que pueda trabajar este equipo». Ejemplo: 22.
+- **Turnos por día:** «Cuántos turnos trabaja normalmente cada día». Ejemplo: 1.
+- **Horas por turno:** «Cuántas horas dura cada turno». Ejemplo: 8.
+- **Equipos equivalentes:** «Cuántos equipos con este mismo calendario estamos midiendo». Ejemplo: 1; si no comparten calendario, registrar por separado.
+- **Paradas habituales:** «Horas previstas sin funcionamiento por mantenimiento u otras interrupciones inevitables». Ejemplo: 8 h.
+- **Actividad habitual sostenible (factor %):** «De las horas disponibles, qué proporción de actividad suele ser representativa en condiciones normales». Ejemplo: 95 %, **supuesto expresamente justificado, no sugerencia por defecto**.
+- **Resultado intermedio:** «Horas de calendario: 176; disponibles tras paradas: 168; propuesta normal: 159,6». Mostrar la fórmula y no etiquetar las tres cifras como si fueran iguales.
+
+**C. «Introducir mi referencia».**
+- **Capacidad normal declarada:** «Escribe el nivel habitual que ya tienes aprobado». Ejemplo: 160 h/mes.
+- **Justificación:** «Explica de qué estudio, planificación o responsable procede»; sin justificación, no se adopta como capacidad de referencia.
+
+### Regla de máxima simplificación sin pérdida de significado
+
+**Pantalla inicial imprescindible:** Centro/Actividad y unidad (precargados), **Capacidad normal**, **Actividad real**, **Utilización** (calculada) y **Estado**. Periodo (en cabecera) y procedencia (al guardar/importar, en detalle de fila) deben quedar visibles o accesibles sin duplicar formularios.
+
+**Solo cuando el usuario pulse «Cómo calcularla»:** opciones de histórico/calendario/declaración. **Solo cuando sean relevantes:** práctica, teórica, calendario detallado y calidad ampliada. No pedir de entrada días, turnos, horas, equipos, paradas, factor y además una capacidad normal independiente. La adopción del cálculo rellena la misma celda, sin dos valores maestros.
+
+No usar un porcentaje prefijado (por ejemplo 95 %) ni fabricar datos faltantes. Si el usuario ya conoce una capacidad normal defendible, debe poder escribirla y justificarla sin entrar al asistente. La falta de observación real no puede sustituirse silenciosamente por el valor normal.
+
+### Comprobación obligatoria con personas usuarias
+
+En la aceptación funcional, un analista ajeno al desarrollo debe poder explicar qué significa cada campo y realizar el recorrido **sin instrucciones externas**. Probar por lo menos: una máquina (horas máquina), preparación (lotes), servicio (horas de personal), actividad real cero, dato ausente, calendario con paradas, histórico con descenso de demanda y cambio de turnos. Si un campo necesita aclaración oral, revisar etiqueta/ayuda y reducir pasos antes de cerrar T14.
+
 ## 3. Tratamiento de periodos anómalos — criterio propuesto para decisión metodológica
 
 **Regla común:** conservar **todos** los datos originales. Si se excluye una observación del cálculo de referencia, conservar su periodo, cantidad, razón, autor y evidencia. La aplicación puede **señalar** anomalías, pero no excluirlas automáticamente por superar un umbral.
