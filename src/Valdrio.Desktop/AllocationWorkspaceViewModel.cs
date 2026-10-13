@@ -134,7 +134,11 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public string this[string key] => Text("AllocationUI." + key);
     private string Text(string key) { var value = texts.Get(key, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)); return pseudo ? PseudoLocalization.Expand(value) : value; }
     private CultureInfo Format => CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
-    private string MoneyText(Money value) => value.Amount.ToString("0.########", Format) + " " + value.Currency;
+    private int DisplayCurrencyDigits => workspace?.Resources.Study.Currency.CurrencyMetadataSnapshot.MinorUnitDigits ?? 2;
+    private decimal DisplayCurrencyQuantum => workspace?.Resources.Study.Currency.CurrencyMetadataSnapshot.ReportQuantum ?? 0.01m;
+    private string DisplayMoney(decimal amount, CurrencyCode currency) =>
+        amount.ToString("N" + DisplayCurrencyDigits, Format) + " " + currency;
+    private string MoneyText(Money value) => DisplayMoney(value.Amount, value.Currency);
     public bool IsBusy => busy;
     public bool CanManagePrimary => !busy && earlierBusy?.Invoke() != true && company.CanWrite && workspace?.Resources.Study.State == StudyState.Open;
     public bool IsPrimaryClosed => workspace?.Configuration.PrimaryClosed == true;
