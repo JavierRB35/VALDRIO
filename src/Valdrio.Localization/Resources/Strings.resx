@@ -1336,7 +1336,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.SecondaryGraphOriginHeader" xml:space="preserve"><value>1. Nodes after primary allocation</value></data>
   <data name="AllocationUI.SecondaryGraphAuxHeader" xml:space="preserve"><value>2. Auxiliary nodes and reciprocal services</value></data>
   <data name="AllocationUI.SecondaryGraphPrincipalHeader" xml:space="preserve"><value>3. Final principal node costs</value></data>
-  <data name="AllocationUI.SecondaryGraphKey" xml:space="preserve"><value>Green curves: transfers to auxiliary and principal nodes · dashed grey curves: direct primary principal cost · dashed blue curves: reciprocal services (gross circulation, not additional cost). Hover a connection to inspect its amount and routing group.</value></data>
+  <data name="AllocationUI.SecondaryGraphKey" xml:space="preserve"><value>Blue cards: auxiliary nodes · green cards: principal nodes. Green curves: final transfers · dashed grey curves: direct primary cost · dashed blue curves: reciprocal services (gross circulation, not additional cost). Hover over a card to highlight its links, or a curve to inspect its amount and routing group.</value></data>
   <data name="AllocationUI.SecondaryGraphInitialAux" xml:space="preserve"><value>PRIMARY · AUXILIARY</value></data>
   <data name="AllocationUI.SecondaryGraphInitialPrincipal" xml:space="preserve"><value>PRIMARY · PRINCIPAL</value></data>
   <data name="AllocationUI.SecondaryGraphAuxType" xml:space="preserve"><value>AUXILIARY · RECIPROCAL</value></data>

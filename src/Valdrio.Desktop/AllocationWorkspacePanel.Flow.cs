@@ -64,10 +64,13 @@ public partial class AllocationWorkspacePanel
 
         var foreground = TryFindResource("Text.Primary") as Brush ?? Brushes.Black;
         var edgeInk = TryFindResource("Brand.DeepGreen") as Brush ?? Brushes.DarkGreen;
-        var primaryBrush = TryFindResource("Surface.Subtle") as Brush ?? Brushes.WhiteSmoke;
-        var auxiliaryBrush = TryFindResource("Surface.Canvas") as Brush ?? Brushes.AliceBlue;
-        var finalBrush = TryFindResource("Status.SuccessBg") as Brush ?? Brushes.Honeydew;
-        var reciprocalInk = Brushes.SteelBlue;
+        // Node fill and stroke encode the accounting role consistently across
+        // all three columns, including both kinds of nodes after primary.
+        var auxiliaryBrush = TryFindResource("CostGraph.AuxiliaryBackground") as Brush ?? Brushes.AliceBlue;
+        var auxiliaryBorder = TryFindResource("CostGraph.AuxiliaryBorder") as Brush ?? Brushes.SteelBlue;
+        var principalBrush = TryFindResource("CostGraph.PrincipalBackground") as Brush ?? Brushes.Honeydew;
+        var principalBorder = TryFindResource("CostGraph.PrincipalBorder") as Brush ?? Brushes.ForestGreen;
+        var reciprocalInk = auxiliaryBorder;
         var directInk = Brushes.SlateGray;
 
         var originalCards = PlaceGraphColumn(origins, originX, top, maxRows, rowStep);
@@ -171,7 +174,8 @@ public partial class AllocationWorkspacePanel
             DrawGraphNodeCard(card.Position, cardWidth, cardHeight,
                 entry.IsAuxiliary ? vm["SecondaryGraphInitialAux"] : vm["SecondaryGraphInitialPrincipal"],
                 entry.ShortName, vm.FormatBatchAmount(amount), entry.FullName,
-                primaryBrush, foreground, edgeInk, "primary:" + entry.Id);
+                entry.IsAuxiliary ? auxiliaryBrush : principalBrush, foreground,
+                entry.IsAuxiliary ? auxiliaryBorder : principalBorder, "primary:" + entry.Id);
         }
         foreach (var card in auxiliaryCards.Values)
         {
@@ -183,7 +187,7 @@ public partial class AllocationWorkspacePanel
                 vm["SecondaryGraphGross"] + ": " + vm.FormatBatchAmount(gross),
                 entry.FullName + "\n" + vm["SecondaryGraphInitial"] +
                     ": " + vm.FormatBatchAmount(initial),
-                auxiliaryBrush, foreground, reciprocalInk, "auxiliary:" + entry.Id);
+                auxiliaryBrush, foreground, auxiliaryBorder, "auxiliary:" + entry.Id);
         }
         foreach (var card in principalCards.Values)
         {
@@ -196,7 +200,7 @@ public partial class AllocationWorkspacePanel
                     ": " + (total?.Primary ?? vm.FormatBatchAmount(0m)) +
                     "\n" + vm["SecondaryGraphReceived"] +
                     ": " + (total?.Auxiliary ?? vm.FormatBatchAmount(0m)),
-                finalBrush, foreground, edgeInk, "principal:" + entry.Id);
+                principalBrush, foreground, principalBorder, "principal:" + entry.Id);
         }
         DrawGraphNote(vm.SecondaryFlowNotice, 25,
             canvasHeight - 67, width - 50);

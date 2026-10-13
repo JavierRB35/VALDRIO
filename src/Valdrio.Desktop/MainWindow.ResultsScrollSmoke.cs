@@ -115,6 +115,18 @@ public partial class MainWindow
                 costGraphCards.Select(card => (string)card.Tag!).Distinct(StringComparer.Ordinal).Count() ==
                     costGraphCards.Length,
                 "the three-column secondary graph renders one card per active node per economic stage " + language);
+            var auxiliaryColour = (Brush)panel.FindResource("CostGraph.AuxiliaryBackground");
+            var principalColour = (Brush)panel.FindResource("CostGraph.PrincipalBackground");
+            Check(!Equals(auxiliaryColour, principalColour) &&
+                costGraphCards.All(card =>
+                    card.Tag is string tag &&
+                    (tag.StartsWith("auxiliary:", StringComparison.Ordinal) ||
+                     tag.StartsWith("primary:", StringComparison.Ordinal) &&
+                        vm.SecondaryFlowNodes.Any(n => n.IsAuxiliary &&
+                            tag == "primary:" + n.Id)
+                        ? Equals(card.Background, auxiliaryColour)
+                        : Equals(card.Background, principalColour))),
+                "auxiliary nodes have blue cards and principal nodes green cards in all stages " + language);
             Check(panel.PrincipalFlowCanvas.Children.OfType<System.Windows.Shapes.Path>()
                     .Any(path => path.Data is PathGeometry geometry &&
                         geometry.Figures.Any(fig => fig.Segments.OfType<BezierSegment>().Any())),

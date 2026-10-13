@@ -1336,7 +1336,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.SecondaryGraphOriginHeader" xml:space="preserve"><value>1. Nodos tras el reparto primario</value></data>
   <data name="AllocationUI.SecondaryGraphAuxHeader" xml:space="preserve"><value>2. Nodos auxiliares y reciprocidad</value></data>
   <data name="AllocationUI.SecondaryGraphPrincipalHeader" xml:space="preserve"><value>3. Coste final en nodos principales</value></data>
-  <data name="AllocationUI.SecondaryGraphKey" xml:space="preserve"><value>Curvas verdes: transferencias hacia auxiliares y principales · curvas grises discontinuas: coste primario directo a principales · curvas azules discontinuas: prestaciones recíprocas (circulación bruta, no coste adicional). Pasa el ratón por una conexión para ver su importe y grupo.</value></data>
+  <data name="AllocationUI.SecondaryGraphKey" xml:space="preserve"><value>Tarjetas azules: nodos auxiliares · tarjetas verdes: nodos principales. Curvas verdes: transferencias finales · curvas grises discontinuas: coste primario directo · curvas azules discontinuas: prestaciones recíprocas (circulación bruta, no coste adicional). Pasa el ratón por una tarjeta para resaltar sus conexiones y por una curva para ver el importe y el grupo.</value></data>
   <data name="AllocationUI.SecondaryGraphInitialAux" xml:space="preserve"><value>PRIMARIO · AUXILIAR</value></data>
   <data name="AllocationUI.SecondaryGraphInitialPrincipal" xml:space="preserve"><value>PRIMARIO · PRINCIPAL</value></data>
   <data name="AllocationUI.SecondaryGraphAuxType" xml:space="preserve"><value>AUXILIAR · RECÍPROCO</value></data>
