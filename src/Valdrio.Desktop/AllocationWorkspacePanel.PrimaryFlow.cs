@@ -16,11 +16,15 @@ public partial class AllocationWorkspacePanel
     {
         if (PrimaryFlowCanvas is null) return;
         PrimaryFlowCanvas.Children.Clear();
-        if (secondaryOnly || viewModel is not { SelectedPrimaryAccount: { } row }) return;
-        var details = row.Destinations;
-        if (details.Count == 0) return;
+        if (secondaryOnly || viewModel is not { SelectedPrimaryAccount: { } row } vm) return;
+        // Do not create thousands of visual paths for a large account; the table
+        // remains exhaustive while the diagram explicitly labels its limited preview.
+        var all = row.Destinations;
+        var details = all.OrderByDescending(d => Math.Abs(d.NumericAmount))
+            .ThenBy(d => d.Destination, StringComparer.Ordinal).Take(32).ToArray();
+        if (details.Length == 0) return;
         var width = 970d;
-        var height = Math.Max(260d, 60d + 88d * details.Count);
+        var height = Math.Max(260d, 60d + 88d * details.Length + (all.Count > 32 ? 32d : 0d));
         PrimaryFlowCanvas.Width = width;
         PrimaryFlowCanvas.Height = height;
         var foreground = TryFindResource("Text.Primary") as Brush ?? Brushes.Black;
@@ -90,5 +94,17 @@ public partial class AllocationWorkspacePanel
             PrimaryFlowCanvas.Children.Add(destination);
         }
         PrimaryFlowCanvas.Children.Add(card);
+        if (all.Count > details.Length)
+        {
+            var note = new TextBlock
+            {
+                Text = string.Format(vm["PrimaryFlowLimited"], details.Length, all.Count),
+                Foreground = foreground, TextWrapping = TextWrapping.Wrap,
+                FontWeight = FontWeights.SemiBold
+            };
+            Canvas.SetLeft(note, 20);
+            Canvas.SetTop(note, height - 30);
+            PrimaryFlowCanvas.Children.Add(note);
+        }
     }
 }

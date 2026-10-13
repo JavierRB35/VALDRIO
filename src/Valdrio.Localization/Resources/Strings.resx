@@ -1314,6 +1314,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.AuxiliarySettlementBalance" xml:space="preserve"><value>Theoretical balance</value></data>
   <data name="AllocationUI.AuxiliarySettlementTheoreticalZero" xml:space="preserve"><value>0 (theoretical)</value></data>
   <data name="AllocationUI.AuxiliarySettlementSolverResidual" xml:space="preserve"><value>Maximum mathematical residual across groups: {0} {1}. Not an individual accounting balance.</value></data>
+  <data name="AllocationUI.PrimaryFlowLimited" xml:space="preserve"><value>Preview of the {0} largest flows out of {1}; the destination table retains every detail.</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reopen secondary allocation</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explain selected cost</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Behavior</value></data>

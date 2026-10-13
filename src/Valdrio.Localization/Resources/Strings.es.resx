@@ -1314,6 +1314,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.AuxiliarySettlementBalance" xml:space="preserve"><value>Saldo teórico</value></data>
   <data name="AllocationUI.AuxiliarySettlementTheoreticalZero" xml:space="preserve"><value>0 (teórico)</value></data>
   <data name="AllocationUI.AuxiliarySettlementSolverResidual" xml:space="preserve"><value>Máximo residuo matemático global de los grupos: {0} {1}. No representa un saldo contable individual.</value></data>
+  <data name="AllocationUI.PrimaryFlowLimited" xml:space="preserve"><value>Vista limitada a los {0} flujos de mayor importe entre {1}; la tabla de destinos contiene el detalle completo.</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reabrir reparto secundario</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explicar coste seleccionado</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Comportamiento</value></data>
