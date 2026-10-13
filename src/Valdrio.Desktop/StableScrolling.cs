@@ -75,7 +75,7 @@ public static class StableScrolling
             e.Handled = true;
         }
 
-        private static ScrollViewer? PageScrollHost(DependencyObject source, bool horizontal)
+        private static ScrollViewer? PageScrollHost(DependencyObject? source, bool horizontal)
         {
             var viewer = Ancestor<ScrollViewer>(source);
             while (viewer is not null)
