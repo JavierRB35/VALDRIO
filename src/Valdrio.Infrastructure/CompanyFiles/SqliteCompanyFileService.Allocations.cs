@@ -56,7 +56,9 @@ public sealed partial class SqliteCompanyFileService
             last?.Request.Configuration ?? AllocationConfiguration.Empty, last?.ConfirmedStudy.Revision ?? -1,
             usedKeyIds: db.AllocationChanges.AsNoTracking().ToArray().Select(AllocationChange)
                 .SelectMany(UsedKeys).Select(k => k.Id).Distinct().ToArray(),
-            secondaryPublication: last?.SecondaryPublication);
+            secondaryPublication: last?.SecondaryPublication,
+            protectedKeyIds: db.AllocationChanges.AsNoTracking().ToArray().Select(AllocationChange)
+                .SelectMany(change => change.ReferencedKeys).Select(key => key.Id).Distinct().ToArray());
     }
     private static void EnsurePrimaryOpen(AllocationDbContext db, EntityId companyId, EntityId studyId)
     {

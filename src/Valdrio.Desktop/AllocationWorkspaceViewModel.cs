@@ -158,7 +158,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public bool CanDeleteSelectedKey =>
         SelectedKey is { } row && !IsDirty && workspace is not null &&
         (CanEdit || CanManageSecondary && row.Value.Stage == AllocationStage.Secondary) &&
-        !workspace.UsedKeyIds.Contains(row.Value.Id) &&
+        !workspace.ProtectedKeyIds.Contains(row.Value.Id) &&
         !workspace.Keys.Any(key => key.ParentVersionId == row.Value.Id);
     public string KeyDeleteHelp
     {
@@ -173,7 +173,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             if (workspace.Configuration.PrimaryRules.Any(r => r.KeyVersionId == row.Value.Id) ||
                 workspace.Configuration.ExplicitAssignments.Any(a => a.KeyVersionId == row.Value.Id))
                 return this["DeletePrimaryAssigned"];
-            if (workspace.UsedKeyIds.Contains(row.Value.Id)) return this["DeleteHistoricUse"];
+            if (workspace.ProtectedKeyIds.Contains(row.Value.Id)) return this["DeleteHistoricUse"];
             if (workspace.Keys.Any(k => k.ParentVersionId == row.Value.Id)) return this["DeleteHasVersions"];
             return this["DeleteReady"];
         }
@@ -383,7 +383,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             var command = BuildKey(publish || editingKey?.Status == ModelStatus.Published); var port = company.ActiveAllocations!;
             var receipt = await Task.Run(() => port.SaveAllocationKey(command));
             workspace = new(workspace.Resources, workspace.Keys.Where(k => k.Id != receipt.After.Id).Append(receipt.After).ToArray(), workspace.Configuration, workspace.ConfigurationRevision, includeUnroutedAccounts: workspace.IncludeUnroutedAccounts,
-                usedKeyIds: workspace.UsedKeyIds, secondaryPublication: workspace.SecondaryPublication);
+                usedKeyIds: workspace.UsedKeyIds, secondaryPublication: workspace.SecondaryPublication,
+                protectedKeyIds: workspace.ProtectedKeyIds);
             LoadKey(receipt.After); previewId = new(Guid.NewGuid()); Rebuild(); statusKey = publish ? "PublishedSaved" : "DraftSaved";
         });
     }
@@ -465,7 +466,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             // Retain the committed revision even if a dependent refresh fails.
             var r = workspace.Resources;
             workspace = new(new(receipt.ConfirmedStudy, r.Precision, r.Model, r.Origins, r.Ledger, r.EconomicRevision), workspace.Keys, config, receipt.ConfirmedStudy.Revision, includeUnroutedAccounts: workspace.IncludeUnroutedAccounts,
-                usedKeyIds: workspace.UsedKeyIds.Concat(receipt.ReferencedKeys.Where(k => config.ExplicitAssignments.Any(a => a.KeyVersionId == k.Id) || config.PrimaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id) || config.SecondaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id)).Select(k => k.Id)).Distinct().ToArray(), secondaryPublication: receipt.SecondaryPublication);
+                usedKeyIds: workspace.UsedKeyIds.Concat(receipt.ReferencedKeys.Where(k => config.ExplicitAssignments.Any(a => a.KeyVersionId == k.Id) || config.PrimaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id) || config.SecondaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id)).Select(k => k.Id)).Distinct().ToArray(), secondaryPublication: receipt.SecondaryPublication,
+                protectedKeyIds: workspace.ProtectedKeyIds.Concat(receipt.ReferencedKeys.Select(k => k.Id)).Distinct().ToArray());
             ClearRule(); LoadAbsolute(); Rebuild(); statusKey = "Saved";
             try { await studies.ApplyResourceReceiptAsync(receipt.ConfirmedStudy); }
             catch (Exception ex) when (ex is IOException or CompanyFileException or InvalidOperationException) { statusKey = "SavedRefreshPending"; }
@@ -494,7 +496,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             await Task.Run(() => company.ActiveAllocations!.SaveAllocationKey(command));
             workspace = new(workspace!.Resources, workspace.Keys.Where(key => key.Id != k.Id).ToArray(),
                 workspace.Configuration, workspace.ConfigurationRevision, includeUnroutedAccounts: workspace.IncludeUnroutedAccounts,
-                usedKeyIds: workspace.UsedKeyIds, secondaryPublication: workspace.SecondaryPublication);
+                usedKeyIds: workspace.UsedKeyIds, secondaryPublication: workspace.SecondaryPublication,
+                protectedKeyIds: workspace.ProtectedKeyIds);
             if (editingKey?.Id == k.Id) LoadKey(null);
             Rebuild(); statusKey = "KeyDeleted";
         });
