@@ -10,9 +10,17 @@ namespace Valdrio.Desktop;
 
 public sealed record SecondaryAllocationRow(
     EntityId PrimaryNodeId, EntityId TerminalNodeId, ResourceBehavior SourceBehavior,
-    string Source, string Destination, string Amount, string Behavior, decimal PostedAmount);
+    string Source, string Destination, string Amount, string Behavior, decimal PostedAmount)
+{
+    public decimal PresentedAmount { get; init; }
+}
 public sealed record PrincipalCostRow(string Node, string Primary, string Auxiliary, string Total,
-    decimal PrimaryAmount, decimal AuxiliaryAmount, decimal TotalAmount);
+    decimal PrimaryAmount, decimal AuxiliaryAmount, decimal TotalAmount)
+{
+    public decimal PresentedPrimaryAmount { get; init; }
+    public decimal PresentedAuxiliaryAmount { get; init; }
+    public decimal PresentedTotalAmount { get; init; }
+}
 public sealed record SecondarySourceDetailRow(string Account, string Primary, string Share, string Amount, string Keys) { public string TechnicalDetail { get; init; } = ""; }
 
 public sealed record SecondaryGroupRow(string Source, string Group);
@@ -100,15 +108,15 @@ public sealed partial class AllocationWorkspaceViewModel
     public ObservableCollection<ReciprocalCheckRow> SecondaryCirculation { get; } = [];
     private decimal secondaryGrossTotal;
     public string PrincipalCostsPrimaryTotal => PrincipalCosts.Count == 0 ? "" :
-        StudyMoney(PrincipalCosts.Sum(row => row.PrimaryAmount));
+        StudyMoney(PrincipalCosts.Sum(row => row.PresentedPrimaryAmount));
     public string PrincipalCostsAuxiliaryTotal => PrincipalCosts.Count == 0 ? "" :
-        StudyMoney(PrincipalCosts.Sum(row => row.AuxiliaryAmount));
+        StudyMoney(PrincipalCosts.Sum(row => row.PresentedAuxiliaryAmount));
     public string PrincipalCostsFinalTotal => PrincipalCosts.Count == 0 ? "" :
-        StudyMoney(PrincipalCosts.Sum(row => row.TotalAmount));
+        StudyMoney(PrincipalCosts.Sum(row => row.PresentedTotalAmount));
     public string SecondaryResultsTotal => SecondaryResults.Count == 0 ? "" :
-        StudyMoney(SecondaryResults.Sum(row => row.PostedAmount));
+        StudyMoney(SecondaryResults.Sum(row => row.PresentedAmount));
     public string SecondaryExplanationTotal => SecondaryExplanationDetails.Count == 0 ||
-        SelectedSecondaryResultRow is null ? "" : StudyMoney(SelectedSecondaryResultRow.PostedAmount);
+        SelectedSecondaryResultRow is null ? "" : StudyMoney(SelectedSecondaryResultRow.PresentedAmount);
     // The gross internal circulation is diagnostic only, never added to terminal costs.
     public string SecondaryGrossTotal => SecondaryCirculation.Count == 0 ? "" : StudyMoney(secondaryGrossTotal);
     public string SecondarySummary { get; private set; } = "";
@@ -450,26 +458,63 @@ public sealed partial class AllocationWorkspaceViewModel
         if (workspace is null) return;
         var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
         secondaryContributions.AddRange(SecondaryResultPresentation.Build(facts, links, nodes));
-        string Amount(decimal value) => MoneyText(new Money(value,
-            workspace.Resources.Study.Currency.FunctionalCurrencyCode, workspace.Resources.Precision));
-        foreach (var group in secondaryContributions.GroupBy(c =>
-            (c.PrimaryNodeId, c.Fact.TerminalNodeId, c.Fact.Behavior))
-            .OrderBy(g => nodes[g.Key.TerminalNodeId].Code, StringComparer.Ordinal)
-            .ThenBy(g => nodes[g.Key.PrimaryNodeId].Code, StringComparer.Ordinal).ThenBy(g => g.Key.Behavior))
-        {
-            var amount = group.Sum(c => c.PostedAmount);
-            SecondaryResults.Add(new(group.Key.PrimaryNodeId, group.Key.TerminalNodeId, group.Key.Behavior,
-                NodeLabel(nodes[group.Key.PrimaryNodeId]), NodeLabel(nodes[group.Key.TerminalNodeId]),
-                Amount(amount), this["SecondaryBehavior" + group.Key.Behavior], amount));
-        }
-        foreach (var node in nodes.Values.Where(n => n.IsActive && n.Role == NodeRole.Principal)
-            .OrderBy(n => n.Code, StringComparer.Ordinal))
+        var currency = workspace.Resources.Study.Currency.FunctionalCurrencyCode;
+        var precision = workspace.Resources.Precision;
+        var quantum = DisplayCurrencyQuantum;
+
+        // Project each principal's direct/auxiliary split and the grand totals as
+        // one table, so every visible row AND column reconciles to minor units.
+        var principals = nodes.Values.Where(n => n.IsActive && n.Role == NodeRole.Principal)
+            .OrderBy(n => n.Code, StringComparer.Ordinal).ToArray();
+        var ledger = principals.Select(node =>
         {
             var rows = secondaryContributions.Where(c => c.Fact.TerminalNodeId == node.Id).ToArray();
-            var primary = rows.Where(c => nodes[c.PrimaryNodeId].Role == NodeRole.Principal).Sum(c => c.PostedAmount);
-            var auxiliary = rows.Where(c => nodes[c.PrimaryNodeId].Role == NodeRole.Auxiliary).Sum(c => c.PostedAmount);
-            PrincipalCosts.Add(new(NodeLabel(node), Amount(primary), Amount(auxiliary), Amount(primary + auxiliary),
-                primary, auxiliary, primary + auxiliary));
+            return (Direct: rows.Where(c => nodes[c.PrimaryNodeId].Role == NodeRole.Principal)
+                    .Sum(c => c.PostedAmount),
+                Auxiliary: rows.Where(c => nodes[c.PrimaryNodeId].Role == NodeRole.Auxiliary)
+                    .Sum(c => c.PostedAmount));
+        }).ToArray();
+        var presented = AllocationCurrencyDisplay.ProjectBreakdown(ledger, quantum, precision);
+        var finalByNode = new Dictionary<EntityId, decimal>();
+        for (var i = 0; i < principals.Length; i++)
+        {
+            var original = ledger[i];
+            var shown = presented[i];
+            var originalTotal = checked(original.Direct + original.Auxiliary);
+            finalByNode.Add(principals[i].Id, shown.Final);
+            PrincipalCosts.Add(new(NodeLabel(principals[i]),
+                DisplayMoney(shown.Direct, currency), DisplayMoney(shown.Auxiliary, currency),
+                DisplayMoney(shown.Final, currency), original.Direct, original.Auxiliary, originalTotal)
+            {
+                PresentedPrimaryAmount = shown.Direct,
+                PresentedAuxiliaryAmount = shown.Auxiliary,
+                PresentedTotalAmount = shown.Final
+            });
+        }
+
+        var resultGroups = secondaryContributions.GroupBy(c =>
+            (c.PrimaryNodeId, c.Fact.TerminalNodeId, c.Fact.Behavior))
+            .OrderBy(g => nodes[g.Key.TerminalNodeId].Code, StringComparer.Ordinal)
+            .ThenBy(g => nodes[g.Key.PrimaryNodeId].Code, StringComparer.Ordinal)
+            .ThenBy(g => g.Key.Behavior)
+            .Select(g => (g.Key, LedgerAmount: g.Sum(c => c.PostedAmount))).ToArray();
+        foreach (var terminalGroup in resultGroups.GroupBy(g => g.Key.TerminalNodeId))
+        {
+            var contributions = terminalGroup.ToArray();
+            var shown = AllocationCurrencyDisplay.ProjectToTarget(
+                contributions.Select(group => group.LedgerAmount).ToArray(),
+                finalByNode[terminalGroup.Key], quantum, precision);
+            for (var i = 0; i < contributions.Length; i++)
+            {
+                var group = contributions[i];
+                SecondaryResults.Add(new(group.Key.PrimaryNodeId, group.Key.TerminalNodeId,
+                    group.Key.Behavior, NodeLabel(nodes[group.Key.PrimaryNodeId]),
+                    NodeLabel(nodes[group.Key.TerminalNodeId]), DisplayMoney(shown[i], currency),
+                    this["SecondaryBehavior" + group.Key.Behavior], group.LedgerAmount)
+                {
+                    PresentedAmount = shown[i]
+                });
+            }
         }
     }
 
@@ -488,10 +533,15 @@ public sealed partial class AllocationWorkspaceViewModel
         var auxiliary = nodes[row.PrimaryNodeId].Role == NodeRole.Auxiliary;
         SecondaryExplanation = string.Format(Format, this[auxiliary ? "SecondaryExplainAuxiliary" : "SecondaryExplainDirect"],
             row.Source, row.Destination, row.Amount, row.Behavior);
-        foreach (var contribution in secondaryContributions.Where(c => c.PrimaryNodeId == row.PrimaryNodeId &&
+        var contributions = secondaryContributions.Where(c => c.PrimaryNodeId == row.PrimaryNodeId &&
             c.Fact.TerminalNodeId == row.TerminalNodeId && c.Fact.Behavior == row.SourceBehavior)
-            .OrderBy(c => c.Fact.Account, StringComparer.Ordinal))
+            .OrderBy(c => c.Fact.Account, StringComparer.Ordinal).ToArray();
+        var amounts = AllocationCurrencyDisplay.ProjectToTarget(
+            contributions.Select(c => c.PostedAmount).ToArray(), row.PresentedAmount,
+            DisplayCurrencyQuantum, workspace.Resources.Precision);
+        for (var i = 0; i < contributions.Length; i++)
         {
+            var contribution = contributions[i];
             var fact = contribution.Fact;
             var initial = contribution.Links.Sum(l => l.PrimaryPostedAmount);
             var raw = contribution.Links.Sum(l => l.RawContribution);
@@ -503,7 +553,7 @@ public sealed partial class AllocationWorkspaceViewModel
                 origins.TryGetValue(fact.ResourceId, out var origin) ? AccountLabel(origin) : fact.Account,
                 MoneyText(new Money(initial, fact.PostedAmount.Currency, fact.PostedAmount.PrecisionPolicy)),
                 initial == 0m ? "—" : (raw / initial * 100m).ToString("0.####", Format) + " %",
-                MoneyText(new Money(contribution.PostedAmount, fact.PostedAmount.Currency, fact.PostedAmount.PrecisionPolicy)),
+                DisplayMoney(amounts[i], fact.PostedAmount.Currency),
                 string.Join(", ", keys))
             {
                 TechnicalDetail = string.Format(Format, this["ExplainContributionAdjustment"],
