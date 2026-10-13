@@ -67,14 +67,19 @@ public sealed partial class AllocationWorkspaceViewModel
                 StringComparer.Ordinal))
         {
             var inputs = inputAmounts.GetValueOrDefault(id);
-            var baseShown = AllocationCurrencyDisplay.Project([inputs],
-                DisplayCurrencyQuantum, workspace.Resources.Precision).Single();
             var rows = byResource[id].OrderBy(x => nodes[x.Fact.NodeId].Code, StringComparer.Ordinal)
                 .ThenBy(x => x.Fact.PartId).ThenBy(x => x.Fact.Behavior).ToArray();
             var aux = rows.Where(x => nodes[x.Fact.NodeId].Role == NodeRole.Auxiliary).Sum(x => x.Amount);
             var main = rows.Where(x => nodes[x.Fact.NodeId].Role == NodeRole.Principal).Sum(x => x.Amount);
             var assigned = checked(aux + main);
-            var pending = checked(baseShown - assigned);
+            // Project the unposted ledger gap, then add it to already-projected
+            // facts. Independently rounding the source would create fake 0.01
+            // discrepancies in a fully covered account.
+            var rawPosted = rows.Sum(x => x.Fact.PostedAmount.Amount);
+            var rawGap = checked(inputs - rawPosted);
+            var pending = AllocationCurrencyDisplay.Project([rawGap],
+                DisplayCurrencyQuantum, workspace.Resources.Precision).Single();
+            var baseShown = checked(assigned + pending);
             var details = new List<PrimaryDestinationDetail>();
             foreach (var row in rows)
             {
@@ -108,8 +113,8 @@ public sealed partial class AllocationWorkspaceViewModel
                 Math.Clamp(ratio, 0m, 100m), details));
         }
         PrimaryKpiEffective = StudyMoney(primary.Resources.Sum(r => r.Effective.Amount));
-        PrimaryKpiRepartible = StudyMoney(primary.Parts.Sum(p => p.Input.Amount));
-        PrimaryKpiAssigned = StudyMoney(primary.Facts.Sum(f => f.PostedAmount.Amount));
+        PrimaryKpiRepartible = StudyMoney(PrimaryAccounts.Sum(row => row.PresentedBase));
+        PrimaryKpiAssigned = StudyMoney(PrimaryAccounts.Sum(row => row.PresentedAssigned));
         PrimaryKpiPending = StudyMoney(primary.Resources.Sum(r => r.Pending.Amount));
         PrimaryKpiExcluded = StudyMoney(primary.Resources.Sum(r => r.Excluded.Amount));
         PrimaryKpiDirectObject = StudyMoney(primary.Resources.Sum(r => r.Direct.Amount));
