@@ -155,9 +155,21 @@ public partial class MainWindow
         if (step is 5 or 7 && vm.Allocations is { } allocations)
         { if (vm.Resources is { } source) await source.EnterAsync(); await allocations.EnterAsync(); allocations.SecondaryWorkspaceActive = step == 7; }
         UpdateWorkflow(); RootScrollViewer.ScrollToTop();
-        if (enteringAllocation)
+        if (enteringAllocation && vm.Allocations is { } opened)
         {
-            if (step == 5) AllocationPanel.FocusKeyLibrary();
+            // Once a phase is closed, the saved financial result is the user's
+            // first destination. Its key editor remains available by scrolling up.
+            if (step == 5 && opened.IsPrimaryClosed)
+            {
+                AllocationPanel.ResultsSection.IsExpanded = true;
+                ScrollToElement(AllocationPanel.ResultsSection);
+            }
+            else if (step == 7 && opened.IsSecondaryClosed)
+            {
+                SecondaryPanel.Workspace.SecondaryResultsSection.IsExpanded = true;
+                ScrollToElement(SecondaryPanel.Workspace.SecondaryResultsSection);
+            }
+            else if (step == 5) AllocationPanel.FocusKeyLibrary();
             else SecondaryPanel.Workspace.FocusKeyLibrary();
         }
     }
