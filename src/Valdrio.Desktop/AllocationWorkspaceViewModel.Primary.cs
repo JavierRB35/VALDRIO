@@ -18,7 +18,7 @@ public sealed partial class AllocationWorkspaceViewModel
     private bool primaryComplete;
     private decimal primaryPostedTotal;
     private string StudyMoney(decimal amount) => workspace is null ? "" :
-        amount.ToString("0.########", Format) + " " + workspace.Resources.Study.Currency.FunctionalCurrencyCode;
+        DisplayMoney(amount, workspace.Resources.Study.Currency.FunctionalCurrencyCode);
     public string PrimaryResultsTotal => PrimaryResults.Count == 0 ? "" : StudyMoney(primaryPostedTotal);
     public string PrimaryNodeTotalsTotal => PrimaryNodeTotals.Count == 0 ? "" :
         StudyMoney(PrimaryNodeTotals.Sum(row => row.NumericAmount));
@@ -63,7 +63,12 @@ public sealed partial class AllocationWorkspaceViewModel
             primaryPostedTotal = primary.Facts.Sum(f => f.PostedAmount.Amount);
             var nodeById = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
             var resourceById = workspace.Resources.Origins.ToDictionary(o => o.Id);
-            foreach (var fact in primary.Facts)
+            var facts = primary.Facts.ToArray();
+            var shown = AllocationCurrencyDisplay.Project(
+                facts.Select(fact => fact.PostedAmount.Amount).ToArray(),
+                DisplayCurrencyQuantum, workspace.Resources.Precision);
+            var displayed = facts.Select((fact, i) => (Fact: fact, Amount: shown[i])).ToArray();
+            foreach (var (fact, displayAmount) in displayed)
             {
                 var source = AccountLabel(resourceById[fact.ResourceId]);
                 var destination = NodeLabel(nodeById[fact.NodeId]);
@@ -78,19 +83,22 @@ public sealed partial class AllocationWorkspaceViewModel
                     var applied = workspace.Keys.Single(k => k.Id == key);
                     rule += ": " + KeyLabel(applied);
                 }
-                PrimaryResults.Add(new(source, destination, MoneyText(fact.PostedAmount), rule, this["SecondaryBehavior" + fact.Behavior]));
+                PrimaryResults.Add(new(source, destination,
+                    DisplayMoney(displayAmount, fact.PostedAmount.Currency),
+                    rule, this["SecondaryBehavior" + fact.Behavior]));
             }
             // Group published primary facts by node, not by account, without changing the ledger.
             var centers = workspace.Resources.Model.PhysicalCenters.ToDictionary(center => center.Id);
-            foreach (var group in primary.Facts.GroupBy(fact => fact.NodeId)
+            foreach (var group in displayed.GroupBy(item => item.Fact.NodeId)
                 .OrderBy(group => centers[nodeById[group.Key].PhysicalCenterId].Code, StringComparer.Ordinal)
                 .ThenBy(group => nodeById[group.Key].Code, StringComparer.Ordinal))
             {
                 var node = nodeById[group.Key];
                 var center = centers[node.PhysicalCenterId];
-                var total = group.Sum(fact => fact.PostedAmount.Amount);
+                var ledgerTotal = group.Sum(item => item.Fact.PostedAmount.Amount);
+                var shownTotal = group.Sum(item => item.Amount);
                 PrimaryNodeTotals.Add(new(center.Code + " · " + center.Name, node.Code,
-                    total.ToString("0.########", Format) + " " + primary.Currency, total));
+                    DisplayMoney(shownTotal, primary.Currency), ledgerTotal));
             }
             PrimarySummary = string.Format(Format, this["PrimarySummary"], primary.Facts.Count,
                 primary.Gaps.Count, primary.Pools.Count, primary.Currency);
