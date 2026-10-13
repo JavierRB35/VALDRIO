@@ -16,6 +16,11 @@
   <SolidColorBrush x:Key="Status.SuccessBg" Color="#EAF6EE"/>
   <SolidColorBrush x:Key="Status.WarningBg" Color="#FFF5D6"/>
   <SolidColorBrush x:Key="Status.ErrorBg" Color="#FBEAEA"/>
+  <!-- Accounting node roles on the secondary cost graph: colour supplements text labels. -->
+  <SolidColorBrush x:Key="CostGraph.AuxiliaryBackground" Color="#E8F2FC"/>
+  <SolidColorBrush x:Key="CostGraph.AuxiliaryBorder" Color="#24679D"/>
+  <SolidColorBrush x:Key="CostGraph.PrincipalBackground" Color="#E5F5E9"/>
+  <SolidColorBrush x:Key="CostGraph.PrincipalBorder" Color="#236F47"/>
   <!-- Secondary token is reserved for large text/decorative marks: use Primary for small help text (AA). -->
   <FontFamily x:Key="Font.Body">Segoe UI</FontFamily>
   <sys:Double x:Key="Font.Size.Body">13</sys:Double>

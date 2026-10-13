@@ -104,12 +104,16 @@ public sealed class AllocationWorkspaceSnapshot
 {
     public AllocationWorkspaceSnapshot(ResourceWorkspaceSnapshot resources, IReadOnlyList<AllocationKeyVersion> keys,
         AllocationConfiguration configuration, long configurationRevision, bool includeUnroutedAccounts = true,
-        IReadOnlyList<EntityId>? usedKeyIds = null, SecondaryCalculationPublication? secondaryPublication = null)
+        IReadOnlyList<EntityId>? usedKeyIds = null, SecondaryCalculationPublication? secondaryPublication = null,
+        IReadOnlyList<EntityId>? protectedKeyIds = null)
     {
         Resources = resources; Keys = FrozenList.Copy(keys.OrderBy(k => k.Id));
         Configuration = configuration; ConfigurationRevision = configurationRevision;
         IncludeUnroutedAccounts = includeUnroutedAccounts;
         UsedKeyIds = FrozenList.Copy(usedKeyIds ?? []);
+        // Unlike UsedKeyIds (active economic references), these include inactive
+        // rules in historical receipts and thus identify deletion-protected keys.
+        ProtectedKeyIds = FrozenList.Copy(protectedKeyIds ?? usedKeyIds ?? []);
         SecondaryPublication = configuration.SecondaryClosed ? secondaryPublication : null;
     }
     public ResourceWorkspaceSnapshot Resources { get; }
@@ -118,6 +122,7 @@ public sealed class AllocationWorkspaceSnapshot
     public long ConfigurationRevision { get; }
     public bool IncludeUnroutedAccounts { get; }
     [JsonIgnore] public IReadOnlyList<EntityId> UsedKeyIds { get; }
+    [JsonIgnore] public IReadOnlyList<EntityId> ProtectedKeyIds { get; }
     [JsonIgnore] public SecondaryCalculationPublication? SecondaryPublication { get; }
     [JsonIgnore] public IReadOnlyList<AllocationCoverage> Coverage => AllocationWorkspaceRules.Coverage(this);
 }

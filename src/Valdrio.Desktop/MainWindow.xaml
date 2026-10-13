@@ -34,6 +34,15 @@
      <TextBlock x:Name="SaveLocation" Margin="0,4,0,0" FontSize="12" />
     </StackPanel>
    </Border>
+   <!-- Fixed in the application shell: visible on every page while any
+        company/workspace process reports busy. Unlike a page-local bar, it
+        stays on screen while the central content scrolls. -->
+   <ProgressBar x:Name="GlobalActivityBar" DockPanel.Dock="Top" Height="5"
+                IsIndeterminate="True"
+                Background="{DynamicResource Surface.Subtle}"
+                Foreground="{DynamicResource Accent.ActiveGreen}"
+                Visibility="{Binding Company.IsProcessing, Converter={StaticResource BooleanVisibility}}"
+                AutomationProperties.Name="{Binding Company.WorkingLabel}"/>
   <StackPanel x:Name="ActionFooter" Margin="{StaticResource Space.Page}" DockPanel.Dock="Bottom">
    <TextBlock TextWrapping="Wrap" Height="48" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" AutomationProperties.LiveSetting="Polite" x:Name="FieldHelpText" />
    <WrapPanel>
@@ -91,6 +100,8 @@
     <Expander x:Name="DistributionDetails" Grid.Row="9" Header="{Binding Allocations[AccountDetails]}" Expanded="OpenDistributionDetails" Collapsed="CloseDistributionDetails">
      <StackPanel>
       <TextBlock Text="{Binding Allocations[AccountDetailsHelp]}" Margin="0,8,0,12"/>
+      <Button x:Name="BackToAllocationKeysButton" Content="{Binding Allocations[BackToKeys]}"
+              Click="BackToAllocationKeys" HorizontalAlignment="Left" Margin="0,0,0,10"/>
       <local:ResourceWorkspacePanel x:Name="DistributionResourcePanel" DataContext="{Binding Resources}"/>
       <Button x:Name="SaveDistributionButton" Content="{Binding Resources.NextAction}" Click="SaveDistributionDetails" Visibility="{Binding Resources.ShowParts, Converter={StaticResource BooleanVisibility}}" IsEnabled="{Binding Resources.CanEdit}" Style="{StaticResource Button.Primary}" HorizontalAlignment="Left"/>
      </StackPanel>

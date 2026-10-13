@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="../../src/Valdrio.Desktop/CompanyFileViewModel.cs" Link="Desktop/CompanyFileViewModel.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/CompanyFileDialogs.cs" Link="Desktop/CompanyFileDialogs.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ModelWorkspaceViewModel.StudyNodes.cs" Link="Desktop/ModelWorkspaceViewModel.StudyNodes.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ModelWorkspaceViewModel.cs" Link="Desktop/ModelWorkspaceViewModel.cs" />
     <Compile Include="../../src/Valdrio.Desktop/StudyWorkspaceViewModel.cs" Link="Desktop/StudyWorkspaceViewModel.cs" />
@@ -26,9 +27,15 @@
     <Compile Include="../../src/Valdrio.Desktop/ResourceEditorForm.cs" Link="Desktop/ResourceEditorForm.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.cs" Link="Desktop/AllocationWorkspaceViewModel.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Primary.cs" Link="Desktop/AllocationWorkspaceViewModel.Primary.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.PrimaryExplain.cs" Link="Desktop/AllocationWorkspaceViewModel.PrimaryExplain.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.PrincipalOrigins.cs" Link="Desktop/AllocationWorkspaceViewModel.PrincipalOrigins.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Batch.cs" Link="Desktop/AllocationWorkspaceViewModel.Batch.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Reciprocal.cs" Link="Desktop/AllocationWorkspaceViewModel.Reciprocal.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Secondary.cs" Link="Desktop/AllocationWorkspaceViewModel.Secondary.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.AuxiliarySettlement.cs" Link="Desktop/AllocationWorkspaceViewModel.AuxiliarySettlement.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.SecondaryFlow.cs" Link="Desktop/AllocationWorkspaceViewModel.SecondaryFlow.cs" />
     <Compile Include="../../src/Valdrio.Desktop/SecondaryResultPresentation.cs" Link="Desktop/SecondaryResultPresentation.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/AllocationCurrencyDisplay.cs" Link="Desktop/AllocationCurrencyDisplay.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Composition.cs" Link="Desktop/AllocationWorkspaceViewModel.Composition.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ResourceWorkspaceViewModel*.cs" Link="Desktop/%(Filename)%(Extension)" />
     <Compile Include="../../src/Valdrio.Desktop/WorkspaceDialogContracts.cs" Link="Desktop/WorkspaceDialogContracts.cs" />

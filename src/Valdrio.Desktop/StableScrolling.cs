@@ -44,29 +44,66 @@ public static class StableScrolling
         private void Focus(object sender, KeyboardFocusChangedEventArgs e) => active = Ancestor<DataGrid>(e.NewFocus as DependencyObject);
         private void Wheel(object sender, MouseWheelEventArgs e)
         {
+            if (e.Handled || e.Delta == 0) return;
             var source = e.OriginalSource as DependencyObject;
-            // An open drop-down retains its native navigation. A closed one must
-            // not silently change an accounting choice when scrolling the page.
+            if (source is null) return;
+            // Open pickers own their wheel. Closed pickers must not change values on hover.
             if (Ancestor<ComboBox>(source) is { IsDropDownOpen: true }) return;
-            var page = Ancestor<ScrollViewer>(source);
-            while (page is not null)
-            {
-                if (Ancestor<DataGrid>(page) is { } owner)
-                    page = Ancestor<ScrollViewer>(Parent(owner));
-                else if (Ancestor<TextBoxBase>(page) is { } editor)
-                    page = Ancestor<ScrollViewer>(Parent(editor));
-                else break;
-            }
+
+            var horizontal = (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
+            var page = PageScrollHost(source, horizontal);
             if (page is null) return;
-            var target = active is { IsVisible: true, IsEnabled: true } &&
-                Ancestor<ScrollViewer>(Parent(active)) == page ? Descendant<ScrollViewer>(active) ?? page : page;
+
+            // A table is allowed to capture the wheel only when the pointer is actually
+            // over THAT table. Keyboard focus or a previous click elsewhere on the page
+            // must never divert the wheel into a different, off-pointer table.
+            var hoveredGrid = Ancestor<DataGrid>(source);
+            var target = hoveredGrid is { IsVisible: true, IsEnabled: true }
+                && ReferenceEquals(active, hoveredGrid)
+                && ReferenceEquals(PageScrollHost(Parent(hoveredGrid), horizontal), page)
+                    ? Descendant<ScrollViewer>(hoveredGrid) ?? page
+                    : page;
+
             var lines = SystemParameters.WheelScrollLines;
             var distance = lines < 0 ? target.ViewportHeight : lines * 16d;
-            if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0)
-                target.ScrollToHorizontalOffset(Math.Clamp(target.HorizontalOffset - e.Delta / 120d * distance, 0, target.ScrollableWidth));
+            var increment = e.Delta / 120d * distance;
+            if (horizontal)
+                target.ScrollToHorizontalOffset(Math.Clamp(target.HorizontalOffset - increment, 0, target.ScrollableWidth));
             else
-                target.ScrollToVerticalOffset(Math.Clamp(target.VerticalOffset - e.Delta / 120d * distance, 0, target.ScrollableHeight));
+                target.ScrollToVerticalOffset(Math.Clamp(target.VerticalOffset - increment, 0, target.ScrollableHeight));
+            // Consume once: a grid at its boundary cannot unexpectedly move the page.
             e.Handled = true;
+        }
+
+        private static ScrollViewer? PageScrollHost(DependencyObject? source, bool horizontal)
+        {
+            var viewer = Ancestor<ScrollViewer>(source);
+            while (viewer is not null)
+            {
+                // A DataGrid has a private viewer and so does a TextBox. Neither
+                // should become the page host merely because the pointer crosses it.
+                if (Ancestor<DataGrid>(viewer) is { } grid)
+                {
+                    viewer = Ancestor<ScrollViewer>(Parent(grid));
+                    continue;
+                }
+                if (Ancestor<TextBoxBase>(viewer) is { } editor)
+                {
+                    viewer = Ancestor<ScrollViewer>(Parent(editor));
+                    continue;
+                }
+
+                // Results graphs scroll horizontally only. A vertical wheel over
+                // their canvas must scroll the containing page, not disappear.
+                var visibility = horizontal ? viewer.HorizontalScrollBarVisibility : viewer.VerticalScrollBarVisibility;
+                // WPF templates add ScrollViewers even when they have no scroll range
+                // (TreeView, tabs, etc.). Such a viewer must not swallow the page wheel.
+                var range = horizontal ? viewer.ScrollableWidth : viewer.ScrollableHeight;
+                if (visibility != ScrollBarVisibility.Disabled && range > 0)
+                    return viewer;
+                viewer = Ancestor<ScrollViewer>(Parent(viewer));
+            }
+            return null;
         }
     }
     private static DependencyObject? Parent(DependencyObject value) => value is Visual or Visual3D

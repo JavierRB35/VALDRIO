@@ -384,7 +384,7 @@ try {
     Write-Host "FX WPF button interaction checks passed: $($fxChecks.PassedChecks.Count)."
 
     $companyChecks = Get-Content -LiteralPath (Join-Path $captureDir "company-file/interaction.json") -Raw | ConvertFrom-Json
-    if ($companyChecks.Status -ne "passed" -or $companyChecks.PassedChecks.Count -ne 28) {
+    if ($companyChecks.Status -ne "passed" -or $companyChecks.PassedChecks.Count -ne 35) {
       throw "Company WPF interaction evidence is missing or incomplete."
     }
     Write-Host "Company WPF checks passed: $($companyChecks.PassedChecks.Count)."

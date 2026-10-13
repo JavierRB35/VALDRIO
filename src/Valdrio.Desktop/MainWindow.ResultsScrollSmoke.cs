@@ -35,17 +35,52 @@ public partial class MainWindow
             Environment.TickCount, MouseButton.Left) { RoutedEvent = Mouse.PreviewMouseDownEvent });
         void Wheel(UIElement element, int delta) => element.RaiseEvent(new MouseWheelEventArgs(Mouse.PrimaryDevice,
             Environment.TickCount, delta) { RoutedEvent = Mouse.PreviewMouseWheelEvent });
-        await NavigateWorkflow(2);
+        // The busy animation belongs to the fixed MainWindow shell; it must
+        // appear for every workspace, not just the allocations page.
+        await NavigateWorkflow(2); await Idle();
+        var earlierWorkspaceBusy = company.WorkspaceBusy;
+        Check(!company.IsProcessing && !GlobalActivityBar.IsVisible,
+            "global activity indicator remains hidden while all workspaces are idle");
+        try
+        {
+            company.WorkspaceBusy = () => true;
+            company.NotifyWorkspaceStateChanged();
+            await Idle();
+            Check(company.IsProcessing && GlobalActivityBar.IsIndeterminate &&
+                GlobalActivityBar.IsVisible,
+                "global shell indeterminate progress displays while an operation is running");
+        }
+        finally
+        {
+            company.WorkspaceBusy = earlierWorkspaceBusy;
+            company.NotifyWorkspaceStateChanged();
+        }
+        await Idle();
+        Check(!company.IsProcessing && !GlobalActivityBar.IsVisible,
+            "global progress bar disappears when a workspace finishes");
         studies.StudyChoice = studies.Studies.Single(s => s.Value.Name.StartsWith("02 -", StringComparison.Ordinal));
         await studies.LoadCommand.ExecuteAsync(null);
+        Check(vm.IsPrimaryClosed && SecondaryStep.IsEnabled,
+            "saved study exposes secondary navigation without opening primary first");
         foreach (var language in new[] { "es", "en" })
         {
             main.ApplyPresentationPreset(language, language == "es" ? "es-ES" : "en-US", "UTC", false, false);
             Width = 1600; Height = 1000;
             await NavigateWorkflow(5); await Idle();
+            Check(RootScrollViewer.VerticalOffset > 0 && AllocationPanel.ResultsSection.IsExpanded,
+                "closed primary opens at saved results " + language);
+            RootScrollViewer.ScrollToTop(); await Idle();
             var primaryToggleY = AllocationPanel.TogglePrimaryButton.TranslatePoint(new Point(), this).Y;
             Check(AllocationPanel.LinesGrid.ActualHeight > 300, "primary destinations use available height " + language);
             Check(vm.IsPrimaryClosed && vm.PrimaryResults.All(r => !string.IsNullOrWhiteSpace(r.Behavior)), "closed primary shows behavior " + language);
+            Check(vm.PrimaryAccounts.Count > 0 && vm.PrimaryAccounts.Sum(row => row.PresentedAssigned) == vm.PrimaryNodeTotals.Sum(row => row.PresentedAmount),
+                "primary grouped-account assignments reconcile to the primary node totals " + language);
+            Check(vm.PrimaryAccounts.All(row => row.PresentedBase - row.PresentedAssigned == row.PresentedPending),
+                "primary account-level pending values reconcile exactly " + language);
+            Check(vm.SelectedPrimaryAccount is not null && AllocationPanel.PrimaryFlowCanvas.Children.Count > 0,
+                "primary account selection draws original ledger source-to-node flow " + language);
+            ScrollToElement(AllocationPanel.PrimaryFlowSection); await Idle();
+            VisualEvidenceCapture.Capture(this, Path.Combine(directory, language + "-primary-account-flow.png"));
             vm.SelectedKey = vm.Keys.First(); await vm.LoadKeyCommand.ExecuteAsync(null); await Idle();
             Check(AllocationPanel.LinesGrid.IsEnabled && !vm.CanEditComposition, "closed primary key remains navigable " + language);
             Check(Descendants<TextBox>(AllocationPanel.LinesGrid).All(b => b.IsReadOnly), "primary weights are read-only " + language);
@@ -68,6 +103,9 @@ public partial class MainWindow
             }
             await NavigateWorkflow(7); await Idle();
             var panel = SecondaryPanel.Workspace;
+            Check(RootScrollViewer.VerticalOffset > 0 && panel.SecondaryResultsSection.IsExpanded,
+                "closed secondary opens at saved results " + language);
+            RootScrollViewer.ScrollToTop(); await Idle();
             Check(Math.Abs(panel.ToggleSecondaryButton.TranslatePoint(new Point(), this).Y - primaryToggleY) < 2,
                 "secondary reopen occupies same top position as primary " + language);
             Check(panel.ToggleSecondaryButton.IsEnabled && panel.LinesGrid.ActualHeight > 300,
@@ -76,8 +114,75 @@ public partial class MainWindow
             var snapshot = company.ActiveAllocations!.ReadAllocations(studies.Current!.CompanyId, studies.Current.Id);
             var publication = snapshot.SecondaryPublication!;
             Check(vm.PrincipalCosts.Sum(r => r.TotalAmount) == publication.Facts.Sum(f => f.PostedAmount.Amount), "principal totals equal posted ledger " + language);
+            Check(vm.AuxiliarySettlements.Count > 0 && vm.AuxiliarySettlements.All(row => row.InitialAmount + row.IncomingAmount == row.GrossAmount),
+                "auxiliary liquidation displays signed mathematically reconciled primary and reciprocal inputs " + language);
+            ScrollToElement(panel.AuxiliarySettlementSection); await Idle();
+            VisualEvidenceCapture.Capture(this, Path.Combine(directory, language + "-auxiliary-settlement.png"));
             Check(vm.PrincipalCosts.All(r => r.PrimaryAmount + r.AuxiliaryAmount == r.TotalAmount), "primary plus auxiliary reconciles per principal " + language);
             Check(vm.SecondaryResults.Sum(r => r.PostedAmount) == vm.PrincipalCosts.Sum(r => r.TotalAmount), "contributions reconcile with principal totals " + language);
+            Check(vm.SelectedPrincipalCostRow is not null && panel.PrincipalOriginGrid.Items.Count > 0,
+                "first principal cost centre selected with origin breakdown " + language);
+            Check(vm.PrincipalOriginRows.Sum(r => r.NumericAmount) == vm.SelectedPrincipalCostRow!.PresentedTotalAmount,
+                "selected centre origins reconcile at displayed currency precision " + language);
+            Check(vm.SecondaryFlowArcs.Count > 0 &&
+                vm.SecondaryFlowArcs.Any(arc => arc.Stage == SecondaryFlowStage.Primary) &&
+                vm.SecondaryFlowArcs.Any(arc => arc.Stage == SecondaryFlowStage.Final),
+                "published secondary result projects complete primary-node and auxiliary-to-principal stages " + language);
+            var costGraphCards = panel.PrincipalFlowCanvas.Children.OfType<Border>()
+                .Where(card => card.Tag is string tag && (
+                    tag.StartsWith("primary:", StringComparison.Ordinal) ||
+                    tag.StartsWith("auxiliary:", StringComparison.Ordinal) ||
+                    tag.StartsWith("principal:", StringComparison.Ordinal))).ToArray();
+            Check(costGraphCards.Length == vm.SecondaryFlowNodes.Count * 2 &&
+                costGraphCards.Select(card => (string)card.Tag!).Distinct(StringComparer.Ordinal).Count() ==
+                    costGraphCards.Length,
+                "the three-column secondary graph renders one card per active node per economic stage " + language);
+            var auxiliaryColour = (Brush)panel.FindResource("CostGraph.AuxiliaryBackground");
+            var principalColour = (Brush)panel.FindResource("CostGraph.PrincipalBackground");
+            Check(!Equals(auxiliaryColour, principalColour) &&
+                costGraphCards.All(card =>
+                    card.Tag is string tag &&
+                    (tag.StartsWith("auxiliary:", StringComparison.Ordinal) ||
+                     tag.StartsWith("primary:", StringComparison.Ordinal) &&
+                        vm.SecondaryFlowNodes.Any(n => n.IsAuxiliary &&
+                            tag == "primary:" + n.Id)
+                        ? Equals(card.Background, auxiliaryColour)
+                        : Equals(card.Background, principalColour))),
+                "auxiliary nodes have blue cards and principal nodes green cards in all stages " + language);
+            Check(panel.PrincipalFlowCanvas.Children.OfType<System.Windows.Shapes.Path>()
+                    .Any(path => path.Data is PathGeometry geometry &&
+                        geometry.Figures.Any(fig => fig.Segments.OfType<BezierSegment>().Any())),
+                "secondary node graph has real Bezier connectors rather than row-by-row straight lines " + language);
+            Check(panel.PrincipalFlowCanvas.Height > 410,
+                "complete secondary graph has full content-driven page height " + language);
+            Check(panel.PrincipalFlowCanvas.Width == 1320d &&
+                panel.PrincipalFlowViewport.Stretch == Stretch.Uniform &&
+                panel.PrincipalFlowViewport.StretchDirection == StretchDirection.DownOnly,
+                "three-column graph scales to panel width instead of forcing horizontal scrolling " + language);
+            var graphArrows = panel.PrincipalFlowCanvas.Children
+                .OfType<System.Windows.Shapes.Polygon>().ToArray();
+            Check(graphArrows.Length > 0 &&
+                graphArrows.All(arrow => arrow.Opacity >= .98d &&
+                    arrow.Points.Count == 3 && arrow.Points[0].Y != arrow.Points[2].Y),
+                "direction arrows stay large, filled and visually prominent " + language);
+            Check(panel.PrincipalFlowCanvas.Children.OfType<System.Windows.Shapes.Path>()
+                .All(line => line.StrokeThickness <= 4.01d),
+                "cost links use bounded thin strokes rather than large overlapping bands " + language);
+            var priorCentre = vm.SelectedPrincipalCostRow;
+            var globalArcCount = vm.SecondaryFlowArcs.Count;
+            vm.SelectedPrincipalCostRow = null; await Idle();
+            Check(vm.SecondaryFlowArcs.Count == globalArcCount && panel.PrincipalFlowCanvas.Children.Count > 0,
+                "secondary flow remains visible without selecting any account or principal centre " + language);
+            vm.SelectedPrincipalCostRow = priorCentre; await Idle();
+            var nextCentre = vm.PrincipalCosts.Skip(1).FirstOrDefault();
+            if (nextCentre is not null)
+            {
+                panel.PrincipalCostsGrid.SelectedItem = nextCentre; await Idle();
+                Check(vm.SelectedPrincipalCostRow == nextCentre && vm.PrincipalOriginRows.Sum(r => r.NumericAmount) == nextCentre.PresentedTotalAmount,
+                    "changing principal centre updates the adjacent cost-origin table " + language);
+            }
+            ScrollToElement(panel.PrincipalCostFlowSection); await Idle();
+            VisualEvidenceCapture.Capture(this, Path.Combine(directory, language + "-principal-flow.png"));
             foreach (var factGroup in publication.Facts.GroupBy(f => (f.TerminalNodeId, f.Behavior)))
                 Check(vm.SecondaryResults.Where(r => r.TerminalNodeId == factGroup.Key.TerminalNodeId && r.SourceBehavior == factGroup.Key.Behavior).Sum(r => r.PostedAmount)
                     == factGroup.Sum(f => f.PostedAmount.Amount), "behavior reconciles per destination " + language);
@@ -101,6 +206,26 @@ public partial class MainWindow
             Check(RootScrollViewer.VerticalOffset == outerBefore, "table bottom does not transfer wheel to page " + language);
             inside.ScrollToTop(); await Idle(); Wheel(panel.LinesGrid, 120); await Idle();
             Check(RootScrollViewer.VerticalOffset == outerBefore, "table top does not transfer wheel to page " + language);
+            // Regression: the previously activated table must not steal the wheel
+            // when the pointer is on another part of the page or another table.
+            RootScrollViewer.ScrollToTop(); await Idle();
+            var tableAtPointerExit = inside.VerticalOffset;
+            Wheel(panel.ActionStatus, -30); await Idle();
+            Check(RootScrollViewer.VerticalOffset > 0 && inside.VerticalOffset == tableAtPointerExit,
+                "activated table cannot hijack wheel outside its bounds " + language);
+            RootScrollViewer.ScrollToTop(); await Idle();
+            Wheel(panel.PrincipalCostsGrid, -30); await Idle();
+            Check(RootScrollViewer.VerticalOffset > 0 && inside.VerticalOffset == tableAtPointerExit,
+                "activated table cannot hijack wheel hovering over another grid " + language);
+            // The results graph allows horizontal scrolling only. Its vertical wheel
+            // must reach the document, even while a table still owns keyboard focus.
+            RootScrollViewer.ScrollToTop(); await Idle();
+            var graphScroll = Descendants<ScrollViewer>(panel.PrincipalCostFlowSection).Single();
+            var graphVertical = graphScroll.VerticalOffset;
+            Wheel(panel.PrincipalFlowCanvas, -30); await Idle();
+            Check(RootScrollViewer.VerticalOffset > 0 && graphScroll.VerticalOffset == graphVertical,
+                "vertical wheel over horizontal-only results graph scrolls the page " + language);
+            RootScrollViewer.ScrollToTop(); await Idle();
             Click(panel.ActionStatus); Wheel(panel.LinesGrid, -120); await Idle();
             Check(RootScrollViewer.VerticalOffset > outerBefore, "click outside returns wheel to page " + language);
             var editorScroll = Descendants<ScrollViewer>(panel.KeyNameBox).Single();
@@ -173,6 +298,11 @@ public partial class MainWindow
         await vm.CalculateSecondaryCommand.ExecuteAsync(null); await Idle();
         Check(vm.ReciprocalHasError && vm.ReciprocalChecks.Single().HasError && vm.SecondaryResults.Count == 0,
             "failed reciprocal calculation automatically reports error and removes stale results");
+        Check(vm.SecondaryCalculationFailed && vm.SelectedSecondary is not null &&
+            SecondaryPanel.Workspace.RemoveSecondaryButton.IsEnabled,
+            "impossible graph exposes selected repairable route without altering the saved key");
+        Check(vm.PrincipalOriginRows.Count == 0 && vm.SecondaryFlowArcs.Count == 0 && vm.AuxiliarySettlements.Count == 0,
+            "failed calculation shows no stale or invented reciprocal links or auxiliary liquidation");
         ScrollToElement(SecondaryPanel.Workspace.ReciprocalGrid); await Idle();
         var errorText = Descendants<TextBlock>(SecondaryPanel.Workspace.ReciprocalGrid)
             .Where(t => t.DataContext is ReciprocalCheckRow { HasError: true }).ToArray();

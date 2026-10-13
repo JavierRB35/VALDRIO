@@ -114,6 +114,7 @@
   <data name="CompanyAddUnit" xml:space="preserve"><value>Guardar unidad de actividad</value></data>
   <data name="CompanyNotes" xml:space="preserve"><value>El proyecto se guarda en un único archivo local que reúne la estructura de costes, los análisis por periodo, las importaciones y la preparación de cuentas. La moneda indicada aquí sirve como valor inicial y puede cambiarse en cada análisis.</value></data>
   <data name="CompanyNoFile" xml:space="preserve"><value>No hay ningún proyecto de costes abierto.</value></data>
+  <data name="GlobalProcessing" xml:space="preserve"><value>Procesando. VALDRIO está realizando una operación.</value></data>
   <data name="CompanyWorking" xml:space="preserve"><value>Operación en curso. Cancelar tiene efecto antes de la confirmación.</value></data>
   <data name="CompanyCompleted" xml:space="preserve"><value>Operación completada.</value></data>
   <data name="CompanyCancelled" xml:space="preserve"><value>Operación cancelada antes de confirmar. Los datos previos del archivo se conservan.</value></data>
@@ -140,6 +141,7 @@ Archivo: {8}</value></data>
   <data name="File.RevisionChanged" xml:space="preserve"><value>La revisión ha cambiado. Recarga la empresa antes de guardar.</value></data>
   <data name="File.DuplicateUnit" xml:space="preserve"><value>El ID o código de unidad ya existe. Usa un código único. No se ha confirmado ningún cambio.</value></data>
   <data name="File.InputInvalid" xml:space="preserve"><value>Revisa el nombre, la moneda y la unidad introducidos. No se ha confirmado ningún cambio.</value></data>
+  <data name="CompanyOpenFailureTitle" xml:space="preserve"><value>No se ha podido abrir el proyecto</value></data>
   <data name="CompanyUpgrade" xml:space="preserve"><value>Abrir y actualizar un archivo antiguo en una copia nueva</value></data>
   <data name="File.UpgradeRequired" xml:space="preserve"><value>Este archivo anterior requiere actualización a un archivo nuevo. Seleccione Actualizar y conserve el original.</value></data>
   <data name="File.UpgradeNotRequired" xml:space="preserve"><value>El archivo ya tiene la versión actual; no se ha actualizado.</value></data>
@@ -645,7 +647,7 @@ Completa: {5}</value></data>
 <data name="Resource.PartNotFound" xml:space="preserve"><value>Selecciona una parte existente y única de este recurso.</value></data>
   <data name="Resources.Title" xml:space="preserve"><value>Recursos</value></data>
   <data name="Resources.Introduction" xml:space="preserve"><value>Revisa los saldos importados y ajusta Correcciones (por ejemplo, amortización técnica o ajustes extracontables). Cada celda confirmada se guarda automáticamente. El importe efectivo se distribuye a los nodos en 6. Reparto primario.</value></data>
-  <data name="Resources.Ready" xml:space="preserve"><value>Correcciones se guarda al confirmar cada celda. La distribución se configura en Claves y reglas.</value></data>
+  <data name="Resources.Ready" xml:space="preserve"><value>Las correcciones se guardan al confirmar cada celda. La distribución se configura en Claves y reglas.</value></data>
   <data name="Resources.NeedStudy" xml:space="preserve"><value>Guarda o carga un estudio en el paso 3 para preparar sus recursos.</value></data>
   <data name="Resources.NeedImport" xml:space="preserve"><value>Primero importa y guarda datos contables en el análisis. Al terminar la importación, VALDRIO te traerá directamente aquí.</value></data>
   <data name="Resources.ReadOnly" xml:space="preserve"><value>El archivo está abierto para consulta. Ábrelo en modo edición para guardar cambios.</value></data>
@@ -869,7 +871,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.ModelStepHelp" xml:space="preserve"><value>La estructura de costes define cómo se organiza el reparto: centros, nodos, unidades y reglas. Puedes reutilizar la misma estructura en muchos análisis. Cuando esté terminada, finalízala para dejar esa versión disponible y protegida frente a cambios.</value></data>
   <data name="Model.ExistingModelHelp" xml:space="preserve"><value>Abrir una estructura existente</value></data>
   <data name="Model.NewModelHelp" xml:space="preserve"><value>Crear una estructura nueva</value></data>
-  <data name="Model.UnitSectionHelp" xml:space="preserve"><value>Las unidades de actividad indican cómo se medirá el trabajo de los nodos, por ejemplo horas, lotes o unidades. Puedes crearlas aquí como catálogo reutilizable, pero no es obligatorio hacerlo por adelantado: también podrás crear una nueva directamente al configurar un nodo.</value></data>
+  <data name="Model.UnitSectionHelp" xml:space="preserve"><value>Elige una unidad de actividad del catálogo incluido (horas, lotes, pedidos, etc.) o crea una propia al configurar un nodo.</value></data>
   <data name="Model.ReviewModelHelp" xml:space="preserve"><value>Revisa la estructura. Guardar conserva el trabajo en preparación; Comprobar detecta incoherencias; Finalizar crea una versión fija y lista para usar en análisis. No se envía ni publica nada fuera de VALDRIO.</value></data>
   <data name="Model.CenterSectionHelp" xml:space="preserve"><value>Un centro físico representa un área reconocible de la empresa, como Prensa, Mantenimiento o Administración. Añade los centros uno a uno; los ya guardados permanecen visibles en la tabla.</value></data>
   <data name="Model.CenterListTitle" xml:space="preserve"><value>Centros ya guardados</value></data>
@@ -917,7 +919,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.CreateUnitHere" xml:space="preserve"><value>¿No aparece la unidad que necesitas? Crear una aquí</value></data>
   <data name="Model.CreateUnitHereHelp" xml:space="preserve"><value>Crea la unidad sin salir del nodo. Se guardará como unidad reutilizable de la empresa y, si el alta termina correctamente, VALDRIO la seleccionará automáticamente en este nodo.</value></data>
   <data name="Model.UnitCatalogTitle" xml:space="preserve"><value>Gestionar catálogo de unidades de actividad (opcional)</value></data>
-  <data name="CompanyUnitCreationHelp" xml:space="preserve"><value>Define cómo se medirá la actividad. Por ejemplo: código HORAS, tipo de medida time. La unidad se guarda una sola vez y puede reutilizarse en distintos nodos.</value></data>
+  <data name="CompanyUnitCreationHelp" xml:space="preserve"><value>¿Necesitas otra medida? Crea una unidad de actividad personalizada para reutilizarla en distintos nodos.</value></data>
   <data name="CompanyUnitRequiredHelp" xml:space="preserve"><value>Obligatorio: código de unidad y tipo de medida. Símbolo, decimales y unidades enteras son opciones adicionales.</value></data>
   <data name="CompanyUnitAdvanced" xml:space="preserve"><value>Opciones adicionales de la unidad</value></data>
   <data name="ImportMapping.FileStepTitle" xml:space="preserve"><value>Selecciona el archivo de origen</value></data>
@@ -1098,6 +1100,15 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.NumberFormat" xml:space="preserve"><value>Formato de edición: {0}. Separador decimal: «{1}». Se conserva mientras editas.</value></data>
   <data name="AllocationUI.CheckNumbers" xml:space="preserve"><value>Revisa los valores introducidos.</value></data>
   <data name="AllocationUI.Complete" xml:space="preserve"><value>Clave válida: puede guardarse y utilizarse.</value></data>
+  <data name="AllocationUI.BackToKeys" xml:space="preserve"><value>Volver a claves y reglas</value></data>
+  <data name="AllocationUI.BulkAssignHelp" xml:space="preserve"><value>Selecciona las partes pendientes en la tabla (Ctrl o Mayús para varias). Solo se asignarán las que no estén cubiertas: no se sobrescriben reglas ni asignaciones manuales o absolutas.</value></data>
+  <data name="AllocationUI.BulkAssignKey" xml:space="preserve"><value>Clave primaria publicada</value></data>
+  <data name="AllocationUI.BulkAssignAction" xml:space="preserve"><value>Asignar clave a las seleccionadas</value></data>
+  <data name="AllocationUI.BulkAssignSelectKey" xml:space="preserve"><value>Selecciona una clave primaria publicada y las filas pendientes.</value></data>
+  <data name="AllocationUI.BulkAssignPreview" xml:space="preserve"><value>Seleccionadas: {0} · pendientes aplicables: {1} · omitidas: {2} · importe: {3}.</value></data>
+  <data name="AllocationUI.BulkAssignConfirm" xml:space="preserve"><value>Se asignará la clave a {0} partes pendientes, por {1}. Se omitirán {2} filas ya cubiertas o protegidas. No se cambiarán asignaciones anteriores. ¿Confirmar?</value></data>
+  <data name="AllocationUI.BulkAssignTitle" xml:space="preserve"><value>Confirmar asignación múltiple</value></data>
+  <data name="AllocationUI.BulkAssignError" xml:space="preserve"><value>No se ha podido completar la asignación múltiple. Revisa el estado y vuelve a intentarlo.</value></data>
   <data name="AllocationUI.Coverage" xml:space="preserve"><value>Asignar claves a las cuentas</value></data>
   <data name="AllocationUI.CoverageSummary" xml:space="preserve"><value>{0} de {1} partes asignadas. Selecciona una clave en la tabla para asignarla directamente.</value></data>
   <data name="AllocationUI.Covered" xml:space="preserve"><value>Reparto definido</value></data>
@@ -1251,6 +1262,89 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.SecondaryGross" xml:space="preserve"><value>Circulación bruta de auxiliares (informativa, no se suma al coste final)</value></data>
   <data name="AllocationUI.CalculateSecondary" xml:space="preserve"><value>Realizar cálculo</value></data>
   <data name="AllocationUI.CloseSecondary" xml:space="preserve"><value>Cerrar reparto secundario</value></data>
+  <data name="AllocationUI.SecondaryRepairHelp" xml:space="preserve"><value>El cálculo no es viable con las reglas actuales. Puedes quitar la asignación secundaria seleccionada y sustituirla por otra clave. Si la clave publicada ya se utilizó, crea una nueva versión en lugar de sobrescribirla o eliminar su historial.</value></data>
+  <data name="AllocationUI.SecondaryRepairAction" xml:space="preserve"><value>Corregir clave o asignación secundaria</value></data>
+  <data name="AllocationUI.SecondaryRepairVersionHelp" xml:space="preserve"><value>Crea una nueva versión editable de una clave publicada. Las versiones referenciadas se conservan por trazabilidad.</value></data>
+  <data name="AllocationUI.PrincipalOriginMoreKeys" xml:space="preserve"><value>(+{0} más)</value></data>
+  <data name="AllocationUI.PrincipalOriginTitle" xml:space="preserve"><value>Origen de los costes del centro seleccionado</value></data>
+  <data name="AllocationUI.PrincipalOriginOverviewHelp" xml:space="preserve"><value>Selecciona una fila del cuadro de centros principales: a la derecha se muestra la procedencia de sus costes y, debajo, el flujo visual. Los importes concilian; la circulación interna entre auxiliares no se suma al total final.</value></data>
+  <data name="AllocationUI.PrincipalOriginSelect" xml:space="preserve"><value>Selecciona un centro principal para consultar el origen de sus costes.</value></data>
+  <data name="AllocationUI.PrincipalOriginSummary" xml:space="preserve"><value>{0} · coste final {1}</value></data>
+  <data name="AllocationUI.PrincipalOriginDirect" xml:space="preserve"><value>Directo</value></data>
+  <data name="AllocationUI.PrincipalOriginAuxiliary" xml:space="preserve"><value>Vía auxiliar</value></data>
+  <data name="AllocationUI.PrincipalFlowTitle" xml:space="preserve"><value>Flujo global: del reparto primario, por auxiliares recíprocos, hasta principales</value></data>
+  <data name="AllocationUI.PrincipalFlowHelp" xml:space="preserve"><value>El diagrama muestra automáticamente todos los nodos con coste primario, todas las transferencias brutas entre auxiliares (incluida reciprocidad y autoasignación) y las salidas a principales, sin selección previa. Los principales conservan también su coste primario. La circulación auxiliar es informativa y no se suma al coste final.</value></data>
+  <data name="AllocationUI.PrincipalFlowAccounts" xml:space="preserve"><value>Cuentas de origen</value></data>
+  <data name="AllocationUI.PrincipalFlowPrimary" xml:space="preserve"><value>Nodos de reparto primario</value></data>
+  <data name="AllocationUI.PrincipalFlowDestination" xml:space="preserve"><value>Centro principal receptor</value></data>
+  <data name="AllocationUI.DeleteSelectFirst" xml:space="preserve"><value>Selecciona una clave en la biblioteca para conocer si se puede eliminar.</value></data>
+  <data name="AllocationUI.DeleteOpenSecondaryFirst" xml:space="preserve"><value>Reabre el reparto secundario para cambiar o eliminar sus claves.</value></data>
+  <data name="AllocationUI.DeleteLockedPhase" xml:space="preserve"><value>Esta fase está cerrada o el estudio es de solo lectura.</value></data>
+  <data name="AllocationUI.DeletePendingChanges" xml:space="preserve"><value>Guarda o descarta los cambios pendientes antes de eliminar.</value></data>
+  <data name="AllocationUI.DeleteSecondaryAssigned" xml:space="preserve"><value>Esta clave figura en una regla secundaria guardada (incluso si está inactiva). Elimina o sustituye la regla actual; los vínculos históricos siguen protegidos.</value></data>
+  <data name="AllocationUI.DeletePrimaryAssigned" xml:space="preserve"><value>Esta clave está referenciada por una asignación o regla primaria guardada, incluso si está inactiva.</value></data>
+  <data name="AllocationUI.DeleteHistoricUse" xml:space="preserve"><value>Clave protegida: existe al menos una asignación histórica, aunque ya no se use actualmente. No se elimina para preservar la trazabilidad.</value></data>
+  <data name="AllocationUI.DeleteHasVersions" xml:space="preserve"><value>Esta clave tiene versiones posteriores; se conserva como antecesora.</value></data>
+  <data name="AllocationUI.DeleteReady" xml:space="preserve"><value>Esta clave no tiene usos históricos ni versiones dependientes y puede eliminarse.</value></data>
+  <data name="AllocationUI.PrimaryAccountOverviewTitle" xml:space="preserve"><value>Reparto primario por cuenta (selecciona una fila para ver los destinos)</value></data>
+  <data name="AllocationUI.PrimaryAccountOverviewHelp" xml:space="preserve"><value>Base repartible = partes asignables a nodos, no el gasto contable completo. Las imputaciones directas a objetos, las exclusiones y los pendientes se presentan por separado. El detalle conserva clave, criterio, unidades y porcentaje del hecho primario.</value></data>
+  <data name="AllocationUI.PrimaryKpiEffectiveLabel" xml:space="preserve"><value>Recursos efectivos</value></data>
+  <data name="AllocationUI.PrimaryKpiRepartibleLabel" xml:space="preserve"><value>Base repartible</value></data>
+  <data name="AllocationUI.PrimaryKpiAssignedLabel" xml:space="preserve"><value>Repartido a nodos</value></data>
+  <data name="AllocationUI.PrimaryKpiPendingLabel" xml:space="preserve"><value>Pendiente</value></data>
+  <data name="AllocationUI.PrimaryKpiExcludedLabel" xml:space="preserve"><value>Excluido</value></data>
+  <data name="AllocationUI.PrimaryKpiDirectObjectLabel" xml:space="preserve"><value>Directo a objetos</value></data>
+  <data name="AllocationUI.PrimaryRepartibleHeader" xml:space="preserve"><value>Repartible</value></data>
+  <data name="AllocationUI.PrimaryAuxiliaryHeader" xml:space="preserve"><value>A auxiliares</value></data>
+  <data name="AllocationUI.PrimaryMainHeader" xml:space="preserve"><value>A principales</value></data>
+  <data name="AllocationUI.PrimaryAssignedHeader" xml:space="preserve"><value>Asignado</value></data>
+  <data name="AllocationUI.PrimaryPendingHeader" xml:space="preserve"><value>Diferencia</value></data>
+  <data name="AllocationUI.PrimaryPercentHeader" xml:space="preserve"><value>% asignado</value></data>
+  <data name="AllocationUI.PrimaryDriverDetailHeader" xml:space="preserve"><value>Criterio / unidades</value></data>
+  <data name="AllocationUI.PrimaryShareDetailHeader" xml:space="preserve"><value>% reparto</value></data>
+  <data name="AllocationUI.PrimarySelectionDetailHeader" xml:space="preserve"><value>Asignación / clave</value></data>
+  <data name="AllocationUI.PrimaryNodeKindPrincipal" xml:space="preserve"><value>Principal</value></data>
+  <data name="AllocationUI.PrimaryNodeKindAuxiliary" xml:space="preserve"><value>Auxiliar</value></data>
+  <data name="AllocationUI.PrimaryFlowSelectionTitle" xml:space="preserve"><value>Flujo desde la cuenta seleccionada</value></data>
+  <data name="AllocationUI.PrimaryFlowSelectionHelp" xml:space="preserve"><value>Representación explicativa de importes del reparto primario, no una nueva imputación ni una reconstrucción de servicios auxiliares.</value></data>
+  <data name="AllocationUI.AuxiliarySettlementTitle" xml:space="preserve"><value>Liquidación de costes de nodos auxiliares</value></data>
+  <data name="AllocationUI.AuxiliarySettlementNotAvailable" xml:space="preserve"><value>Sin liquidación válida. Calcula el reparto secundario antes de consultar estos saldos.</value></data>
+  <data name="AllocationUI.AuxiliarySettlementExplanation" xml:space="preserve"><value>Por grupo de reparto: coste primario inicial + recepción recíproca neta = circulación bruta distribuida. El saldo es teórico una vez realizado el reparto completo; las recepciones no se vuelven a sumar al coste final. No se imputan movimientos internos por cuenta que el motor no registra.</value></data>
+  <data name="AllocationUI.AuxiliarySettlementInitial" xml:space="preserve"><value>Coste primario</value></data>
+  <data name="AllocationUI.AuxiliarySettlementIncoming" xml:space="preserve"><value>Recibido neto (deducido)</value></data>
+  <data name="AllocationUI.AuxiliarySettlementGross" xml:space="preserve"><value>Distribuido (bruto)</value></data>
+  <data name="AllocationUI.AuxiliarySettlementBalance" xml:space="preserve"><value>Saldo teórico</value></data>
+  <data name="AllocationUI.AuxiliarySettlementTheoreticalZero" xml:space="preserve"><value>0 (teórico)</value></data>
+  <data name="AllocationUI.AuxiliarySettlementSolverResidual" xml:space="preserve"><value>Máximo residuo matemático global de los grupos: {0} {1}. No representa un saldo contable individual.</value></data>
+  <data name="AllocationUI.PrimaryFlowLimited" xml:space="preserve"><value>Vista limitada a los {0} flujos de mayor importe entre {1}; la tabla de destinos contiene el detalle completo.</value></data>
+  <data name="AllocationUI.SecondaryFlowNoResult" xml:space="preserve"><value>Todavía no hay un reparto secundario calculado o publicado que pueda visualizarse.</value></data>
+  <data name="AllocationUI.SecondaryFlowFullTitle" xml:space="preserve"><value>Red global de reparto secundario — sin seleccionar centros</value></data>
+  <data name="AllocationUI.SecondaryFlowStagePrimary" xml:space="preserve"><value>1. Coste que llega del reparto primario: nodos principales y auxiliares</value></data>
+  <data name="AllocationUI.SecondaryFlowStageReciprocal" xml:space="preserve"><value>2. Prestaciones recíprocas entre auxiliares (circulación bruta)</value></data>
+  <data name="AllocationUI.SecondaryFlowStageFinal" xml:space="preserve"><value>3. Transferencias de auxiliares a nodos principales</value></data>
+  <data name="AllocationUI.SecondaryFlowNoRoutesStage" xml:space="preserve"><value>No hay transferencias en esta etapa.</value></data>
+  <data name="AllocationUI.SecondaryFlowTotalsTitle" xml:space="preserve"><value>4. Coste final conciliado de los nodos principales (primario + secundario)</value></data>
+  <data name="AllocationUI.SecondaryFlowInitialAux" xml:space="preserve"><value>Entrada al auxiliar</value></data>
+  <data name="AllocationUI.SecondaryFlowInitialPrincipal" xml:space="preserve"><value>Coste primario principal</value></data>
+  <data name="AllocationUI.SecondaryFlowCompleteNotice" xml:space="preserve"><value>Vista completa de {0} tramos. Total final de los principales: {1}. La circulación interna se indica de forma separada y NO debe sumarse de nuevo. Los importes de las flechas son proyecciones brutas de los coeficientes publicados; los importes económicos finales se comprueban en las tablas.</value></data>
+  <data name="AllocationUI.SecondaryFlowUnavailable" xml:space="preserve"><value>No se puede representar con seguridad la red recíproca completa con las claves guardadas. Los resultados económicos originales no han cambiado.</value></data>
+  <data name="AllocationUI.PrincipalOriginAccountHeader" xml:space="preserve"><value>Cuenta de origen</value></data>
+  <data name="AllocationUI.PrincipalOriginInitialNodeHeader" xml:space="preserve"><value>Nodo primario inicial</value></data>
+  <data name="AllocationUI.PrincipalOriginRouteHeader" xml:space="preserve"><value>Vía</value></data>
+  <data name="AllocationUI.PrincipalOriginAmountHeader" xml:space="preserve"><value>Coste atribuido</value></data>
+  <data name="AllocationUI.PrincipalOriginKeysHeader" xml:space="preserve"><value>Claves utilizadas</value></data>
+  <data name="AllocationUI.SecondaryGraphTitle" xml:space="preserve"><value>Recorrido global del coste entre nodos</value></data>
+  <data name="AllocationUI.SecondaryGraphOriginHeader" xml:space="preserve"><value>1. Nodos tras el reparto primario</value></data>
+  <data name="AllocationUI.SecondaryGraphAuxHeader" xml:space="preserve"><value>2. Nodos auxiliares y reciprocidad</value></data>
+  <data name="AllocationUI.SecondaryGraphPrincipalHeader" xml:space="preserve"><value>3. Coste final en nodos principales</value></data>
+  <data name="AllocationUI.SecondaryGraphKey" xml:space="preserve"><value>Tarjetas azules: nodos auxiliares · tarjetas verdes: nodos principales. Curvas verdes: transferencias finales · curvas grises discontinuas: coste primario directo · curvas azules discontinuas: prestaciones recíprocas (circulación bruta, no coste adicional). Pasa el ratón por una tarjeta para resaltar sus conexiones y por una curva para ver el importe y el grupo.</value></data>
+  <data name="AllocationUI.SecondaryGraphInitialAux" xml:space="preserve"><value>PRIMARIO · AUXILIAR</value></data>
+  <data name="AllocationUI.SecondaryGraphInitialPrincipal" xml:space="preserve"><value>PRIMARIO · PRINCIPAL</value></data>
+  <data name="AllocationUI.SecondaryGraphAuxType" xml:space="preserve"><value>AUXILIAR · RECÍPROCO</value></data>
+  <data name="AllocationUI.SecondaryGraphGross" xml:space="preserve"><value>Circulación bruta</value></data>
+  <data name="AllocationUI.SecondaryGraphInitial" xml:space="preserve"><value>Coste primario</value></data>
+  <data name="AllocationUI.SecondaryGraphPrincipalType" xml:space="preserve"><value>PRINCIPAL · FINAL</value></data>
+  <data name="AllocationUI.SecondaryGraphReceived" xml:space="preserve"><value>Absorción secundaria</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reabrir reparto secundario</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explicar coste seleccionado</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Comportamiento</value></data>
@@ -1369,4 +1463,28 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.GrossDiagnosticTotal" xml:space="preserve"><value>Total bruto (informativo, no se suma al final)</value></data>
+  <data name="Guide.CloseAccountDetailsForKeys" xml:space="preserve"><value>Está abierto «Detalle de cuentas». Cierra ese panel para volver al editor de claves de reparto.</value></data>
+  <data name="CompanyDefaultsHelp" xml:space="preserve"><value>Los proyectos nuevos incluyen 20 unidades de actividad habituales. En los existentes puedes añadir las que falten sin modificar las guardadas.</value></data>
+  <data name="CompanyInstallDefaults" xml:space="preserve"><value>Añadir unidades habituales que faltan</value></data>
+  <data name="CompanyDefaultsInstalled" xml:space="preserve"><value>Unidades de actividad habituales añadidas correctamente.</value></data>
+  <data name="ActivityUnit.unit" xml:space="preserve"><value>Unidad</value></data>
+  <data name="ActivityUnit.labor_hour" xml:space="preserve"><value>Hora de mano de obra</value></data>
+  <data name="ActivityUnit.machine_hour" xml:space="preserve"><value>Hora de máquina</value></data>
+  <data name="ActivityUnit.minute" xml:space="preserve"><value>Minuto</value></data>
+  <data name="ActivityUnit.batch" xml:space="preserve"><value>Lote</value></data>
+  <data name="ActivityUnit.kilogram" xml:space="preserve"><value>Kilogramo</value></data>
+  <data name="ActivityUnit.liter" xml:space="preserve"><value>Litro</value></data>
+  <data name="ActivityUnit.meter" xml:space="preserve"><value>Metro</value></data>
+  <data name="ActivityUnit.square_meter" xml:space="preserve"><value>Metro cuadrado</value></data>
+  <data name="ActivityUnit.cubic_meter" xml:space="preserve"><value>Metro cúbico</value></data>
+  <data name="ActivityUnit.kilometer" xml:space="preserve"><value>Kilómetro</value></data>
+  <data name="ActivityUnit.kilowatt_hour" xml:space="preserve"><value>Kilovatio hora</value></data>
+  <data name="ActivityUnit.order" xml:space="preserve"><value>Pedido</value></data>
+  <data name="ActivityUnit.operation" xml:space="preserve"><value>Operación</value></data>
+  <data name="ActivityUnit.service" xml:space="preserve"><value>Servicio</value></data>
+  <data name="ActivityUnit.delivery" xml:space="preserve"><value>Entrega</value></data>
+  <data name="ActivityUnit.transaction" xml:space="preserve"><value>Transacción</value></data>
+  <data name="ActivityUnit.setup" xml:space="preserve"><value>Preparación</value></data>
+  <data name="ActivityUnit.pallet" xml:space="preserve"><value>Palé</value></data>
+  <data name="ActivityUnit.cycle" xml:space="preserve"><value>Ciclo</value></data>
 </root>

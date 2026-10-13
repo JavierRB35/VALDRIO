@@ -6,6 +6,7 @@ using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Data.Sqlite;
 using Valdrio.Application;
 using Valdrio.Infrastructure;
 using Valdrio.Infrastructure.CompanyFiles;
@@ -33,6 +34,10 @@ public partial class CompanyFilePanel
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
             UpdateLayout();
         }
+        Check(CompanyFileDialogs.SuggestedFileName("Café / Taller: Norte") == "Café - Taller- Norte",
+            "new project dialog suggests a Windows-safe filename from project name");
+        Check(CompanyFileDialogs.SuggestedFileName("CON") == "_CON",
+            "reserved Windows device names receive a safe prefix");
         main.ApplyPresentationPreset("en", "es-ES", "UTC", false, false);
         SetText(NameBox, "VALDRIO synthetic factory 日本");
         CurrencyBox.SetCurrentValue(ComboBox.SelectedItemProperty, "USD"); CurrencyBox.GetBindingExpression(ComboBox.SelectedItemProperty)!.UpdateSource();
@@ -42,19 +47,44 @@ public partial class CompanyFilePanel
         SetText(NameBox, "Draft for another company");
         Check(ActiveCompanyNameText.Text == "VALDRIO synthetic factory 日本", "new company draft does not rename active company");
         var id = vm.Snapshot!.Id;
+        Check(vm.Snapshot.Units.Count == DefaultActivityUnitCatalog.All.Count &&
+              vm.Snapshot.Units.Any(u => u.Code == "machine_hour"), "new project contains standard units");
         SetText(UnitCodeBox, "00123"); await Click(AddUnitButton);
-        Check(vm.Snapshot.Units.Single().Code == "00123", "bound unit saved");
+        Check(vm.Snapshot.Units.Any(u => u.Code == "00123"), "bound custom unit saved");
         dialogs.Paths.Enqueue(backup); await Click(BackupButton);
         Check(File.Exists(backup), "live backup created");
         await Click(CloseButton); Check(vm.Snapshot is null, "close removes active session");
         Check(ActiveCompanyNameText.Text == vm.ActiveCompanyName && !ActiveCompanyNameText.Text.Contains("synthetic factory", StringComparison.Ordinal), "closing clears active company label");
         dialogs.Paths.Enqueue(path); await Click(OpenButton);
         Check(ActiveCompanyNameText.Text == "VALDRIO synthetic factory 日本", "reopening shows persisted company name");
-        Check(vm.Snapshot?.Id == id && vm.Snapshot.Units.Count == 1, "real reopen retains identity and unit");
+        Check(vm.Snapshot?.Id == id && vm.Snapshot.Units.Count == DefaultActivityUnitCatalog.All.Count + 1,
+            "real reopen retains identity and standard plus custom units");
         var hash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)));
         var bad = Path.Combine(output, "bad.fixture"); File.WriteAllText(bad, "corrupt");
         dialogs.Paths.Enqueue(bad); await Click(OpenButton);
         Check(vm.Snapshot?.Id == id && vm.DiagnosticCode?.StartsWith("FILE_", StringComparison.Ordinal) == true, "failed open preserves active company");
+        // Simulate a previous-format file on a disposable copy. Schema rejection must
+        // not crash WPF, mutate the source or replace the active company session.
+        var older = Path.Combine(output, "older-schema.valdrio");
+        File.Copy(path, older);
+        using (var connection = new SqliteConnection(new SqliteConnectionStringBuilder
+               { DataSource = older, Pooling = false }.ToString()))
+        {
+            connection.Open();
+            using var command = connection.CreateCommand();
+            command.CommandText = "UPDATE FileMetadata SET SchemaVersion=8";
+            Check(command.ExecuteNonQuery() == 1, "previous format test fixture prepared");
+        }
+        var oldHash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(older)));
+        string? alert = null;
+        vm.OpenFailure = message => alert = message;
+        dialogs.Paths.Enqueue(older); await Click(OpenButton);
+        Check(vm.DiagnosticCode == "FILE_UPGRADE_REQUIRED" && !string.IsNullOrWhiteSpace(alert),
+            "previous format raises an actionable warning without ending the WPF session");
+        Check(vm.Snapshot?.Id == id && vm.ActivePath == path &&
+              Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(older))) == oldHash,
+            "previous format leaves active project and source file untouched");
+        vm.OpenFailure = null;
         dialogs.Paths.Enqueue(path); await Click(CreateButton);
         Check(vm.Snapshot?.Id == id && Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))) == hash,
             "failed creation never overwrites");
@@ -75,7 +105,9 @@ public partial class CompanyFilePanel
         // Query independently using the same public storage port; UI text alone is not persistence evidence.
         var catalog = new JsonCurrencyCatalog(Path.Combine(AppContext.BaseDirectory, "reference", "currency-catalog-example.json"));
         using (var independent = new SqliteCompanyFileService(catalog, new SystemClock()).Open(path, CompanyFileOpenMode.ReadOnly))
-            Check(independent.Read().Id == id && independent.Read().Units.Single().Code == "00123", "independent read of UI-created SQLite");
+            Check(independent.Read().Id == id && independent.Read().Units.Any(u => u.Code == "00123")
+                && independent.Read().Units.Count == DefaultActivityUnitCatalog.All.Count + 1,
+                "independent read of UI-created SQLite");
         var window = (MainWindow)System.Windows.Window.GetWindow(this);
         window.ResetScrollForCapture();
         VisualEvidenceCapture.Capture(window, Path.Combine(output, "company-panel.png"));

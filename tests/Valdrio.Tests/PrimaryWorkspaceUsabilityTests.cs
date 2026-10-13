@@ -25,6 +25,8 @@ public sealed partial class T06ImportConfirmationTests
             file.Allocations.ChangeAllocations(AllocationCommand(w, new([pending], [], [], [], [])));
             var live = file.Allocations.ReadAllocations(w.Study.CompanyId, studyId);
             Assert.IsFalse(live.UsedKeyIds.Contains(key.Id));
+            Assert.IsTrue(live.ProtectedKeyIds.Contains(key.Id),
+                "Even an inactive rule persists a snapshot reference and protects the key from deletion.");
             key = file.Allocations.SaveAllocationKey(edited with { ExpectedRevision = key.Revision, RequestId = Id(), Lines = command.Lines.Select(l => l with { Value = 1m }).ToArray() }).After;
             file.Allocations.ChangeAllocations(AllocationCommand(live.Resources, new([pending with { IsActive = true }], [], [], [], [])));
             live = file.Allocations.ReadAllocations(w.Study.CompanyId, studyId);
@@ -57,6 +59,10 @@ public sealed partial class T06ImportConfirmationTests
         vm.RuleAccount = vm.Accounts.First().Value; vm.RuleKey = first;
         await vm.SaveRuleCommand.ExecuteAsync(null);
         Assert.AreEqual(0, vm.PrimaryResults.Count); Assert.AreEqual(vm["RuleSavedOnly"], vm.Status);
+        vm.SelectedKey = vm.Keys.Single(k => k.Value.Id == first);
+        Assert.IsFalse(vm.DeleteKeyCommand.CanExecute(null),
+            "An inactive saved rule protects its referenced key even though it does not allocate cost.");
+        Assert.AreEqual(vm["DeletePrimaryAssigned"], vm.KeyDeleteHelp);
         await vm.ApplyRuleCommand.ExecuteAsync(null);
         Assert.AreEqual(1, vm.PrimaryResults.Count); var originalDestination = vm.PrimaryResults.Single().Destination;
         vm.RuleKey = second;

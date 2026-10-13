@@ -39,6 +39,8 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
         NewProjectCommand = new AsyncRelayCommand(NewProject, () => Available && active is not null);
         AddUnitCommand = new AsyncRelayCommand(AddUnit, () => Available && active is not null &&
             !string.IsNullOrWhiteSpace(UnitCode) && !string.IsNullOrWhiteSpace(UnitDimension));
+        AddDefaultUnitsCommand = new AsyncRelayCommand(AddDefaultUnits,
+            () => Available && CanWrite && Snapshot is not null && DefaultActivityUnitCatalog.HasMissing(Snapshot.Units));
         BackupCommand = new AsyncRelayCommand(Backup, () => Available && active is not null);
         RestoreCommand = new AsyncRelayCommand(Restore, () => Available);
         UpgradeCommand = new AsyncRelayCommand(Upgrade, () => Available);
@@ -50,10 +52,12 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public IAsyncRelayCommand CloseCommand { get; }
     public IAsyncRelayCommand NewProjectCommand { get; }
     public IAsyncRelayCommand AddUnitCommand { get; }
+    public IAsyncRelayCommand AddDefaultUnitsCommand { get; }
     public IAsyncRelayCommand BackupCommand { get; }
     public IAsyncRelayCommand RestoreCommand { get; }
     public IAsyncRelayCommand UpgradeCommand { get; }
     public string UpgradeLabel => Text("CompanyUpgrade");
+    public bool UpgradeSuggested => diagnostic?.Code == "FILE_UPGRADE_REQUIRED";
     public IRelayCommand CancelCommand { get; }
     public IReadOnlyList<string> CurrencyOptions { get; }
     public IReadOnlyList<int> ScaleOptions { get; } = Enumerable.Range(0,13).ToArray();
@@ -92,6 +96,8 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public Func<bool>? WorkspaceBusy { get; set; }
     public Func<Task<bool>>? BeforeChangeAsync { get; set; }
     public Func<Task>? AfterChangeAsync { get; set; }
+    // A recoverable file-open error is surfaced visibly without failing the UI dispatcher.
+    public Action<string>? OpenFailure { get; set; }
     public IModelWorkspace? ActiveModels => active?.Models;
     public IStudyWorkspace? ActiveStudies => active?.Studies;
     public IImportWorkspace? ActiveImports => active?.Imports;
@@ -99,6 +105,11 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public IAllocationWorkspace? ActiveAllocations => active?.Allocations;
     public bool CanWrite => active?.Mode == CompanyFileOpenMode.Edit;
     public bool WorkspaceIdle => !busy && WorkspaceBusy?.Invoke() != true;
+    // Central activity state shared by every workspace. Existing asynchronous
+    // workflows call NotifyWorkspaceStateChanged at start/end, so the shell
+    // indicator follows file, model, study, import, resources and allocation.
+    public bool IsProcessing => !WorkspaceIdle;
+    public string WorkingLabel => Text("GlobalProcessing");
     private bool Available => !busy && WorkspaceBusy?.Invoke() != true;
     public void NotifyWorkspaceStateChanged() => Refresh();
     public CompanyFileSnapshot? Snapshot { get; private set; }
@@ -127,6 +138,9 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public string CancelLabel => Text("CompanyCancel");
     public string UnitLabel => Text("CompanyUnitLabel");
     public string UnitCreationHelp => Text("CompanyUnitCreationHelp");
+    public string DefaultUnitsHelp => Text("CompanyDefaultsHelp");
+    public string AddDefaultUnitsLabel => Text("CompanyInstallDefaults");
+    public bool MissingDefaultUnits => CanWrite && Snapshot is not null && DefaultActivityUnitCatalog.HasMissing(Snapshot.Units);
     public string UnitRequiredHelp => Text("CompanyUnitRequiredHelp");
     public string UnitAdvancedLabel => Text("CompanyUnitAdvanced");
     public string DimensionLabel => Text("CompanyDimensionLabel");
@@ -154,7 +168,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     {
         OnPropertyChanged(string.Empty);
         CreateCommand.NotifyCanExecuteChanged(); OpenCommand.NotifyCanExecuteChanged(); CloseCommand.NotifyCanExecuteChanged(); NewProjectCommand.NotifyCanExecuteChanged();
-        AddUnitCommand.NotifyCanExecuteChanged(); BackupCommand.NotifyCanExecuteChanged(); RestoreCommand.NotifyCanExecuteChanged(); UpgradeCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
+        AddUnitCommand.NotifyCanExecuteChanged(); AddDefaultUnitsCommand.NotifyCanExecuteChanged(); BackupCommand.NotifyCanExecuteChanged(); RestoreCommand.NotifyCanExecuteChanged(); UpgradeCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
     }
     private async Task Run(Func<CancellationToken, Task> operation)
     {
@@ -172,22 +186,106 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     {
         CompanyFileSnapshot snapshot;
         try { snapshot = await Task.Run(() => candidate.Read()); } catch { candidate.Dispose(); throw; }
-        var old = active; active = candidate; Snapshot = snapshot; old?.Dispose();
-        if (AfterChangeAsync is not null) await AfterChangeAsync();
+        var old = active;
+        var previousSnapshot = Snapshot;
+        active = candidate;
+        Snapshot = snapshot;
+        try
+        {
+            if (AfterChangeAsync is not null) await AfterChangeAsync();
+        }
+        catch
+        {
+            // Keep the previous session usable if a dependent workspace rejects the switch.
+            active = old;
+            Snapshot = previousSnapshot;
+            candidate.Dispose();
+            if (AfterChangeAsync is not null)
+            {
+                try { await AfterChangeAsync(); }
+                catch (Exception rollbackError) { Trace.TraceError("Workspace restoration after failed open: {0}", rollbackError); }
+            }
+            throw;
+        }
+        old?.Dispose();
     }
     private async Task Create()
     {
         if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
-        var path = dialogs.SelectNewFile(); if (path is null) return;
         var name = CompanyName; var selectedCurrency = Currency;
-        await Run(async token => await ReplaceAsync(await Task.Run(() => files.Create(
-            new(path, name, new CurrencyCode(selectedCurrency), PrecisionPolicy.Pdec1Proposed), token))));
+        var path = dialogs.SelectNewFile(name); if (path is null) return;
+        await Run(async token =>
+        {
+            var candidate = await Task.Run(() =>
+            {
+                var session = files.Create(
+                    new(path, name, new CurrencyCode(selectedCurrency), PrecisionPolicy.Pdec1Proposed), token);
+                try
+                {
+                    var created = session.Read(token);
+                    var defaults = DefaultActivityUnitCatalog.Missing(created.Units);
+                    if (defaults.Count != 0)
+                        session.AddUnits(defaults, created.Revision, "system-defaults", token);
+                    return session;
+                }
+                catch
+                {
+                    session.Dispose();
+                    throw;
+                }
+            }, token);
+            await ReplaceAsync(candidate);
+        });
     }
-    private async Task Open() { var path = dialogs.SelectFile(); if (path is not null) await OpenPath(path); }
+    private async Task Open()
+    {
+        try
+        {
+            var path = dialogs.SelectFile();
+            if (path is not null) await OpenPath(path);
+        }
+        catch (Exception ex)
+        {
+            SetUnexpectedOpenFailure(ex);
+            ReportOpenFailure();
+        }
+    }
     public async Task OpenPath(string path)
     {
-        if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
-        await Run(async token => await ReplaceAsync(await Task.Run(() => files.Open(path, cancellationToken: token))));
+        try
+        {
+            if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
+            await Run(async token => await ReplaceAsync(await Task.Run(() => files.Open(path, cancellationToken: token))));
+        }
+        catch (OperationCanceledException)
+        {
+            diagnostic = null;
+            statusKey = "CompanyCancelled";
+            Refresh();
+        }
+        catch (Exception ex)
+        {
+            // Includes failures from pending-edit coordination outside Run().
+            SetUnexpectedOpenFailure(ex);
+        }
+        ReportOpenFailure();
+    }
+    private void SetUnexpectedOpenFailure(Exception ex)
+    {
+        Trace.TraceError("Opening company failed: {0}", ex);
+        diagnostic = ex switch
+        {
+            CompanyFileException file => file.Diagnostic,
+            DomainRuleException domain => domain.Diagnostic,
+            _ => new DomainDiagnostic("FILE_IO_FAILED", "File.IoFailed", [])
+        };
+        Refresh();
+    }
+    private void ReportOpenFailure()
+    {
+        if (diagnostic is null) return;
+        try { OpenFailure?.Invoke(Status); }
+        catch (Exception ex) { Trace.TraceError("Company open alert failed: {0}", ex); }
     }
     private async Task NewProject()
     {
@@ -210,6 +308,24 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
         active?.Dispose(); active = null; Snapshot = null; diagnostic = null; statusKey = "CompanyNoFile";
         if (AfterChangeAsync is not null) await AfterChangeAsync(); Refresh();
     }
+    private async Task AddDefaultUnits()
+    {
+        await Run(async token =>
+        {
+            var before = Snapshot!;
+            var missing = DefaultActivityUnitCatalog.Missing(before.Units);
+            if (missing.Count == 0) return;
+            Snapshot = await Task.Run(() =>
+                active!.AddUnits(missing, before.Revision, "local-user", token), token);
+            if (AfterChangeAsync is not null) await AfterChangeAsync();
+        });
+        if (diagnostic is null && statusKey == "CompanyCompleted")
+        {
+            statusKey = "CompanyDefaultsInstalled";
+            Refresh();
+        }
+    }
+
     private async Task AddUnit()
     {
         await Run(async token =>

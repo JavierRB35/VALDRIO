@@ -74,7 +74,21 @@ public partial class MainWindow
         panel.RuleTabs.SelectedIndex = 0; await Idle(); Select(panel.RuleAccountBox, "6005"); Select(panel.RuleKeyBox, primaryKey.Id);
         await Click(panel.SaveRuleButton); Check(vm.PrimaryRules.Count == 1 && vm.PrimaryResults.Count == 0, "save rule persists without applying");
         await Click(panel.ApplyRuleButton);
-        Check(vm.PrimaryResults.Count == 1 && vm.PrimaryResults.Single().Amount == "1000 EUR", "apply rule distributes prepared account");
+        // Validate the economic ledger, not a hard-coded display string.
+        // es-ES presents 1,000 EUR as "1.000,00 EUR", rather than "1000 EUR".
+        // Keeping the displayed result equal to the node total also verifies
+        // that the two UI projections agree with the underlying posted amount.
+        var previewMatchesLedger = vm.PrimaryResults.Count == 1 &&
+            vm.PrimaryNodeTotals.Count == 1 &&
+            vm.PrimaryAccounts.Count == 1 &&
+            vm.PrimaryNodeTotals.Single().NumericAmount == 1000m &&
+            vm.PrimaryAccounts.Single().PresentedAssigned == 1000m &&
+            vm.PrimaryResults.Single().Amount == vm.PrimaryNodeTotals.Single().Amount;
+        Check(previewMatchesLedger,
+            "apply rule distributes exactly 1000 EUR with reconciled localized presentation " +
+            $"(facts={vm.PrimaryResults.Count}, nodes={vm.PrimaryNodeTotals.Count}, accounts={vm.PrimaryAccounts.Count}; " +
+            $"shown={string.Join("; ", vm.PrimaryResults.Select(row => row.Amount))}; " +
+            $"ledger={string.Join("; ", vm.PrimaryNodeTotals.Select(row => row.NumericAmount))})");
         panel.RuleTabs.SelectedIndex = 2; await Idle(); Select(panel.NameAccountBox, "6005");
         panel.DescriptionBox.SetCurrentValue(ComboBox.SelectedItemProperty, "Papelería"); panel.DescriptionBox.GetBindingExpression(ComboBox.SelectedItemProperty)!.UpdateSource();
         await Click(panel.ChooseDescriptionButton); Check(vm.Accounts.Single().Label == "6005 — Papelería", "chosen description replaces the conflict label without changing the account code");

@@ -51,12 +51,19 @@ public sealed partial class SqliteCompanyFileService
     }
     private static AllocationWorkspaceSnapshot AllocationWorkspace(AllocationDbContext db, CompanyFileSnapshot file, StudyDefinition study)
     {
-        var last = AllocationChanges(db, file.Id, study.Id).LastOrDefault(c => c.ConfirmedStudy.Revision <= study.Revision);
+        // Read the cross-study history only once: active economic use and immutable
+        // deletion references have deliberately distinct meanings.
+        var history = db.AllocationChanges.AsNoTracking().ToArray()
+            .Select(AllocationChange).Where(c => c.Request.CompanyId == file.Id).ToArray();
+        var last = history.Where(c => c.Request.StudyId == study.Id &&
+                c.ConfirmedStudy.Revision <= study.Revision)
+            .OrderBy(c => c.ConfirmedStudy.Revision).LastOrDefault();
         return new(ResourceWorkspace(db, file, study), AllocationKeys(db, file.Id, study.SelectedModelVersionId),
             last?.Request.Configuration ?? AllocationConfiguration.Empty, last?.ConfirmedStudy.Revision ?? -1,
-            usedKeyIds: db.AllocationChanges.AsNoTracking().ToArray().Select(AllocationChange)
-                .SelectMany(UsedKeys).Select(k => k.Id).Distinct().ToArray(),
-            secondaryPublication: last?.SecondaryPublication);
+            usedKeyIds: history.SelectMany(UsedKeys).Select(key => key.Id).Distinct().ToArray(),
+            secondaryPublication: last?.SecondaryPublication,
+            protectedKeyIds: history.SelectMany(change => change.ReferencedKeys)
+                .Select(key => key.Id).Distinct().ToArray());
     }
     private static void EnsurePrimaryOpen(AllocationDbContext db, EntityId companyId, EntityId studyId)
     {

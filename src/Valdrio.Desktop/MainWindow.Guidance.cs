@@ -83,7 +83,9 @@ public partial class MainWindow
             2 or 3 => vm.Studies?.NextRequirement ?? vm.Guide("NeedCompany"),
             4 => vm.Resources?.Requirement ?? vm.Guide("NeedCompany"),
             7 => vm.Allocations?.SecondaryDiagnostic ?? vm.Guide("HelpHint"),
-            5 => vm.Allocations?.Requirement ?? vm.Guide("NeedCompany"),
+            5 => DistributionDetails.IsExpanded
+                ? vm.Guide("CloseAccountDetailsForKeys")
+                : vm.Allocations?.Requirement ?? vm.Guide("NeedCompany"),
             _ => vm.Guide("HelpHint")
         };
         SaveLocation.Text = vm.Company?.ActivePath is { Length: > 0 } path ? vm.Guide("StoredAt") + path : "";
@@ -155,9 +157,23 @@ public partial class MainWindow
         if (step is 5 or 7 && vm.Allocations is { } allocations)
         { if (vm.Resources is { } source) await source.EnterAsync(); await allocations.EnterAsync(); allocations.SecondaryWorkspaceActive = step == 7; }
         UpdateWorkflow(); RootScrollViewer.ScrollToTop();
-        if (enteringAllocation)
+        if (enteringAllocation && vm.Allocations is { } opened)
         {
-            if (step == 5) AllocationPanel.FocusKeyLibrary();
+            // Once a phase is closed, the saved financial result is the user's
+            // first destination. Its key editor remains available by scrolling up.
+            if (step == 5 && opened.IsPrimaryClosed)
+            {
+                AllocationPanel.ResultsSection.IsExpanded = true;
+                AllocationPanel.RestoreClosedKeyDetails();
+                ScrollToElement(AllocationPanel.ResultsSection);
+            }
+            else if (step == 7 && opened.IsSecondaryClosed)
+            {
+                SecondaryPanel.Workspace.SecondaryResultsSection.IsExpanded = true;
+                SecondaryPanel.Workspace.RestoreClosedKeyDetails();
+                ScrollToElement(SecondaryPanel.Workspace.SecondaryResultsSection);
+            }
+            else if (step == 5) AllocationPanel.FocusKeyLibrary();
             else SecondaryPanel.Workspace.FocusKeyLibrary();
         }
     }
@@ -177,6 +193,22 @@ public partial class MainWindow
         { changingDistributionDetails = true; DistributionDetails.IsExpanded = false; changingDistributionDetails = false; return; }
         if (viewModel.Resources is { } resources) await resources.EnterAsync();
         UpdateWorkflow();
+    }
+    private async void BackToAllocationKeys(object sender, RoutedEventArgs e)
+    {
+        if (viewModel?.Resources is { } resources && !await resources.CanLeaveAsync())
+        {
+            DistributionResourcePanel.ActionStatus.BringIntoView();
+            return;
+        }
+        changingDistributionDetails = true;
+        DistributionDetails.IsExpanded = false;
+        changingDistributionDetails = false;
+        if (viewModel?.Allocations is { } allocations) await allocations.EnterAsync(true);
+        UpdateWorkflow();
+        AllocationPanel.IsEnabled = true;
+        AllocationPanel.FocusKeyLibrary();
+        ScrollToElement(AllocationPanel.LibrarySection);
     }
     private async void CloseDistributionDetails(object sender, RoutedEventArgs e)
     {

@@ -28,6 +28,24 @@ public sealed partial class T06ImportConfirmationTests
         Assert.AreEqual(2, vm.Keys.Count); Assert.AreEqual(2, vm.Keys.Max(k => k.Value.VersionNumber));
     }
     [TestMethod]
+    public async Task UnusedPrimaryKeyCanBeDeletedAfterSelectionAndReasonIsVisible()
+    {
+        using var ui = await ResourceUiReady();
+        using var vm = new AllocationWorkspaceViewModel(ui.Company, ui.Studies,
+            new UiTextCatalog(), ui.Preferences, ui.Dialogs);
+        await vm.EnterAsync();
+        vm.Name = "Sin referencia histórica";
+        vm.Lines[0].Included = true; vm.Lines[0].Value = "100";
+        Assert.IsTrue(await vm.SaveKeyAsync(true), vm.Status);
+        var selected = vm.Keys.Single();
+        vm.SelectedKey = selected;
+        Assert.IsTrue(vm.DeleteKeyCommand.CanExecute(null), vm.KeyDeleteHelp);
+        Assert.AreEqual(vm["DeleteReady"], vm.KeyDeleteHelp);
+        await vm.DeleteKeyCommand.ExecuteAsync(null);
+        Assert.AreEqual(0, vm.Keys.Count, vm.Status);
+    }
+
+    [TestMethod]
     public async Task T08EditorRuleFieldsDoNotDisappearOnCancelOrStudyChange()
     {
         using var ui = await ResourceUiReady();

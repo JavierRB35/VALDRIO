@@ -7,6 +7,7 @@ using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Input;
+using Valdrio.Application;
 using Valdrio.Domain;
 
 namespace Valdrio.Desktop;
@@ -55,18 +56,20 @@ public partial class MainWindow
         Audit(models.Master is null && string.IsNullOrEmpty(models.CenterCode) && ModelPanel.CenterGrid.Items.Count == 1,
             "saving a centre clears the form and adds it to the persistent table");
         await AdvanceWorkflow();
-        Audit(ModelPanel.ModelSteps.SelectedIndex == 2 && ModelPanel.NodeUnitCreator.IsExpanded,
-            "the user can continue to nodes without defining activity units in advance");
+        Audit(ModelPanel.ModelSteps.SelectedIndex == 2 && !ModelPanel.NodeUnitCreator.IsExpanded,
+            "the user can continue to nodes with the standard activity units already available");
         Check(GuidedUi.Contains(ModelPanel.NodeUnitsCreationHost, CompanyPanel.UnitCreationPanel),
             "activity-unit creation is available where the node needs the unit");
 
         Text(CompanyPanel.UnitCodeBox, "");
-        Audit(!CompanyPanel.AddUnitButton.IsEnabled && models.Units.Count == 0,
-            "inline unit save stays disabled until the required unit code is entered");
+        Audit(!CompanyPanel.AddUnitButton.IsEnabled &&
+              models.Units.Count == DefaultActivityUnitCatalog.All.Count,
+            "inline custom unit save stays disabled until the required unit code is entered");
 
         Text(CompanyPanel.UnitCodeBox, "HORAS"); Text(CompanyPanel.DimensionBox, "time"); Text(CompanyPanel.SymbolBox, "h");
         Select(CompanyPanel.ScaleBox, 2); CompanyPanel.DiscreteBox.IsChecked = false; await Click(CompanyPanel.AddUnitButton);
-        Audit(models.Units.Count == 1 && models.DriverUnit?.Value.Definition.Code == "HORAS",
+        Audit(models.Units.Count == DefaultActivityUnitCatalog.All.Count + 1 &&
+              models.DriverUnit?.Value.Definition.Code == "HORAS",
             "a unit created inside the node is saved and selected automatically");
         Check(string.IsNullOrEmpty(company.UnitCode) && !ModelPanel.NodeUnitCreator.IsExpanded,
             "successful inline unit creation clears the unit form and returns focus to the node");
@@ -74,7 +77,7 @@ public partial class MainWindow
         Audit(workflowStep == 1 && ModelPanel.ModelSteps.SelectedIndex == 1, "global back returns to the previous model step");
         await AdvanceWorkflow();
         Text(ModelPanel.NodeCodeBox, "AUX"); Select(ModelPanel.PhysicalBox, models.Centers.Single());
-        Select(ModelPanel.UnitBox, models.Units.Single()); Select(ModelPanel.RoleBox, models.Roles.Single(r => r.Value == NodeRole.Auxiliary));
+        Select(ModelPanel.UnitBox, models.Units.Single(x => x.Value.Definition.Code == "HORAS")); Select(ModelPanel.RoleBox, models.Roles.Single(r => r.Value == NodeRole.Auxiliary));
         await AdvanceWorkflow();
         Audit(ModelPanel.ModelSteps.SelectedIndex == 2 && models.Nodes.Count == 1 && WorkflowRequirement.Text == models.Guide("NeedPrincipal"),
             "auxiliary-only structure remains at nodes and explains the principal requirement");
@@ -83,7 +86,7 @@ public partial class MainWindow
         Check(models.NextRequirement == models.Guide("NeedNodeUnit"), "missing node unit has a specific actionable explanation");
         await ModelPanel.PublishForStudy();
         Check(!models.IsPublished && models.NodeCode == "NODO", "incomplete node cannot publish and its form is retained");
-        Select(ModelPanel.UnitBox, models.Units.Single()); await Click(ModelPanel.ApplyNodeButton);
+        Select(ModelPanel.UnitBox, models.Units.Single(x => x.Value.Definition.Code == "HORAS")); await Click(ModelPanel.ApplyNodeButton);
         ModelPanel.ModelSteps.SelectedIndex = 3;
         models.Master = models.Centers.Single(); // Keep review visible to exercise redirection to the pending centre.
         models.CenterName = "Centro revisado";

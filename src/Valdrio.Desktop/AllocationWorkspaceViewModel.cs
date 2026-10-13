@@ -90,7 +90,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             if (SelectedKey?.Value is not { Status: ModelStatus.Published } source || !await CanLeaveAsync()) return;
             LoadKey(source); editingKey = null; newParent = source.Id; keyDirty = true; Refresh();
         }, () => (CanEdit || CanManageSecondary && SelectedKey?.Value.Stage == AllocationStage.Secondary) && SelectedKey?.Value.Status == ModelStatus.Published);
-        DeleteKeyCommand = new AsyncRelayCommand(DeleteKeyAsync, () => (CanEdit || CanManageSecondary && SelectedKey?.Value.Stage == AllocationStage.Secondary) && !IsDirty && SelectedKey is { } row && !workspace!.UsedKeyIds.Contains(row.Value.Id));
+        DeleteKeyCommand = new AsyncRelayCommand(DeleteKeyAsync, () => CanDeleteSelectedKey);
         TogglePrimaryCommand = new AsyncRelayCommand(TogglePrimaryAsync, () => CanManagePrimary && !IsSecondaryClosed && !IsDirty && (IsPrimaryClosed || primaryComplete));
         SaveDraftCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(false), () => CanEditKey && MissingKeyInput(false) is null);
         PublishCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey && MissingKeyInput(true) is null);
@@ -134,7 +134,11 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public string this[string key] => Text("AllocationUI." + key);
     private string Text(string key) { var value = texts.Get(key, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)); return pseudo ? PseudoLocalization.Expand(value) : value; }
     private CultureInfo Format => CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
-    private string MoneyText(Money value) => value.Amount.ToString("0.########", Format) + " " + value.Currency;
+    private int DisplayCurrencyDigits => workspace?.Resources.Study.Currency.CurrencyMetadataSnapshot.MinorUnitDigits ?? 2;
+    private decimal DisplayCurrencyQuantum => workspace?.Resources.Study.Currency.CurrencyMetadataSnapshot.ReportQuantum ?? 0.01m;
+    private string DisplayMoney(decimal amount, CurrencyCode currency) =>
+        amount.ToString("N" + DisplayCurrencyDigits, Format) + " " + currency;
+    private string MoneyText(Money value) => DisplayMoney(value.Amount, value.Currency);
     public bool IsBusy => busy;
     public bool CanManagePrimary => !busy && earlierBusy?.Invoke() != true && company.CanWrite && workspace?.Resources.Study.State == StudyState.Open;
     public bool IsPrimaryClosed => workspace?.Configuration.PrimaryClosed == true;
@@ -149,7 +153,31 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         !IsPrimaryClosed && !keyDirty && !HasUnappliedRule && !HasCompositionChanges;
     public bool CanEditConfiguration => CanEdit && !keyDirty && !HasCompositionChanges;
     public bool CanEditKey => (Stage == AllocationStage.Secondary ? CanManageSecondary : CanEdit) && !HasUnappliedRule && !HasCompositionChanges;
+    // Historic references must never be erased, even when the current study no longer uses the key.
     private bool IsKeyUsed => editingKey is not null && workspace?.UsedKeyIds.Contains(editingKey.Id) == true;
+    public bool CanDeleteSelectedKey =>
+        SelectedKey is { } row && !IsDirty && workspace is not null &&
+        (CanEdit || CanManageSecondary && row.Value.Stage == AllocationStage.Secondary) &&
+        !workspace.ProtectedKeyIds.Contains(row.Value.Id) &&
+        !workspace.Keys.Any(key => key.ParentVersionId == row.Value.Id);
+    public string KeyDeleteHelp
+    {
+        get
+        {
+            if (SelectedKey is not { } row || workspace is null) return this["DeleteSelectFirst"];
+            if (IsSecondaryClosed && row.Value.Stage == AllocationStage.Secondary) return this["DeleteOpenSecondaryFirst"];
+            if (!CanManagePrimary || row.Value.Stage == AllocationStage.Primary && IsPrimaryClosed) return this["DeleteLockedPhase"];
+            if (IsDirty) return this["DeletePendingChanges"];
+            if (workspace.Configuration.SecondaryRules.Any(r => r.KeyVersionId == row.Value.Id))
+                return this["DeleteSecondaryAssigned"];
+            if (workspace.Configuration.PrimaryRules.Any(r => r.KeyVersionId == row.Value.Id) ||
+                workspace.Configuration.ExplicitAssignments.Any(a => a.KeyVersionId == row.Value.Id))
+                return this["DeletePrimaryAssigned"];
+            if (workspace.ProtectedKeyIds.Contains(row.Value.Id)) return this["DeleteHistoricUse"];
+            if (workspace.Keys.Any(k => k.ParentVersionId == row.Value.Id)) return this["DeleteHasVersions"];
+            return this["DeleteReady"];
+        }
+    }
     public bool CanEditComposition => CanEditKey && !IsKeyUsed;
     public bool HasObsolete => workspace is not null && (workspace.Configuration.ExplicitAssignments.Any(a => !Parts.Any(p => p.Value == a.PartId))
         || workspace.Configuration.AbsoluteAssignments.Any(a => !Parts.Any(p => p.Value == a.PartId))
@@ -204,7 +232,12 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     [ObservableProperty] private AllocationKeyRow? selectedKey;
     [ObservableProperty] private AllocationRuleRow? selectedRule;
     [ObservableProperty] private AllocationSecondaryRow? selectedSecondary;
-    partial void OnSelectedKeyChanged(AllocationKeyRow? value) => Commands();
+    partial void OnSelectedKeyChanged(AllocationKeyRow? value)
+    {
+        OnPropertyChanged(nameof(KeyDeleteHelp));
+        OnPropertyChanged(nameof(CanDeleteSelectedKey));
+        Commands();
+    }
     partial void OnSelectedRuleChanged(AllocationRuleRow? value) => Commands();
     partial void OnSelectedSecondaryChanged(AllocationSecondaryRow? value) => Commands();
     public string Name { get => name; set { if (SetProperty(ref name, value)) KeyEdited(); } }
@@ -266,7 +299,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private void RuleEdited() { if (loading) return; ruleDirty = true; RefreshEditor(); }
     private void RefreshEditor()
     {
-        foreach (var property in new[] { nameof(IsDirty), nameof(HasUnappliedRule), nameof(KeyState), nameof(CanEditConfiguration),
+        foreach (var property in new[] { nameof(IsDirty), nameof(HasUnappliedRule), nameof(KeyState), nameof(KeyDeleteHelp), nameof(CanDeleteSelectedKey), nameof(CanEditConfiguration),
             nameof(CanAssignCoverage), nameof(CanShowCoverageEditor), nameof(CanEditClassification), nameof(CanEditKey), nameof(CanEditComposition), nameof(CanEditWeights), nameof(IsPercentage), nameof(IsDriver), nameof(IsSecondary),
             nameof(IsExact), nameof(IsPrefix), nameof(KeyNameMissing), nameof(KeyValidationHasError), nameof(Total), nameof(PrimaryAbsoluteTotal), nameof(Validation) }) OnPropertyChanged(property);
         Commands();
@@ -350,7 +383,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             var command = BuildKey(publish || editingKey?.Status == ModelStatus.Published); var port = company.ActiveAllocations!;
             var receipt = await Task.Run(() => port.SaveAllocationKey(command));
             workspace = new(workspace.Resources, workspace.Keys.Where(k => k.Id != receipt.After.Id).Append(receipt.After).ToArray(), workspace.Configuration, workspace.ConfigurationRevision, includeUnroutedAccounts: workspace.IncludeUnroutedAccounts,
-                usedKeyIds: workspace.UsedKeyIds, secondaryPublication: workspace.SecondaryPublication);
+                usedKeyIds: workspace.UsedKeyIds, secondaryPublication: workspace.SecondaryPublication,
+                protectedKeyIds: workspace.ProtectedKeyIds);
             LoadKey(receipt.After); previewId = new(Guid.NewGuid()); Rebuild(); statusKey = publish ? "PublishedSaved" : "DraftSaved";
         });
     }
@@ -432,7 +466,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             // Retain the committed revision even if a dependent refresh fails.
             var r = workspace.Resources;
             workspace = new(new(receipt.ConfirmedStudy, r.Precision, r.Model, r.Origins, r.Ledger, r.EconomicRevision), workspace.Keys, config, receipt.ConfirmedStudy.Revision, includeUnroutedAccounts: workspace.IncludeUnroutedAccounts,
-                usedKeyIds: workspace.UsedKeyIds.Concat(receipt.ReferencedKeys.Where(k => config.ExplicitAssignments.Any(a => a.KeyVersionId == k.Id) || config.PrimaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id) || config.SecondaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id)).Select(k => k.Id)).Distinct().ToArray(), secondaryPublication: receipt.SecondaryPublication);
+                usedKeyIds: workspace.UsedKeyIds.Concat(receipt.ReferencedKeys.Where(k => config.ExplicitAssignments.Any(a => a.KeyVersionId == k.Id) || config.PrimaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id) || config.SecondaryRules.Any(r => r.IsActive && r.KeyVersionId == k.Id)).Select(k => k.Id)).Distinct().ToArray(), secondaryPublication: receipt.SecondaryPublication,
+                protectedKeyIds: workspace.ProtectedKeyIds.Concat(receipt.ReferencedKeys.Select(k => k.Id)).Distinct().ToArray());
             ClearRule(); LoadAbsolute(); Rebuild(); statusKey = "Saved";
             try { await studies.ApplyResourceReceiptAsync(receipt.ConfirmedStudy); }
             catch (Exception ex) when (ex is IOException or CompanyFileException or InvalidOperationException) { statusKey = "SavedRefreshPending"; }
@@ -451,7 +486,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     }
     private async Task DeleteKeyAsync()
     {
-        if ((!CanEdit && !(CanManageSecondary && SelectedKey?.Value.Stage == AllocationStage.Secondary)) || IsDirty || SelectedKey is not { } row) return;
+        if (!CanDeleteSelectedKey || SelectedKey is not { } row) return;
         await Run(async () =>
         {
             var k = row.Value;
@@ -461,7 +496,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             await Task.Run(() => company.ActiveAllocations!.SaveAllocationKey(command));
             workspace = new(workspace!.Resources, workspace.Keys.Where(key => key.Id != k.Id).ToArray(),
                 workspace.Configuration, workspace.ConfigurationRevision, includeUnroutedAccounts: workspace.IncludeUnroutedAccounts,
-                usedKeyIds: workspace.UsedKeyIds, secondaryPublication: workspace.SecondaryPublication);
+                usedKeyIds: workspace.UsedKeyIds, secondaryPublication: workspace.SecondaryPublication,
+                protectedKeyIds: workspace.ProtectedKeyIds);
             if (editingKey?.Id == k.Id) LoadKey(null);
             Rebuild(); statusKey = "KeyDeleted";
         });
