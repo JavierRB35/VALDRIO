@@ -35,7 +35,29 @@ public partial class MainWindow
             Environment.TickCount, MouseButton.Left) { RoutedEvent = Mouse.PreviewMouseDownEvent });
         void Wheel(UIElement element, int delta) => element.RaiseEvent(new MouseWheelEventArgs(Mouse.PrimaryDevice,
             Environment.TickCount, delta) { RoutedEvent = Mouse.PreviewMouseWheelEvent });
-        await NavigateWorkflow(2);
+        // The busy animation belongs to the fixed MainWindow shell; it must
+        // appear for every workspace, not just the allocations page.
+        await NavigateWorkflow(2); await Idle();
+        var earlierWorkspaceBusy = company.WorkspaceBusy;
+        Check(!company.IsProcessing && !GlobalActivityBar.IsVisible,
+            "global activity indicator remains hidden while all workspaces are idle");
+        try
+        {
+            company.WorkspaceBusy = () => true;
+            company.NotifyWorkspaceStateChanged();
+            await Idle();
+            Check(company.IsProcessing && GlobalActivityBar.IsIndeterminate &&
+                GlobalActivityBar.IsVisible,
+                "global shell indeterminate progress displays while an operation is running");
+        }
+        finally
+        {
+            company.WorkspaceBusy = earlierWorkspaceBusy;
+            company.NotifyWorkspaceStateChanged();
+        }
+        await Idle();
+        Check(!company.IsProcessing && !GlobalActivityBar.IsVisible,
+            "global progress bar disappears when a workspace finishes");
         studies.StudyChoice = studies.Studies.Single(s => s.Value.Name.StartsWith("02 -", StringComparison.Ordinal));
         await studies.LoadCommand.ExecuteAsync(null);
         Check(vm.IsPrimaryClosed && SecondaryStep.IsEnabled,
