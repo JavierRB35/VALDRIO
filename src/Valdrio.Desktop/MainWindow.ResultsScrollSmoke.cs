@@ -43,6 +43,9 @@ public partial class MainWindow
             main.ApplyPresentationPreset(language, language == "es" ? "es-ES" : "en-US", "UTC", false, false);
             Width = 1600; Height = 1000;
             await NavigateWorkflow(5); await Idle();
+            Check(RootScrollViewer.VerticalOffset > 0 && AllocationPanel.ResultsSection.IsExpanded,
+                "closed primary opens at saved results " + language);
+            RootScrollViewer.ScrollToTop(); await Idle();
             var primaryToggleY = AllocationPanel.TogglePrimaryButton.TranslatePoint(new Point(), this).Y;
             Check(AllocationPanel.LinesGrid.ActualHeight > 300, "primary destinations use available height " + language);
             Check(vm.IsPrimaryClosed && vm.PrimaryResults.All(r => !string.IsNullOrWhiteSpace(r.Behavior)), "closed primary shows behavior " + language);
@@ -68,6 +71,9 @@ public partial class MainWindow
             }
             await NavigateWorkflow(7); await Idle();
             var panel = SecondaryPanel.Workspace;
+            Check(RootScrollViewer.VerticalOffset > 0 && panel.SecondaryResultsSection.IsExpanded,
+                "closed secondary opens at saved results " + language);
+            RootScrollViewer.ScrollToTop(); await Idle();
             Check(Math.Abs(panel.ToggleSecondaryButton.TranslatePoint(new Point(), this).Y - primaryToggleY) < 2,
                 "secondary reopen occupies same top position as primary " + language);
             Check(panel.ToggleSecondaryButton.IsEnabled && panel.LinesGrid.ActualHeight > 300,
