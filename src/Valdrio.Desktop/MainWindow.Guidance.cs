@@ -93,9 +93,11 @@ public partial class MainWindow
                 label = label[3..];
             buttons[i].Content = label;
             buttons[i].Tag = i == workflowStep ? "Active" : null;
-            // Preferences stays outside the economic phase-navigation style.
-            buttons[i].FontWeight = i == 6 && i == workflowStep
-                ? FontWeights.Bold : FontWeights.Normal;
+            // Do not set a local FontWeight on phase buttons: it would
+            // override the lightweight active-state trigger in their style.
+            if (i == 6)
+                buttons[i].FontWeight = i == workflowStep
+                    ? FontWeights.Bold : FontWeights.Normal;
         }
         Border[] markers = [CompanyStepMarker, ModelStepMarker, StudyStepMarker,
             ImportStepMarker, ResourcesStepMarker, AllocationsStepMarker, SecondaryStepMarker];
