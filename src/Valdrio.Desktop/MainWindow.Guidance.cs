@@ -85,10 +85,18 @@ public partial class MainWindow
         Button[] buttons = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, AllocationsStep, SettingsStep, SecondaryStep];
         for (var i = 0; i < buttons.Length; i++)
         {
-            buttons[i].Content = vm.Guide(keys[i]);
-            buttons[i].FontWeight = i == workflowStep ? FontWeights.Bold : FontWeights.Normal;
+            var label = vm.Guide(keys[i]);
+            // The small step marker already carries the sequence number.
+            // Retain numbered full titles elsewhere (e.g. the page heading).
+            if (i != 6 && label.Length > 3 && char.IsDigit(label[0]) &&
+                label[1] == '.' && label[2] == ' ')
+                label = label[3..];
+            buttons[i].Content = label;
+            buttons[i].Tag = i == workflowStep ? "Active" : null;
+            // Preferences stays outside the economic phase-navigation style.
+            buttons[i].FontWeight = i == 6 && i == workflowStep
+                ? FontWeights.Bold : FontWeights.Normal;
         }
-        // Connected step numbers are navigational indicators, not completion claims.
         Border[] markers = [CompanyStepMarker, ModelStepMarker, StudyStepMarker,
             ImportStepMarker, ResourcesStepMarker, AllocationsStepMarker, SecondaryStepMarker];
         int[] markerSteps = [0, 1, 2, 3, 4, 5, 7];
@@ -96,10 +104,13 @@ public partial class MainWindow
         {
             var active = markerSteps[i] == workflowStep;
             markers[i].Background = active
-                ? (System.Windows.Media.Brush)FindResource("Brand.White")
+                ? System.Windows.Media.Brushes.White
                 : System.Windows.Media.Brushes.Transparent;
+            markers[i].Opacity = active ? 1d : 0.7d;
             if (markers[i].Child is TextBlock number)
-                number.Foreground = (System.Windows.Media.Brush)FindResource(active ? "Brand.DeepGreen" : "Brand.White");
+                number.Foreground = active
+                    ? Sidebar.Background
+                    : System.Windows.Media.Brushes.White;
         }
 
 
