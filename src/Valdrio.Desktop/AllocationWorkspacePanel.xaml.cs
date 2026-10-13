@@ -21,6 +21,7 @@ public partial class AllocationWorkspacePanel : UserControl
             {
                 viewModel.PropertyChanged -= Changed;
                 viewModel.PrincipalOriginsChanged -= PrincipalFlowChanged;
+                viewModel.SecondaryFullFlowChanged -= CompleteFlowChanged;
                 viewModel.PrimaryAccountChanged -= PrimaryFlowChanged;
             }
             viewModel = e.NewValue as AllocationWorkspaceViewModel;
@@ -28,6 +29,7 @@ public partial class AllocationWorkspacePanel : UserControl
             {
                 viewModel.PropertyChanged += Changed;
                 viewModel.PrincipalOriginsChanged += PrincipalFlowChanged;
+                viewModel.SecondaryFullFlowChanged += CompleteFlowChanged;
                 viewModel.PrimaryAccountChanged += PrimaryFlowChanged;
             }
             Headers();

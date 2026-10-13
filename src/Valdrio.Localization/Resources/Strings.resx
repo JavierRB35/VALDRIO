@@ -1270,8 +1270,8 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.PrincipalOriginSummary" xml:space="preserve"><value>{0} · final cost {1}</value></data>
   <data name="AllocationUI.PrincipalOriginDirect" xml:space="preserve"><value>Direct</value></data>
   <data name="AllocationUI.PrincipalOriginAuxiliary" xml:space="preserve"><value>Via auxiliary</value></data>
-  <data name="AllocationUI.PrincipalFlowTitle" xml:space="preserve"><value>Cost flow to the selected principal centre</value></data>
-  <data name="AllocationUI.PrincipalFlowHelp" xml:space="preserve"><value>Original accounts → initial cost-assignment nodes → receiving principal centre. Arrows represent contributions to final cost, not every internal route between auxiliary nodes.</value></data>
+  <data name="AllocationUI.PrincipalFlowTitle" xml:space="preserve"><value>Complete flow: primary nodes through reciprocal auxiliaries to principals</value></data>
+  <data name="AllocationUI.PrincipalFlowHelp" xml:space="preserve"><value>Automatically displays all nodes receiving primary cost, all gross auxiliary-to-auxiliary transfers (including reciprocal and self-service), and the amounts reaching principal nodes. Principal nodes also retain their original primary cost. Auxiliary circulation is informational and is not added again to final costs.</value></data>
   <data name="AllocationUI.PrincipalFlowAccounts" xml:space="preserve"><value>Original accounts</value></data>
   <data name="AllocationUI.PrincipalFlowPrimary" xml:space="preserve"><value>Primary allocation nodes</value></data>
   <data name="AllocationUI.PrincipalFlowDestination" xml:space="preserve"><value>Receiving principal centre</value></data>
@@ -1315,6 +1315,17 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.AuxiliarySettlementTheoreticalZero" xml:space="preserve"><value>0 (theoretical)</value></data>
   <data name="AllocationUI.AuxiliarySettlementSolverResidual" xml:space="preserve"><value>Maximum mathematical residual across groups: {0} {1}. Not an individual accounting balance.</value></data>
   <data name="AllocationUI.PrimaryFlowLimited" xml:space="preserve"><value>Preview of the {0} largest flows out of {1}; the destination table retains every detail.</value></data>
+  <data name="AllocationUI.SecondaryFlowNoResult" xml:space="preserve"><value>No calculated or published secondary result is available for visualisation yet.</value></data>
+  <data name="AllocationUI.SecondaryFlowFullTitle" xml:space="preserve"><value>Complete secondary cost network — no centre selection needed</value></data>
+  <data name="AllocationUI.SecondaryFlowStagePrimary" xml:space="preserve"><value>1. Cost entering from primary allocation: principal and auxiliary nodes</value></data>
+  <data name="AllocationUI.SecondaryFlowStageReciprocal" xml:space="preserve"><value>2. Reciprocal auxiliary-to-auxiliary services (gross circulation)</value></data>
+  <data name="AllocationUI.SecondaryFlowStageFinal" xml:space="preserve"><value>3. Transfers from auxiliary nodes to principal nodes</value></data>
+  <data name="AllocationUI.SecondaryFlowNoRoutesStage" xml:space="preserve"><value>No transfers at this stage.</value></data>
+  <data name="AllocationUI.SecondaryFlowTotalsTitle" xml:space="preserve"><value>4. Reconciled final principal-node costs (primary + secondary)</value></data>
+  <data name="AllocationUI.SecondaryFlowInitialAux" xml:space="preserve"><value>Into auxiliary pool</value></data>
+  <data name="AllocationUI.SecondaryFlowInitialPrincipal" xml:space="preserve"><value>Principal primary cost</value></data>
+  <data name="AllocationUI.SecondaryFlowCompleteNotice" xml:space="preserve"><value>Complete view of {0} links. Total cost of final principal nodes: {1}. Internal circulation is shown separately and must NOT be added again. Arrow amounts are gross projections from published coefficients; final economic amounts are verified in the tables.</value></data>
+  <data name="AllocationUI.SecondaryFlowUnavailable" xml:space="preserve"><value>The complete reciprocal network cannot be rendered safely from saved keys. The underlying economic results are unchanged.</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reopen secondary allocation</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explain selected cost</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Behavior</value></data>
