@@ -6,7 +6,10 @@ namespace Valdrio.Desktop;
 // Read-only attribution of published/previewed terminal facts. No recalculation,
 // invented per-hop internal flows, or persistence is performed here.
 public sealed record PrincipalOriginRow(
-    string Account, string PrimaryNode, string Route, string Amount, string Keys, decimal NumericAmount);
+    string Account, string PrimaryNode, string Route, string Amount, string Keys, decimal NumericAmount)
+{
+    public string KeysPreview { get; init; } = "";
+}
 
 public sealed partial class AllocationWorkspaceViewModel
 {
@@ -59,12 +62,17 @@ public sealed partial class AllocationWorkspaceViewModel
                 .Select(key => KeyLabel(key!))
                 .Distinct(StringComparer.Ordinal)
                 .Order(StringComparer.Ordinal);
+            var keyNames = keys.ToArray();
+            var previewKeys = string.Join(", ", keyNames.Take(1));
+            if (keyNames.Length > 1)
+                previewKeys += " " + string.Format(Format, this["PrincipalOriginMoreKeys"], keyNames.Length - 1);
             var amount = presented[i];
             PrincipalOriginRows.Add(new(
                 accounts.TryGetValue(group.Key.ResourceId, out var resource) ? AccountLabel(resource) : group.Key.ResourceId.ToString(),
                 NodeLabel(primaryNode),
                 this[primaryNode.Role == NodeRole.Auxiliary ? "PrincipalOriginAuxiliary" : "PrincipalOriginDirect"],
-                StudyMoney(amount), string.Join(", ", keys), amount));
+                StudyMoney(amount), string.Join(", ", keyNames), amount)
+            { KeysPreview = previewKeys });
         }
         PrincipalOriginSummary = string.Format(Format,
             this["PrincipalOriginSummary"], selected.Node, selected.Total);
