@@ -324,7 +324,12 @@
    </Expander>
 
      <TextBlock Text="{Binding [PrincipalCostsTitle]}" FontWeight="SemiBold" Margin="0,8,0,8"/>
-     <DataGrid x:Name="PrincipalCostsGrid" ItemsSource="{Binding PrincipalCosts}" IsReadOnly="True" AutoGenerateColumns="False" Height="185" CanUserAddRows="False">
+     <TextBlock Text="{Binding [PrincipalOriginOverviewHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="0,0,0,12">
+     <Grid MinWidth="790">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="3*" MinWidth="430"/><ColumnDefinition Width="2*" MinWidth="350"/></Grid.ColumnDefinitions>
+      <StackPanel Grid.Column="0" Margin="0,0,10,0">
+     <DataGrid x:Name="PrincipalCostsGrid" ItemsSource="{Binding PrincipalCosts}" SelectedItem="{Binding SelectedPrincipalCostRow, Mode=TwoWay}" SelectionMode="Single" IsReadOnly="True" AutoGenerateColumns="False" Height="230" CanUserAddRows="False">
       <DataGrid.Columns>
        <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Node}" Width="3*"/>
        <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Primary}" Width="*" MinWidth="150"/>
@@ -336,6 +341,34 @@
 <TextBlock Grid.Column="1" Text="{Binding PrincipalCostsPrimaryTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/>
 <TextBlock Grid.Column="2" Text="{Binding PrincipalCostsAuxiliaryTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/>
 <TextBlock Grid.Column="3" Text="{Binding PrincipalCostsFinalTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+      </StackPanel>
+      <StackPanel Grid.Column="1" Margin="10,0,0,0">
+       <TextBlock Text="{Binding [PrincipalOriginTitle]}" FontWeight="SemiBold" Margin="0,0,0,6"/>
+       <TextBlock Text="{Binding PrincipalOriginSummary}" TextWrapping="Wrap" Margin="0,0,0,6" AutomationProperties.LiveSetting="Polite"/>
+       <DataGrid x:Name="PrincipalOriginGrid" ItemsSource="{Binding PrincipalOriginRows}" IsReadOnly="True" AutoGenerateColumns="False" Height="230" CanUserAddRows="False">
+        <DataGrid.Columns>
+         <DataGridTextColumn Binding="{Binding Account}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
+         <DataGridTextColumn Binding="{Binding PrimaryNode}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
+         <DataGridTextColumn Binding="{Binding Route}" Width="*" ElementStyle="{StaticResource Text.TableText}"/>
+         <DataGridTextColumn Binding="{Binding Amount}" Width="*" MinWidth="110" HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}"/>
+         <DataGridTextColumn Binding="{Binding Keys}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
+        </DataGrid.Columns>
+       </DataGrid>
+       <DockPanel Background="{DynamicResource Surface.Subtle}" MinHeight="34">
+        <TextBlock Text="{Binding [TableTotal]}" Margin="9,8" DockPanel.Dock="Left" FontWeight="SemiBold"/>
+        <TextBlock Text="{Binding PrincipalOriginTotal}" Margin="9,8" TextAlignment="Right" FontWeight="SemiBold"/>
+       </DockPanel>
+      </StackPanel>
+     </Grid>
+     </ScrollViewer>
+     <Expander x:Name="PrincipalCostFlowSection" Header="{Binding [PrincipalFlowTitle]}" IsExpanded="True" Margin="0,0,0,12">
+      <StackPanel Margin="0,8,0,0">
+       <TextBlock Text="{Binding [PrincipalFlowHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+       <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Height="410">
+        <Canvas x:Name="PrincipalFlowCanvas" Width="1160" Height="380" Background="Transparent"/>
+       </ScrollViewer>
+      </StackPanel>
+     </Expander>
 
      <TextBlock Text="{Binding [SecondaryContributionsTitle]}" FontWeight="SemiBold" Margin="0,16,0,8"/>
      <TextBlock Text="{Binding [SecondaryContributionsHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
