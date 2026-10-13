@@ -51,7 +51,8 @@
     <Expander x:Name="DefinitionSection" Header="{Binding [Definition]}" IsExpanded="True" VerticalContentAlignment="Stretch"><Grid Margin="0,8,0,0">
      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
      <Grid>
-      <Grid.ColumnDefinitions><ColumnDefinition Width="3*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+      <Grid.ColumnDefinitions><ColumnDefinition Width="3*"/><ColumnDefinition Width="2*"/></Grid.ColumnDefinitions>
       <StackPanel Margin="0,0,8,0" IsEnabled="{Binding CanEditKey}"><TextBlock Text="{Binding [Name]}"/><TextBox x:Name="KeyNameBox" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Name]}">
         <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}">
          <Style.Triggers><DataTrigger Binding="{Binding KeyNameMissing}" Value="True">
@@ -64,7 +65,7 @@
       <StackPanel Grid.Column="1" Margin="0,0,8,0" IsEnabled="{Binding CanEditComposition}"><TextBlock Text="{Binding [Criterion]}"/><ComboBox x:Name="ModeBox" ItemsSource="{Binding Modes}" SelectedValue="{Binding Mode}" AutomationProperties.Name="{Binding [Criterion]}"/>
        <StackPanel Visibility="{Binding IsDriver, Converter={StaticResource Visible}}"><TextBlock Text="{Binding [Unit]}"/><ComboBox ItemsSource="{Binding Units}" SelectedValue="{Binding Unit}" AutomationProperties.Name="{Binding [Unit]}" x:Name="UnitBox"/></StackPanel>
       </StackPanel>
-      <Button Grid.Column="2" Style="{StaticResource Button.Primary}" Content="{Binding [SaveKey]}" Command="{Binding SaveKeyCommand}" x:Name="SaveKeyButton" VerticalAlignment="Bottom"/>
+      <Button Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource Button.Primary}" Content="{Binding [SaveKey]}" Command="{Binding SaveKeyCommand}" x:Name="SaveKeyButton" HorizontalAlignment="Right" Margin="0,8,0,0"/>
      </Grid>
      <TextBlock Grid.Row="1" Text="{Binding NumberFormatHelp}" Margin="0,4,0,8"/>
      <DataGrid Grid.Row="2" x:Name="LinesGrid" ItemsSource="{Binding Lines}" AutoGenerateColumns="False" CanUserAddRows="False" MinHeight="200" IsReadOnly="True" SelectionMode="Single">
