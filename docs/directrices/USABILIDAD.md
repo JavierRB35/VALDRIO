@@ -107,3 +107,12 @@ de cambios pendientes y la validación del rango.
   de la funcional no puede confirmarse sin puente FX; la interfaz nueva no permite
   crear ese perfil. Cualquier futura eliminación del motor heredado requerirá una
   migración auditada por separado.
+
+## Lenguaje comprensible y reducción de campos — instrucción del propietario (2026-10-13)
+
+- **Todo campo debe explicar:** qué significa, qué se introduce (unidad y ejemplo), de dónde procede o cómo se calcula y para qué se utiliza. Una microayuda operativa visible y una explicación contextual ampliable deben estar disponibles con teclado y ratón; no esconder requisitos críticos en tooltips.
+- **Antes de añadir un campo, justificar que no pueda eliminarse, deducirse, precargarse o agruparse sin pérdida metodológica.** Mostrar primero lo esencial; funciones avanzadas solo cuando sean útiles.
+- **No pedir por duplicado una magnitud que la aplicación ya deriva.** Las cantidades calculadas son de solo lectura; las propuestas adoptadas se copian a una sola fuente editable, preservando evidencia, versión y trazabilidad.
+- **Lenguaje de usuario**, no nombres de clases ni fórmulas sin interpretación. Si se muestra un porcentaje, explicar numerador, denominador, significado y límites; un campo sin dato no se convierte silenciosamente en cero.
+- **Validación de comprensión:** un analista no desarrollador debe poder realizar el flujo sin explicaciones externas; si no comprende una etiqueta, reducir pasos y mejorar microtexto antes de aceptarlo.
+- Aplicación concreta en [T14 — Capacidad normal asistida](T14_CAPACIDAD_NORMAL_ASISTIDA.md). Esta regla también orienta futuros desarrollos, sin autorizar cambios funcionales ni eliminar validaciones existentes.
