@@ -15,7 +15,7 @@
       <TextBlock Text="{Binding HeaderSubtitle}" Margin="0,8,0,0" Foreground="{DynamicResource Brand.White}" FontSize="12" />
      </StackPanel>
      <TextBlock x:Name="NavigationGroupLabel" Margin="24,0,16,8" Foreground="{DynamicResource Brand.White}" FontSize="12" FontWeight="SemiBold" />
-     <Expander x:Name="ProjectPhase" Expanded="OnPhaseExpanded" IsExpanded="True" Margin="8,0,8,4">
+     <Expander x:Name="ProjectPhase" Expanded="OnPhaseExpanded" Margin="8,0,8,4">
       <StackPanel>
        <Button x:Name="CompanyStep" Click="ChooseCompany" Style="{StaticResource Sidebar.Button}" />
        <Button x:Name="ModelStep" Click="ChooseModel" Style="{StaticResource Sidebar.Button}" />
