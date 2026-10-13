@@ -59,6 +59,10 @@ public sealed partial class T06ImportConfirmationTests
         vm.RuleAccount = vm.Accounts.First().Value; vm.RuleKey = first;
         await vm.SaveRuleCommand.ExecuteAsync(null);
         Assert.AreEqual(0, vm.PrimaryResults.Count); Assert.AreEqual(vm["RuleSavedOnly"], vm.Status);
+        vm.SelectedKey = vm.Keys.Single(k => k.Value.Id == first);
+        Assert.IsFalse(vm.DeleteKeyCommand.CanExecute(null),
+            "An inactive saved rule protects its referenced key even though it does not allocate cost.");
+        Assert.AreEqual(vm["DeletePrimaryAssigned"], vm.KeyDeleteHelp);
         await vm.ApplyRuleCommand.ExecuteAsync(null);
         Assert.AreEqual(1, vm.PrimaryResults.Count); var originalDestination = vm.PrimaryResults.Single().Destination;
         vm.RuleKey = second;
