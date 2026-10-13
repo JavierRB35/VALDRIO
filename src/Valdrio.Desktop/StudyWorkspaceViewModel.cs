@@ -340,11 +340,17 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         Reformat();
         Refresh();
     }
+    // Wired by the desktop composition root, not by the economic/application layers.
+    // Finish loading allocation state before the study selection command completes.
+    public Func<Task>? AfterStudyLoadedAsync { get; set; }
+
     private async Task Load()
     {
         var id = StudyChoice?.Value.Id;
         if (id is null || !await CanLeaveAsync()) return;
         await Run(async token => { await Reload(token); SetCurrent(studyValues.Single(s => s.Id == id)); await Reload(token); SnapshotChoice = Snapshots.LastOrDefault(); });
+        if (Current?.Id == id && AfterStudyLoadedAsync is not null)
+            await AfterStudyLoadedAsync();
     }
     private BusinessDate Date(DateTime? value)
     {
