@@ -91,7 +91,7 @@ public partial class AllocationWorkspacePanel : UserControl
                 SecondaryRulesGrid.ScrollIntoView(vm.SelectedSecondary);
                 SecondaryRulesGrid.BringIntoView();
             }
-        }));
+        }), DispatcherPriority.ContextIdle);
     }
     private void RevealResults(Expander section)
     {
