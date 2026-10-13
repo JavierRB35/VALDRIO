@@ -96,7 +96,10 @@ public static class StableScrolling
                 // Results graphs scroll horizontally only. A vertical wheel over
                 // their canvas must scroll the containing page, not disappear.
                 var visibility = horizontal ? viewer.HorizontalScrollBarVisibility : viewer.VerticalScrollBarVisibility;
-                if (visibility != ScrollBarVisibility.Disabled)
+                // WPF templates add ScrollViewers even when they have no scroll range
+                // (TreeView, tabs, etc.). Such a viewer must not swallow the page wheel.
+                var range = horizontal ? viewer.ScrollableWidth : viewer.ScrollableHeight;
+                if (visibility != ScrollBarVisibility.Disabled && range > 0)
                     return viewer;
                 viewer = Ancestor<ScrollViewer>(Parent(viewer));
             }
