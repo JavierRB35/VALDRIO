@@ -109,6 +109,7 @@ public partial class AllocationWorkspacePanel : UserControl
         Set(KeyGrid, "Name", "State"); Set(LinesGrid, "Include", "Destination", "NodeUnit", "Weight"); Set(ReciprocalGrid, "ReciprocalGroup", "ReciprocalStatus", "ReciprocalDetail"); Set(SecondaryRulesGrid, "Auxiliary", "ReciprocalGroup", "AppliedKey"); Set(SecondaryResultsGrid, "SecondarySourceNode", "SecondaryPrincipalDestination", "PrimaryAmount", "Behavior"); Set(SecondaryCirculationGrid, "Auxiliary", "SecondaryGross");  Set(SecondaryGroupAssignmentsGrid, "SecondarySourcePart", "SecondarySelectedGroup");
         Set(PrincipalCostsGrid, "SecondaryPrincipalDestination", "PrincipalPrimary", "PrincipalAuxiliary", "PrincipalTotal");
         Set(SecondaryExplanationGrid, "PrimarySource", "ExplainPrimaryAmount", "ExplainEffectiveShare", "PrimaryAmount", "ExplainKeys");
+        Set(PrincipalOriginGrid, "Account", "PrimarySource", "Behavior", "PrimaryAmount", "ExplainKeys");
         CompositionGrid.Columns[0].Header = viewModel["CompositionAccount"];
         CompositionGrid.Columns[1].Header = viewModel["CompositionAmount"];
         CompositionGrid.Columns[2].Header = viewModel["CompositionBehavior"];
