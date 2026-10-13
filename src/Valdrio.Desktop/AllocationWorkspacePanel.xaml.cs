@@ -72,7 +72,7 @@ public partial class AllocationWorkspacePanel : UserControl
             if (newClosure && IsVisible) RevealResults(ResultsSection);
         }
     }
-    private void NavigateToSecondaryRepair(object sender, RoutedEventArgs e)
+    private async void NavigateToSecondaryRepair(object sender, RoutedEventArgs e)
     {
         if (viewModel is not { } vm) return;
         LibrarySection.IsExpanded = true;
@@ -80,6 +80,9 @@ public partial class AllocationWorkspacePanel : UserControl
         RulesSection.IsExpanded = true;
         RuleTabs.SelectedIndex = 1;
         if (vm.SelectedSecondary is null) vm.SelectedSecondary = vm.SecondaryRules.FirstOrDefault();
+        vm.SelectSecondaryRepairKey();
+        if (vm.LoadKeyCommand.CanExecute(null))
+            await vm.LoadKeyCommand.ExecuteAsync(null);
         Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
         {
             if (SecondaryRulesGrid.IsVisible && vm.SelectedSecondary is not null)

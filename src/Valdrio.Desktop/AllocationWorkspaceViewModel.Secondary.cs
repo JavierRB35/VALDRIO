@@ -149,6 +149,17 @@ public sealed partial class AllocationWorkspaceViewModel
     public string SecondaryState => this[IsSecondaryClosed ? "SecondaryClosedState" : "SecondaryOpenState"];
     public string SecondaryToggleLabel => this[IsSecondaryClosed ? "ReopenSecondary" : "CloseSecondary"];
 
+    // Recovery selects the persisted offending rule and its referenced key,
+    // never deletes or edits a previously published/used methodology version.
+    public void SelectSecondaryRepairKey()
+    {
+        if (workspace is null || SelectedSecondary is null) return;
+        var route = workspace.Configuration.SecondaryRules.FirstOrDefault(r => r.Id == SelectedSecondary.Id);
+        if (route is null) return;
+        SelectedKey = Keys.FirstOrDefault(k => k.Value.Id == route.KeyVersionId);
+        Refresh();
+    }
+
     private IReadOnlyList<(string Group, CalculationNodeDefinition Node)> MissingSecondaryNodes()
     {
         if (workspace is null) return [];
