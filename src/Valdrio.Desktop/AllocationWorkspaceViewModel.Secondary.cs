@@ -17,6 +17,7 @@ public sealed record SecondaryAllocationRow(
 public sealed record PrincipalCostRow(string Node, string Primary, string Auxiliary, string Total,
     decimal PrimaryAmount, decimal AuxiliaryAmount, decimal TotalAmount)
 {
+    public EntityId NodeId { get; init; }
     public decimal PresentedPrimaryAmount { get; init; }
     public decimal PresentedAuxiliaryAmount { get; init; }
     public decimal PresentedTotalAmount { get; init; }
@@ -267,6 +268,7 @@ public sealed partial class AllocationWorkspaceViewModel
         secondaryCalculationFailed = false;
         SecondaryResults.Clear();
         PrincipalCosts.Clear();
+        SelectedPrincipalCostRow = null;
         secondaryContributions.Clear();
         SecondaryExplanationDetails.Clear();
         SecondaryBridges.Clear();
@@ -384,6 +386,7 @@ public sealed partial class AllocationWorkspaceViewModel
         secondaryCalculationFailed = false;
         SecondaryResults.Clear();
         PrincipalCosts.Clear();
+        SelectedPrincipalCostRow = null;
         secondaryContributions.Clear();
         SecondaryExplanationDetails.Clear();
         SecondaryBridges.Clear();
@@ -502,6 +505,7 @@ public sealed partial class AllocationWorkspaceViewModel
                 DisplayMoney(shown.Direct, currency), DisplayMoney(shown.Auxiliary, currency),
                 DisplayMoney(shown.Final, currency), original.Direct, original.Auxiliary, originalTotal)
             {
+                NodeId = principals[i].Id,
                 PresentedPrimaryAmount = shown.Direct,
                 PresentedAuxiliaryAmount = shown.Auxiliary,
                 PresentedTotalAmount = shown.Final
@@ -541,6 +545,8 @@ public sealed partial class AllocationWorkspaceViewModel
                 PresentedAmount = shown
             });
         }
+        SelectedPrincipalCostRow = PrincipalCosts.FirstOrDefault();
+        RebuildPrincipalOrigins();
     }
 
     private void ShowSecondaryExplanation()

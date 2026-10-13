@@ -1264,6 +1264,14 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.SecondaryRepairHelp" xml:space="preserve"><value>The current rules cannot produce a valid result. You can remove the selected secondary assignment and replace it with another key. If the published key is already referenced, create a new version rather than overwriting or deleting its history.</value></data>
   <data name="AllocationUI.SecondaryRepairAction" xml:space="preserve"><value>Repair secondary key or assignment</value></data>
   <data name="AllocationUI.SecondaryRepairVersionHelp" xml:space="preserve"><value>Creates an editable new version of a published key. Referenced versions are retained for traceability.</value></data>
+  <data name="AllocationUI.PrincipalOriginTitle" xml:space="preserve"><value>Cost origin for the selected principal centre</value></data>
+  <data name="AllocationUI.PrincipalOriginOverviewHelp" xml:space="preserve"><value>Select a principal centre in the summary table: the panel on the right shows cost origins, and the flow below shows their route. Amounts reconcile; internal circulation among auxiliaries is not added to final cost.</value></data>
+  <data name="AllocationUI.PrincipalOriginSelect" xml:space="preserve"><value>Select a principal centre to inspect where its costs came from.</value></data>
+  <data name="AllocationUI.PrincipalOriginSummary" xml:space="preserve"><value>{0} · final cost {1}</value></data>
+  <data name="AllocationUI.PrincipalOriginDirect" xml:space="preserve"><value>Direct</value></data>
+  <data name="AllocationUI.PrincipalOriginAuxiliary" xml:space="preserve"><value>Via auxiliary</value></data>
+  <data name="AllocationUI.PrincipalFlowTitle" xml:space="preserve"><value>Cost flow to the selected principal centre</value></data>
+  <data name="AllocationUI.PrincipalFlowHelp" xml:space="preserve"><value>Original accounts → initial cost-assignment nodes → receiving principal centre. Arrows represent contributions to final cost, not every internal route between auxiliary nodes.</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reopen secondary allocation</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explain selected cost</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Behavior</value></data>

@@ -1264,6 +1264,14 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.SecondaryRepairHelp" xml:space="preserve"><value>El cálculo no es viable con las reglas actuales. Puedes quitar la asignación secundaria seleccionada y sustituirla por otra clave. Si la clave publicada ya se utilizó, crea una nueva versión en lugar de sobrescribirla o eliminar su historial.</value></data>
   <data name="AllocationUI.SecondaryRepairAction" xml:space="preserve"><value>Corregir clave o asignación secundaria</value></data>
   <data name="AllocationUI.SecondaryRepairVersionHelp" xml:space="preserve"><value>Crea una nueva versión editable de una clave publicada. Las versiones referenciadas se conservan por trazabilidad.</value></data>
+  <data name="AllocationUI.PrincipalOriginTitle" xml:space="preserve"><value>Origen de los costes del centro seleccionado</value></data>
+  <data name="AllocationUI.PrincipalOriginOverviewHelp" xml:space="preserve"><value>Selecciona una fila del cuadro de centros principales: a la derecha se muestra la procedencia de sus costes y, debajo, el flujo visual. Los importes concilian; la circulación interna entre auxiliares no se suma al total final.</value></data>
+  <data name="AllocationUI.PrincipalOriginSelect" xml:space="preserve"><value>Selecciona un centro principal para consultar el origen de sus costes.</value></data>
+  <data name="AllocationUI.PrincipalOriginSummary" xml:space="preserve"><value>{0} · coste final {1}</value></data>
+  <data name="AllocationUI.PrincipalOriginDirect" xml:space="preserve"><value>Directo</value></data>
+  <data name="AllocationUI.PrincipalOriginAuxiliary" xml:space="preserve"><value>Vía auxiliar</value></data>
+  <data name="AllocationUI.PrincipalFlowTitle" xml:space="preserve"><value>Flujo de costes al centro principal seleccionado</value></data>
+  <data name="AllocationUI.PrincipalFlowHelp" xml:space="preserve"><value>Cuentas de origen → nodos donde entraron inicialmente los costes → centro principal receptor. Las flechas representan contribuciones al coste final, no todos los recorridos internos entre auxiliares.</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reabrir reparto secundario</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explicar coste seleccionado</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Comportamiento</value></data>
