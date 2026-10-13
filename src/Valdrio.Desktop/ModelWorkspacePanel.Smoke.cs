@@ -81,7 +81,8 @@ public partial class ModelWorkspacePanel
         Select(companyPanel.ScaleBox, 0);
         companyPanel.DiscreteBox.SetCurrentValue(CheckBox.IsCheckedProperty, true);
         await Click(companyPanel.AddUnitButton);
-        Check(vm.Units.Count == 2, "unit selections loaded through port");
+        Check(vm.Units.Count == DefaultActivityUnitCatalog.All.Count + 2,
+            "standard and custom unit selections loaded through port");
         Text(CenterCodeBox, "PRENSA-001");
         Text(CenterNameBox, "Prensa 日本");
         await Click(SaveCenterButton);
