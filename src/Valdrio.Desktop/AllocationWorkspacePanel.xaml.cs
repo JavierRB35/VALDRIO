@@ -17,17 +17,27 @@ public partial class AllocationWorkspacePanel : UserControl
         ConfigurePage(false);
         DataContextChanged += (_, e) =>
         {
-            if (viewModel is not null) viewModel.PropertyChanged -= Changed;
+            if (viewModel is not null)
+            {
+                viewModel.PropertyChanged -= Changed;
+                viewModel.PrincipalOriginsChanged -= PrincipalFlowChanged;
+            }
             viewModel = e.NewValue as AllocationWorkspaceViewModel;
-            if (viewModel is not null) viewModel.PropertyChanged += Changed;
+            if (viewModel is not null)
+            {
+                viewModel.PropertyChanged += Changed;
+                viewModel.PrincipalOriginsChanged += PrincipalFlowChanged;
+            }
             Headers();
             UpdateBatchState();
+            RedrawPrincipalCostFlow();
         };
     }
     public bool SecondaryOnly { set => ConfigurePage(value); }
     private void ConfigurePage(bool secondary)
     {
         secondaryOnly = secondary;
+        RedrawPrincipalCostFlow();
         // Each page has its own visual tree; shared controls retain the same commands and validation.
         static void Card(FrameworkElement section, bool visible) =>
             ((FrameworkElement)section.Parent).Visibility = visible ? Visibility.Visible : Visibility.Collapsed;

@@ -1272,6 +1272,9 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.PrincipalOriginAuxiliary" xml:space="preserve"><value>Vía auxiliar</value></data>
   <data name="AllocationUI.PrincipalFlowTitle" xml:space="preserve"><value>Flujo de costes al centro principal seleccionado</value></data>
   <data name="AllocationUI.PrincipalFlowHelp" xml:space="preserve"><value>Cuentas de origen → nodos donde entraron inicialmente los costes → centro principal receptor. Las flechas representan contribuciones al coste final, no todos los recorridos internos entre auxiliares.</value></data>
+  <data name="AllocationUI.PrincipalFlowAccounts" xml:space="preserve"><value>Cuentas de origen</value></data>
+  <data name="AllocationUI.PrincipalFlowPrimary" xml:space="preserve"><value>Nodos de reparto primario</value></data>
+  <data name="AllocationUI.PrincipalFlowDestination" xml:space="preserve"><value>Centro principal receptor</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reabrir reparto secundario</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explicar coste seleccionado</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Comportamiento</value></data>

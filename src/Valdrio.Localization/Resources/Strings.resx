@@ -1272,6 +1272,9 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.PrincipalOriginAuxiliary" xml:space="preserve"><value>Via auxiliary</value></data>
   <data name="AllocationUI.PrincipalFlowTitle" xml:space="preserve"><value>Cost flow to the selected principal centre</value></data>
   <data name="AllocationUI.PrincipalFlowHelp" xml:space="preserve"><value>Original accounts → initial cost-assignment nodes → receiving principal centre. Arrows represent contributions to final cost, not every internal route between auxiliary nodes.</value></data>
+  <data name="AllocationUI.PrincipalFlowAccounts" xml:space="preserve"><value>Original accounts</value></data>
+  <data name="AllocationUI.PrincipalFlowPrimary" xml:space="preserve"><value>Primary allocation nodes</value></data>
+  <data name="AllocationUI.PrincipalFlowDestination" xml:space="preserve"><value>Receiving principal centre</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reopen secondary allocation</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explain selected cost</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Behavior</value></data>
