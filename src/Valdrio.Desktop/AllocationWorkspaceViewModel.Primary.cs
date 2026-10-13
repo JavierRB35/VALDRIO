@@ -5,7 +5,10 @@ using Valdrio.Domain;
 namespace Valdrio.Desktop;
 
 public sealed record PrimaryAllocationRow(string Source, string Destination, string Amount, string AppliedRule, string Behavior);
-public sealed record PrimaryNodeTotalRow(string Center, string Node, string Amount, decimal NumericAmount);
+public sealed record PrimaryNodeTotalRow(string Center, string Node, string Amount, decimal NumericAmount)
+{
+    public decimal PresentedAmount { get; init; }
+}
 
 // The preview belongs to the T08 workspace: never invent a second, editable set of rules.
 public sealed partial class AllocationWorkspaceViewModel
@@ -21,7 +24,7 @@ public sealed partial class AllocationWorkspaceViewModel
         DisplayMoney(amount, workspace.Resources.Study.Currency.FunctionalCurrencyCode);
     public string PrimaryResultsTotal => PrimaryResults.Count == 0 ? "" : StudyMoney(primaryPostedTotal);
     public string PrimaryNodeTotalsTotal => PrimaryNodeTotals.Count == 0 ? "" :
-        StudyMoney(PrimaryNodeTotals.Sum(row => row.NumericAmount));
+        StudyMoney(PrimaryNodeTotals.Sum(row => row.PresentedAmount));
     public string PrimaryCoverageTotal => Coverage.Count == 0 ? "" :
         StudyMoney(Coverage.Sum(row => row.NumericAmount));
     public string PrimaryCompositionTotal => workspace?.Resources.Preparation.Coverage is not { Count: > 0 } coverage ? "" :
@@ -98,7 +101,8 @@ public sealed partial class AllocationWorkspaceViewModel
                 var ledgerTotal = group.Sum(item => item.Fact.PostedAmount.Amount);
                 var shownTotal = group.Sum(item => item.Amount);
                 PrimaryNodeTotals.Add(new(center.Code + " · " + center.Name, node.Code,
-                    DisplayMoney(shownTotal, primary.Currency), ledgerTotal));
+                    DisplayMoney(shownTotal, primary.Currency), ledgerTotal)
+                { PresentedAmount = shownTotal });
             }
             PrimarySummary = string.Format(Format, this["PrimarySummary"], primary.Facts.Count,
                 primary.Gaps.Count, primary.Pools.Count, primary.Currency);
