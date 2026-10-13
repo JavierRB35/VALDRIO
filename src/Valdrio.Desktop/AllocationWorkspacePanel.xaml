@@ -29,7 +29,7 @@
    <Grid.ColumnDefinitions><ColumnDefinition Width="2*" MinWidth="320"/><ColumnDefinition Width="5*" MinWidth="460"/></Grid.ColumnDefinitions>
    <Border Style="{StaticResource Card}" Margin="0,0,12,16">
     <Expander x:Name="LibrarySection" Header="{Binding [Library]}" IsExpanded="True" VerticalContentAlignment="Stretch"><Grid Margin="0,8,0,0"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-     <WrapPanel><Button Content="{Binding [NewKey]}" Command="{Binding NewKeyCommand}" x:Name="NewKeyButton" Click="FocusNewKey"/><Button Content="{Binding [DeleteKey]}" Command="{Binding DeleteKeyCommand}" x:Name="DeleteKeyButton"/><Button Content="{Binding [Refresh]}" Command="{Binding RefreshCommand}" x:Name="RefreshButton"/></WrapPanel>
+     <WrapPanel><Button Content="{Binding [NewKey]}" Command="{Binding NewKeyCommand}" x:Name="NewKeyButton" Click="FocusNewKey"/><Button Content="{Binding [NewVersion]}" Command="{Binding NewVersionCommand}" x:Name="NewVersionButton" ToolTip="{Binding [SecondaryRepairVersionHelp]}"/><Button Content="{Binding [DeleteKey]}" Command="{Binding DeleteKeyCommand}" x:Name="DeleteKeyButton"/><Button Content="{Binding [Refresh]}" Command="{Binding RefreshCommand}" x:Name="RefreshButton"/></WrapPanel>
      <DataGrid Grid.Row="1" x:Name="KeyGrid" SelectionChanged="OpenKeySelectionChanged" MouseDoubleClick="OpenKeyDoubleClick" KeyDown="OpenKeyKeyDown" ItemsSource="{Binding Keys}" SelectedItem="{Binding SelectedKey}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" Margin="0,12,0,8">
       <DataGrid.RowStyle>
        <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
@@ -300,6 +300,11 @@
      </WrapPanel>
      <TextBlock Text="{Binding SecondarySummary}" Margin="0,8,0,4" AutomationProperties.LiveSetting="Polite"/>
      <TextBlock Text="{Binding SecondaryDiagnostic}" TextWrapping="Wrap" Margin="0,4,0,8" AutomationProperties.LiveSetting="Polite"/>
+     <StackPanel Visibility="{Binding SecondaryCalculationFailed, Converter={StaticResource Visible}}" Margin="0,4,0,12">
+      <TextBlock Text="{Binding [SecondaryRepairHelp]}" Foreground="{DynamicResource Brand.Red}" TextWrapping="Wrap" Margin="0,0,0,6"/>
+      <Button Content="{Binding [SecondaryRepairAction]}" Click="NavigateToSecondaryRepair"
+              HorizontalAlignment="Left" Style="{StaticResource Button.Primary}"/>
+     </StackPanel>
    <Expander x:Name="ReciprocalSection" Header="{Binding [ReciprocalTitle]}" IsExpanded="True">
     <StackPanel Margin="0,8,0,0">
      <TextBlock Text="{Binding [ReciprocalHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>

@@ -59,6 +59,8 @@ public sealed partial class AllocationWorkspaceViewModel
     private SecondaryAllocationResult? secondaryPreview;
     private IReadOnlyList<string> requiredSecondaryGroups = [];
     private bool secondaryCalculated;
+    private bool secondaryCalculationFailed;
+    public bool SecondaryCalculationFailed => secondaryCalculationFailed && !IsSecondaryClosed;
     private CancellationTokenSource? secondaryCalculationCts;
     public ObservableCollection<SecondaryAllocationRow> SecondaryResults { get; } = [];
     public ObservableCollection<PrincipalCostRow> PrincipalCosts { get; } = [];
@@ -262,6 +264,7 @@ public sealed partial class AllocationWorkspaceViewModel
         requiredSecondaryGroups = DetermineRequiredSecondaryGroups();
         secondaryPreview = null;
         secondaryCalculated = false;
+        secondaryCalculationFailed = false;
         SecondaryResults.Clear();
         PrincipalCosts.Clear();
         secondaryContributions.Clear();
@@ -378,6 +381,7 @@ public sealed partial class AllocationWorkspaceViewModel
         busy = true;
         secondaryPreview = null;
         secondaryCalculated = false;
+        secondaryCalculationFailed = false;
         SecondaryResults.Clear();
         PrincipalCosts.Clear();
         secondaryContributions.Clear();
@@ -418,7 +422,17 @@ public sealed partial class AllocationWorkspaceViewModel
         }
         catch (DomainRuleException ex)
         {
+            secondaryCalculationFailed = true;
             SecondarySummary = "";
+            // Select the saved route associated with the failing auxiliary when known.
+            var troublesome = ex.Diagnostic.Arguments
+                .Where(a => a.Name is "auxiliary" or "auxiliaries")
+                .SelectMany(a => a.CanonicalValue.Split(','))
+                .Select(id => id.Trim()).ToHashSet(StringComparer.Ordinal);
+            SelectedSecondary = SecondaryRules.FirstOrDefault(r =>
+                workspace?.Configuration.SecondaryRules.Any(route => route.Id == r.Id &&
+                    troublesome.Contains(route.AuxiliaryNodeId.ToString())) == true)
+                ?? SecondaryRules.FirstOrDefault();
             var diagnostic = MakeReciprocalDiagnosticReadable(ex.Diagnostic);
             SecondaryDiagnostic = new DomainDiagnosticFormatter(texts)
                 .Format(diagnostic, System.Globalization.CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message;
@@ -426,6 +440,8 @@ public sealed partial class AllocationWorkspaceViewModel
         }
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or OverflowException)
         {
+            secondaryCalculationFailed = true;
+            SelectedSecondary = SecondaryRules.FirstOrDefault();
             SecondarySummary = "";
             SecondaryDiagnostic = this["SecondaryInvalid"];
             PresentReciprocalFailure(SecondaryDiagnostic);

@@ -62,6 +62,24 @@ public partial class AllocationWorkspacePanel : UserControl
             if (newClosure && IsVisible) RevealResults(ResultsSection);
         }
     }
+    private void NavigateToSecondaryRepair(object sender, RoutedEventArgs e)
+    {
+        if (viewModel is not { } vm) return;
+        LibrarySection.IsExpanded = true;
+        DefinitionSection.IsExpanded = true;
+        RulesSection.IsExpanded = true;
+        RuleTabs.SelectedIndex = 1;
+        if (vm.SelectedSecondary is null) vm.SelectedSecondary = vm.SecondaryRules.FirstOrDefault();
+        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+        {
+            if (SecondaryRulesGrid.IsVisible && vm.SelectedSecondary is not null)
+            {
+                SecondaryRulesGrid.SelectedItem = vm.SelectedSecondary;
+                SecondaryRulesGrid.ScrollIntoView(vm.SelectedSecondary);
+                SecondaryRulesGrid.BringIntoView();
+            }
+        }));
+    }
     private void RevealResults(Expander section)
     {
         section.IsExpanded = true;

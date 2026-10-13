@@ -1261,6 +1261,9 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.SecondaryGross" xml:space="preserve"><value>Circulación bruta de auxiliares (informativa, no se suma al coste final)</value></data>
   <data name="AllocationUI.CalculateSecondary" xml:space="preserve"><value>Realizar cálculo</value></data>
   <data name="AllocationUI.CloseSecondary" xml:space="preserve"><value>Cerrar reparto secundario</value></data>
+  <data name="AllocationUI.SecondaryRepairHelp" xml:space="preserve"><value>El cálculo no es viable con las reglas actuales. Puedes quitar la asignación secundaria seleccionada y sustituirla por otra clave. Si la clave publicada ya se utilizó, crea una nueva versión en lugar de sobrescribirla o eliminar su historial.</value></data>
+  <data name="AllocationUI.SecondaryRepairAction" xml:space="preserve"><value>Corregir clave o asignación secundaria</value></data>
+  <data name="AllocationUI.SecondaryRepairVersionHelp" xml:space="preserve"><value>Crea una nueva versión editable de una clave publicada. Las versiones referenciadas se conservan por trazabilidad.</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reabrir reparto secundario</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explicar coste seleccionado</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Comportamiento</value></data>
