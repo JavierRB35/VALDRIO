@@ -118,6 +118,19 @@ public partial class AllocationWorkspacePanel : UserControl
             Keyboard.Focus(KeyGrid);
         }));
     }
+    internal void RestoreClosedKeyDetails()
+    {
+        // Do not steal focus or displace the financial results on a closed phase.
+        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(async () =>
+        {
+            if (viewModel is not { } vm || !KeyGrid.IsVisible || KeyGrid.Items.Count == 0) return;
+            var first = KeyGrid.Items[0];
+            KeyGrid.SelectedItem = first;
+            if (vm.LoadKeyCommand.CanExecute(null))
+                await vm.LoadKeyCommand.ExecuteAsync(null);
+        }));
+    }
+
     private void FocusNewKey(object sender, RoutedEventArgs e)
     {
         // The key editor is shared by primary and secondary pages.
