@@ -645,7 +645,7 @@ Completa: {5}</value></data>
 <data name="Resource.PartNotFound" xml:space="preserve"><value>Selecciona una parte existente y única de este recurso.</value></data>
   <data name="Resources.Title" xml:space="preserve"><value>Recursos</value></data>
   <data name="Resources.Introduction" xml:space="preserve"><value>Revisa los saldos importados y ajusta Correcciones (por ejemplo, amortización técnica o ajustes extracontables). Cada celda confirmada se guarda automáticamente. El importe efectivo se distribuye a los nodos en 6. Reparto primario.</value></data>
-  <data name="Resources.Ready" xml:space="preserve"><value>Correcciones se guarda al confirmar cada celda. La distribución se configura en Claves y reglas.</value></data>
+  <data name="Resources.Ready" xml:space="preserve"><value>Las correcciones se guardan al confirmar cada celda. La distribución se configura en Claves y reglas.</value></data>
   <data name="Resources.NeedStudy" xml:space="preserve"><value>Guarda o carga un estudio en el paso 3 para preparar sus recursos.</value></data>
   <data name="Resources.NeedImport" xml:space="preserve"><value>Primero importa y guarda datos contables en el análisis. Al terminar la importación, VALDRIO te traerá directamente aquí.</value></data>
   <data name="Resources.ReadOnly" xml:space="preserve"><value>El archivo está abierto para consulta. Ábrelo en modo edición para guardar cambios.</value></data>
