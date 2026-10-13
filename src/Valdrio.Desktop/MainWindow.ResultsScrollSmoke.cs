@@ -102,14 +102,25 @@ public partial class MainWindow
                 "first principal cost centre selected with origin breakdown " + language);
             Check(vm.PrincipalOriginRows.Sum(r => r.NumericAmount) == vm.SelectedPrincipalCostRow!.PresentedTotalAmount,
                 "selected centre origins reconcile at displayed currency precision " + language);
-            Check(panel.PrincipalFlowCanvas.Children.Count > 0,
-                "selected principal cost centre displays a non-empty node-flow diagram " + language);
+            Check(vm.SecondaryFlowArcs.Count > 0 &&
+                vm.SecondaryFlowArcs.Any(arc => arc.Stage == SecondaryFlowStage.Primary) &&
+                vm.SecondaryFlowArcs.Any(arc => arc.Stage == SecondaryFlowStage.Final),
+                "published secondary result projects complete primary-node and auxiliary-to-principal stages " + language);
+            Check(panel.PrincipalFlowCanvas.Children.Count > 0 &&
+                panel.PrincipalFlowCanvas.Height > 410,
+                "complete secondary graph renders on full page height " + language);
+            var priorCentre = vm.SelectedPrincipalCostRow;
+            var globalArcCount = vm.SecondaryFlowArcs.Count;
+            vm.SelectedPrincipalCostRow = null; await Idle();
+            Check(vm.SecondaryFlowArcs.Count == globalArcCount && panel.PrincipalFlowCanvas.Children.Count > 0,
+                "secondary flow remains visible without selecting any account or principal centre " + language);
+            vm.SelectedPrincipalCostRow = priorCentre; await Idle();
             var nextCentre = vm.PrincipalCosts.Skip(1).FirstOrDefault();
             if (nextCentre is not null)
             {
                 panel.PrincipalCostsGrid.SelectedItem = nextCentre; await Idle();
                 Check(vm.SelectedPrincipalCostRow == nextCentre && vm.PrincipalOriginRows.Sum(r => r.NumericAmount) == nextCentre.PresentedTotalAmount,
-                    "changing principal centre updates source trace and flow " + language);
+                    "changing principal centre updates the adjacent cost-origin table " + language);
             }
             ScrollToElement(panel.PrincipalCostFlowSection); await Idle();
             VisualEvidenceCapture.Capture(this, Path.Combine(directory, language + "-principal-flow.png"));
