@@ -23,7 +23,7 @@ public partial class AllocationWorkspacePanel
         PrincipalFlowCanvas.Children.Clear();
         if (!secondaryOnly || viewModel is not { } vm) return;
 
-        const double width = 1780d, top = 210d, rowStep = 140d;
+        const double width = 1780d, top = 270d, rowStep = 140d;
         const double cardHeight = 112d, cardWidth = 344d;
         const double originX = 24d, auxiliaryX = 696d, principalX = 1405d;
 
@@ -48,7 +48,7 @@ public partial class AllocationWorkspacePanel
         var foreground = TryFindResource("Text.Primary") as Brush ?? Brushes.Black;
         var edgeInk = TryFindResource("Brand.DeepGreen") as Brush ?? Brushes.DarkGreen;
         var primaryBrush = TryFindResource("Surface.Subtle") as Brush ?? Brushes.WhiteSmoke;
-        var auxiliaryBrush = Brushes.AliceBlue;
+        var auxiliaryBrush = TryFindResource("Surface.Canvas") as Brush ?? Brushes.AliceBlue;
         var finalBrush = TryFindResource("Status.SuccessBg") as Brush ?? Brushes.Honeydew;
         var reciprocalInk = Brushes.SteelBlue;
         var directInk = Brushes.SlateGray;
@@ -112,7 +112,7 @@ public partial class AllocationWorkspacePanel
                 {
                     // Primary cost already absorbed by a principal bypasses
                     // auxiliary nodes along a distinctive top corridor.
-                    var laneY = 166d - (directIndex++ % 5) * 11d;
+                    var laneY = 228d - (directIndex++ % 6) * 10d;
                     DrawGraphDirectCurve(
                         new(from.Position.X + cardWidth, from.Position.Y + 44),
                         new(toPrincipal.Position.X, toPrincipal.Position.Y + 43),
