@@ -187,9 +187,16 @@ public partial class AllocationWorkspacePanel : UserControl
     }
     private async void OpenKeySelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (e.OriginalSource == KeyGrid && KeyGrid.IsKeyboardFocusWithin &&
-            viewModel?.LoadKeyCommand.CanExecute(null) == true)
-            await viewModel.LoadKeyCommand.ExecuteAsync(null);
+        // DataGrid.SelectionChanged normally fires before the row receives keyboard
+        // focus on a mouse click. Requiring IsKeyboardFocusWithin made a selected
+        // key appear locked or unrelated to the editor until "Open" was clicked.
+        if (e.OriginalSource != KeyGrid || e.AddedItems.Count == 0 ||
+            !IsLoaded || viewModel is not { } vm || vm.IsBusy) return;
+        var selected = e.AddedItems[0];
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ContextIdle);
+        if (ReferenceEquals(KeyGrid.SelectedItem, selected) &&
+            ReferenceEquals(vm.SelectedKey, selected) && vm.LoadKeyCommand.CanExecute(null))
+            await vm.LoadKeyCommand.ExecuteAsync(null);
     }
     internal Task SecondaryAssignmentTask { get; private set; } = Task.CompletedTask;
 
