@@ -13,6 +13,22 @@ public partial class AllocationWorkspacePanel
     private sealed record PositionedFlowNode(SecondaryFlowNode Node, Point Position);
     private sealed record GroupedFlowLink(SecondaryFlowStage Stage, string SourceId,
         string TargetId, decimal Amount, IReadOnlyList<SecondaryFlowArc> Details);
+    private sealed record DrawnNetworkArc(System.Windows.Shapes.Path Curve,
+        Polygon Arrow, string SourceId, string TargetId, double BaseOpacity);
+    private readonly List<DrawnNetworkArc> drawnNetworkArcs = [];
+
+    private void EmphasizeNetworkNode(string? nodeId)
+    {
+        foreach (var arc in drawnNetworkArcs)
+        {
+            var visible = nodeId is null ||
+                StringComparer.Ordinal.Equals(arc.SourceId, nodeId) ||
+                StringComparer.Ordinal.Equals(arc.TargetId, nodeId);
+            var opacity = nodeId is null ? arc.BaseOpacity : visible ? 1d : .08d;
+            arc.Curve.Opacity = opacity;
+            arc.Arrow.Opacity = opacity;
+        }
+    }
 
     private void PrincipalFlowChanged(object? sender, EventArgs e) => RedrawPrincipalCostFlow();
     private void CompleteFlowChanged(object? sender, EventArgs e) => RedrawPrincipalCostFlow();
@@ -21,6 +37,7 @@ public partial class AllocationWorkspacePanel
     {
         if (PrincipalFlowCanvas is null) return;
         PrincipalFlowCanvas.Children.Clear();
+        drawnNetworkArcs.Clear();
         if (!secondaryOnly || viewModel is not { } vm) return;
 
         const double width = 1780d, top = 270d, rowStep = 140d;
@@ -106,7 +123,8 @@ public partial class AllocationWorkspacePanel
                 {
                     DrawGraphCurve(new(from.Position.X + cardWidth, from.Position.Y + 54),
                         new(toAux.Position.X, toAux.Position.Y + 54),
-                        edgeInk, stroke, amount + "\n" + detail, 0);
+                        edgeInk, stroke, amount + "\n" + detail, 0,
+                        link.SourceId, link.TargetId);
                 }
                 else if (principalCards.TryGetValue(link.TargetId, out var toPrincipal))
                 {
@@ -117,7 +135,7 @@ public partial class AllocationWorkspacePanel
                         new(from.Position.X + cardWidth, from.Position.Y + 44),
                         new(toPrincipal.Position.X, toPrincipal.Position.Y + 43),
                         laneY, directInk, Math.Max(1.7, stroke * .6),
-                        amount + "\n" + detail);
+                        amount + "\n" + detail, link.SourceId, link.TargetId);
                 }
             }
             else if (link.Stage == SecondaryFlowStage.Final)
@@ -126,7 +144,8 @@ public partial class AllocationWorkspacePanel
                     !principalCards.TryGetValue(link.TargetId, out var to)) continue;
                 DrawGraphCurve(new(from.Position.X + cardWidth, from.Position.Y + 77),
                     new(to.Position.X, to.Position.Y + 77),
-                    edgeInk, stroke, amount + "\n" + detail, 1);
+                    edgeInk, stroke, amount + "\n" + detail, 1,
+                    link.SourceId, link.TargetId);
             }
             else
             {
@@ -139,7 +158,8 @@ public partial class AllocationWorkspacePanel
                 DrawGraphReciprocalCurve(
                     new(from.Position.X + cardWidth, from.Position.Y + 28),
                     new(to.Position.X + cardWidth, to.Position.Y + 87),
-                    laneX, reciprocalInk, stroke, amount + "\n" + detail);
+                    laneX, reciprocalInk, stroke, amount + "\n" + detail,
+                    link.SourceId, link.TargetId);
             }
         }
 
@@ -192,18 +212,19 @@ public partial class AllocationWorkspacePanel
     }
 
     private void DrawGraphCurve(Point from, Point to, Brush brush,
-        double thickness, string tooltip, int variant)
+        double thickness, string tooltip, int variant, string sourceId, string targetId)
     {
         var dx = (to.X - from.X) * .48d;
         var geometry = new PathGeometry([
             new PathFigure(from, [new BezierSegment(
                 new(from.X + dx, from.Y), new(to.X - dx, to.Y), to, true)], false)]);
         DrawGraphLink(geometry, to, true, brush, thickness, tooltip,
-            variant == 1 ? .68d : .50d, false);
+            variant == 1 ? .68d : .50d, false, sourceId, targetId);
     }
 
     private void DrawGraphDirectCurve(Point from, Point to,
-        double laneY, Brush brush, double thickness, string tooltip)
+        double laneY, Brush brush, double thickness, string tooltip,
+        string sourceId, string targetId)
     {
         var hubLeft = new Point(515, laneY);
         var hubRight = new Point(1274, laneY);
@@ -216,11 +237,13 @@ public partial class AllocationWorkspacePanel
                 new BezierSegment(new(hubRight.X + 55, hubRight.Y),
                     new(to.X - 75, to.Y), to, true)
             ], false)]);
-        DrawGraphLink(geometry, to, true, brush, thickness, tooltip, .57d, true);
+        DrawGraphLink(geometry, to, true, brush, thickness, tooltip,
+            .57d, true, sourceId, targetId);
     }
 
     private void DrawGraphReciprocalCurve(Point from, Point to,
-        double laneX, Brush brush, double thickness, string tooltip)
+        double laneX, Brush brush, double thickness, string tooltip,
+        string sourceId, string targetId)
     {
         // A->A has distinct source/destination ports and a visible loop.
         // Other reciprocal arcs return to the middle column (right-to-left
@@ -228,12 +251,13 @@ public partial class AllocationWorkspacePanel
         var geometry = new PathGeometry([
             new PathFigure(from, [new BezierSegment(
                 new(laneX, from.Y), new(laneX, to.Y), to, true)], false)]);
-        DrawGraphLink(geometry, to, false, brush, thickness, tooltip, .75d, true);
+        DrawGraphLink(geometry, to, false, brush, thickness, tooltip,
+            .75d, true, sourceId, targetId);
     }
 
     private void DrawGraphLink(PathGeometry geometry, Point end,
         bool rightward, Brush brush, double thickness, string tooltip,
-        double opacity, bool dashed)
+        double opacity, bool dashed, string sourceId, string targetId)
     {
         var path = new System.Windows.Shapes.Path
         {
@@ -256,6 +280,7 @@ public partial class AllocationWorkspacePanel
         };
         PrincipalFlowCanvas.Children.Add(path);
         PrincipalFlowCanvas.Children.Add(arrow);
+        drawnNetworkArcs.Add(new(path, arrow, sourceId, targetId, opacity));
     }
 
     private void DrawGraphNodeCard(Point position, double width,
@@ -294,6 +319,9 @@ public partial class AllocationWorkspacePanel
             BorderBrush = border, Child = panel,
             ToolTip = tooltip, Tag = tag
         };
+        var id = tag[(tag.IndexOf(':') + 1)..];
+        card.MouseEnter += (_, _) => EmphasizeNetworkNode(id);
+        card.MouseLeave += (_, _) => EmphasizeNetworkNode(null);
         Canvas.SetLeft(card, position.X);
         Canvas.SetTop(card, position.Y);
         PrincipalFlowCanvas.Children.Add(card);
