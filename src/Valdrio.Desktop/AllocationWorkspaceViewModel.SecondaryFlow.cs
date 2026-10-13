@@ -12,7 +12,14 @@ public enum SecondaryFlowStage { Primary, Reciprocal, Final }
 public sealed record SecondaryFlowArc(
     SecondaryFlowStage Stage, string Group, string Source, string Target,
     string SourceFull, string TargetFull, bool TargetAuxiliary,
-    decimal NumericAmount, string Amount);
+    decimal NumericAmount, string Amount)
+{
+    public string SourceId { get; init; } = "";
+    public string TargetId { get; init; } = "";
+}
+public sealed record SecondaryFlowNode(
+    string Id, string ShortName, string FullName, bool IsAuxiliary);
+
 
 // This projector uses existing solution.Gross and the exact published
 // coefficients. No iterating, no factorization and no per-account fake ledger.
@@ -56,12 +63,14 @@ internal static class SecondaryFlowProjector
 public sealed partial class AllocationWorkspaceViewModel
 {
     public ObservableCollection<SecondaryFlowArc> SecondaryFlowArcs { get; } = [];
+    public ObservableCollection<SecondaryFlowNode> SecondaryFlowNodes { get; } = [];
     public string SecondaryFlowNotice { get; private set; } = "";
     public event EventHandler? SecondaryFullFlowChanged;
 
     private void ClearCompleteSecondaryFlow()
     {
         SecondaryFlowArcs.Clear();
+        SecondaryFlowNodes.Clear();
         SecondaryFlowNotice = this["SecondaryFlowNoResult"];
         OnPropertyChanged(nameof(SecondaryFlowNotice));
         SecondaryFullFlowChanged?.Invoke(this, EventArgs.Empty);
@@ -70,6 +79,7 @@ public sealed partial class AllocationWorkspaceViewModel
     private void BuildCompleteSecondaryFlow(IReadOnlyList<SecondaryGroupCirculation> groups)
     {
         SecondaryFlowArcs.Clear();
+        SecondaryFlowNodes.Clear();
         SecondaryFlowNotice = "";
         var primary = primaryForOverview;
         if (workspace is null || primary is null)
@@ -96,7 +106,8 @@ public sealed partial class AllocationWorkspaceViewModel
                 SecondaryFlowArcs.Add(new(stage, group, ShortName(source), ShortName(target),
                     LongName(source), LongName(target),
                     activeNodes.TryGetValue(target, out var n) && n.Role == NodeRole.Auxiliary,
-                    amount, StudyMoney(amount)));
+                    amount, StudyMoney(amount))
+                { SourceId = source, TargetId = target });
             }
 
             var assignedGroups = (workspace.Configuration.SecondaryPartRoutingGroups ?? [])
@@ -151,6 +162,12 @@ public sealed partial class AllocationWorkspaceViewModel
 
             // The last column's totals are the persisted secondary results,
             // not the sum of internal reciprocal arrows.
+            // All active nodes appear as unique cards even when their primary
+            // cost or reciprocal coefficient is zero.
+            foreach (var entry in activeNodes.OrderBy(p => ShortName(p.Key), StringComparer.CurrentCulture)
+                .ThenBy(p => p.Key, StringComparer.Ordinal))
+                SecondaryFlowNodes.Add(new(entry.Key, ShortName(entry.Key),
+                    LongName(entry.Key), entry.Value.Role == NodeRole.Auxiliary));
             SecondaryFlowNotice = string.Format(Format, this["SecondaryFlowCompleteNotice"],
                 SecondaryFlowArcs.Count,
                 StudyMoney(PrincipalCosts.Sum(p => p.PresentedTotalAmount)));
@@ -159,6 +176,7 @@ public sealed partial class AllocationWorkspaceViewModel
         {
             // Do not render a partial map with missing reciprocal arcs.
             SecondaryFlowArcs.Clear();
+            SecondaryFlowNodes.Clear();
             SecondaryFlowNotice = this["SecondaryFlowUnavailable"];
         }
         OnPropertyChanged(nameof(SecondaryFlowNotice));
