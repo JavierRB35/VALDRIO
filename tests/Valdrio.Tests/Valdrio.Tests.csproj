@@ -33,6 +33,7 @@
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Reciprocal.cs" Link="Desktop/AllocationWorkspaceViewModel.Reciprocal.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Secondary.cs" Link="Desktop/AllocationWorkspaceViewModel.Secondary.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.AuxiliarySettlement.cs" Link="Desktop/AllocationWorkspaceViewModel.AuxiliarySettlement.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.SecondaryFlow.cs" Link="Desktop/AllocationWorkspaceViewModel.SecondaryFlow.cs" />
     <Compile Include="../../src/Valdrio.Desktop/SecondaryResultPresentation.cs" Link="Desktop/SecondaryResultPresentation.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationCurrencyDisplay.cs" Link="Desktop/AllocationCurrencyDisplay.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Composition.cs" Link="Desktop/AllocationWorkspaceViewModel.Composition.cs" />

@@ -11,7 +11,8 @@ public enum SecondaryFlowStage { Primary, Reciprocal, Final }
 // reciprocal stage are gross transfers; they must NOT be added to final costs.
 public sealed record SecondaryFlowArc(
     SecondaryFlowStage Stage, string Group, string Source, string Target,
-    string SourceFull, string TargetFull, decimal NumericAmount, string Amount);
+    string SourceFull, string TargetFull, bool TargetAuxiliary,
+    decimal NumericAmount, string Amount);
 
 // This projector uses existing solution.Gross and the exact published
 // coefficients. No iterating, no factorization and no per-account fake ledger.
@@ -93,7 +94,9 @@ public sealed partial class AllocationWorkspaceViewModel
             {
                 if (amount == 0m) return;
                 SecondaryFlowArcs.Add(new(stage, group, ShortName(source), ShortName(target),
-                    LongName(source), LongName(target), amount, StudyMoney(amount)));
+                    LongName(source), LongName(target),
+                    activeNodes.TryGetValue(target, out var n) && n.Role == NodeRole.Auxiliary,
+                    amount, StudyMoney(amount)));
             }
 
             var assignedGroups = (workspace.Configuration.SecondaryPartRoutingGroups ?? [])
