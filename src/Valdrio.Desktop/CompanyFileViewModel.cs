@@ -201,8 +201,8 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     private async Task Create()
     {
         if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
-        var path = dialogs.SelectNewFile(); if (path is null) return;
         var name = CompanyName; var selectedCurrency = Currency;
+        var path = dialogs.SelectNewFile(name); if (path is null) return;
         await Run(async token => await ReplaceAsync(await Task.Run(() => files.Create(
             new(path, name, new CurrencyCode(selectedCurrency), PrecisionPolicy.Pdec1Proposed), token))));
     }
