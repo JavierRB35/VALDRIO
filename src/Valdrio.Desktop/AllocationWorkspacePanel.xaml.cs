@@ -8,6 +8,9 @@ namespace Valdrio.Desktop;
 public partial class AllocationWorkspacePanel : UserControl
 {
     private AllocationWorkspaceViewModel? viewModel;
+    private bool secondaryOnly;
+    private bool previouslyClosedPrimary;
+    private bool previouslyHadSecondaryResults;
     public AllocationWorkspacePanel()
     {
         InitializeComponent();
@@ -23,6 +26,7 @@ public partial class AllocationWorkspacePanel : UserControl
     public bool SecondaryOnly { set => ConfigurePage(value); }
     private void ConfigurePage(bool secondary)
     {
+        secondaryOnly = secondary;
         // Each page has its own visual tree; shared controls retain the same commands and validation.
         static void Card(FrameworkElement section, bool visible) =>
             ((FrameworkElement)section.Parent).Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
@@ -40,6 +44,29 @@ public partial class AllocationWorkspacePanel : UserControl
     private void Changed(object? sender, PropertyChangedEventArgs e)
     {
         if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == "Item[]") Headers();
+        if (viewModel is not { } vm || !string.IsNullOrEmpty(e.PropertyName)) return;
+        if (secondaryOnly)
+        {
+            var hasResults = vm.SecondaryResults.Count > 0;
+            var firstCalculation = !previouslyHadSecondaryResults && hasResults;
+            previouslyHadSecondaryResults = hasResults;
+            if (firstCalculation && IsVisible) RevealResults(SecondaryResultsSection);
+        }
+        else
+        {
+            var closed = vm.IsPrimaryClosed;
+            var newClosure = !previouslyClosedPrimary && closed;
+            previouslyClosedPrimary = closed;
+            if (newClosure && IsVisible) RevealResults(ResultsSection);
+        }
+    }
+    private void RevealResults(Expander section)
+    {
+        section.IsExpanded = true;
+        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+        {
+            if (IsVisible) section.BringIntoView();
+        }));
     }
     private void Headers()
     {
