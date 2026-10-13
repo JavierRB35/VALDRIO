@@ -96,7 +96,7 @@ public sealed partial class AllocationWorkspaceViewModel
                     fact.Weight.ToString("0.####", Format) +
                     (key?.Mode == AllocationKeyMode.DriverUnits ? " " +
                         workspace.Resources.Model.DriverUnits.FirstOrDefault(u => u.Id == key.UnitId)?.Symbol : "");
-                details.Add(new(NodeLabel(node), this[node.Role.ToString()], criterion,
+                details.Add(new(NodeLabel(node), this[node.Role == NodeRole.Principal ? "PrimaryNodeKindPrincipal" : "PrimaryNodeKindAuxiliary"], criterion,
                     driver + " · " + weight, share, DisplayMoney(row.Amount, currency), row.Amount));
             }
             var ratio = baseShown == 0m ? 0m : assigned / baseShown * 100m;

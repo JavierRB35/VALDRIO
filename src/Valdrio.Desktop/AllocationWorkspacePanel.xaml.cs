@@ -21,16 +21,19 @@ public partial class AllocationWorkspacePanel : UserControl
             {
                 viewModel.PropertyChanged -= Changed;
                 viewModel.PrincipalOriginsChanged -= PrincipalFlowChanged;
+                viewModel.PrimaryAccountChanged -= PrimaryFlowChanged;
             }
             viewModel = e.NewValue as AllocationWorkspaceViewModel;
             if (viewModel is not null)
             {
                 viewModel.PropertyChanged += Changed;
                 viewModel.PrincipalOriginsChanged += PrincipalFlowChanged;
+                viewModel.PrimaryAccountChanged += PrimaryFlowChanged;
             }
             Headers();
             UpdateBatchState();
             RedrawPrincipalCostFlow();
+            RedrawPrimaryFlow();
         };
     }
     public bool SecondaryOnly { set => ConfigurePage(value); }
@@ -38,6 +41,7 @@ public partial class AllocationWorkspacePanel : UserControl
     {
         secondaryOnly = secondary;
         RedrawPrincipalCostFlow();
+        RedrawPrimaryFlow();
         // Each page has its own visual tree; shared controls retain the same commands and validation.
         static void Card(FrameworkElement section, bool visible) =>
             ((FrameworkElement)section.Parent).Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
@@ -106,6 +110,8 @@ public partial class AllocationWorkspacePanel : UserControl
         if (viewModel is null) return;
         Set(SecondaryNodeAssignmentsGrid, "Auxiliary", "PublishedKey");
         Set(PrimaryNodeTotalsGrid, "NodeCenter", "Node", "PrimaryAmount");
+        Set(PrimaryAccountGrid, "Account", "PrimaryRepartibleHeader", "PrimaryAuxiliaryHeader",
+            "PrimaryMainHeader", "PrimaryAssignedHeader", "PrimaryPendingHeader", "PrimaryPercentHeader");
         Set(KeyGrid, "Name", "State"); Set(LinesGrid, "Include", "Destination", "NodeUnit", "Weight"); Set(ReciprocalGrid, "ReciprocalGroup", "ReciprocalStatus", "ReciprocalDetail"); Set(SecondaryRulesGrid, "Auxiliary", "ReciprocalGroup", "AppliedKey"); Set(SecondaryResultsGrid, "SecondarySourceNode", "SecondaryPrincipalDestination", "PrimaryAmount", "Behavior"); Set(SecondaryCirculationGrid, "Auxiliary", "SecondaryGross");  Set(SecondaryGroupAssignmentsGrid, "SecondarySourcePart", "SecondarySelectedGroup");
         Set(PrincipalCostsGrid, "SecondaryPrincipalDestination", "PrincipalPrimary", "PrincipalAuxiliary", "PrincipalTotal");
         Set(SecondaryExplanationGrid, "PrimarySource", "ExplainPrimaryAmount", "ExplainEffectiveShare", "PrimaryAmount", "ExplainKeys");
