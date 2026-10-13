@@ -86,6 +86,21 @@ public partial class MainWindow
             Check(vm.PrincipalCosts.Sum(r => r.TotalAmount) == publication.Facts.Sum(f => f.PostedAmount.Amount), "principal totals equal posted ledger " + language);
             Check(vm.PrincipalCosts.All(r => r.PrimaryAmount + r.AuxiliaryAmount == r.TotalAmount), "primary plus auxiliary reconciles per principal " + language);
             Check(vm.SecondaryResults.Sum(r => r.PostedAmount) == vm.PrincipalCosts.Sum(r => r.TotalAmount), "contributions reconcile with principal totals " + language);
+            Check(vm.SelectedPrincipalCostRow is not null && panel.PrincipalOriginGrid.Items.Count > 0,
+                "first principal cost centre selected with origin breakdown " + language);
+            Check(vm.PrincipalOriginRows.Sum(r => r.NumericAmount) == vm.SelectedPrincipalCostRow!.PresentedTotalAmount,
+                "selected centre origins reconcile at displayed currency precision " + language);
+            Check(panel.PrincipalFlowCanvas.Children.Count > 0,
+                "selected principal cost centre displays a non-empty node-flow diagram " + language);
+            var nextCentre = vm.PrincipalCosts.Skip(1).FirstOrDefault();
+            if (nextCentre is not null)
+            {
+                panel.PrincipalCostsGrid.SelectedItem = nextCentre; await Idle();
+                Check(vm.SelectedPrincipalCostRow == nextCentre && vm.PrincipalOriginRows.Sum(r => r.NumericAmount) == nextCentre.PresentedTotalAmount,
+                    "changing principal centre updates source trace and flow " + language);
+            }
+            ScrollToElement(panel.PrincipalCostFlowSection); await Idle();
+            VisualEvidenceCapture.Capture(this, Path.Combine(directory, language + "-principal-flow.png"));
             foreach (var factGroup in publication.Facts.GroupBy(f => (f.TerminalNodeId, f.Behavior)))
                 Check(vm.SecondaryResults.Where(r => r.TerminalNodeId == factGroup.Key.TerminalNodeId && r.SourceBehavior == factGroup.Key.Behavior).Sum(r => r.PostedAmount)
                     == factGroup.Sum(f => f.PostedAmount.Amount), "behavior reconciles per destination " + language);
@@ -181,6 +196,11 @@ public partial class MainWindow
         await vm.CalculateSecondaryCommand.ExecuteAsync(null); await Idle();
         Check(vm.ReciprocalHasError && vm.ReciprocalChecks.Single().HasError && vm.SecondaryResults.Count == 0,
             "failed reciprocal calculation automatically reports error and removes stale results");
+        Check(vm.SecondaryCalculationFailed && vm.SelectedSecondary is not null &&
+            SecondaryPanel.Workspace.RemoveSecondaryButton.IsEnabled,
+            "impossible graph exposes selected repairable route without altering the saved key");
+        Check(vm.PrincipalOriginRows.Count == 0 && SecondaryPanel.Workspace.PrincipalFlowCanvas.Children.Count == 0,
+            "failed calculation does not show stale or invented cost flows");
         ScrollToElement(SecondaryPanel.Workspace.ReciprocalGrid); await Idle();
         var errorText = Descendants<TextBlock>(SecondaryPanel.Workspace.ReciprocalGrid)
             .Where(t => t.DataContext is ReciprocalCheckRow { HasError: true }).ToArray();

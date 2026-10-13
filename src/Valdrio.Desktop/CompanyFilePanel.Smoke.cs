@@ -34,6 +34,10 @@ public partial class CompanyFilePanel
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
             UpdateLayout();
         }
+        Check(CompanyFileDialogs.SuggestedFileName("Café / Taller: Norte") == "Café - Taller- Norte",
+            "new project dialog suggests a Windows-safe filename from project name");
+        Check(CompanyFileDialogs.SuggestedFileName("CON") == "_CON",
+            "reserved Windows device names receive a safe prefix");
         main.ApplyPresentationPreset("en", "es-ES", "UTC", false, false);
         SetText(NameBox, "VALDRIO synthetic factory 日本");
         CurrencyBox.SetCurrentValue(ComboBox.SelectedItemProperty, "USD"); CurrencyBox.GetBindingExpression(ComboBox.SelectedItemProperty)!.UpdateSource();
