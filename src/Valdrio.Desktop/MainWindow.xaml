@@ -15,13 +15,25 @@
       <TextBlock Text="{Binding HeaderSubtitle}" Margin="0,8,0,0" Foreground="{DynamicResource Brand.White}" FontSize="12" />
      </StackPanel>
      <TextBlock x:Name="NavigationGroupLabel" Margin="24,0,16,8" Foreground="{DynamicResource Brand.White}" FontSize="12" FontWeight="SemiBold" />
-      <Button x:Name="CompanyStep" Click="ChooseCompany" Style="{StaticResource Sidebar.Button}" />
-      <Button x:Name="ModelStep" Click="ChooseModel" Style="{StaticResource Sidebar.Button}" />
-      <Button x:Name="StudyStep" Click="ChooseStudy" Style="{StaticResource Sidebar.Button}" />
-      <Button x:Name="ImportStep" Click="ChooseImport" Style="{StaticResource Sidebar.Button}" />
-      <Button x:Name="ResourcesStep" Click="ChooseResources" Style="{StaticResource Sidebar.Button}" />
-      <Button x:Name="AllocationsStep" Click="ChooseAllocations" Style="{StaticResource Sidebar.Button}" />
-      <Button x:Name="SecondaryStep" Click="ChooseSecondary" Style="{StaticResource Sidebar.Button}" />
+     <Expander x:Name="ProjectPhase" Expanded="OnPhaseExpanded" IsExpanded="True" Margin="8,0,8,4">
+      <StackPanel>
+       <Button x:Name="CompanyStep" Click="ChooseCompany" Style="{StaticResource Sidebar.Button}" />
+       <Button x:Name="ModelStep" Click="ChooseModel" Style="{StaticResource Sidebar.Button}" />
+      </StackPanel>
+     </Expander>
+     <Expander x:Name="AnalysisPhase" Expanded="OnPhaseExpanded" Margin="8,0,8,4">
+      <StackPanel>
+       <Button x:Name="StudyStep" Click="ChooseStudy" Style="{StaticResource Sidebar.Button}" />
+       <Button x:Name="ImportStep" Click="ChooseImport" Style="{StaticResource Sidebar.Button}" />
+       <Button x:Name="ResourcesStep" Click="ChooseResources" Style="{StaticResource Sidebar.Button}" />
+      </StackPanel>
+     </Expander>
+     <Expander x:Name="AllocationPhase" Expanded="OnPhaseExpanded" Margin="8,0,8,4">
+      <StackPanel>
+       <Button x:Name="AllocationsStep" Click="ChooseAllocations" Style="{StaticResource Sidebar.Button}" />
+       <Button x:Name="SecondaryStep" Click="ChooseSecondary" Style="{StaticResource Sidebar.Button}" />
+      </StackPanel>
+     </Expander>
      <Border BorderBrush="{DynamicResource Accent.ActiveGreen}" BorderThickness="0,1,0,0" Margin="16,16,16,8" />
      <Button x:Name="SettingsStep" Click="ChooseSettings" Style="{StaticResource Sidebar.Button}" />
     </StackPanel>
