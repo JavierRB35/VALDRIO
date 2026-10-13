@@ -1369,4 +1369,5 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.TableTotal" xml:space="preserve"><value>TOTAL</value></data>
   <data name="AllocationUI.GrossDiagnosticTotal" xml:space="preserve"><value>Total bruto (informativo, no se suma al final)</value></data>
+  <data name="Guide.CloseAccountDetailsForKeys" xml:space="preserve"><value>Está abierto «Detalle de cuentas». Cierra ese panel para volver al editor de claves de reparto.</value></data>
 </root>
