@@ -1332,6 +1332,18 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.PrincipalOriginRouteHeader" xml:space="preserve"><value>Vía</value></data>
   <data name="AllocationUI.PrincipalOriginAmountHeader" xml:space="preserve"><value>Coste atribuido</value></data>
   <data name="AllocationUI.PrincipalOriginKeysHeader" xml:space="preserve"><value>Claves utilizadas</value></data>
+  <data name="AllocationUI.SecondaryGraphTitle" xml:space="preserve"><value>Recorrido global del coste entre nodos</value></data>
+  <data name="AllocationUI.SecondaryGraphOriginHeader" xml:space="preserve"><value>1. Nodos tras el reparto primario</value></data>
+  <data name="AllocationUI.SecondaryGraphAuxHeader" xml:space="preserve"><value>2. Nodos auxiliares y reciprocidad</value></data>
+  <data name="AllocationUI.SecondaryGraphPrincipalHeader" xml:space="preserve"><value>3. Coste final en nodos principales</value></data>
+  <data name="AllocationUI.SecondaryGraphKey" xml:space="preserve"><value>Curvas verdes: transferencias hacia auxiliares y principales · curvas grises discontinuas: coste primario directo a principales · curvas azules discontinuas: prestaciones recíprocas (circulación bruta, no coste adicional). Pasa el ratón por una conexión para ver su importe y grupo.</value></data>
+  <data name="AllocationUI.SecondaryGraphInitialAux" xml:space="preserve"><value>PRIMARIO · AUXILIAR</value></data>
+  <data name="AllocationUI.SecondaryGraphInitialPrincipal" xml:space="preserve"><value>PRIMARIO · PRINCIPAL</value></data>
+  <data name="AllocationUI.SecondaryGraphAuxType" xml:space="preserve"><value>AUXILIAR · RECÍPROCO</value></data>
+  <data name="AllocationUI.SecondaryGraphGross" xml:space="preserve"><value>Circulación bruta</value></data>
+  <data name="AllocationUI.SecondaryGraphInitial" xml:space="preserve"><value>Coste primario</value></data>
+  <data name="AllocationUI.SecondaryGraphPrincipalType" xml:space="preserve"><value>PRINCIPAL · FINAL</value></data>
+  <data name="AllocationUI.SecondaryGraphReceived" xml:space="preserve"><value>Absorción secundaria</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reabrir reparto secundario</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explicar coste seleccionado</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Comportamiento</value></data>

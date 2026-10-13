@@ -495,7 +495,7 @@
        <TextBlock Text="{Binding [PrincipalFlowHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
                      Height="{Binding ElementName=PrincipalFlowCanvas, Path=Height}">
-        <Canvas x:Name="PrincipalFlowCanvas" Width="1160" Height="550" Background="Transparent"/>
+        <Canvas x:Name="PrincipalFlowCanvas" Width="1780" Height="760" Background="Transparent"/>
        </ScrollViewer>
       </StackPanel>
      </Expander>
