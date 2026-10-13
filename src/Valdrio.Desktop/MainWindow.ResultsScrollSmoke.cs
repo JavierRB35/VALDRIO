@@ -106,9 +106,21 @@ public partial class MainWindow
                 vm.SecondaryFlowArcs.Any(arc => arc.Stage == SecondaryFlowStage.Primary) &&
                 vm.SecondaryFlowArcs.Any(arc => arc.Stage == SecondaryFlowStage.Final),
                 "published secondary result projects complete primary-node and auxiliary-to-principal stages " + language);
-            Check(panel.PrincipalFlowCanvas.Children.Count > 0 &&
-                panel.PrincipalFlowCanvas.Height > 410,
-                "complete secondary graph renders on full page height " + language);
+            var costGraphCards = panel.PrincipalFlowCanvas.Children.OfType<Border>()
+                .Where(card => card.Tag is string tag && (
+                    tag.StartsWith("primary:", StringComparison.Ordinal) ||
+                    tag.StartsWith("auxiliary:", StringComparison.Ordinal) ||
+                    tag.StartsWith("principal:", StringComparison.Ordinal))).ToArray();
+            Check(costGraphCards.Length == vm.SecondaryFlowNodes.Count * 2 &&
+                costGraphCards.Select(card => (string)card.Tag!).Distinct(StringComparer.Ordinal).Count() ==
+                    costGraphCards.Length,
+                "the three-column secondary graph renders one card per active node per economic stage " + language);
+            Check(panel.PrincipalFlowCanvas.Children.OfType<System.Windows.Shapes.Path>()
+                    .Any(path => path.Data is PathGeometry geometry &&
+                        geometry.Figures.Any(fig => fig.Segments.OfType<BezierSegment>().Any())),
+                "secondary node graph has real Bezier connectors rather than row-by-row straight lines " + language);
+            Check(panel.PrincipalFlowCanvas.Height > 410,
+                "complete secondary graph has full content-driven page height " + language);
             var priorCentre = vm.SelectedPrincipalCostRow;
             var globalArcCount = vm.SecondaryFlowArcs.Count;
             vm.SelectedPrincipalCostRow = null; await Idle();
