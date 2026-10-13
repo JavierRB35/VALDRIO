@@ -159,6 +159,26 @@ public partial class MainWindow
             Check(RootScrollViewer.VerticalOffset == outerBefore, "table bottom does not transfer wheel to page " + language);
             inside.ScrollToTop(); await Idle(); Wheel(panel.LinesGrid, 120); await Idle();
             Check(RootScrollViewer.VerticalOffset == outerBefore, "table top does not transfer wheel to page " + language);
+            // Regression: the previously activated table must not steal the wheel
+            // when the pointer is on another part of the page or another table.
+            RootScrollViewer.ScrollToTop(); await Idle();
+            var tableAtPointerExit = inside.VerticalOffset;
+            Wheel(panel.ActionStatus, -30); await Idle();
+            Check(RootScrollViewer.VerticalOffset > 0 && inside.VerticalOffset == tableAtPointerExit,
+                "activated table cannot hijack wheel outside its bounds " + language);
+            RootScrollViewer.ScrollToTop(); await Idle();
+            Wheel(panel.PrincipalCostsGrid, -30); await Idle();
+            Check(RootScrollViewer.VerticalOffset > 0 && inside.VerticalOffset == tableAtPointerExit,
+                "activated table cannot hijack wheel hovering over another grid " + language);
+            // The results graph allows horizontal scrolling only. Its vertical wheel
+            // must reach the document, even while a table still owns keyboard focus.
+            RootScrollViewer.ScrollToTop(); await Idle();
+            var graphScroll = Descendants<ScrollViewer>(panel.PrincipalCostFlowSection).Single();
+            var graphVertical = graphScroll.VerticalOffset;
+            Wheel(panel.PrincipalFlowCanvas, -30); await Idle();
+            Check(RootScrollViewer.VerticalOffset > 0 && graphScroll.VerticalOffset == graphVertical,
+                "vertical wheel over horizontal-only results graph scrolls the page " + language);
+            RootScrollViewer.ScrollToTop(); await Idle();
             Click(panel.ActionStatus); Wheel(panel.LinesGrid, -120); await Idle();
             Check(RootScrollViewer.VerticalOffset > outerBefore, "click outside returns wheel to page " + language);
             var editorScroll = Descendants<ScrollViewer>(panel.KeyNameBox).Single();
