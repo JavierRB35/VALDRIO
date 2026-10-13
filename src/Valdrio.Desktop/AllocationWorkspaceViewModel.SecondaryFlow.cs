@@ -125,7 +125,27 @@ public sealed partial class AllocationWorkspaceViewModel
                     workspace.Resources.Model.Structure, workspace.Keys,
                     workspace.Configuration.SecondaryRules, workspace.Resources.Model.DriverUnits,
                     workspace.Resources.Precision, group.ComponentRoutingGroup);
-                foreach (var edge in SecondaryFlowProjector.Project(graph, group.Solution))
+                var projected = SecondaryFlowProjector.Project(graph, group.Solution);
+                // Check group-specific principal receipts against the published
+                // LU solution before showing an allegedly complete network.
+                // Even a later edited key cannot silently produce misleading arrows.
+                for (var terminal = 0; terminal < group.Solution.TerminalIds.Count; terminal++)
+                {
+                    var id = group.Solution.TerminalIds[terminal];
+                    var directlyAssigned = primary.Facts
+                        .Where(f => f.NodeId.ToString() == id &&
+                            StringComparer.Ordinal.Equals(GroupFor(f.PartId), group.ComponentRoutingGroup))
+                        .Sum(f => f.PostedAmount.Amount);
+                    var secondaryReceived = projected
+                        .Where(edge => edge.Stage == SecondaryFlowStage.Final && edge.TargetId == id)
+                        .Sum(edge => edge.Amount);
+                    var expected = group.Solution.Final[terminal];
+                    var difference = Math.Abs(expected - checked(directlyAssigned + secondaryReceived));
+                    var tolerance = Math.Max(0.00000001m, Math.Abs(expected) * 0.000000000001m);
+                    if (difference > tolerance)
+                        throw new InvalidOperationException("Saved reciprocal coefficients differ from the published result.");
+                }
+                foreach (var edge in projected)
                     Add(edge.Stage, group.ComponentRoutingGroup, edge.SourceId, edge.TargetId, edge.Amount);
             }
 
