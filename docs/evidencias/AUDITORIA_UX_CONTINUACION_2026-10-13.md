@@ -53,7 +53,7 @@ El motor conserva su precisión de libro mayor; **no se modifican** `PrimaryAllo
 ## Puertas de aceptación pendientes — ejecutar localmente en Windows o runner self-hosted autorizado
 
 1. **Compilar** `dotnet build Valdrio.slnx -c Release` con .NET 10 y restauración local de paquetes.
-2. **Pruebas** `dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj -c Release` (incluidas nuevas pruebas de tercios/5.500 EUR/JYP/saldos negativos), sin usar runners GitHub-hosted.
+2. **Pruebas** `dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj -c Release` (incluidas nuevas pruebas de tercios/5.500 EUR/JPY/saldos negativos), sin usar runners GitHub-hosted.
 3. **Smoke WPF** sobre copias desechables de `services.valdrio`, `industrial.valdrio` y `Horizonte.valdrio` si está disponible. Validar cierre/reapertura, selección de clave, acceso directo a secundaria, tablas y explicaciones, importación.
 4. **Cuadre visual**: suma de filas = pie de tabla, subtotales directo + auxiliar = total y secundario = recursos efectivos a precisión de moneda. Revisar EUR y divisas de 0/3 decimales; importes negativos y 1/3.
 5. **Pantallas** ES/EN, anchos 780/960/1440/1600 px, DPI 100/125/150/200 %, teclado/lector de pantalla, editor visible y desplazamiento accesible.
