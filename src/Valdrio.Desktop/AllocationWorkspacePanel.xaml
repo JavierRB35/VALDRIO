@@ -333,8 +333,9 @@
     <Expander x:Name="PrimaryFlowSection" Header="{Binding [PrimaryFlowSelectionTitle]}" IsExpanded="True" Margin="0,0,0,12">
       <StackPanel Margin="0,8,0,0">
         <TextBlock Text="{Binding [PrimaryFlowSelectionHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Height="270">
-          <Canvas x:Name="PrimaryFlowCanvas" Width="970" Height="260" Background="Transparent"/>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
+                      Height="{Binding ElementName=PrimaryFlowCanvas, Path=Height}">
+          <Canvas x:Name="PrimaryFlowCanvas" Width="970" Height="550" Background="Transparent"/>
         </ScrollViewer>
       </StackPanel>
     </Expander>
@@ -422,15 +423,23 @@
      <TextBlock Text="{Binding [PrincipalCostsTitle]}" FontWeight="SemiBold" Margin="0,8,0,8"/>
      <TextBlock Text="{Binding [PrincipalOriginOverviewHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
      <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="0,0,0,12">
-     <Grid MinWidth="790">
-      <Grid.ColumnDefinitions><ColumnDefinition Width="3*" MinWidth="430"/><ColumnDefinition Width="2*" MinWidth="350"/></Grid.ColumnDefinitions>
+     <Grid MinWidth="1580">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="700" MinWidth="700"/><ColumnDefinition Width="880" MinWidth="880"/></Grid.ColumnDefinitions>
       <StackPanel Grid.Column="0" Margin="0,0,10,0">
-     <DataGrid x:Name="PrincipalCostsGrid" ItemsSource="{Binding PrincipalCosts}" SelectedItem="{Binding SelectedPrincipalCostRow, Mode=TwoWay}" SelectionMode="Single" IsReadOnly="True" AutoGenerateColumns="False" Height="230" CanUserAddRows="False">
+     <DataGrid x:Name="PrincipalCostsGrid" ItemsSource="{Binding PrincipalCosts}" SelectedItem="{Binding SelectedPrincipalCostRow, Mode=TwoWay}" SelectionMode="Single" IsReadOnly="True" AutoGenerateColumns="False" Height="285" CanUserAddRows="False">
       <DataGrid.Columns>
-       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Node}" Width="3*"/>
-       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Primary}" Width="*" MinWidth="150"/>
-       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Auxiliary}" Width="*" MinWidth="150"/>
-       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Total}" Width="*" MinWidth="150"/>
+       <DataGridTextColumn Binding="{Binding Node}" Width="260" MinWidth="240">
+         <DataGridTextColumn.ElementStyle>
+          <Style TargetType="TextBlock" BasedOn="{StaticResource Text.TableText}">
+           <Setter Property="TextWrapping" Value="NoWrap"/>
+           <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+           <Setter Property="ToolTip" Value="{Binding Node}"/>
+          </Style>
+         </DataGridTextColumn.ElementStyle>
+        </DataGridTextColumn>
+       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Primary}" Width="145" MinWidth="130"/>
+       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Auxiliary}" Width="145" MinWidth="130"/>
+       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Total}" Width="145" MinWidth="130"/>
       </DataGrid.Columns>
      </DataGrid>
 <Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="3*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
@@ -441,13 +450,37 @@
       <StackPanel Grid.Column="1" Margin="10,0,0,0">
        <TextBlock Text="{Binding [PrincipalOriginTitle]}" FontWeight="SemiBold" Margin="0,0,0,6"/>
        <TextBlock Text="{Binding PrincipalOriginSummary}" TextWrapping="Wrap" Margin="0,0,0,6" AutomationProperties.LiveSetting="Polite"/>
-       <DataGrid x:Name="PrincipalOriginGrid" ItemsSource="{Binding PrincipalOriginRows}" IsReadOnly="True" AutoGenerateColumns="False" Height="230" CanUserAddRows="False">
+       <DataGrid x:Name="PrincipalOriginGrid" ItemsSource="{Binding PrincipalOriginRows}" IsReadOnly="True" AutoGenerateColumns="False" Height="285" CanUserAddRows="False" ScrollViewer.HorizontalScrollBarVisibility="Auto">
         <DataGrid.Columns>
-         <DataGridTextColumn Binding="{Binding Account}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
-         <DataGridTextColumn Binding="{Binding PrimaryNode}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
-         <DataGridTextColumn Binding="{Binding Route}" Width="*" ElementStyle="{StaticResource Text.TableText}"/>
-         <DataGridTextColumn Binding="{Binding Amount}" Width="*" MinWidth="110" HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}"/>
-         <DataGridTextColumn Binding="{Binding Keys}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
+         <DataGridTextColumn Binding="{Binding Account}" Width="190" MinWidth="180">
+          <DataGridTextColumn.ElementStyle>
+           <Style TargetType="TextBlock" BasedOn="{StaticResource Text.TableText}">
+            <Setter Property="TextWrapping" Value="NoWrap"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+            <Setter Property="ToolTip" Value="{Binding Account}"/>
+           </Style>
+          </DataGridTextColumn.ElementStyle>
+         </DataGridTextColumn>
+         <DataGridTextColumn Binding="{Binding PrimaryNode}" Width="205" MinWidth="190">
+          <DataGridTextColumn.ElementStyle>
+           <Style TargetType="TextBlock" BasedOn="{StaticResource Text.TableText}">
+            <Setter Property="TextWrapping" Value="NoWrap"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+            <Setter Property="ToolTip" Value="{Binding PrimaryNode}"/>
+           </Style>
+          </DataGridTextColumn.ElementStyle>
+         </DataGridTextColumn>
+         <DataGridTextColumn Binding="{Binding Route}" Width="105" MinWidth="100" ElementStyle="{StaticResource Text.TableText}"/>
+         <DataGridTextColumn Binding="{Binding Amount}" Width="135" MinWidth="130" HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}"/>
+         <DataGridTextColumn Binding="{Binding KeysPreview}" Width="230" MinWidth="220">
+          <DataGridTextColumn.ElementStyle>
+           <Style TargetType="TextBlock" BasedOn="{StaticResource Text.TableText}">
+            <Setter Property="TextWrapping" Value="NoWrap"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+            <Setter Property="ToolTip" Value="{Binding Keys}"/>
+           </Style>
+          </DataGridTextColumn.ElementStyle>
+         </DataGridTextColumn>
         </DataGrid.Columns>
        </DataGrid>
        <DockPanel Background="{DynamicResource Surface.Subtle}" MinHeight="34">
@@ -460,8 +493,9 @@
      <Expander x:Name="PrincipalCostFlowSection" Header="{Binding [PrincipalFlowTitle]}" IsExpanded="True" Margin="0,0,0,12">
       <StackPanel Margin="0,8,0,0">
        <TextBlock Text="{Binding [PrincipalFlowHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
-       <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Height="410">
-        <Canvas x:Name="PrincipalFlowCanvas" Width="1160" Height="380" Background="Transparent"/>
+       <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
+                     Height="{Binding ElementName=PrincipalFlowCanvas, Path=Height}">
+        <Canvas x:Name="PrincipalFlowCanvas" Width="1160" Height="550" Background="Transparent"/>
        </ScrollViewer>
       </StackPanel>
      </Expander>
