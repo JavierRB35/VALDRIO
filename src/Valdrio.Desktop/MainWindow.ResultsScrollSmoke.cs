@@ -38,6 +38,8 @@ public partial class MainWindow
         await NavigateWorkflow(2);
         studies.StudyChoice = studies.Studies.Single(s => s.Value.Name.StartsWith("02 -", StringComparison.Ordinal));
         await studies.LoadCommand.ExecuteAsync(null);
+        Check(vm.IsPrimaryClosed && SecondaryStep.IsEnabled,
+            "saved study exposes secondary navigation without opening primary first");
         foreach (var language in new[] { "es", "en" })
         {
             main.ApplyPresentationPreset(language, language == "es" ? "es-ES" : "en-US", "UTC", false, false);
