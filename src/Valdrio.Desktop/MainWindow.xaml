@@ -13,7 +13,7 @@
    <Setter Property="Margin" Value="5,2,0,2"/>
    <Setter Property="Padding" Value="7,9"/>
    <Style.Triggers>
-    <Trigger Property="Tag" Value="True">
+    <Trigger Property="Tag" Value="Active">
      <Setter Property="FontWeight" Value="SemiBold"/>
      <Setter Property="Background" Value="{DynamicResource Accent.ActiveGreen}"/>
      <Setter Property="BorderBrush" Value="{DynamicResource Brand.Yellow}"/>
