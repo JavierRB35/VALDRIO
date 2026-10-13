@@ -1275,6 +1275,15 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.PrincipalFlowAccounts" xml:space="preserve"><value>Cuentas de origen</value></data>
   <data name="AllocationUI.PrincipalFlowPrimary" xml:space="preserve"><value>Nodos de reparto primario</value></data>
   <data name="AllocationUI.PrincipalFlowDestination" xml:space="preserve"><value>Centro principal receptor</value></data>
+  <data name="AllocationUI.DeleteSelectFirst" xml:space="preserve"><value>Selecciona una clave en la biblioteca para conocer si se puede eliminar.</value></data>
+  <data name="AllocationUI.DeleteOpenSecondaryFirst" xml:space="preserve"><value>Reabre el reparto secundario para cambiar o eliminar sus claves.</value></data>
+  <data name="AllocationUI.DeleteLockedPhase" xml:space="preserve"><value>Esta fase está cerrada o el estudio es de solo lectura.</value></data>
+  <data name="AllocationUI.DeletePendingChanges" xml:space="preserve"><value>Guarda o descarta los cambios pendientes antes de eliminar.</value></data>
+  <data name="AllocationUI.DeleteSecondaryAssigned" xml:space="preserve"><value>Esta clave tiene una regla secundaria asignada. Elimina o sustituye primero la regla; si la clave figura en el historial, seguirá protegida.</value></data>
+  <data name="AllocationUI.DeletePrimaryAssigned" xml:space="preserve"><value>Esta clave sigue asignada a una cuenta o regla primaria.</value></data>
+  <data name="AllocationUI.DeleteHistoricUse" xml:space="preserve"><value>Clave protegida: existe al menos una asignación histórica, aunque ya no se use actualmente. No se elimina para preservar la trazabilidad.</value></data>
+  <data name="AllocationUI.DeleteHasVersions" xml:space="preserve"><value>Esta clave tiene versiones posteriores; se conserva como antecesora.</value></data>
+  <data name="AllocationUI.DeleteReady" xml:space="preserve"><value>Esta clave no tiene usos históricos ni versiones dependientes y puede eliminarse.</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reabrir reparto secundario</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explicar coste seleccionado</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Comportamiento</value></data>

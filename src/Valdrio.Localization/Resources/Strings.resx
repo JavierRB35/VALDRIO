@@ -1275,6 +1275,15 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.PrincipalFlowAccounts" xml:space="preserve"><value>Original accounts</value></data>
   <data name="AllocationUI.PrincipalFlowPrimary" xml:space="preserve"><value>Primary allocation nodes</value></data>
   <data name="AllocationUI.PrincipalFlowDestination" xml:space="preserve"><value>Receiving principal centre</value></data>
+  <data name="AllocationUI.DeleteSelectFirst" xml:space="preserve"><value>Select a key to see whether it can be deleted.</value></data>
+  <data name="AllocationUI.DeleteOpenSecondaryFirst" xml:space="preserve"><value>Reopen secondary allocation to change or delete its keys.</value></data>
+  <data name="AllocationUI.DeleteLockedPhase" xml:space="preserve"><value>This phase is closed or the study is read-only.</value></data>
+  <data name="AllocationUI.DeletePendingChanges" xml:space="preserve"><value>Save or discard unsaved changes before deleting.</value></data>
+  <data name="AllocationUI.DeleteSecondaryAssigned" xml:space="preserve"><value>This key still has a secondary assignment. Remove or replace that rule first; historical references continue to protect the key.</value></data>
+  <data name="AllocationUI.DeletePrimaryAssigned" xml:space="preserve"><value>This key is still assigned to a primary account or rule.</value></data>
+  <data name="AllocationUI.DeleteHistoricUse" xml:space="preserve"><value>Protected key: at least one historical assignment references it, even if it is not used now. It cannot be deleted without losing traceability.</value></data>
+  <data name="AllocationUI.DeleteHasVersions" xml:space="preserve"><value>This key has later versions and is retained as their ancestor.</value></data>
+  <data name="AllocationUI.DeleteReady" xml:space="preserve"><value>This key has no historical references or dependent versions and can be deleted.</value></data>
   <data name="AllocationUI.ReopenSecondary" xml:space="preserve"><value>Reopen secondary allocation</value></data>
   <data name="AllocationUI.SecondaryExplain" xml:space="preserve"><value>Explain selected cost</value></data>
   <data name="AllocationUI.Behavior" xml:space="preserve"><value>Behavior</value></data>

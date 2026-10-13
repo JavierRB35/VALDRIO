@@ -90,7 +90,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             if (SelectedKey?.Value is not { Status: ModelStatus.Published } source || !await CanLeaveAsync()) return;
             LoadKey(source); editingKey = null; newParent = source.Id; keyDirty = true; Refresh();
         }, () => (CanEdit || CanManageSecondary && SelectedKey?.Value.Stage == AllocationStage.Secondary) && SelectedKey?.Value.Status == ModelStatus.Published);
-        DeleteKeyCommand = new AsyncRelayCommand(DeleteKeyAsync, () => (CanEdit || CanManageSecondary && SelectedKey?.Value.Stage == AllocationStage.Secondary) && !IsDirty && SelectedKey is { } row && !workspace!.UsedKeyIds.Contains(row.Value.Id));
+        DeleteKeyCommand = new AsyncRelayCommand(DeleteKeyAsync, () => CanDeleteSelectedKey);
         TogglePrimaryCommand = new AsyncRelayCommand(TogglePrimaryAsync, () => CanManagePrimary && !IsSecondaryClosed && !IsDirty && (IsPrimaryClosed || primaryComplete));
         SaveDraftCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(false), () => CanEditKey && MissingKeyInput(false) is null);
         PublishCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey && MissingKeyInput(true) is null);
@@ -153,7 +153,31 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         !IsPrimaryClosed && !keyDirty && !HasUnappliedRule && !HasCompositionChanges;
     public bool CanEditConfiguration => CanEdit && !keyDirty && !HasCompositionChanges;
     public bool CanEditKey => (Stage == AllocationStage.Secondary ? CanManageSecondary : CanEdit) && !HasUnappliedRule && !HasCompositionChanges;
+    // Historic references must never be erased, even when the current study no longer uses the key.
     private bool IsKeyUsed => editingKey is not null && workspace?.UsedKeyIds.Contains(editingKey.Id) == true;
+    public bool CanDeleteSelectedKey =>
+        SelectedKey is { } row && !IsDirty && workspace is not null &&
+        (CanEdit || CanManageSecondary && row.Value.Stage == AllocationStage.Secondary) &&
+        !workspace.UsedKeyIds.Contains(row.Value.Id) &&
+        !workspace.Keys.Any(key => key.ParentVersionId == row.Value.Id);
+    public string KeyDeleteHelp
+    {
+        get
+        {
+            if (SelectedKey is not { } row || workspace is null) return this["DeleteSelectFirst"];
+            if (IsSecondaryClosed && row.Value.Stage == AllocationStage.Secondary) return this["DeleteOpenSecondaryFirst"];
+            if (!CanManagePrimary || row.Value.Stage == AllocationStage.Primary && IsPrimaryClosed) return this["DeleteLockedPhase"];
+            if (IsDirty) return this["DeletePendingChanges"];
+            if (workspace.Configuration.SecondaryRules.Any(r => r.KeyVersionId == row.Value.Id))
+                return this["DeleteSecondaryAssigned"];
+            if (workspace.Configuration.PrimaryRules.Any(r => r.KeyVersionId == row.Value.Id) ||
+                workspace.Configuration.ExplicitAssignments.Any(a => a.KeyVersionId == row.Value.Id))
+                return this["DeletePrimaryAssigned"];
+            if (workspace.UsedKeyIds.Contains(row.Value.Id)) return this["DeleteHistoricUse"];
+            if (workspace.Keys.Any(k => k.ParentVersionId == row.Value.Id)) return this["DeleteHasVersions"];
+            return this["DeleteReady"];
+        }
+    }
     public bool CanEditComposition => CanEditKey && !IsKeyUsed;
     public bool HasObsolete => workspace is not null && (workspace.Configuration.ExplicitAssignments.Any(a => !Parts.Any(p => p.Value == a.PartId))
         || workspace.Configuration.AbsoluteAssignments.Any(a => !Parts.Any(p => p.Value == a.PartId))
@@ -208,7 +232,12 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     [ObservableProperty] private AllocationKeyRow? selectedKey;
     [ObservableProperty] private AllocationRuleRow? selectedRule;
     [ObservableProperty] private AllocationSecondaryRow? selectedSecondary;
-    partial void OnSelectedKeyChanged(AllocationKeyRow? value) => Commands();
+    partial void OnSelectedKeyChanged(AllocationKeyRow? value)
+    {
+        OnPropertyChanged(nameof(KeyDeleteHelp));
+        OnPropertyChanged(nameof(CanDeleteSelectedKey));
+        Commands();
+    }
     partial void OnSelectedRuleChanged(AllocationRuleRow? value) => Commands();
     partial void OnSelectedSecondaryChanged(AllocationSecondaryRow? value) => Commands();
     public string Name { get => name; set { if (SetProperty(ref name, value)) KeyEdited(); } }
@@ -455,7 +484,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     }
     private async Task DeleteKeyAsync()
     {
-        if ((!CanEdit && !(CanManageSecondary && SelectedKey?.Value.Stage == AllocationStage.Secondary)) || IsDirty || SelectedKey is not { } row) return;
+        if (!CanDeleteSelectedKey || SelectedKey is not { } row) return;
         await Run(async () =>
         {
             var k = row.Value;
