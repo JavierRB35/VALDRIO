@@ -50,7 +50,7 @@ public partial class AllocationWorkspacePanel
         Canvas.SetLeft(card, 20);
         Canvas.SetTop(card, sourceY);
         var magnitude = Math.Max(0.000001m, details.Sum(d => Math.Abs(d.NumericAmount)));
-        for (var i = 0; i < details.Count; i++)
+        for (var i = 0; i < details.Length; i++)
         {
             var detail = details[i];
             var top = 20d + i * 88d;
