@@ -17,21 +17,91 @@
      <TextBlock x:Name="NavigationGroupLabel" Margin="24,0,16,8" Foreground="{DynamicResource Brand.White}" FontSize="12" FontWeight="SemiBold" />
      <Expander x:Name="ProjectPhase" Foreground="{DynamicResource Brand.White}" Expanded="OnPhaseExpanded" Margin="8,0,8,4">
       <StackPanel>
-       <Button x:Name="CompanyStep" Click="ChooseCompany" Style="{StaticResource Sidebar.Button}" />
-       <Button x:Name="ModelStep" Click="ChooseModel" Style="{StaticResource Sidebar.Button}" />
+       <Grid Margin="4,0,4,0">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="12"/></Grid.RowDefinitions>
+        <Border x:Name="CompanyStepMarker" Grid.Column="0" Width="24" Height="24" CornerRadius="12"
+                BorderBrush="{DynamicResource Brand.White}" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+         <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"
+                    FontWeight="SemiBold" Foreground="{DynamicResource Brand.White}"/>
+        </Border>
+        <Button Grid.Column="1" x:Name="CompanyStep" Click="ChooseCompany" Style="{StaticResource Sidebar.Button}" />
+        <Border Grid.Row="1" Grid.Column="0" Width="2" Background="{DynamicResource Brand.White}" Opacity="0.55" HorizontalAlignment="Center"/>
+       </Grid>
+       <Grid Margin="4,0,4,0">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <Border x:Name="ModelStepMarker" Grid.Column="0" Width="24" Height="24" CornerRadius="12"
+                BorderBrush="{DynamicResource Brand.White}" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+         <TextBlock Text="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"
+                    FontWeight="SemiBold" Foreground="{DynamicResource Brand.White}"/>
+        </Border>
+        <Button Grid.Column="1" x:Name="ModelStep" Click="ChooseModel" Style="{StaticResource Sidebar.Button}" />
+        
+       </Grid>
       </StackPanel>
      </Expander>
      <Expander x:Name="AnalysisPhase" Foreground="{DynamicResource Brand.White}" Expanded="OnPhaseExpanded" Margin="8,0,8,4">
       <StackPanel>
-       <Button x:Name="StudyStep" Click="ChooseStudy" Style="{StaticResource Sidebar.Button}" />
-       <Button x:Name="ImportStep" Click="ChooseImport" Style="{StaticResource Sidebar.Button}" />
-       <Button x:Name="ResourcesStep" Click="ChooseResources" Style="{StaticResource Sidebar.Button}" />
+       <Grid Margin="4,0,4,0">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="12"/></Grid.RowDefinitions>
+        <Border x:Name="StudyStepMarker" Grid.Column="0" Width="24" Height="24" CornerRadius="12"
+                BorderBrush="{DynamicResource Brand.White}" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+         <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"
+                    FontWeight="SemiBold" Foreground="{DynamicResource Brand.White}"/>
+        </Border>
+        <Button Grid.Column="1" x:Name="StudyStep" Click="ChooseStudy" Style="{StaticResource Sidebar.Button}" />
+        <Border Grid.Row="1" Grid.Column="0" Width="2" Background="{DynamicResource Brand.White}" Opacity="0.55" HorizontalAlignment="Center"/>
+       </Grid>
+       <Grid Margin="4,0,4,0">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="12"/></Grid.RowDefinitions>
+        <Border x:Name="ImportStepMarker" Grid.Column="0" Width="24" Height="24" CornerRadius="12"
+                BorderBrush="{DynamicResource Brand.White}" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+         <TextBlock Text="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"
+                    FontWeight="SemiBold" Foreground="{DynamicResource Brand.White}"/>
+        </Border>
+        <Button Grid.Column="1" x:Name="ImportStep" Click="ChooseImport" Style="{StaticResource Sidebar.Button}" />
+        <Border Grid.Row="1" Grid.Column="0" Width="2" Background="{DynamicResource Brand.White}" Opacity="0.55" HorizontalAlignment="Center"/>
+       </Grid>
+       <Grid Margin="4,0,4,0">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <Border x:Name="ResourcesStepMarker" Grid.Column="0" Width="24" Height="24" CornerRadius="12"
+                BorderBrush="{DynamicResource Brand.White}" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+         <TextBlock Text="3" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"
+                    FontWeight="SemiBold" Foreground="{DynamicResource Brand.White}"/>
+        </Border>
+        <Button Grid.Column="1" x:Name="ResourcesStep" Click="ChooseResources" Style="{StaticResource Sidebar.Button}" />
+        
+       </Grid>
       </StackPanel>
      </Expander>
      <Expander x:Name="AllocationPhase" Foreground="{DynamicResource Brand.White}" Expanded="OnPhaseExpanded" Margin="8,0,8,4">
       <StackPanel>
-       <Button x:Name="AllocationsStep" Click="ChooseAllocations" Style="{StaticResource Sidebar.Button}" />
-       <Button x:Name="SecondaryStep" Click="ChooseSecondary" Style="{StaticResource Sidebar.Button}" />
+       <Grid Margin="4,0,4,0">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="12"/></Grid.RowDefinitions>
+        <Border x:Name="AllocationsStepMarker" Grid.Column="0" Width="24" Height="24" CornerRadius="12"
+                BorderBrush="{DynamicResource Brand.White}" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+         <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"
+                    FontWeight="SemiBold" Foreground="{DynamicResource Brand.White}"/>
+        </Border>
+        <Button Grid.Column="1" x:Name="AllocationsStep" Click="ChooseAllocations" Style="{StaticResource Sidebar.Button}" />
+        <Border Grid.Row="1" Grid.Column="0" Width="2" Background="{DynamicResource Brand.White}" Opacity="0.55" HorizontalAlignment="Center"/>
+       </Grid>
+       <Grid Margin="4,0,4,0">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <Border x:Name="SecondaryStepMarker" Grid.Column="0" Width="24" Height="24" CornerRadius="12"
+                BorderBrush="{DynamicResource Brand.White}" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+         <TextBlock Text="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"
+                    FontWeight="SemiBold" Foreground="{DynamicResource Brand.White}"/>
+        </Border>
+        <Button Grid.Column="1" x:Name="SecondaryStep" Click="ChooseSecondary" Style="{StaticResource Sidebar.Button}" />
+        
+       </Grid>
       </StackPanel>
      </Expander>
      <Border BorderBrush="{DynamicResource Accent.ActiveGreen}" BorderThickness="0,1,0,0" Margin="16,16,16,8" />
