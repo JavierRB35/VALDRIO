@@ -105,6 +105,11 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public IAllocationWorkspace? ActiveAllocations => active?.Allocations;
     public bool CanWrite => active?.Mode == CompanyFileOpenMode.Edit;
     public bool WorkspaceIdle => !busy && WorkspaceBusy?.Invoke() != true;
+    // Central activity state shared by every workspace. Existing asynchronous
+    // workflows call NotifyWorkspaceStateChanged at start/end, so the shell
+    // indicator follows file, model, study, import, resources and allocation.
+    public bool IsProcessing => !WorkspaceIdle;
+    public string WorkingLabel => Text("CompanyWorking");
     private bool Available => !busy && WorkspaceBusy?.Invoke() != true;
     public void NotifyWorkspaceStateChanged() => Refresh();
     public CompanyFileSnapshot? Snapshot { get; private set; }
