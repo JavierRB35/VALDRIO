@@ -98,6 +98,54 @@ No usar un porcentaje prefijado (por ejemplo 95 %) ni fabricar datos faltantes. 
 
 En la aceptación funcional, un analista ajeno al desarrollo debe poder explicar qué significa cada campo y realizar el recorrido **sin instrucciones externas**. Probar por lo menos: una máquina (horas máquina), preparación (lotes), servicio (horas de personal), actividad real cero, dato ausente, calendario con paradas, histórico con descenso de demanda y cambio de turnos. Si un campo necesita aclaración oral, revisar etiqueta/ayuda y reducir pasos antes de cerrar T14.
 
+## 2B. Diseño de pantalla integrado con T11 — acuerdo de revisión (2026-10-13)
+
+**Decisión de interfaz del propietario: mostrar los nodos principales junto a su coste final de T11 y permitir completar su actividad desde la misma fila, abriendo una calculadora contextual completa.** La variante simplificada presentada posteriormente era únicamente ilustrativa y **no elimina** los tres métodos ni las explicaciones y validaciones del apartado 2A.
+
+### Vista principal: una tabla y ninguna tabla de ratios monetarios
+
+- Al entrar en T14, recuperar los **nodos principales** del estudio y su **coste final conciliado del reparto secundario publicado T11**; los importes no se reescriben ni recalculan en T14. Si no hay resultados finales vigentes, presentar un estado comprensible con acceso para completar/cerrar el reparto previo; no inventar importes.
+- Columnas mínimas: **Centro / Nodo**, **Coste final (€ u otra moneda funcional del estudio; solo lectura)**, **Unidad de actividad (precargada)**, **Capacidad normal (editable)**, **Actividad real (editable/importable)**, **Utilización (calculada, solo lectura)**, **Estado** y **botón de calculadora por fila**. Periodo completo visible en cabecera. Fuente y calidad consultables junto a la fila; capacidades práctica y teórica en detalle avanzado.
+- El botón muestra un **icono de calculadora acompañado de texto accesible «Calcular capacidad de [nodo]»** (nombre accesible, ayuda y teclado). La calculadora abierta siempre corresponde a la fila seleccionada; no se permite aplicar valores al nodo equivocado.
+- **R1 sigue siendo por pool de unidad/driver homogéneos**. Cuando nodo y pool coinciden, una fila representa ese nodo. Si un nodo contiene varios pools medibles con unidades o drivers diferentes, mostrar el nodo como agrupador y una **subfila por pool**, sin copiar como coste propio el coste total del nodo a cada pool. El coste de T11 sigue identificándose como total del nodo; cualquier desglose económico adicional deberá estar respaldado por datos propios, no por prorrateo inventado.
+- **Eliminar de T14 cualquier tabla de «costes unitarios» o cifras «coste del centro / normal» o «coste del centro / real».** Aunque el cociente sea matemáticamente computable, no presentarlo como tarifa ni indicador económico representativo: puede ocultar la separación fija/variable, capacidad y perímetro de valoración. T14 es captura/validación física; **las tarifas y sus componentes son exclusiva responsabilidad de T15**.
+
+### Ventana flotante: calculadora completa, prellenada y guiada
+
+1. Abrir ventana contextual no destructiva sobre la tabla (modal o flotante según accesibilidad WPF), con **nodo, centro, unidad, coste T11, fechas exactas del estudio** y observaciones ya guardadas precargadas de fuentes verificadas. No solicitar al usuario datos conocidos ni deducir como ciertos campos que faltan.
+2. Mostrar los **tres métodos completos** del apartado 2A, accesibles sin perder el estado de edición: **Histórico representativo**, **Calendario operativo** o **Capacidad declarada**. Cada método conserva sus campos y revisión de supuestos: histórico/comparabilidad/anomalías; calendario/días/turnos/horas/equipos/paradas/factor; declaración/cifra/fuente/justificación. Las capacidades práctica y teórica se calculan o muestran cuando existan datos válidos, sin convertirlas en campos obligatorios de todos los métodos.
+3. Cada campo muestra en texto de usuario **qué es, qué introducir con unidad/ejemplo, de dónde sale y para qué sirve**, con ayuda contextual ES/EN y teclado. Se resalta en **amarillo de marca, con foco de teclado, el primer dato editable necesario que falte**, y el foco avanza lógicamente al siguiente al completarlo. No pintar amarillo un dato de solo lectura ni señalar campos opcionales como bloqueantes. No utilizar amarillo como único medio de indicación: etiqueta visible «Siguiente dato» y texto de ayuda.
+4. Mostrar valores intermedios, fórmula, unidades, procedencia, advertencias y propuesta de capacidad normal **antes de confirmar**. Si falta **actividad real**, ofrecer introducirla o importarla con su fuente; **no calcularla desde normal o práctica**. Si faltan práctica/teórica opcionales, dejarlas ausentes en la tabla, no cero.
+5. Acción primaria **«Calcular y aplicar»**: ejecuta validación; solo si los datos y sus periodos son coherentes, incorpora a la fila **cada magnitud física realmente obtenida o declarada** y el método/fuente, cierra la calculadora y deja cambios pendientes de **guardar en el estudio**. Los valores no obtenibles no se rellenan. Si existe error, mantener la ventana abierta, resaltar campo y explicar cómo corregirlo. **Cancelar** cierra sin cambios; no sobrescribir un valor vigente al abrir ni al cambiar de método.
+6. Al regresar a la tabla, conservar selección de la fila, actualizar utilización/estado y mostrar si hay **cambios sin guardar**. La aprobación económica D04 y la publicación posterior no son efectos de ese botón.
+
+### Intervalo del estudio como referencia única de T14
+
+**Requisito expreso:** las unidades de actividad normal, real, práctica y teórica mostradas o propuestas se refieren al **mismo intervalo exacto de fechas del estudio ya definido** en la fase Estudios. Se heredarán **fecha inicial, fecha final, unidad, contexto operativo y calendario disponible**; no pedir seleccionar un mes alternativo para guardar cantidades incompatibles.
+
+- Ejemplo: estudio **01/10/2026–31/10/2026**. Mostrar «Actividad del 1 al 31 de octubre de 2026» (no solo «mensual»), unidad «h máquina» y valor total de horas **de ese intervalo**. El cálculo por calendario utiliza los días laborables/operativos efectivos comprendidos en el intervalo y la zona/calendario declarados, incluidos festivos y cierres pertinentes cuando existan, turnos vigentes, cambios de equipo y paradas realmente planificadas.
+- Un estudio trimestral, de 15 días o de fechas irregulares debe calcularse **desde sus fechas**, no como «3 × promedio mensual» o por una duración media implícita. Si el calendario no está disponible, solicitar su declaración. Los turnos/festivos no se infieren por idioma o región de visualización.
+- En el método histórico, observar períodos fuente con **sus propias fechas**, normalizarlos de manera explícita a una base comparable o utilizar históricos de intervalos equivalentes. Documentar supuestos, equivalencia de jornadas, periodos seleccionados y tratamiento estacional. No multiplicar promedios históricos por días/meses sin comparación verificable.
+- Si se ha definido una **referencia normal anual**, distribuirla en los periodos del estudio solo mediante calendario y regla aprobada, manteniendo referencia anual, regla y resultado específico del intervalo. Un cambio duradero de turnos o capacidad crea versión nueva con fecha de vigencia.
+- Si la actividad real importada corresponde a **otro intervalo, unidad o calendario no conciliable**, no aplicarla silenciosamente; exigir selección de hechos del periodo o conversión explícita auditada. Si falta una medición fiable, mostrar «Pendiente» en lugar de inventar horas.
+- Toda cifra «por hora», «por lote» o «por periodo» necesita unidad explícita. La cantidad normal de un pool del estudio no es automáticamente igual a su capacidad normal anual sin adecuarla al intervalo.
+
+### Ejemplo de recorrido aceptable, con datos ilustrativos
+
+El reparto secundario T11 termina con **Mecanizado = 12.000 EUR** (solo lectura), unidad `h máquina`, periodo del estudio 01/10/2026–31/10/2026. T14 muestra normal «Pendiente», real «Pendiente» y botón `[Calculadora]`. El analista abre el botón: la ventana conoce nodo, coste, unidad y fechas. Elige «Desde calendario», declara 22 días operativos, 1 turno, 8 h, 1 equipo, 8 h de mantenimiento y un factor sostenible **de ejemplo justificado** del 95 %. Calcula calendario ideal **176 h**, disponibilidad **168 h** y normal propuesta **159,6 h**. El usuario declara/importa **120 h de actividad real** de octubre con origen identificable y confirma.
+
+La ventana se cierra. La tabla muestra **12.000 EUR**, **159,6 h normales**, **120 h reales** y **75,19 %** de actividad real respecto a la normal, con las 168 h prácticas y 176 h teóricas consultables en detalle. **No muestra 12.000/159,6 ni 12.000/120 como coste unitario.** Todavía habrá que guardar/validar los cambios en el estudio; T15 calculará las tarifas cuando su metodología haya sido aprobada.
+
+### Aceptación funcional específica
+
+1. La tabla recupera exactamente los importes finales T11 de nodos principales, preservando snapshots y sin duplicación por pool.
+2. La calculadora de cualquier fila hereda unidad, nodo y fechas del estudio; se abre precargada y enfoca en amarillo el **primer dato realmente pendiente**, con texto de ayuda explícito.
+3. Alternar histórico/calendario/declarado conserva cada alternativa y no elimina campos necesarios; «Cancelar» deja intacta la fila.
+4. «Calcular y aplicar» ejecuta validaciones, rellena solo magnitudes calculadas/medidas, cierra la ventana y conserva la fila correcta; los datos faltantes siguen pendientes.
+5. Pruebas de periodos **mensuales, trimestrales, parciales y con cambio de turnos**, festivos configurados y fuentes históricas no comparables. No multiplicar por 3 una referencia mensual sin justificación.
+6. El encabezado y cada campo explican período/unidad, y el estado distingue propuesta, aplicado en borrador, guardado y falta de fuente.
+7. No existe pantalla de tarifas unitarias ni división monetaria simplista en T14. La frontera económica está en T15.
+
 ## 3. Tratamiento de periodos anómalos — criterio propuesto para decisión metodológica
 
 **Regla común:** conservar **todos** los datos originales. Si se excluye una observación del cálculo de referencia, conservar su periodo, cantidad, razón, autor y evidencia. La aplicación puede **señalar** anomalías, pero no excluirlas automáticamente por superar un umbral.
