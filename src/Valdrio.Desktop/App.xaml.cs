@@ -149,7 +149,8 @@ public partial class App : System.Windows.Application
             { ImportColumns = importColumns };
         resources = new ResourceWorkspaceViewModel(company, studies, currencyCatalog, texts, preferences, modelDialogs);
         allocations = new AllocationWorkspaceViewModel(company, studies, texts, preferences, modelDialogs);
-        studies.AfterStudyLoadedAsync = () => allocations.EnterAsync(true);
+        studies.AfterStudyLoadedAsync = () => studies.HasConfirmedImports
+            ? allocations.EnterAsync(true) : Task.CompletedTask;
         models.AttachStudyNodes(studies);
         allocations.AfterPrimaryStateChanged = () => resources.EnterAsync(true);
         var viewModel =
