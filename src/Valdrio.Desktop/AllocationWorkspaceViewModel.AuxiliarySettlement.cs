@@ -29,7 +29,8 @@ public sealed partial class AllocationWorkspaceViewModel
     private void BuildAuxiliarySettlement(IReadOnlyList<SecondaryGroupCirculation> groups)
     {
         ClearAuxiliarySettlement();
-        if (workspace is null || primaryForOverview is null || groups.Count == 0) return;
+        var primary = primaryForOverview;
+        if (workspace is null || primary is null || groups.Count == 0) return;
 
         var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(node => node.Id);
         var mappedGroups = (workspace.Configuration.SecondaryPartRoutingGroups ?? [])
@@ -43,7 +44,7 @@ public sealed partial class AllocationWorkspaceViewModel
             {
                 var id = EntityId.Parse(solution.AuxiliaryIds[i]);
                 if (!nodes.TryGetValue(id, out var node)) continue;
-                var initial = primaryForOverview.Facts
+                var initial = primary.Facts
                     .Where(fact => fact.NodeId == id &&
                         (mappedGroups.TryGetValue(fact.PartId, out var selectedGroup) ?
                             selectedGroup : "all") == group.ComponentRoutingGroup)
