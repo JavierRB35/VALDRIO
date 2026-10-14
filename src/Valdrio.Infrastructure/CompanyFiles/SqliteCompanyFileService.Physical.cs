@@ -160,7 +160,7 @@ public sealed partial class SqliteCompanyFileService
                     study.PeriodStart, study.PeriodEnd, checked((before?.Version ?? 0) + 1),
                     command.State, command.TheoreticalQuantity, command.PracticalQuantity,
                     command.NormalQuantity, command.RealQuantity, command.NormalEvidence, command.RealEvidence,
-                    command.NormalZeroReason, command.ExceptionReason, command.Actor, owner.time.GetUtcNow());
+                    command.NormalZeroReason, command.ExceptionReason, command.CorrectionReason, command.Actor, owner.time.GetUtcNow());
                 db.PhysicalObservations.Add(ToPhysicalRow(after));
                 Audit<PhysicalObservation>(db, file, "PhysicalObservation", after.Id, 0, "RecordPhysicalVersion",
                     command.Actor, before, after);
@@ -187,6 +187,7 @@ public sealed partial class SqliteCompanyFileService
                     Version = checked(before.Version + 1),
                     State = PhysicalObservationState.Annulled,
                     ExceptionReason = command.Reason,
+                    CorrectionReason = command.Reason,
                     Actor = command.Actor,
                     RecordedAtUtc = owner.time.GetUtcNow()
                 };
