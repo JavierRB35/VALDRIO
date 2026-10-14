@@ -5,6 +5,8 @@
 
 **Fuentes normativas:** [tarea T14 de la especificación v0.4](../../specification/v0.4/tareas/T14.md), [CM08](../../specification/v0.4/especificacion/02_Contratos_Metodologicos.md), [decisiones D04](../decisiones/DECISIONES_PENDIENTES.md), [usabilidad](USABILIDAD.md) y [sistema visual V1](../diseno/SISTEMA_VISUAL_VALDRIO_V1.md). Esta directriz complementa la especificación canónica sin alterar sus archivos ni sus hashes.
 
+**Integración y entregas aprobadas el 14/10/2026:** [inventario pantalla por pantalla y hoja de ruta T14.1–T14.4](T14_INTEGRACION_Y_HOJA_DE_RUTA.md). Toda nueva medición física se centraliza en T14; la captura real manual precede a la importación; se conserva el coste de referencia T12 identificado sin recalcular; para horas de personal se usan personas equivalentes y calendarios homogéneos con diferencias justificadas.
+
 ## 1. Finalidad y frontera de fase
 
 T14 aporta **magnitudes físicas trazables por pool, unidad, nodo y periodo** para que T15 aplique después políticas económicas de tarifas y capacidad. No calcula tarifas, ociosidad monetaria, costes por objeto ni decide por sí sola la política D04.
@@ -74,10 +76,10 @@ Presentar **una frase junto al campo** durante la primera configuración y una a
 - **Media propuesta:** «Promedio calculado solo con los periodos seleccionados y comparables». Mostrar cuántos se usaron y por qué; **no equiparar promedio con referencia aprobada**.
 
 **B. «Calcular desde el calendario».**
-- **Días de funcionamiento:** «En cuántos días está previsto que pueda trabajar este equipo». Ejemplo: 22.
+- **Días de funcionamiento:** «En cuántos días está previsto que pueda trabajar este equipo o colectivo de personas». Ejemplo: 22.
 - **Turnos por día:** «Cuántos turnos trabaja normalmente cada día». Ejemplo: 1.
 - **Horas por turno:** «Cuántas horas dura cada turno». Ejemplo: 8.
-- **Equipos equivalentes:** «Cuántos equipos con este mismo calendario estamos midiendo». Ejemplo: 1; si no comparten calendario, registrar por separado.
+- **Recursos equivalentes:** «Cuántos equipos o personas con el mismo calendario estamos midiendo». Ejemplo: 1 equipo; para horas de personal, declarar personas equivalentes. Si no comparten jornada o turnos, **justificar primero una equivalencia comprobable**; no sumar calendarios incompatibles.
 - **Paradas habituales:** «Horas previstas sin funcionamiento por mantenimiento u otras interrupciones inevitables». Ejemplo: 8 h.
 - **Actividad habitual sostenible (factor %):** «De las horas disponibles, qué proporción de actividad suele ser representativa en condiciones normales». Ejemplo: 95 %, **supuesto expresamente justificado, no sugerencia por defecto**.
 - **Resultado intermedio:** «Horas de calendario: 176; disponibles tras paradas: 168; propuesta normal: 159,6». Mostrar la fórmula y no etiquetar las tres cifras como si fueran iguales.
@@ -98,21 +100,29 @@ No usar un porcentaje prefijado (por ejemplo 95 %) ni fabricar datos faltantes. 
 
 En la aceptación funcional, un analista ajeno al desarrollo debe poder explicar qué significa cada campo y realizar el recorrido **sin instrucciones externas**. Probar por lo menos: una máquina (horas máquina), preparación (lotes), servicio (horas de personal), actividad real cero, dato ausente, calendario con paradas, histórico con descenso de demanda y cambio de turnos. Si un campo necesita aclaración oral, revisar etiqueta/ayuda y reducir pasos antes de cerrar T14.
 
-## 2B. Diseño de pantalla integrado con T11 — acuerdo de revisión (2026-10-13)
+## 2B. Diseño de pantalla integrado con los resultados T11 publicados por T12 — acuerdo de revisión (2026-10-13; precisión de origen 2026-10-14)
 
-**Decisión de interfaz del propietario: mostrar los nodos principales junto a su coste final de T11 y permitir completar su actividad desde la misma fila, abriendo una calculadora contextual completa.** La variante simplificada presentada posteriormente era únicamente ilustrativa y **no elimina** los tres métodos ni las explicaciones y validaciones del apartado 2A.
+**Decisión de interfaz del propietario: mostrar los nodos principales junto al coste final calculado en T11 y publicado por T12, y permitir completar su actividad desde la misma fila, abriendo una calculadora contextual completa.** La fuente de consulta de T14 es la ejecución T12 completada y vigente, no la vista mutable del cálculo T11; T13 certifica esta cadena con escenarios de aceptación, pero no produce un coste alternativo. La variante simplificada presentada posteriormente era únicamente ilustrativa y **no elimina** los tres métodos ni las explicaciones y validaciones del apartado 2A.
 
 ### Vista principal: una tabla y ninguna tabla de ratios monetarios
 
-- Al entrar en T14, recuperar los **nodos principales** del estudio y su **coste final conciliado del reparto secundario publicado T11**; los importes no se reescriben ni recalculan en T14. Si no hay resultados finales vigentes, presentar un estado comprensible con acceso para completar/cerrar el reparto previo; no inventar importes.
+- Al entrar en T14, recuperar los **nodos principales** del estudio y su **coste final conciliado T11 desde los resultados terminales de la ejecución T12 completada y vigente**; los importes no se reescriben ni recalculan en T14. Si no hay ejecución T12 vigente para la revisión compatible, mostrar «Coste publicado no disponible para esta revisión» y acceso a «Flujos y ejecuciones», sin inventar importes ni sustituir T12 silenciosamente por un cierre T11 o una ejecución histórica. La captura de magnitudes físicas puede permanecer accesible si no depende del importe monetario.
 - Columnas mínimas: **Centro / Nodo**, **Coste final (€ u otra moneda funcional del estudio; solo lectura)**, **Unidad de actividad (precargada)**, **Capacidad normal (editable)**, **Actividad real (editable/importable)**, **Utilización (calculada, solo lectura)**, **Estado** y **botón de calculadora por fila**. Periodo completo visible en cabecera. Fuente y calidad consultables junto a la fila; capacidades práctica y teórica en detalle avanzado.
 - El botón muestra un **icono de calculadora acompañado de texto accesible «Calcular capacidad de [nodo]»** (nombre accesible, ayuda y teclado). La calculadora abierta siempre corresponde a la fila seleccionada; no se permite aplicar valores al nodo equivocado.
-- **Regla estructural vigente de R1: exactamente un pool por nodo publicado y una unidad/driver por pool.** La interfaz T14 muestra **una fila por nodo principal, sin subfilas de pools ni unidades múltiples por nodo**. Recupera su única unidad de actividad del pool ya definido en T04; no vuelve a solicitarla ni permite cambiarla desde la calculadora. Un mismo centro físico puede albergar varios nodos con unidades distintas. Esta regla consta en `docs/directrices/T04_SIGUIENTE_FASE.md` y está respaldada por el índice único `IX_CostPools_ModelVersionId_NodeId` de la persistencia. El coste final de T11 sigue correspondiendo al nodo y no se prorratea.
+- **Regla estructural vigente de R1: exactamente un pool por nodo publicado y una unidad/driver por pool.** La interfaz T14 muestra **una fila por nodo principal, sin subfilas de pools ni unidades múltiples por nodo**. Recupera su única unidad de actividad del pool ya definido en T04; no vuelve a solicitarla ni permite cambiarla desde la calculadora. Un mismo centro físico puede albergar varios nodos con unidades distintas. Esta regla consta en `docs/directrices/T04_SIGUIENTE_FASE.md` y está respaldada por el índice único `IX_CostPools_ModelVersionId_NodeId` de la persistencia. El coste final calculado en T11 y publicado en T12 sigue correspondiendo al nodo y no se prorratea.
 - **Eliminar de T14 cualquier tabla de «costes unitarios» o cifras «coste del centro / normal» o «coste del centro / real».** Aunque el cociente sea matemáticamente computable, no presentarlo como tarifa ni indicador económico representativo: puede ocultar la separación fija/variable, capacidad y perímetro de valoración. T14 es captura/validación física; **las tarifas y sus componentes son exclusiva responsabilidad de T15**.
+
+### Fuente del coste y contrato de lectura T12
+
+- Consultar `IRunStore.ReadRuns(CompanyId, StudyId)` y usar `RunHistory.CurrentRunId` para identificar la ejecución de referencia del estudio. El identificador vigente **se deriva** de la revisión y la versión de algoritmo en T12; no debe consultarse como si fuera un campo persistido utilizable de `StudyDefinition.CurrentRunId`.
+- Exigir ejecución `Completed`, revisión compatible y `Output.Secondary` publicado. Leer `CalculationRun.Output.Secondary.Totals`, agrupando únicamente los componentes terminales del **mismo nodo principal** sin perder su moneda, comportamiento y clasificación. El coste final no se obtiene sumando transferencias auxiliares brutas (`RunOutput.Transfers`), que son movimientos internos no aditivos.
+- Mostrar la moneda funcional, el ID de ejecución T12 y su condición «vigente» o «histórica» en los detalles de procedencia. La consulta no modifica importes, snapshots, recibos ni crea una nueva ejecución; el usuario no tiene que volver a cerrar T11 para visualizar una ejecución T12 ya publicada.
+- **Revisiones y cambios T14 (decisión del propietario, 14/10/2026):** el contrato actual de T12 considera vigente un run completado de la revisión actual con versión de algoritmo compatible. Guardar nuevas observaciones físicas T14 puede crear una revisión posterior. **Mantener visible el coste de esa ejecución como referencia histórica identificada**, con RunId, revisión, algoritmo y aviso «No hay coste publicado vigente para esta revisión», **sin recalcular automáticamente** ni promocionar el run anterior a vigente. Antes de implementar la persistencia T14, resolver y documentar la compatibilidad verificada con el run económico T12 (por ejemplo, RunId base y prueba explícita de cambios solo físicos); no cambiar unilateralmente los contratos existentes.
+- T13 verifica los escenarios y la lectura persistida T12; sus ficheros de prueba no son la fuente económica de los estudios reales. El origen matemático continúa siendo T11 y la valoración unitaria seguirá siendo T15.
 
 ### Ventana flotante: calculadora completa, prellenada y guiada
 
-1. Abrir ventana contextual no destructiva sobre la tabla (modal o flotante según accesibilidad WPF), con **nodo, centro, unidad, coste T11, fechas exactas del estudio** y observaciones ya guardadas precargadas de fuentes verificadas. No solicitar al usuario datos conocidos ni deducir como ciertos campos que faltan.
+1. Abrir ventana contextual no destructiva sobre la tabla (modal o flotante según accesibilidad WPF), con **nodo, centro, unidad, coste terminal T11 recuperado de T12 (si es vigente), fechas exactas del estudio** y observaciones ya guardadas precargadas de fuentes verificadas. No solicitar al usuario datos conocidos ni deducir como ciertos campos que faltan.
 2. Mostrar los **tres métodos completos** del apartado 2A, accesibles sin perder el estado de edición: **Histórico representativo**, **Calendario operativo** o **Capacidad declarada**. Cada método conserva sus campos y revisión de supuestos: histórico/comparabilidad/anomalías; calendario/días/turnos/horas/equipos/paradas/factor; declaración/cifra/fuente/justificación. Las capacidades práctica y teórica se calculan o muestran cuando existan datos válidos, sin convertirlas en campos obligatorios de todos los métodos.
 3. Cada campo muestra en texto de usuario **qué es, qué introducir con unidad/ejemplo, de dónde sale y para qué sirve**, con ayuda contextual ES/EN y teclado. Se resalta en **amarillo de marca, con foco de teclado, el primer dato editable necesario que falte**, y el foco avanza lógicamente al siguiente al completarlo. No pintar amarillo un dato de solo lectura ni señalar campos opcionales como bloqueantes. No utilizar amarillo como único medio de indicación: etiqueta visible «Siguiente dato» y texto de ayuda.
 4. Mostrar valores intermedios, fórmula, unidades, procedencia, advertencias y propuesta de capacidad normal **antes de confirmar**. Si falta **actividad real**, ofrecer introducirla o importarla con su fuente; **no calcularla desde normal o práctica**. Si faltan práctica/teórica opcionales, dejarlas ausentes en la tabla, no cero.
@@ -132,19 +142,21 @@ En la aceptación funcional, un analista ajeno al desarrollo debe poder explicar
 
 ### Ejemplo de recorrido aceptable, con datos ilustrativos
 
-El reparto secundario T11 termina con **Mecanizado = 12.000 EUR** (solo lectura), unidad `h máquina`, periodo del estudio 01/10/2026–31/10/2026. T14 muestra normal «Pendiente», real «Pendiente» y botón `[Calculadora]`. El analista abre el botón: la ventana conoce nodo, coste, unidad y fechas. Elige «Desde calendario», declara 22 días operativos, 1 turno, 8 h, 1 equipo, 8 h de mantenimiento y un factor sostenible **de ejemplo justificado** del 95 %. Calcula calendario ideal **176 h**, disponibilidad **168 h** y normal propuesta **159,6 h**. El usuario declara/importa **120 h de actividad real** de octubre con origen identificable y confirma.
+Una **ejecución T12 completada y vigente** contiene el coste terminal **Mecanizado = 12.000 EUR**, calculado por T11 y mostrado en solo lectura; unidad `h máquina`, periodo del estudio 01/10/2026–31/10/2026. T14 muestra normal «Pendiente», real «Pendiente» y botón `[Calculadora]`. El analista abre el botón: la ventana conoce nodo, coste, unidad y fechas. Elige «Desde calendario», declara 22 días operativos, 1 turno, 8 h, 1 equipo, 8 h de mantenimiento y un factor sostenible **de ejemplo justificado** del 95 %. Calcula calendario ideal **176 h**, disponibilidad **168 h** y normal propuesta **159,6 h**. El usuario declara/importa **120 h de actividad real** de octubre con origen identificable y confirma.
 
 La ventana se cierra. La tabla muestra **12.000 EUR**, **159,6 h normales**, **120 h reales** y **75,19 %** de actividad real respecto a la normal, con las 168 h prácticas y 176 h teóricas consultables en detalle. **No muestra 12.000/159,6 ni 12.000/120 como coste unitario.** Todavía habrá que guardar/validar los cambios en el estudio; T15 calculará las tarifas cuando su metodología haya sido aprobada.
 
 ### Aceptación funcional específica
 
-1. La tabla recupera exactamente los importes finales T11 de nodos principales, preservando snapshots y sin duplicación por pool.
+1. La tabla recupera exactamente los importes terminales T11 **persistidos en la ejecución T12 vigente** por nodo principal, preservando snapshots, ID de ejecución y revisión, y sin duplicación por pool ni suma de circulaciones auxiliares.
 2. La calculadora de cualquier fila hereda unidad, nodo y fechas del estudio; se abre precargada y enfoca en amarillo el **primer dato realmente pendiente**, con texto de ayuda explícito.
 3. Alternar histórico/calendario/declarado conserva cada alternativa y no elimina campos necesarios; «Cancelar» deja intacta la fila.
 4. «Calcular y aplicar» ejecuta validaciones, rellena solo magnitudes calculadas/medidas, cierra la ventana y conserva la fila correcta; los datos faltantes siguen pendientes.
 5. Pruebas de periodos **mensuales, trimestrales, parciales y con cambio de turnos**, festivos configurados y fuentes históricas no comparables. No multiplicar por 3 una referencia mensual sin justificación.
 6. El encabezado y cada campo explican período/unidad, y el estado distingue propuesta, aplicado en borrador, guardado y falta de fuente.
 7. No existe pantalla de tarifas unitarias ni división monetaria simplista en T14. La frontera económica está en T15.
+8. Una ejecución T12 histórica puede consultarse para trazabilidad, pero no etiquetarse como vigente ni mezclarse con magnitudes de la revisión actual sin un vínculo expresamente validado; si no hay ejecución actual, aparece un diagnóstico claro y acceso a «Flujos y ejecuciones».
+9. La captura, el guardado y la reapertura de T14 no recalculan T11/T12 ni generan ejecuciones T12. Si guardar datos físicos modifica la revisión del estudio, hay que resolver explícitamente la compatibilidad entre la revisión T14 y el `CurrentRunId` derivado de T12 antes de cerrar T14; no se cambia por interpretación el contrato de actualidad existente.
 
 ## 3. Tratamiento de periodos anómalos — criterio propuesto para decisión metodológica
 
@@ -216,6 +228,8 @@ Presentar interfaz ES/EN, cantidades según perfil regional explícito (sin alte
 9. Las comprobaciones matemáticas exigidas por CM08 (C15, C16, C18, C19, C31) se ejecutan donde corresponda, sin reemplazarlas por la maqueta.
 
 ## 8. Decisiones todavía abiertas (no implementar por interpretación)
+
+Los cuatro acuerdos de integración del 14/10/2026 **sí están adoptados**, pero no resuelven los contratos técnicos de revisiones con T12, la interpretación de datos físicos legados de T07, la estructura de observaciones y versiones, los casos de equivalencia de calendarios de personal ni la política económica de T15. Véase la [matriz de asuntos pendientes](T14_INTEGRACION_Y_HOJA_DE_RUTA.md#6-cuestiones-técnicas-y-metodológicas-todavía-abiertas--no-resolver-por-interpretación).
 
 - **D04**: política económica por defecto para T15; sigue propuesta.
 - Regla para elegir muestras, normalización por longitud de periodo, ponderación y representatividad; **no imponer media universal**.
