@@ -109,6 +109,25 @@ El propietario ha aportado resultados de `Verify-Windows.ps1` para el SHA `68d38
 - **Pendiente**: repetir autoprueba y cobertura de mensajes con el nuevo commit; si pasan, continuar la aceptación Windows general y el smoke T12 específico. No se ha certificado la aceptación integral, ni se debe fusionar.
 - GitHub Actions no ejecutado.
 
+## Tercera aceptación Windows local: bloqueo por plantilla antigua (14/10/2026)
+
+El propietario ejecutó `Verify-Windows.ps1` en el commit `c0147acf1b74e8cddadbb2a5d6542e469ab450f8`. Resultados comunicados:
+
+- Verificación de origen canónico: **57** archivos comprobados.
+- Referencias matemáticas Python: **39/39**; runner T02 y T02A (moneda, tiempo, FX) superados.
+- Compilación Release: **correcta** (13,0 s).
+- MSTest: **691/691 correctas** (250,3 s).
+- Autoprueba del extractor de mensajes: **superada**.
+- Cobertura de traducciones: **420** claves de mensajes comprobadas.
+- Publicación Windows x64: **correcta**.
+- WPF launch smoke y recuperación de preferencias inválidas: **superados**.
+- **Fallo** al iniciar el smoke visual de empresa: `CompanyFilePanel.Smoke.cs:48`, comprobación «example opens a real editable copy with saved analyses», provocando código de salida 2.
+- Nota de entorno: la comprobación ad hoc del usuario ejecutada desde Windows PowerShell (política local restrictiva) no lanzó `Get-ProductionMessageKeys.ps1`; la impresión posterior «Verificación de traducciones superada» de ese bloque ad hoc es un falso positivo del envoltorio. **Dentro de `Verify-Windows.ps1` ejecutado con `pwsh` sí pasó la cobertura de 420 claves.** No hace falta cambiar la política global de ejecución.
+- Diagnóstico reproducible: se inspeccionó la base SQLite empaquetada `Synthetic Projects/Service Company/services.valdrio` y su tabla `FileMetadata` devuelve `SchemaVersion = 9` (formato `VALDRIO-COMPANY`); T12 utiliza esquema 10. `OpenExample` copiaba los bytes a destino y llamaba a `Open` sin migrar, por lo que no podía crear una sesión editable.
+- Corrección: `CompanyFileViewModel.OpenExample` consulta `RequiresUpgrade` sobre el origen en modo solo lectura y usa `Upgrade(source,destination,"local-user",token)`, que trabaja en fichero temporal, lo migra, valida y lo mueve al destino nuevo sin sobrescritura. Si el ejemplo ya es compatible, se conserva la ruta anterior de copia sin sobrescritura. La plantilla distribuida no se modifica.
+- Se añade `ExampleOpensBundledV9AsEditableV10WithoutChangingTemplate` contra el **mismo archivo real** distribuido y su huella; exige sesión editable, esquema vigente, análisis guardados, destino y archivo original intacto. El smoke informa diagnóstico y estado si vuelve a fallar.
+- **Pendiente**: compilar en Windows, probar la regresión nueva y repetir aceptación visual. Todavía no se ha fusionado ni aprobado T12.
+
 ## Acta de resultados — por cumplimentar
 
 - Fecha/hora, Windows, .NET: **pendiente**

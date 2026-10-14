@@ -1,10 +1,37 @@
 using Valdrio.Desktop;
 using Valdrio.Localization;
+using Valdrio.Infrastructure.CompanyFiles;
 
 namespace Valdrio.Tests;
 
 public sealed partial class T06ImportConfirmationTests
 {
+    [TestMethod]
+    public async Task ExampleOpensBundledV9AsEditableV10WithoutChangingTemplate()
+    {
+        var template = Path.Combine(AppContext.BaseDirectory, "examples", "services.valdrio");
+        Assert.IsTrue(File.Exists(template), "The actual distributed example must be included in the test output.");
+        var originalHash = Hash(template);
+        Assert.IsTrue(Service().RequiresUpgrade(template), "Bundled v9 example must be exercised as legacy input.");
+
+        var copy = FileOf("services-example-upgraded.valdrio");
+        var dialogs = new QueuedCompanyFileDialogs();
+        dialogs.Paths.Enqueue(copy);
+        var preferences = new PresentationPreferencesService(new LanguageCatalog(), UserPresentationPreferences.Default);
+        using var vm = new CompanyFileViewModel(Service(), dialogs, Catalog, new UiTextCatalog(), preferences,
+            new PresentationFormatter(new DisplayTimeZoneResolver()));
+        await vm.OpenExampleCommand.ExecuteAsync(null);
+
+        Assert.IsNotNull(vm.Snapshot, vm.Status);
+        Assert.IsNull(vm.DiagnosticCode, vm.Status);
+        Assert.AreEqual(SqliteCompanyFileService.SchemaVersion, vm.Snapshot.SchemaVersion);
+        Assert.AreEqual(copy, vm.ActivePath);
+        Assert.IsTrue(vm.CanWrite, "The upgraded example must be editable.");
+        Assert.IsTrue(vm.ActiveStudies!.ReadStudies().Count > 0, "Example analyses must remain available.");
+        Assert.IsFalse(Service().RequiresUpgrade(copy));
+        Assert.AreEqual(originalHash, Hash(template), "Bundled template must remain byte-for-byte unchanged.");
+    }
+
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]

@@ -45,8 +45,10 @@ public partial class CompanyFilePanel
         Check(vm.Snapshot is null, "cancel example destination leaves project closed");
         var examplePath = Path.Combine(output, "learning-copy.valdrio");
         dialogs.Paths.Enqueue(examplePath); await Click(ExampleButton);
-        Check(vm.Snapshot is not null && vm.ActivePath == examplePath && main.Studies!.Studies.Count > 0,
-            "example opens a real editable copy with saved analyses");
+        Check(vm.Snapshot is not null && vm.ActivePath == examplePath && main.Studies!.Studies.Count > 0
+              && vm.Snapshot.SchemaVersion == SqliteCompanyFileService.SchemaVersion && vm.CanWrite,
+            "example opens a real editable current-format copy with saved analyses"
+            + " (diagnostic=" + (vm.DiagnosticCode ?? "none") + ", status=" + vm.Status + ")");
         var exampleId = vm.Snapshot!.Id;
         var sentinel = Path.Combine(output, "do-not-overwrite.valdrio");
         File.WriteAllText(sentinel, "existing destination");

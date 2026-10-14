@@ -263,7 +263,11 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
             {
                 token.ThrowIfCancellationRequested();
                 var source = System.IO.Path.Combine(AppContext.BaseDirectory, "examples", "services.valdrio");
-                // The shipped fixture is immutable. Never overwrite the chosen destination.
+                // The shipped fixture is immutable. Older bundled examples are
+                // migrated directly into a NEW destination with atomic promotion;
+                // never open an incompatible raw copy as a current-format file.
+                if (files.RequiresUpgrade(source, token))
+                    return files.Upgrade(source, destination, "local-user", token);
                 try { System.IO.File.Copy(source, destination, overwrite: false); }
                 catch (System.IO.IOException ex) when (System.IO.File.Exists(destination) || System.IO.Directory.Exists(destination))
                 {
