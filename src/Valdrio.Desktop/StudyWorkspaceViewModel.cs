@@ -80,11 +80,16 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         // Reading a source does not abandon the unsaved study form. Only a saved,
         // unchanged study can be used as a destination for confirmation.
         if (Current is not null && !await CanLeaveAsync()) return false;
+        // A study may be open while its PRIMARY allocation is closed. Do not
+        // offer a write action that the persistence layer must reject.
+        var primaryClosed = Current is { } study && company.ActiveAllocations is { } allocations &&
+            (await Task.Run(() => allocations.ReadAllocations(study.CompanyId, study.Id))).Configuration.PrimaryClosed;
         ImportColumns.BindTarget(company.ActiveImports, Current, company.CanWrite, async batch =>
         {
             await ApplyConfirmedThenReload(batch.ConfirmedStudy, ApplyConfirmedStudy);
             if (committedRefreshPending) throw new InvalidOperationException("Committed import refresh pending.");
         });
+        ImportColumns.BindPrimaryClosed(primaryClosed);
         ImportColumns.SetExistingBatches(importValues);
         return true;
     }
