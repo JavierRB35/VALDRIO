@@ -148,7 +148,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
             {
                 NodeId = node.Id, PoolId = pool.Id,
                 Node = string.IsNullOrWhiteSpace(center) ? node.Code : center + " · " + node.Code,
-                Unit = DefaultActivityUnitCatalog.All.Any(p => p.Code == unit.Code)
+                Unit = DefaultActivityUnitCatalog.IsPreset(unit)
                     ? Label("ActivityUnit." + unit.Code) : unit.Code, Cost = cost
             };
             row.ReadFrom(latest.GetValueOrDefault(pool.Id), formatCulture, Label("Activity.Pending"),
