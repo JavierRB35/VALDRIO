@@ -198,8 +198,9 @@ public sealed partial class SqliteCompanyFileService
             PhysicalWorkspace(true, cancellationToken, (db, file) =>
             {
                 Scope(command.CompanyId, file);
-                if (string.IsNullOrWhiteSpace(command.Actor) || string.IsNullOrWhiteSpace(command.Reason))
-                    throw PhysicalActivityRules.Error("ACT_ANNUL_REASON", "Activity.AnnulReason");
+                if (string.IsNullOrWhiteSpace(command.Actor) || command.Actor.Length > 300 ||
+                    command.Reason?.Length > 4000 || command.ExpectedStudyRevision < 0)
+                    throw PhysicalActivityRules.Error("ACT_INPUT_INVALID", "Activity.InputInvalid");
                 var study = Study(RequiredStudy(db, file.Id, command.StudyId));
                 if (study.State != StudyState.Open)
                     throw PhysicalActivityRules.Error("ACT_STUDY_CLOSED", "Activity.StudyClosed");
@@ -209,6 +210,8 @@ public sealed partial class SqliteCompanyFileService
                     throw PhysicalActivityRules.Error("ACT_CONFLICT", "Activity.Conflict");
                 if (before is null || before.NodeId != command.NodeId || before.State == PhysicalObservationState.Annulled)
                     throw PhysicalActivityRules.Error("ACT_SCOPE_INVALID", "Activity.ScopeInvalid");
+                if (before.State == PhysicalObservationState.Confirmed && string.IsNullOrWhiteSpace(command.Reason))
+                    throw PhysicalActivityRules.Error("ACT_ANNUL_REASON", "Activity.AnnulReason");
                 var after = before with
                 {
                     Id = new EntityId(Guid.NewGuid()),
