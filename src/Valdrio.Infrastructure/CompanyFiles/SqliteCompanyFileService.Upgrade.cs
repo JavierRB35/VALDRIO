@@ -23,6 +23,19 @@ public sealed partial class SqliteCompanyFileService
         return schema;
     }
 
+    // Detect known historical formats without opening an edit session, writing, or throwing
+    // FILE_UPGRADE_REQUIRED as part of an expected user workflow.
+    public bool RequiresUpgrade(string path, CancellationToken cancellationToken = default) => Guard(() =>
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var source = Normalize(path);
+        if (!File.Exists(source)) throw Error("FILE_NOT_FOUND", "File.NotFound");
+        using var connection = Connect(source, SqliteOpenMode.ReadOnly);
+        if (Scalar(connection, "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='FileMetadata';") != "1")
+            throw Error("FILE_FOREIGN_FORMAT", "File.ForeignFormat");
+        return DetectSchema(connection) < SchemaVersion;
+    });
+
     public ICompanyFileSession Upgrade(string source, string destination, string actor, CancellationToken cancellationToken = default) => Guard(() =>
     {
         var original = Normalize(source);

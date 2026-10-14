@@ -46,6 +46,9 @@ public interface ICompanyFileSession : IDisposable
 
 public interface ICompanyFileService
 {
+    // Read-only compatibility probe. Older files are a normal user choice, not an Open() exception.
+    // Existing alternate service implementations can keep relying on their legacy Open() behavior.
+    bool RequiresUpgrade(string path, CancellationToken cancellationToken = default) => false;
     ICompanyFileSession Upgrade(string source, string destination, string actor, CancellationToken cancellationToken = default);
     ICompanyFileSession Create(CreateCompanyFile command, CancellationToken cancellationToken = default);
     ICompanyFileSession Open(string path, CompanyFileOpenMode mode = CompanyFileOpenMode.Edit,
