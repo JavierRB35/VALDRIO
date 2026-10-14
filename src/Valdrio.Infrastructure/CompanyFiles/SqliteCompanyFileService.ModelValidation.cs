@@ -60,7 +60,7 @@ public sealed partial class SqliteCompanyFileService
         foreach (var a in audit)
         {
             Invalid(a.Row.CompanyId != file.Id.ToString() || EntityId.Parse(a.Row.Id).ToString() != a.Row.Id || EntityId.Parse(a.AggregateId).ToString() != a.AggregateId || EntityId.Parse(a.TransactionId).ToString() != a.TransactionId || string.IsNullOrWhiteSpace(a.Row.Actor) || UtcInstant.ParseIso(a.Row.AtUtc).ToCanonicalString() != a.Row.AtUtc || a.Schema != CanonicalSnapshotJson.SchemaVersion, "Audit envelope invalid");
-            Invalid(a.Type is not ("Company" or "CompanyFile" or "PhysicalCenter" or "ModelVersion" or "UnitState" or "Study" or "StudySnapshot" or "ImportBatch" or "ResourceChange" or "ResourceAdjustment" or "AllocationKey" or "AllocationChange"), "Unknown audit aggregate");
+            Invalid(a.Type is not ("Company" or "CompanyFile" or "PhysicalCenter" or "ModelVersion" or "UnitState" or "Study" or "StudySnapshot" or "ImportBatch" or "ResourceChange" or "ResourceAdjustment" or "AllocationKey" or "AllocationChange" or "PhysicalObservation"), "Unknown audit aggregate");
             if (a.Type == "Company")
                 Invalid(a.AggregateId != file.Id.ToString(), "Company audit scope invalid");
         }
@@ -123,6 +123,7 @@ public sealed partial class SqliteCompanyFileService
         Invalid(file.SchemaVersion < 4 && audit.Any(a => a.Type == "ImportBatch"), "Import audit in old schema");
         Invalid(file.SchemaVersion < 8 && audit.Any(a => a.Type is "ResourceChange" or "ResourceAdjustment" or "AllocationKey" or "AllocationChange"), "Resource audit in old schema");
         Invalid(file.SchemaVersion < 9 && audit.Any(a => a.Type is "AllocationKey" or "AllocationChange"), "Allocation audit in old schema");
+        Invalid(file.SchemaVersion < 11 && audit.Any(a => a.Type == "PhysicalObservation"), "Physical audit in old schema");
         Invalid(upgrades.Length > SchemaVersion - 1, "Too many format upgrades");
         int? previousSchema = null;
         for (var i = 0; i < upgrades.Length; i++)
