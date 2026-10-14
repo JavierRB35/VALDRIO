@@ -1661,4 +1661,10 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Activity.Cost" xml:space="preserve"><value>Coste publicado T12</value></data>
   <data name="Activity.CostUnavailable" xml:space="preserve"><value>Sin coste T12 vigente</value></data>
   <data name="Activity.Method" xml:space="preserve"><value>Cómo calcular la capacidad normal</value></data>
+  <data name="Activity.History" xml:space="preserve"><value>Ver historial de observaciones</value></data>
+  <data name="Activity.Status" xml:space="preserve"><value>Estado</value></data>
+  <data name="Activity.SaveFailed" xml:space="preserve"><value>No se pudo guardar la observación física. Revisa el archivo y vuelve a intentarlo.</value></data>
+  <data name="Activity.State.Draft" xml:space="preserve"><value>Borrador</value></data>
+  <data name="Activity.State.Confirmed" xml:space="preserve"><value>Confirmada</value></data>
+  <data name="Activity.State.Annulled" xml:space="preserve"><value>Anulada</value></data>
 </root>
