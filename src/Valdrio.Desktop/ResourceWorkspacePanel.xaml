@@ -14,11 +14,13 @@
  <StackPanel Visibility="{Binding CultureChanged, Converter={StaticResource Visible}}">
  <TextBlock Text="{Binding CultureMessage}"/>
 <Button x:Name="AcknowledgeCultureButton" Content="{Binding [KeepCulture]}" Command="{Binding AcknowledgeCultureCommand}" local:FieldHelp.Key="Resource.KeepCulture" Margin="0,4,8,6" Padding="10,6"/></StackPanel>
- <Expander x:Name="ReusableAdjustmentsSection" Header="{Binding RuleSectionTitle}" Margin="0,0,0,16">
-  <Expander.Style><Style TargetType="Expander" BasedOn="{StaticResource {x:Type Expander}}"><Style.Triggers><DataTrigger Binding="{Binding ShowDistributionTools,ElementName=Root}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Expander.Style>
+ <Border Margin="0,0,0,16" BorderBrush="{DynamicResource Brand.DeepGreen}" BorderThickness="4,1,1,1">
+  <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Card}"><Style.Triggers><DataTrigger Binding="{Binding ShowDistributionTools,ElementName=Root}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Border.Style>
+ <Expander x:Name="ReusableAdjustmentsSection" Header="{Binding RuleSectionTitle}" IsExpanded="True">
+  <Expander.HeaderTemplate><DataTemplate><TextBlock Text="{Binding}" FontSize="20" FontWeight="SemiBold"/></DataTemplate></Expander.HeaderTemplate>
   <StackPanel>
    <TextBlock Text="{Binding RuleSectionHelp}" Margin="0,8"/>
-   <Button x:Name="AddAdjustmentRuleButton" Content="{Binding RuleAddLabel}" Command="{Binding AddRuleCommand}" HorizontalAlignment="Left"/>
+   <Button x:Name="AddAdjustmentRuleButton" Content="{Binding RuleAddLabel}" Command="{Binding AddRuleCommand}" HorizontalAlignment="Left" Style="{StaticResource Button.Primary}"/>
    <ItemsControl ItemsSource="{Binding RuleCards}"><ItemsControl.ItemTemplate><DataTemplate>
     <Border Style="{StaticResource Card}" Margin="0,8"><Expander Header="{Binding Header}" IsExpanded="True"><StackPanel>
      <local:AdaptiveColumnsPanel MinColumnWidth="280" IsEnabled="{Binding CanEdit}">
@@ -40,6 +42,7 @@
    </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
   </StackPanel>
  </Expander>
+ </Border>
  <Border Style="{StaticResource Card}" Margin="0,0,0,16" Visibility="{Binding ShowList, Converter={StaticResource Visible}}"><StackPanel Visibility="{Binding ShowList, Converter={StaticResource Visible}}">
   <TextBlock Text="{Binding ResourceListTitle}" FontSize="18" FontWeight="SemiBold" Margin="0,4,0,4"/>
   <TextBlock Text="{Binding ResourceListHelp}" Margin="0,0,0,8"/>

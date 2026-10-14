@@ -137,6 +137,7 @@ public sealed class AdjustmentRuleCard : ObservableObject
     public ResourceMutation? Prepared { get; private set; }
     private string name, pattern, code, value, reason, preview = "";
     private string? feedbackKey;
+    private bool suggestCode;
     private AdjustmentValueMode mode;
     private bool dirty;
     public AdjustmentRuleCard(ResourceWorkspaceViewModel owner, ReusableAdjustmentRule? saved, CultureInfo culture)
@@ -145,6 +146,7 @@ public sealed class AdjustmentRuleCard : ObservableObject
         name = saved?.Name ?? ""; pattern = saved?.AccountPattern ?? ""; code = saved?.AnalyticalCode ?? "";
         value = saved?.Value.ToString("0.########", culture) ?? "0"; reason = saved?.Reason ?? ""; mode = saved?.Mode ?? AdjustmentValueMode.Fixed;
         dirty = saved is null;
+        suggestCode = saved is null;
         SaveCommand = new AsyncRelayCommand(() => owner.SaveRule(this), () => owner.CanEditRule && IsDirty);
         DeleteCommand = new AsyncRelayCommand(() => owner.SaveRule(this, true), () => owner.CanEditRule);
         ApplyCommand = new RelayCommand(() => owner.PrepareRule(this, false), () => owner.CanEditRule && !IsDirty && Saved?.Archived == false && owner.ActiveApplication(Id) is null);
@@ -154,12 +156,28 @@ public sealed class AdjustmentRuleCard : ObservableObject
         DuplicateCommand = new RelayCommand(() => owner.DuplicateRule(this), () => owner.CanEditRule);
     }
     public string this[string key] => owner.RuleText(key);
-    public string Name { get => name; set => Edit(ref name, value); }
-    public string Pattern { get => pattern; set => Edit(ref pattern, value); }
+    public string Name { get => name; set { Edit(ref name, value); UpdateSuggestedCode(); } }
+    public string Pattern { get => pattern; set { Edit(ref pattern, value); UpdateSuggestedCode(); } }
     public string SelectionSummary => owner.RuleSelectionSummary(Pattern);
     public string Feedback => !string.IsNullOrEmpty(owner.RuleFeedback) ? owner.RuleFeedback :
         feedbackKey is not null ? this[feedbackKey] : IsDirty ? this["SaveFirst"] : "";
-    public string Code { get => code; set => Edit(ref code, value); }
+    public string Code { get => code; set { suggestCode = false; Edit(ref code, value); } }
+    private void UpdateSuggestedCode()
+    {
+        if (!suggestCode) return;
+        static string Slug(string input)
+        {
+            var normalized = input.Normalize(System.Text.NormalizationForm.FormD);
+            var plain = new string(normalized.Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark).ToArray());
+            return System.Text.RegularExpressions.Regex.Replace(plain.ToUpperInvariant(), @"[^A-Z0-9]+", "-").Trim('-');
+        }
+        var account = Slug(Pattern.Trim().TrimEnd('*'));
+        var label = Slug(Name);
+        var parts = new[] { "AJ", account, label }.Where(p => p.Length > 0);
+        var proposed = account.Length == 0 && label.Length == 0 ? "" : string.Join("-", parts);
+        if (proposed.Length > 80) proposed = proposed[..80].TrimEnd('-');
+        if (SetProperty(ref code, proposed, nameof(Code))) Changed();
+    }
     public string Value { get => value; set => Edit(ref this.value, value); }
     public string Reason { get => reason; set => Edit(ref reason, value); }
     public AdjustmentValueMode Mode { get => mode; set { if (SetProperty(ref mode, value)) Changed(); } }
@@ -180,7 +198,7 @@ public sealed class AdjustmentRuleCard : ObservableObject
     private void Edit(ref string field, string text, [System.Runtime.CompilerServices.CallerMemberName] string? property = null)
     { if (SetProperty(ref field, text, property)) Changed(); }
     private void Changed() { dirty = true; feedbackKey = null; ClearPreview(); owner.RuleEdited(); }
-    internal void Accept(ReusableAdjustmentRule rule) { Saved = rule; dirty = false; ClearPreview(); }
+    internal void Accept(ReusableAdjustmentRule rule) { Saved = rule; suggestCode = false; dirty = false; ClearPreview(); }
     internal void Prepare(ResourceMutation command, string text) { Prepared = command; preview = text; ShowFeedback("ReviewPreview"); }
     internal void ShowFeedback(string key) { feedbackKey = key; RefreshState(); }
     internal void ClearPreview() { Prepared = null; preview = ""; RefreshState(); }

@@ -7,6 +7,27 @@ namespace Valdrio.Tests;
 public sealed partial class T06ImportConfirmationTests
 {
     [TestMethod]
+    public async Task ReusableAdjustment_SuggestsCodeButPreservesManualAndSavedCodes()
+    {
+        using var ui = await ResourceUiReady();
+        ui.Resources.AddRuleCommand.Execute(null);
+        var card = ui.Resources.RuleCards.Single();
+        card.Name = "Amortización técnica";
+        Assert.AreEqual("AJ-AMORTIZACION-TECNICA", card.Code);
+        card.Pattern = "0681*";
+        Assert.AreEqual("AJ-0681-AMORTIZACION-TECNICA", card.Code);
+        card.Pattern = "";
+        Assert.AreEqual("AJ-AMORTIZACION-TECNICA", card.Code);
+        card.Code = "MI-CODIGO";
+        card.Name = "Otro nombre"; card.Pattern = "681*";
+        Assert.AreEqual("MI-CODIGO", card.Code);
+        card.Reason = "Estimate";
+        await card.SaveCommand.ExecuteAsync(null);
+        card = ui.Resources.RuleCards.Single();
+        card.Name = "Nombre posterior";
+        Assert.AreEqual("MI-CODIGO", card.Code);
+    }
+    [TestMethod]
     public async Task ReusableAdjustment_SelectionShowsImportedBalanceBeforeSaving()
     {
         using var ui = await ResourceUiReady("Amount;Ignored;Account\n600;x;0681001\n-100;x;0681002\n200;x;681001");

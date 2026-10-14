@@ -99,3 +99,13 @@ Cada ficha muestra instrucciones para guardar/aplicar/confirmar y feedback conte
 Validación final de este incremento: 15 pruebas seleccionadas superadas, incluida creación/confirmación/reversión con campo vacío y prefijo sin coincidencias; Desktop Release sin errores ni advertencias. Esta ampliación sustituye el rechazo anterior por ausencia de cuentas descrito en la evidencia inicial. No se ha repetido la suite económica completa. GitHub Actions: sin ejecución.
 
 WPF real: proceso terminado con código 0, 17 comprobaciones del recorrido de ajustes y 21 del recorrido guiado. Comprobado saldo visible antes de guardar, vista previa sin origen, fila analítica y mensaje de éxito visible. [Captura final con feedback](feedback/04-es-additional-feedback.png).
+
+## Código propuesto y visibilidad del apartado
+
+Las fichas nuevas proponen un código `AJ-<cuenta sin comodín>-<nombre normalizado>` (sin cuenta: `AJ-<nombre>`), con mayúsculas, sin tildes y separadores de guion, hasta 80 caracteres. Se preservan ceros iniciales. El código se actualiza con nombre/cuenta hasta que el usuario lo modifica o guarda la ficha; los códigos guardados no se renumeran al editar el nombre. Las validaciones existentes siguen detectando colisiones al aplicar; la propuesta no reserva códigos ni implica aplicación.
+
+El apartado se presenta como tarjeta con borde verde de marca, título «Reglas de ajustes extracontables» a 20 px, desplegado inicialmente y botón principal Añadir ficha. Conserva la posibilidad de plegarlo y su ubicación exclusiva en Preparar cuentas. No cambia el motor económico.
+
+Validación: pruebas seleccionadas de reglas y localización y compilación Release, logs rule-code adjuntos. La nueva prueba comprueba inferencia por nombre/cuenta, tildes, ceros iniciales y preservación de códigos manuales y guardados. No se repite la batería económica completa.
+
+Resultado: 16/16 pruebas superadas; compilación con 0 errores y 0 advertencias. Recorrido WPF finalizado con código 0 y captura inspeccionada: [apartado destacado](section/03-en-undone.png). Sin GitHub Actions.

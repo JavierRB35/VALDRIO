@@ -1503,12 +1503,12 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.ShowNavigation" xml:space="preserve"><value>Mostrar navegación</value></data>
   <data name="AllocationUI.ShowSource" xml:space="preserve"><value>Explicar importe seleccionado</value></data>
   <data name="AllocationUI.BackToAmounts" xml:space="preserve"><value>Volver a las aportaciones</value></data>
-  <data name="Adjustment.Title" xml:space="preserve"><value>Ajustes reutilizables</value></data>
+  <data name="Adjustment.Title" xml:space="preserve"><value>Reglas de ajustes extracontables</value></data>
   <data name="Adjustment.Help" xml:space="preserve"><value>Sustituye las cuentas seleccionadas por un coste analítico. Aplicación expresa en cada análisis. Porcentaje: 50 equivale al 50 % del total. Añadir admite importes negativos. Moneda:</value></data>
   <data name="Adjustment.New" xml:space="preserve"><value>Añadir ficha</value></data>
   <data name="Adjustment.Name" xml:space="preserve"><value>Nombre del coste analítico</value></data>
   <data name="Adjustment.Pattern" xml:space="preserve"><value>Cuenta exacta o prefijo (681*) · opcional</value></data>
-  <data name="Adjustment.Code" xml:space="preserve"><value>Código analítico (AJ-AMORT-TEC)</value></data>
+  <data name="Adjustment.Code" xml:space="preserve"><value>Código analítico (propuesto, editable)</value></data>
   <data name="Adjustment.Operation" xml:space="preserve"><value>Importe del nuevo coste</value></data>
   <data name="Adjustment.Value" xml:space="preserve"><value>Valor (moneda funcional o %)</value></data>
   <data name="Adjustment.Reason" xml:space="preserve"><value>Motivo económico</value></data>
