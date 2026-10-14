@@ -1501,8 +1501,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.NavigationMenu" xml:space="preserve"><value>Menú</value></data>
   <data name="Guide.HideNavigation" xml:space="preserve"><value>Ocultar navegación para ampliar el área de datos</value></data>
   <data name="Guide.ShowNavigation" xml:space="preserve"><value>Mostrar navegación</value></data>
-  <data name="Allocation.ShowSource" xml:space="preserve"><value>Explicar importe seleccionado</value></data>
-  <data name="Allocation.BackToAmounts" xml:space="preserve"><value>Volver a las aportaciones</value></data>
+  <data name="AllocationUI.ShowSource" xml:space="preserve"><value>Explicar importe seleccionado</value></data>
+  <data name="AllocationUI.BackToAmounts" xml:space="preserve"><value>Volver a las aportaciones</value></data>
   <data name="Adjustment.Title" xml:space="preserve"><value>Ajustes reutilizables</value></data>
   <data name="Adjustment.Help" xml:space="preserve"><value>Sustituye las cuentas seleccionadas por un coste analítico. Aplicación expresa en cada análisis. Porcentaje: 50 equivale al 50 % del total. Añadir admite importes negativos. Moneda:</value></data>
   <data name="Adjustment.New" xml:space="preserve"><value>Añadir ficha</value></data>

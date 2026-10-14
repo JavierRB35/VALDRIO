@@ -7,6 +7,25 @@ namespace Valdrio.Tests;
 public sealed class AllocationUiResourceCompletenessTests
 {
     [TestMethod]
+    public void AllocationPanelIndexerBindingsResolveInEveryPublishedLanguage()
+    {
+        var xaml = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "ui-contracts", "AllocationWorkspacePanel.xaml"));
+        var keys = System.Text.RegularExpressions.Regex.Matches(xaml, @"\{Binding\s+\[([^\]]+)\]")
+            .Select(m => "AllocationUI." + m.Groups[1].Value).Distinct().ToArray();
+        Assert.IsTrue(keys.Length > 0);
+        var catalog = new UiTextCatalog();
+        foreach (var culture in UiTextCatalog.SupportedUiCultures)
+        {
+            var resources = catalog.ReadAll(culture);
+            foreach (var key in keys)
+            {
+                Assert.IsTrue(resources.ContainsKey(key), $"Missing actual XAML binding {key} in {culture.Name}");
+                Assert.IsFalse(string.IsNullOrWhiteSpace(catalog.Get(key, culture)));
+            }
+        }
+    }
+
+    [TestMethod]
     public void AllocationUiKeysAreCompleteInNeutralEnglishAndSpanish()
     {
         var texts = new UiTextCatalog();

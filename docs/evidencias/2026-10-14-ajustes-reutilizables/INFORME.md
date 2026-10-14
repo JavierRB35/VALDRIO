@@ -71,3 +71,9 @@ Comandos locales: `dotnet build src/Valdrio.Desktop/Valdrio.Desktop.csproj -c Re
 ![Coste analítico y compensaciones aplicadas](02-es-applied.png)
 
 ![Ficha después de deshacer, en inglés](03-en-undone.png)
+
+## Corrección posterior: etiquetas de trazabilidad (captura del propietario)
+
+La excepción `Missing neutral English UI resource AllocationUI.ShowSource` reveló dos claves con prefijo incorrecto: `Allocation.ShowSource` y `Allocation.BackToAmounts`. Se corrigen a `AllocationUI.*` en ambos idiomas. No cambia la lógica de cálculo.
+
+La nueva prueba lee los bindings del XAML real de AllocationWorkspacePanel y exige que existan en todos los idiomas publicados. Antes del arreglo falla exactamente con `AllocationUI.ShowSource`; después pasan las siete pruebas de completitud/localización seleccionadas. Desktop Release compila con cero errores y cero advertencias. No se repitió la suite económica completa ni el recorrido WPF: los 664 tests y 558 comprobaciones anteriores corresponden a b70075c. Los hashes anteriores conservan esa evidencia histórica. El proceso abierto en Visual Studio debe detenerse y recompilarse para cargar los recursos nuevos.

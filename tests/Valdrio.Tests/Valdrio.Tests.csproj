@@ -6,6 +6,7 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="../../src/Valdrio.Desktop/AllocationWorkspacePanel.xaml" Link="ui-contracts/AllocationWorkspacePanel.xaml" CopyToOutputDirectory="PreserveNewest" />
     <Using Include="System.IO" />
     <Compile Include="../../src/Valdrio.Desktop/WorkspaceGuidance.cs" Link="Desktop/WorkspaceGuidance.cs" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />

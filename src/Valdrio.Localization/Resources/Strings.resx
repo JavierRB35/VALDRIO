@@ -1501,8 +1501,8 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.NavigationMenu" xml:space="preserve"><value>Menu</value></data>
   <data name="Guide.HideNavigation" xml:space="preserve"><value>Hide navigation to give your data more room</value></data>
   <data name="Guide.ShowNavigation" xml:space="preserve"><value>Show navigation</value></data>
-  <data name="Allocation.ShowSource" xml:space="preserve"><value>Explain selected amount</value></data>
-  <data name="Allocation.BackToAmounts" xml:space="preserve"><value>Back to contributions</value></data>
+  <data name="AllocationUI.ShowSource" xml:space="preserve"><value>Explain selected amount</value></data>
+  <data name="AllocationUI.BackToAmounts" xml:space="preserve"><value>Back to contributions</value></data>
   <data name="Adjustment.Title" xml:space="preserve"><value>Reusable adjustments</value></data>
   <data name="Adjustment.Help" xml:space="preserve"><value>Replace selected accounts with an analytical cost. Explicit application per analysis. Percentage: 50 means 50% of the total. Add accepts negative amounts. Currency:</value></data>
   <data name="Adjustment.New" xml:space="preserve"><value>Add card</value></data>
