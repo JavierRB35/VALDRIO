@@ -145,6 +145,18 @@ Este documento complementa [T14](../tareas/T14.md), la [directriz de capacidad n
 
 **Pendiente técnico T14.1:** especificar catálogo/versionado, significado exacto de Source frente a Quality, claves de diagnóstico y validación por tipo de dato, evitando categorías mezcladas o etiquetas que prometan comprobaciones inexistentes.
 
+### T14.1 · Decisión técnica 12 aprobada (15/10/2026): capacidad normal cero justificada
+
+**Opción A aprobada por el propietario.** VALDRIO permitirá **guardar y confirmar una capacidad normal igual a cero** cuando exista fuente y justificación explícita, incluso cuando el nodo registre costes fijos positivos. El cero representa una cantidad **conocida** y no debe sustituirse por uno, por un valor estimado ni confundirse con `null`/«Pendiente».
+
+- **Validación física:** si la capacidad normal es `0`, la confirmación exige una explicación específica de la circunstancia y procedencia/calidad identificadas, además de las demás reglas de confirmación por nodo. La actividad real sigue siendo una magnitud distinta, que puede ser cero **medido**, positivo debidamente documentado o estar ausente en borrador; no inferirla de la normal.
+- **Indicador de utilización:** calcular `ActividadReal / CapacidadNormal × 100` **solo con capacidad normal estrictamente positiva y actividad real válida**. Para normal igual a cero mostrar «Utilización no calculable: capacidad normal cero», **no** mostrar 0 %, 100 %, infinito, error de división ni porcentaje artificial. Si falta normal o real, diagnosticar «Pendiente» según el campo ausente.
+- **Frontera económica:** costes fijos del período (por ejemplo, 2.000 EUR) no se eliminan, redistribuyen ni convierten automáticamente en tarifa por la presencia de normal cero. La política monetaria y el denominador económico quedan para T15/D04; T14 no calcula ni publica costes unitarios.
+- **Ejemplo de prueba:** Montaje, normal `0 h`, real `0 h` observado, coste terminal T12 `2.000 EUR`; se permite confirmar el registro físico con fuente/calidad/justificación válida, indicador «No calculable» y coste T12 inalterado.
+- **Pruebas obligatorias T14.1/T14.2:** cero justificado versus `null`; rechazo de normal cero sin explicación; normal cero con real cero y con costes fijos; real cero con normal positiva; actividad real pendiente; validación ES/EN y ausencia de división por cero. Registrar casos de normal cero con real positivo como situación a diagnosticar/revisar sin inventar política económica.
+
+**Pendiente técnico:** contrato tipado de motivos y diagnósticos (incluido formato de cero justificado), estados de confirmación y control de denominador, coherente con las pruebas de la ficha canónica T14 v0.4.
+
 ## 2. Inventario por pantalla: información existente y destino en T14
 
 | Pantalla y responsable | Datos introducidos o disponibles antes de T14 | Uso en T14 | ¿Se pide de nuevo? |
