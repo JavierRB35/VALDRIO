@@ -149,8 +149,9 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
             descriptionColumn is { } description && !string.IsNullOrWhiteSpace(row.GetCell(description).TextValue) ? Display(row.GetCell(description).TextValue) : this["DescriptionMissing"]);
     }).ToArray();
     public string Status => diagnostic is null ? this[statusKey] : FormatDiagnostic(diagnostic);
-    public string UserStatus => diagnostic is null ? this[statusKey] : FormatDiagnosticMessage(diagnostic);
-    public bool HasUserError => diagnostic is not null || validation is { IsValid: false };
+    public string UserStatus => diagnostic is not null ? FormatDiagnosticMessage(diagnostic) :
+        primaryClosed && !busy ? PrimaryClosedNotice : this[statusKey];
+    public bool HasUserError => primaryClosed || diagnostic is not null || validation is { IsValid: false };
     public string Summary => validation is null ? "" : string.Format(Ui, this["Summary"],
         validation.Rows.Count, validation.Diagnostics.Count, validation.IsValid ? this["Valid"] : this["Blocked"]);
     public string FriendlySummary => validation is null ? "" : validation.IsValid
@@ -216,7 +217,14 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         using var token = new CancellationTokenSource(); cancellation = token; Refresh();
         try { await action(token.Token); }
         catch (OperationCanceledException) { if (!keepSelection) validation = null; statusKey = "Cancelled"; }
-        catch (DomainRuleException ex) { if (!keepSelection) validation = null; diagnostic = ex.Diagnostic; }
+        catch (DomainRuleException ex)
+        {
+            if (!keepSelection) validation = null;
+            diagnostic = ex.Diagnostic;
+            // A closure may happen after the import was prepared. Keep the
+            // reviewed source, block another confirmation, and release Busy.
+            if (ex.Diagnostic.Code == "PRIMARY_CLOSED") primaryClosed = true;
+        }
         catch (CompanyFileException ex) { if (!keepSelection) validation = null; diagnostic = ex.Diagnostic; }
         catch (ArgumentException) { if (!keepSelection) validation = null; diagnostic = ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile").Diagnostic; }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
