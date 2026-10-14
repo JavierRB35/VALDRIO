@@ -79,9 +79,19 @@ public static class PhysicalActivityRules
         if (input.TheoreticalQuantity is decimal theoretical && input.PracticalQuantity is decimal practical && practical > theoretical)
             throw Error("ACT_CAPACITY_ORDER", "Activity.CapacityOrder");
 
-        input.NormalEvidence?.EnsureValid();
-        input.RealEvidence?.EnsureValid();
-        if (input.NormalZeroReason?.Length > 4000 || input.ExceptionReason?.Length > 4000 || input.CorrectionReason?.Length > 4000)
+        // Drafts may retain incomplete source descriptions. Confirmation is the trust boundary:
+        // both physical quantities must then have identifiable, nonempty provenance.
+        foreach (var evidence in new[] { input.NormalEvidence, input.RealEvidence })
+        {
+            if (evidence is null) continue;
+            if (!Enum.IsDefined(evidence.Quality) || evidence.Source is null ||
+                evidence.Description is null || evidence.Source.Length > 500 ||
+                evidence.Description.Length > 4000)
+                throw Error("ACT_EVIDENCE_TOO_LONG", "Activity.EvidenceTooLong");
+            if (input.State == PhysicalObservationState.Confirmed) evidence.EnsureValid();
+        }
+        if (input.NormalZeroReason?.Length > 4000 || input.ExceptionReason?.Length > 4000 ||
+            input.CorrectionReason?.Length > 4000)
             throw Error("ACT_INPUT_INVALID", "Activity.InputInvalid");
 
         if (input.State != PhysicalObservationState.Confirmed) return;
