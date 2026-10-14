@@ -2,6 +2,23 @@
  <UserControl.Resources>
   <BooleanToVisibilityConverter x:Key="Visible"/>
   <Style x:Key="ResourceCell" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="3,2"/></Style>
+  <!-- Scoped to the allocation base only; selection and focus still inherit the global grid styles. -->
+  <Style x:Key="ResourceEffectiveNumber" TargetType="TextBlock" BasedOn="{StaticResource Text.TableNumber}">
+   <Setter Property="FontWeight" Value="SemiBold"/>
+   <Setter Property="Foreground" Value="{DynamicResource Brand.DeepGreen}"/>
+  </Style>
+  <Style x:Key="ResourceEffectiveCell" TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+   <Setter Property="Background" Value="{DynamicResource Status.SuccessBg}"/>
+   <Setter Property="BorderBrush" Value="{DynamicResource Accent.ActiveGreen}"/>
+   <Setter Property="BorderThickness" Value="2,0,0,0"/>
+  </Style>
+  <Style x:Key="ResourceEffectiveHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+   <Setter Property="Background" Value="{DynamicResource Status.SuccessBg}"/>
+   <Setter Property="Foreground" Value="{DynamicResource Brand.DeepGreen}"/>
+   <Setter Property="FontWeight" Value="Bold"/>
+   <Setter Property="BorderBrush" Value="{DynamicResource Accent.ActiveGreen}"/>
+   <Setter Property="BorderThickness" Value="2,0,0,1"/>
+  </Style>
   <Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}"><Setter Property="TextWrapping" Value="Wrap"/></Style>
   <Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}"><Setter Property="MinHeight" Value="26"/></Style>
   <Style TargetType="ComboBox" BasedOn="{StaticResource Input.Combo}"><Setter Property="MinHeight" Value="28"/></Style>
@@ -48,17 +65,26 @@
   <TextBlock Text="{Binding ResourceListHelp}" Margin="0,0,0,8"/>
   <TextBlock Text="{Binding CorrectionHelp}" Margin="0,0,0,8"/><TextBlock Text="{Binding CorrectionLockMessage}" Margin="0,0,0,8"/>
   <TextBlock Text="{Binding ProgressSummary}" FontWeight="SemiBold" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite"/>
+  <TextBlock Text="{Binding [EffectiveBasisHelp]}" Foreground="{DynamicResource Brand.DeepGreen}"
+             FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,2,0,10"/>
 <DataGrid x:Name="ResourceGrid" PreviewMouseDown="SelectCorrectionCell" PreviewTextInput="TypeCorrection" PreparingCellForEdit="PrepareCorrection" BeginningEdit="BeginCorrection" CellEditEnding="EndCorrection" ItemsSource="{Binding Rows}" SelectedItem="{Binding ResourceChoice}" FlowDirection="LeftToRight" IsEnabled="{Binding CanNavigate}" IsReadOnly="False" AutoGenerateColumns="False" SelectionMode="Single" CanUserAddRows="False" CanUserDeleteRows="False" MinHeight="90" MaxHeight="240" Margin="0,6,0,8" local:FieldHelp.Key="Resource.Rows"><DataGrid.Resources><Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}"><Setter Property="TextWrapping" Value="Wrap"/></Style></DataGrid.Resources><DataGrid.Columns><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource ResourceCell}" Binding="{Binding DisplayName}" Width="2*" MinWidth="180"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Originals}" Width="*" MinWidth="115"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Converted}" Width="*" MinWidth="115"/><DataGridTemplateColumn x:Name="CorrectionsColumn" Width="*" MinWidth="130">
 <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock Text="{Binding Adjustments}" Style="{StaticResource Text.TableNumber}" Background="{DynamicResource Surface.Subtle}"/></DataTemplate></DataGridTemplateColumn.CellTemplate>
 <DataGridTemplateColumn.CellEditingTemplate><DataTemplate><TextBox Text="{Binding CorrectionNumber, Mode=OneWay}" local:FieldHelp.Key="Resource.Corrections" AutomationProperties.Name="{Binding DataContext[Adjustments], RelativeSource={RelativeSource AncestorType=UserControl}}" TextAlignment="Right"/></DataTemplate></DataGridTemplateColumn.CellEditingTemplate>
-</DataGridTemplateColumn><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Effective}" Width="*" MinWidth="115"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Pending}" Width="*" MinWidth="115"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Difference}" Width="*" MinWidth="115"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource ResourceCell}" Binding="{Binding AssignmentStatus}" Width="*" MinWidth="130"/><DataGridTextColumn x:Name="RuleAdjustmentsColumn" IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding RuleAdjustments}" Width="*" MinWidth="130"/></DataGrid.Columns></DataGrid>
+</DataGridTemplateColumn><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource ResourceEffectiveNumber}"
+    CellStyle="{StaticResource ResourceEffectiveCell}" HeaderStyle="{StaticResource ResourceEffectiveHeader}"
+    Binding="{Binding Effective}" Width="*" MinWidth="162"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Pending}" Width="*" MinWidth="115"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Difference}" Width="*" MinWidth="115"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource ResourceCell}" Binding="{Binding AssignmentStatus}" Width="*" MinWidth="130"/><DataGridTextColumn x:Name="RuleAdjustmentsColumn" IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding RuleAdjustments}" Width="*" MinWidth="130"/></DataGrid.Columns></DataGrid>
 <WrapPanel Background="{DynamicResource Surface.Subtle}" Margin="0,0,0,10">
 <TextBlock Text="{Binding [TableTotal]}" Margin="8" FontWeight="SemiBold"/>
 <StackPanel Margin="8"><TextBlock Text="{Binding [Originals]}"/><TextBlock Text="{Binding ResourcesTotalOriginal}" FontWeight="SemiBold"/></StackPanel>
 <StackPanel Margin="8"><TextBlock Text="{Binding [Converted]}"/><TextBlock Text="{Binding ResourcesTotalConverted}" FontWeight="SemiBold"/></StackPanel>
 <StackPanel Margin="8"><TextBlock Text="{Binding [Adjustments]}"/><TextBlock Text="{Binding ResourcesTotalAdjustments}" FontWeight="SemiBold"/></StackPanel>
 <StackPanel Margin="8"><TextBlock Text="{Binding RuleTotalLabel}"/><TextBlock Text="{Binding ResourcesTotalRuleAdjustments}" FontWeight="SemiBold"/></StackPanel>
-<StackPanel Margin="8"><TextBlock Text="{Binding [Effective]}"/><TextBlock Text="{Binding ResourcesTotalEffective}" FontWeight="SemiBold"/></StackPanel>
+<Border Background="{DynamicResource Status.SuccessBg}" BorderBrush="{DynamicResource Accent.ActiveGreen}"
+   BorderThickness="2,0,0,0" Padding="8" Margin="4">
+  <StackPanel><TextBlock Text="{Binding [EffectiveBasis]}" Foreground="{DynamicResource Brand.DeepGreen}"
+   FontWeight="SemiBold" TextWrapping="Wrap"/><TextBlock Text="{Binding ResourcesTotalEffective}"
+   Foreground="{DynamicResource Brand.DeepGreen}" FontWeight="Bold"/></StackPanel>
+ </Border>
 <StackPanel Margin="8"><TextBlock Text="{Binding [PendingAmount]}"/><TextBlock Text="{Binding ResourcesTotalPending}" FontWeight="SemiBold"/></StackPanel>
 <StackPanel Margin="8"><TextBlock Text="{Binding [Difference]}"/><TextBlock Text="{Binding ResourcesTotalDifference}" FontWeight="SemiBold"/></StackPanel>
 </WrapPanel>

@@ -674,6 +674,8 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.Originals" xml:space="preserve"><value>Original (by currency)</value></data>
   <data name="Resources.Converted" xml:space="preserve"><value>Converted import</value></data>
   <data name="Resources.Adjustments" xml:space="preserve"><value>Corrections</value></data>
+  <data name="Resources.EffectiveBasis" xml:space="preserve"><value>Effective amount (allocation basis)</value></data>
+  <data name="Resources.EffectiveBasisHelp" xml:space="preserve"><value>Allocations use this amount: converted import + manual corrections + rule adjustments. The original balance remains available for reference.</value></data>
   <data name="Resources.Effective" xml:space="preserve"><value>Effective amount</value></data>
   <data name="Resources.PendingAmount" xml:space="preserve"><value>Pending assignment</value></data>
   <data name="Resources.Difference" xml:space="preserve"><value>Difference</value></data>

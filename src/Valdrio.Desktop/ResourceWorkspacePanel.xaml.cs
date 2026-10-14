@@ -112,6 +112,7 @@ public partial class ResourceWorkspacePanel : UserControl
         if (vm is null) return;
         void Headers(DataGrid grid, string[] keys) { for (var i = 0; i < keys.Length; i++) grid.Columns[i].Header = vm[keys[i]]; }
         Headers(ResourceGrid, ["Code", "Originals", "Converted", "Adjustments", "Effective", "PendingAmount", "Difference", "AssignmentStatus"]);
+        ResourceGrid.Columns[4].Header = vm["EffectiveBasis"];
         // Preparation only reconciles amounts; allocation status belongs to step 6.
         ResourceGrid.Columns[5].Visibility = ResourceGrid.Columns[7].Visibility = ShowDistributionTools ? Visibility.Visible : Visibility.Collapsed;
         CorrectionsColumn.IsReadOnly = vm.CorrectionsReadOnly;

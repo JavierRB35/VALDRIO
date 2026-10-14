@@ -50,6 +50,14 @@ Se incorpora `DuplicatePhysicalCenterCodeIsShownBeforeStorageAndUniqueCodeCanBeS
 
 Sin compilación ni pruebas Windows todavía.
 
+## Claridad del importe efectivo y gráficos T12 (14/10/2026)
+
+Conforme a las capturas del propietario, la fase «Preparar cuentas» destaca solo la columna «Importe efectivo (base de reparto)», con superficie verde suave y cifra seminegrita, conservando selección, formato y edición de correcciones. La misma jerarquía distingue el subtotal efectivo. Los mensajes ES/EN explican importado convertido + ajustes manuales + ajustes por reglas. **No se modifica el libro mayor, los resultados o la mecánica económica de distribución**.
+
+T12 separa ahora el antiguo gráfico de cuatro etapas con lienzo rígido 1100 × 1350 en **primario** (cuenta → centro) y **secundario/final** (centro → circulación auxiliar → principales). Se usan los importes persistidos, mostrando solo en el gráfico dinero con dos decimales y porcentajes con dos decimales; tablas e historial conservan los importes completos. La disposición envuelve nodos por filas conforme al ancho disponible y permite desplazamiento al faltar espacio. Al seleccionar un nodo o transferencia, la selección ilumina las rutas upstream/downstream por ambos gráficos, usando un recorrido de grafos con conjunto de visitados para ciclos recíprocos; las transferencias internas siguen tratándose como brutas no aditivas. Selección y foco por teclado permanecen activos.
+
+Se amplía el smoke WPF de T12 para verificar ambas vistas, estado de ruta iluminada, porcentajes, moneda, cambio de idioma y ancho estrecho. **Ejecución WPF, build .NET y pruebas de regresión aún pendientes.**
+
 ## Criterio de entrega antes de fusionar
 
 Ejecutar en Windows local `dotnet build`, suite completa, escenarios migrados y smoke WPF; resolver regresiones por los cambios T13, PR #47–#50, rutas y localización. Registrar hash de commit probado, resultados, errores reales, capturas y conformidad económica. No usar runners hosted sin consentimiento separado.
