@@ -22,7 +22,8 @@ public sealed class AllocationKeyVersion
             (status == ModelStatus.Published) != publishedAtUtc.HasValue || lines is null ||
             lines.Any(l => l is null || !l.DestinationNodeId.IsValid) ||
             lines.Select(l => l.DestinationNodeId).Distinct().Count() != lines.Count ||
-            (mode == AllocationKeyMode.DriverUnits) != unitId.HasValue)
+            (mode != AllocationKeyMode.DriverUnits && unitId.HasValue) ||
+            (status == ModelStatus.Published && mode == AllocationKeyMode.DriverUnits && !unitId.HasValue))
             throw AllocationDiagnostics.Error("KEY_INVALID", "Allocation.Invalid");
         Id = id; CompanyId = companyId; ModelVersionId = modelVersionId; FamilyId = familyId;
         VersionNumber = versionNumber; ParentVersionId = parentVersionId; Revision = revision; Name = name;

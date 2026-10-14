@@ -1,6 +1,7 @@
 using Valdrio.Application;
 using Valdrio.Desktop;
 using Valdrio.Domain;
+using Valdrio.Infrastructure;
 using Valdrio.Localization;
 
 namespace Valdrio.Tests;
@@ -61,6 +62,101 @@ public sealed partial class T06ImportConfirmationTests
             Eur(-100), Catalog.GetRequired(new("EUR")).Freeze(), Id(), Id(), Id(), "test")!;
         reopened.Resources.ChangeResources(change);
         Assert.AreEqual(900m, reopened.Resources.ReadResources(reopened.Read().Id, studyId).Preparation.Coverage.Single().Effective.Amount);
+    }
+
+    [TestMethod]
+    public async Task AttachingImportToPersistedClosedPrimaryDisablesConfirmationBeforeReview()
+    {
+        EntityId studyId;
+        using (var file = Baseline())
+        {
+            var workspace = await ImportedResources(file);
+            studyId = workspace.Study.Id;
+            var key = file.Allocations.SaveAllocationKey(KeyCommand(workspace)).After;
+            var configuration = new AllocationConfiguration([], [],
+                [new(workspace.Resources.Single().Parts.Single().Id, key.Id)], [], []);
+            file.Allocations.ChangeAllocations(
+                AllocationCommand(workspace, configuration.WithPrimaryClosed(true)));
+        }
+
+        var before = Hash(FileOf("current.valdrio"));
+        var texts = new UiTextCatalog();
+        var preferences = new PresentationPreferencesService(
+            new LanguageCatalog(), UserPresentationPreferences.Default);
+        var formatter = new PresentationFormatter(new DisplayTimeZoneResolver());
+        var dialogs = new ResourceDialogs();
+        using var company = new CompanyFileViewModel(
+            Service(), dialogs, Catalog, texts, preferences, formatter);
+        using var import = new ImportColumnMappingViewModel(
+            new ImportSourceSessionFactory(), new Dialogs(FileOf("unused.csv")), texts, preferences);
+        using var studies = new StudyWorkspaceViewModel(
+            company, Catalog, texts, preferences, formatter, dialogs) { ImportColumns = import };
+        await company.OpenPath(FileOf("current.valdrio"));
+        studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == studyId);
+        await studies.LoadCommand.ExecuteAsync(null);
+        Assert.IsTrue(await studies.AttachImportTarget());
+
+        Assert.IsTrue(import.HasClosedPrimaryDestination);
+        Assert.IsFalse(import.CanSaveReviewedImport);
+        Assert.IsFalse(import.ConfirmCommand.CanExecute(null));
+        Assert.IsFalse(string.IsNullOrWhiteSpace(import.PrimaryClosedNotice));
+        Assert.IsTrue(import.IsIdle);
+        Assert.AreEqual(before, Hash(FileOf("current.valdrio")));
+    }
+
+    [TestMethod]
+    public async Task ClosedPrimaryImportReviewIsVisibleButCannotBeSaved()
+    {
+        using var file = Baseline();
+        var study = Study(file);
+        using var vm = await Vm(file, study, csv: "Amount;Ignored;Account\n77;x;NEW");
+        var prepared = vm.Preparation;
+        var before = Hash(file.Path);
+        Assert.IsTrue(vm.ConfirmCommand.CanExecute(null), vm.UserStatus);
+
+        // The import editor can still inspect its prepared values, but a closed
+        // destination must never offer the write operation.
+        vm.BindTarget(file.Imports, study, true, null, primaryClosed: true);
+        Assert.IsTrue(vm.HasClosedPrimaryDestination);
+        Assert.IsFalse(vm.CanSaveReviewedImport);
+        Assert.IsFalse(vm.ConfirmCommand.CanExecute(null));
+        Assert.AreEqual(vm.PrimaryClosedNotice, vm.ReviewSaveRequirement);
+        Assert.IsTrue(vm.HasUserError);
+        Assert.AreSame(prepared, vm.Preparation);
+        Assert.IsTrue(vm.IsIdle);
+        Assert.AreEqual(before, Hash(file.Path));
+    }
+
+    [TestMethod]
+    public async Task ClosingPrimaryAfterImportReviewReportsErrorWithoutLosingPreparedRowsOrBusyState()
+    {
+        using var file = Baseline();
+        var resources = await ImportedResources(file);
+        using var vm = await Vm(file, resources.Study,
+            csv: "Amount;Ignored;Account\n77;x;NEW");
+        Assert.IsTrue(vm.ConfirmCommand.CanExecute(null), vm.UserStatus);
+        var prepared = vm.Preparation;
+
+        var key = file.Allocations.SaveAllocationKey(KeyCommand(resources)).After;
+        var config = new AllocationConfiguration([], [],
+            [new(resources.Resources.Single().Parts.Single().Id, key.Id)], [], []);
+        file.Allocations.ChangeAllocations(AllocationCommand(resources, config.WithPrimaryClosed(true)));
+        var before = Hash(file.Path);
+        var count = file.Imports.ReadImports(resources.Study.CompanyId, resources.Study.Id).Count;
+
+        // The primary closure changed after the review was prepared.
+        // Persistence rejects the write; the view model must handle it.
+        await vm.ConfirmCommand.ExecuteAsync(null);
+
+        Assert.AreEqual(before, Hash(file.Path));
+        Assert.AreEqual(count, file.Imports.ReadImports(resources.Study.CompanyId, resources.Study.Id).Count);
+        Assert.IsTrue(vm.Status.StartsWith("PRIMARY_CLOSED", StringComparison.Ordinal), vm.Status);
+        Assert.IsTrue(vm.HasUserError);
+        Assert.IsTrue(vm.HasClosedPrimaryDestination);
+        Assert.IsTrue(vm.IsIdle);
+        Assert.IsFalse(vm.ConfirmCommand.CanExecute(null));
+        Assert.AreSame(prepared, vm.Preparation);
+        Assert.IsNull(vm.ConfirmedImport);
     }
 
     [TestMethod]
