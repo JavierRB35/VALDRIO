@@ -55,7 +55,7 @@ public sealed partial class PhysicalActivityRow : ObservableObject
             _ => pending
         };
         Utilization = data?.State == PhysicalObservationState.Annulled || data?.NormalQuantity is null ||
-            data.RealQuantity is null ? pending :
+            data?.RealQuantity is null ? pending :
             data.UtilizationPercent is decimal percentage ? percentage.ToString("0.##", culture) + " %" : undefined;
     }
 }
@@ -123,7 +123,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     private PhysicalEvidence? Evidence(decimal? value, PhysicalEvidenceQuality quality,
         string source, string description) =>
         value is null && string.IsNullOrWhiteSpace(source) && string.IsNullOrWhiteSpace(description) ? null :
-            new(quality, source.Trim(), description.Trim());
+            new(quality, source?.Trim() ?? "", description?.Trim() ?? "");
 
     public void Reload()
     {
@@ -132,7 +132,9 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
             m.Structure.Id == study.SelectedModelVersionId && m.Status == ModelStatus.Published);
         var latest = activity.ReadCurrent(study.CompanyId, study.Id).ToDictionary(x => x.PoolId);
         var publishedRun = runs?.ReadRuns(study.CompanyId, study.Id);
-        var result = publishedRun?.Runs.FirstOrDefault(r => r.Id == publishedRun.CurrentRunId)?.Output?.Secondary;
+        var currentRunId = publishedRun?.CurrentRunId;
+        var result = currentRunId is null ? null : publishedRun!.Runs
+            .FirstOrDefault(r => r.Id == currentRunId)?.Output?.Secondary;
         Rows.Clear();
         foreach (var node in model.Structure.Nodes.Where(n => n.Role == NodeRole.Principal && n.IsActive).OrderBy(n => n.Code))
         {
