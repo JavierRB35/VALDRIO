@@ -1,3 +1,7 @@
+## T14 — desarrollo candidato sin validación, 15/10/2026
+
+Tras consolidar decisiones 1–16 por PR #54, existe la rama `feat/t14-physical-observations-20261015` con **primera implementación propuesta T14.1 + captura manual base de T14.2**: contratos físicos, esquema SQLite v11 con versiones completas inmutables y auditoría, control de concurrencia y revisión del estudio, ventana WPF con fuente/calidad ES/EN y coste T12 vigente de solo lectura, tests redactados. **Sin compilación/ejecución .NET ni aceptación de interfaz**: el entorno disponible no tiene SDK ni Windows local. **T14.3/T14.4 no completadas**; la tarea T14 no está terminada, y el candidato debe permanecer sin fusionar hasta validación y cierre de pendientes. [Evidencia y plan](docs/evidencias/t14-candidato-20261015/README.md). No se ejecutó GitHub Actions ni se autorizó consumo.
+
 
 ## Integración T13–T12 — aceptación integral completada (14/10/2026)
 
