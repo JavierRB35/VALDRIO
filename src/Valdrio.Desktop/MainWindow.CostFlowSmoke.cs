@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -43,8 +44,9 @@ public partial class MainWindow
                   "highlight spans upstream primary and downstream final "+language);
             Check(flows.Arrows.Where(a=>a.Row is not null).All(a=>a.DisplayLabel?.Contains('%')==true),
                   "graph transfers include percentages "+language);
-            Check(flows.Nodes.Where(n=>n.Stage is 0 or 1 or 3).All(n=>n.DisplayAmount?.Contains(".00")==true ||
-                  n.DisplayAmount?.Contains(",00")==true),"node money uses two decimals "+language);
+            Check(flows.Nodes.Where(n=>n.Stage is 0 or 1 or 3).All(n=>
+                  n.DisplayAmount is { } label && Regex.IsMatch(label, @"[.,][0-9]{2} EUR$")),
+                  "node money uses exactly two decimals "+language);
             flows.ClearSelectionCommand.Execute(null);
             Check(!flows.HasHighlightedRoute,"clearing detail removes route highlight "+language);
             RootScrollViewer.ScrollToTop();await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);

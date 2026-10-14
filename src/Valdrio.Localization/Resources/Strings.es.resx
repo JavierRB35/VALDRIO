@@ -1566,8 +1566,9 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Run.Execution" xml:space="preserve"><value>Historial de ejecuciones</value></data>
   <data name="Run.PrimaryGraph" xml:space="preserve"><value>Reparto primario · cuentas → centros</value></data>
   <data name="Run.SecondaryGraph" xml:space="preserve"><value>Reparto secundario y costes finales</value></data>
-  <data name="Run.GraphTraceHelp" xml:space="preserve"><value>Selecciona una casilla o transferencia para destacar su recorrido completo en ambos gráficos. El gráfico muestra 2 decimales; el detalle conserva la precisión original.</value></data>
+  <data name="Run.GraphTraceHelp" xml:space="preserve"><value>Al elegir una casilla se iluminan sus conexiones anteriores y posteriores en ambos gráficos; cada línea muestra importes y, cuando existen, porcentajes. Los flujos recíprocos son brutos, no importes finales atribuibles a una cuenta. Consulta el detalle para importes exactos y trazabilidad por recurso.</value></data>
   <data name="Run.GrossGraphHelp" xml:space="preserve"><value>Las flechas entre auxiliares muestran movimientos brutos internos, que no se suman al coste final. Los porcentajes son las participaciones guardadas en cada transferencia.</value></data>
+  <data name="Run.GrossAmount" xml:space="preserve"><value>Coste bruto</value></data>
   <data name="Run.NoGraphData" xml:space="preserve"><value>Esta ejecución todavía no tiene datos para mostrar el gráfico.</value></data>
   <data name="Run.Graph" xml:space="preserve"><value>Gráfico de flujos de costes</value></data>
   <data name="Run.GrossHelp" xml:space="preserve"><value>Las transferencias auxiliares son movimientos brutos internos, no costes nuevos. No se suman al coste final. Los importes conservan la precisión del cálculo; las tablas permiten comprobar los valores exactos.</value></data>

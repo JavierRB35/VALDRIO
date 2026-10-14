@@ -131,7 +131,7 @@ public partial class CostFlowPanel : UserControl
                     [new BezierSegment(new Point(from.X, from.Y + span),
                                        new Point(to.X, to.Y - span), to, true)], false)]);
             }
-            var stroke = Brush(active ? "Brand.Yellow" : edge.Internal ? "Accent.ActiveGreen" : "Brand.DeepGreen");
+            var stroke = ThemeBrush(active ? "Brand.Yellow" : edge.Internal ? "Accent.ActiveGreen" : "Brand.DeepGreen");
             var line = new Path { Data = geometry, Stroke = stroke, StrokeThickness = active ? 4 : 2,
                                   Opacity = opacity, Cursor = Cursors.Hand,
                                   ToolTip = edge.Label };
@@ -156,8 +156,8 @@ public partial class CostFlowPanel : UserControl
                 Content = new TextBlock { Text = edge.DisplayLabel ?? edge.Label, TextWrapping = TextWrapping.Wrap,
                                           TextAlignment = TextAlignment.Center, FontSize = 11 },
                 Width = labelWidth, Padding = new Thickness(3), MinHeight = 25,
-                Background = Brush(active ? "Status.WarningBg" : "Brand.White"),
-                BorderBrush = Brush(active ? "Brand.Yellow" : "Border.Soft"),
+                Background = ThemeBrush(active ? "Status.WarningBg" : "Brand.White"),
+                BorderBrush = ThemeBrush(active ? "Brand.Yellow" : "Border.Soft"),
                 Opacity = opacity, ToolTip = edge.Label,
                 Cursor = Cursors.Hand
             };
@@ -184,9 +184,9 @@ public partial class CostFlowPanel : UserControl
             var btn = new Button
             {
                 Content = content, Width = NodeWidth, Height = NodeHeight, Padding = new Thickness(7),
-                Background = Brush(active ? "Status.WarningBg" :
+                Background = ThemeBrush(active ? "Status.WarningBg" :
                     node.Stage == 3 ? "Status.SuccessBg" : "Surface.Subtle"),
-                BorderBrush = Brush(active ? "Brand.Yellow" : "Border.Soft"),
+                BorderBrush = ThemeBrush(active ? "Brand.Yellow" : "Border.Soft"),
                 BorderThickness = new Thickness(active ? 3 : 1),
                 Opacity = opacity, ToolTip = node.Label + Environment.NewLine + node.Amount
             };
@@ -204,11 +204,11 @@ public partial class CostFlowPanel : UserControl
         var text = new TextBlock
         {
             Text = vm!.Stages[stage], FontSize = 16, FontWeight = FontWeights.SemiBold,
-            Foreground = Brush("Brand.DeepGreen"), TextWrapping = TextWrapping.Wrap
+            Foreground = ThemeBrush("Brand.DeepGreen"), TextWrapping = TextWrapping.Wrap
         };
         Canvas.SetLeft(text, 20); Canvas.SetTop(text, y);
         canvas.Children.Add(text);
     }
 
-    private Brush Brush(string key) => (Brush)FindResource(key);
+    private Brush ThemeBrush(string key) => (Brush)FindResource(key);
 }

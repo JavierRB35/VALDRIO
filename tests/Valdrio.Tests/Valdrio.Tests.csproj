@@ -8,6 +8,8 @@
   <ItemGroup>
     <Content Include="../../src/Valdrio.Desktop/AllocationWorkspacePanel.xaml" Link="ui-contracts/AllocationWorkspacePanel.xaml" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../../src/Valdrio.Desktop/CompanyFilePanel.xaml" Link="ui-contracts/CompanyFilePanel.xaml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../src/Valdrio.Desktop/ResourceWorkspacePanel.xaml" Link="ui-contracts/ResourceWorkspacePanel.xaml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../src/Valdrio.Desktop/CostFlowPanel.xaml" Link="ui-contracts/CostFlowPanel.xaml" CopyToOutputDirectory="PreserveNewest" />
     <Using Include="System.IO" />
     <Compile Include="../../src/Valdrio.Desktop/WorkspaceGuidance.cs" Link="Desktop/WorkspaceGuidance.cs" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />

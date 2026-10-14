@@ -228,7 +228,7 @@ public sealed partial class CostFlowViewModel : ObservableObject
                 var received=output.Transfers.Where(t=>t.Internal && t.DestinationNodeId==id && t.Group==group.ComponentRoutingGroup).Sum(t=>t.Amount);
                 Nodes.Add(new(graphId,2,Node(id)+(group.ComponentRoutingGroup=="all"?"":" · "+group.ComponentRoutingGroup),
                     string.Format(Format,this["Available"],initial.ToString("0.############################",Format),received.ToString("0.############################",Format),Amount(group.Solution.Gross[i])),
-                     string.Format(Format,this["Available"],GraphAmount(initial),GraphAmount(received),GraphAmount(group.Solution.Gross[i]))));
+                     this["GrossAmount"]+": "+GraphAmount(group.Solution.Gross[i])));
                 Arrows.Add(new(nodeId(1,id),graphId,Amount(initial),null,DisplayLabel:GraphAmount(initial)));
             }
             foreach (var group in secondary.Facts.GroupBy(f=>f.TerminalNodeId))
