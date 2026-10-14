@@ -1616,4 +1616,49 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.CostFlows" xml:space="preserve"><value>8. Cost flows and executions</value></data>
   <data name="Run.Available" xml:space="preserve"><value>{0} + {1} received = {2}</value></data>
   <data name="Run.PanGraph" xml:space="preserve"><value>Move diagram horizontally</value></data>
+  <data name="Activity.EvidenceRequired" xml:space="preserve"><value>Identify both a source and the evidence quality before confirming.</value></data>
+  <data name="Activity.EvidenceTooLong" xml:space="preserve"><value>The source description is too long. Shorten it without losing its provenance.</value></data>
+  <data name="Activity.InputInvalid" xml:space="preserve"><value>Review the entered physical data and the recorded author.</value></data>
+  <data name="Activity.NegativeQuantity" xml:space="preserve"><value>Physical quantities cannot be negative.</value></data>
+  <data name="Activity.CapacityOrder" xml:space="preserve"><value>Practical capacity cannot exceed theoretical capacity.</value></data>
+  <data name="Activity.Incomplete" xml:space="preserve"><value>Enter valid normal capacity and actual activity to confirm this node.</value></data>
+  <data name="Activity.ZeroNormalReason" xml:space="preserve"><value>Explain why normal capacity is zero.</value></data>
+  <data name="Activity.ExceptionReason" xml:space="preserve"><value>Review and explain activity exceeding the normal reference.</value></data>
+  <data name="Activity.CorrectionReason" xml:space="preserve"><value>Explain why a previously confirmed observation must be corrected.</value></data>
+  <data name="Activity.CalendarInvalid" xml:space="preserve"><value>Check the operating days, shifts, resources, stoppages and justified normal factor.</value></data>
+  <data name="Activity.HistoryInvalid" xml:space="preserve"><value>Select historical periods and explain every excluded observation.</value></data>
+  <data name="Activity.HistoryNotComparable" xml:space="preserve"><value>The selected periods are not comparable. Use equal durations or review normalization.</value></data>
+  <data name="Activity.StudyClosed" xml:space="preserve"><value>Reopen the study explicitly before modifying physical observations.</value></data>
+  <data name="Activity.ScopeInvalid" xml:space="preserve"><value>The selected principal node and pool do not belong to the current published model.</value></data>
+  <data name="Activity.Conflict" xml:space="preserve"><value>These physical data have changed. Refresh and review before saving again.</value></data>
+  <data name="Activity.Annulled" xml:space="preserve"><value>This observation was annulled and cannot be changed. Review its history.</value></data>
+  <data name="Activity.AnnulReason" xml:space="preserve"><value>Explain why this observation must be annulled.</value></data>
+  <data name="Activity.Quality.Recorded" xml:space="preserve"><value>Supported by records</value></data>
+  <data name="Activity.Quality.Declared" xml:space="preserve"><value>Declared by a responsible person</value></data>
+  <data name="Activity.Quality.Calculated" xml:space="preserve"><value>Calculated using a justified method</value></data>
+  <data name="Activity.UtilizationUndefined" xml:space="preserve"><value>Utilization not calculable: zero normal capacity</value></data>
+  <data name="Activity.OverNormal" xml:space="preserve"><value>Actual activity exceeds normal capacity. Review its source.</value></data>
+  <data name="Activity.ZeroException" xml:space="preserve"><value>Actual work was recorded despite zero normal capacity.</value></data>
+  <data name="Activity.Title" xml:space="preserve"><value>T14 — Activity and capacities</value></data>
+  <data name="Activity.Open" xml:space="preserve"><value>Open activity and capacities (T14)</value></data>
+  <data name="Activity.Help" xml:space="preserve"><value>Enter normal capacity and actual activity for the study period. Confirm only after checking their sources.</value></data>
+  <data name="Activity.Normal" xml:space="preserve"><value>Normal capacity</value></data>
+  <data name="Activity.Real" xml:space="preserve"><value>Actual activity</value></data>
+  <data name="Activity.Utilization" xml:space="preserve"><value>Utilization</value></data>
+  <data name="Activity.Source" xml:space="preserve"><value>Source</value></data>
+  <data name="Activity.Quality" xml:space="preserve"><value>Quality</value></data>
+  <data name="Activity.Exception" xml:space="preserve"><value>Exception explanation</value></data>
+  <data name="Activity.ZeroReason" xml:space="preserve"><value>Zero normal explanation</value></data>
+  <data name="Activity.Correction" xml:space="preserve"><value>Correction reason</value></data>
+  <data name="Activity.SaveDraft" xml:space="preserve"><value>Save draft</value></data>
+  <data name="Activity.Confirm" xml:space="preserve"><value>Confirm row</value></data>
+  <data name="Activity.Annul" xml:space="preserve"><value>Annul row</value></data>
+  <data name="Activity.Cancel" xml:space="preserve"><value>Close</value></data>
+  <data name="Activity.Pending" xml:space="preserve"><value>Pending physical data</value></data>
+  <data name="Activity.AnnulledRow" xml:space="preserve"><value>Observation annulled</value></data>
+  <data name="Activity.Node" xml:space="preserve"><value>Node / activity</value></data>
+  <data name="Activity.Unit" xml:space="preserve"><value>Unit</value></data>
+  <data name="Activity.Cost" xml:space="preserve"><value>T12 published cost</value></data>
+  <data name="Activity.CostUnavailable" xml:space="preserve"><value>No current T12 cost</value></data>
+  <data name="Activity.Method" xml:space="preserve"><value>How to calculate normal capacity</value></data>
 </root>
