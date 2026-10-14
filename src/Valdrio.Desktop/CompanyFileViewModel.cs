@@ -249,6 +249,12 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
         if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
         var destination = dialogs.SelectNewFile("VALDRIO - Example");
         if (destination is null) return;
+        if (System.IO.File.Exists(destination) || System.IO.Directory.Exists(destination))
+        {
+            diagnostic = new("FILE_ALREADY_EXISTS", "File.AlreadyExists", []);
+            Refresh();
+            return;
+        }
         await Run(async token =>
         {
             var candidate = await Task.Run(() =>
@@ -256,7 +262,12 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
                 token.ThrowIfCancellationRequested();
                 var source = System.IO.Path.Combine(AppContext.BaseDirectory, "examples", "services.valdrio");
                 // The shipped fixture is immutable. Never overwrite the chosen destination.
-                System.IO.File.Copy(source, destination, overwrite: false);
+                try { System.IO.File.Copy(source, destination, overwrite: false); }
+                catch (System.IO.IOException ex) when (System.IO.File.Exists(destination) || System.IO.Directory.Exists(destination))
+                {
+                    // Another process may create the destination after the preflight check.
+                    throw new CompanyFileException("FILE_ALREADY_EXISTS", "File.AlreadyExists", ex);
+                }
                 return files.Open(destination, cancellationToken: token);
             }, token);
             await ReplaceAsync(candidate);

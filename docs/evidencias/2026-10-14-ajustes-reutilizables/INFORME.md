@@ -77,3 +77,9 @@ Comandos locales: `dotnet build src/Valdrio.Desktop/Valdrio.Desktop.csproj -c Re
 La excepción `Missing neutral English UI resource AllocationUI.ShowSource` reveló dos claves con prefijo incorrecto: `Allocation.ShowSource` y `Allocation.BackToAmounts`. Se corrigen a `AllocationUI.*` en ambos idiomas. No cambia la lógica de cálculo.
 
 La nueva prueba lee los bindings del XAML real de AllocationWorkspacePanel y exige que existan en todos los idiomas publicados. Antes del arreglo falla exactamente con `AllocationUI.ShowSource`; después pasan las siete pruebas de completitud/localización seleccionadas. Desktop Release compila con cero errores y cero advertencias. No se repitió la suite económica completa ni el recorrido WPF: los 664 tests y 558 comprobaciones anteriores corresponden a b70075c. Los hashes anteriores conservan esa evidencia histórica. El proceso abierto en Visual Studio debe detenerse y recompilarse para cargar los recursos nuevos.
+
+## Corrección posterior: destino ocupado al cargar ejemplo
+
+Se comprueba si el nombre elegido ya corresponde a un archivo o directorio antes de copiar. Se muestra el diagnóstico localizado `File.AlreadyExists`, se conserva el proyecto abierto y no se escribe sobre el destino. La copia sigue usando `overwrite: false`; una colisión concurrente se traduce al mismo diagnóstico. El selector puede volver a abrirse para elegir otro nombre.
+
+Validación local: cinco pruebas seleccionadas superadas (archivo existente, directorio existente, cancelación y conservación de sesión, nombres y errores de apertura relacionados). Desktop Release: cero errores y advertencias. La primera preparación de las pruebas retenía el archivo abierto y se corrigió para cerrarlo antes de abrirlo desde el ViewModel. No se repitió la batería completa ni el recorrido WPF. Archivos: CompanyFileViewModel.cs y ExampleDestinationTests.cs; logs adjuntos. GitHub Actions no ejecutado.

@@ -1,0 +1,12 @@
+  Valdrio.Domain -> C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-audit\src\Valdrio.Domain\bin\Release\net10.0\Valdrio.Domain.dll
+  Valdrio.Calculation -> C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-audit\src\Valdrio.Calculation\bin\Release\net10.0\Valdrio.Calculation.dll
+  Valdrio.Localization -> C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-audit\src\Valdrio.Localization\bin\Release\net10.0\Valdrio.Localization.dll
+  Valdrio.Application -> C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-audit\src\Valdrio.Application\bin\Release\net10.0\Valdrio.Application.dll
+  Valdrio.Reporting -> C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-audit\src\Valdrio.Reporting\bin\Release\net10.0\Valdrio.Reporting.dll
+  Valdrio.Infrastructure -> C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-audit\src\Valdrio.Infrastructure\bin\Release\net10.0\Valdrio.Infrastructure.dll
+  Valdrio.Runner -> C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-audit\src\Valdrio.Runner\bin\Release\net10.0\Valdrio.Runner.dll
+  Valdrio.Tests -> C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-audit\tests\Valdrio.Tests\bin\Release\net10.0-windows\Valdrio.Tests.dll
+Serie de pruebas para C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-audit\tests\Valdrio.Tests\bin\Release\net10.0-windows\Valdrio.Tests.dll (.NETCoreApp,Version=v10.0)
+1 archivos de prueba en total coincidieron con el patrón especificado.
+
+Correctas! - Con error:     0, Superado:     5, Omitido:     0, Total:     5, Duración: 7 s - Valdrio.Tests.dll (net10.0)
