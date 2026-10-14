@@ -73,6 +73,23 @@ public sealed partial class T06ImportConfirmationTests
             live.Configuration.WithSecondaryClosed(true, stamp)));
         Assert.AreEqual(500m,
             published.SecondaryPublication!.Facts.Sum(fact => fact.PostedAmount.Amount));
+
+        var run = file.Runs.PrepareRun(new(companyId, studyId, published.ConfirmedStudy.Revision, Id(), "T13-parts"));
+        var output = CalculationRunService.Calculate(run);
+        Assert.IsNotNull(output.Secondary);
+        Assert.AreEqual(500m, output.Secondary!.Facts.Sum(f => f.PostedAmount.Amount),
+            "Direct and excluded values must not be added again to terminal costs.");
+        var runBridge = output.Secondary.ResourceBridges.Single();
+        Assert.AreEqual(1000m, runBridge.Effective.Amount);
+        Assert.AreEqual(300m, runBridge.Direct.Amount);
+        Assert.AreEqual(200m, runBridge.Excluded.Amount);
+        Assert.AreEqual(500m, runBridge.Terminal.Amount);
+        Assert.AreEqual(0m, runBridge.Difference.Amount);
+        var completed = file.Runs.PublishRun(run.Id, output);
+        using var reopened = Service().Open(file.Path, CompanyFileOpenMode.ReadOnly);
+        Assert.AreEqual(completed.Id, reopened.Runs.ReadRuns(companyId, studyId).CurrentRunId);
+        Assert.AreEqual(CanonicalSnapshotJson.Serialize(completed),
+            CanonicalSnapshotJson.Serialize(reopened.Runs.ReadRuns(companyId, studyId).Runs.Single()));
     }
 
     [TestMethod]
@@ -120,8 +137,15 @@ public sealed partial class T06ImportConfirmationTests
         Assert.AreEqual(358.35m, secondary.Facts.Sum(fact => fact.PostedAmount.Amount));
         Assert.AreEqual(0m, secondary.Reconciliations.Sum(r => r.Difference.Amount));
         var fingerprint = SecondaryAllocationService.ResultFingerprint(secondary, live.Configuration);
-        file.Allocations.ChangeAllocations(AllocationCommand(live.Resources,
+        var closed = file.Allocations.ChangeAllocations(AllocationCommand(live.Resources,
             live.Configuration.WithSecondaryClosed(true, fingerprint)));
+        var run = file.Runs.PrepareRun(new(companyId, study.Id, closed.ConfirmedStudy.Revision, Id(), "T13-grouped"));
+        var output = CalculationRunService.Calculate(run);
+        Assert.IsNotNull(output.Secondary);
+        Assert.AreEqual(358.35m, output.Secondary!.Facts.Sum(f => f.PostedAmount.Amount),
+            "Conflicting descriptions must not duplicate allocated account amounts.");
+        Assert.IsTrue(output.Secondary.Reconciliations.All(r => r.Difference.Amount == 0m));
+        var completed = file.Runs.PublishRun(run.Id, output);
 
         using var reopened = Service().Open(file.Path, CompanyFileOpenMode.ReadOnly);
         Assert.AreEqual(2, reopened.Resources.ReadResources(companyId, study.Id)
@@ -129,5 +153,8 @@ public sealed partial class T06ImportConfirmationTests
         Assert.AreEqual(358.35m,
             reopened.Allocations.ReadAllocations(companyId, study.Id)
                 .SecondaryPublication!.Facts.Sum(fact => fact.PostedAmount.Amount));
+        Assert.AreEqual(completed.Id, reopened.Runs.ReadRuns(companyId, study.Id).CurrentRunId);
+        Assert.AreEqual(CanonicalSnapshotJson.Serialize(completed),
+            CanonicalSnapshotJson.Serialize(reopened.Runs.ReadRuns(companyId, study.Id).Runs.Single()));
     }
 }

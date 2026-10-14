@@ -4,6 +4,7 @@ using Valdrio.Application;
 using Valdrio.Calculation;
 using Valdrio.Domain;
 using Valdrio.Infrastructure;
+using Valdrio.Infrastructure.CompanyFiles;
 
 namespace Valdrio.Tests;
 
@@ -315,13 +316,13 @@ public sealed partial class T06ImportConfirmationTests
                 CanonicalSnapshotJson.Serialize(file.Studies.ReadSnapshots(companyId, studyId).Single()),
                 "T11 receipt and imported history must survive the 9-to-10 upgrade exactly.");
             var oldClosure = file.Allocations.ReadAllocations(companyId, studyId);
-            Assert.AreEqual(expectedAmount, oldClosure.SecondaryPublication!.Facts
+            Assert.AreEqual((decimal)expectedAmount, oldClosure.SecondaryPublication!.Facts
                 .Sum(f => f.PostedAmount.Amount), "T13 terminal amount must survive migration.");
 
             var run = file.Runs.PrepareRun(new(companyId, studyId, study.Revision, Id(), "T13-upgrade"));
             var output = CalculationRunService.Calculate(run);
             Assert.IsNotNull(output.Secondary, "The migrated T13 model must run under T12.");
-            Assert.AreEqual(expectedAmount, output.Secondary!.Facts.Sum(f => f.PostedAmount.Amount));
+            Assert.AreEqual((decimal)expectedAmount, output.Secondary!.Facts.Sum(f => f.PostedAmount.Amount));
             Assert.IsTrue(output.Transfers.Any(t => t.Internal), "Reciprocal transfer audit was lost.");
             Assert.IsTrue(output.Secondary.Reconciliations.All(r => r.Difference.Amount == 0m));
             Assert.IsTrue(output.Secondary.ResourceBridges.All(r => r.Difference.Amount == 0m));
