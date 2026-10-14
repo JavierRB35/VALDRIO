@@ -80,6 +80,22 @@ Get-Content (Join-Path $visual "checks.json")
 
 Si cualquier comprobación falla, **no fusionar**; corregir en la rama y repetir desde un nuevo SHA. Nunca inventar estados «PASSED».
 
+## Primera ejecución local comunicada por el propietario — 14/10/2026
+
+El propietario ejecutó en Windows local el commit `60c8e73826b211a5e2de26b3e4f8bd6de997da6a`. Resultados de su salida de PowerShell:
+
+- `git fetch/switch/pull`: correcto, avance rápido local `d9b8202 → 60c8e73`; `git rev-parse HEAD` comprobado.
+- `dotnet restore Valdrio.slnx`: **superado** (1,3 s).
+- `dotnet build Valdrio.slnx -c Release --no-restore`: **fallido**, 3 errores (12,5 s):
+  - `src/Valdrio.Desktop/CostFlowPanel.xaml.cs:86`: `CS1955` llamada `Brush(...)` no invocable.
+  - `tests/Valdrio.Tests/LegacyCompanyOpenAndBatchTests.cs:78`: `CS0103` referencia `SqliteCompanyFileService` inexistente en ese ámbito.
+  - `tests/Valdrio.Tests/LegacyCompanyOpenAndBatchTests.cs:82`: `CS0103` referencia `CompanyFileOpenMode` inexistente en ese ámbito.
+- Las pruebas focalizadas **NO se ejecutaron**, porque el script detuvo la ejecución tras el build fallido.
+- Corrección textual en rama, commit `9217c55868e2636039ab8f6820ad9e1c5a272454`: `ThemeBrush` en la línea residual y directivas `using` de aplicación/infraestructura para los tests antiguos.
+- **Pendiente:** el propietario debe volver a ejecutar `dotnet build` y las pruebas focalizadas en ese commit o posterior. Esta corrección no acredita build exitoso.
+
+La captura del gráfico de cuatro etapas aportada en la conversación muestra la UI de la revisión anterior; no valida ni invalida la nueva disposición de dos gráficos hasta disponer de una compilación Windows actualizada.
+
 ## Acta de resultados — por cumplimentar
 
 - Fecha/hora, Windows, .NET: **pendiente**
