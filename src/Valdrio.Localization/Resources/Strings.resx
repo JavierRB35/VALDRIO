@@ -1503,4 +1503,6 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.ShowNavigation" xml:space="preserve"><value>Show navigation</value></data>
   <data name="Allocation.ShowSource" xml:space="preserve"><value>Explain selected amount</value></data>
   <data name="Allocation.BackToAmounts" xml:space="preserve"><value>Back to contributions</value></data>
+  <data name="AllocationUI.ShowSource" xml:space="preserve"><value>Explain selected amount</value></data>
+  <data name="AllocationUI.BackToAmounts" xml:space="preserve"><value>Back to contributions</value></data>
 </root>
