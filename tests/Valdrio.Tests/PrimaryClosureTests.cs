@@ -1,6 +1,7 @@
 using Valdrio.Application;
 using Valdrio.Desktop;
 using Valdrio.Domain;
+using Valdrio.Infrastructure;
 using Valdrio.Localization;
 
 namespace Valdrio.Tests;
