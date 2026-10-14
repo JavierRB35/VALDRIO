@@ -32,22 +32,28 @@ public sealed partial class PhysicalActivityRow : ObservableObject
     public required string Cost { get; init; }
     public long Version { get; set; }
 
-    public void ReadFrom(PhysicalObservation? data, CultureInfo culture, string pending, string undefined, string annulled)
+    public void ReadFrom(PhysicalObservation? data, CultureInfo culture, string pending, string undefined, string annulled, string draft, string confirmed)
     {
         Version = data?.Version ?? 0;
-        NormalText = data?.NormalQuantity?.ToString(culture) ?? "";
-        RealText = data?.RealQuantity?.ToString(culture) ?? "";
-        NormalSource = data?.NormalEvidence?.Source ?? "";
-        RealSource = data?.RealEvidence?.Source ?? "";
-        NormalDescription = data?.NormalEvidence?.Description ?? "";
-        RealDescription = data?.RealEvidence?.Description ?? "";
+        var available = data?.State != PhysicalObservationState.Annulled;
+        NormalText = available ? data?.NormalQuantity?.ToString(culture) ?? "" : "";
+        RealText = available ? data?.RealQuantity?.ToString(culture) ?? "" : "";
+        NormalSource = available ? data?.NormalEvidence?.Source ?? "" : "";
+        RealSource = available ? data?.RealEvidence?.Source ?? "" : "";
+        NormalDescription = available ? data?.NormalEvidence?.Description ?? "" : "";
+        RealDescription = available ? data?.RealEvidence?.Description ?? "" : "";
         NormalQuality = data?.NormalEvidence?.Quality ?? PhysicalEvidenceQuality.Calculated;
         RealQuality = data?.RealEvidence?.Quality ?? PhysicalEvidenceQuality.Recorded;
-        NormalZeroReason = data?.NormalZeroReason ?? "";
-        ExceptionReason = data?.ExceptionReason ?? "";
+        NormalZeroReason = available ? data?.NormalZeroReason ?? "" : "";
+        ExceptionReason = available ? data?.ExceptionReason ?? "" : "";
         CorrectionReason = "";
-        Status = data?.State == PhysicalObservationState.Annulled ? annulled :
-            data?.State.ToString() ?? pending;
+        Status = data?.State switch
+        {
+            PhysicalObservationState.Annulled => annulled,
+            PhysicalObservationState.Draft => draft,
+            PhysicalObservationState.Confirmed => confirmed,
+            _ => pending
+        };
         Utilization = data?.State == PhysicalObservationState.Annulled || data?.NormalQuantity is null ||
             data.RealQuantity is null ? pending :
             data.UtilizationPercent is decimal percentage ? percentage.ToString("0.##", culture) + " %" : undefined;
@@ -143,7 +149,8 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
                 Unit = unit.Code, Cost = cost
             };
             row.ReadFrom(latest.GetValueOrDefault(pool.Id), formatCulture, Label("Activity.Pending"),
-                Label("Activity.UtilizationUndefined"), Label("Activity.AnnulledRow"));
+                Label("Activity.UtilizationUndefined"), Label("Activity.AnnulledRow"),
+                Label("Activity.State.Draft"), Label("Activity.State.Confirmed"));
             Rows.Add(row);
         }
         SelectedRow = Rows.FirstOrDefault(r => r.PoolId == selectedId) ?? Rows.FirstOrDefault();
@@ -195,7 +202,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         var versions = activity.ReadHistory(study.CompanyId, study.Id, row.PoolId);
         return string.Join(Environment.NewLine, versions.Select(v =>
             string.Format(formatCulture, "v{0} · {1} · {2}: {3} / {4} · {5}",
-                v.Version, v.RecordedAtUtc, v.State, v.NormalQuantity?.ToString(formatCulture) ?? "—",
+                v.Version, v.RecordedAtUtc, Label("Activity.State." + v.State), v.NormalQuantity?.ToString(formatCulture) ?? "—",
                 v.RealQuantity?.ToString(formatCulture) ?? "—", v.CorrectionReason ?? v.ExceptionReason ?? "—")));
     }
 }
