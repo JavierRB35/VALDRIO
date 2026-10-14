@@ -39,6 +39,25 @@ public partial class CompanyFilePanel
         Check(CompanyFileDialogs.SuggestedFileName("CON") == "_CON",
             "reserved Windows device names receive a safe prefix");
         main.ApplyPresentationPreset("en", "es-ES", "UTC", false, false);
+        var template = Path.Combine(AppContext.BaseDirectory, "examples", "services.valdrio");
+        var templateHash = SHA256.HashData(File.ReadAllBytes(template));
+        dialogs.Paths.Enqueue(null); await Click(ExampleButton);
+        Check(vm.Snapshot is null, "cancel example destination leaves project closed");
+        var examplePath = Path.Combine(output, "learning-copy.valdrio");
+        dialogs.Paths.Enqueue(examplePath); await Click(ExampleButton);
+        Check(vm.Snapshot is not null && vm.ActivePath == examplePath && main.Studies!.Studies.Count > 0,
+            "example opens a real editable copy with saved analyses");
+        var exampleId = vm.Snapshot!.Id;
+        var sentinel = Path.Combine(output, "do-not-overwrite.valdrio");
+        File.WriteAllText(sentinel, "existing destination");
+        dialogs.Paths.Enqueue(sentinel);
+        await vm.OpenExampleCommand.ExecuteAsync(null);
+        Check(File.ReadAllText(sentinel) == "existing destination" && vm.Snapshot?.Id == exampleId,
+            "example never overwrites a destination or replaces the active project on failure");
+        Check(templateHash.SequenceEqual(SHA256.HashData(File.ReadAllBytes(template))), "shipped example remains byte-for-byte unchanged");
+        await vm.CloseCommand.ExecuteAsync(null);
+        await Click(ImportStartButton);
+        Check(NameBox.IsKeyboardFocusWithin, "import entry focuses the existing project setup instead of bypassing prerequisites");
         SetText(NameBox, "VALDRIO synthetic factory 日本");
         CurrencyBox.SetCurrentValue(ComboBox.SelectedItemProperty, "USD"); CurrencyBox.GetBindingExpression(ComboBox.SelectedItemProperty)!.UpdateSource();
         dialogs.Paths.Enqueue(path); await Click(CreateButton);

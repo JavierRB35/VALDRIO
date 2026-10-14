@@ -371,6 +371,14 @@
       </Setter.Value>
     </Setter>
   </Style>
+  <Style x:Key="GroupBox.Section" TargetType="GroupBox" BasedOn="{StaticResource {x:Type GroupBox}}">
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="GroupBox">
+      <StackPanel>
+        <ContentPresenter ContentSource="Header" Margin="0,8,0,8" TextElement.FontSize="17" TextElement.FontWeight="SemiBold" TextElement.Foreground="{DynamicResource Brand.DeepGreen}"/>
+        <ContentPresenter Margin="{TemplateBinding Padding}"/>
+      </StackPanel>
+    </ControlTemplate></Setter.Value></Setter>
+  </Style>
   <Style TargetType="DataGrid">
     <Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel"/>
     <Setter Property="MinColumnWidth" Value="100"/>

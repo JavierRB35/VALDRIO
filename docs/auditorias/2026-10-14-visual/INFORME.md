@@ -66,6 +66,8 @@ Recorridos observables en el código y en las capturas: cuenta seleccionada → 
 
 ## Esquema breve de trabajo restante
 
+Actualización: véase [CONTINUACION.md](CONTINUACION.md) para las mejoras implementadas y los límites de aceptación que permanecen.
+
 1. **Arranque:** tres intenciones reales, ejemplo instalado y asistente que conduzca a estructura/análisis sin callejones sin salida.
 2. **Pantallas densas:** reducir anidación y repetir menos instrucciones en estructura, periodos y cuentas.
 3. **Trazabilidad:** medir los recorridos con importes positivos/negativos y datos representativos; situar explicación junto a selección cuando resulte útil.

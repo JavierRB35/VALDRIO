@@ -116,6 +116,18 @@ public partial class MainWindow
             Check(RootScrollViewer.ScrollableWidth > 0 && RootScrollViewer.ViewportHeight > 80 && Inside(WorkflowBack),
                 "760x620 keeps navigation and footer visible; wide forms have horizontal scroll");
             VisualEvidenceCapture.Capture(this, Path.Combine(output, "minimum-window.png"));
+            var narrowViewport = RootScrollViewer.ViewportWidth;
+            ((IInvokeProvider)new ButtonAutomationPeer(NavigationToggle).GetPattern(PatternInterface.Invoke)).Invoke();
+            await Idle();
+            Check(!Sidebar.IsVisible && RootScrollViewer.ViewportWidth > narrowViewport && Inside(NavigationToggle),
+                "menu hides reversibly to recover workspace width without losing its toggle");
+            await NavigateWorkflow(2); await Idle();
+            Check(StudyPanel.AnalysisForm.ActualWidth > 0, "analysis adaptive form remains visible in a narrow window");
+            StudyPanel.StudyNameBox.BringIntoView(); await Idle();
+            VisualEvidenceCapture.Capture(this, Path.Combine(output, "narrow-analysis-focus.png"));
+            ((IInvokeProvider)new ButtonAutomationPeer(NavigationToggle).GetPattern(PatternInterface.Invoke)).Invoke();
+            await Idle();
+            Check(Sidebar.IsVisible, "menu restores all navigation phases");
             Width = originalWidth; Height = originalHeight;
             await NavigateWorkflow(1);
             foreach (var scale in new[] { 1.25, 1.5, 2.0 })
@@ -128,6 +140,15 @@ public partial class MainWindow
                 Check(Inside(ContextDetailsButton) && Inside(CompactTables), "context and density controls fit at scale: " + scale);
                 VisualEvidenceCapture.Capture(this, Path.Combine(output, $"layout-scale-{scale * 100:0}.png"));
             }
+            ((IInvokeProvider)new ButtonAutomationPeer(NavigationToggle).GetPattern(PatternInterface.Invoke)).Invoke();
+            await NavigateWorkflow(2); await Idle();
+            var left = StudyPanel.StudyNameBox.TranslatePoint(new Point(), StudyPanel.AnalysisForm);
+            var right = StudyPanel.StudyModelBox.TranslatePoint(new Point(), StudyPanel.AnalysisForm);
+            Check(right.Y > left.Y && Math.Abs(right.X - left.X) < 2,
+                "200 percent analysis fields reflow into reading order instead of horizontal clipping");
+            StudyPanel.StudyNameBox.BringIntoView(); await Idle();
+            VisualEvidenceCapture.Capture(this, Path.Combine(output, "scale-200-analysis-focus.png"));
+            ((IInvokeProvider)new ButtonAutomationPeer(NavigationToggle).GetPattern(PatternInterface.Invoke)).Invoke();
             ShellLayout.LayoutTransform = Transform.Identity;
             await NavigateWorkflow(6); DevelopmentTools.IsExpanded = true;
             foreach (var scale in new[] { 1.0, 1.25, 1.5, 2.0 })

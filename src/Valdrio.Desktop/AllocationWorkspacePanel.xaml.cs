@@ -99,6 +99,17 @@ public partial class AllocationWorkspacePanel : UserControl
             }
         }), DispatcherPriority.ContextIdle);
     }
+    private void ShowSecondarySource(object sender, RoutedEventArgs e)
+    {
+        SecondaryExplanationSection.IsExpanded = true;
+        SecondaryExplanationSection.BringIntoView();
+        SecondaryExplanationGrid.Focus();
+    }
+    private void BackToContributions(object sender, RoutedEventArgs e)
+    {
+        SecondaryResultsGrid.BringIntoView();
+        SecondaryResultsGrid.Focus();
+    }
     private void RevealResults(Expander section)
     {
         section.IsExpanded = true;

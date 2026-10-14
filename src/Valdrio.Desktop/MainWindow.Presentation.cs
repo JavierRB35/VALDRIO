@@ -5,6 +5,13 @@ namespace Valdrio.Desktop;
 
 public partial class MainWindow
 {
+    private void ToggleNavigation(object sender, RoutedEventArgs e)
+    {
+        var show = Sidebar.Visibility != Visibility.Visible;
+        Sidebar.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+        SidebarColumn.Width = show ? (GridLength)FindResource("Sidebar.Width") : new GridLength(0);
+        UpdatePresentationLabels();
+    }
     // Session-only presentation choices; never stored in an economic snapshot.
     private void ToggleContextDetails(object sender, RoutedEventArgs e)
     {
@@ -27,6 +34,9 @@ public partial class MainWindow
         ContextDetailsButton.Content = vm.Guide(ContextDetails.Visibility == Visibility.Visible ? "HideContext" : "ShowContext");
         CompactTables.Content = vm.Guide("CompactTables");
         CompactTables.ToolTip = vm.Guide("CompactTablesHelp");
-        AutomationProperties.SetName(ContextDetailsButton, vm.Guide("ShowContext"));
+        AutomationProperties.SetName(ContextDetailsButton, ContextDetailsButton.Content.ToString());
+        NavigationToggle.Content = vm.Guide("NavigationMenu");
+        NavigationToggle.ToolTip = vm.Guide(Sidebar.Visibility == Visibility.Visible ? "HideNavigation" : "ShowNavigation");
+        AutomationProperties.SetName(NavigationToggle, NavigationToggle.ToolTip.ToString());
     }
 }

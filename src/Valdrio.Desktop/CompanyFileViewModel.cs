@@ -35,6 +35,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
         CurrencyOptions = catalog.GetAll().Where(x => x.IsMonetary).Select(x => x.AlphaCode.ToString()).ToArray();
         CreateCommand = new AsyncRelayCommand(Create, () => Available && !string.IsNullOrWhiteSpace(CompanyName));
         OpenCommand = new AsyncRelayCommand(Open, () => Available);
+        OpenExampleCommand = new AsyncRelayCommand(OpenExample, () => Available);
         CloseCommand = new AsyncRelayCommand(Close, () => Available && active is not null);
         NewProjectCommand = new AsyncRelayCommand(NewProject, () => Available && active is not null);
         AddUnitCommand = new AsyncRelayCommand(AddUnit, () => Available && active is not null &&
@@ -49,6 +50,11 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     }
     public IAsyncRelayCommand CreateCommand { get; }
     public IAsyncRelayCommand OpenCommand { get; }
+    public IAsyncRelayCommand OpenExampleCommand { get; }
+    public string ExampleLabel => Text("Guide.OpenExample");
+    public string ExampleHelp => Text("Guide.ExampleHelp");
+    public string ImportStartLabel => Text("Guide.ImportStart");
+    public string ImportStartHelp => Text("Guide.ImportStartHelp");
     public IAsyncRelayCommand CloseCommand { get; }
     public IAsyncRelayCommand NewProjectCommand { get; }
     public IAsyncRelayCommand AddUnitCommand { get; }
@@ -167,6 +173,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     private void Refresh()
     {
         OnPropertyChanged(string.Empty);
+        OpenExampleCommand.NotifyCanExecuteChanged();
         CreateCommand.NotifyCanExecuteChanged(); OpenCommand.NotifyCanExecuteChanged(); CloseCommand.NotifyCanExecuteChanged(); NewProjectCommand.NotifyCanExecuteChanged();
         AddUnitCommand.NotifyCanExecuteChanged(); AddDefaultUnitsCommand.NotifyCanExecuteChanged(); BackupCommand.NotifyCanExecuteChanged(); RestoreCommand.NotifyCanExecuteChanged(); UpgradeCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
     }
@@ -237,6 +244,25 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
             await ReplaceAsync(candidate);
         });
     }
+    private async Task OpenExample()
+    {
+        if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
+        var destination = dialogs.SelectNewFile("VALDRIO - Example");
+        if (destination is null) return;
+        await Run(async token =>
+        {
+            var candidate = await Task.Run(() =>
+            {
+                token.ThrowIfCancellationRequested();
+                var source = System.IO.Path.Combine(AppContext.BaseDirectory, "examples", "services.valdrio");
+                // The shipped fixture is immutable. Never overwrite the chosen destination.
+                System.IO.File.Copy(source, destination, overwrite: false);
+                return files.Open(destination, cancellationToken: token);
+            }, token);
+            await ReplaceAsync(candidate);
+        });
+    }
+
     private async Task Open()
     {
         try

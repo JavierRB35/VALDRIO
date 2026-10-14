@@ -33,8 +33,7 @@
   </Border>
   <Border Style="{StaticResource Card}" Margin="0,0,0,16"><DockPanel LastChildFill="True"><Button x:Name="TogglePrimaryButton" DockPanel.Dock="Right" Content="{Binding PrimaryToggleLabel}" Command="{Binding TogglePrimaryCommand}"/><TextBlock Text="{Binding PrimaryState}" VerticalAlignment="Center" Margin="0,0,12,0" AutomationProperties.LiveSetting="Polite"/></DockPanel></Border>
   <Border x:Name="SecondaryPhaseBar" Style="{StaticResource Card}" Margin="0,0,0,16"><DockPanel LastChildFill="True"><Button x:Name="ToggleSecondaryButton" DockPanel.Dock="Right" Content="{Binding SecondaryToggleLabel}" Command="{Binding ToggleSecondaryCommand}"/><TextBlock Text="{Binding SecondaryState}" VerticalAlignment="Center" Margin="0,0,12,0" AutomationProperties.LiveSetting="Polite"/></DockPanel></Border>
-  <Grid x:Name="KeyWorkspaceLayout" Height="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}, Converter={StaticResource KeyWorkspaceHeight}}">
-   <Grid.ColumnDefinitions><ColumnDefinition Width="2*" MinWidth="320"/><ColumnDefinition Width="5*" MinWidth="460"/></Grid.ColumnDefinitions>
+  <local:AdaptiveColumnsPanel x:Name="KeyWorkspaceLayout" MinColumnWidth="440" MinimumRowHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}, Converter={StaticResource KeyWorkspaceHeight}}">
    <Border Style="{StaticResource Card}" Margin="0,0,12,16">
     <Expander x:Name="LibrarySection" Header="{Binding [Library]}" IsExpanded="True" VerticalContentAlignment="Stretch"><Grid Margin="0,8,0,0"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
      <WrapPanel><Button Content="{Binding [NewKey]}" Command="{Binding NewKeyCommand}" x:Name="NewKeyButton" Click="FocusNewKey"/><Button Content="{Binding [NewVersion]}" Command="{Binding NewVersionCommand}" x:Name="NewVersionButton" ToolTip="{Binding [SecondaryRepairVersionHelp]}"/><Button Content="{Binding [DeleteKey]}" Command="{Binding DeleteKeyCommand}" x:Name="DeleteKeyButton" ToolTip="{Binding KeyDeleteHelp}"/><Button Content="{Binding [Refresh]}" Command="{Binding RefreshCommand}" x:Name="RefreshButton"/></WrapPanel>
@@ -97,7 +96,7 @@
      </TextBlock>
      </Grid></Expander>
    </Border>
-</Grid>
+</local:AdaptiveColumnsPanel>
     <Border Style="{StaticResource Card}" Margin="0,0,0,16">
    <Expander x:Name="CompositionSection" Header="{Binding [CompositionTitle]}" IsExpanded="True">
     <StackPanel Margin="0,8,0,0">
@@ -513,6 +512,9 @@
 
      <TextBlock Text="{Binding [SecondaryContributionsTitle]}" FontWeight="SemiBold" Margin="0,16,0,8"/>
      <TextBlock Text="{Binding [SecondaryContributionsHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+     <Button x:Name="ShowSecondarySourceButton" Content="{Binding [ShowSource]}" Click="ShowSecondarySource" HorizontalAlignment="Left">
+      <Button.Style><Style TargetType="Button" BasedOn="{StaticResource Button.Secondary}"><Style.Triggers><DataTrigger Binding="{Binding SelectedSecondaryResultRow}" Value="{x:Null}"><Setter Property="IsEnabled" Value="False"/></DataTrigger></Style.Triggers></Style></Button.Style>
+     </Button>
      <DataGrid x:Name="SecondaryResultsGrid" ItemsSource="{Binding SecondaryResults}" SelectionMode="Single" SelectionUnit="FullRow" SelectedItem="{Binding SelectedSecondaryResultRow, Mode=TwoWay}" IsReadOnly="True" AutoGenerateColumns="False" Height="215">
       <DataGrid.Columns>
        <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Source}" Width="2*"/>
@@ -524,8 +526,9 @@
 <Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
 <TextBlock Grid.Column="2" Text="{Binding SecondaryResultsTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
 
-     <Expander Header="{Binding [SecondaryExplanationTitle]}" IsExpanded="True" Margin="0,8,0,0">
+     <Expander x:Name="SecondaryExplanationSection" Header="{Binding [SecondaryExplanationTitle]}" IsExpanded="True" Margin="0,8,0,0">
       <StackPanel>
+       <Button x:Name="BackToContributionsButton" Content="{Binding [BackToAmounts]}" Click="BackToContributions" HorizontalAlignment="Left"/>
        <TextBlock Text="{Binding SecondaryExplanation}" MinHeight="72" TextWrapping="Wrap" Margin="8"/>
        <DataGrid x:Name="SecondaryExplanationGrid" ItemsSource="{Binding SecondaryExplanationDetails}" IsReadOnly="True" AutoGenerateColumns="False" Height="170" CanUserAddRows="False">
         <DataGrid.Columns>

@@ -1,0 +1,58 @@
+[
+  {
+    "file": "src/Valdrio.Desktop/AllocationWorkspacePanel.xaml",
+    "removed_names": [],
+    "removed_bindings": [
+      {
+        "attribute": "Height",
+        "binding": "{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}, Converter={StaticResource KeyWorkspaceHeight}}",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "file": "src/Valdrio.Desktop/App.xaml",
+    "removed_names": [],
+    "removed_bindings": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/CompanyFilePanel.xaml",
+    "removed_names": [],
+    "removed_bindings": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/ImportColumnMappingWindow.xaml",
+    "removed_names": [],
+    "removed_bindings": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/MainWindow.xaml",
+    "removed_names": [],
+    "removed_bindings": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/ModelWorkspacePanel.xaml",
+    "removed_names": [],
+    "removed_bindings": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/ResourceWorkspacePanel.xaml",
+    "removed_names": [],
+    "removed_bindings": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/SecondaryWorkspacePanel.xaml",
+    "removed_names": [],
+    "removed_bindings": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/StudyWorkspacePanel.xaml",
+    "removed_names": [],
+    "removed_bindings": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/Styles/ValdrioTheme.xaml",
+    "removed_names": [],
+    "removed_bindings": []
+  }
+]
