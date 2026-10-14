@@ -157,6 +157,16 @@ Este documento complementa [T14](../tareas/T14.md), la [directriz de capacidad n
 
 **Pendiente técnico:** contrato tipado de motivos y diagnósticos (incluido formato de cero justificado), estados de confirmación y control de denominador, coherente con las pruebas de la ficha canónica T14 v0.4.
 
+### T14.1 · Decisión técnica 13 aprobada (15/10/2026): actividad real superior a capacidad normal
+
+**Opción A aprobada por el propietario.** Para capacidad normal **estrictamente positiva**, una actividad real válida superior a esa capacidad no impide guardar ni confirmar un nodo. T14 calcula y presenta la **utilización física real/normal × 100**, incluso si supera el 100 %, y muestra una advertencia de revisión, no un error bloqueante ni una medida de eficiencia/productividad.
+
+- **Ejemplo:** Montaje, normal `700 h`, real `770 h`, utilización `110 %`. Podrían concurrir horas extraordinarias o turnos adicionales; el indicador no demuestra por sí solo eficiencia ni constituye una anomalía contable.
+- **Verificación:** la pantalla advierte «La actividad real supera la capacidad normal» con ayudas ES/EN. El usuario revisa las cantidades, fuente/calidad, período y circunstancias; puede confirmar los valores reales justificados, dejando la explicación y trazabilidad pertinentes. No truncar las horas reales a la normal, elevar automáticamente la normal ni fijar la utilización máxima en 100 %.
+- **Cálculo y casos especiales:** `normal > 0` y `real >= 0` conocido → porcentaje físico sin saturar; `normal = 0` → «No calculable: capacidad normal cero», con independencia del valor real; magnitud ausente (`null`) → pendiente; nunca división por cero. **El caso `normal = 0` y `real > 0` requiere criterio adicional de validación/revisión**, sin inventarlo como parte de esta decisión.
+- **Frontera económica:** T14 no calcula tarifas, monetiza exceso, revisa importes T12 ni aplica políticas de capacidad T15/D04 por superar 100 %.
+- **Pruebas T14.1/T14.2:** `700/770 = 110 %`, `700/700 = 100 %`, `700/0 = 0 %` real medida, `0/0` no calculable, nulos pendientes, advertencia traducida y confirmación sin modificación automática de observaciones.
+
 ## 2. Inventario por pantalla: información existente y destino en T14
 
 | Pantalla y responsable | Datos introducidos o disponibles antes de T14 | Uso en T14 | ¿Se pide de nuevo? |
