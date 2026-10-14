@@ -163,9 +163,19 @@ Este documento complementa [T14](../tareas/T14.md), la [directriz de capacidad n
 
 - **Ejemplo:** Montaje, normal `700 h`, real `770 h`, utilización `110 %`. Podrían concurrir horas extraordinarias o turnos adicionales; el indicador no demuestra por sí solo eficiencia ni constituye una anomalía contable.
 - **Verificación:** la pantalla advierte «La actividad real supera la capacidad normal» con ayudas ES/EN. El usuario revisa las cantidades, fuente/calidad, período y circunstancias; puede confirmar los valores reales justificados, dejando la explicación y trazabilidad pertinentes. No truncar las horas reales a la normal, elevar automáticamente la normal ni fijar la utilización máxima en 100 %.
-- **Cálculo y casos especiales:** `normal > 0` y `real >= 0` conocido → porcentaje físico sin saturar; `normal = 0` → «No calculable: capacidad normal cero», con independencia del valor real; magnitud ausente (`null`) → pendiente; nunca división por cero. **El caso `normal = 0` y `real > 0` requiere criterio adicional de validación/revisión**, sin inventarlo como parte de esta decisión.
+- **Cálculo y casos especiales:** `normal > 0` y `real >= 0` conocido → porcentaje físico sin saturar; `normal = 0` → «No calculable: capacidad normal cero», con independencia del valor real; magnitud ausente (`null`) → pendiente; nunca división por cero. **Decisión técnica 14 (A) posterior:** el caso `normal = 0` y `real > 0` es confirmable con revisión y justificación específica, manteniendo la utilización no calculable.
 - **Frontera económica:** T14 no calcula tarifas, monetiza exceso, revisa importes T12 ni aplica políticas de capacidad T15/D04 por superar 100 %.
 - **Pruebas T14.1/T14.2:** `700/770 = 110 %`, `700/700 = 100 %`, `700/0 = 0 %` real medida, `0/0` no calculable, nulos pendientes, advertencia traducida y confirmación sin modificación automática de observaciones.
+
+### T14.1 · Decisión técnica 14 aprobada (15/10/2026): actividad real positiva con capacidad normal cero
+
+**Opción A aprobada por el propietario.** T14 admite **confirmar un nodo cuya capacidad normal es 0 y actividad real estrictamente positiva**, si el analista revisa la incoherencia aparente y registra una **justificación específica** junto con procedencia y calidad de **ambas** magnitudes. Es un caso extraordinario legítimo, no un error bloqueante ni motivo para inventar horas normales.
+
+- **Ejemplo:** Montaje tenía cierre planificado todo octubre (normal `0 h`) pero realizó una intervención extraordinaria documentada (`20 h` reales). Se conservan `0 h` normales y `20 h` reales. Mensaje ES: «Se ha registrado actividad real pese a existir capacidad normal cero». Traducir con clave localizada EN.
+- **Confirmación y auditoría:** la pantalla señala advertencia destacada, solicita revisión expresa de ambas fuentes y la explicación del hecho extraordinario, y conserva aceptación, autor/fecha, motivo y versión física. Rechazar confirmación si falta la justificación especial; permitir borrador incompleto. La confirmación sigue exigiendo presencia de normal y real, unidad/período coherentes y controles de concurrencia/estudio abierto.
+- **Indicador:** **«Utilización no calculable: capacidad normal cero»**; nunca dividir `20 / 0`, presentar un porcentaje artificial o asumir que el cero normal es dato desconocido.
+- **Tratamiento económico:** no ajustar T12, no establecer automáticamente horas normales ficticias, ninguna decisión de coste fijo, coste de capacidad o tarifa unitaria: queda para T15/D04.
+- **Pruebas T14.1/T14.2:** `normal=0`, `real=20`, fuentes/calidad y explicación presentes → confirmable, advertencia y utilización no calculable; justificación ausente → no confirmable; valores `0/0` justificados y `700/770` siguen sus reglas; datos ausentes siguen pendientes. Reabrir no altera el origen del registro.
 
 ## 2. Inventario por pantalla: información existente y destino en T14
 
