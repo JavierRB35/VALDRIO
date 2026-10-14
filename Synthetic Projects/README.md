@@ -10,6 +10,10 @@ This folder contains **fictional**, executable business scenarios; it is not pro
 
 Every case defines a `scenario.json` (business structure, 100%-reconciled keys, expected primary/terminal totals, numerical tolerance) and `accounts.csv` (semicolons, decimal comma, signed amount, descriptive account code). Codes are strings, not numeric identifiers.
 
+## Actualización después de T12
+
+T12 quedó fusionada en `main` mediante PR #52. Esta integración T13–T12 conserva los dos archivos de referencia originales en **SQLite esquema 9** como fixtures de migración. La nueva rama `feature/t13-t12-integration-20261014` genera copias **esquema 10 con CalculationRun completado**, exporta su `completed-t12-run.json` y permite la aceptación visual ES/EN mediante `.github/scripts/Verify-T13-T12.ps1`. Todos estos cambios están **pendientes de prueba nativa Windows**; la ejecución CI histórica de T13 corresponde a la etapa T00–T11. No ejecutar Actions sin autorización.
+
 ## Run
 
 ```powershell
