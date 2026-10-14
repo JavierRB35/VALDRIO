@@ -64,6 +64,46 @@ public sealed partial class T06ImportConfirmationTests
     }
 
     [TestMethod]
+    public async Task AttachingImportToPersistedClosedPrimaryDisablesConfirmationBeforeReview()
+    {
+        EntityId studyId;
+        using (var file = Baseline())
+        {
+            var workspace = await ImportedResources(file);
+            studyId = workspace.Study.Id;
+            var key = file.Allocations.SaveAllocationKey(KeyCommand(workspace)).After;
+            var configuration = new AllocationConfiguration([], [],
+                [new(workspace.Resources.Single().Parts.Single().Id, key.Id)], [], []);
+            file.Allocations.ChangeAllocations(
+                AllocationCommand(workspace, configuration.WithPrimaryClosed(true)));
+        }
+
+        var before = Hash(FileOf("current.valdrio"));
+        var texts = new UiTextCatalog();
+        var preferences = new PresentationPreferencesService(
+            new LanguageCatalog(), UserPresentationPreferences.Default);
+        var formatter = new PresentationFormatter(new DisplayTimeZoneResolver());
+        var dialogs = new ResourceDialogs();
+        using var company = new CompanyFileViewModel(
+            Service(), dialogs, Catalog, texts, preferences, formatter);
+        using var import = new ImportColumnMappingViewModel(
+            new ImportSourceSessionFactory(), new Dialogs(FileOf("unused.csv")), texts, preferences);
+        using var studies = new StudyWorkspaceViewModel(
+            company, Catalog, texts, preferences, formatter, dialogs) { ImportColumns = import };
+        await company.OpenPath(FileOf("current.valdrio"));
+        studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == studyId);
+        await studies.LoadCommand.ExecuteAsync(null);
+        Assert.IsTrue(await studies.AttachImportTarget());
+
+        Assert.IsTrue(import.HasClosedPrimaryDestination);
+        Assert.IsFalse(import.CanSaveReviewedImport);
+        Assert.IsFalse(import.ConfirmCommand.CanExecute(null));
+        Assert.IsFalse(string.IsNullOrWhiteSpace(import.PrimaryClosedNotice));
+        Assert.IsTrue(import.IsIdle);
+        Assert.AreEqual(before, Hash(FileOf("current.valdrio")));
+    }
+
+    [TestMethod]
     public async Task ClosedPrimaryImportReviewIsVisibleButCannotBeSaved()
     {
         using var file = Baseline();
