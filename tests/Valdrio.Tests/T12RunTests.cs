@@ -158,4 +158,35 @@ public sealed partial class T06ImportConfirmationTests
         Assert.ThrowsExactly<Microsoft.Data.Sqlite.SqliteException>(()=>Query(file.Path,"DELETE FROM CalculationRuns"));
     }
 
+    [TestMethod]
+    public async Task T14_SavingOnlyHoursDoesNotChangePublishedT12RunOrEconomicHashes()
+    {
+        using var file = Baseline();
+        var snapshot = await T12Fixture(file);
+        var study = snapshot.Resources.Study;
+        var publishedModel = file.Models.ReadModels().Single(m =>
+            m.Structure.Id == study.SelectedModelVersionId && m.Status == ModelStatus.Published);
+        var principal = publishedModel.Structure.Nodes.Single(n => n.Role == NodeRole.Principal);
+        var pool = publishedModel.Structure.Pools.Single(p => p.NodeId == principal.Id);
+        var prepared = file.Runs.PrepareRun(new(study.CompanyId, study.Id, study.Revision, Id(), "test"));
+        var completed = file.Runs.PublishRun(prepared.Id, CalculationRunService.Calculate(prepared));
+        var before = file.Runs.ReadRuns(study.CompanyId, study.Id);
+        var snapshots = file.Studies.ReadSnapshots(study.CompanyId, study.Id).Count;
+        var normal = new PhysicalEvidence(PhysicalEvidenceQuality.Calculated, "Calendar October", "");
+        var real = new PhysicalEvidence(PhysicalEvidenceQuality.Recorded, "Production logs October", "");
+        var physical = file.PhysicalActivity.Save(new(study.CompanyId, study.Id, principal.Id, pool.Id,
+            0L, PhysicalObservationState.Confirmed, null, null, 700m, 610m,
+            normal, real, null, null, null, "test"));
+
+        Assert.AreEqual(1L, physical.Version);
+        Assert.AreEqual(study.Revision, file.Studies.ReadStudies().Single(s => s.Id == study.Id).Revision);
+        Assert.AreEqual(completed.Id, file.Runs.ReadRuns(study.CompanyId, study.Id).CurrentRunId);
+        Assert.AreEqual(before.Runs.Count, file.Runs.ReadRuns(study.CompanyId, study.Id).Runs.Count);
+        Assert.AreEqual(prepared.EconomicInputHash,
+            file.Runs.ReadRuns(study.CompanyId, study.Id).Runs.Single(r => r.Id == completed.Id).EconomicInputHash);
+        Assert.AreEqual(prepared.FullSnapshotHash,
+            file.Runs.ReadRuns(study.CompanyId, study.Id).Runs.Single(r => r.Id == completed.Id).FullSnapshotHash);
+        Assert.AreEqual(snapshots, file.Studies.ReadSnapshots(study.CompanyId, study.Id).Count);
+    }
+
 }
