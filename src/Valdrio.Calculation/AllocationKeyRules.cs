@@ -10,6 +10,8 @@ public static class AllocationKeyRules
         if (key.CompanyId != model.CompanyId || key.ModelVersionId != model.Id ||
             key.Lines.Any(l => !model.Nodes.Any(n => n.Id == l.DestinationNodeId && n.IsActive)))
             throw AllocationDiagnostics.Error("KEY_SCOPE_INVALID", "Allocation.ScopeInvalid", key.Id);
+        if (publication && key.Mode == AllocationKeyMode.DriverUnits && !key.UnitId.HasValue)
+            throw AllocationDiagnostics.Error("KEY_UNIT_INVALID", "Allocation.UnitInvalid", key.Id);
         if (key.UnitId is { } unit && !units.Any(u => u.Id == unit))
             throw AllocationDiagnostics.Error("KEY_UNIT_INVALID", "Allocation.UnitInvalid", key.Id);
         decimal total = 0;
