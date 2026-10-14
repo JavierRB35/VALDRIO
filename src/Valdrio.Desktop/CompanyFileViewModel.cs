@@ -109,6 +109,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public IImportWorkspace? ActiveImports => active?.Imports;
     public IResourceWorkspace? ActiveResources => active?.Resources;
     public IAllocationWorkspace? ActiveAllocations => active?.Allocations;
+    public IRunStore? ActiveRuns => active?.Runs;
     public bool CanWrite => active?.Mode == CompanyFileOpenMode.Edit;
     public bool WorkspaceIdle => !busy && WorkspaceBusy?.Invoke() != true;
     // Central activity state shared by every workspace. Existing asynchronous
