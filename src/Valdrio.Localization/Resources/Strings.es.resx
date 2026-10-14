@@ -1503,4 +1503,6 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.ShowNavigation" xml:space="preserve"><value>Mostrar navegación</value></data>
   <data name="Allocation.ShowSource" xml:space="preserve"><value>Explicar importe seleccionado</value></data>
   <data name="Allocation.BackToAmounts" xml:space="preserve"><value>Volver a las aportaciones</value></data>
+  <data name="AllocationUI.ShowSource" xml:space="preserve"><value>Explicar importe seleccionado</value></data>
+  <data name="AllocationUI.BackToAmounts" xml:space="preserve"><value>Volver a las aportaciones</value></data>
 </root>
