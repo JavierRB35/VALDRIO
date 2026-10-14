@@ -92,7 +92,19 @@ public sealed partial class CostFlowViewModel : ObservableObject
         try
         {
             Status = this["Preparing"];
-            run = await Task.Run(() => store.PrepareRun(new(study.CompanyId, study.Id, study.Revision, new EntityId(Guid.NewGuid()), "local-user"), token));
+            // Query only, before capturing a snapshot: an unchanged calculation
+            // must not persist an extra snapshot, audit event or execution row.
+            var latest = await Task.Run(() => store.ReadRuns(study.CompanyId, study.Id, token), token);
+            var previous = latest.MatchingCompleted(study.Revision);
+            if (previous is not null)
+            {
+                history = latest;
+                RebuildChoices();
+                SelectedRun = Runs.First(r => r.Run.Id == previous.Id);
+                Status = this["NoChanges"];
+                return;
+            }
+            run = await Task.Run(() => store.PrepareRun(new(study.CompanyId, study.Id, study.Revision, new EntityId(Guid.NewGuid()), "local-user"), token), token);
             Status = this["Calculating"];
             var output = await Task.Run(() => CalculationRunService.Calculate(run, token));
             Status = this["Publishing"];

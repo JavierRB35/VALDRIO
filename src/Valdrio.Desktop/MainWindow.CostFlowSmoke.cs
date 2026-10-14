@@ -27,11 +27,9 @@ public partial class MainWindow
             var originalId=flows.SelectedRun.Run.Id;var originalCount=flows.Runs.Count;
             Check(flows.CalculateCommand.CanExecute(null),"explicit calculation enabled "+language);
             await flows.CalculateCommand.ExecuteAsync(null);
-            Check(flows.Runs.Count==originalCount+1 && flows.SelectedRun?.Run.Status==CalculationRunStatus.Completed,"UI calculates and publishes "+language);
-            var newest=flows.SelectedRun;flows.SelectedRun=flows.Runs.Single(r=>r.Run.Id==originalId);
-            Check(flows.CurrentState==flows["Historical"],"older execution marked historical "+language);
-            Check(original==CanonicalSnapshotJson.Serialize(flows.SelectedRun.Run),"older execution identical "+language);
-            flows.SelectedRun=newest;original=CanonicalSnapshotJson.Serialize(flows.SelectedRun!.Run);
+            Check(flows.Runs.Count==originalCount && flows.SelectedRun?.Run.Id==originalId &&
+                  flows.Status==flows["NoChanges"],"unchanged study reuses prior completed run without saving "+language);
+            Check(original==CanonicalSnapshotJson.Serialize(flows.SelectedRun!.Run),"prior run is byte-identical "+language);
             await flows.EnterAsync();Check(original==CanonicalSnapshotJson.Serialize(flows.SelectedRun!.Run),"query leaves execution unchanged "+language);
             var node=flows.Nodes.First(n=>n.Stage==0);flows.SelectNode(node.Id);Check(flows.Rows.Count>=2,"source trace table "+language);
             Check(flows.HighlightedNodeIds.Contains(node.Id) && flows.HighlightedArrows.Any(a=>a.SourceId==node.Id),"full primary path selected "+language);

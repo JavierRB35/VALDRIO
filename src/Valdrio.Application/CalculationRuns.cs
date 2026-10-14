@@ -27,6 +27,13 @@ public sealed record CalculationRun(EntityId Id, StudySnapshotReceipt Snapshot, 
 public sealed record RunHistory(long StudyRevision, IReadOnlyList<CalculationRun> Runs)
 {
     public EntityId? CurrentRunId => Runs.LastOrDefault(r => r.IsCurrentFor(StudyRevision))?.Id;
+
+    // A completed calculation for the identical, frozen revision/algorithm
+    // is reusable; failed/cancelled/in-progress and historical runs are not.
+    public CalculationRun? MatchingCompleted(long revision) =>
+        StudyRevision == revision
+            ? Runs.LastOrDefault(r => r.IsCurrentFor(revision))
+            : null;
 }
 public interface IRunStore
 {

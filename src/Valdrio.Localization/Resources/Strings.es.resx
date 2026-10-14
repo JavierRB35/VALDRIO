@@ -1570,6 +1570,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Run.GrossGraphHelp" xml:space="preserve"><value>Las flechas entre auxiliares muestran movimientos brutos internos, que no se suman al coste final. Los porcentajes son las participaciones guardadas en cada transferencia.</value></data>
   <data name="Run.GrossAmount" xml:space="preserve"><value>Coste bruto</value></data>
   <data name="Run.NoGraphData" xml:space="preserve"><value>Esta ejecución todavía no tiene datos para mostrar el gráfico.</value></data>
+  <data name="Run.NoChanges" xml:space="preserve"><value>No hay cambios desde la ejecución guardada de esta revisión. Se muestran sus resultados; no se ha guardado ni calculado otra vez.</value></data>
   <data name="Run.Graph" xml:space="preserve"><value>Gráfico de flujos de costes</value></data>
   <data name="Run.GrossHelp" xml:space="preserve"><value>Las transferencias auxiliares son movimientos brutos internos, no costes nuevos. No se suman al coste final. Los importes conservan la precisión del cálculo; las tablas permiten comprobar los valores exactos.</value></data>
   <data name="Run.ClearSelection" xml:space="preserve"><value>Mostrar todo el detalle</value></data>

@@ -1570,6 +1570,7 @@ Difference to distribute: {7}</value></data>
   <data name="Run.GrossGraphHelp" xml:space="preserve"><value>Arrows between auxiliaries are gross internal transfers; do not add them to final costs. Percentages are the stored transfer shares.</value></data>
   <data name="Run.GrossAmount" xml:space="preserve"><value>Gross cost</value></data>
   <data name="Run.NoGraphData" xml:space="preserve"><value>This execution has no data to display in the diagram.</value></data>
+  <data name="Run.NoChanges" xml:space="preserve"><value>Nothing has changed since the saved execution for this revision. Showing its results; no new run was saved or calculated.</value></data>
   <data name="Run.Graph" xml:space="preserve"><value>Cost flow diagram</value></data>
   <data name="Run.GrossHelp" xml:space="preserve"><value>Auxiliary transfers are gross internal movements, not new costs. Do not add them to final costs. Amounts retain calculation precision; tables provide the exact values.</value></data>
   <data name="Run.ClearSelection" xml:space="preserve"><value>Show all details</value></data>

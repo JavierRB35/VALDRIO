@@ -58,6 +58,14 @@ T12 separa ahora el antiguo gráfico de cuatro etapas con lienzo rígido 1100 ×
 
 Se amplía el smoke WPF de T12 para verificar ambas vistas, estado de ruta iluminada, porcentajes, moneda, cambio de idioma y ancho estrecho. **Ejecución WPF, build .NET y pruebas de regresión aún pendientes.**
 
+## Evitar ejecuciones duplicadas e historial (14/10/2026)
+
+Al pulsar Calcular en T12, el ViewModel realiza primero una consulta **solo lectura** y verifica que existe un resultado `Completed` para la **misma revisión congelada del estudio** y la versión vigente de algoritmo. Si existe, selecciona ese resultado y presenta «No hay cambios» sin capturar otro snapshot, ejecutar el solver o publicar otra ejecución. Se preservan los intentos `Failed`, `Cancelled` y `Started`; no sirven como resultados a reutilizar. Los resultados de revisiones previas tampoco bloquean un cálculo nuevo. Esta comprobación conservadora se limita a la identidad de revisión/algoritmo: no deduce equivalencia entre revisiones distintas.
+
+El propietario solicitó además poder eliminar ejecuciones a voluntad. **No se ha autorizado ni implementado un borrado físico**: el formato v10 protege con triggers las ejecuciones e historial. La opción propuesta es archivar/ocultar de la lista normal con recuperación y auditoría, lo que exigiría persistencia de visibilidad separada (sin mutar resultados); requiere aprobación específica del diseño de retención antes de cambiar el esquema.
+
+Se actualiza el smoke WPF para esperar la reutilización sin duplicado, y se añade prueba T12 de reconocimiento de revisión completada y ausencia de captura al consultar. Validación .NET/Windows pendiente.
+
 ## Criterio de entrega antes de fusionar
 
 Ejecutar en Windows local `dotnet build`, suite completa, escenarios migrados y smoke WPF; resolver regresiones por los cambios T13, PR #47–#50, rutas y localización. Registrar hash de commit probado, resultados, errores reales, capturas y conformidad económica. No usar runners hosted sin consentimiento separado.

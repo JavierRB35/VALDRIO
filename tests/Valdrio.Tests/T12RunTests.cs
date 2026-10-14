@@ -87,6 +87,28 @@ public sealed partial class T06ImportConfirmationTests
         Assert.IsNull(file.Runs.ReadRuns(s.CompanyId,s.Id).CurrentRunId);
     }
     [TestMethod]
+    public async Task T12_UnchangedCompletedRevisionIsRecognisedWithoutAnotherStoredRun()
+    {
+        using var file=Baseline(); var w=await T12Fixture(file); var s=w.Resources.Study;
+        var first=file.Runs.PrepareRun(new(s.CompanyId,s.Id,s.Revision,Id(),"test"));
+        var published=file.Runs.PublishRun(first.Id,CalculationRunService.Calculate(first));
+        var before=file.Runs.ReadRuns(s.CompanyId,s.Id);
+        var snapshotsBefore=file.Studies.ReadSnapshots(s.CompanyId,s.Id).Count;
+        Assert.AreEqual(published.Id,before.MatchingCompleted(s.Revision)?.Id);
+        Assert.AreEqual(before.CurrentRunId,before.MatchingCompleted(s.Revision)?.Id);
+        Assert.IsNull(before.MatchingCompleted(s.Revision+1));
+        Assert.AreEqual(1,before.Runs.Count);
+        Assert.AreEqual(snapshotsBefore,file.Studies.ReadSnapshots(s.CompanyId,s.Id).Count,
+            "The read-only duplicate check must not create a snapshot.");
+        var current=file.Studies.ReadStudies().Single(x=>x.Id==s.Id);
+        file.Studies.UpdateContext(new(s.CompanyId,s.Id,current.Revision,"Different revision",
+            current.PeriodStart,current.PeriodEnd,current.Purpose,current.ScenarioKind,
+            current.SelectedModelVersionId,current.Currency.FunctionalCurrencyCode,"test"));
+        Assert.IsNull(file.Runs.ReadRuns(s.CompanyId,s.Id).MatchingCompleted(current.Revision));
+        Assert.IsNull(file.Runs.ReadRuns(s.CompanyId,s.Id).MatchingCompleted(current.Revision+1));
+    }
+
+    [TestMethod]
     public async Task T12_CancellationBeforePublishLeavesNoPartialResultsAndPriorRunSurvives()
     {
         using var file=Baseline();var w=await T12Fixture(file);var s=w.Resources.Study;
