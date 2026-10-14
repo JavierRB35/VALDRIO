@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="Valdrio.Desktop.PhysicalActivityWindow"
         Title="{Binding Title}" Height="780" Width="1180" MinHeight="640" MinWidth="820"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner" Background="{DynamicResource Surface.Canvas}">
  <Grid Margin="20">
   <Grid.RowDefinitions>
    <RowDefinition Height="Auto"/>
@@ -69,7 +69,7 @@
               TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" Margin="0,0,0,6"/>
    <WrapPanel>
     <Button Content="{Binding SaveDraftLabel}" Click="SaveDraft" IsEnabled="{Binding IsWritable}" Margin="0,0,8,0"/>
-    <Button Content="{Binding ConfirmLabel}" Click="Confirm" IsEnabled="{Binding IsWritable}" Margin="0,0,8,0"/>
+    <Button Content="{Binding ConfirmLabel}" Click="Confirm" IsEnabled="{Binding IsWritable}" Style="{StaticResource Button.Primary}" Margin="0,0,8,0"/>
     <Button Content="{Binding AnnulLabel}" Click="Annul" IsEnabled="{Binding IsWritable}" Margin="0,0,8,0"/>
     <Button Content="{Binding HistoryLabel}" Click="History" Margin="0,0,8,0"/>
     <Button Content="{Binding CloseLabel}" IsCancel="True" Click="CloseWindow"/>
