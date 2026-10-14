@@ -133,6 +133,18 @@ Este documento complementa [T14](../tareas/T14.md), la [directriz de capacidad n
 
 **Pendiente de definición técnica:** catálogos o tipos estables para fuente/calidad, textos específicos y estructura de evidencia opcional. No introducir la obligación de adjuntar un fichero mediante validaciones indirectas.
 
+### T14.1 · Decisión técnica 11 aprobada (15/10/2026): categorías normalizadas más texto libre
+
+**Opción A aprobada por el propietario.** Para confirmar observaciones físicas T14 se usará una **clasificación estructurada y traducible de procedencia/calidad**, con **descripción libre complementaria**. El usuario identifica tanto el tipo de evidencia como la fuente concreta; la clasificación no sustituye las explicaciones ni impone la obligación de adjuntar documentos (decisión técnica 10).
+
+- **Ejemplos ilustrativos de categorías:** «Respaldado por registros», «Declarado por responsable» y «Calculado mediante método justificado». **No son todavía códigos ni catálogo definitivo.** En el contrato T14.1 se diferenciarán conceptualmente procedencia, método de cálculo y calidad/verificación, evitando tratarlos como una escala automática de fiabilidad o afirmar que todo dato calculado está verificado.
+- **Internacionalización:** los códigos persistidos serán estables e independientes del idioma, con etiquetas/ayudas ES y EN. Cambiar idioma/región no alterará categorías, fuentes, cantidades ni versiones guardadas.
+- **Requisitos de confirmación:** categoría aplicable y fuente identificable, con descripción suficiente del dato, según las validaciones establecidas; el texto libre permite aclarar responsable, registros o particularidades. Un «Declarado» no se convierte en «Medido y contrastado» por el acto de confirmar la fila física.
+- **Auditoría:** almacenar código, descripción y fuente con su versión física y conservar clasificaciones anteriores en correcciones. La calidad no se revalorará automáticamente al aportar un adjunto; cualquier reclasificación será una modificación registrada.
+- **Pruebas T14.1/T14.2:** entrada por categorías en ES/EN, persistencia y reapertura tras cambio de idioma, categoría ausente al confirmar, fuente libre, dato declarado confirmable sin adjunto y conservación de procedencia/calidad al corregir.
+
+**Pendiente técnico T14.1:** especificar catálogo/versionado, significado exacto de Source frente a Quality, claves de diagnóstico y validación por tipo de dato, evitando categorías mezcladas o etiquetas que prometan comprobaciones inexistentes.
+
 ## 2. Inventario por pantalla: información existente y destino en T14
 
 | Pantalla y responsable | Datos introducidos o disponibles antes de T14 | Uso en T14 | ¿Se pide de nuevo? |
