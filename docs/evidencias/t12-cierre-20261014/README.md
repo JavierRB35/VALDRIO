@@ -150,6 +150,12 @@ Análisis estático de `src/Valdrio.Desktop/CompanyFilePanel.Smoke.cs`: **29** c
 
 Corrección: `Verify-Windows.ps1` exige exactamente **44** controles y además comprueba la presencia de las cuatro evidencias clave de migración segura y conservación de datos, sin reducir el alcance de los tests. El error informa ahora resultado real, esperado y estado. No se han modificado la aplicación, los resultados económicos ni el histórico. **Pendiente**: ejecutar localmente el verificador actualizado y comprobar el resto de puertas de aceptación y el smoke específico T12. No fusionar hasta obtener los recibos finales. Sin GitHub Actions.
 
+## Auditoría preventiva de la quinta corrección — manifiestos SQLite de aceptación
+
+La misma revisión estática de `Verify-Windows.ps1` encontró que cinco aserciones de `SchemaVersion` seguían fijadas a **9**, aunque `SqliteCompanyFileService.SchemaVersion` y los cinco emisores de JSON usan **10**: manifest de confirmación, débito/crédito, agrupación, cierre de importación e interacción de recursos. Se actualizan a `$expectedCompanySchemaVersion = 10` (versión explícitamente fijada para esta aceptación). Se deja intacta la expectativa `SchemaVersion = 1` para el manifiesto internacional, porque corresponde a un formato independiente, no al archivo SQLite de empresa.
+
+Este ajuste es **solo del contrato de verificación**: no cambia esquemas, migraciones, cálculos ni datos. Pendiente repetir la aceptación Windows sobre el SHA actualizado.
+
 ## Acta de resultados — por cumplimentar
 
 - Fecha/hora, Windows, .NET: **pendiente**

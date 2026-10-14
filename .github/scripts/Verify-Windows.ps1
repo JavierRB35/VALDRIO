@@ -377,6 +377,9 @@ try {
       throw "Visual evidence process failed with code $($process.ExitCode)."
     }
 
+    # All company files emitted by this acceptance run are current schema v10.
+    # Keep this version pinned for sign-off, so format bumps require review.
+    $expectedCompanySchemaVersion = 10
     $fxChecks = Get-Content -LiteralPath (Join-Path $captureDir "fx-editor-interaction.json") -Raw | ConvertFrom-Json
     if ($fxChecks.Status -ne "passed" -or $fxChecks.PassedChecks.Count -ne 12) {
       throw "FX WPF interaction evidence is missing or incomplete."
@@ -425,7 +428,7 @@ try {
     }
     $confirmationManifest = Get-Content -LiteralPath (Join-Path $confirmationFolder "manifest.json") -Raw | ConvertFrom-Json
     $confirmationNames = @("import.valdrio", "import.valdrio-backup", "restored.valdrio", "snapshot.json", "period-amounts.csv")
-    if ($confirmationManifest.SchemaVersion -ne 9 -or $confirmationManifest.Files.Count -ne $confirmationNames.Count -or
+    if ($confirmationManifest.SchemaVersion -ne $expectedCompanySchemaVersion -or $confirmationManifest.Files.Count -ne $confirmationNames.Count -or
         @(Compare-Object ($confirmationNames | Sort-Object) (@($confirmationManifest.Files.Name) | Sort-Object)).Count -ne 0) {
       throw "Import confirmation manifest is incomplete."
     }
@@ -446,7 +449,7 @@ try {
     if ($debitImages.Count -ne 3) { throw "Expected CSV prepared/confirmed and Excel debit/credit screenshots." }
     $debitManifest = Get-Content -LiteralPath (Join-Path $debitFolder "manifest.json") -Raw | ConvertFrom-Json
     $debitNames = @("import.valdrio", "import.valdrio-backup", "restored.valdrio", "snapshot.json", "debit-credit.csv", "debit-credit.xlsx")
-    if ($debitManifest.SchemaVersion -ne 9 -or $debitManifest.BatchIds.Count -ne 2 -or $debitManifest.Files.Count -ne $debitNames.Count -or
+    if ($debitManifest.SchemaVersion -ne $expectedCompanySchemaVersion -or $debitManifest.BatchIds.Count -ne 2 -or $debitManifest.Files.Count -ne $debitNames.Count -or
         @(Compare-Object ($debitNames | Sort-Object) (@($debitManifest.Files.Name) | Sort-Object)).Count -ne 0) {
       throw "Debit/credit import manifest is incomplete."
     }
@@ -467,7 +470,7 @@ try {
     if (@(Compare-Object (@("records-es.png", "groups-es.png", "groups-pseudo.png") | Sort-Object) (@($groupingImages.Name) | Sort-Object)).Count -ne 0) { throw "Missing grouped import screenshots." }
     $groupingManifest = Get-Content -LiteralPath (Join-Path $groupingFolder "manifest.json") -Raw | ConvertFrom-Json
     $groupingNames = @("grouping.valdrio", "grouping.valdrio-backup", "restored.valdrio", "snapshot.json", "grouping.csv")
-    if ($groupingManifest.SchemaVersion -ne 9 -or $groupingManifest.Files.Count -ne $groupingNames.Count -or
+    if ($groupingManifest.SchemaVersion -ne $expectedCompanySchemaVersion -or $groupingManifest.Files.Count -ne $groupingNames.Count -or
         @(Compare-Object ($groupingNames | Sort-Object) (@($groupingManifest.Files.Name) | Sort-Object)).Count -ne 0) {
       throw "Grouped import manifest is incomplete."
     }
@@ -486,7 +489,7 @@ try {
     if (@(Compare-Object (@("comparison-es.png", "comparison-pseudo.png") | Sort-Object) (@($completionImages.Name) | Sort-Object)).Count -ne 0) { throw "Missing comparison screenshots." }
     $completionManifest = Get-Content -LiteralPath (Join-Path $completionFolder "manifest.json") -Raw | ConvertFrom-Json
     $completionNames = @("completion.valdrio", "completion.valdrio-backup", "restored.valdrio", "snapshot.json", "earlier.csv", "current.csv", "corrected.csv")
-    if ($completionManifest.SchemaVersion -ne 9 -or $completionManifest.Files.Count -ne $completionNames.Count -or
+    if ($completionManifest.SchemaVersion -ne $expectedCompanySchemaVersion -or $completionManifest.Files.Count -ne $completionNames.Count -or
         @(Compare-Object ($completionNames | Sort-Object) (@($completionManifest.Files.Name) | Sort-Object)).Count -ne 0) { throw "Invalid T06 completion manifest." }
     foreach ($entry in $completionManifest.Files) {
       if ((Get-FileHash -LiteralPath (Join-Path $completionFolder $entry.Name) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $entry.Sha256) { throw "T06 completion artifact hash differs." }
@@ -495,7 +498,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Runner could not verify comparison/replacement snapshot." }
     $resourceFolder = Join-Path $captureDir "t07-resources"
     $resourceChecks = Get-Content -LiteralPath (Join-Path $resourceFolder "interaction.json") -Raw | ConvertFrom-Json
-    if ($resourceChecks.Status -ne "passed" -or $resourceChecks.SchemaVersion -ne 9 -or $resourceChecks.PassedChecks.Count -ne 49) {
+    if ($resourceChecks.Status -ne "passed" -or $resourceChecks.SchemaVersion -ne $expectedCompanySchemaVersion -or $resourceChecks.PassedChecks.Count -ne 49) {
         throw "Expected all 49 T07 resource WPF checks."
     }
     foreach ($imageName in @("review-es.png", "review-pseudo-rtl.png", "saved-en.png")) {
