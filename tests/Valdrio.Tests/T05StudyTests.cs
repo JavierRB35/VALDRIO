@@ -65,16 +65,16 @@ public sealed class T05StudyTests
         var publications = schema == 2 ? Query(source, "SELECT group_concat(CanonicalJson) FROM ModelPublications ORDER BY ModelVersionId") : "";
         Assert.AreEqual("FILE_UPGRADE_REQUIRED", Assert.ThrowsExactly<CompanyFileException>(() => Service().Open(source)).Diagnostic.Code);
         using var file = Service().Upgrade(source, FileOf(), "test");
-        Assert.AreEqual(10, file.Read().SchemaVersion); Assert.AreEqual(sha, Hash(source));
+        Assert.AreEqual(SqliteCompanyFileService.SchemaVersion, file.Read().SchemaVersion); Assert.AreEqual(sha, Hash(source));
         Assert.AreEqual(companyId, file.Read().Id.ToString()); Assert.AreEqual(units, Query(file.Path, "SELECT group_concat(Id||Code) FROM Units ORDER BY Id"));
         Assert.AreEqual(companyAudit, Query(file.Path, "SELECT group_concat(AfterJson) FROM AuditEvents WHERE AggregateType='Company' ORDER BY Revision"));
         if (schema == 2) Assert.AreEqual(publications, Query(file.Path, "SELECT group_concat(CanonicalJson) FROM ModelPublications ORDER BY ModelVersionId"));
-        Assert.AreEqual((10 - schema).ToString(CultureInfo.InvariantCulture), Query(file.Path, "SELECT count(*) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
+        Assert.AreEqual((SqliteCompanyFileService.SchemaVersion - schema).ToString(CultureInfo.InvariantCulture), Query(file.Path, "SELECT count(*) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
         using var c = new SqliteConnection("Data Source=" + file.Path + ";Pooling=False"); c.Open();
         using var v3 = new StudyDbContext(c); using var v2 = new ModelDbContext(c); using var v1 = new CompanyDbContext(c);
         Assert.IsFalse(v3.Database.HasPendingModelChanges()); Assert.IsFalse(v2.Database.HasPendingModelChanges()); Assert.IsFalse(v1.Database.HasPendingModelChanges());
         using var v4 = new ImportDbContext(c); Assert.IsFalse(v4.Database.HasPendingModelChanges());
-        Assert.AreEqual(10, v4.Database.GetAppliedMigrations().Count());
+        Assert.AreEqual(SqliteCompanyFileService.SchemaVersion, v4.Database.GetAppliedMigrations().Count());
         CollectionAssert.Contains(v4.Database.GetAppliedMigrations().ToArray(), SqliteCompanyFileService.AllocationMigrationId);
     }
 
@@ -102,8 +102,8 @@ public sealed class T05StudyTests
         using var file = Service().Upgrade(source, FileOf(), "test");
         Assert.AreEqual(sha, Hash(source));
         Assert.AreEqual(old, Query(file.Path, "SELECT AfterJson FROM AuditEvents WHERE AggregateType='CompanyFile' AND Revision=0"));
-        Assert.AreEqual("9", Query(file.Path, "SELECT count(*) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
-        Assert.AreEqual("8", Query(file.Path, "SELECT max(Revision) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
+        Assert.AreEqual((SqliteCompanyFileService.SchemaVersion - 1).ToString(CultureInfo.InvariantCulture), Query(file.Path, "SELECT count(*) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
+        Assert.AreEqual((SqliteCompanyFileService.SchemaVersion - 2).ToString(CultureInfo.InvariantCulture), Query(file.Path, "SELECT max(Revision) FROM AuditEvents WHERE AggregateType='CompanyFile'"));
     }
 
     [TestMethod]
