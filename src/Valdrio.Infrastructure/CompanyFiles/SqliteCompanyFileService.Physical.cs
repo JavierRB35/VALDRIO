@@ -152,9 +152,8 @@ public sealed partial class SqliteCompanyFileService
                 if ((before?.Version ?? 0) != command.ExpectedPhysicalVersion)
                     throw PhysicalActivityRules.Error("ACT_CONFLICT", "Activity.Conflict");
                 PhysicalActivityRules.EnsureCorrectionReason(before, command.CorrectionReason);
-                if (before?.State == PhysicalObservationState.Annulled)
-                    throw PhysicalActivityRules.Error("ACT_ANNULLED", "Activity.Annulled");
-
+                // A new observation may follow an annulment. Its new version is never a revival
+                // of the invalidated value, and must pass normal validation and confirmation rules.
                 var after = new PhysicalObservation(new EntityId(Guid.NewGuid()), file.Id, study.Id,
                     study.SelectedModelVersionId, command.NodeId, pool.Id, pool.DriverUnitId,
                     study.PeriodStart, study.PeriodEnd, checked((before?.Version ?? 0) + 1),
