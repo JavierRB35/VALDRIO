@@ -5,6 +5,8 @@
 
 **Fuentes normativas:** [tarea T14 de la especificación v0.4](../../specification/v0.4/tareas/T14.md), [CM08](../../specification/v0.4/especificacion/02_Contratos_Metodologicos.md), [decisiones D04](../decisiones/DECISIONES_PENDIENTES.md), [usabilidad](USABILIDAD.md) y [sistema visual V1](../diseno/SISTEMA_VISUAL_VALDRIO_V1.md). Esta directriz complementa la especificación canónica sin alterar sus archivos ni sus hashes.
 
+**Integración y entregas aprobadas el 14/10/2026:** [inventario pantalla por pantalla y hoja de ruta T14.1–T14.4](T14_INTEGRACION_Y_HOJA_DE_RUTA.md). Toda nueva medición física se centraliza en T14; la captura real manual precede a la importación; se conserva el coste de referencia T12 identificado sin recalcular; para horas de personal se usan personas equivalentes y calendarios homogéneos con diferencias justificadas.
+
 ## 1. Finalidad y frontera de fase
 
 T14 aporta **magnitudes físicas trazables por pool, unidad, nodo y periodo** para que T15 aplique después políticas económicas de tarifas y capacidad. No calcula tarifas, ociosidad monetaria, costes por objeto ni decide por sí sola la política D04.
@@ -74,10 +76,10 @@ Presentar **una frase junto al campo** durante la primera configuración y una a
 - **Media propuesta:** «Promedio calculado solo con los periodos seleccionados y comparables». Mostrar cuántos se usaron y por qué; **no equiparar promedio con referencia aprobada**.
 
 **B. «Calcular desde el calendario».**
-- **Días de funcionamiento:** «En cuántos días está previsto que pueda trabajar este equipo». Ejemplo: 22.
+- **Días de funcionamiento:** «En cuántos días está previsto que pueda trabajar este equipo o colectivo de personas». Ejemplo: 22.
 - **Turnos por día:** «Cuántos turnos trabaja normalmente cada día». Ejemplo: 1.
 - **Horas por turno:** «Cuántas horas dura cada turno». Ejemplo: 8.
-- **Equipos equivalentes:** «Cuántos equipos con este mismo calendario estamos midiendo». Ejemplo: 1; si no comparten calendario, registrar por separado.
+- **Recursos equivalentes:** «Cuántos equipos o personas con el mismo calendario estamos midiendo». Ejemplo: 1 equipo; para horas de personal, declarar personas equivalentes. Si no comparten jornada o turnos, **justificar primero una equivalencia comprobable**; no sumar calendarios incompatibles.
 - **Paradas habituales:** «Horas previstas sin funcionamiento por mantenimiento u otras interrupciones inevitables». Ejemplo: 8 h.
 - **Actividad habitual sostenible (factor %):** «De las horas disponibles, qué proporción de actividad suele ser representativa en condiciones normales». Ejemplo: 95 %, **supuesto expresamente justificado, no sugerencia por defecto**.
 - **Resultado intermedio:** «Horas de calendario: 176; disponibles tras paradas: 168; propuesta normal: 159,6». Mostrar la fórmula y no etiquetar las tres cifras como si fueran iguales.
@@ -115,7 +117,7 @@ En la aceptación funcional, un analista ajeno al desarrollo debe poder explicar
 - Consultar `IRunStore.ReadRuns(CompanyId, StudyId)` y usar `RunHistory.CurrentRunId` para identificar la ejecución de referencia del estudio. El identificador vigente **se deriva** de la revisión y la versión de algoritmo en T12; no debe consultarse como si fuera un campo persistido utilizable de `StudyDefinition.CurrentRunId`.
 - Exigir ejecución `Completed`, revisión compatible y `Output.Secondary` publicado. Leer `CalculationRun.Output.Secondary.Totals`, agrupando únicamente los componentes terminales del **mismo nodo principal** sin perder su moneda, comportamiento y clasificación. El coste final no se obtiene sumando transferencias auxiliares brutas (`RunOutput.Transfers`), que son movimientos internos no aditivos.
 - Mostrar la moneda funcional, el ID de ejecución T12 y su condición «vigente» o «histórica» en los detalles de procedencia. La consulta no modifica importes, snapshots, recibos ni crea una nueva ejecución; el usuario no tiene que volver a cerrar T11 para visualizar una ejecución T12 ya publicada.
-- **Revisiones y cambios T14:** el contrato actual de T12 considera vigente un run completado de la revisión actual con versión de algoritmo compatible. Guardar nuevas observaciones físicas T14 puede crear una revisión posterior; no promocionar tácitamente el run anterior a vigente ni recalcularlo al abrir pantalla. Antes de implementar la persistencia T14, resolver y documentar cómo se relacionan esas observaciones con el run económico T12 (por ejemplo, identificando el `RunId` base y definiendo una compatibilidad verificable), sin cambiar unilateralmente los contratos existentes. Un histórico puede mostrarse identificado como tal, nunca como coste actual.
+- **Revisiones y cambios T14 (decisión del propietario, 14/10/2026):** el contrato actual de T12 considera vigente un run completado de la revisión actual con versión de algoritmo compatible. Guardar nuevas observaciones físicas T14 puede crear una revisión posterior. **Mantener visible el coste de esa ejecución como referencia histórica identificada**, con RunId, revisión, algoritmo y aviso «No hay coste publicado vigente para esta revisión», **sin recalcular automáticamente** ni promocionar el run anterior a vigente. Antes de implementar la persistencia T14, resolver y documentar la compatibilidad verificada con el run económico T12 (por ejemplo, RunId base y prueba explícita de cambios solo físicos); no cambiar unilateralmente los contratos existentes.
 - T13 verifica los escenarios y la lectura persistida T12; sus ficheros de prueba no son la fuente económica de los estudios reales. El origen matemático continúa siendo T11 y la valoración unitaria seguirá siendo T15.
 
 ### Ventana flotante: calculadora completa, prellenada y guiada
@@ -226,6 +228,8 @@ Presentar interfaz ES/EN, cantidades según perfil regional explícito (sin alte
 9. Las comprobaciones matemáticas exigidas por CM08 (C15, C16, C18, C19, C31) se ejecutan donde corresponda, sin reemplazarlas por la maqueta.
 
 ## 8. Decisiones todavía abiertas (no implementar por interpretación)
+
+Los cuatro acuerdos de integración del 14/10/2026 **sí están adoptados**, pero no resuelven los contratos técnicos de revisiones con T12, la interpretación de datos físicos legados de T07, la estructura de observaciones y versiones, los casos de equivalencia de calendarios de personal ni la política económica de T15. Véase la [matriz de asuntos pendientes](T14_INTEGRACION_Y_HOJA_DE_RUTA.md#6-cuestiones-técnicas-y-metodológicas-todavía-abiertas--no-resolver-por-interpretación).
 
 - **D04**: política económica por defecto para T15; sigue propuesta.
 - Regla para elegir muestras, normalización por longitud de periodo, ponderación y representatividad; **no imponer media universal**.
