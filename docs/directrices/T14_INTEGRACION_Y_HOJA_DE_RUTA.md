@@ -122,6 +122,17 @@ Este documento complementa [T14](../tareas/T14.md), la [directriz de capacidad n
 
 **Pendiente técnico T14.1:** definir la firma/comparador de entradas económicas de T12, su integración con revisión actual y el contrato de consumidores T15; la decisión de negocio queda cerrada, pero la compatibilidad no debe darse por comprobada hasta contar con pruebas.
 
+### T14.1 · Decisión técnica 10 aprobada (15/10/2026): fuente y calidad obligatorias, adjunto opcional
+
+**Opción A aprobada por el propietario.** Para **confirmar** la fila física de T14 debe quedar identificada la procedencia y la calidad de cada observación obligatoria (normal y real); **no se exige adjuntar un PDF/Excel ni otro archivo**. La fuente puede ser un registro medido, una declaración identificada o un método de cálculo justificado. El borrador puede guardar información incompleta con su estado pendiente, sin fingir que está confirmado.
+
+- **Campos mínimos confirmables:** fuente identificable y descripción suficiente de dónde procede, clasificación de calidad acorde a la evidencia disponible, unidad, período, cantidad válida y demás invariantes ya acordados. La calidad declarada no debe elevarse automáticamente a medición documental por confirmar una fila.
+- **Adjuntos y referencias:** permiten vincular justificantes cuando existan, pero su ausencia no impide confirmar una cifra cuya procedencia/calidad se conocen. Si después se añade o reemplaza una referencia documental, conservar fecha/autor y trazabilidad sin borrar la evidencia anterior. **Pendiente técnico:** formato seguro de almacenamiento/identidad de archivos opcionales dentro de la estrategia de archivo único SQLite y límites de tamaño; no hacer depender T14.2 de un gestor de archivos.
+- **Ejemplo:** Montaje: actividad real 610 h, fuente «resumen declarado por responsable de producción», calidad «declarado, sin soporte documental adjunto»; confirmable si cumple el resto de validaciones. No mostrarlo como «medición verificada».
+- **Pruebas:** confirmación con fuente/calidad sin archivo; rechazo de confirmación sin procedencia/ calidad; borrador parcial, real cero medido, incorporación posterior de evidencia, corrección justificada de datos confirmados y reapertura ES/EN.
+
+**Pendiente de definición técnica:** catálogos o tipos estables para fuente/calidad, textos específicos y estructura de evidencia opcional. No introducir la obligación de adjuntar un fichero mediante validaciones indirectas.
+
 ## 2. Inventario por pantalla: información existente y destino en T14
 
 | Pantalla y responsable | Datos introducidos o disponibles antes de T14 | Uso en T14 | ¿Se pide de nuevo? |
