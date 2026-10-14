@@ -48,7 +48,32 @@ public partial class MainWindow
                     while ((main.Company?.WorkspaceIdle == false || workflowStep != index) && timer.Elapsed < TimeSpan.FromSeconds(15))
                     { await Task.Delay(25); await Idle(); }
                     UpdateLayout();
-                    Check(workflowStep == index && button.FontWeight == FontWeights.Bold,
+                    // The accordion uses an active Tag and marker, not a bold
+                    // local FontWeight. Preferences retains its original style.
+                    bool activePresentation;
+                    if (index == 6)
+                    {
+                        activePresentation = button.FontWeight == FontWeights.Bold;
+                    }
+                    else
+                    {
+                        var marker = index switch
+                        {
+                            0 => CompanyStepMarker,
+                            1 => ModelStepMarker,
+                            2 => StudyStepMarker,
+                            3 => ImportStepMarker,
+                            4 => ResourcesStepMarker,
+                            5 => AllocationsStepMarker,
+                            _ => throw new InvalidOperationException("Unexpected navigation index")
+                        };
+                        activePresentation = Equals(button.Tag, "Active") &&
+                            marker.Background is SolidColorBrush selectedBrush &&
+                            selectedBrush.Color == Colors.White &&
+                            NavigationPhases[PhaseForStep(index)].IsExpanded &&
+                            NavigationPhases.Count(phase => phase.IsExpanded) == 1;
+                    }
+                    Check(workflowStep == index && activePresentation,
                         language + " sidebar invokes the original handler and marks selected step: " + index);
                     Check(button.Focus() && button.IsKeyboardFocusWithin, language + " sidebar keyboard focus: " + index);
                     Check(RootScrollViewer.ViewportHeight > 80 && Inside(WorkflowBack), language + " content and back action remain accessible: " + index);

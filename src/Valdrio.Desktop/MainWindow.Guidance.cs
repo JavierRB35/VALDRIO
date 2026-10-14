@@ -6,6 +6,45 @@ namespace Valdrio.Desktop;
 
 public partial class MainWindow
 {
+    private bool changingNavigationPhase;
+    private int displayedNavigationPhase = -1;
+    private Expander[] NavigationPhases => [ProjectPhase, AnalysisPhase, AllocationPhase];
+
+    private static int PhaseForStep(int step) => step switch
+    {
+        0 or 1 => 0,
+        2 or 3 or 4 => 1,
+        5 or 7 => 2,
+        _ => -1
+    };
+
+    private void ShowNavigationPhase(int step)
+    {
+        var phase = PhaseForStep(step);
+        if (phase < 0 || phase == displayedNavigationPhase) return;
+        changingNavigationPhase = true;
+        try
+        {
+            var groups = NavigationPhases;
+            for (var i = 0; i < groups.Length; i++) groups[i].IsExpanded = i == phase;
+            displayedNavigationPhase = phase;
+        }
+        finally { changingNavigationPhase = false; }
+    }
+
+    private void OnPhaseExpanded(object sender, RoutedEventArgs e)
+    {
+        if (changingNavigationPhase || sender is not Expander selected || e.OriginalSource != selected) return;
+        changingNavigationPhase = true;
+        try
+        {
+            foreach (var phase in NavigationPhases)
+                if (!ReferenceEquals(phase, selected)) phase.IsExpanded = false;
+            displayedNavigationPhase = Array.IndexOf(NavigationPhases, selected);
+        }
+        finally { changingNavigationPhase = false; }
+    }
+
     private int workflowStep;
     private readonly List<INotifyPropertyChanged> workflowSources = [];
     private void InitializeGuidance()
@@ -38,13 +77,44 @@ public partial class MainWindow
         if (viewModel is not { } vm) return;
         if (workflowStep == 4 && lastResourceStage != vm.Resources?.Stage) { lastHelpKey = null; lastResourceStage = vm.Resources?.Stage ?? -1; }
         NavigationGroupLabel.Text = vm.Guide("WorkspaceNavigation");
+        ProjectPhase.Header = vm.Guide("PhaseProjectStructure");
+        AnalysisPhase.Header = vm.Guide("PhaseAnalysisData");
+        AllocationPhase.Header = vm.Guide("PhaseAllocations");
+        ShowNavigationPhase(workflowStep);
         var keys = new[] { "Company", "Model", "Study", "Import", "Resources", "Allocations", "Settings", "SecondaryAllocations" };
         Button[] buttons = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, AllocationsStep, SettingsStep, SecondaryStep];
         for (var i = 0; i < buttons.Length; i++)
         {
-            buttons[i].Content = vm.Guide(keys[i]);
-            buttons[i].FontWeight = i == workflowStep ? FontWeights.Bold : FontWeights.Normal;
+            var label = vm.Guide(keys[i]);
+            // The small step marker already carries the sequence number.
+            // Retain numbered full titles elsewhere (e.g. the page heading).
+            if (i != 6 && label.Length > 3 && char.IsDigit(label[0]) &&
+                label[1] == '.' && label[2] == ' ')
+                label = label[3..];
+            buttons[i].Content = label;
+            buttons[i].Tag = i == workflowStep ? "Active" : null;
+            // Do not set a local FontWeight on phase buttons: it would
+            // override the lightweight active-state trigger in their style.
+            if (i == 6)
+                buttons[i].FontWeight = i == workflowStep
+                    ? FontWeights.Bold : FontWeights.Normal;
         }
+        Border[] markers = [CompanyStepMarker, ModelStepMarker, StudyStepMarker,
+            ImportStepMarker, ResourcesStepMarker, AllocationsStepMarker, SecondaryStepMarker];
+        int[] markerSteps = [0, 1, 2, 3, 4, 5, 7];
+        for (var i = 0; i < markers.Length; i++)
+        {
+            var active = markerSteps[i] == workflowStep;
+            markers[i].Background = active
+                ? System.Windows.Media.Brushes.White
+                : System.Windows.Media.Brushes.Transparent;
+            markers[i].Opacity = active ? 1d : 0.7d;
+            if (markers[i].Child is TextBlock number)
+                number.Foreground = active
+                    ? Sidebar.Background
+                    : System.Windows.Media.Brushes.White;
+        }
+
 
         var hasProject = vm.Company?.Snapshot is not null;
         var hasAnalysis = vm.Studies?.Current is not null;

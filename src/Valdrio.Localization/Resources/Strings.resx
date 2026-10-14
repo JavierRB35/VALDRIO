@@ -1487,4 +1487,7 @@ Difference to distribute: {7}</value></data>
   <data name="ActivityUnit.setup" xml:space="preserve"><value>Setup</value></data>
   <data name="ActivityUnit.pallet" xml:space="preserve"><value>Pallet</value></data>
   <data name="ActivityUnit.cycle" xml:space="preserve"><value>Cycle</value></data>
+  <data name="Guide.PhaseProjectStructure" xml:space="preserve"><value>Project and structure</value></data>
+  <data name="Guide.PhaseAnalysisData" xml:space="preserve"><value>Analysis and economic data</value></data>
+  <data name="Guide.PhaseAllocations" xml:space="preserve"><value>Allocations and calculation</value></data>
 </root>
