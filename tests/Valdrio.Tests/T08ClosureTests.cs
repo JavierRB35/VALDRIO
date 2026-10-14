@@ -84,7 +84,7 @@ public sealed partial class T06ImportConfirmationTests
         var history=Query(source,"SELECT group_concat(CanonicalJson) FROM ResourceChanges ORDER BY Id");
         var photos=Query(source,"SELECT group_concat(CanonicalJson) FROM StudySnapshots ORDER BY Id");
         using var file=Service().Upgrade(source,FileOf("v9.valdrio"),"test");
-        Assert.AreEqual(10,file.Read().SchemaVersion);Assert.AreEqual(hash,Hash(source));
+        Assert.AreEqual(SqliteCompanyFileService.SchemaVersion,file.Read().SchemaVersion);Assert.AreEqual(hash,Hash(source));
         Assert.AreEqual(history,Query(file.Path,"SELECT group_concat(CanonicalJson) FROM ResourceChanges ORDER BY Id"));
         Assert.AreEqual(photos,Query(file.Path,"SELECT group_concat(CanonicalJson) FROM StudySnapshots ORDER BY Id"));
         Assert.AreEqual("0",Query(file.Path,"SELECT COUNT(*) FROM AllocationKeyEvents"));
