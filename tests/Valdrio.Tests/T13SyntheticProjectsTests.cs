@@ -41,6 +41,9 @@ public sealed partial class T06ImportConfirmationTests
         var studyId = default(EntityId);
         string terminalFacts = "";
         string frozenSnapshot = "";
+        string completedRun = "";
+        EntityId savedReceiptId = default;
+        EntityId completedRunId = default;
 
         using (var file = Service().Create(new(companyPath, Read(caseData, "companyName"),
             new CurrencyCode("EUR"), PrecisionPolicy.Pdec1Proposed)))
@@ -208,10 +211,45 @@ public sealed partial class T06ImportConfirmationTests
             var receipt = file.Studies.Capture(new(companyId, studyId,
                 closed.ConfirmedStudy.Revision, Id(), "T13"));
             receipt.EnsureValid();
+            savedReceiptId = receipt.Id;
             frozenSnapshot = CanonicalSnapshotJson.Serialize(receipt);
             Assert.AreEqual(terminalFacts,
                 CanonicalSnapshotJson.Serialize(
                     SecondaryAllocationService.Calculate((AllocationStudySnapshotInput)receipt.Input).Facts));
+
+            // T13 now proves the complete T12 publication path against the same
+            // independent totals, rather than treating a legacy T11 closure as a run.
+            var run = file.Runs.PrepareRun(new(companyId, studyId,
+                closed.ConfirmedStudy.Revision, Id(), "T13"));
+            var runOutput = CalculationRunService.Calculate(run);
+            Assert.IsNotNull(runOutput.Primary);
+            Assert.IsNotNull(runOutput.Secondary, "The synthetic reciprocal graph must complete as a T12 run.");
+            Assert.AreEqual(Number(expected, "importTotal"),
+                runOutput.Secondary!.Facts.Sum(f => f.PostedAmount.Amount),
+                "Internal auxiliary transfers must never be added to terminal expense.");
+            Assert.AreEqual(terminalFacts, CanonicalSnapshotJson.Serialize(runOutput.Secondary.Facts));
+            Assert.IsTrue(runOutput.Transfers.Any(t => t.Internal),
+                "Both cases must cover actual auxiliary-to-auxiliary circulation.");
+            Assert.IsTrue(runOutput.Secondary.Reconciliations.All(r => r.Difference.Amount == 0m));
+            Assert.IsTrue(runOutput.Secondary.ResourceBridges.All(r =>
+                r.Difference.Amount == 0m && r.Pending.Amount == 0m));
+            foreach (var entry in expected.GetProperty("terminalTotals").EnumerateObject())
+                Assert.IsTrue(Math.Abs(runOutput.Secondary.Facts
+                    .Where(f => f.TerminalNodeId == nodeIds[entry.Name])
+                    .Sum(f => f.PostedAmount.Amount) -
+                    decimal.Parse(entry.Value.GetString()!, CultureInfo.InvariantCulture)) <= tolerance,
+                    "T12 final node differs from the independent T13 oracle: " + entry.Name);
+            var publishedRun = file.Runs.PublishRun(run.Id, runOutput);
+            Assert.AreEqual(CalculationRunStatus.Completed, publishedRun.Status);
+            completedRunId = publishedRun.Id;
+            completedRun = CanonicalSnapshotJson.Serialize(publishedRun);
+            var beforeRead = file.Studies.ReadSnapshots(companyId, studyId).Count;
+            var history = file.Runs.ReadRuns(companyId, studyId);
+            Assert.AreEqual(1, history.Runs.Count);
+            Assert.AreEqual(completedRunId, history.CurrentRunId);
+            Assert.AreEqual(completedRunId, history.MatchingCompleted(history.StudyRevision)?.Id);
+            Assert.AreEqual(beforeRead, file.Studies.ReadSnapshots(companyId, studyId).Count,
+                "Reading or checking an identical completed run must not create another snapshot.");
         }
 
         using (var reopened = Service().Open(companyPath, CompanyFileOpenMode.ReadOnly))
@@ -221,8 +259,15 @@ public sealed partial class T06ImportConfirmationTests
             Assert.IsTrue(persisted.Configuration.SecondaryClosed);
             Assert.AreEqual(terminalFacts,
                 CanonicalSnapshotJson.Serialize(persisted.SecondaryPublication!.Facts));
-            Assert.AreEqual(frozenSnapshot,
-                CanonicalSnapshotJson.Serialize(reopened.Studies.ReadSnapshots(companyId, studyId).Single()));
+            Assert.AreEqual(frozenSnapshot, CanonicalSnapshotJson.Serialize(
+                reopened.Studies.ReadSnapshots(companyId, studyId).Single(s => s.Id == savedReceiptId)));
+            var history = reopened.Runs.ReadRuns(companyId, studyId);
+            Assert.AreEqual(1, history.Runs.Count);
+            Assert.AreEqual(completedRunId, history.CurrentRunId);
+            Assert.AreEqual(completedRunId, history.MatchingCompleted(history.StudyRevision)?.Id);
+            Assert.AreEqual(completedRun,
+                CanonicalSnapshotJson.Serialize(history.Runs.Single(r => r.Id == completedRunId)),
+                "A historical T12 run must reopen byte-for-byte with no solver replay.");
         }
 
         // Optional: create usable .valdrio examples and audit receipts on Windows.
@@ -234,6 +279,78 @@ public sealed partial class T06ImportConfirmationTests
             Directory.CreateDirectory(target);
             File.Copy(companyPath, Path.Combine(target, Read(caseData, "id").ToLowerInvariant() + ".valdrio"), true);
             File.WriteAllText(Path.Combine(target, "frozen-snapshot.json"), frozenSnapshot);
+            File.WriteAllText(Path.Combine(target, "completed-t12-run.json"), completedRun);
         }
     }
-}
+
+    // Preserve both tracked T13 v9 files as migration fixtures. Never rewrite
+    // them while generating a current-format copy with a real T12 run.
+    [TestMethod]
+    [DataRow("Service Company", "services", 17500)]
+    [DataRow("Industrial Company", "industrial", 36000)]
+    public void T13_LegacySyntheticFileUpgradesToT12WithoutChangingSource(
+        string folder, string fileName, int expectedAmount)
+    {
+        var basePath = Path.Combine(AppContext.BaseDirectory, "Synthetic Projects", folder);
+        var sourcePath = Path.Combine(basePath, fileName + ".valdrio");
+        var goldenPath = Path.Combine(basePath, "frozen-snapshot.json");
+        Assert.IsTrue(File.Exists(sourcePath), "The real T13 SQLite v9 company must be copied to test output.");
+        var originalHash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(
+            File.ReadAllBytes(sourcePath)));
+        Assert.IsTrue(Service().RequiresUpgrade(sourcePath), "The checked-in T13 file is a genuine v9 input.");
+
+        var destination = FileOf(fileName + "-t12-upgraded.valdrio");
+        EntityId companyId;
+        EntityId studyId;
+        string completedRun;
+        EntityId runId;
+        using (var file = Service().Upgrade(sourcePath, destination, "T13-upgrade"))
+        {
+            Assert.AreEqual(SqliteCompanyFileService.SchemaVersion, file.Read().SchemaVersion);
+            Assert.IsFalse(Service().RequiresUpgrade(destination));
+            var study = file.Studies.ReadStudies().Single();
+            companyId = study.CompanyId;
+            studyId = study.Id;
+            Assert.AreEqual(File.ReadAllText(goldenPath),
+                CanonicalSnapshotJson.Serialize(file.Studies.ReadSnapshots(companyId, studyId).Single()),
+                "T11 receipt and imported history must survive the 9-to-10 upgrade exactly.");
+            var oldClosure = file.Allocations.ReadAllocations(companyId, studyId);
+            Assert.AreEqual(expectedAmount, oldClosure.SecondaryPublication!.Facts
+                .Sum(f => f.PostedAmount.Amount), "T13 terminal amount must survive migration.");
+
+            var run = file.Runs.PrepareRun(new(companyId, studyId, study.Revision, Id(), "T13-upgrade"));
+            var output = CalculationRunService.Calculate(run);
+            Assert.IsNotNull(output.Secondary, "The migrated T13 model must run under T12.");
+            Assert.AreEqual(expectedAmount, output.Secondary!.Facts.Sum(f => f.PostedAmount.Amount));
+            Assert.IsTrue(output.Transfers.Any(t => t.Internal), "Reciprocal transfer audit was lost.");
+            Assert.IsTrue(output.Secondary.Reconciliations.All(r => r.Difference.Amount == 0m));
+            Assert.IsTrue(output.Secondary.ResourceBridges.All(r => r.Difference.Amount == 0m));
+            var completed = file.Runs.PublishRun(run.Id, output);
+            Assert.AreEqual(CalculationRunStatus.Completed, completed.Status);
+            runId = completed.Id;
+            completedRun = CanonicalSnapshotJson.Serialize(completed);
+            var before = file.Studies.ReadSnapshots(companyId, studyId).Count;
+            var history = file.Runs.ReadRuns(companyId, studyId);
+            Assert.AreEqual(1, history.Runs.Count);
+            Assert.AreEqual(runId, history.MatchingCompleted(study.Revision)?.Id);
+            Assert.AreEqual(before, file.Studies.ReadSnapshots(companyId, studyId).Count);
+        }
+
+        using (var reopened = Service().Open(destination, CompanyFileOpenMode.ReadOnly))
+        {
+            var history = reopened.Runs.ReadRuns(companyId, studyId);
+            Assert.AreEqual(1, history.Runs.Count);
+            Assert.AreEqual(runId, history.CurrentRunId);
+            Assert.AreEqual(completedRun,
+                CanonicalSnapshotJson.Serialize(history.Runs.Single()),
+                "Historical T12 runs must remain frozen after reopening a migrated company.");
+            Assert.AreEqual(File.ReadAllText(goldenPath),
+                CanonicalSnapshotJson.Serialize(reopened.Studies.ReadSnapshots(companyId, studyId)
+                    .Single(s => s.Id != runId)),
+                "Migration must preserve the original T11 snapshot.");
+        }
+        Assert.AreEqual(originalHash,
+            Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(sourcePath))),
+            "The packaged T13 v9 company must stay byte-for-byte intact.");
+    }
+
