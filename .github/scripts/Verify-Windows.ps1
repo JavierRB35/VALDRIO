@@ -605,12 +605,19 @@ try {
       Write-Host "Artifact manifest verified: $group ($($manifest.Files.Count) files)."
     }
 
-    $files = Get-ChildItem -Path $captureDir -Filter *.png
-    if ($files.Count -ne 4) {
-      throw "Expected 4 visual evidence PNG files, found $($files.Count)."
+    # App.OnStartup emits startup.png in addition to the four presentation presets.
+    $expectedRootImages = @(
+      "startup.png", "01-en-esES-ltr.png", "02-es-esES-ltr.png",
+      "03-es-enUS-ltr.png", "04-pseudo-rtl.png"
+    )
+    $files = @(Get-ChildItem -LiteralPath $captureDir -File -Filter *.png)
+    if ($files.Count -ne $expectedRootImages.Count -or
+        @(Compare-Object ($expectedRootImages | Sort-Object) (@($files.Name) | Sort-Object)).Count -ne 0) {
+      throw "Root WPF evidence images differ: expected $($expectedRootImages -join ', '); found $($files.Name -join ', ')."
     }
 
     $files | ForEach-Object {
+      $null = Get-RequiredSha256 $_.FullName
       Write-Host "Visual evidence: $($_.Name) $($_.Length) bytes"
     }
     [xml]$trx = Get-Content -LiteralPath "tests/Valdrio.Tests/TestResults/valdrio-tests.trx" -Raw

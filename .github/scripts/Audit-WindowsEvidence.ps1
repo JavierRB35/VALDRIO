@@ -122,7 +122,8 @@ $imageContracts = @(
     @{ Dir = 't08-allocations'; Names = @('es-keys.png', 'es-rules.png', 'en-keys.png', 'en-rules.png', 'pseudo-rtl.png'); Count = 5; Exact = $false }
     @{ Dir = 'guided-workflow'; Names = @('structure-es.png', 'destination-es.png', 'review-es.png', 'review-pseudo-rtl.png'); Count = 4; Exact = $false }
     @{ Dir = 'studies'; Names = @(); Count = 8; Exact = $false }
-    @{ Dir = '.'; Names = @(); Count = 4; Exact = $false }
+    # The startup capture and all four ES/EN/pseudo-RTL presentation presets are required.
+    @{ Dir = '.'; Names = @('startup.png', '01-en-esES-ltr.png', '02-es-esES-ltr.png', '03-es-enUS-ltr.png', '04-pseudo-rtl.png'); Count = 5; Exact = $true }
 )
 foreach ($spec in $imageContracts) {
     $folder = Join-Path $root $spec.Dir

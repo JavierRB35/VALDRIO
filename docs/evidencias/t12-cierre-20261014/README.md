@@ -168,6 +168,16 @@ El usuario solicita revisar conjuntamente todas las expectativas del verificador
 - Se inspeccionó el workflow windows-ci.yml, que llama al mismo Verify-Windows.ps1; no se ejecutó ningún runner GitHub ni se autorizó gasto.
 - **Pendiente** validar el nuevo auditor en PowerShell Windows y repetir solo una vez la aceptación completa sobre SHA final. No fusionar ni eliminar la rama todavía.
 
+## Sexta aceptación: cinco capturas raíz correctamente generadas (14/10/2026)
+
+El usuario ejecutó el auditor transversal sobre las evidencias de `c33f6f57` y comunicó que los **16 recibos**, los **7 manifiestos con integridad de archivos** y las comprobaciones de imágenes interiores pasaron; la única discrepancia fue `Screenshot count .: expected 4, actual 5`. La prueba WPF global había pasado sus **80 controles**.
+
+Causa confirmada en `src/Valdrio.Desktop/App.xaml.cs`: `OnStartup` genera `startup.png` y `CaptureVisualEvidence` genera además las cuatro capturas `01-en-esES-ltr.png`, `02-es-esES-ltr.png`, `03-es-enUS-ltr.png`, `04-pseudo-rtl.png`. **No hay capturas sobrantes ni deben borrarse.**
+
+Se corrigen tanto `Audit-WindowsEvidence.ps1` como `Verify-Windows.ps1` para exigir exactamente esas **cinco capturas**, verificar presencia y ausencia de extras; la aceptación también comprueba que sus cinco archivos pueden obtener una huella SHA256. No cambia el código de producción, los recursos, los cálculos ni las migraciones.
+
+**Pendiente:** reejecutar el auditor local sobre la carpeta de evidencias previa y recibir `AUDITORIA GLOBAL SUPERADA`; después una aceptación Windows final, smoke específico T12 ES/EN, documentar resultados y solo entonces fusionar y eliminar la rama. No usar GitHub Actions.
+
 ## Acta de resultados — por cumplimentar
 
 - Fecha/hora, Windows, .NET: **pendiente**
