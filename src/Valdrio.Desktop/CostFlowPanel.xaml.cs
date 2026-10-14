@@ -83,7 +83,7 @@ public partial class CostFlowPanel : UserControl
         canvas.Height = Math.Max(340, y - 48);
         if (candidates.Length == 0)
         {
-            var empty = new TextBlock { Text = vm["NoGraphData"], Margin = new Thickness(22), Foreground = Brush("Text.Primary") };
+            var empty = new TextBlock { Text = vm["NoGraphData"], Margin = new Thickness(22), Foreground = ThemeBrush("Text.Primary") };
             canvas.Children.Add(empty);
             return;
         }

@@ -1,4 +1,6 @@
 using Microsoft.Data.Sqlite;
+using Valdrio.Application;
+using Valdrio.Infrastructure.CompanyFiles;
 using Valdrio.Desktop;
 using Valdrio.Localization;
 
