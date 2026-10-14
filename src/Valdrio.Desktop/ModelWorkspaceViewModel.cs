@@ -59,12 +59,12 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         this.preferences = preferences;
         this.dialogs = dialogs;
         this.formatter = formatter;
-        CreateCenterCommand = new AsyncRelayCommand(CreateCenter, () => Ready && company.CanWrite);
-        SaveCenterCommand = new AsyncRelayCommand(SaveCenter, () => Ready && company.CanWrite && Master is not null);
+        CreateCenterCommand = new AsyncRelayCommand(CreateCenter, () => Ready && company.CanWrite && !DuplicateCenterCode);
+        SaveCenterCommand = new AsyncRelayCommand(SaveCenter, () => Ready && company.CanWrite && Master is not null && !DuplicateCenterCode);
         NewCenterCommand = new AsyncRelayCommand(NewCenter, () => Ready && company.CanWrite && (IsEditingCenter || CenterFormEdited));
         SaveCenterFormCommand = new AsyncRelayCommand(SaveCenterForm, () => Ready && company.CanWrite &&
             !string.IsNullOrWhiteSpace(CenterCode) && !string.IsNullOrWhiteSpace(CenterName) &&
-            (Master is null || MasterEdited));
+            (Master is null || MasterEdited) && !DuplicateCenterCode);
         ToggleCenterCommand = new AsyncRelayCommand(ToggleCenter, () => Ready && company.CanWrite && Master is not null && !MasterEdited);
         ToggleUnitCommand = new AsyncRelayCommand(ToggleUnit, () => Ready && company.CanWrite && UnitMaster is not null);
         NewDraftCommand = new AsyncRelayCommand(NewDraft, () => Ready && company.CanWrite);
@@ -95,6 +95,12 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
 
     public bool IsBusy => busy;
     private bool MasterEdited => master is not null && (centerCode != master.Value.Code || centerName != master.Value.Name);
+    // Match the case-sensitive, company-wide uniqueness enforced by SQLite.
+    // During editing the selected centre's own ID is not a conflict.
+    private bool DuplicateCenterCode => !string.IsNullOrWhiteSpace(centerCode) &&
+        Centers.Any(c => c.Value.Code == centerCode &&
+            (master is null || c.Value.Id != master.Value.Id));
+    public string CenterCodeValidation => DuplicateCenterCode ? Text("Model.CenterCodeInUse") : "";
     private bool CenterFormEdited => master is null
         ? !string.IsNullOrWhiteSpace(centerCode) || !string.IsNullOrWhiteSpace(centerName)
         : MasterEdited;
@@ -899,12 +905,16 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         Refresh();
     }
 
-    private async Task CreateCenter() => await Run(async t =>
+    private async Task CreateCenter()
+    {
+        if (DuplicateCenterCode) { Refresh(); return; }
+        await Run(async t =>
     {
         var created = await Task.Run(() => company.ActiveModels!.CreateCenter(new(company.Snapshot!.Id, CenterCode, CenterName, "local-user"), t));
         await ApplyConfirmedThenReload(created, ApplyConfirmedCenter);
         if (!committedRefreshPending) statusKey = "Model.CenterCreated";
-    });
+        });
+    }
 
     private async Task SaveCenter() => await ChangeCenter(Master!.Value.IsActive, "Model.CenterSaved");
     private async Task ToggleCenter() => await ChangeCenter(!Master!.Value.IsActive, "Model.CenterStateChanged");
@@ -942,13 +952,17 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         Refresh();
     }
 
-    private async Task ChangeCenter(bool active, string successKey) => await Run(async t =>
+    private async Task ChangeCenter(bool active, string successKey)
+    {
+        if (DuplicateCenterCode) { Refresh(); return; }
+        await Run(async t =>
     {
         var current = Master!.Value;
         var result = await Task.Run(() => company.ActiveModels!.ChangeCenter(new(company.Snapshot!.Id, current.Id, current.Revision, CenterCode, CenterName, active, "local-user"), t));
         await ApplyConfirmedThenReload(result, ApplyConfirmedCenter);
         if (!committedRefreshPending) statusKey = successKey;
-    });
+        });
+    }
     private async Task ToggleUnit() => await Run(async t =>
     {
         var u = UnitMaster!.Value;

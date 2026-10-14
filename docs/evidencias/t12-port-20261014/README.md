@@ -42,6 +42,14 @@ Se ha incorporado `ICompanyFileService.RequiresUpgrade` y su lectura SQLite en m
 
 Prueba nueva: `OpeningGenuineOldFileOffersUpgradeToNewCopyWithoutReSelectingSource`, sobre fixture histórica v3, con verificación de hash del origen, cancelación, migración a versión 10, reapertura y ausencia de segundo selector del origen. Se amplía también el smoke WPF para comprobar que aparece la acción. **Pruebas nuevas aún no ejecutadas en Windows**; no se presume superada la aceptación por revisión estática.
 
+## Incidencia: código de centro duplicado durante preparación (14/10/2026)
+
+La captura del usuario muestra `MODEL_DUPLICATE` en `SqliteCompanyFileService.Session.CreateCenter` cuando existe el código de un centro físico. El repositorio ya capturaba `DomainRuleException` en `ModelWorkspaceViewModel.Run`, pero el depurador se detenía en el `throw` original. Se ha añadido comprobación previa de código de centro repetido en el ViewModel, comparando literalmente con todos los centros guardados, incluso desactivados, y excluyendo el ID del propio centro editado. La pantalla muestra ayuda de corrección junto al código y deshabilita guardar mientras coincida. El servicio SQLite mantiene la validación final contra carreras de concurrencia.
+
+Se incorpora `DuplicatePhysicalCenterCodeIsShownBeforeStorageAndUniqueCodeCanBeSaved` para probar código repetido al crear y editar, desbloqueo con uno nuevo, persistencia y no-escritura en caso duplicado. **No se modifica ni restringe la selección de cuentas a importar:** varias líneas con la misma cuenta siguen agrupándose según el contrato de importación. La relación causal concreta entre el flujo de importación del usuario y `CreateCenter` todavía debe reproducirse en WPF.
+
+Sin compilación ni pruebas Windows todavía.
+
 ## Criterio de entrega antes de fusionar
 
 Ejecutar en Windows local `dotnet build`, suite completa, escenarios migrados y smoke WPF; resolver regresiones por los cambios T13, PR #47–#50, rutas y localización. Registrar hash de commit probado, resultados, errores reales, capturas y conformidad económica. No usar runners hosted sin consentimiento separado.

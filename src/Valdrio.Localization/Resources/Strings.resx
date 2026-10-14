@@ -179,6 +179,7 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Title" xml:space="preserve"><value>Configure cost structure</value></data>
   <data name="Model.Notes" xml:space="preserve"><value>Define how cost allocation is organised: centres, nodes and activity units. This structure can be reused across different periods and analyses.</value></data>
   <data name="Model.Centers" xml:space="preserve"><value>Physical centres</value></data>
+  <data name="Model.CenterCodeInUse" xml:space="preserve"><value>This code already belongs to another centre. Enter a different code or select that centre in the table to edit it.</value></data>
   <data name="Model.CenterCode" xml:space="preserve"><value>Centre code</value></data>
   <data name="Model.CenterName" xml:space="preserve"><value>Centre name</value></data>
   <data name="Model.CreateCenter" xml:space="preserve"><value>Create center</value></data>

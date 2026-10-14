@@ -179,6 +179,7 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.Title" xml:space="preserve"><value>Configurar estructura de costes</value></data>
   <data name="Model.Notes" xml:space="preserve"><value>Define cómo se organizará el reparto de costes: centros, nodos y unidades de actividad. Esta estructura se puede reutilizar en distintos periodos y análisis.</value></data>
   <data name="Model.Centers" xml:space="preserve"><value>Centros físicos</value></data>
+  <data name="Model.CenterCodeInUse" xml:space="preserve"><value>Este código ya pertenece a otro centro. Utiliza uno diferente o selecciona ese centro en la tabla para modificarlo.</value></data>
   <data name="Model.CenterCode" xml:space="preserve"><value>Código del centro</value></data>
   <data name="Model.CenterName" xml:space="preserve"><value>Nombre del centro</value></data>
   <data name="Model.CreateCenter" xml:space="preserve"><value>Crear centro</value></data>
