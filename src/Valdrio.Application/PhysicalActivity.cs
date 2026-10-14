@@ -41,14 +41,16 @@ public sealed record PhysicalObservation(
 }
 
 public sealed record SavePhysicalObservation(
-    EntityId CompanyId, EntityId StudyId, EntityId NodeId, EntityId PoolId, long ExpectedPhysicalVersion,
+    EntityId CompanyId, EntityId StudyId, long ExpectedStudyRevision,
+    EntityId NodeId, EntityId PoolId, long ExpectedPhysicalVersion,
     PhysicalObservationState State, decimal? TheoreticalQuantity, decimal? PracticalQuantity,
     decimal? NormalQuantity, decimal? RealQuantity,
     PhysicalEvidence? NormalEvidence, PhysicalEvidence? RealEvidence,
     string? NormalZeroReason, string? ExceptionReason, string? CorrectionReason, string Actor);
 
 public sealed record AnnulPhysicalObservation(
-    EntityId CompanyId, EntityId StudyId, EntityId NodeId, EntityId PoolId,
+    EntityId CompanyId, EntityId StudyId, long ExpectedStudyRevision,
+    EntityId NodeId, EntityId PoolId,
     long ExpectedPhysicalVersion, string Reason, string Actor);
 
 public interface IPhysicalActivityWorkspace
@@ -67,7 +69,7 @@ public static class PhysicalActivityRules
     {
         ArgumentNullException.ThrowIfNull(input);
         if (!Enum.IsDefined(input.State) || input.State == PhysicalObservationState.Annulled
-            || input.ExpectedPhysicalVersion < 0 || string.IsNullOrWhiteSpace(input.Actor) || input.Actor.Length > 300)
+            || input.ExpectedPhysicalVersion < 0 || input.ExpectedStudyRevision < 0 || string.IsNullOrWhiteSpace(input.Actor) || input.Actor.Length > 300)
             throw Error("ACT_INPUT_INVALID", "Activity.InputInvalid");
 
         foreach (var quantity in new[] { input.TheoreticalQuantity, input.PracticalQuantity, input.NormalQuantity, input.RealQuantity })
