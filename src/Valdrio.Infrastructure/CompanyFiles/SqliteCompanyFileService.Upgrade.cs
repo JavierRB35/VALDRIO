@@ -73,6 +73,7 @@ public sealed partial class SqliteCompanyFileService
                 using (var international = new InternationalImportDbContext(output)) international.Database.Migrate();
                 using (var resources = new ResourceDbContext(output)) resources.Database.Migrate();
                 using (var allocations = new AllocationDbContext(output)) allocations.Database.Migrate();
+                using (var runs = new RunDbContext(output)) runs.Database.Migrate();
                 using var db = new PhysicalDbContext(output);
                 db.Database.Migrate();
                 onCheckpoint?.Invoke(CompanyWriteCheckpoint.AfterFirstWrite);
