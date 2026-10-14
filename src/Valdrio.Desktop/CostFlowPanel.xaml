@@ -8,11 +8,27 @@
    <TextBlock Text="{Binding CurrentState}" FontWeight="SemiBold" Margin="0,8,0,4"/><TextBlock Text="{Binding Summary}" TextWrapping="Wrap"/>
    <TextBlock Text="{Binding Diagnostics}" TextWrapping="Wrap" Margin="0,8,0,0" AutomationProperties.LiveSetting="Assertive"><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}"><Style.Triggers><DataTrigger Binding="{Binding HasError}" Value="True"><Setter Property="Foreground" Value="{DynamicResource Brand.Red}"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
   </StackPanel></Border>
-  <Border Style="{StaticResource Card}" Margin="0,0,0,16"><Expander Header="{Binding [Graph]}" IsExpanded="True"><StackPanel>
-   <TextBlock Text="{Binding [GrossHelp]}" TextWrapping="Wrap" Margin="0,8"/>
-   <ScrollBar Orientation="Horizontal" Maximum="{Binding ScrollableWidth, ElementName=GraphViewport}" ViewportSize="{Binding ViewportWidth, ElementName=GraphViewport}" SmallChange="80" LargeChange="300" ValueChanged="PanGraph" AutomationProperties.Name="{Binding [PanGraph]}"/>
-   <ScrollViewer x:Name="GraphViewport" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" CanContentScroll="False"><Canvas x:Name="GraphCanvas" Width="1100" Height="1350" Background="{DynamicResource Surface.Canvas}"/></ScrollViewer>
-  </StackPanel></Expander></Border>
+  <!-- Separate, independently scrolling stages; shared VM selection lights both. -->
+  <Border Style="{StaticResource Card}" Margin="0,0,0,16"><StackPanel>
+   <TextBlock Text="{Binding [GraphTraceHelp]}" TextWrapping="Wrap" Margin="0,2,0,12"/>
+   <Expander Header="{Binding [PrimaryGraph]}" IsExpanded="True">
+    <ScrollViewer x:Name="PrimaryGraphViewport" SizeChanged="ResizeGraph" HorizontalScrollBarVisibility="Auto"
+                  VerticalScrollBarVisibility="Auto" CanContentScroll="False" MaxHeight="565">
+     <Canvas x:Name="PrimaryGraphCanvas" Width="860" Height="360" Background="{DynamicResource Surface.Canvas}"/>
+    </ScrollViewer>
+   </Expander>
+  </StackPanel></Border>
+  <Border Style="{StaticResource Card}" Margin="0,0,0,16"><StackPanel>
+   <Expander Header="{Binding [SecondaryGraph]}" IsExpanded="True">
+    <StackPanel>
+     <TextBlock Text="{Binding [GrossGraphHelp]}" TextWrapping="Wrap" Margin="0,4,0,12"/>
+     <ScrollViewer x:Name="SecondaryGraphViewport" SizeChanged="ResizeGraph" HorizontalScrollBarVisibility="Auto"
+                   VerticalScrollBarVisibility="Auto" CanContentScroll="False" MaxHeight="640">
+      <Canvas x:Name="SecondaryGraphCanvas" Width="860" Height="430" Background="{DynamicResource Surface.Canvas}"/>
+     </ScrollViewer>
+    </StackPanel>
+   </Expander>
+  </StackPanel></Border>
   <Border Style="{StaticResource Card}" Margin="0,0,0,16"><StackPanel>
    <DockPanel><Button DockPanel.Dock="Right" Content="{Binding [ClearSelection]}" Command="{Binding ClearSelectionCommand}"/><TextBlock Text="{Binding [Details]}" FontWeight="SemiBold"/></DockPanel>
    <TextBlock Text="{Binding Selection}" TextWrapping="Wrap" Margin="0,8"/>
