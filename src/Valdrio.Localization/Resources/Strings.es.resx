@@ -141,6 +141,7 @@ Archivo: {8}</value></data>
   <data name="File.RevisionChanged" xml:space="preserve"><value>La revisión ha cambiado. Recarga la empresa antes de guardar.</value></data>
   <data name="File.DuplicateUnit" xml:space="preserve"><value>El ID o código de unidad ya existe. Usa un código único. No se ha confirmado ningún cambio.</value></data>
   <data name="File.InputInvalid" xml:space="preserve"><value>Revisa el nombre, la moneda y la unidad introducidos. No se ha confirmado ningún cambio.</value></data>
+  <data name="CompanyUpgradeNoticeTitle" xml:space="preserve"><value>Este proyecto necesita actualizarse</value></data>
   <data name="CompanyOpenFailureTitle" xml:space="preserve"><value>No se ha podido abrir el proyecto</value></data>
   <data name="CompanyUpgrade" xml:space="preserve"><value>Abrir y actualizar un archivo antiguo en una copia nueva</value></data>
   <data name="File.UpgradeRequired" xml:space="preserve"><value>Este archivo anterior requiere actualización a un archivo nuevo. Seleccione Actualizar y conserve el original.</value></data>

@@ -34,6 +34,14 @@ Los hunks originales en infraestructura y pruebas se aplicaron por coincidencia 
 [PR #36](https://github.com/JavierRB35/VALDRIO/pull/36) registra validación local en otra revisión (634/634, 9/9 y 28/28); logs y capturas originales:
 [docs/evidencias/t12-flujos-20261011](https://github.com/JavierRB35/VALDRIO/tree/8f3d24976502b4d7909268eee0e922cfbeed3229/docs/evidencias/t12-flujos-20261011).
 
+## Incidencia nueva: apertura de archivo anterior (14/10/2026)
+
+El usuario detectó que Visual Studio pausaba en el lanzamiento de `FILE_UPGRADE_REQUIRED` al abrir un proyecto antiguo. La excepción ya se capturaba en `CompanyFileViewModel.Run`, pero el caso normal pasaba por un `throw` antes de ofrecer la actualización.
+
+Se ha incorporado `ICompanyFileService.RequiresUpgrade` y su lectura SQLite en modo solo lectura, sin escribir ni abrir el archivo con esquema actual. La interfaz anticipa la situación, conserva la ruta elegida y ofrece actualizar a una copia nueva sin volver a seleccionar el origen. El título del aviso se distingue de errores auténticos (ES/EN). El comando de actualización conserva la ruta original y exige destino nuevo; cancelar no altera el origen.
+
+Prueba nueva: `OpeningGenuineOldFileOffersUpgradeToNewCopyWithoutReSelectingSource`, sobre fixture histórica v3, con verificación de hash del origen, cancelación, migración a versión 10, reapertura y ausencia de segundo selector del origen. Se amplía también el smoke WPF para comprobar que aparece la acción. **Pruebas nuevas aún no ejecutadas en Windows**; no se presume superada la aceptación por revisión estática.
+
 ## Criterio de entrega antes de fusionar
 
 Ejecutar en Windows local `dotnet build`, suite completa, escenarios migrados y smoke WPF; resolver regresiones por los cambios T13, PR #47–#50, rutas y localización. Registrar hash de commit probado, resultados, errores reales, capturas y conformidad económica. No usar runners hosted sin consentimiento separado.

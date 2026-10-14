@@ -141,6 +141,7 @@ File: {8}</value></data>
   <data name="File.RevisionChanged" xml:space="preserve"><value>The revision changed. Reload the current company before saving.</value></data>
   <data name="File.DuplicateUnit" xml:space="preserve"><value>The unit ID or code already exists. Use a unique code. No change was confirmed.</value></data>
   <data name="File.InputInvalid" xml:space="preserve"><value>Review the entered name, currency and unit. No change was confirmed.</value></data>
+  <data name="CompanyUpgradeNoticeTitle" xml:space="preserve"><value>This project needs an upgrade</value></data>
   <data name="CompanyOpenFailureTitle" xml:space="preserve"><value>Unable to open project</value></data>
   <data name="CompanyUpgrade" xml:space="preserve"><value>Open and upgrade an older file into a new copy</value></data>
   <data name="File.UpgradeRequired" xml:space="preserve"><value>This older file needs an explicit upgrade to a new file. Select Upgrade; keep the original.</value></data>

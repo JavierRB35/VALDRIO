@@ -144,9 +144,13 @@ public partial class App : System.Windows.Application
         if (captureDirectory is null)
         {
             company.OpenFailure = message =>
+            {
+                var legacy = company.DiagnosticCode == "FILE_UPGRADE_REQUIRED";
                 MessageBox.Show(message,
-                    texts.Get("CompanyOpenFailureTitle", CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)),
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                    texts.Get(legacy ? "CompanyUpgradeNoticeTitle" : "CompanyOpenFailureTitle",
+                        CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)),
+                    MessageBoxButton.OK, legacy ? MessageBoxImage.Information : MessageBoxImage.Warning);
+            };
         }
         var modelDialogs = captureDirectory is null ? (IModelEditorDialogs)new ModelEditorDialogs() : new QueuedModelEditorDialogs();
         models = new ModelWorkspaceViewModel(company, texts, preferences, modelDialogs, formatter);
