@@ -51,7 +51,7 @@ public sealed record SavePhysicalObservation(
 public sealed record AnnulPhysicalObservation(
     EntityId CompanyId, EntityId StudyId, long ExpectedStudyRevision,
     EntityId NodeId, EntityId PoolId,
-    long ExpectedPhysicalVersion, string Reason, string Actor);
+    long ExpectedPhysicalVersion, string? Reason, string Actor);
 
 public interface IPhysicalActivityWorkspace
 {
