@@ -39,7 +39,7 @@ public static class ResourceDraftEditor
         CurrencyCode currency, PrecisionPolicy precision)
     {
         ArgumentNullException.ThrowIfNull(draft);
-        var candidate = new ResourceDraft(draft.Id, draft.Sources, draft.Adjustments, parts);
+        var candidate = new ResourceDraft(draft.Id, draft.Sources, draft.Adjustments, parts) { AnalyticalOrigin = draft.AnalyticalOrigin };
         var preparation = ResourcePreparationRules.Prepare([candidate], currency, precision);
         if (!preparation.IsValid) throw new DomainRuleException(preparation.Diagnostics[0]);
         return new(candidate, preparation);

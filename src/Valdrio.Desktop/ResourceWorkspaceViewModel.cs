@@ -50,11 +50,11 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
         ClearAdjustmentCommand = new RelayCommand(ClearAdjustment, () => CanEdit);
         PutObjectCommand = new AsyncRelayCommand(SaveObject, () => CanEdit && !IsRevaluing);
         ClearObjectCommand = new RelayCommand(ClearObject, () => CanEdit);
-        DiscardCommand = new RelayCommand(Discard, () => !busy && IsDirty);
+        DiscardCommand = new RelayCommand(() => { RuleCards.Clear(); RebuildRuleCards(); Discard(); }, () => !busy && IsDirty);
         CancelCommand = new RelayCommand(() => cancellation?.Cancel(), () => busy);
         ResetCommand = new AsyncRelayCommand(Reset, () => CanEdit && !IsDirty);
         AcknowledgeCultureCommand = new RelayCommand(() => { cultureAcknowledged = true; Refresh(); }, () => CultureChanged && !busy);
-        InitializeRevalueCommands();
+        InitializeRevalueCommands(); InitializeRuleCommands();
         PartForm.Edited += PartEdited; AdjustmentForm.Edited += AdjustmentEdited; ObjectForm.Edited += ObjectEdited;
         earlierBusy = company.WorkspaceBusy; earlierBefore = studies.BeforeChangeAsync; earlierAfter = company.AfterChangeAsync;
         company.WorkspaceBusy = () => busy || correctionCommitPending || earlierBusy?.Invoke() == true;
@@ -125,7 +125,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
         }
     }
     public string ResourcesTotalConverted => SumResourceCoverage(c => c.ConvertedOriginal);
-    public string ResourcesTotalAdjustments => SumResourceCoverage(c => c.AdjustmentTotal);
+    public string ResourcesTotalAdjustments => SumResourceCoverage(c => c.AdjustmentTotal - AdjustmentRuleEngine.RuleTotal((preview ?? workspace)!, c.ResourceId));
     public string ResourcesTotalEffective => SumResourceCoverage(c => c.Effective);
     public string ResourcesTotalPending => SumResourceCoverage(c => c.Pending);
     public string ResourcesTotalDifference => SumResourceCoverage(c => c.Difference);
@@ -138,7 +138,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     public bool CanEditAdjustmentsAndObjects => CanEdit && !IsRevaluing;
     private bool primaryClosed;
     public bool CanEdit => !primaryClosed && !busy && company.IsIdle && earlierBusy?.Invoke() != true && company.CanWrite && workspace?.Study.State == StudyState.Open;
-    public bool IsDirty => dirty || partDirty || adjustmentDirty || objectDirty || IsRevaluing;
+    public bool IsDirty => dirty || partDirty || adjustmentDirty || objectDirty || IsRevaluing || RuleCards.Any(c => c.IsDirty);
     public bool HasResourceChanges => dirty || partDirty || adjustmentDirty;
     public int Stage => stage;
     public bool ShowList => true;
@@ -214,8 +214,9 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
         {
             var port = company.ActiveResources!;
             var data = await Task.Run(() => (port.ReadResources(current.CompanyId, current.Id, token), port.ReadResourceHistory(current.CompanyId, current.Id, token), company.ActiveAllocations!.ReadAllocations(current.CompanyId, current.Id, token).Configuration), token);
+            savedRules = await Task.Run(() => port.ReadAdjustmentRules(current.CompanyId, token), token);
             workspace = data.Item1; history = data.Item2; accountDescriptions = data.Item3.Descriptions; primaryClosed = data.Item3.PrimaryClosed; path = company.ActivePath; preview = workspace; editing = null; stage = 0;
-            statusKey = "Ready"; RebuildRows(); Refresh();
+            statusKey = "Ready"; RebuildRuleCards(); RebuildRows(); Refresh();
         });
     }
     public async Task AdvanceAsync()
@@ -262,7 +263,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
         parts.Clear(); parts.AddRange(editing.Parts); deltas.Clear(); dirty = false; reason = "";
         ClearPart(); ClearAdjustment(); ClearObject(); Recompute();
     }
-    private void ClearWorkspace() { primaryClosed = false; workspace = preview = null; history = []; editing = null; Discard(); RebuildRows(); Refresh(); }
+    private void ClearWorkspace() { RuleCards.Clear(); savedRules = []; primaryClosed = false; workspace = preview = null; history = []; editing = null; Discard(); RebuildRows(); Refresh(); }
     private void Discard()
     {
         dirty = false; editing = null; parts.Clear(); deltas.Clear(); reason = ""; stage = 0; preview = workspace; CancelRevalue();
@@ -279,11 +280,12 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
             _ => await SavePendingAndLeaveAsync()
         };
     }
-    private bool DiscardAndLeave() { Discard(); return true; }
+    private bool DiscardAndLeave() { RuleCards.Clear(); RebuildRuleCards(); Discard(); return true; }
     public async Task<bool> SavePendingAndLeaveAsync()
     {
         if (!CanEdit || !CheckCulture()) return false;
         if (IsRevaluing) { statusKey = "ApplyFormsFirst"; Refresh(); return false; }
+        foreach (var card in RuleCards.Where(c => c.IsDirty).ToArray()) { await SaveRule(card); if (card.IsDirty) return false; }
         if (objectDirty) { await SaveObject(); if (objectDirty) return false; }
         if (adjustmentDirty) { Try(AddAdjustment); if (adjustmentDirty) return false; }
         if (partDirty) { Try(ApplyPart); if (partDirty) return false; }
@@ -355,10 +357,12 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
         foreach (var resource in (preview ?? workspace)?.Resources ?? [])
         {
             var w = preview ?? workspace!; var c = w.Preparation.Coverage.Single(c => c.ResourceId == resource.Id);
+            var ruleTotal = AdjustmentRuleEngine.RuleTotal(w, resource.Id);
+            var manual = c.AdjustmentTotal - ruleTotal;
             var originals = string.Join(" + ", ResourceWorkspaceRules.OriginalTotals(resource, w.Precision).Select(MoneyText));
             Rows.Add(new(resource.Id, w.Origins.Single(o => o.Id == resource.Id).Code, originals, MoneyText(c.ConvertedOriginal),
-                MoneyText(c.AdjustmentTotal), MoneyText(c.Effective), MoneyText(c.Pending), MoneyText(c.Difference))
-                { DisplayName = AccountLabel(w.Origins.Single(o => o.Id == resource.Id)), Revision = w.Study.Revision, CorrectionNumber = c.AdjustmentTotal.Amount.ToString("0.########", Format), FormatCulture = Format.Name, AssignmentStatus = this[c.HasPendingParts ? "AssignmentPending" : "AssignmentComplete"] });
+                MoneyText(manual), MoneyText(c.Effective), MoneyText(c.Pending), MoneyText(c.Difference))
+                { DisplayName = AccountLabel(w.Origins.Single(o => o.Id == resource.Id)), Revision = w.Study.Revision, RuleAdjustments = MoneyText(ruleTotal), CorrectionNumber = manual.Amount.ToString("0.########", Format), FormatCulture = Format.Name, AssignmentStatus = this[c.HasPendingParts ? "AssignmentPending" : "AssignmentComplete"] });
         }
         ResourceChoice = Rows.FirstOrDefault(r => r.Id == id) ?? Rows.FirstOrDefault();
         var oldPart = PartChoice?.Value.Id; Parts.Clear();
@@ -389,6 +393,8 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     private void Refresh() { OnPropertyChanged(string.Empty); RefreshCommands(); }
     private void RefreshCommands()
     {
+        AddRuleCommand?.NotifyCanExecuteChanged();
+        foreach (var card in RuleCards) card.RefreshState();
         foreach (var command in new IRelayCommand?[] { RefreshCommand, OpenSelectedResourceCommand, CloseDestinationsCommand, ApplyPartCommand, RemovePartCommand, LoadPartCommand, ClearPartCommand, AddPendingCommand,
             AddAdjustmentCommand, ReverseAdjustmentCommand, ClearAdjustmentCommand, PutObjectCommand, ClearObjectCommand, DiscardCommand, CancelCommand, ResetCommand,
             AcknowledgeCultureCommand, PrepareRevalueCommand, CommitRevalueCommand, CancelRevalueCommand, StartRevalueCommand }) command?.NotifyCanExecuteChanged();

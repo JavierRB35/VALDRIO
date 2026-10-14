@@ -26,6 +26,12 @@ public sealed partial class SqliteCompanyFileService
 
     private sealed partial class Session
     {
+        public IReadOnlyList<ReusableAdjustmentRule> ReadAdjustmentRules(EntityId companyId, CancellationToken token = default) =>
+            Workspace(false, token, (context, file) =>
+            {
+                Scope(companyId, file);
+                return AdjustmentCatalog((ResourceDbContext)context, companyId);
+            });
         public ResourceWorkspaceSnapshot ReadResources(EntityId companyId, EntityId studyId, CancellationToken token = default) =>
             Workspace(false, token, (context, file) =>
             {
@@ -57,9 +63,26 @@ public sealed partial class SqliteCompanyFileService
                         throw ResourceWorkspaceRules.Error("RES_ADJUSTMENT_CURRENCY_INVALID", "Resource.AdjustmentCurrencyInvalid");
                 }
                 // IDs may not be reused after an explicit reset either.
-                var used = ResourceChanges(db, file.Id, before.Id).SelectMany(r => r.Request.Adjustments).Select(a => a.Id).ToHashSet();
+                var used = ResourceChanges(db, file.Id, before.Id).SelectMany(r => r.Ledger.Entries.SelectMany(e => e.Adjustments)).Select(a => a.Id).ToHashSet();
                 if (command.Adjustments.Any(a => used.Contains(a.Id))) throw ResourceWorkspaceRules.Error("RES_DUPLICATE_ID", "Resource.DuplicateId");
-                var ledger = ResourceWorkspaceRules.Apply(ResourceWorkspace(db, file, before), command);
+                if (command.AdjustmentRule is { } operation)
+                {
+                    if (operation.Metadata != owner.FreezeResourceCurrency(before.Currency.FunctionalCurrencyCode))
+                        throw ResourceWorkspaceRules.Error("RES_ADJUSTMENT_CURRENCY_INVALID", "Resource.AdjustmentCurrencyInvalid");
+                    var currentRule = AdjustmentCatalog(db, file.Id).SingleOrDefault(r => r.Id == operation.Rule.Id);
+                    if (operation.Action == AdjustmentRuleAction.Save)
+                    {
+                        if (operation.Rule.Version != (currentRule?.Version ?? 0) + 1)
+                            throw ResourceWorkspaceRules.Error("ADJ_STALE", "Adjustment.Stale");
+                    }
+                    else if (operation.Action == AdjustmentRuleAction.Apply && currentRule != operation.Rule)
+                        throw ResourceWorkspaceRules.Error("ADJ_STALE", "Adjustment.Stale");
+                }
+                var previousWorkspace = ResourceWorkspace(db, file, before);
+                var ledger = ResourceWorkspaceRules.Apply(previousWorkspace, command);
+                var previousIds = previousWorkspace.Resources.SelectMany(r => r.Adjustments).Select(a => a.Id).ToHashSet();
+                var createdAdjustments = ledger.Entries.SelectMany(r => r.Adjustments).Where(a => !previousIds.Contains(a.Id)).ToArray();
+                if (createdAdjustments.Any(a => used.Contains(a.Id))) throw ResourceWorkspaceRules.Error("RES_DUPLICATE_ID", "Resource.DuplicateId");
                 var after = Changed(before, before.Name, before.PeriodStart, before.PeriodEnd, before.Purpose, before.ScenarioKind,
                     before.SelectedModelVersionId, before.Currency, before.State);
                 var result = new ResourceMutationReceipt(command, before, after, ledger, owner.time.GetUtcNow());
@@ -70,7 +93,7 @@ public sealed partial class SqliteCompanyFileService
                 Audit(db, file, "Study", before.Id, after.Revision, "ChangeResources", command.Actor, before, after);
                 Audit(db, file, "ResourceChange", command.RequestId, 0, "ChangeResources", command.Actor,
                     (ResourceMutationReceipt?)null, result, command.RequestId.ToString());
-                foreach (var delta in command.Adjustments)
+                foreach (var delta in createdAdjustments)
                 {
                     token.ThrowIfCancellationRequested();
                     var saved = ledger.Entries.SelectMany(e => e.Adjustments).Single(a => a.Id == delta.Id);
@@ -82,8 +105,22 @@ public sealed partial class SqliteCompanyFileService
             });
     }
 
+    private static IReadOnlyList<ReusableAdjustmentRule> AdjustmentCatalog(ResourceDbContext db, EntityId companyId)
+    {
+        var versions = db.ResourceChanges.AsNoTracking().Where(r => r.CompanyId == companyId.ToString()).ToArray()
+            .Select(ResourceChange).Select(r => r.Request.AdjustmentRule)
+            .Where(o => o?.Action == AdjustmentRuleAction.Save).Select(o => o!.Rule).ToArray();
+        foreach (var group in versions.GroupBy(r => r.Id))
+        {
+            var ordered = group.OrderBy(r => r.Version).ToArray();
+            Invalid(ordered.Where((r, i) => r.CompanyId != companyId || r.Version != i + 1).Any(), "Invalid adjustment rule history");
+            foreach (var rule in ordered) AdjustmentRuleEngine.Validate(rule);
+        }
+        return FrozenList.Copy(versions.GroupBy(r => r.Id).Select(g => g.MaxBy(r => r.Version)!).OrderBy(r => r.Name, StringComparer.Ordinal));
+    }
     private static void ValidateResources(ResourceDbContext db, CompanyFileSnapshot file)
     {
+        _ = AdjustmentCatalog(db, file.Id);
         var changes = db.ResourceChanges.AsNoTracking().ToArray().Select(ResourceChange).ToArray();
         var audits = db.Audit.AsNoTracking().Select(a => new { Row = a, Type = EF.Property<string>(a, "AggregateType"),
             Id = EF.Property<string>(a, "AggregateId"), Request = EF.Property<string>(a, "TransactionId") }).ToArray();
@@ -105,7 +142,9 @@ public sealed partial class SqliteCompanyFileService
                 Invalid(studyEvent is null || studyEvent.Row.Operation != "ChangeResources" || studyEvent.Row.Actor != c.Actor ||
                     studyEvent.Row.BeforeJson != Json(change.PreviousStudy) ||
                     studyEvent.Row.AfterJson != Json(change.ConfirmedStudy), "Resource change has no study transition");
-                foreach (var request in c.Adjustments)
+                var earlierIds = history.Where(h => h.ConfirmedStudy.Revision < change.ConfirmedStudy.Revision)
+                    .SelectMany(h => h.Ledger.Entries.SelectMany(e => e.Adjustments)).Select(d => d.Id).ToHashSet();
+                foreach (var request in change.Ledger.Entries.SelectMany(e => e.Adjustments).Where(d => !earlierIds.Contains(d.Id)))
                 {
                     var delta = change.Ledger.Entries.SelectMany(e => e.Adjustments).Single(d => d.Id == request.Id);
                     expectedAdjustments.Add(delta.Id.ToString());

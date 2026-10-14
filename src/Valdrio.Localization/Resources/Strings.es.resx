@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -1503,4 +1503,42 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.ShowNavigation" xml:space="preserve"><value>Mostrar navegación</value></data>
   <data name="Allocation.ShowSource" xml:space="preserve"><value>Explicar importe seleccionado</value></data>
   <data name="Allocation.BackToAmounts" xml:space="preserve"><value>Volver a las aportaciones</value></data>
+  <data name="Adjustment.Title" xml:space="preserve"><value>Ajustes reutilizables</value></data>
+  <data name="Adjustment.Help" xml:space="preserve"><value>Sustituye las cuentas seleccionadas por un coste analítico. Aplicación expresa en cada análisis. Porcentaje: 50 equivale al 50 % del total. Añadir admite importes negativos. Moneda:</value></data>
+  <data name="Adjustment.New" xml:space="preserve"><value>Añadir ficha</value></data>
+  <data name="Adjustment.Name" xml:space="preserve"><value>Nombre del coste analítico</value></data>
+  <data name="Adjustment.Pattern" xml:space="preserve"><value>Cuenta exacta o prefijo (681*)</value></data>
+  <data name="Adjustment.Code" xml:space="preserve"><value>Código analítico (AJ-AMORT-TEC)</value></data>
+  <data name="Adjustment.Operation" xml:space="preserve"><value>Importe del nuevo coste</value></data>
+  <data name="Adjustment.Value" xml:space="preserve"><value>Valor (moneda funcional o %)</value></data>
+  <data name="Adjustment.Reason" xml:space="preserve"><value>Motivo económico</value></data>
+  <data name="Adjustment.Save" xml:space="preserve"><value>Guardar ficha</value></data>
+  <data name="Adjustment.Apply" xml:space="preserve"><value>Aplicar regla…</value></data>
+  <data name="Adjustment.Undo" xml:space="preserve"><value>Deshacer aplicación…</value></data>
+  <data name="Adjustment.Delete" xml:space="preserve"><value>Retirar ficha</value></data>
+  <data name="Adjustment.Confirm" xml:space="preserve"><value>Confirmar operación</value></data>
+  <data name="Adjustment.Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="Adjustment.Fixed" xml:space="preserve"><value>Cifra exacta</value></data>
+  <data name="Adjustment.Percentage" xml:space="preserve"><value>Porcentaje del total seleccionado</value></data>
+  <data name="Adjustment.AddAmount" xml:space="preserve"><value>Total seleccionado más/menos importe</value></data>
+  <data name="Adjustment.Draft" xml:space="preserve"><value>Cambios sin guardar</value></data>
+  <data name="Adjustment.Applied" xml:space="preserve"><value>Aplicada en este análisis</value></data>
+  <data name="Adjustment.Archived" xml:space="preserve"><value>Retirada</value></data>
+  <data name="Adjustment.Saved" xml:space="preserve"><value>Guardada; sin aplicar</value></data>
+  <data name="Adjustment.ApplyPreview" xml:space="preserve"><value>Compensaremos {0} para dejar a cero las cuentas siguientes y registraremos {1} en {2}. Los originales no cambian. Asigna el nuevo recurso y recalcula los resultados.</value></data>
+  <data name="Adjustment.UndoPreview" xml:space="preserve"><value>Revertiremos solo esta aplicación. Restauraremos las partes anteriores de las cuentas compensadas; las correcciones monetarias independientes posteriores quedarán pendientes. Los destinos posteriores de los recursos afectados se sustituyen por esa preparación restaurada. El recurso analítico se neutraliza sin borrar su historial. Revisa las asignaciones y recalcula.</value></data>
+  <data name="Adjustment.RuleTotal" xml:space="preserve"><value>Ajustes por reglas</value></data>
+  <data name="Adjustment.Invalid" xml:space="preserve"><value>Revisa nombre, cuenta o prefijo, código analítico, motivo y moneda de la ficha.</value></data>
+  <data name="Adjustment.NoAccounts" xml:space="preserve"><value>No hay cuentas importadas que coincidan con esta ficha en el análisis.</value></data>
+  <data name="Adjustment.Conflict" xml:space="preserve"><value>Estas cuentas ya están compensadas por una sustitución activa. Deshaz esa aplicación antes de aplicar otra.</value></data>
+  <data name="Adjustment.CodeUsed" xml:space="preserve"><value>El código analítico ya existe o conserva un importe independiente. Elige otro código.</value></data>
+  <data name="Adjustment.NotApplied" xml:space="preserve"><value>No existe una aplicación activa que se pueda deshacer.</value></data>
+  <data name="Adjustment.Stale" xml:space="preserve"><value>La ficha ha cambiado. Recarga y revisa su nueva versión antes de continuar.</value></data>
+  <data name="Adjustment.ActiveReset" xml:space="preserve"><value>Deshaz las sustituciones activas antes de reiniciar la preparación.</value></data>
+<data name="Adjustment.Duplicate" xml:space="preserve"><value>Duplicar ficha</value></data>
+<data name="Adjustment.UseUndo" xml:space="preserve"><value>Usa Deshacer aplicación en la ficha para revertir conjuntamente la sustitución.</value></data>
+<data name="Adjustment.ManualTotal" xml:space="preserve"><value>Correcciones manuales</value></data>
+<data name="Resources.AdjustmentRule" xml:space="preserve"><value>Ajuste reutilizable</value></data>
+<data name="Adjustment.AccountsAndCosts" xml:space="preserve"><value>Cuentas y costes analíticos</value></data>
+<data name="Adjustment.ManualHelp" xml:space="preserve"><value>Las correcciones manuales y los ajustes por reglas se muestran por separado. Editar una corrección manual no modifica la regla aplicada. El importe efectivo es la suma del importado convertido y ambos ajustes.</value></data>
 </root>

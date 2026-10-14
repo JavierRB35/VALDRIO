@@ -1,3 +1,6 @@
+## Ajustes reutilizables — candidato validado localmente, 2026-10-14
+
+Implementación en `design/reusable-adjustments-20261014`, desde main@8d7ce5c4. Fichas en Preparar cuentas, guardadas por proyecto, aplicación expresa por análisis, compensación de cuentas y coste analítico explícito, conflicto de solapamientos y reversión mientras los cálculos estén abiertos. No fusionado; pendiente de revisión del propietario. Ver [informe, capturas, archivos y resultados](docs/evidencias/2026-10-14-ajustes-reutilizables/INFORME.md) y [ADR-0017](docs/adr/ADR-0017-ajustes-reutilizables.md). Validación local y ningún workflow ejecutado.
 ## Estado vigente contrastado — 14/10/2026
 
 Base autorizada: main@0a1dd6e. Véase [auditoría integral y refactorización gradual](docs/auditorias/2026-10-14/INFORME.md) y su validación. Las secciones siguientes conservan evidencia histórica; sus pendientes y referencias de CI no describen necesariamente el estado actual. No existe todavía en main el historial general T12 ni el motor completo de capacidad/ociosidad T14+. GitHub Actions solo por petición expresa; validación local por defecto.

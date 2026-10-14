@@ -52,6 +52,8 @@ public sealed class ResourcePartDraft
     }
 }
 
+public sealed record AnalyticalResourceOrigin(EntityId ApplicationId, string Code, string Name);
+
 public sealed class ResourceDraft
 {
     [JsonConstructor]
@@ -68,6 +70,8 @@ public sealed class ResourceDraft
         Parts = FrozenList.Copy(parts);
     }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public AnalyticalResourceOrigin? AnalyticalOrigin { get; init; }
     public EntityId Id { get; }
     public IReadOnlyList<ResourceSourceValue> Sources { get; }
     public IReadOnlyList<ResourceAdjustment> Adjustments { get; }

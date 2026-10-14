@@ -1,0 +1,86 @@
+[
+  {
+    "Path": "src/Valdrio.Application/AllocationWorkspace.cs",
+    "SHA256": "F680507267D88A80C2CCE70195CE68E74DB843FF21CC7CFC32392BD84FA1B1BE"
+  },
+  {
+    "Path": "src/Valdrio.Application/PrimaryAllocation.cs",
+    "SHA256": "793A48B245BE6F7F808B826EDA245EA978AD090E435C466B2718656CE60E347B"
+  },
+  {
+    "Path": "src/Valdrio.Application/ResourceCorrectionCommand.cs",
+    "SHA256": "76F7D6C728E95021E897031C33612BE57E24F57C31D837F9E01A7DBE88BB5614"
+  },
+  {
+    "Path": "src/Valdrio.Application/ResourceDraftEditor.cs",
+    "SHA256": "BFAFFAA1FB5016D1481A74BD15A29A0EB440A21CBCCDD7325F0F779455A26C0B"
+  },
+  {
+    "Path": "src/Valdrio.Application/ResourceHistory.cs",
+    "SHA256": "1C423ABD32350A5DE7B191E16A3952DEF89CB857EF4BF0BD2D485DB668F2EFC5"
+  },
+  {
+    "Path": "src/Valdrio.Application/ResourceWorkspace.cs",
+    "SHA256": "76D16B9AB6E0C09CE4F99932DE5CB0B47B3E7F3D43F80E1EFB803F794DB941A1"
+  },
+  {
+    "Path": "src/Valdrio.Application/ResourceWorkspaceRules.cs",
+    "SHA256": "C0CE4D5D8F57767C2FB57FD5EFCECDB645DA08C5104C8200D102CF0091986300"
+  },
+  {
+    "Path": "src/Valdrio.Application/ReusableAdjustments.cs",
+    "SHA256": "16DC69E7BD498D0B756A033ACAAE567F3CAD070C62DE735B3DA9DEA555D93C71"
+  },
+  {
+    "Path": "src/Valdrio.Calculation/ResourcePreparationRules.cs",
+    "SHA256": "3D3D379368EA61C2DF0FACBF010B0F698AF35EE04C6A2FC20CA9EB9D219F8795"
+  },
+  {
+    "Path": "src/Valdrio.Desktop/App.xaml.cs",
+    "SHA256": "6C5B1090B2695F32AC62B24B9D9EA0AD019F9F002F571614B578D963D784C364"
+  },
+  {
+    "Path": "src/Valdrio.Desktop/MainWindow.AdjustmentSmoke.cs",
+    "SHA256": "224258968247E59E61D7795BBD03410350EAE81CD7B672510DA990240322E7DA"
+  },
+  {
+    "Path": "src/Valdrio.Desktop/ResourceEditorForm.cs",
+    "SHA256": "227ACABE410F8FF736ADC4451480F63EC699BF164174626F65D235079C830216"
+  },
+  {
+    "Path": "src/Valdrio.Desktop/ResourceWorkspacePanel.xaml",
+    "SHA256": "A91DE06255F4B78CBEF9E1EF0D0C424ADF6F74A6EE61F029BFAE36173089AC74"
+  },
+  {
+    "Path": "src/Valdrio.Desktop/ResourceWorkspacePanel.xaml.cs",
+    "SHA256": "B864136A6020D0EE2AB823E94241E12981B7E49C0EAECCD76B3206B3935A6562"
+  },
+  {
+    "Path": "src/Valdrio.Desktop/ResourceWorkspaceViewModel.cs",
+    "SHA256": "262F044B86A9DB9786C6CE7BEEE7294C4698C8A772B9CE868F3682DBADD8FB16"
+  },
+  {
+    "Path": "src/Valdrio.Desktop/ResourceWorkspaceViewModel.Rules.cs",
+    "SHA256": "0C94E8D3571C70DED2BFA2F12B5196AC3AC5E412FFE76066AD18092E3AF6AF98"
+  },
+  {
+    "Path": "src/Valdrio.Domain/ResourceDraft.cs",
+    "SHA256": "0EDD8D9077F9F2200B2FA7CDEEF17E3D85F76F29A9A1B105380D2926A056FCF4"
+  },
+  {
+    "Path": "src/Valdrio.Infrastructure/CompanyFiles/SqliteCompanyFileService.Resources.cs",
+    "SHA256": "2D90029F26A27C66C517098909D44929797E53EE5AE62A77AF2C69578875D884"
+  },
+  {
+    "Path": "src/Valdrio.Localization/Resources/Strings.es.resx",
+    "SHA256": "871612A1B6D1FD2B8052FDB8D5CCEA84B26C9196960C0E11F90DEA60F28EF709"
+  },
+  {
+    "Path": "src/Valdrio.Localization/Resources/Strings.resx",
+    "SHA256": "61C4EB4F761C6899274BDD6D331751A95C2BF309EE4025AD9C017877032C316E"
+  },
+  {
+    "Path": "tests/Valdrio.Tests/ReusableAdjustmentTests.cs",
+    "SHA256": "9D680D6B9525BD89605F10EE42F02C77DBDF1B45870733369A6F82B430984D92"
+  }
+]

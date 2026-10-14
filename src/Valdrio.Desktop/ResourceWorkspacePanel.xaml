@@ -14,25 +14,49 @@
  <StackPanel Visibility="{Binding CultureChanged, Converter={StaticResource Visible}}">
  <TextBlock Text="{Binding CultureMessage}"/>
 <Button x:Name="AcknowledgeCultureButton" Content="{Binding [KeepCulture]}" Command="{Binding AcknowledgeCultureCommand}" local:FieldHelp.Key="Resource.KeepCulture" Margin="0,4,8,6" Padding="10,6"/></StackPanel>
+ <Expander x:Name="ReusableAdjustmentsSection" Header="{Binding RuleSectionTitle}" Margin="0,0,0,16">
+  <Expander.Style><Style TargetType="Expander" BasedOn="{StaticResource {x:Type Expander}}"><Style.Triggers><DataTrigger Binding="{Binding ShowDistributionTools,ElementName=Root}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Expander.Style>
+  <StackPanel>
+   <TextBlock Text="{Binding RuleSectionHelp}" Margin="0,8"/>
+   <Button x:Name="AddAdjustmentRuleButton" Content="{Binding RuleAddLabel}" Command="{Binding AddRuleCommand}" HorizontalAlignment="Left"/>
+   <ItemsControl ItemsSource="{Binding RuleCards}"><ItemsControl.ItemTemplate><DataTemplate>
+    <Border Style="{StaticResource Card}" Margin="0,8"><Expander Header="{Binding Header}" IsExpanded="True"><StackPanel>
+     <local:AdaptiveColumnsPanel MinColumnWidth="280" IsEnabled="{Binding CanEdit}">
+      <StackPanel Margin="0,4,12,4"><TextBlock Text="{Binding [Name]}"/><TextBox Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Name]}"/></StackPanel>
+      <StackPanel Margin="0,4,12,4"><TextBlock Text="{Binding [Pattern]}"/><TextBox Text="{Binding Pattern,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Pattern]}"/></StackPanel>
+      <StackPanel Margin="0,4,12,4"><TextBlock Text="{Binding [Code]}"/><TextBox Text="{Binding Code,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Code]}"/></StackPanel>
+      <StackPanel Margin="0,4,12,4"><TextBlock Text="{Binding [Operation]}"/><ComboBox ItemsSource="{Binding Modes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Mode}" AutomationProperties.Name="{Binding [Operation]}"/></StackPanel>
+      <StackPanel Margin="0,4,12,4"><TextBlock Text="{Binding [Value]}"/><TextBox Text="{Binding Value,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Value]}" TextAlignment="Right"/></StackPanel>
+      <StackPanel Margin="0,4,12,4"><TextBlock Text="{Binding [Reason]}"/><TextBox Text="{Binding Reason,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Reason]}"/></StackPanel>
+     </local:AdaptiveColumnsPanel>
+     <WrapPanel><Button Content="{Binding [Save]}" Command="{Binding SaveCommand}"/><Button Content="{Binding [Apply]}" Command="{Binding ApplyCommand}"/><Button Content="{Binding [Undo]}" Command="{Binding UndoCommand}"/><Button Content="{Binding [Duplicate]}" Command="{Binding DuplicateCommand}"/><Button Content="{Binding [Delete]}" Command="{Binding DeleteCommand}"/></WrapPanel>
+     <Border Background="{DynamicResource Surface.Subtle}" Padding="12" Visibility="{Binding HasPreview,Converter={StaticResource Visible}}"><StackPanel>
+      <TextBlock Text="{Binding PreviewText}" AutomationProperties.LiveSetting="Polite"/>
+      <WrapPanel><Button Content="{Binding [Confirm]}" Command="{Binding ConfirmCommand}" Style="{StaticResource Button.Primary}"/><Button Content="{Binding [Cancel]}" Command="{Binding CancelCommand}"/></WrapPanel>
+     </StackPanel></Border>
+    </StackPanel></Expander></Border>
+   </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+  </StackPanel>
+ </Expander>
  <Border Style="{StaticResource Card}" Margin="0,0,0,16" Visibility="{Binding ShowList, Converter={StaticResource Visible}}"><StackPanel Visibility="{Binding ShowList, Converter={StaticResource Visible}}">
-  <TextBlock Text="{Binding [ListTitle]}" FontSize="18" FontWeight="SemiBold" Margin="0,4,0,4"/>
-  <TextBlock Text="{Binding [ListHelp]}" Margin="0,0,0,8"/>
+  <TextBlock Text="{Binding ResourceListTitle}" FontSize="18" FontWeight="SemiBold" Margin="0,4,0,4"/>
+  <TextBlock Text="{Binding ResourceListHelp}" Margin="0,0,0,8"/>
   <TextBlock Text="{Binding CorrectionHelp}" Margin="0,0,0,8"/><TextBlock Text="{Binding CorrectionLockMessage}" Margin="0,0,0,8"/>
   <TextBlock Text="{Binding ProgressSummary}" FontWeight="SemiBold" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite"/>
 <DataGrid x:Name="ResourceGrid" PreviewMouseDown="SelectCorrectionCell" PreviewTextInput="TypeCorrection" PreparingCellForEdit="PrepareCorrection" BeginningEdit="BeginCorrection" CellEditEnding="EndCorrection" ItemsSource="{Binding Rows}" SelectedItem="{Binding ResourceChoice}" FlowDirection="LeftToRight" IsEnabled="{Binding CanNavigate}" IsReadOnly="False" AutoGenerateColumns="False" SelectionMode="Single" CanUserAddRows="False" CanUserDeleteRows="False" MinHeight="90" MaxHeight="240" Margin="0,6,0,8" local:FieldHelp.Key="Resource.Rows"><DataGrid.Resources><Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}"><Setter Property="TextWrapping" Value="Wrap"/></Style></DataGrid.Resources><DataGrid.Columns><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource ResourceCell}" Binding="{Binding DisplayName}" Width="2*" MinWidth="180"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Originals}" Width="*" MinWidth="115"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Converted}" Width="*" MinWidth="115"/><DataGridTemplateColumn x:Name="CorrectionsColumn" Width="*" MinWidth="130">
 <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock Text="{Binding Adjustments}" Style="{StaticResource Text.TableNumber}" Background="{DynamicResource Surface.Subtle}"/></DataTemplate></DataGridTemplateColumn.CellTemplate>
 <DataGridTemplateColumn.CellEditingTemplate><DataTemplate><TextBox Text="{Binding CorrectionNumber, Mode=OneWay}" local:FieldHelp.Key="Resource.Corrections" AutomationProperties.Name="{Binding DataContext[Adjustments], RelativeSource={RelativeSource AncestorType=UserControl}}" TextAlignment="Right"/></DataTemplate></DataGridTemplateColumn.CellEditingTemplate>
-</DataGridTemplateColumn><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Effective}" Width="*" MinWidth="115"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Pending}" Width="*" MinWidth="115"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Difference}" Width="*" MinWidth="115"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource ResourceCell}" Binding="{Binding AssignmentStatus}" Width="*" MinWidth="130"/></DataGrid.Columns></DataGrid>
-<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-5,0,10" MinHeight="35">
- <Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
- <TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" FontWeight="SemiBold" Margin="9,8"/>
- <TextBlock Grid.Column="1" Text="{Binding ResourcesTotalOriginal}" FontWeight="SemiBold" TextAlignment="Right" Margin="5,8" TextWrapping="Wrap"/>
- <TextBlock Grid.Column="2" Text="{Binding ResourcesTotalConverted}" FontWeight="SemiBold" TextAlignment="Right" Margin="5,8"/>
- <TextBlock Grid.Column="3" Text="{Binding ResourcesTotalAdjustments}" FontWeight="SemiBold" TextAlignment="Right" Margin="5,8"/>
- <TextBlock Grid.Column="4" Text="{Binding ResourcesTotalEffective}" FontWeight="SemiBold" TextAlignment="Right" Margin="5,8"/>
- <TextBlock Grid.Column="5" Text="{Binding ResourcesTotalPending}" FontWeight="SemiBold" TextAlignment="Right" Margin="5,8"/>
- <TextBlock Grid.Column="6" Text="{Binding ResourcesTotalDifference}" FontWeight="SemiBold" TextAlignment="Right" Margin="5,8"/>
- </Grid>
+</DataGridTemplateColumn><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Effective}" Width="*" MinWidth="115"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Pending}" Width="*" MinWidth="115"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Difference}" Width="*" MinWidth="115"/><DataGridTextColumn IsReadOnly="True" ElementStyle="{StaticResource ResourceCell}" Binding="{Binding AssignmentStatus}" Width="*" MinWidth="130"/><DataGridTextColumn x:Name="RuleAdjustmentsColumn" IsReadOnly="True" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding RuleAdjustments}" Width="*" MinWidth="130"/></DataGrid.Columns></DataGrid>
+<WrapPanel Background="{DynamicResource Surface.Subtle}" Margin="0,0,0,10">
+<TextBlock Text="{Binding [TableTotal]}" Margin="8" FontWeight="SemiBold"/>
+<StackPanel Margin="8"><TextBlock Text="{Binding [Originals]}"/><TextBlock Text="{Binding ResourcesTotalOriginal}" FontWeight="SemiBold"/></StackPanel>
+<StackPanel Margin="8"><TextBlock Text="{Binding [Converted]}"/><TextBlock Text="{Binding ResourcesTotalConverted}" FontWeight="SemiBold"/></StackPanel>
+<StackPanel Margin="8"><TextBlock Text="{Binding [Adjustments]}"/><TextBlock Text="{Binding ResourcesTotalAdjustments}" FontWeight="SemiBold"/></StackPanel>
+<StackPanel Margin="8"><TextBlock Text="{Binding RuleTotalLabel}"/><TextBlock Text="{Binding ResourcesTotalRuleAdjustments}" FontWeight="SemiBold"/></StackPanel>
+<StackPanel Margin="8"><TextBlock Text="{Binding [Effective]}"/><TextBlock Text="{Binding ResourcesTotalEffective}" FontWeight="SemiBold"/></StackPanel>
+<StackPanel Margin="8"><TextBlock Text="{Binding [PendingAmount]}"/><TextBlock Text="{Binding ResourcesTotalPending}" FontWeight="SemiBold"/></StackPanel>
+<StackPanel Margin="8"><TextBlock Text="{Binding [Difference]}"/><TextBlock Text="{Binding ResourcesTotalDifference}" FontWeight="SemiBold"/></StackPanel>
+</WrapPanel>
  <WrapPanel>
   <Button Visibility="{Binding ShowDistributionTools, ElementName=Root, Converter={StaticResource Visible}}" x:Name="OpenSelectedResourceButton" Content="{Binding [OpenSelected]}" Command="{Binding OpenSelectedResourceCommand}" local:FieldHelp.Key="Resource.Rows" Margin="0,4,8,6" Padding="12,7" FontWeight="SemiBold"/>
   <Button x:Name="RefreshButton" Content="{Binding [Refresh]}" Command="{Binding RefreshCommand}" local:FieldHelp.Key="Resource.Refresh" Margin="0,4,8,6" Padding="10,6"/>

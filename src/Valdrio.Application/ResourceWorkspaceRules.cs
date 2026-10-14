@@ -57,6 +57,13 @@ public static class ResourceWorkspaceRules
 
     public static void ValidateScope(ResourceWorkspaceSnapshot workspace)
     {
+        foreach (var analytical in workspace.Resources.Where(r => r.AnalyticalOrigin is not null))
+        {
+            var origin = analytical.AnalyticalOrigin!;
+            if (workspace.Ledger.AdjustmentApplications?.Any(a => a.Id == origin.ApplicationId && a.GeneratedResourceId == analytical.Id &&
+                a.Rule.AnalyticalCode == origin.Code && a.Rule.Name == origin.Name) != true)
+                throw Error("RES_SOURCE_REQUIRED", "Resource.SourceRequired");
+        }
         var objects = workspace.Ledger.Objects;
         if (objects.Select(o => o.Id).Distinct().Count() != objects.Count ||
             objects.Select(o => o.Code).Distinct(StringComparer.Ordinal).Count() != objects.Count)
@@ -121,6 +128,9 @@ public static class ResourceWorkspaceRules
         if (before.Study.State != StudyState.Open) throw StudyRules.Error("STUDY_CLOSED", "Study.ClosedDiagnostic", before.Study.Id);
         var entries = before.Ledger.Entries.ToList(); var objects = before.Ledger.Objects.ToList();
         var nodeEdits = before.Ledger.NodeEdits;
+        if (command.Kind == ResourceMutationKind.AdjustmentRule)
+            return AdjustmentRuleEngine.Apply(before, command);
+        if (command.AdjustmentRule is not null) throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
         if (command.Kind != ResourceMutationKind.EditStudyNodes && command.NodeEdits is not null)
             throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
         var currency = before.Study.Currency.FunctionalCurrencyCode;
@@ -144,6 +154,8 @@ public static class ResourceWorkspaceRules
                     {
                         if (request.OriginalDelta is not null || request.Rate is not null || request.CurrencyMetadata is not null || request.Type.Length != 0)
                             throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
+                        if (before.Ledger.AdjustmentApplications?.Any(a => a.Lines.Any(l => l.AdjustmentId == reversed)) == true)
+                            throw Error("ADJ_USEUNDO", "Adjustment.UseUndo");
                         var original = adjustments.SingleOrDefault(a => a.Id == reversed) ?? throw Error("RES_REVERSAL_INVALID", "Resource.ReversalInvalid");
                         adjustments.Add(ResourcePreparationRules.ReverseAdjustment(original, request.Id, request.Reason, request.Id));
                     }
@@ -158,7 +170,7 @@ public static class ResourceWorkspaceRules
                     }
                 }
                 entries.RemoveAll(e => e.Id == id);
-                entries.Add(new(id, current.Sources, adjustments, command.Parts));
+                entries.Add(new ResourceDraft(id, current.Sources, adjustments, command.Parts) { AnalyticalOrigin = current.AnalyticalOrigin });
                 break;
             case ResourceMutationKind.PutObject:
                 RequireSimple(command);
@@ -168,6 +180,8 @@ public static class ResourceWorkspaceRules
             case ResourceMutationKind.ResetPreparation:
                 RequireSimple(command);
                 if (command.CostObject is not null) throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
+                if (before.Ledger.AdjustmentApplications?.Any(a => a.ReversedBy is null) == true)
+                    throw Error("ADJ_ACTIVE_RESET", "Adjustment.ActiveReset");
                 entries.Clear(); // Explicit, reasoned operation. The immutable history retains every previous state.
                 break;
             case ResourceMutationKind.ClassifyBatch:
@@ -200,7 +214,7 @@ public static class ResourceWorkspaceRules
                         candidate.Classification.EnsureValid(candidate);
                     }
                     entries.RemoveAll(r => r.Id == source.Id);
-                    entries.Add(new ResourceDraft(source.Id, source.Sources, source.Adjustments, replacement.Parts));
+                    entries.Add(new ResourceDraft(source.Id, source.Sources, source.Adjustments, replacement.Parts) { AnalyticalOrigin = source.AnalyticalOrigin });
                 }
                 break;
             case ResourceMutationKind.Revalue:
@@ -209,7 +223,7 @@ public static class ResourceWorkspaceRules
                 entries = Revalue(before, command);
                 break;
         }
-        var ledger = new ResourceLedger(entries, objects, nodeEdits);
+        var ledger = new ResourceLedger(entries, objects, nodeEdits) { AdjustmentApplications = before.Ledger.AdjustmentApplications };
         var result = new ResourceWorkspaceSnapshot(before.Study, before.Precision, before.Model, before.Origins, ledger);
         if (requireBalanced && !result.Preparation.IsValid) throw new DomainRuleException(result.Preparation.Diagnostics[0]);
         return ledger;
@@ -246,7 +260,7 @@ public static class ResourceWorkspaceRules
                 adjustments.Add(ResourcePreparationRules.ReverseAdjustment(adjustments.Single(a => a.Id == reversal.ReversalOfId),
                     reversal.Id, reversal.Reason, reversal.AuditEventId));
             var parts = command.Replacements.SingleOrDefault(p => p.ResourceId == entry.Id)?.Parts ?? entry.Parts;
-            result.Add(new(entry.Id, sources, adjustments, parts));
+            result.Add(new ResourceDraft(entry.Id, sources, adjustments, parts) { AnalyticalOrigin = entry.AnalyticalOrigin });
         }
         if (!used.SetEquals(selections.Keys)) throw Error("RES_COMMAND_INVALID", "Resource.CommandInvalid");
         return result;

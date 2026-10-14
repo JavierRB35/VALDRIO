@@ -108,13 +108,14 @@ public partial class ResourceWorkspacePanel : UserControl
     }
     private void RefreshHeaders()
     {
+        if (vm is not null) RuleAdjustmentsColumn.Header = vm.RuleText("RuleTotal");
         if (vm is null) return;
         void Headers(DataGrid grid, string[] keys) { for (var i = 0; i < keys.Length; i++) grid.Columns[i].Header = vm[keys[i]]; }
         Headers(ResourceGrid, ["Code", "Originals", "Converted", "Adjustments", "Effective", "PendingAmount", "Difference", "AssignmentStatus"]);
         // Preparation only reconciles amounts; allocation status belongs to step 6.
         ResourceGrid.Columns[5].Visibility = ResourceGrid.Columns[7].Visibility = ShowDistributionTools ? Visibility.Visible : Visibility.Collapsed;
         CorrectionsColumn.IsReadOnly = vm.CorrectionsReadOnly;
-        CorrectionsColumn.Header = vm["Adjustments"] + " (" + vm.FunctionalCurrency + ")";
+        CorrectionsColumn.Header = (vm.HasRuleAdjustments ? vm.RuleText("ManualTotal") : vm["Adjustments"]) + " (" + vm.FunctionalCurrency + ")";
         Headers(PartGrid, ["Amount", "Route", "Destination", "Behavior", "Layer"]);
         Headers(ReviewGrid, ["Amount", "Route", "Destination", "Behavior", "Layer"]);
     }

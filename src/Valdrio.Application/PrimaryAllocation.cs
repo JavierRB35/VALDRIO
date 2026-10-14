@@ -76,7 +76,7 @@ public static class PrimaryAllocationService
         var nodePools = model.Pools.ToDictionary(p => p.NodeId);
         var accountByResource = resources.Origins.ToDictionary(o => o.Id, o => o.Code);
         var seenParts = new HashSet<EntityId>();
-        foreach (var resource in resources.Resources.OrderBy(r => r.Id))
+        foreach (var resource in resources.Resources.Where(r => !AdjustmentRuleEngine.IsNeutralized(resources, r)).OrderBy(r => r.Id))
         foreach (var part in resource.Parts.OrderBy(p => p.Id))
         {
             if (!seenParts.Add(part.Id))
