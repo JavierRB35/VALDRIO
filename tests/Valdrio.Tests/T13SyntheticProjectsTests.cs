@@ -355,3 +355,4 @@ public sealed partial class T06ImportConfirmationTests
             "The packaged T13 v9 company must stay byte-for-byte intact.");
     }
 
+}
