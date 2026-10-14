@@ -96,6 +96,19 @@ El propietario ejecutó en Windows local el commit `60c8e73826b211a5e2de26b3e4f8
 
 La captura del gráfico de cuatro etapas aportada en la conversación muestra la UI de la revisión anterior; no valida ni invalida la nueva disposición de dos gráficos hasta disponer de una compilación Windows actualizada.
 
+## Segunda ejecución Windows local — aceptación detenida en scanner (14/10/2026)
+
+El propietario ha aportado resultados de `Verify-Windows.ps1` para el SHA `68d3829b1d8f710d9cf3cf145ac589ed40ca212b`:
+
+- Compilación Release: **correcta**, 1,4 s.
+- MSTest integral: **691/691 correctas**, 0 fallidas, 0 omitidas, 250,1 s; TRX local `tests/Valdrio.Tests/TestResults/valdrio-tests.trx` (sobrescrito por el verificador, según su aviso).
+- Prueba de autocontrol del scanner: **superada**, pero el paso de cobertura de mensajes falla en la línea 259 de `Verify-Windows.ps1`.
+- Claves erróneamente señaladas: `Accent.ActiveGreen`, `Border.Soft`, `Brand.DeepGreen`, `Brand.White`, `Brand.Yellow`, `Button.Primary`, `Status.SuccessBg`, `Status.WarningBg`, `Surface.Canvas`, `Surface.Subtle`, `Table.CellPadding`, `Table.MinRowHeight`, `Table.NumberPadding`, `Text.Primary`.
+- Diagnóstico del código: el extractor de literales C# confunde claves del `ResourceDictionary` WPF con mensajes traducibles. Son referencias a estilos, brushes y espaciados, no faltas de traducción. Aparecen tanto en llamadas `ThemeBrush(...)` como en accesos `resources["..."]` y `SetResourceReference`.
+- Corrección: `Get-ProductionMessageKeys.ps1` lee las claves `x:Key` declaradas en `src/Valdrio.Desktop/Styles/ValdrioTheme.xaml` y las excluye del conjunto de mensajes traducibles. `Test-ProductionMessageKeys.ps1` amplía la fixture con esos tres mecanismos de acceso y exige detectar **dos mensajes genuinamente ausentes**, para no silenciar fallos reales.
+- **Pendiente**: repetir autoprueba y cobertura de mensajes con el nuevo commit; si pasan, continuar la aceptación Windows general y el smoke T12 específico. No se ha certificado la aceptación integral, ni se debe fusionar.
+- GitHub Actions no ejecutado.
+
 ## Acta de resultados — por cumplimentar
 
 - Fecha/hora, Windows, .NET: **pendiente**
