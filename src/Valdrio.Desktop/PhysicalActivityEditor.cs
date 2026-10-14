@@ -165,7 +165,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         {
             var normal = Parse(row.NormalText);
             var real = Parse(row.RealText);
-            var command = new SavePhysicalObservation(study.CompanyId, study.Id, row.NodeId, row.PoolId,
+            var command = new SavePhysicalObservation(study.CompanyId, study.Id, study.Revision, row.NodeId, row.PoolId,
                 row.Version, confirm ? PhysicalObservationState.Confirmed : PhysicalObservationState.Draft,
                 null, null, normal, real,
                 Evidence(normal, row.NormalQuality, row.NormalSource, row.NormalDescription),
@@ -187,7 +187,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         if (row is null || IsReadOnly) return;
         try
         {
-            _ = activity.Annul(new(study.CompanyId, study.Id, row.NodeId, row.PoolId,
+            _ = activity.Annul(new(study.CompanyId, study.Id, study.Revision, row.NodeId, row.PoolId,
                 row.Version, row.CorrectionReason, "local-user"));
             Reload();
         }
