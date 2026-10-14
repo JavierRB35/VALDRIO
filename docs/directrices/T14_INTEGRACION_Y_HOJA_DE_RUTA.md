@@ -54,6 +54,18 @@ Este documento complementa [T14](../tareas/T14.md), la [directriz de capacidad n
 
 **Pendiente técnico T14.1/T14.3:** concretar consulta y comparabilidad de estudios previos, contrato de evidencia de parámetros y vínculo de adopción; la interfaz/calculadora completa se integra en T14.3.
 
+### T14.1 · Decisión técnica 4 aprobada (15/10/2026): persistencia física en el archivo SQLite de empresa
+
+**Opción A aprobada por el propietario.** Los datos físicos T14, sus versiones, estados, fuentes y auditoría se conservarán **en el mismo archivo de empresa SQLite**, mediante **tablas/contratos propios**, separados lógicamente de las tablas y revisiones de datos económicos. La independencia de `PhysicalRevision` respecto a `Study.Revision` no requiere archivos auxiliares.
+
+- **Operación atómica:** guardar/confirmar/corregir la observación y su registro de auditoría en una transacción que o se confirma íntegramente o no altera el archivo. Evitar registros físicos huérfanos y cambios parciales de versión.
+- **Compatibilidad:** migración de esquema versionada, conservando íntegros los archivos históricos y los cálculos/snapshots T12; la copia o respaldo del archivo debe contener los nuevos datos físicos e historial. Respetar el proceso vigente de creación de copia antes de actualizar formatos antiguos y las comprobaciones de integridad/reapertura.
+- **Integridad:** asegurar ámbito por empresa/estudio/nodo/pool/unidad/período, referencias, tipos decimales, `null` distinto de cero, autoría y bloqueo de sobrescrituras accidentales. Las capacidades heredadas de T07 mantienen sus registros originales.
+- **Sin alterar economía:** ningún guardado solo físico actualiza `Study.Revision`, `CalculationRun`, `RunHistory.CurrentRunId`, hashes o resultados T12. La futura vinculación T15 guardará referencias a la ejecución económica y a la versión física usadas.
+- **Pendiente técnico:** diseñar las tablas, restricciones, índices, migración, versionado, transacciones, tratamiento de evidencias importadas y pruebas con formatos anteriores. No agregar archivos externos obligatorios para que un estudio pueda reabrirse con sus datos físicos.
+
+**Validaciones exigidas:** lectura y escritura local, cierre/reapertura, copia y respaldo portable de una empresa, fallo inyectado antes del commit sin filas/versiones parciales, migración desde esquema previo sin pérdida, auditoría de confirmado, compatibilidad de ejecución T12 y ausencia de costes de CI.
+
 ## 2. Inventario por pantalla: información existente y destino en T14
 
 | Pantalla y responsable | Datos introducidos o disponibles antes de T14 | Uso en T14 | ¿Se pide de nuevo? |
