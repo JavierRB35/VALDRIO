@@ -1,11 +1,11 @@
 
-## Integración T13–T12 — en curso (14/10/2026)
+## Integración T13–T12 — aceptación integral completada (14/10/2026)
 
 T12 se fusionó mediante PR #52 (`main@d46776d108a635200bb614cbbfe18cc549b00748`) tras aceptación Windows local (**692/692 pruebas y 46 controles WPF T12**). La documentación anterior de T12 como candidata es histórica; no describe el estado actual.
 
-La integración de T13 se trabaja en `feature/t13-t12-integration-20261014`: pruebas parametrizadas de ambas empresas T13 para la publicación/reapertura de ejecuciones T12, regresión de migración de los ficheros reales SQLite v9 → v10 sin alterar las plantillas y generación optativa de demos actuales. **Todavía no ejecutada ni aceptada**: falta validación Windows, T13 visual ES/EN y cierre. No lanzar Actions sin autorización separada.
+La integración de T13 se trabaja en `feature/t13-t12-integration-20261014`: pruebas parametrizadas de ambas empresas T13 para la publicación/reapertura de ejecuciones T12, regresión de migración de los ficheros reales SQLite v9 → v10 sin alterar las plantillas y generación optativa de demos actuales. **Aceptada técnicamente en Windows local**: 7/7 MSTest T13 y 92/92 checks WPF ES/EN específicos; doble smoke de recursos con 49 checks superados en cada ejecución, aceptación integral `Verify-Windows.ps1` superada sobre `4cd3586074c86dd4432400ef9bc1f8d610417a96`, evidencias `artifacts/t13-t12-final-20261014-200501`. Fusión de PR #53 autorizada por el propietario si la rama sigue fusionable. Ver [acta](docs/evidencias/t13-t12-integration-20261014/README.md). GitHub Actions no se ha ejecutado; ninguna autorización de gasto.
 
-## T12 — candidata portada a rama de desarrollo, 2026-10-14
+## Historial anterior a la fusión de T12 — candidata de desarrollo, 2026-10-14
 
 La implementación de ejecuciones e historial T12 se recupera de la PR #36 (cerrada sin fusionar) sobre `main@6d746139` en `feature/t12-runs-history-20261014`. Incluye código, migración y adaptación de la navegación actual. **No está fusionada ni validada en Windows sobre esta base**: no dar por aceptada T12, ni declarar que sus resultados históricos se han reejecutado en la rama nueva. Ver [ficha T12](docs/tareas/T12.md) y [registro de portabilidad](docs/evidencias/t12-port-20261014/README.md). GitHub Actions: cero ejecuciones solicitadas.
 
