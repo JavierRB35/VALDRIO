@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Valdrio.Domain;
 
 namespace Valdrio.Application;
@@ -26,13 +27,16 @@ public sealed record PhysicalObservation(
     PhysicalObservationState State, decimal? TheoreticalQuantity, decimal? PracticalQuantity,
     decimal? NormalQuantity, decimal? RealQuantity,
     PhysicalEvidence? NormalEvidence, PhysicalEvidence? RealEvidence,
-    string? NormalZeroReason, string? ExceptionReason,
+    string? NormalZeroReason, string? ExceptionReason, string? CorrectionReason,
     string Actor, UtcInstant RecordedAtUtc)
 {
+    [JsonIgnore]
     public decimal? UtilizationPercent =>
         State != PhysicalObservationState.Annulled && NormalQuantity is > 0 && RealQuantity is >= 0
             ? checked(RealQuantity.Value / NormalQuantity.Value * 100m) : null;
+    [JsonIgnore]
     public bool ExceedsNormal => NormalQuantity is > 0 && RealQuantity > NormalQuantity;
+    [JsonIgnore]
     public bool ExceptionalActivity => NormalQuantity == 0m && RealQuantity > 0m;
 }
 
