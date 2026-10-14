@@ -22,15 +22,45 @@ public partial class ResourceWorkspacePanel : UserControl
     {
         InitializeComponent();
         DataContextChanged += (_, _) => Bind(); Loaded += (_, _) => Bind();
-        Unloaded += (_, _) => { if (vm is not null) vm.PropertyChanged -= Changed; };
+        Unloaded += (_, _) =>
+        {
+            if (vm is not null)
+            {
+                vm.PropertyChanged -= Changed;
+                vm.RowsRebuilding -= BeforeRowsRebuilding;
+            }
+        };
     }
     private void Bind()
     {
-        if (vm is not null) vm.PropertyChanged -= Changed;
+        if (vm is not null)
+        {
+            vm.PropertyChanged -= Changed;
+            vm.RowsRebuilding -= BeforeRowsRebuilding;
+        }
         vm = DataContext as ResourceWorkspaceViewModel;
-        if (vm is not null) vm.PropertyChanged += Changed;
+        if (vm is not null)
+        {
+            vm.PropertyChanged += Changed;
+            vm.RowsRebuilding += BeforeRowsRebuilding;
+        }
         RefreshHeaders();
     }
+    private void BeforeRowsRebuilding(object? sender, EventArgs e)
+    {
+        // SelectedCells/CurrentCell belong to concrete row instances, not to
+        // the persisted resource/part IDs. Discard those visual references before
+        // Rows.Clear()/Parts.Clear() causes DataGrid's virtualized generator to
+        // raise automation selection events for cells with null items.
+        // The ViewModel retains IDs and restores ResourceChoice/PartChoice once
+        // the new rows have been populated.
+        foreach (var grid in new[] { ResourceGrid, PartGrid, ReviewGrid })
+        {
+            grid.UnselectAllCells();
+            grid.CurrentCell = default;
+        }
+    }
+
     private void Changed(object? sender, PropertyChangedEventArgs e)
     {
         if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == "Item[]") RefreshHeaders();

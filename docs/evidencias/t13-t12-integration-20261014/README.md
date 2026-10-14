@@ -37,3 +37,19 @@ Las pruebas T13 incluyen la migración **9→10 en copia** de ambos archivos SQL
 **Aceptación específica T13–T12 superada; PR #53 aún NO fusionable por cierre incompleto.** Ejecutar sobre la misma revisión de código (solo se admiten commits posteriores de documentación) la suite global y el verificador Windows `Verify-Windows.ps1`, que debe confirmar **al menos 694 pruebas MSTest** previstas con los dos casos nuevos, cobertura general WPF y recibos de integridad. Revisar las capturas gráficas si se requiere aprobación visual humana. Registrar SHA y resultados, y pedir autorización de fusión antes de pasar la PR a lista para revisión.
 
 No se afirma que los dos escenarios cubran todas las funcionalidades opcionales T13; esta acta certifica exclusivamente la integración parametrizada T13–T12 y las puertas ejecutadas que se han comunicado.
+
+## Incidencia adicional: selección obsoleta de DataGrid durante el smoke WPF general (14/10/2026)
+
+Tras superar la aceptación T13–T12 específica (7/7 MSTest y 92 checks WPF), el propietario ejecutó `Verify-Windows.ps1` sobre el SHA de código `534cc6bd...` (acta documental en `c0014bce...`). El WPF general se detuvo antes del recibo final de recursos. La excepción completa, leída de `company-failure.txt`, comienza con:
+
+```
+System.ArgumentNullException: Value cannot be null. (Parameter 'item')
+   at System.Windows.Automation.Peers.DataGridCellItemAutomationPeer..ctor(Object item, DataGridColumn dataGridColumn)
+   at System.Windows.Automation.Peers.DataGridItemAutomationPeer.GetOrCreateCellItemPeer(...)
+   at System.Windows.Automation.Peers.DataGridAutomationPeer.RaiseAutomationCellSelectedEvent(...)
+   at System.Windows.Controls.DataGrid.ChangingSelectedCellsHelper.Dispose()
+```
+
+El fallo se propagó desde `GuidedUi.Reveal(SaveDistributionButton)` vía `MainWindow.RevealWorkflowElement → UpdateLayout()`. `ResourceWorkspaceViewModel.RebuildRows` llamaba a `Rows.Clear()` y `Parts.Clear()` mientras `ResourceWorkspacePanel` contiene tres tablas virtualizadas vinculadas a estas listas. Al reconstruir, WPF puede retener un `DataGridCellInfo` cuyo elemento quedó nulo y fallar al generar los eventos de accesibilidad. La secuencia también puede alcanzarse al cambiar preset de idioma y orientación en este smoke.
+
+**Corrección propuesta, pendiente de Windows:** introducir un evento `RowsRebuilding` antes de sustituir las colecciones; `ResourceWorkspacePanel` limpia sincrónicamente `SelectedCells` y `CurrentCell` en las tres tablas; `RebuildRows` conserva los identificadores de recurso/parte/ajuste **antes** de notificar para restaurar las selecciones lógicas después. No se desactiva accesibilidad, virtualización, controles ni cálculos. Requiere reproducir el smoke WPF general al menos dos veces y después repetir la aceptación global y evaluar resultados. Hasta entonces PR #53 sigue en borrador y **NO SE FUSIONA**.

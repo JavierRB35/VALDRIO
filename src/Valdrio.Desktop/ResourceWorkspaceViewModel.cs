@@ -72,6 +72,10 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     partial void OnResourceChoiceChanged(ResourceGridRow? value) => RefreshCommands();
     partial void OnPartChoiceChanged(ResourcePartRow? value) => RefreshCommands();
     partial void OnAdjustmentChoiceChanged(ResourceAdjustmentRow? value) => RefreshCommands();
+    // Raised synchronously on the UI thread before replacing selected DataGrid
+    // items. The WPF automation peer cannot describe a removed cell whose item
+    // has become null while a virtualized grid generates its containers.
+    public event EventHandler? RowsRebuilding;
     public ObservableCollection<ResourceGridRow> Rows { get; } = [];
     public ObservableCollection<ResourcePartRow> Parts { get; } = [];
     public ObservableCollection<ResourceAdjustmentRow> Adjustments { get; } = [];
@@ -353,7 +357,12 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     }
     private void RebuildRows()
     {
-        var id = ResourceChoice?.Id; Rows.Clear();
+        // Preserve stable domain IDs before the view clears obsolete visual cells.
+        var id = ResourceChoice?.Id;
+        var oldPart = PartChoice?.Value.Id;
+        var oldAdjustment = AdjustmentChoice?.Value.Id;
+        RowsRebuilding?.Invoke(this, EventArgs.Empty);
+        Rows.Clear();
         foreach (var resource in (preview ?? workspace)?.Resources ?? [])
         {
             var w = preview ?? workspace!; var c = w.Preparation.Coverage.Single(c => c.ResourceId == resource.Id);
@@ -365,13 +374,13 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
                 { DisplayName = AccountLabel(w.Origins.Single(o => o.Id == resource.Id)), Revision = w.Study.Revision, RuleAdjustments = MoneyText(ruleTotal), CorrectionNumber = manual.Amount.ToString("0.########", Format), FormatCulture = Format.Name, AssignmentStatus = this[c.HasPendingParts ? "AssignmentPending" : "AssignmentComplete"] });
         }
         ResourceChoice = Rows.FirstOrDefault(r => r.Id == id) ?? Rows.FirstOrDefault();
-        var oldPart = PartChoice?.Value.Id; Parts.Clear();
+        Parts.Clear();
         foreach (var p in parts) Parts.Add(new(p, MoneyText(p.Amount), this[p.Routing.ToString()],
             p.PoolId is { } pool ? Pools.FirstOrDefault(o => o.Value == pool)?.Label ?? pool.ToString() :
             p.Routing == ResourceRoutingKind.DirectObject ? string.Join("; ", p.DirectAssignments.Select(a => (Objects.FirstOrDefault(o => o.Value == a.ObjectId)?.Label ?? a.ObjectId.ToString()) + " = " + MoneyText(a.Amount))) : p.ExclusionReason ?? "",
             this[p.Classification.Behavior.ToString()], this[p.Classification.Layer.ToString()]));
         PartChoice = Parts.FirstOrDefault(p => p.Value.Id == oldPart);
-        var oldAdjustment = AdjustmentChoice?.Value.Id; Adjustments.Clear();
+        Adjustments.Clear();
         foreach (var a in preview?.Resources.FirstOrDefault(r => r.Id == editing?.Id)?.Adjustments ?? [])
             Adjustments.Add(new(a, MoneyText(a.Conversion.OriginalMoney), MoneyText(a.Conversion.ConvertedOriginalMoney), a.Type, a.Reason,
                 this[a.ReversalOfId.HasValue ? "Reversal" : "Adjustment"]));
