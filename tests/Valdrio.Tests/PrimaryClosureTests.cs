@@ -64,6 +64,61 @@ public sealed partial class T06ImportConfirmationTests
     }
 
     [TestMethod]
+    public async Task ClosedPrimaryImportReviewIsVisibleButCannotBeSaved()
+    {
+        using var file = Baseline();
+        var study = Study(file);
+        using var vm = await Vm(file, study, csv: "Amount;Ignored;Account\n77;x;NEW");
+        var prepared = vm.Preparation;
+        var before = Hash(file.Path);
+        Assert.IsTrue(vm.ConfirmCommand.CanExecute(null), vm.UserStatus);
+
+        // The import editor can still inspect its prepared values, but a closed
+        // destination must never offer the write operation.
+        vm.BindTarget(file.Imports, study, true, null, primaryClosed: true);
+        Assert.IsTrue(vm.HasClosedPrimaryDestination);
+        Assert.IsFalse(vm.CanSaveReviewedImport);
+        Assert.IsFalse(vm.ConfirmCommand.CanExecute(null));
+        Assert.AreEqual(vm.PrimaryClosedNotice, vm.ReviewSaveRequirement);
+        Assert.IsTrue(vm.HasUserError);
+        Assert.AreSame(prepared, vm.Preparation);
+        Assert.IsTrue(vm.IsIdle);
+        Assert.AreEqual(before, Hash(file.Path));
+    }
+
+    [TestMethod]
+    public async Task ClosingPrimaryAfterImportReviewReportsErrorWithoutLosingPreparedRowsOrBusyState()
+    {
+        using var file = Baseline();
+        var resources = await ImportedResources(file);
+        using var vm = await Vm(file, resources.Study,
+            csv: "Amount;Ignored;Account\n77;x;NEW");
+        Assert.IsTrue(vm.ConfirmCommand.CanExecute(null), vm.UserStatus);
+        var prepared = vm.Preparation;
+
+        var key = file.Allocations.SaveAllocationKey(KeyCommand(resources)).After;
+        var config = new AllocationConfiguration([], [],
+            [new(resources.Resources.Single().Parts.Single().Id, key.Id)], [], []);
+        file.Allocations.ChangeAllocations(AllocationCommand(resources, config.WithPrimaryClosed(true)));
+        var before = Hash(file.Path);
+        var count = file.Imports.ReadImports(resources.Study.CompanyId, resources.Study.Id).Count;
+
+        // The primary closure changed after the review was prepared.
+        // Persistence rejects the write; the view model must handle it.
+        await vm.ConfirmCommand.ExecuteAsync(null);
+
+        Assert.AreEqual(before, Hash(file.Path));
+        Assert.AreEqual(count, file.Imports.ReadImports(resources.Study.CompanyId, resources.Study.Id).Count);
+        Assert.IsTrue(vm.Status.StartsWith("PRIMARY_CLOSED", StringComparison.Ordinal), vm.Status);
+        Assert.IsTrue(vm.HasUserError);
+        Assert.IsTrue(vm.HasClosedPrimaryDestination);
+        Assert.IsTrue(vm.IsIdle);
+        Assert.IsFalse(vm.ConfirmCommand.CanExecute(null));
+        Assert.AreSame(prepared, vm.Preparation);
+        Assert.IsNull(vm.ConfirmedImport);
+    }
+
+    [TestMethod]
     public async Task CoverageAssignmentsKeepRowIdentityAndOrderAndClosureLocksScreenFive()
     {
         using var ui = await ResourceUiReady("Amount;Ignored;Account\n" + string.Join("\n", Enumerable.Range(0, 30).Select(i => $"1000;x;{6000 + i}")));
