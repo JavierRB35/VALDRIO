@@ -11,7 +11,7 @@ public sealed record PhysicalEvidence(PhysicalEvidenceQuality Quality, string So
 {
     public void EnsureValid()
     {
-        if (!Enum.IsDefined(Quality) || string.IsNullOrWhiteSpace(Source) || string.IsNullOrWhiteSpace(Description))
+        if (!Enum.IsDefined(Quality) || string.IsNullOrWhiteSpace(Source) || Description is null)
             throw PhysicalActivityRules.Error("ACT_EVIDENCE_REQUIRED", "Activity.EvidenceRequired");
         if (Source.Length > 500 || Description.Length > 4000)
             throw PhysicalActivityRules.Error("ACT_EVIDENCE_TOO_LONG", "Activity.EvidenceTooLong");
