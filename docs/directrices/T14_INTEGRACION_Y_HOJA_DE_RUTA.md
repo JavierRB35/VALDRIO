@@ -98,6 +98,18 @@ Este documento complementa [T14](../tareas/T14.md), la [directriz de capacidad n
 - **Requisito T14.1 antes de implementar:** diseñar y verificar cómo distinguir un cambio de estado meramente administrativo frente a cambios económicos, sin falsificar `CurrentRunId`, mutar una ejecución publicada ni forzar un cálculo T12 innecesario. Como presentación conservadora, conservar `RunId` y estado histórico y mostrar «Coste de referencia económicamente compatible» **solo tras comprobación de entradas económicas efectivas**. La solución definitiva debe proteger consumidores de T12 y futuro T15 con pruebas; no declarar la ejecución nuevamente «vigente» por cambiar solo horas.
 - **Pruebas:** cerrado rechaza edición y preserva archivo; reapertura expresa, corrección justificada y recierre conservan historial físico; simulación de ventana obsoleta; cambio de estado sin cambios económicos frente a cambio económico real; T12 no se recalcula automáticamente ni se promueve erróneamente.
 
+### T14.1 · Decisión técnica 8 aprobada (15/10/2026): cambio del período del estudio
+
+**Opción A aprobada por el propietario.** Cambiar el intervalo temporal efectivo del estudio **no traslada, prorratea ni extrapola automáticamente** las observaciones físicas anteriores. Se conservan con su `PeriodStart`/`PeriodEnd` de origen, unidad, modelo/pool/nodo, versión, evidencia, estado y fuente. La fila del nuevo período queda **pendiente de una observación compatible** hasta que el usuario introduzca o adopte expresamente datos válidos del nuevo período.
+
+- **Normal:** se pueden ofrecer como plantilla los días, turnos, personas/equipos equivalentes, interrupciones y factores anteriormente justificados, cuando estén disponibles y sean comparables; debe **recalcularse para el período actual** y confirmarse con su propia fuente. No copiar simplemente el valor anterior.
+- **Real:** debe provenir de actividad efectivamente medida para el nuevo intervalo. No inferir ni convertir automáticamente las horas reales de octubre en las de noviembre; una propuesta de uso de registros parciales exige revisión de fechas, cobertura y no solapamiento, sin atribuir horas a días no medidos.
+- **Contratos de estado:** `UpdateStudyContext` gestiona fecha/período y revisión de contexto según reglas existentes y puede invalidar el run T12. La independencia de versiones físicas **no neutraliza** una revisión económica o contextual. No recalcular T12 al abrir la pantalla ni presentar resultados obsoletos como vigentes; aplicar diagnóstico de compatibilidad por separado.
+- **Persistencia y seguridad:** conservar inmutables las observaciones históricas aunque queden fuera del período vigente. Ningún guardado o ajuste de fechas reescribe sus intervalos, fuentes o versiones; crear nuevas observaciones de destino con procedencia cuando se adopten parámetros o datos verdaderamente comparables.
+- **Pruebas T14.1/T14.2:** octubre → noviembre, cambio de intervalo parcial, retorno a período previo, cambio de día laboral, normal procedente de calendario, real ausente, solapamientos, cierre/reapertura y situación de T12 previa. Probar que faltantes quedan pendientes, no se inventan cantidades y no se alteran datos de origen.
+
+**Pendiente de implementación:** criterio formal de identidad período-modelo-pool/unidad, historial y validación contra cambios de contexto, y vínculo con revisión T12; no aprobar prorrateo universal.
+
 ## 2. Inventario por pantalla: información existente y destino en T14
 
 | Pantalla y responsable | Datos introducidos o disponibles antes de T14 | Uso en T14 | ¿Se pide de nuevo? |
