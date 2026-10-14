@@ -77,7 +77,7 @@ public sealed partial class SqliteCompanyFileService
                     audit.BeforeJson != (prior is null ? "null" : Json(prior)) ||
                     audit.AfterJson != Json(observation), "Physical audit/version chain invalid");
                 var source = new SavePhysicalObservation(
-                    observation.CompanyId, observation.StudyId, observation.NodeId, observation.PoolId,
+                    observation.CompanyId, observation.StudyId, 0L, observation.NodeId, observation.PoolId,
                     observation.Version - 1, observation.State == PhysicalObservationState.Annulled
                         ? PhysicalObservationState.Draft : observation.State,
                     observation.TheoreticalQuantity, observation.PracticalQuantity,
@@ -168,6 +168,7 @@ public sealed partial class SqliteCompanyFileService
                 var study = Study(RequiredStudy(db, file.Id, command.StudyId));
                 if (study.State != StudyState.Open)
                     throw PhysicalActivityRules.Error("ACT_STUDY_CLOSED", "Activity.StudyClosed");
+                StudyRules.CheckRevision(command.ExpectedStudyRevision, study.Revision, study.Id);
                 var model = RequiredPublication(db, file.Id, study.SelectedModelVersionId);
                 var pool = model.Structure.Pools.SingleOrDefault(p => p.Id == command.PoolId);
                 var node = model.Structure.Nodes.SingleOrDefault(n => n.Id == command.NodeId &&
@@ -202,6 +203,7 @@ public sealed partial class SqliteCompanyFileService
                 var study = Study(RequiredStudy(db, file.Id, command.StudyId));
                 if (study.State != StudyState.Open)
                     throw PhysicalActivityRules.Error("ACT_STUDY_CLOSED", "Activity.StudyClosed");
+                StudyRules.CheckRevision(command.ExpectedStudyRevision, study.Revision, study.Id);
                 var before = Latest(db, file.Id, study, command.PoolId);
                 if ((before?.Version ?? 0) != command.ExpectedPhysicalVersion)
                     throw PhysicalActivityRules.Error("ACT_CONFLICT", "Activity.Conflict");
