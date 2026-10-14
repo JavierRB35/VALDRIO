@@ -232,7 +232,7 @@ public partial class App : System.Windows.Application
                         if (e.Args.Contains("--adjustments-only", StringComparer.Ordinal))
                         {
                             await window.RunGuidedWorkflowChecks(captureDirectory, (QueuedCompanyFileDialogs)companyDialogs, (QueuedImportSourceDialogs)importDialogs);
-                            await window.RunAdjustmentChecks(captureDirectory);
+                            await window.RunAdjustmentChecks(captureDirectory, (QueuedModelEditorDialogs)modelDialogs);
                             Shutdown(0); return;
                         }
                         if (e.Args.Contains("--results-scroll-only", StringComparer.Ordinal))
@@ -282,7 +282,7 @@ public partial class App : System.Windows.Application
                         if (e.Args.Contains("--adjustments", StringComparer.Ordinal))
                         {
                             await window.RunGuidedWorkflowChecks(Path.Combine(captureDirectory, "adjustment-fixture"), (QueuedCompanyFileDialogs)companyDialogs, (QueuedImportSourceDialogs)importDialogs);
-                            await window.RunAdjustmentChecks(captureDirectory);
+                            await window.RunAdjustmentChecks(captureDirectory, (QueuedModelEditorDialogs)modelDialogs);
                         }
                         CaptureVisualEvidence(
                             window,

@@ -11,6 +11,10 @@ public sealed partial class T06ImportConfirmationTests
     {
         public PendingEditChoice Next = PendingEditChoice.Cancel;
         public int Prompts;
+        public bool ConfirmEconomic;
+        public string EconomicBody = "";
+        public bool ConfirmEconomicChange(string title, string body, string accept, string cancel)
+        { EconomicBody = body; return ConfirmEconomic; }
         public PendingEditChoice ResolvePending(string title, string body) { Prompts++; return Next; }
         public string? SelectNewFile() => null;
         public string? SelectFile() => null;

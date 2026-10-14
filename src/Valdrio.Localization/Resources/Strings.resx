@@ -1549,4 +1549,6 @@ Difference to distribute: {7}</value></data>
 <data name="Adjustment.ReviewPreview" xml:space="preserve"><value>Preview ready. Review the effect and click Confirm operation. No adjustment has been applied yet.</value></data>
 <data name="Adjustment.SaveFirst" xml:space="preserve"><value>Save the card changes before applying the rule.</value></data>
 <data name="Adjustment.UndoDone" xml:space="preserve"><value>Application undone. Table amounts have been updated.</value></data>
+<data name="Adjustment.ManualIncluded" xml:space="preserve"><value>Existing manual corrections are included in the effective balance being offset. They remain in the history.</value></data>
+<data name="Adjustment.ManualOnRule" xml:space="preserve"><value>Account: {0}. Active rule: {1}. Previous manual correction: {2}; new manual correction: {3}. Effective balance: {4} → {5}. This correction is independent: it does not change the rule or its automatic adjustments. Correcting an offset account restores the stated balance without changing the generated analytical cost. Correcting the analytical row changes its own effective balance. Undoing the rule preserves this manual correction. Continue?</value></data>
 </root>

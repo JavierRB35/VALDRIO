@@ -1,0 +1,25 @@
+{
+  "Status": "passed",
+  "PassedChecks": [
+    "enabled: A\u00F1adir ficha",
+    "imported balance visible while card is unsaved",
+    "enabled: Guardar ficha",
+    "card saved through native controls",
+    "enabled: Aplicar regla\u2026",
+    "cancelling the modal preserves all amounts",
+    "enabled: Aplicar regla\u2026",
+    "analytical cost visible with expected amount",
+    "enabled: Deshacer aplicaci\u00F3n\u2026",
+    "enabled: Confirmar operaci\u00F3n",
+    "undo neutralizes generated cost without removing history",
+    "enabled: Guardar ficha",
+    "enabled: Aplicar regla\u2026",
+    "source-free modal confirmation has explicit feedback",
+    "additional analytical row created without source accounts",
+    "application feedback visible next to card",
+    "manual correction modal cancelled",
+    "cancelled manual correction preserves amount",
+    "manual correction modal accepted",
+    "accepted manual correction changes only the independent amount"
+  ]
+}

@@ -11,11 +11,24 @@ using CommunityToolkit.Mvvm.Input;
 namespace Valdrio.Desktop;
 public partial class MainWindow
 {
-    internal async Task RunAdjustmentChecks(string directory)
+    internal async Task RunAdjustmentChecks(string directory, QueuedModelEditorDialogs dialogs)
     {
         var output = Path.Combine(directory, "reusable-adjustments"); Directory.CreateDirectory(output);
         var vm = viewModel!.Resources!;
         var checks = new List<string>();
+        var acceptModal = false;
+        var modalFile = "01-es-modal.png";
+        dialogs.EconomicConfirmation = (title, body, accept, cancel) =>
+        {
+            var modal = new EconomicConfirmationWindow(title, body, accept, cancel);
+            modal.ContentRendered += (_, _) => modal.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                VisualEvidenceCapture.Capture(modal, Path.Combine(output, modalFile));
+                var button = acceptModal ? modal.AcceptButton : modal.CancelButton;
+                ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
+            }), DispatcherPriority.ApplicationIdle);
+            return modal.ShowDialog() == true;
+        };
         void Check(bool ok, string message) { if (!ok) throw new InvalidOperationException(message + " / " + vm.Status); checks.Add(message); }
         async Task Idle() { await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle); UpdateLayout(); }
         IEnumerable<T> Descendants<T>(DependencyObject node) where T : DependencyObject
@@ -53,10 +66,10 @@ public partial class MainWindow
         Button Action(IRelayCommand command) => Descendants<Button>(panel.ReusableAdjustmentsSection).Single(b => ReferenceEquals(b.Command, command));
         await Click(Action(card.SaveCommand)); card = vm.RuleCards.Single();
         Check(!card.IsDirty, "card saved through native controls");
-        await Click(Action(card.ApplyCommand)); Check(card.HasPreview, "economic preview displayed before writing");
-        Action(card.ConfirmCommand).BringIntoView(); await Idle();
-        VisualEvidenceCapture.Capture(this, Path.Combine(output, "01-es-preview.png"));
-        await Click(Action(card.ConfirmCommand));
+        await Click(Action(card.ApplyCommand));
+        Check(!vm.Rows.Any(r => r.Code == "AJ-AMORT-TEC"), "cancelling the modal preserves all amounts");
+        acceptModal = true;
+        await Click(Action(card.ApplyCommand));
         Check(vm.Rows.Any(r => r.Code == "AJ-AMORT-TEC" && r.Effective == "500 EUR"), "analytical cost visible with expected amount");
         panel.ReusableAdjustmentsSection.IsExpanded = false; panel.ResourceGrid.BringIntoView(); await Idle();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "02-es-applied.png"));
@@ -70,12 +83,19 @@ public partial class MainWindow
         card = vm.RuleCards.Single();
         Input("Pattern", ""); await Click(Action(card.SaveCommand)); card = vm.RuleCards.Single();
         await Click(Action(card.ApplyCommand));
-        Check(card.HasPreview && !string.IsNullOrWhiteSpace(card.Feedback), "source-free preview has explicit feedback");
-        await Click(Action(card.ConfirmCommand));
+        Check(!card.HasPreview && !string.IsNullOrWhiteSpace(card.Feedback), "source-free modal confirmation has explicit feedback");
         Check(vm.Rows.Single(r => r.Code == "AJ-AMORT-TEC").Effective == "500 EUR", "additional analytical row created without source accounts");
         Check(Descendants<TextBlock>(panel.ReusableAdjustmentsSection).Any(t => t.Text == card.Feedback && t.IsVisible), "application feedback visible next to card");
         Action(card.UndoCommand).BringIntoView(); await Idle();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "04-es-additional-feedback.png"));
+        modalFile = "05-es-manual-modal.png";
+        acceptModal = false;
+        var analytical = vm.Rows.Single(r => r.Code == "AJ-AMORT-TEC");
+        Check(!await vm.SaveCorrectionAsync(analytical, "25", System.Globalization.CultureInfo.InvariantCulture), "manual correction modal cancelled");
+        Check(vm.Rows.Single(r => r.Code == "AJ-AMORT-TEC").Effective == "500 EUR", "cancelled manual correction preserves amount");
+        acceptModal = true;
+        Check(await vm.SaveCorrectionAsync(vm.Rows.Single(r => r.Code == "AJ-AMORT-TEC"), "25", System.Globalization.CultureInfo.InvariantCulture), "manual correction modal accepted");
+        Check(vm.Rows.Single(r => r.Code == "AJ-AMORT-TEC").Effective == "525 EUR", "accepted manual correction changes only the independent amount");
         await File.WriteAllTextAsync(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }, new JsonSerializerOptions { WriteIndented = true }));
     }
 }

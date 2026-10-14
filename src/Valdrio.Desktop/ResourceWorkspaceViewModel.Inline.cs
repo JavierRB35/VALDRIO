@@ -28,6 +28,7 @@ public sealed partial class ResourceWorkspaceViewModel
         {
             correctionCommitPending = false; company.NotifyWorkspaceStateChanged(); Refresh(); return false;
         }
+        var declined = false;
         var success = await Run(async token =>
         {
             StudyRules.CheckRevision(row.Revision, workspace.Study.Revision, workspace.Study.Id);
@@ -41,12 +42,25 @@ public sealed partial class ResourceWorkspaceViewModel
                 catalog.GetRequired(currency).Freeze(), new(Guid.NewGuid()), new(Guid.NewGuid()),
                 new(Guid.NewGuid()), "local-user");
             if (command is null) { statusKey = "CorrectionUnchanged"; return; }
+            var affected = workspace.Ledger.AdjustmentApplications?.Where(a => a.ReversedBy is null &&
+                a.Lines.Any(l => l.ResourceId == row.Id)).ToArray() ?? [];
+            if (affected.Length > 0)
+            {
+                var coverage = workspace.Preparation.Coverage.Single(c => c.ResourceId == row.Id);
+                var priorManual = coverage.AdjustmentTotal - AdjustmentRuleEngine.RuleTotal(workspace, row.Id);
+                var after = coverage.Effective + total - priorManual;
+                var explanation = string.Format(Format, RuleText("ManualOnRule"), row.DisplayName,
+                    string.Join(", ", affected.Select(a => a.Rule.Name)), MoneyText(priorManual), MoneyText(total),
+                    MoneyText(coverage.Effective), MoneyText(after));
+                if (!dialogs.ConfirmEconomicChange(RuleText("ManualTotal"), explanation, RuleText("Confirm"), RuleText("Cancel")))
+                { declined = true; RebuildRows(); return; }
+            }
             await Commit(command, token);
             if (statusKey != "SavedRefreshPending") statusKey = "CorrectionSaved";
         });
         correctionCommitPending = false; company.NotifyWorkspaceStateChanged();
         correctionFailed = !success;
         Refresh();
-        return success;
+        return success && !declined;
     }
 }

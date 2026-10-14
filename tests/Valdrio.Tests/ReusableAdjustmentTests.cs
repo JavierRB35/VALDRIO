@@ -7,6 +7,34 @@ namespace Valdrio.Tests;
 public sealed partial class T06ImportConfirmationTests
 {
     [TestMethod]
+    public async Task ReusableAdjustment_ModalAcceptAndCancelProtectBothOrders()
+    {
+        using var ui = await ResourceUiReady("Amount;Ignored;Account\n1000;x;681001");
+        var vm = ui.Resources;
+        Assert.IsTrue(await vm.SaveCorrectionAsync(vm.Rows.Single(), "20", System.Globalization.CultureInfo.InvariantCulture));
+        vm.AddRuleCommand.Execute(null);
+        var card = vm.RuleCards.Single();
+        card.Name = "Technical"; card.Pattern = "681*"; card.Value = "500"; card.Reason = "Estimate";
+        await card.SaveCommand.ExecuteAsync(null); card = vm.RuleCards.Single();
+        ui.Dialogs.ConfirmEconomic = false;
+        await card.ApplyCommand.ExecuteAsync(null);
+        Assert.AreEqual(1, vm.Rows.Count);
+        StringAssert.Contains(ui.Dialogs.EconomicBody, "1020 EUR");
+        Assert.IsFalse(card.HasPreview);
+        ui.Dialogs.ConfirmEconomic = true;
+        await card.ApplyCommand.ExecuteAsync(null);
+        Assert.AreEqual("0 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
+        ui.Dialogs.ConfirmEconomic = false;
+        Assert.IsFalse(await vm.SaveCorrectionAsync(vm.Rows.Single(r => r.Code == "681001"), "50", System.Globalization.CultureInfo.InvariantCulture));
+        Assert.AreEqual("0 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
+        StringAssert.Contains(ui.Dialogs.EconomicBody, "30 EUR");
+        ui.Dialogs.ConfirmEconomic = true;
+        Assert.IsTrue(await vm.SaveCorrectionAsync(vm.Rows.Single(r => r.Code == "681001"), "50", System.Globalization.CultureInfo.InvariantCulture));
+        Assert.AreEqual("30 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
+        card.UndoCommand.Execute(null); await card.ConfirmCommand.ExecuteAsync(null);
+        Assert.AreEqual("1050 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
+    }
+    [TestMethod]
     public async Task ReusableAdjustment_SuggestsCodeButPreservesManualAndSavedCodes()
     {
         using var ui = await ResourceUiReady();
@@ -62,7 +90,7 @@ public sealed partial class T06ImportConfirmationTests
         Assert.IsFalse(string.IsNullOrWhiteSpace(card.Feedback));
         await card.SaveCommand.ExecuteAsync(null);
         card = vm.RuleCards.Single();
-        card.ApplyCommand.Execute(null);
+        vm.PrepareRule(card, false);
         Assert.IsTrue(card.HasPreview, vm.Status);
         Assert.IsFalse(string.IsNullOrWhiteSpace(card.Feedback));
         StringAssert.Contains(card.PreviewText, "500 EUR");
@@ -114,11 +142,11 @@ public sealed partial class T06ImportConfirmationTests
         Assert.IsTrue(vm.IsDirty);
         await card.SaveCommand.ExecuteAsync(null);
         Assert.IsFalse(vm.IsDirty, vm.Status);
-        card = vm.RuleCards.Single(); card.ApplyCommand.Execute(null);
+        card = vm.RuleCards.Single(); vm.PrepareRule(card, false);
         Assert.IsTrue(card.HasPreview, vm.Status);
         Assert.AreEqual(1, vm.Rows.Count);
         card.CancelCommand.Execute(null); Assert.IsFalse(card.HasPreview);
-        card.ApplyCommand.Execute(null); await card.ConfirmCommand.ExecuteAsync(null);
+        vm.PrepareRule(card, false); await card.ConfirmCommand.ExecuteAsync(null);
         Assert.AreEqual(2, vm.Rows.Count, vm.Status);
         Assert.AreEqual("0 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
         Assert.AreEqual("0 EUR", vm.Rows.Single(r => r.Code == "681001").Adjustments);

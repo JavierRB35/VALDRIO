@@ -1549,4 +1549,6 @@ Diferencia que falta repartir: {7}</value></data>
 <data name="Adjustment.ReviewPreview" xml:space="preserve"><value>Vista previa preparada. Revisa el efecto y pulsa Confirmar operación. Todavía no se ha aplicado ningún ajuste.</value></data>
 <data name="Adjustment.SaveFirst" xml:space="preserve"><value>Guarda los cambios de la ficha para poder aplicar la regla.</value></data>
 <data name="Adjustment.UndoDone" xml:space="preserve"><value>Aplicación deshecha. Los importes de la tabla se han actualizado.</value></data>
+<data name="Adjustment.ManualIncluded" xml:space="preserve"><value>Si las cuentas ya tienen correcciones manuales, estas se incluyen en el saldo efectivo que se compensará. Se conservarán en el historial.</value></data>
+<data name="Adjustment.ManualOnRule" xml:space="preserve"><value>Cuenta: {0}. Regla activa: {1}. Corrección manual anterior: {2}; nueva corrección manual: {3}. Saldo efectivo: {4} → {5}. Esta corrección es independiente: no modifica la regla ni sus ajustes automáticos. Si corriges una cuenta compensada, volverá a tener el saldo indicado sin modificar el coste analítico generado. Si corriges la propia línea analítica, cambiará su saldo efectivo. Deshacer la regla conservará esta corrección manual. ¿Deseas continuar?</value></data>
 </root>

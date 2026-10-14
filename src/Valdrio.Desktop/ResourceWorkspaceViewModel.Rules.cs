@@ -109,10 +109,20 @@ public sealed partial class ResourceWorkspaceViewModel
                     : string.Format(Format, RuleText("ApplyPreview"), MoneyText(preview.Before), MoneyText(preview.Target), card.Saved.AnalyticalCode);
                 text += Environment.NewLine + string.Join(Environment.NewLine, preview.Accounts.Select(a =>
                     AccountLabel(workspace.Origins.Single(o => o.Id == a.ResourceId)) + ": " + MoneyText(a.Before) + " → 0; " + MoneyText(a.Delta)));
+                if (preview.Accounts.Count > 0) text += Environment.NewLine + RuleText("ManualIncluded");
             }
             _ = ResourceWorkspaceRules.Apply(workspace, command);
             card.Prepare(command, text);
         });
+    }
+    internal async Task ApplyRuleWithConfirmation(AdjustmentRuleCard card)
+    {
+        PrepareRule(card, false);
+        if (!card.HasPreview) return;
+        if (dialogs.ConfirmEconomicChange(RuleText("Apply"), card.PreviewText,
+            RuleText("Confirm"), RuleText("Cancel")))
+            await ConfirmRule(card);
+        else { card.ClearPreview(); card.ShowFeedback("PreviewCancelled"); }
     }
     internal async Task ConfirmRule(AdjustmentRuleCard card)
     {
@@ -149,7 +159,7 @@ public sealed class AdjustmentRuleCard : ObservableObject
         suggestCode = saved is null;
         SaveCommand = new AsyncRelayCommand(() => owner.SaveRule(this), () => owner.CanEditRule && IsDirty);
         DeleteCommand = new AsyncRelayCommand(() => owner.SaveRule(this, true), () => owner.CanEditRule);
-        ApplyCommand = new RelayCommand(() => owner.PrepareRule(this, false), () => owner.CanEditRule && !IsDirty && Saved?.Archived == false && owner.ActiveApplication(Id) is null);
+        ApplyCommand = new AsyncRelayCommand(() => owner.ApplyRuleWithConfirmation(this), () => owner.CanEditRule && !IsDirty && Saved?.Archived == false && owner.ActiveApplication(Id) is null);
         UndoCommand = new RelayCommand(() => owner.PrepareRule(this, true), () => owner.CanEditRule && !IsDirty && owner.ActiveApplication(Id) is not null);
         ConfirmCommand = new AsyncRelayCommand(() => owner.ConfirmRule(this), () => owner.CanEditRule && Prepared is not null && !IsDirty);
         CancelCommand = new RelayCommand(() => { ClearPreview(); ShowFeedback("PreviewCancelled"); });
@@ -190,7 +200,7 @@ public sealed class AdjustmentRuleCard : ObservableObject
     public IReadOnlyList<ResourceChoice<AdjustmentValueMode>> Modes => Enum.GetValues<AdjustmentValueMode>().Select(m => new ResourceChoice<AdjustmentValueMode>(m, this[m.ToString()])).ToArray();
     public IAsyncRelayCommand SaveCommand { get; }
     public IAsyncRelayCommand DeleteCommand { get; }
-    public IRelayCommand ApplyCommand { get; }
+    public IAsyncRelayCommand ApplyCommand { get; }
     public IRelayCommand UndoCommand { get; }
     public IAsyncRelayCommand ConfirmCommand { get; }
     public IRelayCommand CancelCommand { get; }

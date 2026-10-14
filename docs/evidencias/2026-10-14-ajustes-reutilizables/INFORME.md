@@ -109,3 +109,15 @@ El apartado se presenta como tarjeta con borde verde de marca, título «Reglas 
 Validación: pruebas seleccionadas de reglas y localización y compilación Release, logs rule-code adjuntos. La nueva prueba comprueba inferencia por nombre/cuenta, tildes, ceros iniciales y preservación de códigos manuales y guardados. No se repite la batería económica completa.
 
 Resultado: 16/16 pruebas superadas; compilación con 0 errores y 0 advertencias. Recorrido WPF finalizado con código 0 y captura inspeccionada: [apartado destacado](section/03-en-undone.png). Sin GitHub Actions.
+
+## Confirmación modal de reglas y correcciones manuales
+
+Aplicar regla abre ahora un modal con explicación económica y botones Confirmar operación/Cancelar. Cerrar o cancelar no aplica nada. La confirmación usa la operación preparada y su revisión; el almacenamiento conserva su control de concurrencia. Para cuentas coincidentes se aclara que el saldo efectivo incluye las correcciones manuales anteriores. Sin cuentas de origen se explica exclusivamente la creación de una línea adicional.
+
+Guardar una corrección manual sobre una cuenta compensada o una línea analítica de una aplicación activa abre el mismo tipo de modal. Identifica cuenta y regla, corrección manual anterior/nueva y saldo efectivo antes/después; explica que la corrección es independiente y se conserva al deshacer la regla. Se permiten ambos órdenes: corrección→regla y regla→corrección. Cancelar restaura la visualización de importes guardados. Una edición sin cambio de importe no necesita confirmación. Las cuentas no afectadas conservan la edición directa existente.
+
+El modal tiene propietario, texto desplazable, botones siempre visibles, Escape/cierre como cancelación y foco inicial en Cancelar. No se aplica por pulsar Intro accidentalmente. Las pruebas usan el contrato de confirmación; el recorrido WPF abre la ventana real y pulsa sus botones mediante automatización nativa.
+
+Validación: 25 pruebas seleccionadas superadas (reglas, correcciones inline y localización), compilación Release sin errores ni advertencias. Nuevo caso con manual +20, regla que compensa 1020, cancelación de manual +50 sin escritura, aceptación con saldo efectivo 30 y deshacer con total restaurado 1050. No se repitió la suite completa. No se ejecutó GitHub Actions.
+
+Recorrido WPF finalizado con código 0. Verificados cancelar y aceptar en ambos modales, preservación de importes al cancelar y actualización de 500 a 525 al aceptar la corrección independiente. [Modal de regla](modals/01-es-modal.png) y [modal de corrección manual](modals/05-es-manual-modal.png).
