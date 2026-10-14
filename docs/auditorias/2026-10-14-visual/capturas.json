@@ -1,0 +1,920 @@
+[
+  {
+    "version": "antes",
+    "screen": "01-en-esES-ltr.png",
+    "path": "antes/01-en-esES-ltr.png",
+    "sha256": "a67ef57ecdeab31867b8dcc82c83c98a99471e92f25faec9b2f1bc8f0df205b7"
+  },
+  {
+    "version": "antes",
+    "screen": "02-es-esES-ltr.png",
+    "path": "antes/02-es-esES-ltr.png",
+    "sha256": "b17ce106e73501be43ba981818d684570029422e3963e64c5fcecd30ddfaa92c"
+  },
+  {
+    "version": "antes",
+    "screen": "03-es-enUS-ltr.png",
+    "path": "antes/03-es-enUS-ltr.png",
+    "sha256": "41a56fa7b7ee8608805605d0a4ed37653c517ea3af0a7a7572e09378d908f025"
+  },
+  {
+    "version": "antes",
+    "screen": "04-pseudo-rtl.png",
+    "path": "antes/04-pseudo-rtl.png",
+    "sha256": "8491cba25cbfbb1f0b800b30c90e40773fcd26d6fa19eb10c9269ab1a31d952f"
+  },
+  {
+    "version": "antes",
+    "screen": "company-file/company-panel.png",
+    "path": "antes/company-file/company-panel.png",
+    "sha256": "388248789818a3b5f81219523f7de9cfe91460403476a59f0b1e04a870504d73"
+  },
+  {
+    "version": "antes",
+    "screen": "guided-workflow/destination-es.png",
+    "path": "antes/guided-workflow/destination-es.png",
+    "sha256": "825998d9e67eff8549042019fa08317e236d40fec039bb9e57c6020d37c86cfb"
+  },
+  {
+    "version": "antes",
+    "screen": "guided-workflow/review-es.png",
+    "path": "antes/guided-workflow/review-es.png",
+    "sha256": "4f53b1c27bf5c95b19806adae42181ca303ac4753ccf3a97c373f31ee7a34dcd"
+  },
+  {
+    "version": "antes",
+    "screen": "guided-workflow/review-pseudo-rtl.png",
+    "path": "antes/guided-workflow/review-pseudo-rtl.png",
+    "sha256": "4c6698419c0351979d2e33cd1274fd2822e0b9590e9ef9d275519ccd0e24e107"
+  },
+  {
+    "version": "antes",
+    "screen": "guided-workflow/structure-es.png",
+    "path": "antes/guided-workflow/structure-es.png",
+    "sha256": "003f8b11526aff87a8d1613339c88a5e0f5149c168244dad063882b612805380"
+  },
+  {
+    "version": "antes",
+    "screen": "import-columns/csv-es-enUS.png",
+    "path": "antes/import-columns/csv-es-enUS.png",
+    "sha256": "2c1b68c55d4ad7e63d01e7e60450493a41b726887cdd4e7ccd22771c18e859e8"
+  },
+  {
+    "version": "antes",
+    "screen": "import-columns/xlsx-pseudo.png",
+    "path": "antes/import-columns/xlsx-pseudo.png",
+    "sha256": "0920af1b53de71e07c2375f4ba89ed18d3feab6c1293cf17263869be64fd153d"
+  },
+  {
+    "version": "antes",
+    "screen": "import-completion/comparison-es.png",
+    "path": "antes/import-completion/comparison-es.png",
+    "sha256": "5e03d79a63a450d8b0a996831e79c467c4bb9bd32b9b4bcce53a6c6caa459cf6"
+  },
+  {
+    "version": "antes",
+    "screen": "import-completion/comparison-pseudo.png",
+    "path": "antes/import-completion/comparison-pseudo.png",
+    "sha256": "46dbac8dba81f0c991b45e2eea29eedd6f12719ff254323d6c65eba98368ec3e"
+  },
+  {
+    "version": "antes",
+    "screen": "import-confirmation/accounts-es.png",
+    "path": "antes/import-confirmation/accounts-es.png",
+    "sha256": "c8db85e6dfd979be4c84b9f27752887a69d2af197ad6b7d16056c32459bc82b4"
+  },
+  {
+    "version": "antes",
+    "screen": "import-confirmation/confirmed-pseudo.png",
+    "path": "antes/import-confirmation/confirmed-pseudo.png",
+    "sha256": "aa51e8352437c3770800247e86b6eaccfe6fef1bae8e7153d6adb71ef8b5409d"
+  },
+  {
+    "version": "antes",
+    "screen": "import-confirmation/prepared-es.png",
+    "path": "antes/import-confirmation/prepared-es.png",
+    "sha256": "7fdfffcd9e3feeab8f6a3774b265fbba27e88cfed1a20a467a610cdc05c9b6e2"
+  },
+  {
+    "version": "antes",
+    "screen": "import-debit-credit/csv-confirmed-pseudo.png",
+    "path": "antes/import-debit-credit/csv-confirmed-pseudo.png",
+    "sha256": "8377ddd019a3739f0c5585a30896d5df70499d0ca77eb61973727bb1fb098d9f"
+  },
+  {
+    "version": "antes",
+    "screen": "import-debit-credit/csv-prepared-es.png",
+    "path": "antes/import-debit-credit/csv-prepared-es.png",
+    "sha256": "9bdba41301e055082a93c00ab099ba14664f8fa88ab5ec7d87cf95ea6355404b"
+  },
+  {
+    "version": "antes",
+    "screen": "import-debit-credit/xlsx-prepared-es.png",
+    "path": "antes/import-debit-credit/xlsx-prepared-es.png",
+    "sha256": "70746484db4b4e14d6c6237f100586688c6e5e248b4dc426edb5081a36f212af"
+  },
+  {
+    "version": "antes",
+    "screen": "import-grouping/groups-es.png",
+    "path": "antes/import-grouping/groups-es.png",
+    "sha256": "9b703f18db2d0c530dd5b91027f5ab5ddff1e84a4562933fb585f4a3122655a4"
+  },
+  {
+    "version": "antes",
+    "screen": "import-grouping/groups-pseudo.png",
+    "path": "antes/import-grouping/groups-pseudo.png",
+    "sha256": "1140a1c57bbbcbdd9cc2f0c7003bea8946b12b1093e3e81f26cb30ca2be4f409"
+  },
+  {
+    "version": "antes",
+    "screen": "import-grouping/records-es.png",
+    "path": "antes/import-grouping/records-es.png",
+    "sha256": "d4f3d54174f8824a02b577f0f0ac4f67ecc4bb4cf4d3868450778b8d16f28b13"
+  },
+  {
+    "version": "antes",
+    "screen": "import-international/conversion-es.png",
+    "path": "antes/import-international/conversion-es.png",
+    "sha256": "28e5a15e1d55905e4047b775ebfe9a8e1b3500d31989c9564af464ac252878c7"
+  },
+  {
+    "version": "antes",
+    "screen": "import-international/conversion-pseudo.png",
+    "path": "antes/import-international/conversion-pseudo.png",
+    "sha256": "fc13da5014c148a3ac9af946a4fd8a8ca08662a366f00166a0c69bcb58a5aa8b"
+  },
+  {
+    "version": "antes",
+    "screen": "methodology/en-secondary.png",
+    "path": "antes/methodology/en-secondary.png",
+    "sha256": "f9b286ab75fbe4f43b6db85ff7e8c3d70855449c9161bad4f0571aa77233df86"
+  },
+  {
+    "version": "antes",
+    "screen": "methodology/es-editable-nodes.png",
+    "path": "antes/methodology/es-editable-nodes.png",
+    "sha256": "40039a0f642065cfa8c934a6467b1c19094b23215e2eaa167a523905871583e2"
+  },
+  {
+    "version": "antes",
+    "screen": "methodology/es-primary-composition.png",
+    "path": "antes/methodology/es-primary-composition.png",
+    "sha256": "f5bf933fea92c0387cd53f369fe8fcf9f6f278ed32e890c2e93fcf3b6c41d996"
+  },
+  {
+    "version": "antes",
+    "screen": "methodology/es-secondary.png",
+    "path": "antes/methodology/es-secondary.png",
+    "sha256": "c611e9f992ea0a4471380cf622d24d612ddd38a2a57de37246557c36619f7f8d"
+  },
+  {
+    "version": "antes",
+    "screen": "models/nodes-pseudo-rtl.png",
+    "path": "antes/models/nodes-pseudo-rtl.png",
+    "sha256": "1e98c712df5461ac2a1d563419492aefde93b9499eb4d78b4d592e3ef6f544b0"
+  },
+  {
+    "version": "antes",
+    "screen": "models/published-en-esES.png",
+    "path": "antes/models/published-en-esES.png",
+    "sha256": "392a54a9140d7b08071cc724cd0d5c72f211d0bdafcf4d901981d65fe794d667"
+  },
+  {
+    "version": "antes",
+    "screen": "models/published-es-enUS.png",
+    "path": "antes/models/published-es-enUS.png",
+    "sha256": "01a6492cf5c26eb566c8f4e10d58fc0ba63726b9e3d0e57761d0da7c1323a878"
+  },
+  {
+    "version": "antes",
+    "screen": "models/review-tree.png",
+    "path": "antes/models/review-tree.png",
+    "sha256": "b827b58191ccceed63e7a7c946722036ae7af64f5cdfe03f19c49734566fe182"
+  },
+  {
+    "version": "antes",
+    "screen": "studies/en-deDE-history.png",
+    "path": "antes/studies/en-deDE-history.png",
+    "sha256": "58a6777998ff30a9743c50e2c29753bb57f60418bcfd4c6b99305f2196871b53"
+  },
+  {
+    "version": "antes",
+    "screen": "studies/en-deDE.png",
+    "path": "antes/studies/en-deDE.png",
+    "sha256": "2fa86da67dd271fe8b043ce6e4d691dfc0536038d75fdb73636622cfc2c1ea21"
+  },
+  {
+    "version": "antes",
+    "screen": "studies/en-esES-history.png",
+    "path": "antes/studies/en-esES-history.png",
+    "sha256": "e1950d388782375fa634298b0ee931f54c4b1b09788a199a49f94934bf55406e"
+  },
+  {
+    "version": "antes",
+    "screen": "studies/en-esES.png",
+    "path": "antes/studies/en-esES.png",
+    "sha256": "7b0e28ed54bdd220d753784fecc5c6bdf7f68cd217ad451f9df5462caef599de"
+  },
+  {
+    "version": "antes",
+    "screen": "studies/es-enUS-history.png",
+    "path": "antes/studies/es-enUS-history.png",
+    "sha256": "cccf20b4a75c59366eb7f7dac0279c98d61a9ea5d1f477ca80bc61cb88163088"
+  },
+  {
+    "version": "antes",
+    "screen": "studies/es-enUS.png",
+    "path": "antes/studies/es-enUS.png",
+    "sha256": "acfb8a9da6f4c7ea2877268aaee50c158706dc3ac9fa8e34648d4790b84203e1"
+  },
+  {
+    "version": "antes",
+    "screen": "studies/pseudo-rtl-history.png",
+    "path": "antes/studies/pseudo-rtl-history.png",
+    "sha256": "1a5465afc91a165e5e8cd342fc50eb28913667f1ad327f1c3e266ec6e19fee8a"
+  },
+  {
+    "version": "antes",
+    "screen": "studies/pseudo-rtl.png",
+    "path": "antes/studies/pseudo-rtl.png",
+    "sha256": "4e94112555a291e575629d9c0e6105efe9638c710b70c4ef2ef44801b9d56e24"
+  },
+  {
+    "version": "antes",
+    "screen": "t07-resources/inline-corrections-es.png",
+    "path": "antes/t07-resources/inline-corrections-es.png",
+    "sha256": "58eab4a7f3d0d971bf0171f083a82548706df9cd48051ca5182c1e071732550b"
+  },
+  {
+    "version": "antes",
+    "screen": "t07-resources/pool-choices-es.png",
+    "path": "antes/t07-resources/pool-choices-es.png",
+    "sha256": "b66573d0e468235f93896c87ca887245b955c644c1684baabd6a07272350b79f"
+  },
+  {
+    "version": "antes",
+    "screen": "t07-resources/review-es.png",
+    "path": "antes/t07-resources/review-es.png",
+    "sha256": "e9c942817135a939cd5a7434e2341ffbe9947a86a6377be53de8d08b9642ce04"
+  },
+  {
+    "version": "antes",
+    "screen": "t07-resources/review-pseudo-rtl.png",
+    "path": "antes/t07-resources/review-pseudo-rtl.png",
+    "sha256": "4757fc36324509897faf178de65b95ba8d32227f7cf88ab143326c6aa671acd7"
+  },
+  {
+    "version": "antes",
+    "screen": "t07-resources/saved-en.png",
+    "path": "antes/t07-resources/saved-en.png",
+    "sha256": "3a91cf17ff07e4d3357f5b28fbfacac737d128948bdea316f7db08304cc25676"
+  },
+  {
+    "version": "antes",
+    "screen": "t08-allocations/en-keys.png",
+    "path": "antes/t08-allocations/en-keys.png",
+    "sha256": "3bf5db8385d1d1da74d8531efd53016a2756317dbbf22e8b5b1490bccfc9f418"
+  },
+  {
+    "version": "antes",
+    "screen": "t08-allocations/en-rules.png",
+    "path": "antes/t08-allocations/en-rules.png",
+    "sha256": "f3e77d44b69418ea5b571024e2ecd5ec5101ff893b3c7f8a5c39deddf69b71dd"
+  },
+  {
+    "version": "antes",
+    "screen": "t08-allocations/es-direct-assignment.png",
+    "path": "antes/t08-allocations/es-direct-assignment.png",
+    "sha256": "0634353765376d5ffec411108d7437836bee276fe9b07636d59cbeec9d05a184"
+  },
+  {
+    "version": "antes",
+    "screen": "t08-allocations/es-keys.png",
+    "path": "antes/t08-allocations/es-keys.png",
+    "sha256": "82786db68e6b6c4bc1b2a500183108499f24526cfe86df8c0c804750f27e1336"
+  },
+  {
+    "version": "antes",
+    "screen": "t08-allocations/es-rules.png",
+    "path": "antes/t08-allocations/es-rules.png",
+    "sha256": "c787d25262e88cbbc6f2a807b3c0083e09f267134ac1baefb2844f6151712f3f"
+  },
+  {
+    "version": "antes",
+    "screen": "t08-allocations/pseudo-rtl.png",
+    "path": "antes/t08-allocations/pseudo-rtl.png",
+    "sha256": "cf99cc4a56dc59c6ffcfa389e3fa06e81a1112f945e1c2770ddc4a263ebbada1"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/en-step-1.png",
+    "path": "antes/visual-shell/en-step-1.png",
+    "sha256": "abf20c29349b1482ae390edb2d4b8f32208a934396feebfbe6b228e6d172e2ef"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/en-step-2.png",
+    "path": "antes/visual-shell/en-step-2.png",
+    "sha256": "51cacb523c08be9cc0e7addf43ac4bf189ef2b026ccee78e2705ee62f2cb4775"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/en-step-3.png",
+    "path": "antes/visual-shell/en-step-3.png",
+    "sha256": "14c881f9c948b4ece1ecf8dad235ec155d006a9850d2dc2cd591b0a60ebf5509"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/en-step-4.png",
+    "path": "antes/visual-shell/en-step-4.png",
+    "sha256": "4032a4908815739ed9227b95bbc107bb0ea156c71cd07ba57a44fc75e6d332ba"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/en-step-5.png",
+    "path": "antes/visual-shell/en-step-5.png",
+    "sha256": "11da35c4b927c0c284a7dc4e42ca86a84509ab04cdde919d51257cef7776297c"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/en-step-6.png",
+    "path": "antes/visual-shell/en-step-6.png",
+    "sha256": "24b4540e7ae7dbffd3ed7d7d431a11147c601009bec02392e39a0fbfa646523f"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/en-step-7.png",
+    "path": "antes/visual-shell/en-step-7.png",
+    "sha256": "574305a72ed8708d2ef734777128f0743f5cadd368aa56b03b4c733d1aa1194c"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/es-step-1.png",
+    "path": "antes/visual-shell/es-step-1.png",
+    "sha256": "770267a909df2c02630e3e330517d8b4a216d75abdddc6502d74a10551ee8380"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/es-step-2.png",
+    "path": "antes/visual-shell/es-step-2.png",
+    "sha256": "ee7853b233021623ceccc8ceada133a56317963c695f8c85b41ee4ef77e1fc53"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/es-step-3.png",
+    "path": "antes/visual-shell/es-step-3.png",
+    "sha256": "bfeb86a2edbf5751d5ac628e20a9ce82e26f5a0f6cc1f889a70698831d80f2b4"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/es-step-4.png",
+    "path": "antes/visual-shell/es-step-4.png",
+    "sha256": "473c32efa794971455de215b9694919b7ef2ef004d28e5188cca9add8b26c872"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/es-step-5.png",
+    "path": "antes/visual-shell/es-step-5.png",
+    "sha256": "4cced7396d1af8f13b4158d4b961caf1d5f78a2b467dbeb2bf6f8a96275b5572"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/es-step-6.png",
+    "path": "antes/visual-shell/es-step-6.png",
+    "sha256": "bf6c884e4c9f0d21cf19dde61f1835522ec9793584a352f1ee23104e4175976b"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/es-step-7.png",
+    "path": "antes/visual-shell/es-step-7.png",
+    "sha256": "dd554d02106e726af97c5fefd607320582d645c0b02a1dcad84008a947e2aa4e"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/layout-scale-125.png",
+    "path": "antes/visual-shell/layout-scale-125.png",
+    "sha256": "fc5a34881c9faf00bc9201ed3b19dc398e52687d3b65853884264209e7f49a24"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/layout-scale-150.png",
+    "path": "antes/visual-shell/layout-scale-150.png",
+    "sha256": "827a206d211aeb77e7030c1c14510df3aaeaa23023ab730c254a5979643e93a4"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/layout-scale-200.png",
+    "path": "antes/visual-shell/layout-scale-200.png",
+    "sha256": "25b5a7a6ea894a11f5831e90504470446760e5784f65f0c122c64b5e9b162c9c"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/minimum-window.png",
+    "path": "antes/visual-shell/minimum-window.png",
+    "sha256": "94f2512e28b671b36c27c9af8520c43cb1210a2d9acdc13a287bc160a614026f"
+  },
+  {
+    "version": "antes",
+    "screen": "visual-shell/pseudo-rtl.png",
+    "path": "antes/visual-shell/pseudo-rtl.png",
+    "sha256": "f116fe55e3987a5b91b2c7a0e45623a71de6de59e56b951897f1a2baae1d8521"
+  },
+  {
+    "version": "despues",
+    "screen": "01-en-esES-ltr.png",
+    "path": "despues/01-en-esES-ltr.png",
+    "sha256": "28e5d3e70cf8ea98d245a028700bb87cfd35d044e7c7a2510d3a03d313d5a66a"
+  },
+  {
+    "version": "despues",
+    "screen": "02-es-esES-ltr.png",
+    "path": "despues/02-es-esES-ltr.png",
+    "sha256": "52f2c6c5402a8e007e62f573a08854f0ba4c83d8d6e8ddf6b3f0e41a9aa02671"
+  },
+  {
+    "version": "despues",
+    "screen": "03-es-enUS-ltr.png",
+    "path": "despues/03-es-enUS-ltr.png",
+    "sha256": "75e8476dd35ac42d5148d9cfb52538f8a161005c7b7d8738133cf6cd57a4e0ad"
+  },
+  {
+    "version": "despues",
+    "screen": "04-pseudo-rtl.png",
+    "path": "despues/04-pseudo-rtl.png",
+    "sha256": "d63574804da5a63e887ebbf8624040dd5d6f6aa5fbdd19c6eaabb993499f36a0"
+  },
+  {
+    "version": "despues",
+    "screen": "company-file/company-panel.png",
+    "path": "despues/company-file/company-panel.png",
+    "sha256": "3b47b4e5808571232dd7cdbbb32b48593e16efef02173ce6bd138487626bbb47"
+  },
+  {
+    "version": "despues",
+    "screen": "guided-workflow/destination-es.png",
+    "path": "despues/guided-workflow/destination-es.png",
+    "sha256": "52133a630f22493f2933b0c4883482675658aef5131f66b8a5e541951f6981dd"
+  },
+  {
+    "version": "despues",
+    "screen": "guided-workflow/review-es.png",
+    "path": "despues/guided-workflow/review-es.png",
+    "sha256": "216c62cc6da92e9d896cc3985becf5763a833a46869dbab250ccd4150a1730c4"
+  },
+  {
+    "version": "despues",
+    "screen": "guided-workflow/review-pseudo-rtl.png",
+    "path": "despues/guided-workflow/review-pseudo-rtl.png",
+    "sha256": "7fb181891cbf3999e25ac9be657189a290ddfc2db9167ffbb528d36bef640fb9"
+  },
+  {
+    "version": "despues",
+    "screen": "guided-workflow/structure-es.png",
+    "path": "despues/guided-workflow/structure-es.png",
+    "sha256": "1f1e41e5b7bfedbee96489fbf18f2f4f5ac55b55907c5451513ffeeceb8b28b4"
+  },
+  {
+    "version": "despues",
+    "screen": "import-columns/csv-es-enUS.png",
+    "path": "despues/import-columns/csv-es-enUS.png",
+    "sha256": "4e9249f2f152f8a468a6c9c26d2abe9a3ab579c0e7b11ddfaa0ee00a39e83e6b"
+  },
+  {
+    "version": "despues",
+    "screen": "import-columns/xlsx-pseudo.png",
+    "path": "despues/import-columns/xlsx-pseudo.png",
+    "sha256": "59ba367b0712edef2a319e8e7a126244ac6d53a05a3fbd05efedebf8b7862046"
+  },
+  {
+    "version": "despues",
+    "screen": "import-completion/comparison-es.png",
+    "path": "despues/import-completion/comparison-es.png",
+    "sha256": "2abc7a6693926cde99d0664656cfb1b216da9376e390d5e21f87a8a8c3ed51d4"
+  },
+  {
+    "version": "despues",
+    "screen": "import-completion/comparison-pseudo.png",
+    "path": "despues/import-completion/comparison-pseudo.png",
+    "sha256": "46404dd41b91a0c48809b081b3f57e927bd912828ea1015f25f945b64a7113bd"
+  },
+  {
+    "version": "despues",
+    "screen": "import-confirmation/accounts-es.png",
+    "path": "despues/import-confirmation/accounts-es.png",
+    "sha256": "1d84109ed73f19189b4d10cf07cb11debda52284317d39c3d5f06a05105607a9"
+  },
+  {
+    "version": "despues",
+    "screen": "import-confirmation/confirmed-pseudo.png",
+    "path": "despues/import-confirmation/confirmed-pseudo.png",
+    "sha256": "1d7e4e7a54c305f517f63cc569fef1c607ee091f772fb16da12379409f7ea8e7"
+  },
+  {
+    "version": "despues",
+    "screen": "import-confirmation/prepared-es.png",
+    "path": "despues/import-confirmation/prepared-es.png",
+    "sha256": "b62beca8bc9c649d54349736f25245ada14334fcc0f67a90b0057b4d256903f5"
+  },
+  {
+    "version": "despues",
+    "screen": "import-debit-credit/csv-confirmed-pseudo.png",
+    "path": "despues/import-debit-credit/csv-confirmed-pseudo.png",
+    "sha256": "01c3007a0497ef9adcc136555fa723aa29633b3bbe740045201e55ebb711ddf8"
+  },
+  {
+    "version": "despues",
+    "screen": "import-debit-credit/csv-prepared-es.png",
+    "path": "despues/import-debit-credit/csv-prepared-es.png",
+    "sha256": "a4d460426ee42b0815f1c159e9bf4953e42bd7f9e8ee6f5015084daca3cb561d"
+  },
+  {
+    "version": "despues",
+    "screen": "import-debit-credit/xlsx-prepared-es.png",
+    "path": "despues/import-debit-credit/xlsx-prepared-es.png",
+    "sha256": "92a32ed87828e1a872b32113a2646b01ba369008a3dcd8600285b90ad4a89b88"
+  },
+  {
+    "version": "despues",
+    "screen": "import-grouping/groups-es.png",
+    "path": "despues/import-grouping/groups-es.png",
+    "sha256": "1b1b5c016954cda400e7d310f9c9654056b0293115cbfdb2513b71dc3cc6de08"
+  },
+  {
+    "version": "despues",
+    "screen": "import-grouping/groups-pseudo.png",
+    "path": "despues/import-grouping/groups-pseudo.png",
+    "sha256": "792e972c1620ebe83052037844d69be2288178377fbcdd56c029b85f208136e7"
+  },
+  {
+    "version": "despues",
+    "screen": "import-grouping/records-es.png",
+    "path": "despues/import-grouping/records-es.png",
+    "sha256": "fa1c3674cc70c2fa82337887d64865cdd21a7f3993e68394bd258bc7360ec1d4"
+  },
+  {
+    "version": "despues",
+    "screen": "import-international/conversion-es.png",
+    "path": "despues/import-international/conversion-es.png",
+    "sha256": "c14e4bbb310767ba05e613989c9d1c1ffbf0fc08817def847cfb8ba4c1999292"
+  },
+  {
+    "version": "despues",
+    "screen": "import-international/conversion-pseudo.png",
+    "path": "despues/import-international/conversion-pseudo.png",
+    "sha256": "112de65b7524116bcc435185425d5662465662514d14cb9d5519b6aa25843080"
+  },
+  {
+    "version": "despues",
+    "screen": "methodology/en-contributions.png",
+    "path": "despues/methodology/en-contributions.png",
+    "sha256": "2bc7c1b806c516f6eca4f4c82ad0f59f759baf5864035b3577e45e5f9c2b6b10"
+  },
+  {
+    "version": "despues",
+    "screen": "methodology/en-cost-flow.png",
+    "path": "despues/methodology/en-cost-flow.png",
+    "sha256": "acf8acb15a24f39d61281ba43876caed90911a2d3935f625318ea7764bdcd4ef"
+  },
+  {
+    "version": "despues",
+    "screen": "methodology/en-explanation.png",
+    "path": "despues/methodology/en-explanation.png",
+    "sha256": "86220c70e2d16926c926ed3eeae97c696a1c7d01db21a0343b7b18e0796a2282"
+  },
+  {
+    "version": "despues",
+    "screen": "methodology/en-principal-origins.png",
+    "path": "despues/methodology/en-principal-origins.png",
+    "sha256": "c9a99844e7240035d48d12f1fe495bd921f7c7a49b9c050472088f32d1c50c07"
+  },
+  {
+    "version": "despues",
+    "screen": "methodology/en-secondary.png",
+    "path": "despues/methodology/en-secondary.png",
+    "sha256": "ddfcb3efdb43e5e3305bc2a637fac74a31e956bfd09d33378ebd6030df3cafc8"
+  },
+  {
+    "version": "despues",
+    "screen": "methodology/es-contributions.png",
+    "path": "despues/methodology/es-contributions.png",
+    "sha256": "fbfad316277e1c06224fa074c3656128aa9d6ba7fc76d49b7aec0ed4d2e08eb3"
+  },
+  {
+    "version": "despues",
+    "screen": "methodology/es-cost-flow.png",
+    "path": "despues/methodology/es-cost-flow.png",
+    "sha256": "52b31bf1194cefa7920126abc5e7f044131b41872859842bcd319d1460e5827c"
+  },
+  {
+    "version": "despues",
+    "screen": "methodology/es-editable-nodes.png",
+    "path": "despues/methodology/es-editable-nodes.png",
+    "sha256": "d73de07a94e3b2166c5eecdab44f06e548ef05ef32c9bdf90afc076fd842e347"
+  },
+  {
+    "version": "despues",
+    "screen": "methodology/es-explanation.png",
+    "path": "despues/methodology/es-explanation.png",
+    "sha256": "1d8db48cb70f3c525e15cc1069b1ce1bed77aabb0e0e6562053f0f4c14995ad8"
+  },
+  {
+    "version": "despues",
+    "screen": "methodology/es-primary-composition.png",
+    "path": "despues/methodology/es-primary-composition.png",
+    "sha256": "d75c3752e9e7889eef28f8297f0bcc77c93fd77412189b54ba215725c65692e4"
+  },
+  {
+    "version": "despues",
+    "screen": "methodology/es-principal-origins.png",
+    "path": "despues/methodology/es-principal-origins.png",
+    "sha256": "c36e9134b4572d030a2860500436b4d764eb9ca1c538cbc23ea914ba03a69f7b"
+  },
+  {
+    "version": "despues",
+    "screen": "methodology/es-secondary.png",
+    "path": "despues/methodology/es-secondary.png",
+    "sha256": "cac11ae302ab94170e65e7ad0e9144498b2e59b1195de8d28174d9f73c2d5286"
+  },
+  {
+    "version": "despues",
+    "screen": "models/nodes-pseudo-rtl.png",
+    "path": "despues/models/nodes-pseudo-rtl.png",
+    "sha256": "a4ec35d4871813c2a64d004cacac4daf2e290bdefd299acaccf48d9f82f967cb"
+  },
+  {
+    "version": "despues",
+    "screen": "models/published-en-esES.png",
+    "path": "despues/models/published-en-esES.png",
+    "sha256": "509d51bde3a3e07b0b83a2160216f4a72c8f19e99508e44cb4d70ef00c3abcac"
+  },
+  {
+    "version": "despues",
+    "screen": "models/published-es-enUS.png",
+    "path": "despues/models/published-es-enUS.png",
+    "sha256": "63f4f4f4f4b2fce2b6ab5fe4dc59fdcba14945b62fae453dfb99e6ec74f3a6ce"
+  },
+  {
+    "version": "despues",
+    "screen": "models/review-tree.png",
+    "path": "despues/models/review-tree.png",
+    "sha256": "aac7424c467144a50000935ef9b267487b79a6aec0cbd2fe212a952323a8dd76"
+  },
+  {
+    "version": "despues",
+    "screen": "startup.png",
+    "path": "despues/startup.png",
+    "sha256": "f0176fe6263a5e7237e33d8f687a403c89447a8848eea298e8fc0d25514cf21d"
+  },
+  {
+    "version": "despues",
+    "screen": "studies/en-deDE-history.png",
+    "path": "despues/studies/en-deDE-history.png",
+    "sha256": "99a209b5b56d40e52aadca8000daa0dcb36a4f3457526cc902cf2cacbd161af3"
+  },
+  {
+    "version": "despues",
+    "screen": "studies/en-deDE.png",
+    "path": "despues/studies/en-deDE.png",
+    "sha256": "dc6b39941e1e1a31daad5a38375bc7100f849231091fa6b365ad479421db3220"
+  },
+  {
+    "version": "despues",
+    "screen": "studies/en-esES-history.png",
+    "path": "despues/studies/en-esES-history.png",
+    "sha256": "72f4c8d21e38ff797a59a3161581ffb7f991d6ed59d82b8fe2139f1ab77e8b26"
+  },
+  {
+    "version": "despues",
+    "screen": "studies/en-esES.png",
+    "path": "despues/studies/en-esES.png",
+    "sha256": "1fa9ab7a4a03739d00e19e6b8e03da3c1a736319b415823360c4a5faf688ac08"
+  },
+  {
+    "version": "despues",
+    "screen": "studies/es-enUS-history.png",
+    "path": "despues/studies/es-enUS-history.png",
+    "sha256": "4e5e91af700cc7b6df601a9097464d602a7826072377ef8f5f1347baf2869fe7"
+  },
+  {
+    "version": "despues",
+    "screen": "studies/es-enUS.png",
+    "path": "despues/studies/es-enUS.png",
+    "sha256": "676db1d8c8cc61faa3dca3f4cd89be56eef188eb62216c881f249467dee32ae2"
+  },
+  {
+    "version": "despues",
+    "screen": "studies/pseudo-rtl-history.png",
+    "path": "despues/studies/pseudo-rtl-history.png",
+    "sha256": "a0f22fffc0fbad1d4675d8820b83efae413b2b1888f6641bddaa70cd229a7dc6"
+  },
+  {
+    "version": "despues",
+    "screen": "studies/pseudo-rtl.png",
+    "path": "despues/studies/pseudo-rtl.png",
+    "sha256": "a8c1f32fdd61a2aee493a34a83c2c22bebabb07f5a57b644903c24e01711d3a3"
+  },
+  {
+    "version": "despues",
+    "screen": "t07-resources/inline-corrections-es.png",
+    "path": "despues/t07-resources/inline-corrections-es.png",
+    "sha256": "cedd7e44ceb3c46825ccf11979c182a593ecf866b60bef73a5f3c1181bfa0891"
+  },
+  {
+    "version": "despues",
+    "screen": "t07-resources/pool-choices-es.png",
+    "path": "despues/t07-resources/pool-choices-es.png",
+    "sha256": "b66573d0e468235f93896c87ca887245b955c644c1684baabd6a07272350b79f"
+  },
+  {
+    "version": "despues",
+    "screen": "t07-resources/review-es.png",
+    "path": "despues/t07-resources/review-es.png",
+    "sha256": "d2215741fd1a6935da0c656ce85f09cbb27ecf3e2c3997d8418262acccdfb140"
+  },
+  {
+    "version": "despues",
+    "screen": "t07-resources/review-pseudo-rtl.png",
+    "path": "despues/t07-resources/review-pseudo-rtl.png",
+    "sha256": "5f3d854b24fcf6186b57c97bc52eb02eef2453d6e89ee240818ea68356017501"
+  },
+  {
+    "version": "despues",
+    "screen": "t07-resources/saved-en.png",
+    "path": "despues/t07-resources/saved-en.png",
+    "sha256": "765c0c806ceb25ecf05bfa27818a4926957030af1ff0bb14e8dee33a195a15e8"
+  },
+  {
+    "version": "despues",
+    "screen": "t08-allocations/en-keys.png",
+    "path": "despues/t08-allocations/en-keys.png",
+    "sha256": "8837a214d4d4f3d664513bbff3c2b1288742c409a8bf879b20277a062145b9d4"
+  },
+  {
+    "version": "despues",
+    "screen": "t08-allocations/en-rules.png",
+    "path": "despues/t08-allocations/en-rules.png",
+    "sha256": "76cad47b32cfadfd780ee8eba112ec7d9f0f7189a56847f3fc0fa4eb80d48a36"
+  },
+  {
+    "version": "despues",
+    "screen": "t08-allocations/es-direct-assignment.png",
+    "path": "despues/t08-allocations/es-direct-assignment.png",
+    "sha256": "250023d2c2cc9d0de6b17f83524693f823af51c8d1d29e3267bcc382cf01c8d1"
+  },
+  {
+    "version": "despues",
+    "screen": "t08-allocations/es-keys.png",
+    "path": "despues/t08-allocations/es-keys.png",
+    "sha256": "00211632bf577f2792b4e208af699466fe645c08f9f83ac78622bd8133c488e2"
+  },
+  {
+    "version": "despues",
+    "screen": "t08-allocations/es-rules.png",
+    "path": "despues/t08-allocations/es-rules.png",
+    "sha256": "13419f25779a7a8d26d881f1150502880997297e815fb381886c5779190f2e2f"
+  },
+  {
+    "version": "despues",
+    "screen": "t08-allocations/key-incomplete.png",
+    "path": "despues/t08-allocations/key-incomplete.png",
+    "sha256": "5d639997119e2f9ccbdf4a2efdb60c5cf95906ac1fd5821042c66b511e68181a"
+  },
+  {
+    "version": "despues",
+    "screen": "t08-allocations/pseudo-rtl.png",
+    "path": "despues/t08-allocations/pseudo-rtl.png",
+    "sha256": "c39828aac00bdabae767911f3bb6e241d6759e2681aa96a3bd0756842ce5ecfa"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/en-step-1.png",
+    "path": "despues/visual-shell/en-step-1.png",
+    "sha256": "1e775ccc9b629e8d72e952dafff06588dd665861ca0e28aa9453fbec775c6dee"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/en-step-2.png",
+    "path": "despues/visual-shell/en-step-2.png",
+    "sha256": "2e651b1bef0720f6370d6cdd01a5b06d7af6b180de0139b03cf5b068fbae2c0c"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/en-step-3.png",
+    "path": "despues/visual-shell/en-step-3.png",
+    "sha256": "dfd42b35905ee9bb060b5ec74f09f2051f38087806dd7fafdb7e6b3ca50ae0b1"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/en-step-4.png",
+    "path": "despues/visual-shell/en-step-4.png",
+    "sha256": "4a62215dae484512c6a5afb25eba3cbc06e831335dfbcb7db7c96f03d6aae2e7"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/en-step-5.png",
+    "path": "despues/visual-shell/en-step-5.png",
+    "sha256": "63b048eb9850bb65c73e452a338fe3545a59cc4dd6bc371e25f22542dd607392"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/en-step-6.png",
+    "path": "despues/visual-shell/en-step-6.png",
+    "sha256": "68303b3497f825e033de2714213e60de21fb91e0a1bb5c2ce4369bd5fa3daeb3"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/en-step-7.png",
+    "path": "despues/visual-shell/en-step-7.png",
+    "sha256": "a95f3905fe1c02a2cdfd6c5d44ed2628fbe0536949d647a818fc9fb2f087f962"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/es-context-details.png",
+    "path": "despues/visual-shell/es-context-details.png",
+    "sha256": "990849d6f0931f6d32084a4c16e50da3fba4fee609788227c0bb9083b209d450"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/es-density-comfortable.png",
+    "path": "despues/visual-shell/es-density-comfortable.png",
+    "sha256": "94231193455001a31db8f2ef5766cee344aeaca2d3b51e17e61675a2da39164e"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/es-density-compact.png",
+    "path": "despues/visual-shell/es-density-compact.png",
+    "sha256": "81e08494923e8294c602e559abd74fc4380a72f602545f725ab7b28dd8d1cbfa"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/es-step-1.png",
+    "path": "despues/visual-shell/es-step-1.png",
+    "sha256": "8be381e7e2e589a5ddaea08e1ce85f18968da1a8df89513858590e3318e2ded6"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/es-step-2.png",
+    "path": "despues/visual-shell/es-step-2.png",
+    "sha256": "a0f33acf958122c924df5cb8475eef7046918554bdcb8e32bfcc8f4b21d0ff7d"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/es-step-3.png",
+    "path": "despues/visual-shell/es-step-3.png",
+    "sha256": "42d36ae4eb654bf2426e290848dde8c231d03e980c6e8241a70a6b4aaf0d5ae7"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/es-step-4.png",
+    "path": "despues/visual-shell/es-step-4.png",
+    "sha256": "1ecdd75aa3a62807a42f53a00ec3fcf6befaafaf90e47820f25288f4f7444232"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/es-step-5.png",
+    "path": "despues/visual-shell/es-step-5.png",
+    "sha256": "503e6ae66b5ac8f727ad7b64d5a3bfb870bc576eedefcae61b672797d2c6ba9f"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/es-step-6.png",
+    "path": "despues/visual-shell/es-step-6.png",
+    "sha256": "9a14079279ca14853f5beee540ea284261a57a8a84d6087cdc56d5e32a3d33ec"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/es-step-7.png",
+    "path": "despues/visual-shell/es-step-7.png",
+    "sha256": "d66e984a66e4f594449e262137cdeb3463bf97553127afb559d6028094125dd6"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/layout-scale-125.png",
+    "path": "despues/visual-shell/layout-scale-125.png",
+    "sha256": "8414b511dd202e00957def879b66b8307b9f97d1a194bc8eb7a81b2128975826"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/layout-scale-150.png",
+    "path": "despues/visual-shell/layout-scale-150.png",
+    "sha256": "98b2d674af80141bcf434f662935f08c3076f044438c0413c82a1c22b74b9054"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/layout-scale-200.png",
+    "path": "despues/visual-shell/layout-scale-200.png",
+    "sha256": "68e8683009d8fc4faf0a4ea5360bacfff373149faa6c93dd07aa1027f68e2799"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/minimum-window.png",
+    "path": "despues/visual-shell/minimum-window.png",
+    "sha256": "e2ce6b1a379faf4a49a719546292b1210cca4490f6b04d137577b39e8d14d5a7"
+  },
+  {
+    "version": "despues",
+    "screen": "visual-shell/pseudo-rtl.png",
+    "path": "despues/visual-shell/pseudo-rtl.png",
+    "sha256": "1297429a955d89e090811cf5a280a47859608e866d85824b7eb706962e297e3c"
+  }
+]

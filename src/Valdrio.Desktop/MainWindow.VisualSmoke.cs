@@ -87,11 +87,47 @@ public partial class MainWindow
                     VisualEvidenceCapture.Capture(this, Path.Combine(output, $"{language}-step-{index + 1}.png"));
                 }
             }
+            main.ApplyPresentationPreset("es", "es-ES", "Europe/Madrid", false, false);
+            await NavigateWorkflow(5); await Idle();
+            var keyCount = AllocationPanel.KeyGrid.Items.Count;
+            var selectedKey = AllocationPanel.KeyGrid.SelectedItem;
+            Check(ContextDetails.Visibility == Visibility.Collapsed, "context starts compact without removing the full text");
+            ((IInvokeProvider)new ButtonAutomationPeer(ContextDetailsButton).GetPattern(PatternInterface.Invoke)).Invoke();
+            await Idle();
+            Check(ContextDetails.IsVisible && SaveLocation.IsVisible && !string.IsNullOrEmpty(SaveLocation.Text),
+                "one keyboard-accessible action reveals the full context and storage path");
+            VisualEvidenceCapture.Capture(this, Path.Combine(output, "es-context-details.png"));
+            ((IInvokeProvider)new ButtonAutomationPeer(ContextDetailsButton).GetPattern(PatternInterface.Invoke)).Invoke();
+            await Idle();
+            var comfortableHeight = AllocationPanel.KeyGrid.MinRowHeight;
+            Check(CompactTables.Focus(), "density control accepts keyboard focus");
+            ((IToggleProvider)new CheckBoxAutomationPeer(CompactTables).GetPattern(PatternInterface.Toggle)).Toggle();
+            await Idle();
+            Check(AllocationPanel.KeyGrid.MinRowHeight < comfortableHeight, "compact density updates an existing grid");
+            Check(AllocationPanel.KeyGrid.Items.Count == keyCount && Equals(AllocationPanel.KeyGrid.SelectedItem, selectedKey),
+                "density preserves rows and selection");
+            VisualEvidenceCapture.Capture(this, Path.Combine(output, "es-density-compact.png"));
+            ((IToggleProvider)new CheckBoxAutomationPeer(CompactTables).GetPattern(PatternInterface.Toggle)).Toggle();
+            await Idle();
+            Check(AllocationPanel.KeyGrid.MinRowHeight == comfortableHeight, "comfortable density is restored");
+            VisualEvidenceCapture.Capture(this, Path.Combine(output, "es-density-comfortable.png"));
             Width = 760; Height = 620;
             await NavigateWorkflow(4); await Idle();
             Check(RootScrollViewer.ScrollableWidth > 0 && RootScrollViewer.ViewportHeight > 80 && Inside(WorkflowBack),
                 "760x620 keeps navigation and footer visible; wide forms have horizontal scroll");
             VisualEvidenceCapture.Capture(this, Path.Combine(output, "minimum-window.png"));
+            var narrowViewport = RootScrollViewer.ViewportWidth;
+            ((IInvokeProvider)new ButtonAutomationPeer(NavigationToggle).GetPattern(PatternInterface.Invoke)).Invoke();
+            await Idle();
+            Check(!Sidebar.IsVisible && RootScrollViewer.ViewportWidth > narrowViewport && Inside(NavigationToggle),
+                "menu hides reversibly to recover workspace width without losing its toggle");
+            await NavigateWorkflow(2); await Idle();
+            Check(StudyPanel.AnalysisForm.ActualWidth > 0, "analysis adaptive form remains visible in a narrow window");
+            StudyPanel.StudyNameBox.BringIntoView(); await Idle();
+            VisualEvidenceCapture.Capture(this, Path.Combine(output, "narrow-analysis-focus.png"));
+            ((IInvokeProvider)new ButtonAutomationPeer(NavigationToggle).GetPattern(PatternInterface.Invoke)).Invoke();
+            await Idle();
+            Check(Sidebar.IsVisible, "menu restores all navigation phases");
             Width = originalWidth; Height = originalHeight;
             await NavigateWorkflow(1);
             foreach (var scale in new[] { 1.25, 1.5, 2.0 })
@@ -101,8 +137,18 @@ public partial class MainWindow
                 await Idle(); UpdateLayout();
                 Check(RootScrollViewer.ViewportHeight > 48 && Inside(WorkflowBack) && Inside(WorkflowNext) && Inside(Sidebar),
                     "scaled WPF layout retains scrollable work area and footer: " + scale);
+                Check(Inside(ContextDetailsButton) && Inside(CompactTables), "context and density controls fit at scale: " + scale);
                 VisualEvidenceCapture.Capture(this, Path.Combine(output, $"layout-scale-{scale * 100:0}.png"));
             }
+            ((IInvokeProvider)new ButtonAutomationPeer(NavigationToggle).GetPattern(PatternInterface.Invoke)).Invoke();
+            await NavigateWorkflow(2); await Idle();
+            var left = StudyPanel.StudyNameBox.TranslatePoint(new Point(), StudyPanel.AnalysisForm);
+            var right = StudyPanel.StudyModelBox.TranslatePoint(new Point(), StudyPanel.AnalysisForm);
+            Check(right.Y > left.Y && Math.Abs(right.X - left.X) < 2,
+                "200 percent analysis fields reflow into reading order instead of horizontal clipping");
+            StudyPanel.StudyNameBox.BringIntoView(); await Idle();
+            VisualEvidenceCapture.Capture(this, Path.Combine(output, "scale-200-analysis-focus.png"));
+            ((IInvokeProvider)new ButtonAutomationPeer(NavigationToggle).GetPattern(PatternInterface.Invoke)).Invoke();
             ShellLayout.LayoutTransform = Transform.Identity;
             await NavigateWorkflow(6); DevelopmentTools.IsExpanded = true;
             foreach (var scale in new[] { 1.0, 1.25, 1.5, 2.0 })

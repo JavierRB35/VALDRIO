@@ -1,0 +1,54 @@
+[
+  {
+    "file": "src/Valdrio.Desktop/AllocationWorkspacePanel.xaml",
+    "sha256": "CA6CB026BEE491EC4581789C4A523610508437674501133B2337842C7D930CAF"
+  },
+  {
+    "file": "src/Valdrio.Desktop/AllocationWorkspaceViewModel.cs",
+    "sha256": "4F6B9E22B1DE1F6396A269B26E067737ED1C0181AF7C6F99E805C648FE849836"
+  },
+  {
+    "file": "src/Valdrio.Desktop/App.xaml.cs",
+    "sha256": "49A914BF3D7DB11AC72F70760F66A5AA17676B79762EFEDFC085049453C64A69"
+  },
+  {
+    "file": "src/Valdrio.Desktop/ImportColumnMappingWindow.xaml",
+    "sha256": "DB4474393B73AF54224BF760588E90980B5554B842B3377C92B5744926FCBC9E"
+  },
+  {
+    "file": "src/Valdrio.Desktop/MainWindow.AllocationSmoke.cs",
+    "sha256": "C6C0D4EC2D43520929CC2A78AC0F3EFDB18C39E5EC219EA8090023A2E10E627B"
+  },
+  {
+    "file": "src/Valdrio.Desktop/MainWindow.Guidance.cs",
+    "sha256": "38D999EC58F94F22527E2DD71982053A801CED4D7CBCC695DE19B8C69F6FDE1C"
+  },
+  {
+    "file": "src/Valdrio.Desktop/MainWindow.MethodologySmoke.cs",
+    "sha256": "8E2D26201CE228B86B296E76B52802F4498D59A30530592C6A14F6FB90CFD58E"
+  },
+  {
+    "file": "src/Valdrio.Desktop/MainWindow.VisualSmoke.cs",
+    "sha256": "8D1410060E2F83E8C31EC287A3A213B0ED3AA049CE53F66827D2F59F73D0A9A3"
+  },
+  {
+    "file": "src/Valdrio.Desktop/MainWindow.xaml",
+    "sha256": "864C5E5B84BFB6B7D9AE7C3CD1CF81B02CEEB82151998D2C6FAFC67C06B1D7A3"
+  },
+  {
+    "file": "src/Valdrio.Desktop/Styles/ValdrioTheme.xaml",
+    "sha256": "2B893817DC319CD7204A8690A2B91942DDEA7531CCE802FE27E09F417F09635D"
+  },
+  {
+    "file": "src/Valdrio.Localization/Resources/Strings.es.resx",
+    "sha256": "48382B4CB3F6454B076747CBBB358FC528F2F1819E38A54F8DFFDB4787922747"
+  },
+  {
+    "file": "src/Valdrio.Localization/Resources/Strings.resx",
+    "sha256": "F74E82559EDD1584C7C83363CED6ACCEEE4ACAA3B913DC2015BFA260B8FE47E7"
+  },
+  {
+    "file": "src/Valdrio.Desktop/MainWindow.Presentation.cs",
+    "sha256": "4CB67A495FB73F87DAB6F498968AB09B97151C994A3EE49F06DE4602850C293A"
+  }
+]

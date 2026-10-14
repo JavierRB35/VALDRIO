@@ -249,6 +249,8 @@ public partial class App : System.Windows.Application
                                 await window.RunWorkspaceEditingChecks(captureDirectory, (QueuedModelEditorDialogs)modelDialogs);
                             Shutdown(0); return;
                         }
+                        Directory.CreateDirectory(captureDirectory);
+                        VisualEvidenceCapture.Capture(window, Path.Combine(captureDirectory, "startup.png"));
                         await window.CompanyPanel.RunCompanyInteractionChecks(captureDirectory,
                             (QueuedCompanyFileDialogs)companyDialogs, viewModel);
                         await window.ModelPanel.RunModelInteractionChecks(captureDirectory,

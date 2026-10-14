@@ -19,7 +19,7 @@
   <StackPanel>
    <TextBlock Text="{Binding Notes}" Margin="0,0,0,12"/>
 
-   <GroupBox Header="{Binding OpenSectionTitle}" Padding="12" Margin="0,0,0,12">
+   <GroupBox Header="{Binding OpenSectionTitle}" Style="{StaticResource GroupBox.Section}" Padding="0" Margin="0,0,0,12">
     <StackPanel>
      <TextBlock Text="{Binding OpenSectionHelp}" Foreground="{DynamicResource Text.Primary}"/>
      <TextBlock Text="{Binding StudyListHelp}"/>
@@ -35,19 +35,10 @@
 
    <Button Content="{Binding GoToModelsLabel}" Click="GoToModels" HorizontalAlignment="Left" Visibility="{Binding ModelRemedyVisibility}"/>
 
-   <GroupBox Header="{Binding FormTitle}" Padding="12" Margin="0,0,0,12">
+   <GroupBox Header="{Binding FormTitle}" Style="{StaticResource GroupBox.Section}" Padding="0" Margin="0,0,0,12">
     <StackPanel>
      <TextBlock Text="{Binding FormHelp}" Foreground="{DynamicResource Text.Primary}" Margin="0,0,0,8"/>
-     <Grid IsEnabled="{Binding CanEdit}">
-      <Grid.ColumnDefinitions>
-       <ColumnDefinition Width="*"/>
-       <ColumnDefinition Width="*"/>
-      </Grid.ColumnDefinitions>
-      <Grid.RowDefinitions>
-       <RowDefinition Height="Auto"/>
-       <RowDefinition Height="Auto"/>
-       <RowDefinition Height="Auto"/>
-      </Grid.RowDefinitions>
+     <local:AdaptiveColumnsPanel x:Name="AnalysisForm" IsEnabled="{Binding CanEdit}" MinColumnWidth="300">
       <StackPanel>
        <TextBlock Text="{Binding NameLabel}"/>
        <TextBox x:Name="StudyNameBox" Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}" Margin="0,3,8,3" TabIndex="63" AutomationProperties.Name="{Binding NameLabel}" local:FieldHelp.Key="Name"/>
@@ -72,7 +63,7 @@
        <TextBlock Text="{Binding ScenarioLabel}"/>
        <ComboBox x:Name="ScenarioBox" ItemsSource="{Binding Scenarios}" SelectedItem="{Binding Scenario}" TabIndex="68" AutomationProperties.Name="{Binding ScenarioLabel}" local:FieldHelp.Key="Scenario"/>
       </StackPanel>
-     </Grid>
+     </local:AdaptiveColumnsPanel>
 
      <WrapPanel Margin="0,6,0,0">
       <Button x:Name="CreateStudyButton" Content="{Binding CreateLabel}" Command="{Binding CreateCommand}" TabIndex="70" Visibility="{Binding CreateVisibility}" FontWeight="SemiBold" Style="{StaticResource Button.Primary}"/>

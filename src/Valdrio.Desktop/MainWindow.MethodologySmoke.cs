@@ -157,14 +157,32 @@ public partial class MainWindow
             vm.PrincipalCosts.Sum(row => row.TotalAmount), "secondary contribution footer reconciles with final principal costs");
         Check(vm.PrincipalCosts.All(row => row.PrimaryAmount + row.AuxiliaryAmount == row.TotalAmount),
             "terminal totals keep primary and auxiliary components distinct");
-        vm.SelectedSecondaryResultRow = vm.SecondaryResults.First();
+        secondary.SecondaryResultsGrid.SelectedItem = vm.SecondaryResults.First();
         await Idle();
         Check(!string.IsNullOrWhiteSpace(vm.SecondaryExplanation), "component explanation selects the matching fact");
+        var selectedContribution = secondary.SecondaryResultsGrid.SelectedItem;
+        await Click(secondary.ShowSecondarySourceButton);
+        Check(secondary.SecondaryExplanationSection.IsExpanded && secondary.SecondaryExplanationGrid.IsKeyboardFocusWithin && vm.SecondaryExplanationDetails.Count > 0,
+            "select contribution then explain: two activations reach the account-level source with keyboard focus");
+        await Click(secondary.BackToContributionsButton);
+        Check(Equals(secondary.SecondaryResultsGrid.SelectedItem, selectedContribution) && secondary.SecondaryResultsGrid.IsKeyboardFocusWithin,
+            "return from explanation keeps contribution selection and keyboard focus");
         foreach (var language in new[] { "es", "en" })
         {
             main.ApplyPresentationPreset(language, language == "es" ? "es-ES" : "en-US", "UTC", false, false);
             await Idle(); ScrollToElement(secondary.SecondaryResultsSection); await Idle();
             VisualEvidenceCapture.Capture(this, Path.Combine(output, language + "-secondary.png"));
+            foreach (var (element, name) in new (FrameworkElement, string)[]
+            {
+                (secondary.PrincipalCostsGrid, "principal-origins"),
+                (secondary.PrincipalCostFlowSection, "cost-flow"),
+                (secondary.SecondaryResultsGrid, "contributions"),
+                (secondary.SecondaryExplanationGrid, "explanation")
+            })
+            {
+                ScrollToElement(element); await Idle();
+                VisualEvidenceCapture.Capture(this, Path.Combine(output, language + "-" + name + ".png"));
+            }
             Check(SecondaryStep.Content.ToString() == (language == "es"
                 ? "Reparto secundario y cierre" : "Secondary allocation and closing"),
                 language + " secondary navigation label without duplicated step numbering");

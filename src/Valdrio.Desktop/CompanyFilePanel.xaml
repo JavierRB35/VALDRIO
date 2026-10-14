@@ -15,6 +15,12 @@
    <TextBlock Text="{Binding ProjectIntro}" Margin="0,0,0,14"/>
 
    <StackPanel Visibility="{Binding NoProject,Converter={StaticResource BoolVis}}">
+    <Border Margin="0,0,0,12" Style="{StaticResource Card}"><StackPanel>
+     <Button x:Name="ExampleButton" Content="{Binding ExampleLabel}" Command="{Binding OpenExampleCommand}" HorizontalAlignment="Left"/>
+     <TextBlock Text="{Binding ExampleHelp}" Margin="0,4,0,8"/>
+     <Button x:Name="ImportStartButton" Content="{Binding ImportStartLabel}" Click="StartImportSetup" HorizontalAlignment="Left"/>
+     <TextBlock Text="{Binding ImportStartHelp}" Margin="0,4,0,0"/>
+    </StackPanel></Border>
     <Border Margin="0,0,0,12" Style="{StaticResource Card}">
      <StackPanel>
       <TextBlock Text="{Binding OpenProjectTitle}" FontSize="18" FontWeight="SemiBold"/>
@@ -27,20 +33,12 @@
      <StackPanel>
       <TextBlock Text="{Binding NewProjectTitle}" FontSize="18" FontWeight="SemiBold"/>
       <TextBlock Text="{Binding NewProjectHelp}" Margin="0,4,0,10" Foreground="{DynamicResource Text.Primary}"/>
-      <Grid IsEnabled="{Binding IsIdle}">
-       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="220"/>
-        <ColumnDefinition Width="*"/>
-       </Grid.ColumnDefinitions>
-       <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-       </Grid.RowDefinitions>
+      <StackPanel IsEnabled="{Binding IsIdle}">
        <TextBlock Text="{Binding NameLabel}" Margin="0,5,12,6"/>
        <TextBox x:Name="NameBox" Grid.Column="1" Text="{Binding CompanyName,UpdateSourceTrigger=PropertyChanged}" TabIndex="10" AutomationProperties.Name="{Binding NameLabel}" local:FieldHelp.Key="CompanyName"/>
        <TextBlock Grid.Row="1" Text="{Binding CurrencyLabel}" Margin="0,10,12,6"/>
        <ComboBox x:Name="CurrencyBox" Grid.Row="1" Grid.Column="1" Margin="0,6,0,0" ItemsSource="{Binding CurrencyOptions}" SelectedItem="{Binding Currency,UpdateSourceTrigger=PropertyChanged}" TabIndex="11" AutomationProperties.Name="{Binding CurrencyLabel}" local:FieldHelp.Key="Currency"/>
-      </Grid>
+      </StackPanel>
       <Button x:Name="CreateButton" Content="{Binding CreateLabel}" Command="{Binding CreateCommand}" HorizontalAlignment="Left" FontWeight="SemiBold" TabIndex="12" Margin="0,10,8,4" Style="{StaticResource Button.Primary}"/>
      </StackPanel>
     </Border>

@@ -1490,4 +1490,17 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.PhaseProjectStructure" xml:space="preserve"><value>Project and structure</value></data>
   <data name="Guide.PhaseAnalysisData" xml:space="preserve"><value>Analysis and economic data</value></data>
   <data name="Guide.PhaseAllocations" xml:space="preserve"><value>Allocations and calculation</value></data>
+  <data name="Guide.ShowContext" xml:space="preserve"><value>Details</value></data>
+  <data name="Guide.HideContext" xml:space="preserve"><value>Hide details</value></data>
+  <data name="Guide.CompactTables" xml:space="preserve"><value>Compact tables</value></data>
+  <data name="Guide.CompactTablesHelp" xml:space="preserve"><value>Show more rows without changing values or text size. Applies to this session, including import windows. Clear to use comfortable spacing.</value></data>
+  <data name="Guide.OpenExample" xml:space="preserve"><value>Load an example…</value></data>
+  <data name="Guide.ExampleHelp" xml:space="preserve"><value>Explore a fictional service company with accounts, credits and allocations. Choose where to save your own copy; the original stays unchanged.</value></data>
+  <data name="Guide.ImportStart" xml:space="preserve"><value>Import accounting data</value></data>
+  <data name="Guide.ImportStartHelp" xml:space="preserve"><value>First enter your project name and currency below. Continue through the cost structure and analysis period, then choose your CSV or Excel file. Each step explains what is required.</value></data>
+  <data name="Guide.NavigationMenu" xml:space="preserve"><value>Menu</value></data>
+  <data name="Guide.HideNavigation" xml:space="preserve"><value>Hide navigation to give your data more room</value></data>
+  <data name="Guide.ShowNavigation" xml:space="preserve"><value>Show navigation</value></data>
+  <data name="Allocation.ShowSource" xml:space="preserve"><value>Explain selected amount</value></data>
+  <data name="Allocation.BackToAmounts" xml:space="preserve"><value>Back to contributions</value></data>
 </root>

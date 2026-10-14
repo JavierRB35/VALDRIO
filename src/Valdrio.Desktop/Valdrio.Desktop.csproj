@@ -24,6 +24,9 @@
              CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="../../Synthetic Projects/Service Company/services.valdrio" Link="examples/services.valdrio" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="../../tests/Valdrio.Tests/Fixtures/t04-v2.json" Link="reference/t04-v2.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../../tests/Valdrio.Tests/Fixtures/t03-v1.json" Link="reference/t03-v1.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>

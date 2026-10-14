@@ -64,6 +64,7 @@ public partial class MainWindow
         await Idle(); Check(panel.SaveKeyButton.IsEnabled && !vm.PublishCommand.CanExecute(null) && vm.Validation.Contains("100"),
             "80 percent can be saved as a draft but cannot be published; the editor explains that 100 percent is required");
         Check(vm.Keys.Count == 0 && vm.CanEditKey, "incomplete percentages preserve editing");
+        VisualEvidenceCapture.Capture(this, Path.Combine(output, "key-incomplete.png"));
         line.Value = "100";
         await Click(panel.SaveKeyButton); var primaryKey = vm.Keys.Single().Value;
         Check(primaryKey.Status == ModelStatus.Published && panel.KeyNameBox.IsEnabled && vm.CanEditComposition, "unused saved key remains fully editable");
