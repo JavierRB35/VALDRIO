@@ -211,4 +211,26 @@ public sealed class T14PhysicalActivityTests
         }
     }
 
+
+    [TestMethod]
+    public void T14_ChangingStudyPeriodRejectsStaleEditorWithoutTransferringOldHours()
+    {
+        var (file, study, node, pool) = Fixture();
+        using (file)
+        {
+            var initial = file.PhysicalActivity.Save(Save(study, node, pool, 0L, 700m, 610m));
+            var November = BusinessDate.ParseIso("2026-11-01");
+            var monthEnd = BusinessDate.ParseIso("2026-11-30");
+            var changed = file.Studies.UpdateContext(new(study.CompanyId, study.Id, study.Revision,
+                study.Name, November, monthEnd, study.Purpose, study.ScenarioKind,
+                study.SelectedModelVersionId, study.Currency.FunctionalCurrencyCode, "test"));
+            Assert.AreEqual("STUDY_REVISION_CHANGED", Assert.ThrowsExactly<DomainRuleException>(
+                () => file.PhysicalActivity.Save(Save(study, node, pool, 0L, 700m, 610m))).Diagnostic.Code);
+            Assert.AreEqual(0, file.PhysicalActivity.ReadCurrent(study.CompanyId, study.Id).Count);
+            var history = file.PhysicalActivity.ReadHistory(study.CompanyId, study.Id, pool.Id);
+            Assert.AreEqual(initial.Id, history.Single().Id);
+            Assert.AreEqual(study.PeriodStart, history.Single().PeriodStart);
+            Assert.AreEqual(changed.Revision, file.Studies.ReadStudies().Single(s => s.Id == study.Id).Revision);
+        }
+    }
 }
