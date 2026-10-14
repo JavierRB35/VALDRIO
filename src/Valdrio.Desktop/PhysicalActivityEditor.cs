@@ -146,7 +146,8 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
             {
                 NodeId = node.Id, PoolId = pool.Id,
                 Node = string.IsNullOrWhiteSpace(center) ? node.Code : center + " · " + node.Code,
-                Unit = unit.Code, Cost = cost
+                Unit = DefaultActivityUnitCatalog.All.Any(p => p.Code == unit.Code)
+                    ? Label("ActivityUnit." + unit.Code) : unit.Code, Cost = cost
             };
             row.ReadFrom(latest.GetValueOrDefault(pool.Id), formatCulture, Label("Activity.Pending"),
                 Label("Activity.UtilizationUndefined"), Label("Activity.AnnulledRow"),
@@ -178,7 +179,11 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         }
         catch (DomainRuleException e) { Feedback = Label(e.Diagnostic.MessageKey); }
         catch (CompanyFileException e) { Feedback = Label(e.Diagnostic.MessageKey); }
-        catch (Exception) { Feedback = Label("Activity.SaveFailed"); }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Trace.TraceError("T14 save: {0}", ex);
+            Feedback = Label("Activity.SaveFailed");
+        }
     }
 
     public void Annul()
@@ -193,7 +198,11 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         }
         catch (DomainRuleException e) { Feedback = Label(e.Diagnostic.MessageKey); }
         catch (CompanyFileException e) { Feedback = Label(e.Diagnostic.MessageKey); }
-        catch (Exception) { Feedback = Label("Activity.SaveFailed"); }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Trace.TraceError("T14 annul: {0}", ex);
+            Feedback = Label("Activity.SaveFailed");
+        }
     }
 
     public string History()
