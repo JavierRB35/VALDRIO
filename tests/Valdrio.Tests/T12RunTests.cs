@@ -174,7 +174,7 @@ public sealed partial class T06ImportConfirmationTests
         var snapshots = file.Studies.ReadSnapshots(study.CompanyId, study.Id).Count;
         var normal = new PhysicalEvidence(PhysicalEvidenceQuality.Calculated, "Calendar October", "");
         var real = new PhysicalEvidence(PhysicalEvidenceQuality.Recorded, "Production logs October", "");
-        var physical = file.PhysicalActivity.Save(new(study.CompanyId, study.Id, principal.Id, pool.Id,
+        var physical = file.PhysicalActivity.Save(new(study.CompanyId, study.Id, study.Revision, principal.Id, pool.Id,
             0L, PhysicalObservationState.Confirmed, null, null, 700m, 610m,
             normal, real, null, null, null, "test"));
 
