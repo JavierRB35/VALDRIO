@@ -47,22 +47,49 @@ public sealed partial class SqliteCompanyFileService
     {
         var records = db.PhysicalObservations.AsNoTracking().ToArray().Select(RestorePhysical).ToArray();
         var studies = db.Studies.AsNoTracking().ToArray().ToDictionary(s => s.Id);
+        var events = db.Audit.AsNoTracking()
+            .Where(a => EF.Property<string>(a, "AggregateType") == "PhysicalObservation")
+            .Select(a => new { Row = a, AggregateId = EF.Property<string>(a, "AggregateId") })
+            .ToArray();
+        Invalid(events.Length != records.Length, "Physical audit count differs from the persisted versions");
+        var auditByVersion = events.ToDictionary(e => e.AggregateId, e => e.Row);
         var scopes = records.GroupBy(r => (r.CompanyId, r.StudyId, r.ModelVersionId, r.PoolId, r.PeriodStart, r.PeriodEnd));
         foreach (var chain in scopes)
         {
-            var previous = 0L;
+            PhysicalObservation? prior = null;
             foreach (var observation in chain.OrderBy(r => r.Version))
             {
                 Invalid(observation.CompanyId != file.Id || !studies.TryGetValue(observation.StudyId.ToString(), out var study) ||
                     observation.ModelVersionId.ToString() != study.SelectedModelVersionId &&
-                    !db.Models.AsNoTracking().Any(m => m.Id == observation.ModelVersionId.ToString() && m.CompanyId == file.Id.ToString()),
-                    "Physical scope invalid");
-                Invalid(observation.Version != ++previous, "Physical version sequence invalid");
-                // A version's historical model and period remain valid even after the study changes.
+                    !db.Models.AsNoTracking().Any(m => m.Id == observation.ModelVersionId.ToString() &&
+                        m.CompanyId == file.Id.ToString()), "Physical scope invalid");
+                Invalid(observation.Version != (prior?.Version ?? 0L) + 1L, "Physical version sequence invalid");
+                // Historical model/period are frozen even if the study subsequently changes.
                 var pool = db.Pools.AsNoTracking().SingleOrDefault(p => p.Id == observation.PoolId.ToString() &&
                     p.ModelVersionId == observation.ModelVersionId.ToString());
                 Invalid(pool is null || pool.NodeId != observation.NodeId.ToString() ||
                     pool.DriverUnitId != observation.UnitId.ToString(), "Physical pool/unit association invalid");
+                Invalid(!auditByVersion.TryGetValue(observation.Id.ToString(), out var audit) ||
+                    audit.Revision != 0 || audit.CompanyId != file.Id.ToString() ||
+                    audit.Actor != observation.Actor ||
+                    audit.Operation != (observation.State == PhysicalObservationState.Annulled
+                        ? "AnnulPhysicalVersion" : "RecordPhysicalVersion") ||
+                    audit.BeforeJson != (prior is null ? "null" : Json(prior)) ||
+                    audit.AfterJson != Json(observation), "Physical audit/version chain invalid");
+                var source = new SavePhysicalObservation(
+                    observation.CompanyId, observation.StudyId, observation.NodeId, observation.PoolId,
+                    observation.Version - 1, observation.State == PhysicalObservationState.Annulled
+                        ? PhysicalObservationState.Draft : observation.State,
+                    observation.TheoreticalQuantity, observation.PracticalQuantity,
+                    observation.NormalQuantity, observation.RealQuantity,
+                    observation.NormalEvidence, observation.RealEvidence,
+                    observation.NormalZeroReason, observation.ExceptionReason,
+                    observation.CorrectionReason, observation.Actor);
+                PhysicalActivityRules.Validate(source, file.PrecisionPolicy);
+                Invalid(prior is not null && prior.State == PhysicalObservationState.Confirmed &&
+                    string.IsNullOrWhiteSpace(observation.CorrectionReason),
+                    "Confirmed physical version lacks a correction reason");
+                prior = observation;
             }
         }
     }
