@@ -75,6 +75,11 @@
    <TextBlock Text="{Binding Notes}" Margin="0,8,0,0" Foreground="{DynamicResource Text.Primary}"/>
 
    <StackPanel x:Name="UnitCreationPanel">
+    <StackPanel.Resources>
+     <!-- The unit form can be reparented into ModelWorkspacePanel; keep model-specific implicit styles out. -->
+     <Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}"/>
+     <Style TargetType="ComboBox" BasedOn="{StaticResource Input.Combo}"/>
+    </StackPanel.Resources>
     <TextBlock Text="{Binding DefaultUnitsHelp}" Margin="0,4,0,4"/>
     <Button x:Name="InstallDefaultUnitsButton" Content="{Binding AddDefaultUnitsLabel}"
             Command="{Binding AddDefaultUnitsCommand}"
