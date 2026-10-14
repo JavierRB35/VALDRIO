@@ -384,8 +384,22 @@ try {
     Write-Host "FX WPF button interaction checks passed: $($fxChecks.PassedChecks.Count)."
 
     $companyChecks = Get-Content -LiteralPath (Join-Path $captureDir "company-file/interaction.json") -Raw | ConvertFrom-Json
-    if ($companyChecks.Status -ne "passed" -or $companyChecks.PassedChecks.Count -ne 35) {
-      throw "Company WPF interaction evidence is missing or incomplete."
+    # Company smoke runs 29 explicit checks plus 15 button-enabled checks.
+    # The original count of 35 predated example migration and old-file UX coverage.
+    $expectedCompanyChecks = 44
+    if ($companyChecks.Status -ne "passed" -or $companyChecks.PassedChecks.Count -ne $expectedCompanyChecks) {
+      throw "Company WPF interaction evidence is missing or incomplete. Expected $expectedCompanyChecks, got $($companyChecks.PassedChecks.Count); status=$($companyChecks.Status)."
+    }
+    # Preserve the key additional safeguards rather than accepting any 44 checks.
+    foreach ($required in @(
+      "example opens a real editable current-format copy with saved analyses",
+      "shipped example remains byte-for-byte unchanged",
+      "upgrade action is visible for a previous-format file without reselecting its source",
+      "previous format leaves active project and source file untouched"
+    )) {
+      if (-not @($companyChecks.PassedChecks | Where-Object { $_.StartsWith($required, [StringComparison]::Ordinal) }).Count) {
+        throw "Company WPF evidence is missing required check: $required"
+      }
     }
     Write-Host "Company WPF checks passed: $($companyChecks.PassedChecks.Count)."
 

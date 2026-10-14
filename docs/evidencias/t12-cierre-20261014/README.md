@@ -142,6 +142,14 @@ El propietario ha remitido la ejecución Windows del commit `8ea77b315f23a563582
 - Corrección del smoke: verificar que código repetido bloquea Guardar, muestra el mensaje y no crea otro maestro; al editar el código a `MANT-002` debe reactivarse Guardar sin insertar nada. Se mantienen **dos comprobaciones** en lugar de la comprobación previa más el `Click` (que comprobaba `enabled`) para conservar las 64 comprobaciones esperadas por `Verify-Windows.ps1` y no debilitar la cobertura.
 - **Pendiente**: ejecutar de nuevo la aceptación Windows con la corrección y realizar smoke dedicado de ambos gráficos T12. No fusionar hasta obtener `Status = passed` y evidencias completas. Sin GitHub Actions.
 
+## Quinta aceptación Windows local — desajuste en conteo de evidencias de empresa (14/10/2026)
+
+El propietario informa que para el SHA `f4c09df40c12632581f41dc7f3d2d9045640b2a2`, el ejecutable WPF completo **finalizó con código 0**, y el verificador aceptó los **12 controles FX**; a continuación falló en `.github/scripts/Verify-Windows.ps1:388` por `Company WPF interaction evidence is missing or incomplete`.
+
+Análisis estático de `src/Valdrio.Desktop/CompanyFilePanel.Smoke.cs`: **29** comprobaciones explícitas y **15** verificaciones de botón habilitado en `Click`, total **44**. El verificador todavía esperaba **35**, anterior a las mejoras para ejemplo editable, persistencia y recuperación de formatos antiguos. El smoke no falló, ya que `interaction.json` fue escrito y el proceso terminó con éxito; la discrepancia es una expectativa antigua del script de aceptación.
+
+Corrección: `Verify-Windows.ps1` exige exactamente **44** controles y además comprueba la presencia de las cuatro evidencias clave de migración segura y conservación de datos, sin reducir el alcance de los tests. El error informa ahora resultado real, esperado y estado. No se han modificado la aplicación, los resultados económicos ni el histórico. **Pendiente**: ejecutar localmente el verificador actualizado y comprobar el resto de puertas de aceptación y el smoke específico T12. No fusionar hasta obtener los recibos finales. Sin GitHub Actions.
+
 ## Acta de resultados — por cumplimentar
 
 - Fecha/hora, Windows, .NET: **pendiente**
