@@ -1,0 +1,15 @@
+{
+  "src/Valdrio.Calculation/ReciprocalFlowProjector.cs": "7820d6d73050ac45bb17bbc7f1b338fe92e8996fb81c06554fc788195997c070",
+  "src/Valdrio.Reporting/SecondaryContributionProjector.cs": "7582158d5753821c8663a97540d31e9105dbe1fdccbb4505c9713235a07fd328",
+  "src/Valdrio.Reporting/AllocationCurrencyProjection.cs": "56ac7a44fcca96bf704d12d7d2e880731c6cc36406d2709804cbbb02fd95ea5f",
+  "src/Valdrio.Desktop/AllocationCurrencyDisplay.cs": "9b1da842036a6371da612f78e979a3522f539c6d572215e5194d00dc9bcb7a8c",
+  "src/Valdrio.Desktop/SecondaryResultPresentation.cs": "dec34a6a3d6d013c241ef16559f9c0fa9a7d34b8b62bd09bbca8b2621b72919d",
+  "src/Valdrio.Desktop/AllocationWorkspaceViewModel.SecondaryFlow.cs": "f6b0bd041656835c37d41a30ba0b5945469597c0d9d51bcd03627b6a313121ab",
+  "src/Valdrio.Runner/Program.cs": "2cf2c3b807686a7353cd5548fca49823ed0dd9a190c9dbb6f9780efdfdd885ca",
+  "tests/Valdrio.Tests/AuditPortableFlowTests.cs": "b34c16c71a1fceb07dbb6c0ae308f485af19722908fbf03380416fc05808e434",
+  "tests/Valdrio.Tests/Valdrio.Tests.csproj": "8ed7577b73cfdace95f06bf6c290932b1def6740191ffa5944ef5d10a54b5404",
+  "src/Valdrio.Desktop/MainWindow.MethodologySmoke.cs": "b16ba777bf4e5138fee6e0964659364cc2515f01927bb38a3d719188d2840af5",
+  "src/Valdrio.Desktop/bin/Release/net10.0-windows/Valdrio.Desktop.dll": "8a530fe86f21b67910f3dda3eeaeaaa05790708e0ff8f848be89c96e102763ea",
+  "tests/Valdrio.Tests/bin/Release/net10.0-windows/Valdrio.Tests.dll": "a0597622d4807ddc4f4c811a8e39d8df9b9c8228028c8a8caf5f31280fd7cbd5",
+  "src/Valdrio.Desktop/AllocationWorkspacePanel.xaml.cs": "be7f0c77955b0d4085895af6d4036a4a24a08609c4797dd7748d821dd8e068e6"
+}

@@ -58,15 +58,26 @@ if (args.Length == 2 && args[0] == "--study-snapshot")
         receipt.EnsureValid();
         var preparation = StudyPreparationService.Evaluate(receipt.Input);
         var input = receipt.Input;
-        IReadOnlyList<ImportedBatch> batches = input switch { ImportedStudySnapshotInput i => i.Imports, ResourceStudySnapshotInput r => r.Imports, _ => [] };
+        IReadOnlyList<ImportedBatch> batches = input switch
+        {
+            AllocationStudySnapshotInput a => a.Imports,
+            ImportedStudySnapshotInput i => i.Imports,
+            ResourceStudySnapshotInput r => r.Imports,
+            _ => []
+        };
         var activeBatchIds = ImportConfirmationRules.ActiveBatches(batches).Select(b => b.Id).ToHashSet();
         using var output = JsonDocument.Parse(CanonicalSnapshotJson.Serialize(new { status = "verified", outputSchema = "valdrio-study-verification-v2",
-            task = input is ResourceStudySnapshotInput ? "T07-resource-preparation" : input is ImportedStudySnapshotInput ? "T06-period-import" : "T05-context-only", receipt.Id,
+            task = input is AllocationStudySnapshotInput ? "T08-allocation-preparation" : input is ResourceStudySnapshotInput ? "T07-resource-preparation" : input is ImportedStudySnapshotInput ? "T06-period-import" : "T05-context-only", receipt.Id,
             receipt.StudyId, receipt.InputRevision, receipt.PayloadSchema, receipt.EconomicInputHash, receipt.FullSnapshotHash,
             periodStart = receipt.Input.StudyContext.PeriodStart.ToString(), periodEnd = receipt.Input.StudyContext.PeriodEnd.ToString(),
             currency = receipt.Input.StudyContext.Currency.FunctionalCurrencyCode.ToString(), preparation.ReadyForCalculation,
             resourceCount = input.Resources.Count,
-            resourceCoverage = input is ResourceStudySnapshotInput resource ? resource.Workspace.Preparation.Coverage : [],
+            resourceCoverage = input switch
+            {
+                AllocationStudySnapshotInput allocation => allocation.Workspace.Preparation.Coverage,
+                ResourceStudySnapshotInput resource => resource.Workspace.Preparation.Coverage,
+                _ => []
+            },
             imports = batches.Select(b =>
                 new { b.Id, b.ReplacesBatchId, active = activeBatchIds.Contains(b.Id), b.Prepared.Reconciliation, b.Prepared.ConversionBridge }).ToArray(),
             diagnostics = preparation.Diagnostics.Select(d => d.Code) }));

@@ -1,0 +1,15 @@
+{
+  "Status": "passed",
+  "PassedChecks": [
+    "confirmed create survives refresh failure",
+    "confirmed save survives refresh failure",
+    "next save uses confirmed revision",
+    "confirmed close survives refresh failure",
+    "confirmed reopen survives refresh failure",
+    "confirmed snapshot survives refresh failure",
+    "manual refresh retains confirmed snapshot selection",
+    "clean refresh adopts newer persisted revision",
+    "dirty refresh preserves editor while list advances",
+    "discard then refresh reconciles current revision"
+  ]
+}

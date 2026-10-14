@@ -21,43 +21,15 @@ public sealed record SecondaryFlowNode(
     string Id, string ShortName, string FullName, bool IsAuxiliary);
 
 
-// This projector uses existing solution.Gross and the exact published
-// coefficients. No iterating, no factorization and no per-account fake ledger.
+// Compatibility adapter: the portable engine owns coefficient arithmetic.
 internal static class SecondaryFlowProjector
 {
     internal sealed record Directed(SecondaryFlowStage Stage, string SourceId, string TargetId, decimal Amount);
-
-    internal static IReadOnlyList<Directed> Project(ReciprocalInput graph, ReciprocalSolution solution)
-    {
-        var grossById = solution.AuxiliaryIds
-            .Select((id, i) => (id, amount: solution.Gross[i]))
-            .ToDictionary(x => x.id, x => x.amount, StringComparer.Ordinal);
-        var arcs = new List<Directed>();
-        for (var i = 0; i < graph.AuxiliaryIds.Length; i++)
-        {
-            var source = graph.AuxiliaryIds[i];
-            // The published solution has a canonical sorted order, which need
-            // not equal the published keys' source order.
-            var gross = grossById[source];
-            for (var j = 0; j < graph.AuxiliaryIds.Length; j++)
-            {
-                var coefficient = graph.Q[i][j];
-                if (coefficient == 0m) continue;
-                var amount = checked(gross * coefficient);
-                if (amount != 0m)
-                    arcs.Add(new(SecondaryFlowStage.Reciprocal, source, graph.AuxiliaryIds[j], amount));
-            }
-            for (var j = 0; j < graph.TerminalIds.Length; j++)
-            {
-                var coefficient = graph.B[i][j];
-                if (coefficient == 0m) continue;
-                var amount = checked(gross * coefficient);
-                if (amount != 0m)
-                    arcs.Add(new(SecondaryFlowStage.Final, source, graph.TerminalIds[j], amount));
-            }
-        }
-        return arcs;
-    }
+    internal static IReadOnlyList<Directed> Project(ReciprocalInput graph, ReciprocalSolution solution) =>
+        ReciprocalFlowProjector.Project(graph, solution)
+            .Select(edge => new Directed(edge.Stage == ReciprocalFlowStage.Reciprocal
+                ? SecondaryFlowStage.Reciprocal : SecondaryFlowStage.Final,
+                edge.SourceId, edge.TargetId, edge.Amount)).ToArray();
 }
 
 public sealed partial class AllocationWorkspaceViewModel
@@ -114,15 +86,17 @@ public sealed partial class AllocationWorkspaceViewModel
                 .ToDictionary(x => x.PartId, x => x.ComponentRoutingGroup);
             string GroupFor(EntityId part) =>
                 assignedGroups.TryGetValue(part, out var grp) ? grp : "all";
+            var primaryTotals = primary.Facts
+                .GroupBy(f => (Group: GroupFor(f.PartId), Node: f.NodeId.ToString()))
+                .ToDictionary(g => g.Key, g => g.Sum(f => f.PostedAmount.Amount));
 
             // The leftmost stage contains *every initial node receiving cost in
             // primary*, not accounts. Principal costs pass directly to their
             // terminal; auxiliary costs enter the corresponding auxiliary pool.
-            foreach (var group in primary.Facts
-                .GroupBy(fact => (Group: GroupFor(fact.PartId), Node: fact.NodeId.ToString()))
+            foreach (var group in primaryTotals
                 .OrderBy(g => g.Key.Group, StringComparer.Ordinal).ThenBy(g => g.Key.Node, StringComparer.Ordinal))
             {
-                var amount = group.Sum(f => f.PostedAmount.Amount);
+                var amount = group.Value;
                 if (activeNodes.TryGetValue(group.Key.Node, out var node))
                     Add(SecondaryFlowStage.Primary, group.Key.Group,
                         group.Key.Node, group.Key.Node, amount);
@@ -137,19 +111,17 @@ public sealed partial class AllocationWorkspaceViewModel
                     workspace.Configuration.SecondaryRules, workspace.Resources.Model.DriverUnits,
                     workspace.Resources.Precision, group.ComponentRoutingGroup);
                 var projected = SecondaryFlowProjector.Project(graph, group.Solution);
+                var secondaryTotals = projected.Where(edge => edge.Stage == SecondaryFlowStage.Final)
+                    .GroupBy(edge => edge.TargetId, StringComparer.Ordinal)
+                    .ToDictionary(g => g.Key, g => g.Sum(edge => edge.Amount), StringComparer.Ordinal);
                 // Check group-specific principal receipts against the published
                 // LU solution before showing an allegedly complete network.
                 // Even a later edited key cannot silently produce misleading arrows.
                 for (var terminal = 0; terminal < group.Solution.TerminalIds.Count; terminal++)
                 {
                     var id = group.Solution.TerminalIds[terminal];
-                    var directlyAssigned = primary.Facts
-                        .Where(f => f.NodeId.ToString() == id &&
-                            StringComparer.Ordinal.Equals(GroupFor(f.PartId), group.ComponentRoutingGroup))
-                        .Sum(f => f.PostedAmount.Amount);
-                    var secondaryReceived = projected
-                        .Where(edge => edge.Stage == SecondaryFlowStage.Final && edge.TargetId == id)
-                        .Sum(edge => edge.Amount);
+                    var directlyAssigned = primaryTotals.GetValueOrDefault((group.ComponentRoutingGroup, id));
+                    var secondaryReceived = secondaryTotals.GetValueOrDefault(id);
                     var expected = group.Solution.Final[terminal];
                     var difference = Math.Abs(expected - checked(directlyAssigned + secondaryReceived));
                     var tolerance = Math.Max(0.00000001m, Math.Abs(expected) * 0.000000000001m);

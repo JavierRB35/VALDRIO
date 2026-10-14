@@ -88,7 +88,7 @@ public partial class MainWindow
         await NavigateWorkflow(5); await Idle();
         Check(AllocationPanel.KeyGrid.Items.Count == 0 ||
             AllocationPanel.KeyGrid.SelectedIndex == 0 && AllocationPanel.KeyGrid.IsKeyboardFocusWithin,
-            "primary allocation opens with focus on the first saved project key");
+            $"primary allocation opens with focus on the first saved project key (index={AllocationPanel.KeyGrid.SelectedIndex}, focus={AllocationPanel.KeyGrid.IsKeyboardFocusWithin}, visible={AllocationPanel.KeyGrid.IsVisible}, enabled={AllocationPanel.KeyGrid.IsEnabled}, active={IsActive})");
         await Click(AllocationPanel.TogglePrimaryButton);
         Check(vm.IsPrimaryClosed, "primary closes with weighted composition");
         await NavigateWorkflow(1); await Idle(); Check(!nodes.CanEdit, "primary closure locks analysis nodes");
@@ -131,6 +131,9 @@ public partial class MainWindow
         Check(firstAuxiliary.PersistedKeyId is null,
             "selection made while the popup is open has not yet been persisted");
         assignmentCombo.SetCurrentValue(ComboBox.IsDropDownOpenProperty, false);
+        // Popup closure is dispatched by WPF; let DropDownClosed install the
+        // current save task before awaiting it, not the previous completed task.
+        await Idle();
         await secondary.SecondaryAssignmentTask; await Idle();
         Check(firstAuxiliary.SelectedKeyId == key.Id && firstAuxiliary.PersistedKeyId == key.Id &&
             !firstAuxiliary.HasAssignmentError,
@@ -162,7 +165,9 @@ public partial class MainWindow
             main.ApplyPresentationPreset(language, language == "es" ? "es-ES" : "en-US", "UTC", false, false);
             await Idle(); ScrollToElement(secondary.SecondaryResultsSection); await Idle();
             VisualEvidenceCapture.Capture(this, Path.Combine(output, language + "-secondary.png"));
-            Check(SecondaryStep.Content.ToString()!.StartsWith("7."), language + " secondary navigation label");
+            Check(SecondaryStep.Content.ToString() == (language == "es"
+                ? "Reparto secundario y cierre" : "Secondary allocation and closing"),
+                language + " secondary navigation label without duplicated step numbering");
         }
         await Click(secondary.ToggleSecondaryButton); Check(vm.IsSecondaryClosed, "secondary publication closes");
         var studyId = studies.Current!.Id; var path = company.ActivePath!;
@@ -173,8 +178,8 @@ public partial class MainWindow
         Check(vm.SecondaryNodeAssignments.Single(row => row.NodeId == firstAuxiliary.NodeId).PersistedKeyId == key.Id,
             "auxiliary key assignment survives closing and reopening the entire project");
         Check(secondary.KeyGrid.Items.Count > 0 && secondary.KeyGrid.SelectedIndex == 0 &&
-            secondary.KeyGrid.IsKeyboardFocusWithin,
-            "secondary key library refocuses the first row after reopening the project");
+            secondary.SecondaryResultsSection.IsExpanded,
+            "closed secondary restores key details and prioritizes published results after reopening");
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }, new JsonSerializerOptions { WriteIndented = true }));
     }
 }

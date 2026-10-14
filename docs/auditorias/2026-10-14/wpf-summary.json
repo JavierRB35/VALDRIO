@@ -1,0 +1,90 @@
+{
+  "totalChecks": 539,
+  "manifests": [
+    {
+      "path": "company-file\\interaction.json",
+      "status": "passed",
+      "checks": 35
+    },
+    {
+      "path": "fx-editor-interaction.json",
+      "status": "passed",
+      "checks": 12
+    },
+    {
+      "path": "guided-workflow\\audit.json",
+      "status": "passed",
+      "checks": 27
+    },
+    {
+      "path": "guided-workflow\\interaction.json",
+      "status": "passed",
+      "checks": 21
+    },
+    {
+      "path": "import-columns\\interaction.json",
+      "status": "passed",
+      "checks": 18
+    },
+    {
+      "path": "import-completion\\interaction.json",
+      "status": "passed",
+      "checks": 9
+    },
+    {
+      "path": "import-confirmation\\interaction.json",
+      "status": "passed",
+      "checks": 26
+    },
+    {
+      "path": "import-debit-credit\\interaction.json",
+      "status": "passed",
+      "checks": 22
+    },
+    {
+      "path": "import-grouping\\interaction.json",
+      "status": "passed",
+      "checks": 11
+    },
+    {
+      "path": "import-international\\interaction.json",
+      "status": "passed",
+      "checks": 10
+    },
+    {
+      "path": "methodology\\interaction.json",
+      "status": "passed",
+      "checks": 48
+    },
+    {
+      "path": "models\\interaction.json",
+      "status": "passed",
+      "checks": 64
+    },
+    {
+      "path": "studies\\interaction.json",
+      "status": "passed",
+      "checks": 74
+    },
+    {
+      "path": "studies\\recovery.json",
+      "status": "passed",
+      "checks": 10
+    },
+    {
+      "path": "t07-resources\\interaction.json",
+      "status": "passed",
+      "checks": 49
+    },
+    {
+      "path": "t08-allocations\\interaction.json",
+      "status": "passed",
+      "checks": 36
+    },
+    {
+      "path": "visual-shell\\interaction.json",
+      "status": "passed",
+      "checks": 67
+    }
+  ]
+}

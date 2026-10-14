@@ -1,0 +1,17 @@
+{
+  "Status": "passed",
+  "PassedChecks": [
+    "es-ES regional input and output",
+    "en-US regional input and output",
+    "capture edit culture",
+    "keep dirty text across region change",
+    "commit using captured culture",
+    "concrete malformed-number diagnostic",
+    "error preserves last valid result",
+    "explicit ISO date diagnostic",
+    "source diagnostic",
+    "domain quote diagnostic",
+    "de-DE input and output",
+    "language does not alter number region"
+  ]
+}
