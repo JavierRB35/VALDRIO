@@ -47,6 +47,9 @@ public partial class MainWindow
         }
         Input("Name", "Amortización técnica"); Input("Pattern", vm.Rows.First().Code); Input("Code", "AJ-AMORT-TEC");
         Input("Value", "500"); Input("Reason", "Estimación técnica del periodo");
+        await Idle();
+        Check(Descendants<TextBlock>(panel.ReusableAdjustmentsSection).Any(t =>
+            t.IsVisible && t.Text == card.SelectionSummary && t.Text.Contains("EUR")), "imported balance visible while card is unsaved");
         Button Action(IRelayCommand command) => Descendants<Button>(panel.ReusableAdjustmentsSection).Single(b => ReferenceEquals(b.Command, command));
         await Click(Action(card.SaveCommand)); card = vm.RuleCards.Single();
         Check(!card.IsDirty, "card saved through native controls");
@@ -63,6 +66,16 @@ public partial class MainWindow
         viewModel.ApplyPresentationPreset("en", "en-US", "UTC", false, false); await Idle();
         panel.ReusableAdjustmentsSection.BringIntoView(); await Idle();
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "03-en-undone.png"));
+        viewModel.ApplyPresentationPreset("es", "es-ES", "Europe/Madrid", false, false); await Idle();
+        card = vm.RuleCards.Single();
+        Input("Pattern", ""); await Click(Action(card.SaveCommand)); card = vm.RuleCards.Single();
+        await Click(Action(card.ApplyCommand));
+        Check(card.HasPreview && !string.IsNullOrWhiteSpace(card.Feedback), "source-free preview has explicit feedback");
+        await Click(Action(card.ConfirmCommand));
+        Check(vm.Rows.Single(r => r.Code == "AJ-AMORT-TEC").Effective == "500 EUR", "additional analytical row created without source accounts");
+        Check(Descendants<TextBlock>(panel.ReusableAdjustmentsSection).Any(t => t.Text == card.Feedback && t.IsVisible), "application feedback visible next to card");
+        Action(card.UndoCommand).BringIntoView(); await Idle();
+        VisualEvidenceCapture.Capture(this, Path.Combine(output, "04-es-additional-feedback.png"));
         await File.WriteAllTextAsync(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }, new JsonSerializerOptions { WriteIndented = true }));
     }
 }

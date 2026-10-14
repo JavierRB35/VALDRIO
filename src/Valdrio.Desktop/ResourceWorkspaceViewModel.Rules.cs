@@ -24,6 +24,25 @@ public sealed partial class ResourceWorkspaceViewModel
     private void InitializeRuleCommands() => AddRuleCommand = new RelayCommand(() =>
         { RuleCards.Add(new(this, null, Format)); RuleEdited(); }, () => CanEdit && !IsRevaluing);
     internal string RuleText(string key) => Text("Adjustment." + key);
+    internal string RuleFeedback => diagnostic is null ? "" : Status;
+    internal string RuleSelectionSummary(string input)
+    {
+        var pattern = input.Trim();
+        if (workspace is null) return RuleText("SelectionHint");
+        if (pattern.Length == 0) return RuleText("NoAccounts");
+        if (pattern == "*" || pattern.Count(c => c == '*') > 1 || pattern.TrimEnd('*').Contains('*'))
+            return RuleText("SelectionHint");
+        var prefix = pattern.EndsWith('*');
+        var match = prefix ? pattern[..^1] : pattern;
+        var ids = workspace.Origins.Where(o => o.AnalyticalName is null &&
+            (prefix ? o.Code.StartsWith(match, StringComparison.Ordinal) : o.Code == match)).Select(o => o.Id).ToHashSet();
+        if (ids.Count == 0) return RuleText("NoAccounts");
+        var amounts = workspace.Preparation.Coverage.Where(c => ids.Contains(c.ResourceId)).ToArray();
+        var currency = workspace.Study.Currency.FunctionalCurrencyCode;
+        return string.Format(Format, RuleText("SelectionSummary"), ids.Count,
+            MoneyText(new Money(amounts.Sum(c => c.ConvertedOriginal.Amount), currency, workspace.Precision)),
+            MoneyText(new Money(amounts.Sum(c => c.Effective.Amount), currency, workspace.Precision)));
+    }
     internal bool CanEditRule => CanEdit && !dirty && !partDirty && !adjustmentDirty && !objectDirty && !IsRevaluing;
     internal void DuplicateRule(AdjustmentRuleCard source)
     {
@@ -85,7 +104,9 @@ public sealed partial class ResourceWorkspaceViewModel
             {
                 var preview = AdjustmentRuleEngine.Preview(workspace, card.Saved);
                 command = RuleCommand(card.Saved, AdjustmentRuleAction.Apply);
-                text = string.Format(Format, RuleText("ApplyPreview"), MoneyText(preview.Before), MoneyText(preview.Target), card.Saved.AnalyticalCode);
+                text = preview.Accounts.Count == 0
+                    ? string.Format(Format, RuleText("CreatePreview"), MoneyText(preview.Target), card.Saved.AnalyticalCode)
+                    : string.Format(Format, RuleText("ApplyPreview"), MoneyText(preview.Before), MoneyText(preview.Target), card.Saved.AnalyticalCode);
                 text += Environment.NewLine + string.Join(Environment.NewLine, preview.Accounts.Select(a =>
                     AccountLabel(workspace.Origins.Single(o => o.Id == a.ResourceId)) + ": " + MoneyText(a.Before) + " → 0; " + MoneyText(a.Delta)));
             }
@@ -98,8 +119,10 @@ public sealed partial class ResourceWorkspaceViewModel
         if (!CanEditRule || workspace is null || card.Prepared is null || card.IsDirty) return;
         await Run(async token =>
         {
+            var action = card.Prepared.AdjustmentRule!.Action;
             await Commit(card.Prepared, token);
             card.ClearPreview();
+            card.ShowFeedback(action == AdjustmentRuleAction.Undo ? "UndoDone" : "ApplyDone");
             foreach (var item in RuleCards) item.RefreshState();
         });
     }
@@ -113,6 +136,7 @@ public sealed class AdjustmentRuleCard : ObservableObject
     public ReusableAdjustmentRule? Saved { get; private set; }
     public ResourceMutation? Prepared { get; private set; }
     private string name, pattern, code, value, reason, preview = "";
+    private string? feedbackKey;
     private AdjustmentValueMode mode;
     private bool dirty;
     public AdjustmentRuleCard(ResourceWorkspaceViewModel owner, ReusableAdjustmentRule? saved, CultureInfo culture)
@@ -126,12 +150,15 @@ public sealed class AdjustmentRuleCard : ObservableObject
         ApplyCommand = new RelayCommand(() => owner.PrepareRule(this, false), () => owner.CanEditRule && !IsDirty && Saved?.Archived == false && owner.ActiveApplication(Id) is null);
         UndoCommand = new RelayCommand(() => owner.PrepareRule(this, true), () => owner.CanEditRule && !IsDirty && owner.ActiveApplication(Id) is not null);
         ConfirmCommand = new AsyncRelayCommand(() => owner.ConfirmRule(this), () => owner.CanEditRule && Prepared is not null && !IsDirty);
-        CancelCommand = new RelayCommand(ClearPreview);
+        CancelCommand = new RelayCommand(() => { ClearPreview(); ShowFeedback("PreviewCancelled"); });
         DuplicateCommand = new RelayCommand(() => owner.DuplicateRule(this), () => owner.CanEditRule);
     }
     public string this[string key] => owner.RuleText(key);
     public string Name { get => name; set => Edit(ref name, value); }
     public string Pattern { get => pattern; set => Edit(ref pattern, value); }
+    public string SelectionSummary => owner.RuleSelectionSummary(Pattern);
+    public string Feedback => !string.IsNullOrEmpty(owner.RuleFeedback) ? owner.RuleFeedback :
+        feedbackKey is not null ? this[feedbackKey] : IsDirty ? this["SaveFirst"] : "";
     public string Code { get => code; set => Edit(ref code, value); }
     public string Value { get => value; set => Edit(ref this.value, value); }
     public string Reason { get => reason; set => Edit(ref reason, value); }
@@ -152,9 +179,10 @@ public sealed class AdjustmentRuleCard : ObservableObject
     public IRelayCommand DuplicateCommand { get; }
     private void Edit(ref string field, string text, [System.Runtime.CompilerServices.CallerMemberName] string? property = null)
     { if (SetProperty(ref field, text, property)) Changed(); }
-    private void Changed() { dirty = true; ClearPreview(); owner.RuleEdited(); }
+    private void Changed() { dirty = true; feedbackKey = null; ClearPreview(); owner.RuleEdited(); }
     internal void Accept(ReusableAdjustmentRule rule) { Saved = rule; dirty = false; ClearPreview(); }
-    internal void Prepare(ResourceMutation command, string text) { Prepared = command; preview = text; RefreshState(); }
+    internal void Prepare(ResourceMutation command, string text) { Prepared = command; preview = text; ShowFeedback("ReviewPreview"); }
+    internal void ShowFeedback(string key) { feedbackKey = key; RefreshState(); }
     internal void ClearPreview() { Prepared = null; preview = ""; RefreshState(); }
     internal void RefreshState()
     {

@@ -229,6 +229,12 @@ public partial class App : System.Windows.Application
                     {
                         try
                         {
+                        if (e.Args.Contains("--adjustments-only", StringComparer.Ordinal))
+                        {
+                            await window.RunGuidedWorkflowChecks(captureDirectory, (QueuedCompanyFileDialogs)companyDialogs, (QueuedImportSourceDialogs)importDialogs);
+                            await window.RunAdjustmentChecks(captureDirectory);
+                            Shutdown(0); return;
+                        }
                         if (e.Args.Contains("--results-scroll-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("Results checks require a disposable demo file.");

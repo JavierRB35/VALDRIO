@@ -83,3 +83,19 @@ La nueva prueba lee los bindings del XAML real de AllocationWorkspacePanel y exi
 Se comprueba si el nombre elegido ya corresponde a un archivo o directorio antes de copiar. Se muestra el diagnóstico localizado `File.AlreadyExists`, se conserva el proyecto abierto y no se escribe sobre el destino. La copia sigue usando `overwrite: false`; una colisión concurrente se traduce al mismo diagnóstico. El selector puede volver a abrirse para elegir otro nombre.
 
 Validación local: cinco pruebas seleccionadas superadas (archivo existente, directorio existente, cancelación y conservación de sesión, nombres y errores de apertura relacionados). Desktop Release: cero errores y advertencias. La primera preparación de las pruebas retenía el archivo abierto y se corrigió para cerrarlo antes de abrirlo desde el ViewModel. No se repitió la batería completa ni el recorrido WPF. Archivos: CompanyFileViewModel.cs y ExampleDestinationTests.cs; logs adjuntos. GitHub Actions no ejecutado.
+
+## Saldo visible al indicar las cuentas
+
+La ficha muestra bajo Cuenta exacta o prefijo el número de cuentas coincidentes, el saldo importado convertido a moneda funcional y el saldo efectivo actual. Se actualiza al escribir, antes de guardar/aplicar, y tras actualizar el workspace. No incluye recursos analíticos generados ni altera importes. Los códigos conservan ceros iniciales. Un patrón vacío/inválido muestra ayuda; sin coincidencias se indica expresamente, sin presentar un cero engañoso.
+
+Validación: 13 pruebas de reglas y localización superadas; nueva prueba con prefijo, cuenta exacta, ceros iniciales, saldo negativo, patrón inválido y ausencia de coincidencias. El caso de aplicación verifica que el saldo importado sigue visible mientras el efectivo pasa a cero. Compilación Release sin errores ni advertencias. Se añade recorrido WPF específico `--capture-dir=... --adjustments-only` para verificar las fichas sin repetir pantallas ajenas al cambio. No se repite la suite económica completa. Archivos: ResourceWorkspaceViewModel.Rules.cs, ResourceWorkspacePanel.xaml, Strings.resx, Strings.es.resx, ReusableAdjustmentTests.cs y capturador App.xaml.cs/MainWindow.AdjustmentSmoke.cs.
+
+## Ampliación aprobada: costes sin cuentas de origen y feedback
+
+La cuenta/prefijo pasa a ser opcional. Vacío o sin coincidencias crea una línea analítica adicional y no compensa cuentas existentes. La vista previa explica expresamente este efecto antes de confirmar. Importe fijo usa el valor indicado; añadir usa base cero; porcentaje de cero produce cero. Los patrones mal formados siguen siendo inválidos. La protección de códigos únicos, aplicación expresa, revisión, cierre y reversión se conserva.
+
+Cada ficha muestra instrucciones para guardar/aplicar/confirmar y feedback contextual: cambios pendientes de guardar, vista previa preparada (sin aplicar todavía), cancelación, regla aplicada y aplicación deshecha. Los diagnósticos aparecen junto a los botones, además del estado general. La fila adicional utiliza código y nombre analíticos y queda pendiente de preparación/reparto.
+
+Validación final de este incremento: 15 pruebas seleccionadas superadas, incluida creación/confirmación/reversión con campo vacío y prefijo sin coincidencias; Desktop Release sin errores ni advertencias. Esta ampliación sustituye el rechazo anterior por ausencia de cuentas descrito en la evidencia inicial. No se ha repetido la suite económica completa. GitHub Actions: sin ejecución.
+
+WPF real: proceso terminado con código 0, 17 comprobaciones del recorrido de ajustes y 21 del recorrido guiado. Comprobado saldo visible antes de guardar, vista previa sin origen, fila analítica y mensaje de éxito visible. [Captura final con feedback](feedback/04-es-additional-feedback.png).

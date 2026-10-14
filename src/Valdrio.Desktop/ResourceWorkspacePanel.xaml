@@ -23,13 +23,15 @@
     <Border Style="{StaticResource Card}" Margin="0,8"><Expander Header="{Binding Header}" IsExpanded="True"><StackPanel>
      <local:AdaptiveColumnsPanel MinColumnWidth="280" IsEnabled="{Binding CanEdit}">
       <StackPanel Margin="0,4,12,4"><TextBlock Text="{Binding [Name]}"/><TextBox Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Name]}"/></StackPanel>
-      <StackPanel Margin="0,4,12,4"><TextBlock Text="{Binding [Pattern]}"/><TextBox Text="{Binding Pattern,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Pattern]}"/></StackPanel>
+      <StackPanel Margin="0,4,12,4"><TextBlock Text="{Binding [Pattern]}"/><TextBox Text="{Binding Pattern,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Pattern]}"/><TextBlock Text="{Binding SelectionSummary}" Margin="0,6,0,0" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/></StackPanel>
       <StackPanel Margin="0,4,12,4"><TextBlock Text="{Binding [Code]}"/><TextBox Text="{Binding Code,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Code]}"/></StackPanel>
       <StackPanel Margin="0,4,12,4"><TextBlock Text="{Binding [Operation]}"/><ComboBox ItemsSource="{Binding Modes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Mode}" AutomationProperties.Name="{Binding [Operation]}"/></StackPanel>
       <StackPanel Margin="0,4,12,4"><TextBlock Text="{Binding [Value]}"/><TextBox Text="{Binding Value,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Value]}" TextAlignment="Right"/></StackPanel>
       <StackPanel Margin="0,4,12,4"><TextBlock Text="{Binding [Reason]}"/><TextBox Text="{Binding Reason,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [Reason]}"/></StackPanel>
      </local:AdaptiveColumnsPanel>
+     <TextBlock Text="{Binding [ActionHelp]}" Margin="0,4,0,6" TextWrapping="Wrap"/>
      <WrapPanel><Button Content="{Binding [Save]}" Command="{Binding SaveCommand}"/><Button Content="{Binding [Apply]}" Command="{Binding ApplyCommand}"/><Button Content="{Binding [Undo]}" Command="{Binding UndoCommand}"/><Button Content="{Binding [Duplicate]}" Command="{Binding DuplicateCommand}"/><Button Content="{Binding [Delete]}" Command="{Binding DeleteCommand}"/></WrapPanel>
+     <TextBlock Text="{Binding Feedback}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
      <Border Background="{DynamicResource Surface.Subtle}" Padding="12" Visibility="{Binding HasPreview,Converter={StaticResource Visible}}"><StackPanel>
       <TextBlock Text="{Binding PreviewText}" AutomationProperties.LiveSetting="Polite"/>
       <WrapPanel><Button Content="{Binding [Confirm]}" Command="{Binding ConfirmCommand}" Style="{StaticResource Button.Primary}"/><Button Content="{Binding [Cancel]}" Command="{Binding CancelCommand}"/></WrapPanel>

@@ -1507,7 +1507,7 @@ Difference to distribute: {7}</value></data>
   <data name="Adjustment.Help" xml:space="preserve"><value>Replace selected accounts with an analytical cost. Explicit application per analysis. Percentage: 50 means 50% of the total. Add accepts negative amounts. Currency:</value></data>
   <data name="Adjustment.New" xml:space="preserve"><value>Add card</value></data>
   <data name="Adjustment.Name" xml:space="preserve"><value>Analytical cost name</value></data>
-  <data name="Adjustment.Pattern" xml:space="preserve"><value>Exact account or prefix (681*)</value></data>
+  <data name="Adjustment.Pattern" xml:space="preserve"><value>Exact account or prefix (681*) · optional</value></data>
   <data name="Adjustment.Code" xml:space="preserve"><value>Analytical code (AJ-AMORT-TEC)</value></data>
   <data name="Adjustment.Operation" xml:space="preserve"><value>New cost amount</value></data>
   <data name="Adjustment.Value" xml:space="preserve"><value>Value (functional currency or %)</value></data>
@@ -1529,7 +1529,7 @@ Difference to distribute: {7}</value></data>
   <data name="Adjustment.UndoPreview" xml:space="preserve"><value>We will reverse only this application. Previous account parts will be restored; later independent monetary corrections remain pending. Later destinations of affected resources are replaced by that restored preparation. The analytical resource is neutralized without deleting history. Review assignments and recalculate.</value></data>
   <data name="Adjustment.RuleTotal" xml:space="preserve"><value>Rule adjustments</value></data>
   <data name="Adjustment.Invalid" xml:space="preserve"><value>Check the card name, account/prefix, analytical code, reason and currency.</value></data>
-  <data name="Adjustment.NoAccounts" xml:space="preserve"><value>No imported accounts match this card in this analysis.</value></data>
+  <data name="Adjustment.NoAccounts" xml:space="preserve"><value>No source accounts. An analytical cost will be added without offsetting accounts; the percentage base is zero.</value></data>
   <data name="Adjustment.Conflict" xml:space="preserve"><value>These accounts are already offset by an active substitution. Undo it before applying another.</value></data>
   <data name="Adjustment.CodeUsed" xml:space="preserve"><value>The analytical code already exists or retains an independent amount. Choose another code.</value></data>
   <data name="Adjustment.NotApplied" xml:space="preserve"><value>There is no active application to undo.</value></data>
@@ -1541,4 +1541,12 @@ Difference to distribute: {7}</value></data>
 <data name="Resources.AdjustmentRule" xml:space="preserve"><value>Reusable adjustment</value></data>
 <data name="Adjustment.AccountsAndCosts" xml:space="preserve"><value>Accounts and analytical costs</value></data>
 <data name="Adjustment.ManualHelp" xml:space="preserve"><value>Manual corrections and rule adjustments are shown separately. Editing a manual correction does not change the applied rule. Effective cost is converted imports plus both adjustments.</value></data>
+<data name="Adjustment.SelectionHint" xml:space="preserve"><value>Enter an exact account or a prefix ending in * to see its imported balance.</value></data>
+<data name="Adjustment.SelectionSummary" xml:space="preserve"><value>Matching accounts: {0} · Imported balance (functional currency): {1} · Current effective balance: {2}</value></data>
+<data name="Adjustment.CreatePreview" xml:space="preserve"><value>We will add an analytical cost row of {0} with code {1}, without offsetting any account. Existing amounts stay unchanged. Assign the new resource and recalculate.</value></data><data name="Adjustment.ActionHelp" xml:space="preserve"><value>Save the card, click Apply rule and confirm the preview to add the adjustment to the table.</value></data>
+<data name="Adjustment.ApplyDone" xml:space="preserve"><value>Rule applied. The analytical cost appears in an additional table row.</value></data>
+<data name="Adjustment.PreviewCancelled" xml:space="preserve"><value>Operation cancelled. No change has been applied.</value></data>
+<data name="Adjustment.ReviewPreview" xml:space="preserve"><value>Preview ready. Review the effect and click Confirm operation. No adjustment has been applied yet.</value></data>
+<data name="Adjustment.SaveFirst" xml:space="preserve"><value>Save the card changes before applying the rule.</value></data>
+<data name="Adjustment.UndoDone" xml:space="preserve"><value>Application undone. Table amounts have been updated.</value></data>
 </root>

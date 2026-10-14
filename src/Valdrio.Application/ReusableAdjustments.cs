@@ -39,7 +39,7 @@ public static class AdjustmentRuleEngine
         rule.Id.EnsureValid(); rule.CompanyId.EnsureValid();
         if (rule.Version < 1 || string.IsNullOrWhiteSpace(rule.Name) || string.IsNullOrWhiteSpace(rule.Reason) ||
             string.IsNullOrWhiteSpace(rule.AnalyticalCode) || rule.AnalyticalCode.Contains('*') ||
-            string.IsNullOrWhiteSpace(rule.AccountPattern) || rule.AccountPattern == "*" ||
+            rule.AccountPattern is null || rule.AccountPattern == "*" ||
             rule.AccountPattern.Count(c => c == '*') > 1 || rule.AccountPattern.TrimEnd('*').Contains('*') || !Enum.IsDefined(rule.Mode)) throw Error("Invalid");
     }
     public static AdjustmentRulePreview Preview(ResourceWorkspaceSnapshot before, ReusableAdjustmentRule rule)
@@ -49,9 +49,8 @@ public static class AdjustmentRuleEngine
             throw Error("Invalid");
         var prefix = rule.AccountPattern.EndsWith('*');
         var pattern = prefix ? rule.AccountPattern[..^1] : rule.AccountPattern;
-        var ids = before.Origins.Where(o => o.AnalyticalName is null && (prefix ? o.Code.StartsWith(pattern, StringComparison.Ordinal) : o.Code == pattern))
+        var ids = before.Origins.Where(o => !string.IsNullOrWhiteSpace(pattern) && o.AnalyticalName is null && (prefix ? o.Code.StartsWith(pattern, StringComparison.Ordinal) : o.Code == pattern))
             .OrderBy(o => o.Code, StringComparer.Ordinal).ToArray();
-        if (ids.Length == 0) throw Error("NoAccounts");
         var active = before.Ledger.AdjustmentApplications?.Where(a => a.ReversedBy is null).ToArray() ?? [];
         if (active.Any(a => a.Rule.Id == rule.Id || a.Lines.Any(l => ids.Any(o => o.Id == l.ResourceId)))) throw Error("Conflict");
         if (before.Origins.Any(o => o.Code == rule.AnalyticalCode &&

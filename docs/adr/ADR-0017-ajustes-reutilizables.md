@@ -35,3 +35,7 @@ El catálogo se lee del historial completo: no se ha realizado una prueba de ren
 ## Validación y límites
 
 Ver [informe y evidencias](../evidencias/2026-10-14-ajustes-reutilizables/INFORME.md). Las pruebas automatizadas y la inspección visual no sustituyen la aceptación del propietario ni demuestran ausencia absoluta de regresiones. No se modifican workflows ni se ejecuta GitHub Actions.
+
+## Ampliación del propietario: origen opcional y feedback (2026-10-14)
+
+Además de sustituir cuentas, se autoriza crear un coste analítico sin origen contable. Campo vacío o sin coincidencias: ninguna compensación, nueva línea por el importe objetivo, con confirmación explícita y reversión. Para porcentaje/adición, la base sin cuentas es cero. Se mantienen validaciones de formato, código único, versión, cierre y aplicación expresa por análisis. La ficha muestra saldo importado y efectivo cuando hay coincidencias y un aviso de creación sin compensaciones cuando no las hay. Previsualización, aplicación, cancelación, deshacer y errores tienen feedback visible junto a la ficha.

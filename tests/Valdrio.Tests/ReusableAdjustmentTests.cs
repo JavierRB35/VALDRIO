@@ -7,6 +7,56 @@ namespace Valdrio.Tests;
 public sealed partial class T06ImportConfirmationTests
 {
     [TestMethod]
+    public async Task ReusableAdjustment_SelectionShowsImportedBalanceBeforeSaving()
+    {
+        using var ui = await ResourceUiReady("Amount;Ignored;Account\n600;x;0681001\n-100;x;0681002\n200;x;681001");
+        var vm = ui.Resources;
+        vm.AddRuleCommand.Execute(null);
+        var card = vm.RuleCards.Single();
+        var empty = card.SelectionSummary;
+        card.Pattern = "0681*";
+        StringAssert.Contains(card.SelectionSummary, "500 EUR");
+        StringAssert.Contains(card.SelectionSummary, "2 ");
+        card.Pattern = "681001";
+        StringAssert.Contains(card.SelectionSummary, "200 EUR");
+        card.Pattern = "*";
+        Assert.AreNotEqual(empty, card.SelectionSummary);
+        card.Pattern = "999*";
+        Assert.AreEqual(empty, card.SelectionSummary);
+        Assert.IsFalse(card.SelectionSummary.Contains("EUR"));
+        Assert.IsNull(card.Saved);
+        Assert.AreEqual(3, vm.Rows.Count);
+    }
+    [TestMethod]
+    [DataRow("")]
+    [DataRow("777*")]
+    public async Task ReusableAdjustment_WithoutSourceCreatesAdditionalRowWithFeedback(string pattern)
+    {
+        using var ui = await ResourceUiReady("Amount;Ignored;Account\n1000;x;681001");
+        var vm = ui.Resources;
+        vm.AddRuleCommand.Execute(null);
+        var card = vm.RuleCards.Single();
+        card.Name = "Additional cost"; card.Pattern = pattern; card.Code = "AJ-EXTRA";
+        card.Value = "500"; card.Reason = "Analytical estimate";
+        Assert.IsFalse(string.IsNullOrWhiteSpace(card.Feedback));
+        await card.SaveCommand.ExecuteAsync(null);
+        card = vm.RuleCards.Single();
+        card.ApplyCommand.Execute(null);
+        Assert.IsTrue(card.HasPreview, vm.Status);
+        Assert.IsFalse(string.IsNullOrWhiteSpace(card.Feedback));
+        StringAssert.Contains(card.PreviewText, "500 EUR");
+        Assert.AreEqual(1, vm.Rows.Count);
+        await card.ConfirmCommand.ExecuteAsync(null);
+        Assert.IsFalse(card.HasPreview);
+        Assert.IsFalse(string.IsNullOrWhiteSpace(card.Feedback));
+        Assert.AreEqual("1000 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
+        Assert.AreEqual("500 EUR", vm.Rows.Single(r => r.Code == "AJ-EXTRA").Effective);
+        card.UndoCommand.Execute(null); await card.ConfirmCommand.ExecuteAsync(null);
+        Assert.AreEqual("0 EUR", vm.Rows.Single(r => r.Code == "AJ-EXTRA").Effective);
+        Assert.AreEqual("1000 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
+        Assert.IsFalse(string.IsNullOrWhiteSpace(card.Feedback));
+    }
+    [TestMethod]
     public async Task ReusableAdjustment_AnalyticalCostUsesExistingAllocationAndUndoAfterCalculation()
     {
         using var file = Baseline(); var w = await ImportedResources(file, "Amount;Ignored;Account\n1000;x;681001");
@@ -52,6 +102,8 @@ public sealed partial class T06ImportConfirmationTests
         Assert.AreEqual("0 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
         Assert.AreEqual("0 EUR", vm.Rows.Single(r => r.Code == "681001").Adjustments);
         Assert.AreEqual("-1000 EUR", vm.Rows.Single(r => r.Code == "681001").RuleAdjustments);
+        StringAssert.Contains(card.SelectionSummary, "1000 EUR");
+        StringAssert.Contains(card.SelectionSummary, ": 0 EUR");
         Assert.IsFalse(card.ApplyCommand.CanExecute(null));
         await card.DeleteCommand.ExecuteAsync(null);
         card = vm.RuleCards.Single(); Assert.IsTrue(card.Saved!.Archived);
@@ -144,7 +196,7 @@ public sealed partial class T06ImportConfirmationTests
         Assert.AreEqual(2, w.Ledger.AdjustmentApplications!.Count);
     }
     [TestMethod]
-    public async Task ReusableAdjustment_RejectsOverlapNoMatchAndStalePreviewAtomically()
+    public async Task ReusableAdjustment_RejectsOverlapCodeCollisionAndStalePreviewAtomically()
     {
         using var file = Baseline(); var w = await ImportedResources(file, "Amount;Ignored;Account\n1000;x;681001");
         var rule = Rule(w); w = RunRule(file, w, rule, AdjustmentRuleAction.Save);
