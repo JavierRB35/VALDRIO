@@ -49,6 +49,73 @@ public sealed partial class T06ImportConfirmationTests
     }
 
     [TestMethod]
+    public async Task DriverKeyWithoutUnitIsPersistedAsDraftAndCanBeCompletedAfterReopen()
+    {
+        using var ui = await ResourceUiReady();
+        using var vm = new AllocationWorkspaceViewModel(ui.Company, ui.Studies, new UiTextCatalog(), ui.Preferences, ui.Dialogs);
+        await vm.EnterAsync();
+        vm.Name = "Incomplete driver key";
+        vm.Mode = AllocationKeyMode.DriverUnits;
+        vm.Lines.First().Included = true;
+        vm.Lines.First().Value = "10";
+        Assert.IsNull(vm.Unit);
+        Assert.IsFalse(vm.PublishCommand.CanExecute(null));
+        Assert.IsTrue(vm.SaveDraftCommand.CanExecute(null));
+        Assert.IsTrue(await vm.SaveKeyAsync(false), vm.Status);
+
+        var draft = vm.Keys.Single().Value;
+        Assert.AreEqual(ModelStatus.Draft, draft.Status);
+        Assert.IsNull(draft.UnitId);
+        Assert.AreEqual(10m, draft.Lines.Single().Value);
+        Assert.AreEqual(0, vm.PublishedPrimary.Count);
+
+        await vm.EnterAsync(true);
+        Assert.AreEqual(draft.Id, vm.Keys.Single().Value.Id);
+        Assert.IsNull(vm.Keys.Single().Value.UnitId);
+        vm.SelectedKey = vm.Keys.Single();
+        await vm.LoadKeyCommand.ExecuteAsync(null);
+        vm.Unit = vm.Units.First().Value;
+        Assert.IsTrue(vm.PublishCommand.CanExecute(null));
+        Assert.IsTrue(await vm.SaveKeyAsync(true), vm.Status);
+        Assert.AreEqual(ModelStatus.Published, vm.Keys.Single().Value.Status);
+        Assert.AreEqual(1, vm.PublishedPrimary.Count);
+    }
+
+    [TestMethod]
+    public async Task SavingAnIncompleteEditOfPublishedKeyCreatesDraftVersionWithoutChangingPublication()
+    {
+        using var ui = await ResourceUiReady();
+        using var vm = new AllocationWorkspaceViewModel(ui.Company, ui.Studies, new UiTextCatalog(), ui.Preferences, ui.Dialogs);
+        await vm.EnterAsync();
+        vm.Name = "Published allocation";
+        vm.Lines.First().Included = true;
+        vm.Lines.First().Value = "100";
+        Assert.IsTrue(await vm.SaveKeyAsync(true), vm.Status);
+        var published = vm.Keys.Single().Value;
+
+        vm.Lines.First().Value = "60";
+        Assert.IsTrue(vm.SaveDraftCommand.CanExecute(null));
+        Assert.IsFalse(vm.PublishCommand.CanExecute(null));
+        Assert.IsTrue(await vm.SaveKeyAsync(false), vm.Status);
+        Assert.AreEqual(2, vm.Keys.Count);
+
+        var savedPublished = vm.Keys.Single(k => k.Value.Id == published.Id).Value;
+        var draft = vm.Keys.Single(k => k.Value.Status == ModelStatus.Draft).Value;
+        Assert.AreEqual(100m, savedPublished.Lines.Single().Value);
+        Assert.AreEqual(ModelStatus.Published, savedPublished.Status);
+        Assert.AreEqual(60m, draft.Lines.Single().Value);
+        Assert.AreEqual(published.Id, draft.ParentVersionId);
+        Assert.AreEqual(published.FamilyId, draft.FamilyId);
+        Assert.AreEqual(2, draft.VersionNumber);
+        Assert.AreEqual(published.Id, vm.PublishedPrimary.Single().Value);
+
+        await vm.EnterAsync(true);
+        Assert.AreEqual(2, vm.Keys.Count);
+        Assert.AreEqual(60m, vm.Keys.Single(k => k.Value.Status == ModelStatus.Draft).Value.Lines.Single().Value);
+        Assert.AreEqual(100m, vm.Keys.Single(k => k.Value.Status == ModelStatus.Published).Value.Lines.Single().Value);
+    }
+
+    [TestMethod]
     public async Task ResourceSaveOnLeaveAppliesValidFormAndDoesNotPromptAgain()
     {
         using var ui = await ResourceUiReady();
