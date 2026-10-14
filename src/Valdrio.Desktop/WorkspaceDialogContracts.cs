@@ -4,6 +4,7 @@ public enum PendingEditChoice { Save, Discard, Cancel }
 public interface IModelEditorDialogs
 {
     PendingEditChoice ResolvePending(string title, string body);
+    bool ConfirmEconomicChange(string title, string body, string accept, string cancel) => false;
 }
 public interface ICompanyFileDialogs
 {

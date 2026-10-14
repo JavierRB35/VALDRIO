@@ -222,7 +222,7 @@ public static class AllocationWorkspaceRules
     public static IReadOnlyList<AllocationCoverage> Coverage(AllocationWorkspaceSnapshot workspace)
     {
         var result = new List<AllocationCoverage>(); var resources = workspace.Resources;
-        foreach (var resource in resources.Resources)
+        foreach (var resource in resources.Resources.Where(r => !AdjustmentRuleEngine.IsNeutralized(resources, r)))
         foreach (var part in resource.Parts.Where(p => p.Routing is ResourceRoutingKind.AllocationPool or ResourceRoutingKind.Pending))
         {
             var account = resources.Origins.Single(o => o.Id == resource.Id).Code;

@@ -52,7 +52,13 @@ public static class ResourcePreparationRules
         {
             resource.Id.EnsureValid();
             if (!resourceIds.Add(resource.Id)) throw Error("RES_DUPLICATE_ID", "Resource.DuplicateId");
-            if (resource.Sources.Count == 0) throw Error("RES_SOURCE_REQUIRED", "Resource.SourceRequired");
+            if (resource.AnalyticalOrigin is { } analytical)
+            {
+                analytical.ApplicationId.EnsureValid();
+                if (resource.Sources.Count != 0 || string.IsNullOrWhiteSpace(analytical.Code) || string.IsNullOrWhiteSpace(analytical.Name))
+                    throw Error("RES_SOURCE_REQUIRED", "Resource.SourceRequired");
+            }
+            else if (resource.Sources.Count == 0) throw Error("RES_SOURCE_REQUIRED", "Resource.SourceRequired");
             var converted = zero;
             foreach (var source in resource.Sources.OrderBy(value => value.SourceRowId))
             {

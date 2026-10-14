@@ -229,6 +229,12 @@ public partial class App : System.Windows.Application
                     {
                         try
                         {
+                        if (e.Args.Contains("--adjustments-only", StringComparer.Ordinal))
+                        {
+                            await window.RunGuidedWorkflowChecks(captureDirectory, (QueuedCompanyFileDialogs)companyDialogs, (QueuedImportSourceDialogs)importDialogs);
+                            await window.RunAdjustmentChecks(captureDirectory, (QueuedModelEditorDialogs)modelDialogs);
+                            Shutdown(0); return;
+                        }
                         if (e.Args.Contains("--results-scroll-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("Results checks require a disposable demo file.");
@@ -273,6 +279,11 @@ public partial class App : System.Windows.Application
                         await window.RunAllocationChecks(captureDirectory);
                             if (e.Args.Contains("--methodology", StringComparer.Ordinal)) await window.RunMethodologyChecks(captureDirectory);
                         await window.RunVisualShellChecks(captureDirectory);
+                        if (e.Args.Contains("--adjustments", StringComparer.Ordinal))
+                        {
+                            await window.RunGuidedWorkflowChecks(Path.Combine(captureDirectory, "adjustment-fixture"), (QueuedCompanyFileDialogs)companyDialogs, (QueuedImportSourceDialogs)importDialogs);
+                            await window.RunAdjustmentChecks(captureDirectory, (QueuedModelEditorDialogs)modelDialogs);
+                        }
                         CaptureVisualEvidence(
                             window,
                             viewModel,

@@ -51,6 +51,7 @@ public sealed record ResourceGridRow(EntityId Id, string Code, string Originals,
 {
     public string DisplayName { get; init; } = Code;
     public long Revision { get; init; }
+    public string RuleAdjustments { get; init; } = "";
     public string CorrectionNumber { get; init; } = "";
     public string FormatCulture { get; init; } = "es-ES";
     public string AssignmentStatus { get; init; } = "";

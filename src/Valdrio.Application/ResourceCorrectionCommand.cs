@@ -22,10 +22,10 @@ public static class ResourceCorrectionCommand
         metadata.EnsureValid();
         var resource = before.Resources.SingleOrDefault(r => r.Id == resourceId)
             ?? throw ResourceWorkspaceRules.Error("RES_NOT_FOUND", "Resource.NotFound");
-        var correction = ResourceCorrectionRules.Prepare(resource, requestedTotal, pendingPartId);
+        var correction = ResourceCorrectionRules.Prepare(resource, requestedTotal + AdjustmentRuleEngine.RuleTotal(before, resourceId), pendingPartId);
         if (correction is null) return null;
 
-        var previous = before.Preparation.Coverage.Single(c => c.ResourceId == resourceId).AdjustmentTotal;
+        var previous = before.Preparation.Coverage.Single(c => c.ResourceId == resourceId).AdjustmentTotal - AdjustmentRuleEngine.RuleTotal(before, resourceId);
         var code = before.Origins.Single(o => o.Id == resourceId).Code;
         var explanation = "Inline correction: account " + code + "; total " +
             previous.Amount.ToString(CultureInfo.InvariantCulture) + " -> " +
