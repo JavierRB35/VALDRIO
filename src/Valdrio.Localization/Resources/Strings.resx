@@ -1661,4 +1661,10 @@ Difference to distribute: {7}</value></data>
   <data name="Activity.Cost" xml:space="preserve"><value>T12 published cost</value></data>
   <data name="Activity.CostUnavailable" xml:space="preserve"><value>No current T12 cost</value></data>
   <data name="Activity.Method" xml:space="preserve"><value>How to calculate normal capacity</value></data>
+  <data name="Activity.History" xml:space="preserve"><value>View observation history</value></data>
+  <data name="Activity.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Activity.SaveFailed" xml:space="preserve"><value>The physical observation could not be saved. Review the file and try again.</value></data>
+  <data name="Activity.State.Draft" xml:space="preserve"><value>Draft</value></data>
+  <data name="Activity.State.Confirmed" xml:space="preserve"><value>Confirmed</value></data>
+  <data name="Activity.State.Annulled" xml:space="preserve"><value>Annulled</value></data>
 </root>
