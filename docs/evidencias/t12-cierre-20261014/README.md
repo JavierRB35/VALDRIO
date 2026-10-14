@@ -68,8 +68,11 @@ try {
 if (-not (Test-Path -LiteralPath (Join-Path $evidence "demo-t12.valdrio"))) { throw "No se generó la fixture T12." }
 $visual = Join-Path $evidence "visual"
 New-Item -ItemType Directory -Force -Path $visual | Out-Null
+# Quote each path so Start-Process also works when the repository is under "OneDrive - ...".
+$demoArg = '"' + (Join-Path $evidence "demo-t12.valdrio") + '"'
+$captureArg = '"--capture-dir=' + $visual + '"'
 $p = Start-Process -FilePath (Resolve-Path "artifacts/desktop/Valdrio.Desktop.exe").Path -ArgumentList @(
-    (Join-Path $evidence "demo-t12.valdrio"), "--cost-flow-only", "--capture-dir=$visual"
+    $demoArg, "--cost-flow-only", $captureArg
 ) -PassThru -Wait
 if ($p.ExitCode -ne 0) { throw "Smoke WPF T12 falló: $($p.ExitCode)" }
 Get-Content (Join-Path $visual "checks.json")
