@@ -50,6 +50,16 @@ public sealed class AllocationUiResourceCompletenessTests
     }
 
     [TestMethod]
+    public void SecondaryExplanationControlsHaveEnglishAndSpanishLabels()
+    {
+        var texts = new UiTextCatalog();
+        foreach (var culture in UiTextCatalog.SupportedUiCultures)
+        foreach (var key in new[] { "AllocationUI.ShowSource", "AllocationUI.BackToAmounts" })
+            Assert.IsFalse(string.IsNullOrWhiteSpace(texts.Get(key, culture)),
+                "Missing allocation explanation label: " + culture.Name + " / " + key);
+    }
+
+    [TestMethod]
     public void GlobalBusyIndicatorHasAccessibleLabelsInBothLanguages()
     {
         var catalog = new UiTextCatalog();

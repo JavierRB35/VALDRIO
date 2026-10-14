@@ -41,6 +41,27 @@ public sealed partial class T06ImportConfirmationTests
         Assert.AreEqual(2, file.Allocations.ReadAllocationKeys(w.Study.CompanyId, w.Model.Structure.Id).Count);
     }
     [TestMethod]
+    public async Task DriverDraftWithoutUnitIsSavedButCannotBeUsedOrPublished()
+    {
+        using var file = Baseline(); var w = await ImportedResources(file);
+        var command = KeyCommand(w, AllocationKeyMode.DriverUnits, publish: false,
+            lines: [new(w.Model.Structure.Nodes[0].Id, 10m)]) with { UnitId = null };
+        var draft = file.Allocations.SaveAllocationKey(command).After;
+        Assert.AreEqual(ModelStatus.Draft, draft.Status);
+        Assert.IsNull(draft.UnitId);
+        Assert.AreEqual(10m, draft.Lines.Single().Value);
+
+        var readBack = file.Allocations.ReadAllocationKeys(w.Study.CompanyId, w.Model.Structure.Id).Single();
+        Assert.AreEqual(draft.Id, readBack.Id);
+        Assert.IsNull(readBack.UnitId);
+        Assert.AreEqual("KEY_PUBLICATION_REQUIRED", Assert.ThrowsExactly<DomainRuleException>(() =>
+            AllocationKeyRules.ResolvePrimary("6005", draft.Id, [], [readBack], w.Model.Structure)).Diagnostic.Code);
+        Assert.AreEqual("KEY_INVALID", Assert.ThrowsExactly<DomainRuleException>(() =>
+            file.Allocations.SaveAllocationKey(command with { ExpectedRevision = 0, Publish = true, RequestId = Id() })).Diagnostic.Code);
+        Assert.AreEqual(ModelStatus.Draft, file.Allocations.ReadAllocationKeys(w.Study.CompanyId, w.Model.Structure.Id).Single().Status);
+    }
+
+    [TestMethod]
     public async Task T08_C07_C08_EqualSharesNegativeAmountsAndDestinationOrderPreserveLedger()
     {
         using var file = Baseline(); var w = await ImportedResources(file); var model = w.Model.Structure;

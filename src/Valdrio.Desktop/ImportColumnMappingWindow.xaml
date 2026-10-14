@@ -48,6 +48,8 @@
  <DockPanel Margin="14">
   <StackPanel DockPanel.Dock="Top">
    <TextBlock Text="{Binding Target}" FontWeight="SemiBold"/>
+   <TextBlock Text="{Binding PrimaryClosedNotice}" TextWrapping="Wrap" Foreground="{DynamicResource Brand.Red}" Margin="0,5,0,5"
+              Visibility="{Binding HasClosedPrimaryDestination,Converter={StaticResource Visible}}" AutomationProperties.LiveSetting="Assertive"/>
    <TextBlock Text="{Binding CurrencyImportNotice}" TextWrapping="Wrap" Foreground="{DynamicResource Text.Primary}" Margin="0,4,0,6"/>
    <TextBlock TextWrapping="Wrap" Margin="0,4,0,6" AutomationProperties.LiveSetting="Polite" x:Name="ImportStepHelp"/>
   </StackPanel>

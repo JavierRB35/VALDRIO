@@ -91,15 +91,17 @@ public sealed partial class ImportColumnMappingViewModel
     private EntityId requestId = new(Guid.NewGuid());
     private string sourceCurrency = "", approvalReference = "";
     private string? sourcePath;
-    private bool interpretationApproved, writable;
+    private bool interpretationApproved, writable, primaryClosed;
     public IAsyncRelayCommand PrepareCommand { get; }
     public IAsyncRelayCommand ConfirmCommand { get; }
     public PreparedImport? Preparation => preparedImport;
     public ImportedBatch? ConfirmedImport => confirmedImport;
     public bool HasConfirmableReview => preparedImport is { } p && p.Rows.Any(r => r.Selected) &&
         !p.Diagnostics.Any(d => d.Severity == ImportDiagnosticSeverity.Blocking && d.Diagnostic.Code != "IMP_APPROVAL_REQUIRED");
-    public bool CanSaveReviewedImport => writable && confirmedImport is null && HasConfirmableReview && interpretationApproved;
-    public string ReviewSaveRequirement => confirmedImport is not null ? Guide("SavedImport") : !HasConfirmableReview ? Guide("EditReview") : !interpretationApproved ? Guide("ApproveReview") : Guide("SaveReady");
+    public bool HasClosedPrimaryDestination => primaryClosed;
+    public string PrimaryClosedNotice => primaryClosed ? Text("Allocation.PrimaryClosed") : "";
+    public bool CanSaveReviewedImport => writable && !primaryClosed && confirmedImport is null && HasConfirmableReview && interpretationApproved;
+    public string ReviewSaveRequirement => primaryClosed ? Text("Allocation.PrimaryClosed") : confirmedImport is not null ? Guide("SavedImport") : !HasConfirmableReview ? Guide("EditReview") : !interpretationApproved ? Guide("ApproveReview") : Guide("SaveReady");
     public bool ShowReviewApproval => HasConfirmableReview && confirmedImport is null;
     public bool HasPreparedReview => preparedImport is not null || confirmedImport is not null;
     public bool HasPreparedGroups => preparedImport?.Groups is { Count: > 0 };
@@ -148,14 +150,14 @@ public sealed partial class ImportColumnMappingViewModel
         string.Format(Ui, this["FriendlyIssueLine"],
             d.Location.RecordNumber?.ToString(CultureInfo.InvariantCulture) ?? "—",
             FormatDiagnosticMessage(d.Diagnostic))));
-    public void BindTarget(IImportWorkspace? port, StudyDefinition? study, bool canWrite, Func<ImportedBatch, Task>? onConfirmed)
+    public void BindTarget(IImportWorkspace? port, StudyDefinition? study, bool canWrite, Func<ImportedBatch, Task>? onConfirmed, bool primaryClosed = false)
     {
         if (busy) throw new InvalidOperationException("Import is busy.");
         // Every newly attached import defaults to the analysis currency. This
         // prevents a prior legacy international batch from leaking its hidden
         // conversion mode into an ordinary balance import.
         var changed = !ReferenceEquals(importPort, port) || targetStudy != study || international || currencyFromColumn;
-        importPort = port; targetStudy = study; afterConfirmed = onConfirmed; writable = canWrite;
+        importPort = port; targetStudy = study; afterConfirmed = onConfirmed; writable = canWrite; this.primaryClosed = primaryClosed;
         international = false;
         currencyFromColumn = false;
         if (changed)
