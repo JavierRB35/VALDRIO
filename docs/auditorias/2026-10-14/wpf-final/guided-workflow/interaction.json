@@ -1,0 +1,26 @@
+{
+  "Status": "passed",
+  "PassedChecks": [
+    "import navigation explains the missing company before source selection",
+    "only the selected workflow section is presented",
+    "activity-unit creation is available where the node needs the unit",
+    "successful inline unit creation clears the unit form and returns focus to the node",
+    "missing node unit has a specific actionable explanation",
+    "incomplete node cannot publish and its form is retained",
+    "one explicit action saves validates and publishes the structure",
+    "published models refresh when entering study step",
+    "backward navigation preserves the unsaved study form",
+    "import step redirects to unsaved study instead of opening a dead end",
+    "study is saved before guided import becomes available",
+    "import destination and storage path are visible",
+    "read and continue advances to column mapping",
+    "ordinary import inherits EUR without currency conversion",
+    "validated columns advance to record selection",
+    "empty selection stays in records and explains how to proceed",
+    "all except one retains grouping by code independent of descriptions",
+    "field explanation is available to keyboard and assistive technology",
+    "review is accessible without earlier-step approval or example",
+    "save action persists and shows unambiguous saved confirmation",
+    "reopened company contains the saved selected import"
+  ]
+}
