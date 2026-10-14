@@ -133,6 +133,7 @@
 
           <TextBlock Text="{Binding CenterCodeLabel}"/>
           <TextBox x:Name="CenterCodeBox" Text="{Binding CenterCode,UpdateSourceTrigger=PropertyChanged}" TabIndex="25" FlowDirection="LeftToRight" AutomationProperties.Name="{Binding CenterCodeLabel}" local:FieldHelp.Key="CenterCode"/>
+          <TextBlock Text="{Binding CenterCodeValidation}" Style="{StaticResource InlineStatus}" AutomationProperties.LiveSetting="Assertive" Margin="0,2,0,6"/>
 
           <TextBlock Text="{Binding CenterNameLabel}"/>
           <TextBox x:Name="CenterNameBox" Text="{Binding CenterName,UpdateSourceTrigger=PropertyChanged}" TabIndex="26" AutomationProperties.Name="{Binding CenterNameLabel}" local:FieldHelp.Key="CenterName"/>

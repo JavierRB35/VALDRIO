@@ -2,7 +2,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Valdrio.Infrastructure.CompanyFiles.Migrations;
 namespace Valdrio.Infrastructure.CompanyFiles;
-internal sealed class AllocationDbContext(SqliteConnection connection) : ResourceDbContext(connection)
+internal class AllocationDbContext(SqliteConnection connection) : ResourceDbContext(connection)
 {
     public DbSet<AllocationKeyEventRow> AllocationKeyEvents => Set<AllocationKeyEventRow>();
     public DbSet<AllocationChangeRow> AllocationChanges => Set<AllocationChangeRow>();

@@ -1,4 +1,6 @@
 using Microsoft.Data.Sqlite;
+using Valdrio.Application;
+using Valdrio.Infrastructure.CompanyFiles;
 using Valdrio.Desktop;
 using Valdrio.Localization;
 
@@ -38,6 +40,49 @@ public sealed partial class T06ImportConfirmationTests
         Assert.AreEqual(currentPath, ui.Company.ActivePath);
         Assert.AreEqual(before, Hash(older));
         Assert.IsNotNull(ui.Company.ActiveModels); // The original session remains usable.
+    }
+
+    [TestMethod]
+    public async Task OpeningGenuineOldFileOffersUpgradeToNewCopyWithoutReSelectingSource()
+    {
+        // Genuine versioned file, not just a deliberately changed schema number.
+        var older = Fixture(3);
+        var originalHash = Hash(older);
+        Assert.IsTrue(Service().RequiresUpgrade(older));
+        Assert.AreEqual(originalHash, Hash(older), "Read-only version probe must not mutate source.");
+
+        var dialogs = new QueuedCompanyFileDialogs();
+        var preferences = new PresentationPreferencesService(new LanguageCatalog(), UserPresentationPreferences.Default);
+        using var vm = new CompanyFileViewModel(Service(), dialogs, Catalog, new UiTextCatalog(), preferences,
+            new PresentationFormatter(new DisplayTimeZoneResolver()));
+        string? alert = null;
+        vm.OpenFailure = message => alert = message;
+
+        await vm.OpenPath(older);
+        Assert.AreEqual("FILE_UPGRADE_REQUIRED", vm.DiagnosticCode);
+        Assert.IsTrue(vm.UpgradeSuggested);
+        Assert.IsFalse(string.IsNullOrWhiteSpace(alert));
+        Assert.IsNull(vm.Snapshot);
+        Assert.AreEqual(originalHash, Hash(older));
+
+        // Canceling the copy destination is harmless; source remains remembered.
+        dialogs.Paths.Enqueue(null);
+        await vm.UpgradeCommand.ExecuteAsync(null);
+        Assert.IsNull(vm.Snapshot);
+        Assert.AreEqual(originalHash, Hash(older));
+
+        // Only a destination is queued. A second source-file picker would throw here.
+        var target = FileOf("legacy-upgraded-from-open.valdrio");
+        dialogs.Paths.Enqueue(target);
+        await vm.UpgradeCommand.ExecuteAsync(null);
+        Assert.IsNotNull(vm.Snapshot, vm.Status);
+        Assert.AreEqual(target, vm.ActivePath);
+        Assert.AreEqual(SqliteCompanyFileService.SchemaVersion, vm.Snapshot.SchemaVersion);
+        Assert.IsFalse(vm.UpgradeSuggested);
+        Assert.IsFalse(Service().RequiresUpgrade(target));
+        Assert.AreEqual(originalHash, Hash(older), "The original must remain byte-for-byte unchanged.");
+        using var reopened = Service().Open(target, CompanyFileOpenMode.ReadOnly);
+        Assert.AreEqual(vm.Snapshot.Id, reopened.Read().Id);
     }
 
     [TestMethod]

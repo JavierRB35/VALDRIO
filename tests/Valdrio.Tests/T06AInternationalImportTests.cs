@@ -170,7 +170,7 @@ public sealed partial class T06ImportConfirmationTests
         var batches = Query(path, "SELECT group_concat(CanonicalJson) FROM ImportBatches ORDER BY Id");
         var photos = Query(path, "SELECT group_concat(CanonicalJson) FROM StudySnapshots ORDER BY Id");
         using var file = Service().Upgrade(path, FileOf("v7.valdrio"), "test");
-        Assert.AreEqual(9, file.Read().SchemaVersion); Assert.AreEqual(before, Hash(path));
+        Assert.AreEqual(10, file.Read().SchemaVersion); Assert.AreEqual(before, Hash(path));
         Assert.AreEqual(batches, Query(file.Path, "SELECT group_concat(CanonicalJson) FROM ImportBatches ORDER BY Id"));
         Assert.AreEqual(photos, Query(file.Path, "SELECT group_concat(CanonicalJson) FROM StudySnapshots ORDER BY Id"));
     }

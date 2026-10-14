@@ -18,6 +18,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     private ICompanyFileSession? active;
     private CancellationTokenSource? cancellation;
     private DomainDiagnostic? diagnostic;
+    private string? upgradeSourcePath;
     private string statusKey = "CompanyNoFile";
     private bool busy;
     private bool pseudo;
@@ -109,6 +110,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public IImportWorkspace? ActiveImports => active?.Imports;
     public IResourceWorkspace? ActiveResources => active?.Resources;
     public IAllocationWorkspace? ActiveAllocations => active?.Allocations;
+    public IRunStore? ActiveRuns => active?.Runs;
     public bool CanWrite => active?.Mode == CompanyFileOpenMode.Edit;
     public bool WorkspaceIdle => !busy && WorkspaceBusy?.Invoke() != true;
     // Central activity state shared by every workspace. Existing asynchronous
@@ -261,7 +263,11 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
             {
                 token.ThrowIfCancellationRequested();
                 var source = System.IO.Path.Combine(AppContext.BaseDirectory, "examples", "services.valdrio");
-                // The shipped fixture is immutable. Never overwrite the chosen destination.
+                // The shipped fixture is immutable. Older bundled examples are
+                // migrated directly into a NEW destination with atomic promotion;
+                // never open an incompatible raw copy as a current-format file.
+                if (files.RequiresUpgrade(source, token))
+                    return files.Upgrade(source, destination, "local-user", token);
                 try { System.IO.File.Copy(source, destination, overwrite: false); }
                 catch (System.IO.IOException ex) when (System.IO.File.Exists(destination) || System.IO.Directory.Exists(destination))
                 {
@@ -292,7 +298,22 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
         try
         {
             if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
-            await Run(async token => await ReplaceAsync(await Task.Run(() => files.Open(path, cancellationToken: token))));
+            upgradeSourcePath = null;
+            var requiresUpgrade = false;
+            await Run(async token =>
+            {
+                requiresUpgrade = await Task.Run(() => files.RequiresUpgrade(path, token), token);
+                if (!requiresUpgrade)
+                    await ReplaceAsync(await Task.Run(() => files.Open(path, cancellationToken: token), token));
+            });
+            if (requiresUpgrade && diagnostic is null)
+            {
+                // Retain the selected source. "Upgrade" will ask only for a new destination.
+                // A previous project, if open, is left untouched.
+                upgradeSourcePath = path;
+                diagnostic = new("FILE_UPGRADE_REQUIRED", "File.UpgradeRequired", []);
+                Refresh();
+            }
         }
         catch (OperationCanceledException)
         {
@@ -398,9 +419,10 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     private async Task Upgrade()
     {
         if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
-        var source = dialogs.SelectFile(); if (source is null) return;
+        var source = upgradeSourcePath ?? dialogs.SelectFile(); if (source is null) return;
         var target = dialogs.SelectNewFile(); if (target is null) return;
         await Run(async token => await ReplaceAsync(await Task.Run(() => files.Upgrade(source, target, "local-user", token))));
+        if (diagnostic is null) upgradeSourcePath = null;
     }
     public void Dispose() { preferences.Changed -= PreferencesChanged; cancellation?.Cancel(); active?.Dispose(); active = null; }
 }

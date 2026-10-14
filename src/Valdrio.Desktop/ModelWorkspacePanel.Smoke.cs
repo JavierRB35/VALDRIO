@@ -93,8 +93,13 @@ public partial class ModelWorkspacePanel
         Check(vm.Master is null && string.IsNullOrEmpty(vm.CenterCode) && string.IsNullOrEmpty(vm.CenterName), "center form clears after save");
         Text(CenterCodeBox, "MANT-001");
         Text(CenterNameBox, "Duplicate");
-        await Click(SaveCenterButton);
-        Check(vm.Status.StartsWith("MODEL_DUPLICATE", StringComparison.Ordinal) && vm.Centers.Count == 2, "duplicate diagnostic shown without extra master");
+        // A duplicate centre is an expected form-validation state. Save must
+        // be disabled BEFORE a database write, not clicked to provoke an error.
+        Check(!SaveCenterButton.IsEnabled && !string.IsNullOrWhiteSpace(vm.CenterCodeValidation) && vm.Centers.Count == 2,
+            "duplicate centre displays inline feedback and blocks saving without inserting another master");
+        Text(CenterCodeBox, "MANT-002");
+        Check(SaveCenterButton.IsEnabled && string.IsNullOrWhiteSpace(vm.CenterCodeValidation) && vm.Centers.Count == 2,
+            "changing the duplicate code re-enables saving without changing persisted masters");
         Text(CenterCodeBox, "");
         Text(CenterNameBox, "");
         Text(DescriptionBox, "Industrial setup and process");

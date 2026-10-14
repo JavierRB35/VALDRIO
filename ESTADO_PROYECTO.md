@@ -1,3 +1,7 @@
+## T12 — candidata portada a rama de desarrollo, 2026-10-14
+
+La implementación de ejecuciones e historial T12 se recupera de la PR #36 (cerrada sin fusionar) sobre `main@6d746139` en `feature/t12-runs-history-20261014`. Incluye código, migración y adaptación de la navegación actual. **No está fusionada ni validada en Windows sobre esta base**: no dar por aceptada T12, ni declarar que sus resultados históricos se han reejecutado en la rama nueva. Ver [ficha T12](docs/tareas/T12.md) y [registro de portabilidad](docs/evidencias/t12-port-20261014/README.md). GitHub Actions: cero ejecuciones solicitadas.
+
 ## Ajustes reutilizables — candidato validado localmente, 2026-10-14
 
 Implementación en `design/reusable-adjustments-20261014`, desde main@8d7ce5c4. Fichas en Preparar cuentas, guardadas por proyecto, aplicación expresa por análisis, compensación de cuentas y coste analítico explícito, conflicto de solapamientos y reversión mientras los cálculos estén abiertos. No fusionado; pendiente de revisión del propietario. Ver [informe, capturas, archivos y resultados](docs/evidencias/2026-10-14-ajustes-reutilizables/INFORME.md) y [ADR-0017](docs/adr/ADR-0017-ajustes-reutilizables.md). Validación local y ningún workflow ejecutado.

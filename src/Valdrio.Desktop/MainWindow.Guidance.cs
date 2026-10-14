@@ -14,7 +14,7 @@ public partial class MainWindow
     {
         0 or 1 => 0,
         2 or 3 or 4 => 1,
-        5 or 7 => 2,
+        5 or 7 or 8 => 2,
         _ => -1
     };
 
@@ -57,7 +57,7 @@ public partial class MainWindow
         foreach (var source in workflowSources) source.PropertyChanged -= WorkflowChanged;
         workflowSources.Clear();
         if (viewModel is null) return;
-        foreach (var source in new INotifyPropertyChanged?[] { viewModel, viewModel.Company, viewModel.Models, viewModel.Studies, viewModel.Resources, viewModel.Allocations })
+        foreach (var source in new INotifyPropertyChanged?[] { viewModel, viewModel.Company, viewModel.Models, viewModel.Studies, viewModel.Resources, viewModel.Allocations, viewModel.CostFlows })
             if (source is not null) { workflowSources.Add(source); source.PropertyChanged += WorkflowChanged; }
         if (viewModel.Models is { } models && viewModel.Studies is { } studies) models.AttachStudyNodes(studies);
         UpdateWorkflow();
@@ -82,8 +82,8 @@ public partial class MainWindow
         AnalysisPhase.Header = vm.Guide("PhaseAnalysisData");
         AllocationPhase.Header = vm.Guide("PhaseAllocations");
         ShowNavigationPhase(workflowStep);
-        var keys = new[] { "Company", "Model", "Study", "Import", "Resources", "Allocations", "Settings", "SecondaryAllocations" };
-        Button[] buttons = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, AllocationsStep, SettingsStep, SecondaryStep];
+        var keys = new[] { "Company", "Model", "Study", "Import", "Resources", "Allocations", "Settings", "SecondaryAllocations", "CostFlows" };
+        Button[] buttons = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, AllocationsStep, SettingsStep, SecondaryStep, CostFlowStep];
         for (var i = 0; i < buttons.Length; i++)
         {
             var label = vm.Guide(keys[i]);
@@ -101,8 +101,8 @@ public partial class MainWindow
                     ? FontWeights.Bold : FontWeights.Normal;
         }
         Border[] markers = [CompanyStepMarker, ModelStepMarker, StudyStepMarker,
-            ImportStepMarker, ResourcesStepMarker, AllocationsStepMarker, SecondaryStepMarker];
-        int[] markerSteps = [0, 1, 2, 3, 4, 5, 7];
+            ImportStepMarker, ResourcesStepMarker, AllocationsStepMarker, SecondaryStepMarker, CostFlowStepMarker];
+        int[] markerSteps = [0, 1, 2, 3, 4, 5, 7, 8];
         for (var i = 0; i < markers.Length; i++)
         {
             var active = markerSteps[i] == workflowStep;
@@ -130,6 +130,8 @@ public partial class MainWindow
         AllocationsStep.IsEnabled = hasImports;
         SecondaryStep.IsEnabled = hasImports && vm.Allocations?.IsPrimaryClosed == true;
         SecondaryStep.ToolTip = SecondaryStep.IsEnabled ? null : vm.Guide("NeedPrimaryClosedForSecondary");
+        CostFlowStep.IsEnabled = hasAnalysis;
+        CostFlowStep.ToolTip = hasAnalysis ? null : vm.Guide("NeedAnalysisForImportShort");
         SettingsStep.IsEnabled = true;
 
         ModelStep.ToolTip = hasProject ? null : vm.Guide("NeedProjectShort");
@@ -142,6 +144,7 @@ public partial class MainWindow
         ResourcePanel.Visibility = workflowStep == 4 ? Visibility.Visible : Visibility.Collapsed;
         AllocationPanel.Visibility = workflowStep == 5 ? Visibility.Visible : Visibility.Collapsed;
         SecondaryPanel.Visibility = workflowStep == 7 ? Visibility.Visible : Visibility.Collapsed;
+        CostFlowsPanel.Visibility = workflowStep == 8 ? Visibility.Visible : Visibility.Collapsed;
         DistributionDetails.Visibility = workflowStep == 5 ? Visibility.Visible : Visibility.Collapsed;
         AllocationPanel.IsEnabled = !DistributionDetails.IsExpanded;
         ImportHome.Visibility = workflowStep == 3 ? Visibility.Visible : Visibility.Collapsed;
@@ -154,6 +157,7 @@ public partial class MainWindow
             2 or 3 => vm.Studies?.NextRequirement ?? vm.Guide("NeedCompany"),
             4 => vm.Resources?.Requirement ?? vm.Guide("NeedCompany"),
             7 => vm.Allocations?.SecondaryDiagnostic ?? vm.Guide("HelpHint"),
+            8 => vm.CostFlows?.Status ?? vm.Guide("HelpHint"),
             5 => DistributionDetails.IsExpanded
                 ? vm.Guide("CloseAccountDetailsForKeys")
                 : vm.Allocations?.Requirement ?? vm.Guide("NeedCompany"),
@@ -193,7 +197,7 @@ public partial class MainWindow
             _ => "Next"
         });
         if (workflowStep == 4 && vm.Resources is { } resources) WorkflowNext.Content = resources.ShowParts ? resources.NextAction : vm.Guide("ContinueAllocations");
-        WorkflowNext.Visibility = workflowStep is 6 or 7 ? Visibility.Collapsed : Visibility.Visible;
+        WorkflowNext.Visibility = workflowStep is 6 or 7 or 8 ? Visibility.Collapsed : Visibility.Visible;
         WorkflowNext.IsEnabled = vm.Company?.WorkspaceIdle != false &&
             (workflowStep is not (1 or 2) || vm.Company?.CanWrite == true) &&
             (workflowStep != 4 || vm.Resources?.CanAdvance == true) &&
@@ -205,7 +209,7 @@ public partial class MainWindow
         if (viewModel is not { } vm) return;
         if (step is > 0 and not 6 && vm.Company?.Snapshot is null) step = 0;
         if (step == 3 && vm.Studies?.HasImportDestination != true) step = 2;
-        if (step is 4 or 5 or 7 && vm.Studies?.Current is null) step = 2;
+        if (step is 4 or 5 or 7 or 8 && vm.Studies?.Current is null) step = 2;
         if (step is 4 or 5 or 7 && vm.Studies?.HasConfirmedImports != true) step = 3;
         if (step == 7 && vm.Allocations?.IsPrimaryClosed != true) step = 5;
         if (vm.Company?.WorkspaceIdle == false) return;
@@ -227,6 +231,7 @@ public partial class MainWindow
         if (step == 4 && vm.Resources is { } resources) await resources.EnterAsync();
         if (step is 5 or 7 && vm.Allocations is { } allocations)
         { if (vm.Resources is { } source) await source.EnterAsync(); await allocations.EnterAsync(); allocations.SecondaryWorkspaceActive = step == 7; }
+        if (step == 8 && vm.CostFlows is { } flows) await flows.EnterAsync();
         UpdateWorkflow(); RootScrollViewer.ScrollToTop();
         if (enteringAllocation && vm.Allocations is { } opened)
         {
@@ -255,6 +260,7 @@ public partial class MainWindow
     private async void ChooseResources(object sender, RoutedEventArgs e) => await NavigateWorkflow(4);
     private async void ChooseAllocations(object sender, RoutedEventArgs e) => await NavigateWorkflow(5);
     private async void ChooseSecondary(object sender, RoutedEventArgs e) => await NavigateWorkflow(7);
+    private async void ChooseCostFlows(object sender, RoutedEventArgs e) => await NavigateWorkflow(8);
     private async void ChooseSettings(object sender, RoutedEventArgs e) => await NavigateWorkflow(6);
     private bool changingDistributionDetails;
     private async void OpenDistributionDetails(object sender, RoutedEventArgs e)

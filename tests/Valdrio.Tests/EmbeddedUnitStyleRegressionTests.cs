@@ -6,6 +6,42 @@ namespace Valdrio.Tests;
 public sealed class EmbeddedUnitStyleRegressionTests
 {
     [TestMethod]
+    public void EffectiveAllocationBasisAndSplitCostFlowsKeepTheirVisualContracts()
+    {
+        XNamespace presentation = "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
+        XNamespace names = "http://schemas.microsoft.com/winfx/2006/xaml";
+        var resources = XDocument.Load(Path.Combine(AppContext.BaseDirectory, "ui-contracts", "ResourceWorkspacePanel.xaml"));
+        var grid = resources.Descendants(presentation + "DataGrid").Single(x =>
+            (string?)x.Attribute(names + "Name") == "ResourceGrid");
+        var effective = grid.Descendants(presentation + "DataGridTextColumn").Single(x =>
+            (string?)x.Attribute("Binding") == "{Binding Effective}");
+        Assert.AreEqual("{StaticResource ResourceEffectiveCell}", (string?)effective.Attribute("CellStyle"));
+        Assert.AreEqual("{StaticResource ResourceEffectiveHeader}", (string?)effective.Attribute("HeaderStyle"));
+        Assert.AreEqual("True", (string?)effective.Attribute("IsReadOnly"));
+        Assert.IsTrue(resources.Descendants(presentation + "TextBlock").Any(x =>
+            (string?)x.Attribute("Text") == "{Binding [EffectiveBasisHelp]}"));
+        var correction = grid.Descendants(presentation + "DataGridTemplateColumn").Single(x =>
+            (string?)x.Attribute(names + "Name") == "CorrectionsColumn");
+        Assert.IsNotNull(correction.Element(presentation + "DataGridTemplateColumn.CellEditingTemplate"),
+            "The manual correction editor must remain editable and unchanged.");
+
+        var graph = XDocument.Load(Path.Combine(AppContext.BaseDirectory, "ui-contracts", "CostFlowPanel.xaml"));
+        foreach (var canvasName in new[] { "PrimaryGraphCanvas", "SecondaryGraphCanvas" })
+            Assert.AreEqual(1, graph.Descendants(presentation + "Canvas")
+                .Count(x => (string?)x.Attribute(names + "Name") == canvasName));
+        foreach (var viewportName in new[] { "PrimaryGraphViewport", "SecondaryGraphViewport" })
+        {
+            var viewport = graph.Descendants(presentation + "ScrollViewer").Single(x =>
+                (string?)x.Attribute(names + "Name") == viewportName);
+            Assert.AreEqual("ResizeGraph", (string?)viewport.Attribute("SizeChanged"));
+            Assert.AreEqual("Auto", (string?)viewport.Attribute("HorizontalScrollBarVisibility"));
+        }
+        Assert.IsFalse(graph.Descendants(presentation + "Canvas").Any(x =>
+            (string?)x.Attribute(names + "Name") == "GraphCanvas"),
+            "The old fixed-size four-stage graph must not be restored.");
+    }
+
+    [TestMethod]
     public void ReparentedCompanyUnitFormDoesNotInheritModelInputBindings()
     {
         var path = Path.Combine(AppContext.BaseDirectory, "ui-contracts", "CompanyFilePanel.xaml");

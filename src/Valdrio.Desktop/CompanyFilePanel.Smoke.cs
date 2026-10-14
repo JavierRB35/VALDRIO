@@ -45,8 +45,10 @@ public partial class CompanyFilePanel
         Check(vm.Snapshot is null, "cancel example destination leaves project closed");
         var examplePath = Path.Combine(output, "learning-copy.valdrio");
         dialogs.Paths.Enqueue(examplePath); await Click(ExampleButton);
-        Check(vm.Snapshot is not null && vm.ActivePath == examplePath && main.Studies!.Studies.Count > 0,
-            "example opens a real editable copy with saved analyses");
+        Check(vm.Snapshot is not null && vm.ActivePath == examplePath && main.Studies!.Studies.Count > 0
+              && vm.Snapshot.SchemaVersion == SqliteCompanyFileService.SchemaVersion && vm.CanWrite,
+            "example opens a real editable current-format copy with saved analyses"
+            + " (diagnostic=" + (vm.DiagnosticCode ?? "none") + ", status=" + vm.Status + ")");
         var exampleId = vm.Snapshot!.Id;
         var sentinel = Path.Combine(output, "do-not-overwrite.valdrio");
         File.WriteAllText(sentinel, "existing destination");
@@ -100,6 +102,8 @@ public partial class CompanyFilePanel
         dialogs.Paths.Enqueue(older); await Click(OpenButton);
         Check(vm.DiagnosticCode == "FILE_UPGRADE_REQUIRED" && !string.IsNullOrWhiteSpace(alert),
             "previous format raises an actionable warning without ending the WPF session");
+        Check(vm.UpgradeSuggested && UpgradeSuggestionButton.IsVisible,
+            "upgrade action is visible for a previous-format file without reselecting its source");
         Check(vm.Snapshot?.Id == id && vm.ActivePath == path &&
               Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(older))) == oldHash,
             "previous format leaves active project and source file untouched");

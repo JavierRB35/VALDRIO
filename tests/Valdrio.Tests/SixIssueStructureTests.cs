@@ -46,4 +46,44 @@ public sealed partial class WorkspaceAuditClosureTests
         Assert.AreEqual(frozen, vm.ReviewTree.Single(c => c.Children.Any(n => n.Node.Id == row.Node.Id)).Label);
         Assert.AreEqual("Collapsed", vm.NewCenterVisibility);
     }
+    [TestMethod]
+    public async Task DuplicatePhysicalCenterCodeIsShownBeforeStorageAndUniqueCodeCanBeSaved()
+    {
+        var preferences = new PresentationPreferencesService(new LanguageCatalog(), UserPresentationPreferences.Default);
+        var texts = new UiTextCatalog(); var dialogs = new Dialogs();
+        using var company = new CompanyFileViewModel(Service(), dialogs, Catalog, texts, preferences,
+            new PresentationFormatter(new DisplayTimeZoneResolver()));
+        using var vm = new ModelWorkspaceViewModel(company, texts, preferences, dialogs,
+            new PresentationFormatter(new DisplayTimeZoneResolver()));
+        await company.OpenPath(Baseline());
+        Assert.IsTrue(vm.Centers.Count > 0, "The real fixture must contain a saved centre.");
+        var existing = vm.Centers[0].Value;
+        var originalCount = company.ActiveModels!.ReadCenters().Count;
+
+        vm.CenterCode = existing.Code;
+        vm.CenterName = "Different name, same centre code";
+        Assert.IsFalse(string.IsNullOrWhiteSpace(vm.CenterCodeValidation));
+        Assert.IsFalse(vm.SaveCenterFormCommand.CanExecute(null),
+            "Duplicate centre must be blocked before triggering a storage exception.");
+        Assert.IsFalse(vm.CreateCenterCommand.CanExecute(null));
+        Assert.AreEqual(originalCount, company.ActiveModels.ReadCenters().Count);
+
+        vm.CenterCode = "UNIQUE-CENTRE-2026";
+        Assert.AreEqual("", vm.CenterCodeValidation);
+        Assert.IsTrue(vm.SaveCenterFormCommand.CanExecute(null));
+        await vm.SaveCenterFormCommand.ExecuteAsync(null);
+        Assert.AreEqual(originalCount + 1, company.ActiveModels.ReadCenters().Count);
+        Assert.AreEqual(1, company.ActiveModels.ReadCenters()
+            .Count(c => c.Code == "UNIQUE-CENTRE-2026"));
+
+        vm.Master = vm.Centers.Single(c => c.Value.Id == existing.Id);
+        Assert.AreEqual("", vm.CenterCodeValidation, "An unchanged code is valid for its own centre.");
+        vm.CenterCode = "UNIQUE-CENTRE-2026";
+        Assert.IsFalse(string.IsNullOrWhiteSpace(vm.CenterCodeValidation));
+        Assert.IsFalse(vm.SaveCenterFormCommand.CanExecute(null),
+            "Changing a centre to an existing code must also be blocked.");
+        Assert.AreEqual(existing.Code, company.ActiveModels.ReadCenters()
+            .Single(c => c.Id == existing.Id).Code);
+    }
+
 }

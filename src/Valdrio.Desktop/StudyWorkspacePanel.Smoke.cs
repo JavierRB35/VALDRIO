@@ -151,7 +151,7 @@ public partial class StudyWorkspacePanel
         }
         using (var c = new SqliteConnection(new SqliteConnectionStringBuilder { DataSource = restored, Mode = SqliteOpenMode.ReadOnly, Pooling = false }.ToString()))
         {
-            c.Open(); using var command = c.CreateCommand(); command.CommandText = "SELECT count(*) FROM sqlite_master WHERE name IN('CalculationRuns','TerminalCostFacts')";
+            c.Open(); using var command = c.CreateCommand(); command.CommandText = "SELECT count(*) FROM CalculationRuns";
             Check(Convert.ToInt32(command.ExecuteScalar(), System.Globalization.CultureInfo.InvariantCulture) == 0, "no fake execution or cost tables");
         }
         await Click(companyPanel.CloseButton);

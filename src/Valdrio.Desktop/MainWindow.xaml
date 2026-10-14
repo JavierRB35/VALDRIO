@@ -121,6 +121,16 @@
         <Button Grid.Column="1" x:Name="SecondaryStep" Click="ChooseSecondary" Style="{StaticResource NavigationStepButton}" />
         
        </Grid>
+       <Grid Margin="5,2,2,10">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <Border x:Name="CostFlowStepMarker" Grid.Column="0" Width="22" Height="22" CornerRadius="11"
+                BorderBrush="{DynamicResource Brand.White}" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+         <TextBlock Text="3" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"
+                    FontWeight="Normal" Foreground="{DynamicResource Brand.White}"/>
+        </Border>
+        <Button Grid.Column="1" x:Name="CostFlowStep" Click="ChooseCostFlows" Style="{StaticResource NavigationStepButton}" />
+       </Grid>
       </StackPanel>
      </Expander>
      <Border BorderBrush="{DynamicResource Accent.ActiveGreen}" BorderThickness="0,1,0,0" Margin="16,16,16,8" />
@@ -208,6 +218,7 @@
     <local:ResourceWorkspacePanel x:Name="ResourcePanel" Grid.Row="8" DataContext="{Binding Resources}" ShowDistributionTools="False" />
     <local:AllocationWorkspacePanel x:Name="AllocationPanel" Grid.Row="8" DataContext="{Binding Allocations}" />
     <local:SecondaryWorkspacePanel x:Name="SecondaryPanel" Grid.Row="8" DataContext="{Binding Allocations}" Visibility="Collapsed" />
+    <local:CostFlowPanel x:Name="CostFlowsPanel" Grid.Row="8" DataContext="{Binding CostFlows}" Visibility="Collapsed" />
     <Expander x:Name="DistributionDetails" Grid.Row="9" Header="{Binding Allocations[AccountDetails]}" Expanded="OpenDistributionDetails" Collapsed="CloseDistributionDetails">
      <StackPanel>
       <TextBlock Text="{Binding Allocations[AccountDetailsHelp]}" Margin="0,8,0,12"/>
