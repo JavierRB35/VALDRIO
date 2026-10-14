@@ -9,8 +9,8 @@ namespace Valdrio.Desktop;
 
 public sealed record FlowRow(string Stage, string Resource, string Source, string Destination, string Rule,
     string Assigned, string Received, string Terminal, string Detail, string SourceId, string DestinationId);
-public sealed record FlowNode(string Id, int Stage, string Label, string Amount);
-public sealed record FlowArrow(string SourceId, string DestinationId, string Label, FlowRow? Row, bool Internal = false);
+public sealed record FlowNode(string Id, int Stage, string Label, string Amount, string? DisplayAmount = null);
+public sealed record FlowArrow(string SourceId, string DestinationId, string Label, FlowRow? Row, bool Internal = false, string? DisplayLabel = null);
 public sealed record RunChoice(CalculationRun Run, string Label);
 public sealed partial class CostFlowViewModel : ObservableObject
 {
@@ -39,6 +39,11 @@ public sealed partial class CostFlowViewModel : ObservableObject
     public ObservableCollection<FlowRow> Reconciliation { get; } = [];
     public List<FlowNode> Nodes { get; } = [];
     public List<FlowArrow> Arrows { get; } = [];
+    private readonly HashSet<string> highlightedNodes = new(StringComparer.Ordinal);
+    private readonly HashSet<FlowArrow> highlightedArrows = [];
+    public IReadOnlySet<string> HighlightedNodeIds => highlightedNodes;
+    public IReadOnlySet<FlowArrow> HighlightedArrows => highlightedArrows;
+    public bool HasHighlightedRoute => highlightedNodes.Count > 0;
     public event EventHandler? GraphChanged;
     [ObservableProperty] private RunChoice? selectedRun;
     [ObservableProperty] private FlowRow? selectedRow;
@@ -111,20 +116,61 @@ public sealed partial class CostFlowViewModel : ObservableObject
         if (run is not null) SelectedRun = Runs.FirstOrDefault(r => r.Run.Id == run.Id);
         if (SelectedRun?.Run.Status != CalculationRunStatus.Completed) Status = operationStatus;
     }
+    // Trace upstream and downstream of the chosen node or transfer, including
+    // reciprocal cycles. The visited sets ensure termination in cyclic graphs.
+    private void HighlightRoute(string? nodeId, FlowArrow? chosenArrow = null)
+    {
+        highlightedNodes.Clear(); highlightedArrows.Clear();
+        if (nodeId is null && chosenArrow is null) { GraphChanged?.Invoke(this, EventArgs.Empty); return; }
+        var origin = chosenArrow?.SourceId ?? nodeId!;
+        var destination = chosenArrow?.DestinationId ?? nodeId!;
+        highlightedNodes.Add(origin);
+        highlightedNodes.Add(destination);
+        if (chosenArrow is not null) highlightedArrows.Add(chosenArrow);
+        void Walk(string start, bool upstream)
+        {
+            var visited = new HashSet<string>(StringComparer.Ordinal) { start };
+            var pending = new Queue<string>();
+            pending.Enqueue(start);
+            while (pending.Count > 0)
+            {
+                var current = pending.Dequeue();
+                foreach (var edge in Arrows.Where(a => upstream ? a.DestinationId == current : a.SourceId == current))
+                {
+                    highlightedArrows.Add(edge);
+                    var next = upstream ? edge.SourceId : edge.DestinationId;
+                    highlightedNodes.Add(next);
+                    if (visited.Add(next)) pending.Enqueue(next);
+                }
+            }
+        }
+        Walk(origin, upstream: true);
+        Walk(destination, upstream: false);
+        GraphChanged?.Invoke(this, EventArgs.Empty);
+    }
     public void SelectNode(string? id)
     {
+        SelectedRow = null;
         Rows.Clear();
         foreach (var row in allRows.Where(r => id is null || r.SourceId == id || r.DestinationId == id)) Rows.Add(row);
         Selection = id is null ? this["SelectHint"] : Nodes.FirstOrDefault(n => n.Id == id)?.Label ?? this["SelectHint"];
+        HighlightRoute(id);
     }
     public void SelectArrow(FlowArrow arrow)
     {
-        if (arrow.Row is null) { SelectNode(arrow.SourceId); return; }
+        if (arrow.Row is null)
+        {
+            SelectNode(arrow.SourceId);
+            HighlightRoute(null, arrow);
+            return;
+        }
         Rows.Clear(); Rows.Add(arrow.Row); SelectedRow = arrow.Row; Selection = arrow.Row.Detail;
+        HighlightRoute(null, arrow);
     }
     private void Present()
     {
         Nodes.Clear(); Arrows.Clear(); Rows.Clear(); Reconciliation.Clear(); allRows.Clear();
+        highlightedNodes.Clear(); highlightedArrows.Clear();
         Summary = Diagnostics = CurrentState = ""; Selection = this["SelectHint"];
         OnPropertyChanged(nameof(HasError));
         if (SelectedRun?.Run is not { } run) { GraphChanged?.Invoke(this, EventArgs.Empty); return; }
@@ -137,6 +183,9 @@ public sealed partial class CostFlowViewModel : ObservableObject
         string Account(EntityId id) { var o = w.Resources.Origins.Single(o => o.Id == id); var description = w.Configuration.Descriptions.FirstOrDefault(d => d.Account == o.Code)?.Description ?? string.Join(" / ", o.Descriptions); return o.Code + " — " + description; }
         string Key(EntityId? id) => id is null ? "—" : w.Keys.FirstOrDefault(k => k.Id == id)?.Name ?? id.ToString()!;
         string Amount(decimal value) => value.ToString("0.############################", Format) + " " + input.StudyContext.Currency.FunctionalCurrencyCode;
+        // Compact graph-only numbers; persisted audit and detail remain exact.
+        string GraphAmount(decimal value) => value.ToString("N2", Format) + " " + input.StudyContext.Currency.FunctionalCurrencyCode;
+        string GraphPercent(decimal share) => (share * 100m).ToString("N2", Format) + " %";
         string nodeId(int stage, EntityId id) => stage + ":" + id;
         var output = run.Output;
         if (output?.Diagnostics is { } diagnosticList)
@@ -149,7 +198,7 @@ public sealed partial class CostFlowViewModel : ObservableObject
         {
             foreach (var r in primary.Resources)
             {
-                Nodes.Add(new(nodeId(0, r.ResourceId), 0, Account(r.ResourceId), Amount(r.Effective.Amount)));
+                Nodes.Add(new(nodeId(0, r.ResourceId), 0, Account(r.ResourceId), Amount(r.Effective.Amount), GraphAmount(r.Effective.Amount)));
                 var terminal = output?.Secondary?.ResourceBridges.SingleOrDefault(b => b.ResourceId == r.ResourceId);
                 Reconciliation.Add(new(this["OriginStage"], Account(r.ResourceId), Amount(r.Effective.Amount),
                     Amount(r.Direct.Amount), Amount(r.Excluded.Amount), Amount(r.Pending.Amount),
@@ -157,14 +206,14 @@ public sealed partial class CostFlowViewModel : ObservableObject
                     this["ReconcileHelp"], nodeId(0,r.ResourceId), ""));
             }
             foreach (var group in primary.Facts.GroupBy(f => f.NodeId))
-                Nodes.Add(new(nodeId(1,group.Key),1,Node(group.Key),Amount(group.Sum(f => f.PostedAmount.Amount))));
+                Nodes.Add(new(nodeId(1,group.Key),1,Node(group.Key),Amount(group.Sum(f => f.PostedAmount.Amount)), GraphAmount(group.Sum(f => f.PostedAmount.Amount))));
             foreach (var fact in primary.Facts)
             {
                 var row = new FlowRow(this["PrimaryStage"],Account(fact.ResourceId),Account(fact.ResourceId),Node(fact.NodeId),Key(fact.KeyVersionId),
                     Amount(fact.PostedAmount.Amount),Amount(fact.PostedAmount.Amount),"—",
                     $"{Key(fact.KeyVersionId)} · {(fact.Share * 100m).ToString("0.########",Format)} % · {Amount(fact.PostedAmount.Amount)}",
                     nodeId(0,fact.ResourceId),nodeId(1,fact.NodeId));
-                allRows.Add(row); Arrows.Add(new(row.SourceId,row.DestinationId,row.Assigned + " · " + (fact.Share*100m).ToString("0.####",Format)+" %",row));
+                allRows.Add(row); Arrows.Add(new(row.SourceId,row.DestinationId,row.Assigned + " · " + (fact.Share*100m).ToString("0.####",Format)+" %",row,DisplayLabel:GraphAmount(fact.PostedAmount.Amount)+" · "+GraphPercent(fact.Share)));
             }
         }
         if (output?.Secondary is { } secondary)
@@ -178,21 +227,23 @@ public sealed partial class CostFlowViewModel : ObservableObject
                 var initial = primary!.Facts.Where(f => f.NodeId == id && (w.Configuration.SecondaryPartRoutingGroups?.FirstOrDefault(g=>g.PartId==f.PartId)?.ComponentRoutingGroup ?? "all")==group.ComponentRoutingGroup).Sum(f=>f.PostedAmount.Amount);
                 var received=output.Transfers.Where(t=>t.Internal && t.DestinationNodeId==id && t.Group==group.ComponentRoutingGroup).Sum(t=>t.Amount);
                 Nodes.Add(new(graphId,2,Node(id)+(group.ComponentRoutingGroup=="all"?"":" · "+group.ComponentRoutingGroup),
-                    string.Format(Format,this["Available"],initial.ToString("0.############################",Format),received.ToString("0.############################",Format),Amount(group.Solution.Gross[i]))));
-                Arrows.Add(new(nodeId(1,id),graphId,Amount(initial),null));
+                    string.Format(Format,this["Available"],initial.ToString("0.############################",Format),received.ToString("0.############################",Format),Amount(group.Solution.Gross[i])),
+                     string.Format(Format,this["Available"],GraphAmount(initial),GraphAmount(received),GraphAmount(group.Solution.Gross[i]))));
+                Arrows.Add(new(nodeId(1,id),graphId,Amount(initial),null,DisplayLabel:GraphAmount(initial)));
             }
             foreach (var group in secondary.Facts.GroupBy(f=>f.TerminalNodeId))
-                Nodes.Add(new(nodeId(3,group.Key),3,Node(group.Key),Amount(group.Sum(f=>f.PostedAmount.Amount))));
+                Nodes.Add(new(nodeId(3,group.Key),3,Node(group.Key),Amount(group.Sum(f=>f.PostedAmount.Amount)),GraphAmount(group.Sum(f=>f.PostedAmount.Amount))));
             foreach (var flow in output.Transfers)
             {
                 var source=nodeId(2,flow.SourceNodeId)+":"+flow.Group;
                 var dest=flow.Internal ? nodeId(2,flow.DestinationNodeId)+":"+flow.Group : nodeId(3,flow.DestinationNodeId);
                 var row=new FlowRow(this["SecondaryStage"],this["AllResources"],Node(flow.SourceNodeId),Node(flow.DestinationNodeId),Key(flow.KeyId),Amount(flow.Amount),Amount(flow.Amount),flow.Internal?"—":Node(flow.DestinationNodeId),
                     this["GrossHelp"]+" · "+flow.Group+" · "+Key(flow.KeyId)+" · "+(flow.Share*100m).ToString("0.########",Format)+" %",source,dest);
-                allRows.Add(row); Arrows.Add(new(source,dest,(flow.Internal ? nodes[flow.SourceNodeId].Code+" → "+nodes[flow.DestinationNodeId].Code+"\n" : "")+(flow.Share*100m).ToString("0.####",Format)+" % · "+Amount(flow.Amount),row,flow.Internal));
+                allRows.Add(row); Arrows.Add(new(source,dest,(flow.Internal ? nodes[flow.SourceNodeId].Code+" → "+nodes[flow.DestinationNodeId].Code+"\n" : "")+(flow.Share*100m).ToString("0.####",Format)+" % · "+Amount(flow.Amount),row,flow.Internal,
+                    (flow.Internal ? nodes[flow.SourceNodeId].Code+" → "+nodes[flow.DestinationNodeId].Code+" · " : "")+GraphAmount(flow.Amount)+" · "+GraphPercent(flow.Share)));
             }
             foreach (var group in primary!.Facts.Where(f=>nodes[f.NodeId].Role==NodeRole.Principal).GroupBy(f=>f.NodeId))
-                Arrows.Add(new(nodeId(1,group.Key),nodeId(3,group.Key),Amount(group.Sum(f=>f.PostedAmount.Amount)),null));
+                Arrows.Add(new(nodeId(1,group.Key),nodeId(3,group.Key),Amount(group.Sum(f=>f.PostedAmount.Amount)),null,DisplayLabel:GraphAmount(group.Sum(f=>f.PostedAmount.Amount))));
             foreach (var fact in secondary.Facts)
             {
                 var links=secondary.ExplanationLinks.Where(l=>l.ResourceId==fact.ResourceId && l.PartId==fact.PartId && l.TerminalNodeId==fact.TerminalNodeId && (l.SourceBehavior is null || l.SourceBehavior==fact.Behavior)).ToArray();

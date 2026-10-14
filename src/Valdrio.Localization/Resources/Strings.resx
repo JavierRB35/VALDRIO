@@ -1562,6 +1562,11 @@ Difference to distribute: {7}</value></data>
   <data name="Run.Cancel" xml:space="preserve"><value>Cancel</value></data>
   <data name="Run.Refresh" xml:space="preserve"><value>Reload saved executions</value></data>
   <data name="Run.Execution" xml:space="preserve"><value>Execution history</value></data>
+  <data name="Run.PrimaryGraph" xml:space="preserve"><value>Primary allocation · accounts → centres</value></data>
+  <data name="Run.SecondaryGraph" xml:space="preserve"><value>Secondary allocation and final costs</value></data>
+  <data name="Run.GraphTraceHelp" xml:space="preserve"><value>Select a box or transfer to highlight its full route across both diagrams. The diagram shows 2 decimal places; the detail retains the original precision.</value></data>
+  <data name="Run.GrossGraphHelp" xml:space="preserve"><value>Arrows between auxiliaries are gross internal transfers; do not add them to final costs. Percentages are the stored transfer shares.</value></data>
+  <data name="Run.NoGraphData" xml:space="preserve"><value>This execution has no data to display in the diagram.</value></data>
   <data name="Run.Graph" xml:space="preserve"><value>Cost flow diagram</value></data>
   <data name="Run.GrossHelp" xml:space="preserve"><value>Auxiliary transfers are gross internal movements, not new costs. Do not add them to final costs. Amounts retain calculation precision; tables provide the exact values.</value></data>
   <data name="Run.ClearSelection" xml:space="preserve"><value>Show all details</value></data>
