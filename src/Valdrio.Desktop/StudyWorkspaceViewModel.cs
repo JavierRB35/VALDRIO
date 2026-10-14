@@ -88,8 +88,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         {
             await ApplyConfirmedThenReload(batch.ConfirmedStudy, ApplyConfirmedStudy);
             if (committedRefreshPending) throw new InvalidOperationException("Committed import refresh pending.");
-        });
-        ImportColumns.BindPrimaryClosed(primaryClosed);
+        }, primaryClosed);
         ImportColumns.SetExistingBatches(importValues);
         return true;
     }
