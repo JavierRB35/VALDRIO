@@ -1490,4 +1490,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.PhaseProjectStructure" xml:space="preserve"><value>Proyecto y estructura</value></data>
   <data name="Guide.PhaseAnalysisData" xml:space="preserve"><value>Análisis y datos económicos</value></data>
   <data name="Guide.PhaseAllocations" xml:space="preserve"><value>Repartos y cálculo</value></data>
+  <data name="Guide.ShowContext" xml:space="preserve"><value>Detalles</value></data>
+  <data name="Guide.HideContext" xml:space="preserve"><value>Ocultar detalles</value></data>
+  <data name="Guide.CompactTables" xml:space="preserve"><value>Tablas compactas</value></data>
+  <data name="Guide.CompactTablesHelp" xml:space="preserve"><value>Muestra más filas sin cambiar valores ni tamaño del texto. Se aplica durante esta sesión, incluidas las ventanas de importación. Desmarca para usar un espaciado cómodo.</value></data>
 </root>

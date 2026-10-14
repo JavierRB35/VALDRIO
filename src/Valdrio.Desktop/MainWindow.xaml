@@ -129,11 +129,20 @@
    </ScrollViewer>
   </Border>
   <DockPanel Grid.Column="1" LastChildFill="True">
-   <Border DockPanel.Dock="Top" Background="{DynamicResource Brand.White}" BorderBrush="{DynamicResource Border.Soft}" BorderThickness="0,0,0,1" Padding="{StaticResource Space.Page}">
-    <StackPanel>
-     <TextBlock x:Name="ProjectContextText" FontWeight="SemiBold" />
-     <TextBlock x:Name="SaveLocation" Margin="0,4,0,0" FontSize="12" />
-    </StackPanel>
+   <Border DockPanel.Dock="Top" Background="{DynamicResource Brand.White}" BorderBrush="{DynamicResource Border.Soft}" BorderThickness="0,0,0,1" Padding="16,8">
+    <Grid>
+     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+     <TextBlock x:Name="ProjectContextText" FontWeight="SemiBold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0,0,12,0" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+     <Button Grid.Column="1" x:Name="ContextDetailsButton" Click="ToggleContextDetails" MinHeight="28" Padding="8,4" Margin="0,0,12,0"/>
+     <CheckBox Grid.Column="2" x:Name="CompactTables" VerticalAlignment="Center" Margin="0" Checked="ChangeTableDensity" Unchecked="ChangeTableDensity"/>
+     <Border Grid.Row="1" Grid.ColumnSpan="3" x:Name="ContextDetails" Visibility="Collapsed" Background="{DynamicResource Surface.Subtle}" Padding="12" Margin="0,8,0,0">
+      <StackPanel>
+       <TextBlock Text="{Binding Text, ElementName=ProjectContextText}" FontWeight="SemiBold"/>
+       <TextBlock x:Name="SaveLocation" Margin="0,4,0,0" FontSize="12"/>
+      </StackPanel>
+     </Border>
+    </Grid>
    </Border>
    <!-- Fixed in the application shell: visible on every page while any
         company/workspace process reports busy. Unlike a page-local bar, it
@@ -454,11 +463,11 @@
       </Border>
      </Grid>
     </Expander>
-    <StackPanel Visibility="Collapsed" Grid.Row="8" x:Name="ImportHome">
+    <Border Visibility="Collapsed" Grid.Row="8" x:Name="ImportHome" Style="{StaticResource Card}"><StackPanel>
      <TextBlock Text="{Binding Studies.Details}" TextWrapping="Wrap" />
      <TextBlock Text="{Binding Studies.ImportedAmounts}" TextWrapping="Wrap" Margin="0,8,0,8" />
      <Button Click="OpenAnotherImport" Content="{Binding AnotherImportLabel}" HorizontalAlignment="Left" Padding="12,7" Margin="0,6,0,8" />
-    </StackPanel>
+    </StackPanel></Border>
    </Grid>
    </Border>
   </ScrollViewer>

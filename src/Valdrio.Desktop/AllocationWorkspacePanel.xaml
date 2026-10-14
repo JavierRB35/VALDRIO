@@ -22,7 +22,15 @@
     <DataTrigger Binding="{Binding IsBusy}" Value="True"><Setter Property="Cursor" Value="Wait"/></DataTrigger>
   </Style.Triggers></Style></StackPanel.Style>
   <!-- Activity feedback belongs to MainWindow.GlobalActivityBar, shared by all pages. -->
-  <Border Style="{StaticResource Diagnostic}" Margin="0,0,0,16"><TextBlock x:Name="ActionStatus" Text="{Binding Status}" AutomationProperties.LiveSetting="Polite"/></Border>
+  <Border Margin="0,0,0,12">
+   <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Diagnostic}">
+    <Style.Triggers><DataTrigger Binding="{Binding HasStatusError}" Value="True">
+     <Setter Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
+     <Setter Property="BorderBrush" Value="{DynamicResource Brand.Red}"/>
+    </DataTrigger></Style.Triggers>
+   </Style></Border.Style>
+   <TextBlock x:Name="ActionStatus" Text="{Binding Status}" AutomationProperties.LiveSetting="Polite"/>
+  </Border>
   <Border Style="{StaticResource Card}" Margin="0,0,0,16"><DockPanel LastChildFill="True"><Button x:Name="TogglePrimaryButton" DockPanel.Dock="Right" Content="{Binding PrimaryToggleLabel}" Command="{Binding TogglePrimaryCommand}"/><TextBlock Text="{Binding PrimaryState}" VerticalAlignment="Center" Margin="0,0,12,0" AutomationProperties.LiveSetting="Polite"/></DockPanel></Border>
   <Border x:Name="SecondaryPhaseBar" Style="{StaticResource Card}" Margin="0,0,0,16"><DockPanel LastChildFill="True"><Button x:Name="ToggleSecondaryButton" DockPanel.Dock="Right" Content="{Binding SecondaryToggleLabel}" Command="{Binding ToggleSecondaryCommand}"/><TextBlock Text="{Binding SecondaryState}" VerticalAlignment="Center" Margin="0,0,12,0" AutomationProperties.LiveSetting="Polite"/></DockPanel></Border>
   <Grid x:Name="KeyWorkspaceLayout" Height="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}, Converter={StaticResource KeyWorkspaceHeight}}">
@@ -104,7 +112,7 @@
       <CheckBox Content="{Binding [CompositionOnlyExceptions]}" IsChecked="{Binding CompositionOnlyExceptions, Mode=TwoWay}"
                 VerticalAlignment="Bottom" Margin="0,0,0,10"/>
      </WrapPanel>
-     <DataGrid x:Name="CompositionGrid" ItemsSource="{Binding CompositionView}" AutoGenerateColumns="False" IsReadOnly="True" Height="240" MinRowHeight="32">
+     <DataGrid x:Name="CompositionGrid" ItemsSource="{Binding CompositionView}" AutoGenerateColumns="False" IsReadOnly="True" Height="240" MinRowHeight="{DynamicResource Table.MinRowHeight}">
       <DataGrid.Columns>
        <DataGridTextColumn Binding="{Binding Account}" ElementStyle="{StaticResource Text.TableText}" Width="3*" MinWidth="200"/>
        <DataGridTextColumn Binding="{Binding Amount}" HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Width="125"/>
@@ -251,7 +259,7 @@
              Content="{Binding [BulkAssignAction]}" Click="ApplyBatchToSelectedRows" IsEnabled="False"/>
     </WrapPanel>
     <TextBlock x:Name="BatchPreviewText" TextWrapping="Wrap" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite"/>
-    <DataGrid x:Name="CoverageGrid" ItemsSource="{Binding Coverage}" CanUserSortColumns="True" IsReadOnly="True" AutoGenerateColumns="False" Height="420" MinRowHeight="32" SelectionMode="Extended" SelectionUnit="FullRow" SelectionChanged="BatchSelectionChanged">
+    <DataGrid x:Name="CoverageGrid" ItemsSource="{Binding Coverage}" CanUserSortColumns="True" IsReadOnly="True" AutoGenerateColumns="False" Height="420" MinRowHeight="{DynamicResource Table.MinRowHeight}" SelectionMode="Extended" SelectionUnit="FullRow" SelectionChanged="BatchSelectionChanged">
      <DataGrid.Columns><DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" SortMemberPath="Source" Binding="{Binding Source}" Width="2*"/><DataGridTextColumn SortMemberPath="NumericAmount" Binding="{Binding Amount}" HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Width="110"/><DataGridTemplateColumn SortMemberPath="Key" CanUserSort="True" Width="2*" MinWidth="180"><DataGridTemplateColumn.CellTemplate><DataTemplate><ComboBox ItemsSource="{Binding DataContext.PublishedPrimary, RelativeSource={RelativeSource AncestorType=DataGrid}}" SelectedValue="{Binding SelectedKeyId, Mode=OneWay}" IsEnabled="{Binding DataContext.CanShowCoverageEditor, RelativeSource={RelativeSource AncestorType=DataGrid}}" SelectionChanged="CoverageKeyChanged" AutomationProperties.Name="{Binding Source}" ToolTip="{Binding Key}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn><DataGridTextColumn SortMemberPath="Status" Binding="{Binding Status}" Width="2*" ElementStyle="{StaticResource {x:Type TextBlock}}"/></DataGrid.Columns>
     </DataGrid>
 <Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="110"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
@@ -265,12 +273,12 @@
     <TextBlock Text="{Binding PrimarySummary}" Margin="0,4,0,8" AutomationProperties.LiveSetting="Polite"/>
     <TextBlock Text="{Binding [PrimaryAccountOverviewHelp]}" TextWrapping="Wrap" Margin="0,0,0,10"/>
     <WrapPanel Margin="0,0,0,8">
-      <StackPanel Margin="0,0,22,8"><TextBlock Text="{Binding [PrimaryKpiEffectiveLabel]}"/><TextBlock Text="{Binding PrimaryKpiEffective}" FontWeight="SemiBold"/></StackPanel>
-      <StackPanel Margin="0,0,22,8"><TextBlock Text="{Binding [PrimaryKpiRepartibleLabel]}"/><TextBlock Text="{Binding PrimaryKpiRepartible}" FontWeight="SemiBold"/></StackPanel>
-      <StackPanel Margin="0,0,22,8"><TextBlock Text="{Binding [PrimaryKpiAssignedLabel]}"/><TextBlock Text="{Binding PrimaryKpiAssigned}" FontWeight="SemiBold"/></StackPanel>
-      <StackPanel Margin="0,0,22,8"><TextBlock Text="{Binding [PrimaryKpiPendingLabel]}"/><TextBlock Text="{Binding PrimaryKpiPending}" FontWeight="SemiBold"/></StackPanel>
-      <StackPanel Margin="0,0,22,8"><TextBlock Text="{Binding [PrimaryKpiExcludedLabel]}"/><TextBlock Text="{Binding PrimaryKpiExcluded}" FontWeight="SemiBold"/></StackPanel>
-      <StackPanel Margin="0,0,22,8"><TextBlock Text="{Binding [PrimaryKpiDirectObjectLabel]}"/><TextBlock Text="{Binding PrimaryKpiDirectObject}" FontWeight="SemiBold"/></StackPanel>
+      <StackPanel Margin="0,0,22,8"><TextBlock Text="{Binding [PrimaryKpiEffectiveLabel]}"/><TextBlock Text="{Binding PrimaryKpiEffective}" Style="{StaticResource Text.Kpi}"/></StackPanel>
+      <StackPanel Margin="0,0,22,8"><TextBlock Text="{Binding [PrimaryKpiRepartibleLabel]}"/><TextBlock Text="{Binding PrimaryKpiRepartible}" Style="{StaticResource Text.Kpi}"/></StackPanel>
+      <StackPanel Margin="0,0,22,8"><TextBlock Text="{Binding [PrimaryKpiAssignedLabel]}"/><TextBlock Text="{Binding PrimaryKpiAssigned}" Style="{StaticResource Text.Kpi}"/></StackPanel>
+      <StackPanel Margin="0,0,22,8"><TextBlock Text="{Binding [PrimaryKpiPendingLabel]}"/><TextBlock Text="{Binding PrimaryKpiPending}" Style="{StaticResource Text.Kpi}"/></StackPanel>
+      <StackPanel Margin="0,0,22,8"><TextBlock Text="{Binding [PrimaryKpiExcludedLabel]}"/><TextBlock Text="{Binding PrimaryKpiExcluded}" Style="{StaticResource Text.Kpi}"/></StackPanel>
+      <StackPanel Margin="0,0,22,8"><TextBlock Text="{Binding [PrimaryKpiDirectObjectLabel]}"/><TextBlock Text="{Binding PrimaryKpiDirectObject}" Style="{StaticResource Text.Kpi}"/></StackPanel>
     </WrapPanel>
     <TextBlock Text="{Binding [PrimaryAccountOverviewTitle]}" FontWeight="SemiBold" Margin="0,0,0,8"/>
     <DataGrid x:Name="PrimaryAccountGrid" ItemsSource="{Binding PrimaryAccounts}"
@@ -389,7 +397,7 @@
      <TextBlock Text="{Binding [ReciprocalHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
      <TextBlock Text="{Binding ReciprocalSummary}" Margin="0,8,0,8" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}"><Style.Triggers><DataTrigger Binding="{Binding ReciprocalHasError}" Value="True"><Setter Property="Foreground" Value="{DynamicResource Brand.Red}"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
      <DataGrid x:Name="ReciprocalGrid" ItemsSource="{Binding ReciprocalChecks}" IsReadOnly="True"
-               AutoGenerateColumns="False" MaxHeight="220" MinRowHeight="32"
+               AutoGenerateColumns="False" MaxHeight="220" MinRowHeight="{DynamicResource Table.MinRowHeight}"
                AutomationProperties.Name="{Binding [ReciprocalTitle]}">
       <DataGrid.Columns>
        <DataGridTextColumn ElementStyle="{StaticResource ViabilityText}" Binding="{Binding Group}" Width="2*"/>
@@ -518,7 +526,7 @@
 
      <Expander Header="{Binding [SecondaryExplanationTitle]}" IsExpanded="True" Margin="0,8,0,0">
       <StackPanel>
-       <TextBlock Text="{Binding SecondaryExplanation}" Height="72" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding SecondaryExplanation}" Margin="8"/>
+       <TextBlock Text="{Binding SecondaryExplanation}" MinHeight="72" TextWrapping="Wrap" Margin="8"/>
        <DataGrid x:Name="SecondaryExplanationGrid" ItemsSource="{Binding SecondaryExplanationDetails}" IsReadOnly="True" AutoGenerateColumns="False" Height="170" CanUserAddRows="False">
         <DataGrid.Columns>
          <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Account}" Width="2*"/>

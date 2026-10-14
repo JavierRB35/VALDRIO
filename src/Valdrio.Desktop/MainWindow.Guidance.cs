@@ -75,6 +75,7 @@ public partial class MainWindow
     internal void UpdateWorkflow()
     {
         if (viewModel is not { } vm) return;
+        UpdatePresentationLabels();
         if (workflowStep == 4 && lastResourceStage != vm.Resources?.Stage) { lastHelpKey = null; lastResourceStage = vm.Resources?.Stage ?? -1; }
         NavigationGroupLabel.Text = vm.Guide("WorkspaceNavigation");
         ProjectPhase.Header = vm.Guide("PhaseProjectStructure");

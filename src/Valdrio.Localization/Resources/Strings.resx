@@ -1490,4 +1490,8 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.PhaseProjectStructure" xml:space="preserve"><value>Project and structure</value></data>
   <data name="Guide.PhaseAnalysisData" xml:space="preserve"><value>Analysis and economic data</value></data>
   <data name="Guide.PhaseAllocations" xml:space="preserve"><value>Allocations and calculation</value></data>
+  <data name="Guide.ShowContext" xml:space="preserve"><value>Details</value></data>
+  <data name="Guide.HideContext" xml:space="preserve"><value>Hide details</value></data>
+  <data name="Guide.CompactTables" xml:space="preserve"><value>Compact tables</value></data>
+  <data name="Guide.CompactTablesHelp" xml:space="preserve"><value>Show more rows without changing values or text size. Applies to this session, including import windows. Clear to use comfortable spacing.</value></data>
 </root>

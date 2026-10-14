@@ -27,6 +27,9 @@
   <sys:Double x:Key="Font.Size.Title">26</sys:Double>
   <sys:Double x:Key="Font.Size.Panel">17</sys:Double>
   <sys:Double x:Key="Control.MinHeight">36</sys:Double>
+  <sys:Double x:Key="Table.MinRowHeight">36</sys:Double>
+  <Thickness x:Key="Table.CellPadding">4,4</Thickness>
+  <Thickness x:Key="Table.NumberPadding">8,5</Thickness>
   <GridLength x:Key="Sidebar.Width">224</GridLength>
   <Thickness x:Key="Space.Page">24,16,24,16</Thickness>
   <Thickness x:Key="Space.Card">16</Thickness>
@@ -72,11 +75,18 @@
     <Setter Property="TextAlignment" Value="Right"/>
     <Setter Property="FlowDirection" Value="LeftToRight"/>
     <Setter Property="Typography.NumeralAlignment" Value="Tabular"/>
-    <Setter Property="Padding" Value="8,4"/>
+    <Setter Property="Padding" Value="{DynamicResource Table.NumberPadding}"/>
   </Style>
   <Style x:Key="Text.Section" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
     <Setter Property="FontSize" Value="17"/><Setter Property="FontWeight" Value="SemiBold"/>
     <Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,0,0,12"/>
+  </Style>
+  <Style x:Key="Text.Kpi" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+    <Setter Property="FontSize" Value="20"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="Foreground" Value="{DynamicResource Brand.DeepGreen}"/>
+    <Setter Property="Typography.NumeralAlignment" Value="Tabular"/>
+    <Setter Property="Margin" Value="0,4,0,0"/>
   </Style>
   <Style x:Key="Text.TableNumber" TargetType="TextBlock" BasedOn="{StaticResource Text.Number}">
     <Setter Property="TextAlignment" Value="Right"/><Setter Property="TextWrapping" Value="NoWrap"/>
@@ -84,7 +94,7 @@
   </Style>
   <Style x:Key="Text.TableText" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
     <Setter Property="TextWrapping" Value="Wrap"/>
-    <Setter Property="Padding" Value="4,3"/>
+    <Setter Property="Padding" Value="{DynamicResource Table.CellPadding}"/>
     <Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}"/>
   </Style>
   <Style x:Key="Card" TargetType="Border">
@@ -376,7 +386,8 @@
     <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource Border.Soft}"/>
     <Setter Property="GridLinesVisibility" Value="Horizontal"/>
     <Setter Property="RowHeaderWidth" Value="0"/>
-    <Setter Property="MinRowHeight" Value="30"/>
+    <Setter Property="MinRowHeight" Value="{DynamicResource Table.MinRowHeight}"/>
+    <Setter Property="Typography.NumeralAlignment" Value="Tabular"/>
   </Style>
   <Style TargetType="DataGridColumnHeader">
     <Setter Property="ContentTemplate">
@@ -399,8 +410,8 @@
     <Setter Property="FocusVisualStyle" Value="{StaticResource Focus.Visible}"/>
     <Style.Triggers>
       <Trigger Property="IsSelected" Value="True">
-        <Setter Property="Background" Value="{DynamicResource Status.WarningBg}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource Brand.Yellow}"/>
+        <Setter Property="Background" Value="{DynamicResource Surface.Subtle}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Accent.ActiveGreen}"/>
         <Setter Property="Foreground" Value="{DynamicResource Text.Primary}"/>
       </Trigger>
       <Trigger Property="IsKeyboardFocusWithin" Value="True">

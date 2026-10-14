@@ -194,6 +194,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public bool IsExact => SelectorKind == AccountSelectorKind.Exact;
     public bool IsPrefix => !IsExact;
     public string Requirement => this[workspace is null ? "NeedStudy" : !company.CanWrite ? "ReadOnly" : workspace.Resources.Study.State == StudyState.Closed ? "Closed" : "Help"];
+    public bool HasStatusError => diagnostic is not null;
     public string Status => diagnostic is null ? this[statusKey] : new DomainDiagnosticFormatter(texts).Format(diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message;
     public string KeyState => this[IsKeyUsed ? "UsedKeyHelp" : keyDirty ? "Unsaved" : "DraftHelp"];
     public string Currency => workspace?.Resources.Study.Currency.FunctionalCurrencyCode.ToString() ?? "";

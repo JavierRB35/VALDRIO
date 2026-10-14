@@ -48,7 +48,7 @@
  <DockPanel Margin="14">
   <StackPanel DockPanel.Dock="Top">
    <TextBlock Text="{Binding Target}" FontWeight="SemiBold"/>
-   <TextBlock Text="{Binding CurrencyImportNotice}" TextWrapping="Wrap" Foreground="{DynamicResource Text.Secondary}" Margin="0,4,0,6"/>
+   <TextBlock Text="{Binding CurrencyImportNotice}" TextWrapping="Wrap" Foreground="{DynamicResource Text.Primary}" Margin="0,4,0,6"/>
    <TextBlock TextWrapping="Wrap" Margin="0,4,0,6" AutomationProperties.LiveSetting="Polite" x:Name="ImportStepHelp"/>
   </StackPanel>
   <StackPanel DockPanel.Dock="Bottom">
@@ -68,7 +68,7 @@
    <TextBlock TextWrapping="Wrap" MinHeight="36" x:Name="ImportFieldHelp"/>
    <WrapPanel>
     <Button Click="PreviousImportStep" x:Name="ImportBack"/>
-    <Button Click="NextImportStep" x:Name="ImportNext"/>
+    <Button Click="NextImportStep" x:Name="ImportNext" Style="{StaticResource Button.Primary}"/>
     <Button x:Name="ConfirmImportButton" Content="{Binding [ConfirmImport]}" Command="{Binding ConfirmCommand}" Style="{StaticResource Button.Primary}"/>
     <Button Content="{Binding [Cancel]}" Command="{Binding CancelCommand}"/>
     <Button x:Name="CloseMappingButton" Content="{Binding [Close]}" Click="CloseMapping" IsEnabled="{Binding IsIdle}"/>
@@ -249,7 +249,7 @@
       <TextBlock Text="{Binding [PreviewHelp]}"/>
       <DataGrid x:Name="PreviewGrid" ItemsSource="{Binding Preview}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="Auto" MinHeight="280" MaxHeight="590" FlowDirection="LeftToRight" EnableRowVirtualization="True">
        <DataGrid.ColumnHeaderStyle>
-        <Style TargetType="DataGridColumnHeader">
+        <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
          <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
          <Setter Property="ContentTemplate">
           <Setter.Value>
@@ -263,10 +263,10 @@
        <DataGrid.Columns>
         <DataGridTextColumn Binding="{Binding Row}" Width="65"/>
         <DataGridTextColumn Binding="{Binding Account}" Width="155"/>
-        <DataGridTextColumn Binding="{Binding OriginalAmount}" Width="155"/>
-        <DataGridTextColumn Binding="{Binding OriginalDebit}" Width="155" Visibility="Collapsed"/>
-        <DataGridTextColumn Binding="{Binding OriginalCredit}" Width="155" Visibility="Collapsed"/>
-        <DataGridTextColumn Binding="{Binding ParsedAmount}" Width="155"/>
+        <DataGridTextColumn Binding="{Binding OriginalAmount}" ElementStyle="{StaticResource Text.TableNumber}" Width="155"/>
+        <DataGridTextColumn Binding="{Binding OriginalDebit}" ElementStyle="{StaticResource Text.TableNumber}" Width="155" Visibility="Collapsed"/>
+        <DataGridTextColumn Binding="{Binding OriginalCredit}" ElementStyle="{StaticResource Text.TableNumber}" Width="155" Visibility="Collapsed"/>
+        <DataGridTextColumn Binding="{Binding ParsedAmount}" ElementStyle="{StaticResource Text.TableNumber}" Width="155"/>
         <DataGridTextColumn Binding="{Binding Issues}" Width="*"/>
         <DataGridTextColumn Binding="{Binding Description}" Width="230" DisplayIndex="2"/>
        </DataGrid.Columns>
