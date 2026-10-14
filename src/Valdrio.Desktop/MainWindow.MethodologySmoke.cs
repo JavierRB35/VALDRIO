@@ -88,7 +88,7 @@ public partial class MainWindow
         await NavigateWorkflow(5); await Idle();
         Check(AllocationPanel.KeyGrid.Items.Count == 0 ||
             AllocationPanel.KeyGrid.SelectedIndex == 0 && AllocationPanel.KeyGrid.IsKeyboardFocusWithin,
-            "primary allocation opens with focus on the first saved project key");
+            $"primary allocation opens with focus on the first saved project key (index={AllocationPanel.KeyGrid.SelectedIndex}, focus={AllocationPanel.KeyGrid.IsKeyboardFocusWithin}, visible={AllocationPanel.KeyGrid.IsVisible}, enabled={AllocationPanel.KeyGrid.IsEnabled}, active={IsActive})");
         await Click(AllocationPanel.TogglePrimaryButton);
         Check(vm.IsPrimaryClosed, "primary closes with weighted composition");
         await NavigateWorkflow(1); await Idle(); Check(!nodes.CanEdit, "primary closure locks analysis nodes");

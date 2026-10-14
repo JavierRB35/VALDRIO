@@ -43,6 +43,7 @@
   <ItemGroup>
     <ProjectReference Include="../../src/Valdrio.Runner/Valdrio.Runner.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Valdrio.Domain/Valdrio.Domain.csproj" />
+    <ProjectReference Include="../../src/Valdrio.Reporting/Valdrio.Reporting.csproj" />
     <ProjectReference Include="../../src/Valdrio.Calculation/Valdrio.Calculation.csproj" />
     <ProjectReference Include="../../src/Valdrio.Application/Valdrio.Application.csproj" />
     <ProjectReference Include="../../src/Valdrio.Infrastructure/Valdrio.Infrastructure.csproj" />

@@ -1,3 +1,7 @@
+## Estado vigente contrastado — 14/10/2026
+
+Base autorizada: main@0a1dd6e. Véase [auditoría integral y refactorización gradual](docs/auditorias/2026-10-14/INFORME.md) y su validación. Las secciones siguientes conservan evidencia histórica; sus pendientes y referencias de CI no describen necesariamente el estado actual. No existe todavía en main el historial general T12 ni el motor completo de capacidad/ociosidad T14+. GitHub Actions solo por petición expresa; validación local por defecto.
+
 
 ### Actualización de supervisión sénior T11 (2026-10-09)
 

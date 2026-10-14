@@ -154,7 +154,9 @@ public partial class AllocationWorkspacePanel : UserControl
                 {
                     row.Focus();
                     Keyboard.Focus(row);
-                    return;
+                    // A generated row may refuse keyboard focus. Keep the
+                    // grid fallback instead of returning with focus elsewhere.
+                    if (KeyGrid.IsKeyboardFocusWithin) return;
                 }
             }
 
