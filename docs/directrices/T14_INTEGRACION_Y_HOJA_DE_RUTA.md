@@ -76,6 +76,18 @@ Este documento complementa [T14](../tareas/T14.md), la [directriz de capacidad n
 - **Granularidad pendiente de diseño:** preferir control sobre la fila física del **nodo/pool/unidad/período**, para no bloquear la edición de otros nodos independientes; decidir técnicamente cómo sincronizar observaciones de normal y real y la confirmación conjunta. No depender solo de comparar un número en la interfaz: la precondición debe validarse **en SQLite al escribir**.
 - **Pruebas T14.1/T14.2:** dos ventanas leen versión n; primera guarda n+1, segunda intenta guardar n y obtiene conflicto sin cambios parciales; cargar nuevo valor y reintentar explícitamente; conflicto con dato confirmado; operaciones en nodos distintos; reapertura, transacciones/auditoría e independencia de T12.
 
+### T14.1 · Decisión técnica 6 aprobada (15/10/2026): continuidad histórica ante cambios de estructura
+
+**Opción A aprobada por el propietario.** Cuando la estructura/modelo del estudio cambie (nodo, pool, asignación o unidad), las observaciones físicas existentes **se conservan inalteradas en su contexto original**, con el `ModelVersionId`, `StudyId`, `NodeId`, `PoolId`, `UnitId`, período, versión, fuente, calidad y estado que les correspondían. Una confirmación histórica no equivale a una confirmación para la nueva estructura.
+
+- **Detección y presentación:** al abrir T14, comparar identidades y versión del modelo publicado con el ámbito de las observaciones existentes. No reasignar capacidades por coincidencia de nombres ni convertir unidades solo porque ambas contengan «horas».
+- **Incompatibilidad:** si hay cambios relevantes de nodo/pool/unidad o dimensión (por ejemplo, horas-persona a horas-máquina), mostrar advertencia, mantener los datos originales para consulta histórica y dejar **pendiente** la observación en el ámbito del nuevo modelo.
+- **Reutilización revisada:** el usuario puede examinar candidatos históricos y adoptar expresamente datos o parámetros **solo tras validar una correspondencia real de significado, unidad y período** y, cuando proceda, recalcular. Esa adopción genera nueva observación física con referencia al origen, **no altera el registro original ni confirma automáticamente la nueva fila**.
+- **Seguridad:** el cambio de estructura puede modificar entradas económicas y vigencia de T12 mediante los contratos habituales; conservar datos físicos históricos **no rehabilita ningún `CalculationRun` económico invalidado**.
+- **Pruebas T14.1/T14.2:** cambio de unidad incompatible, pool trasladado a otro nodo, nodo renombrado conservando identidad, nodo reemplazado con nombre idéntico, nuevo modelo publicado, reapertura y correcciones históricas; ninguna migración reescribe ni adopta observaciones tácitamente.
+
+**Pendiente técnico:** concreción de identidad del modelo por registro/versión física, detección de equivalencias y mecanismo de adopción explícita, validaciones e índices SQLite. No diseñar un algoritmo de conversión o asignación automática no aprobado.
+
 ## 2. Inventario por pantalla: información existente y destino en T14
 
 | Pantalla y responsable | Datos introducidos o disponibles antes de T14 | Uso en T14 | ¿Se pide de nuevo? |
