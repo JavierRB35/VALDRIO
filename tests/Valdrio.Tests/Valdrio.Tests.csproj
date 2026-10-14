@@ -63,6 +63,10 @@
     <Content Include="../../Synthetic Projects/**/*.json"
              Link="Synthetic Projects/%(RecursiveDir)%(Filename)%(Extension)"
              CopyToOutputDirectory="PreserveNewest" />
+    <!-- Both genuine v9 T13 SQLite companies remain immutable inputs to the v10 upgrade tests. -->
+    <Content Include="../../Synthetic Projects/**/*.valdrio"
+             Link="Synthetic Projects/%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../../reference/t02-rounding-cases.json"
              Link="reference/t02-rounding-cases.json"
              CopyToOutputDirectory="PreserveNewest" />
