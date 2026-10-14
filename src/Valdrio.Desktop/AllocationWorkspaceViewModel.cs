@@ -347,20 +347,30 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         if (IsDirty) { statusKey = "PendingBody"; Refresh(); return; }
         await Run(async () => { workspace = await Task.Run(() => port.ReadAllocations(current.CompanyId, current.Id)); path = company.ActivePath; LoadKey(null); ClearRule(); Rebuild(); });
     }
-    private SaveAllocationKey BuildKey(bool publish) => new(workspace!.Resources.Study.CompanyId, workspace.Resources.Model.Structure.Id,
-        editingKey?.Id ?? previewId, newParent, editingKey?.Revision ?? -1, Name, Stage, Mode, IsDriver ? Unit : null,
-        // All newly saved secondary keys permit self-service by definition;
-        // primary keys retain the legacy field for backwards-compatible snapshots.
-        Stage == AllocationStage.Secondary || SelfAllowed ? SelfAllocationPolicy.Allowed : SelfAllocationPolicy.Forbidden,
-        Lines.Where(l => l.Included).Select(l => new AllocationKeyLine(l.Id, Mode == AllocationKeyMode.EqualShares ? 1m : Parse(l.Value))).ToArray(), publish, new(Guid.NewGuid()), "local-user")
-        { ValidationStudyId = workspace.Resources.Study.Id, ValidationStudyRevision = workspace.Resources.Study.Revision };
+    private SaveAllocationKey BuildKey(bool publish)
+    {
+        // A draft saved while editing a publication is a new version. The published
+        // value and every existing rule pointing to it must remain unchanged.
+        var forkPublishedDraft = !publish && editingKey?.Status == ModelStatus.Published;
+        return new(workspace!.Resources.Study.CompanyId, workspace.Resources.Model.Structure.Id,
+            forkPublishedDraft ? previewId : editingKey?.Id ?? previewId,
+            forkPublishedDraft ? editingKey!.Id : newParent,
+            forkPublishedDraft ? -1 : editingKey?.Revision ?? -1,
+            Name, Stage, Mode, IsDriver ? Unit : null,
+            // All newly saved secondary keys permit self-service by definition;
+            // primary keys retain the legacy field for backwards-compatible snapshots.
+            Stage == AllocationStage.Secondary || SelfAllowed ? SelfAllocationPolicy.Allowed : SelfAllocationPolicy.Forbidden,
+            Lines.Where(l => l.Included).Select(l => new AllocationKeyLine(l.Id, Mode == AllocationKeyMode.EqualShares ? 1m : Parse(l.Value))).ToArray(),
+            publish, new(Guid.NewGuid()), "local-user")
+            { ValidationStudyId = workspace.Resources.Study.Id, ValidationStudyRevision = workspace.Resources.Study.Revision };
+    }
     private EntityId previewId = new(Guid.NewGuid());
     private AllocationKeyVersion PreviewKey(bool publish) => AllocationWorkspaceRules.SaveKey(BuildKey(publish), workspace!.Resources.Model, workspace.Resources.Precision,
         workspace.Keys, UtcInstant.ParseIso("2000-01-01T00:00:00Z"), !IsKeyUsed);
     private string? MissingKeyInput(bool publish)
     {
         if (string.IsNullOrWhiteSpace(Name)) return "NameRequired";
-        if (IsDriver && !Unit.HasValue) return "UnitRequired";
+        if (publish && IsDriver && !Unit.HasValue) return "UnitRequired";
         if (!publish) return null;
         if (!Lines.Any(l => l.Included)) return "DestinationsRequired";
         try
@@ -381,7 +391,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         }
         return await Run(async () =>
         {
-            var command = BuildKey(publish || editingKey?.Status == ModelStatus.Published); var port = company.ActiveAllocations!;
+            var command = BuildKey(publish); var port = company.ActiveAllocations!;
             var receipt = await Task.Run(() => port.SaveAllocationKey(command));
             workspace = new(workspace.Resources, workspace.Keys.Where(k => k.Id != receipt.After.Id).Append(receipt.After).ToArray(), workspace.Configuration, workspace.ConfigurationRevision, includeUnroutedAccounts: workspace.IncludeUnroutedAccounts,
                 usedKeyIds: workspace.UsedKeyIds, secondaryPublication: workspace.SecondaryPublication,
