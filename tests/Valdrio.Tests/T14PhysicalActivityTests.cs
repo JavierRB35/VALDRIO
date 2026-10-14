@@ -55,7 +55,7 @@ public sealed class T14PhysicalActivityTests
         CostPoolDefinition pool, long revision, decimal? normal, decimal? real,
         PhysicalObservationState state = PhysicalObservationState.Confirmed, string? reason = null,
         string? zero = null, string? exception = null) =>
-        new(study.CompanyId, study.Id, node.Id, pool.Id, revision, state,
+        new(study.CompanyId, study.Id, study.Revision, node.Id, pool.Id, revision, state,
             null, null, normal, real, normal is null ? null : Source(PhysicalEvidenceQuality.Calculated),
             real is null ? null : Source(), zero, exception, reason, "test");
 
@@ -79,7 +79,7 @@ public sealed class T14PhysicalActivityTests
             Assert.AreEqual("ACT_CONFLICT", Assert.ThrowsExactly<DomainRuleException>(
                 () => file.PhysicalActivity.Save(Save(study, node, pool, 1, 700, 630, reason: "Ventana antigua"))).Diagnostic.Code);
 
-            var annulled = file.PhysicalActivity.Annul(new(study.CompanyId, study.Id, node.Id, pool.Id, 2,
+            var annulled = file.PhysicalActivity.Annul(new(study.CompanyId, study.Id, study.Revision, node.Id, pool.Id, 2,
                 "El parte pertenece a otro nodo", "test"));
             Assert.AreEqual(3L, annulled.Version);
             Assert.AreEqual(PhysicalObservationState.Annulled, annulled.State);
@@ -127,7 +127,7 @@ public sealed class T14PhysicalActivityTests
             Assert.AreEqual("ACT_STUDY_CLOSED", Assert.ThrowsExactly<DomainRuleException>(
                 () => file.PhysicalActivity.Save(Save(study, node, pool, 1, 700, 625, reason: "Late"))).Diagnostic.Code);
             Assert.AreEqual("ACT_STUDY_CLOSED", Assert.ThrowsExactly<DomainRuleException>(
-                () => file.PhysicalActivity.Annul(new(study.CompanyId, study.Id, node.Id, pool.Id, 1, "Wrong", "test"))).Diagnostic.Code);
+                () => file.PhysicalActivity.Annul(new(study.CompanyId, study.Id, study.Revision, node.Id, pool.Id, 1, "Wrong", "test"))).Diagnostic.Code);
             using var connection = new SqliteConnection("Data Source=" + file.Path + ";Pooling=False");
             connection.Open();
             using var sql = connection.CreateCommand();
@@ -159,7 +159,7 @@ public sealed class T14PhysicalActivityTests
         using (file)
         {
             file.PhysicalActivity.Save(Save(study, node, pool, 0, 700m, 610m));
-            file.PhysicalActivity.Annul(new(study.CompanyId, study.Id, node.Id, pool.Id, 1L,
+            file.PhysicalActivity.Annul(new(study.CompanyId, study.Id, study.Revision, node.Id, pool.Id, 1L,
                 "Wrong production log", "test"));
             var replacement = file.PhysicalActivity.Save(Save(study, node, pool, 2L, 680m, 600m));
             Assert.AreEqual(3L, replacement.Version);
