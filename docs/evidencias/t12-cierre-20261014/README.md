@@ -128,6 +128,20 @@ El propietario ejecutó `Verify-Windows.ps1` en el commit `c0147acf1b74e8cddadbb
 - Se añade `ExampleOpensBundledV9AsEditableV10WithoutChangingTemplate` contra el **mismo archivo real** distribuido y su huella; exige sesión editable, esquema vigente, análisis guardados, destino y archivo original intacto. El smoke informa diagnóstico y estado si vuelve a fallar.
 - **Pendiente**: compilar en Windows, probar la regresión nueva y repetir aceptación visual. Todavía no se ha fusionado ni aprobado T12.
 
+## Cuarta aceptación Windows local — smoke WPF de códigos duplicados (14/10/2026)
+
+El propietario ha remitido la ejecución Windows del commit `8ea77b315f23a56358284cd0373a5e80acea53a0`:
+
+- Restauración y compilación Release: **correctas** (build inicial 8,4 s; build aceptación 13,0 s).
+- Pruebas focalizadas del proyecto de ejemplo: **3/3 correctas**.
+- Prueba integral: **692/692 correctas**, 0 fallidas, 0 omitidas (259,9 s).
+- Fuentes canónicas: **57 comprobadas**; Python **39/39**; scanner local y **420 claves** traducibles correctos; T02/T02A y publicación `win-x64` correctos.
+- Smoke de arranque WPF y recuperación de preferencias inválidas: **correctos**.
+- Fallo de aceptación visual: `ModelWorkspacePanel.Smoke.cs:96`, `Model WPF: enabled: SaveCenterButton`. En el smoke antiguo se intentaba pulsar Guardar con el código de centro `MANT-001`, deliberadamente duplicado, y se esperaba una excepción `MODEL_DUPLICATE`.
+- Diagnóstico: después del cambio UX de validación preventiva, el botón **debe estar deshabilitado** con un mensaje junto al campo. No se trata de un nuevo error del modelo ni de que se permita duplicar; es una expectativa obsoleta de aceptación WPF.
+- Corrección del smoke: verificar que código repetido bloquea Guardar, muestra el mensaje y no crea otro maestro; al editar el código a `MANT-002` debe reactivarse Guardar sin insertar nada. Se mantienen **dos comprobaciones** en lugar de la comprobación previa más el `Click` (que comprobaba `enabled`) para conservar las 64 comprobaciones esperadas por `Verify-Windows.ps1` y no debilitar la cobertura.
+- **Pendiente**: ejecutar de nuevo la aceptación Windows con la corrección y realizar smoke dedicado de ambos gráficos T12. No fusionar hasta obtener `Status = passed` y evidencias completas. Sin GitHub Actions.
+
 ## Acta de resultados — por cumplimentar
 
 - Fecha/hora, Windows, .NET: **pendiente**
