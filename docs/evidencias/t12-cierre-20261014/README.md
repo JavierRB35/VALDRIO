@@ -178,18 +178,42 @@ Se corrigen tanto `Audit-WindowsEvidence.ps1` como `Verify-Windows.ps1` para exi
 
 **Pendiente:** reejecutar el auditor local sobre la carpeta de evidencias previa y recibir `AUDITORIA GLOBAL SUPERADA`; después una aceptación Windows final, smoke específico T12 ES/EN, documentar resultados y solo entonces fusionar y eliminar la rama. No usar GitHub Actions.
 
-## Acta de resultados — por cumplimentar
+## Acta de cierre T12 — validación local concluida (14/10/2026)
 
-- Fecha/hora, Windows, .NET: **pendiente**
-- SHA probado / comando exacto: **pendiente**
-- Build (errores, avisos): **pendiente**
-- MSTest focalizadas: **pendiente**
-- MSTest total: **pendiente**
-- Windows acceptance y WPF T12 ES/EN: **pendiente**
-- Defectos, corrección y retest: **pendiente**
-- Evidencias (logs/TRX/capturas), ubicación: **pendiente**
-- Revisión metodológica e integridad: **pendiente**
-- Decisión final: **NO APROBADA TODAVÍA**
+**Decisión:** T12 **APROBADA PARA FUSIÓN EN main** sobre evidencias locales Windows y pruebas automatizadas. El código de producción y los scripts que se han probado corresponden a `5f03181c85d8c61184007feef52d4b889b8af4d7`; este commit de acta es **solo documental**, y por tanto distinto del SHA probado.
+
+### Evidencias verificadas por el propietario
+
+| Puerta | Resultado comunicado |
+| --- | --- |
+| Restauración y compilación .NET 10 Release Windows | **Correctas**, sin errores de compilación |
+| Regresión del ejemplo distribuido (esquema 9 → 10 sin tocar plantilla) | **3/3 correctas** en primera validación de la corrección |
+| Pruebas focalizadas de T12 y flujos de costes | **11/11** al inicio; posteriormente **1/1** de fixture T12 sobre el commit de cierre |
+| Suite MSTest dentro de la aceptación integral | **692/692**, sin errores ni omisiones; el verificador comprueba los contadores del TRX |
+| Referencias canónicas / matemáticas | 57 fuentes canónicas; 39 casos Python; verificadores T02/T02A, importaciones, recursos y repartos correctamente superados en aceptación |
+| Localización y estilos | Control de **420 claves** correcto; claves del tema WPF diferenciadas de mensajes traducibles |
+| WPF general / integridad / persistencia | **Aceptación integral SUPERADA**; 16 documentos de comprobación, 7 manifiestos con archivos y SHA256, 12 grupos de imágenes; 80 controles de visual shell y 5 capturas raíz exactas; pruebas de empresa, modelos, estudio, importaciones y recursos |
+| T12: fixture de ejecución persistida y vista ES/EN | **1/1 test**, **46 comprobaciones**, 8 capturas generadas, salida `T12 SUPERADO` |
+| Resultado global | `Windows acceptance passed for source commit 5f03181c85d8c61184007feef52d4b889b8af4d7` |
+
+**Comandos efectivamente realizados:** `Verify-Windows.ps1 -EvidenceDirectory artifacts/t12-cierre-20261014-190003`; generación local del ejemplo con `VALDRIO_T12_DEMO` y `dotnet test --filter Name~T12_6500FlowsPersistAndHistoricalReadDoesNotRecalculate`; WPF `Valdrio.Desktop.exe <demo> --cost-flow-only --capture-dir=<ruta>`; comprobación de `checks.json` con estado `passed` y existencia de 8 PNG. Los comandos completos y las opciones están recogidos arriba.
+
+**Evidencias locales Windows** (no publicadas como archivos en GitHub):
+
+- Aceptación integral: `artifacts/t12-cierre-20261014-190003`, con recibo de aceptación, TRX y capturas de todos los paneles.
+- Prueba específica T12: `artifacts/t12-graficos-20261014-190859/visual`.
+- Capturas T12: `es-screen.png`, `es-primary-graph.png`, `es-secondary-graph.png`, `es-narrow.png`; análogas `en-screen.png`, `en-primary-graph.png`, `en-secondary-graph.png`, `en-narrow.png`.
+- Transcripciones de PowerShell facilitadas por el propietario en la conversación como evidencia de salida. Se ha confirmado **la generación y presencia** de las ocho capturas, pero **no se han inspeccionado visualmente sus píxeles por el asistente**. Los 46 checks WPF validan funcionalmente idioma, recorridos, porcentajes, importes, visibilidad, adaptación y foco de teclado.
+
+### Incidencias y resolución
+
+Se corrigieron errores de compilación (`ThemeBrush` y namespaces), cobertura de mensajes visuales falsamente clasificados, migración sin sobreescritura del archivo de ejemplo, expectation obsoleta de duplicados de centros en el smoke WPF, y contratos de comprobación desactualizados (44 controles empresa, 80 visuales, esquema SQLite 10 y 5 capturas raíz). Tras los ajustes, **la aceptación integral y el smoke T12 terminaron correctamente** en Windows local.
+
+**Integridad T12:** la prueba dedicada comprueba conciliación de **6.500 EUR**, flujos primarios y secundarios/recíprocos, selección de trayectos aguas arriba/abajo, uso de dos decimales y porcentajes, adaptación y acceso por teclado. Repetir «Calcular» sin cambiar la revisión reutiliza la ejecución completada sin crear otra ejecución ni cambiar su snapshot; el historial continúa **visible e inmutable, sin borrado ni archivado**.
+
+### Límites y resolución de fusión
+
+El resultado permite la fusión autorizada. No sustituye una revisión humana de estética de las capturas ni una inspección independiente en el equipo remoto; sí refleja las comprobaciones automatizadas y los resultados comunicados. Si se modifica código tras este SHA habrá que volver a pasar las pruebas afectadas; **el commit de acta no modifica código**. GitHub Actions no se ha ejecutado; gasto facturable autorizado y realizado: **0 USD**. La fusión y posterior eliminación de rama deberán confirmarse por separado contra GitHub.
 
 ## Protocolo posterior a la aceptación
 
