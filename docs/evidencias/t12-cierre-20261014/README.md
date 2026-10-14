@@ -156,6 +156,18 @@ La misma revisión estática de `Verify-Windows.ps1` encontró que cinco asercio
 
 Este ajuste es **solo del contrato de verificación**: no cambia esquemas, migraciones, cálculos ni datos. Pendiente repetir la aceptación Windows sobre el SHA actualizado.
 
+## Auditoría transversal preventiva de scripts y evidencias WPF (14/10/2026)
+
+El usuario solicita revisar conjuntamente todas las expectativas del verificador para evitar nuevas aceptaciones costosas que se detengan ante el primer contrato desactualizado.
+
+- Último intento en el SHA c33f6f57: el proceso WPF y la validación de importes/snapshots alcanzan la comprobación del visual shell; error en Verify-Windows.ps1:522, que exige 67 comprobaciones obsoletas.
+- Recuento estático documentado de MainWindow.VisualSmoke.cs: 7 pasos × 2 idiomas × 4 = 56; herramientas por idioma = 2; contexto/densidad/ventana estrecha = 10; escalado x3 × 2 = 6; reflujo 200 % = 1; escalado de herramientas x4 = 4; RTL = 1. Total **80**. Se modifica el contrato sin borrar comprobaciones.
+- Auditoría de 16 recibos de smoke, 7 manifiestos con nombres/huellas SHA256 y 12 grupos de imágenes. Incluye versiones SQLite v10 e internacional v1, textos de salvaguarda de empresa y estudio. En .github/scripts/Audit-WindowsEvidence.ps1 se entrega un informe de TODAS las discrepancias; se puede ejecutar sobre evidencias existentes sin compilar ni ejecutar tests.
+- Verify-Windows.ps1 invoca el auditor agregado tras terminar el proceso visual, antes de los controles individuales de hashes/snapshots/validación matemática que permanecen intactos.
+- Mínimo de pruebas automatizadas requerido: ahora **692**, frente al heredado 389, siempre 0 fallos y 0 omitidas.
+- Se inspeccionó el workflow windows-ci.yml, que llama al mismo Verify-Windows.ps1; no se ejecutó ningún runner GitHub ni se autorizó gasto.
+- **Pendiente** validar el nuevo auditor en PowerShell Windows y repetir solo una vez la aceptación completa sobre SHA final. No fusionar ni eliminar la rama todavía.
+
 ## Acta de resultados — por cumplimentar
 
 - Fecha/hora, Windows, .NET: **pendiente**

@@ -380,6 +380,9 @@ try {
     # All company files emitted by this acceptance run are current schema v10.
     # Keep this version pinned for sign-off, so format bumps require review.
     $expectedCompanySchemaVersion = 10
+    # Collect all evidence contract mismatches at once rather than fail one by one.
+    # Also callable on an existing capture without re-running 692 MSTest cases.
+    & (Join-Path $PSScriptRoot 'Audit-WindowsEvidence.ps1') -EvidenceDirectory $captureDir
     $fxChecks = Get-Content -LiteralPath (Join-Path $captureDir "fx-editor-interaction.json") -Raw | ConvertFrom-Json
     if ($fxChecks.Status -ne "passed" -or $fxChecks.PassedChecks.Count -ne 12) {
       throw "FX WPF interaction evidence is missing or incomplete."
@@ -519,7 +522,7 @@ try {
     dotnet run --project src/Valdrio.Runner/Valdrio.Runner.csproj --configuration Release --no-build -- --study-snapshot (Join-Path $allocationFolder "snapshot-receipt.json")
     if ($LASTEXITCODE -ne 0) { throw "Runner could not verify the frozen T08 snapshot." }
     $visualChecks = Get-Content -LiteralPath (Join-Path $captureDir "visual-shell/interaction.json") -Raw | ConvertFrom-Json
-    if ($visualChecks.Status -ne "passed" -or $visualChecks.PassedChecks.Count -ne 67) { throw "Expected all 67 seven-step visual shell checks." }
+    if ($visualChecks.Status -ne "passed" -or $visualChecks.PassedChecks.Count -ne 80) { throw "Expected all 80 seven-step visual shell checks." }
     $guidedFolder = Join-Path $captureDir "guided-workflow"
     $guidedChecks = Get-Content -LiteralPath (Join-Path $guidedFolder "interaction.json") -Raw | ConvertFrom-Json
     if ($guidedChecks.Status -ne "passed" -or $guidedChecks.PassedChecks.Count -ne 21) { throw "Expected all 21 guided workflow checks." }
@@ -612,7 +615,7 @@ try {
     }
     [xml]$trx = Get-Content -LiteralPath "tests/Valdrio.Tests/TestResults/valdrio-tests.trx" -Raw
     $counters = $trx.TestRun.ResultSummary.Counters
-    if ([int]$counters.total -lt 389 -or [int]$counters.failed -ne 0 -or [int]$counters.notExecuted -ne 0 -or [int]$counters.total -ne [int]$counters.passed) {
+    if ([int]$counters.total -lt 692 -or [int]$counters.failed -ne 0 -or [int]$counters.notExecuted -ne 0 -or [int]$counters.total -ne [int]$counters.passed) {
         throw "The acceptance receipt requires all discovered tests to pass without omissions."
     }
 
