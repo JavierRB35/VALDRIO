@@ -246,6 +246,18 @@ public partial class App : System.Windows.Application
                             await window.RunCostFlowChecks(captureDirectory);
                             Shutdown(0); return;
                         }
+                        if (e.Args.Contains("--t13-service-flow-only", StringComparer.Ordinal)
+                            || e.Args.Contains("--t13-industrial-flow-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("T13 flow smoke requires a generated v10 company.");
+                            await company.OpenPath(requestedPath);
+                            if (company.Snapshot is null) throw new InvalidOperationException("Cannot open T13 company: " + company.Status);
+                            if (e.Args.Contains("--t13-service-flow-only", StringComparer.Ordinal))
+                                await window.RunT13CostFlowChecks(captureDirectory, "September 2026 - Service operations", 17500m, 2);
+                            else
+                                await window.RunT13CostFlowChecks(captureDirectory, "September 2026 - Production cost", 36000m, 3);
+                            Shutdown(0); return;
+                        }
                         if (e.Args.Contains("--results-scroll-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("Results checks require a disposable demo file.");
