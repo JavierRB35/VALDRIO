@@ -152,4 +152,63 @@ public sealed class T14PhysicalActivityTests
         var july = october with { Start = BusinessDate.ParseIso("2026-07-01"), End = BusinessDate.ParseIso("2026-07-31"), RealQuantity = 640m };
         Assert.AreEqual(620m, PhysicalNormalCalculator.History([october, july]));
     }
+    [TestMethod]
+    public void T14_AfterAnnulmentNewObservationDoesNotRevalidateOldHours()
+    {
+        var (file, study, node, pool) = Fixture();
+        using (file)
+        {
+            file.PhysicalActivity.Save(Save(study, node, pool, 0, 700m, 610m));
+            file.PhysicalActivity.Annul(new(study.CompanyId, study.Id, node.Id, pool.Id, 1L,
+                "Wrong production log", "test"));
+            var replacement = file.PhysicalActivity.Save(Save(study, node, pool, 2L, 680m, 600m));
+            Assert.AreEqual(3L, replacement.Version);
+            Assert.AreEqual(600m, file.PhysicalActivity.ReadCurrent(study.CompanyId, study.Id).Single().RealQuantity);
+            var old = file.PhysicalActivity.ReadHistory(study.CompanyId, study.Id, pool.Id);
+            Assert.AreEqual(PhysicalObservationState.Annulled, old[1].State);
+            Assert.AreEqual(610m, old[0].RealQuantity);
+        }
+    }
+
+    [TestMethod]
+    public void T14_CancelledTransactionDoesNotWriteObservationOrAudit()
+    {
+        var (file, study, node, pool) = Fixture();
+        var path = file.Path;
+        file.Dispose();
+        using (var faulty = Service(p =>
+        {
+            if (p == CompanyWriteCheckpoint.BeforeCommit)
+                throw new InvalidOperationException("Injected T14 failure");
+        }).Open(path))
+        {
+            Assert.ThrowsExactly<InvalidOperationException>(
+                () => faulty.PhysicalActivity.Save(Save(study, node, pool, 0, 700m, 610m)));
+            Assert.AreEqual(0, faulty.PhysicalActivity.ReadHistory(study.CompanyId, study.Id, pool.Id).Count);
+        }
+        using var reopened = Service().Open(path);
+        Assert.AreEqual(0, reopened.PhysicalActivity.ReadHistory(study.CompanyId, study.Id, pool.Id).Count);
+    }
+
+    [TestMethod]
+    public void T14_DraftCanKeepPartialSourceWithoutClaimingConfirmation()
+    {
+        var (file, study, node, pool) = Fixture();
+        using (file)
+        {
+            var draft = Save(study, node, pool, 0L, 684m, null, PhysicalObservationState.Draft) with
+            {
+                NormalEvidence = new(PhysicalEvidenceQuality.Declared, "", "")
+            };
+            var saved = file.PhysicalActivity.Save(draft);
+            Assert.AreEqual(PhysicalObservationState.Draft, saved.State);
+            Assert.AreEqual("ACT_INCOMPLETE", Assert.ThrowsExactly<DomainRuleException>(
+                () => file.PhysicalActivity.Save(draft with
+                {
+                    ExpectedPhysicalVersion = 1L,
+                    State = PhysicalObservationState.Confirmed
+                })).Diagnostic.Code);
+        }
+    }
+
 }
