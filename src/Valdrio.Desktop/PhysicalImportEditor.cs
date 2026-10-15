@@ -38,7 +38,7 @@ public sealed partial class PhysicalImportEditor : ObservableObject
     public PhysicalImportEditor(PhysicalActivityEditor host)
     {
         this.host = host; numeric = host.NumericCulture;
-        ui = CultureInfo.GetCultureInfo(host.Label("Activity.UiCulture"));
+        ui = host.LanguageCulture;
     }
 
     public ObservableCollection<PhysicalImportCandidate> Lines { get; } = [];
