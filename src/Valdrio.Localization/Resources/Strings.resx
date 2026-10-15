@@ -1566,7 +1566,6 @@ Difference to distribute: {7}</value></data>
   <data name="Run.Execution" xml:space="preserve"><value>Execution history</value></data>
   <data name="Run.PrimaryGraph" xml:space="preserve"><value>Primary allocation · accounts → centres</value></data>
   <data name="Run.SecondaryGraph" xml:space="preserve"><value>Secondary allocation and final costs</value></data>
-  <data name="Run.GraphTraceHelp" xml:space="preserve"><value>Selecting a box highlights its upstream and downstream connections in both diagrams; each line shows amounts and, where available, percentages. Reciprocal flows are gross, not final costs attributable to one account. Use the detail view for exact amounts and resource-level tracing.</value></data>
   <data name="Run.GrossGraphHelp" xml:space="preserve"><value>Arrows between auxiliaries are gross internal transfers; do not add them to final costs. Percentages are the stored transfer shares.</value></data>
   <data name="Run.GrossAmount" xml:space="preserve"><value>Gross cost</value></data>
   <data name="Run.NoGraphData" xml:space="preserve"><value>This execution has no data to display in the diagram.</value></data>
@@ -1755,4 +1754,21 @@ Difference to distribute: {7}</value></data>
   <data name="Activity.UnsavedRow" xml:space="preserve"><value>Unsaved changes</value></data>
   <data name="Activity.Calculator" xml:space="preserve"><value>Calculator</value></data>
   <data name="Reuse.NoDescription" xml:space="preserve"><value>No source description</value></data>
+  <data name="Run.GraphTraceHelp" xml:space="preserve"><value>Select a node or connection to follow its path. Use Tab to reach connections and Enter or Space to select. Enable all amounts to show their labels; the detail retains exact values.</value></data>
+  <data name="Run.ReportTitle" xml:space="preserve"><value>Cost allocation results</value></data>
+  <data name="Run.CenterBalances" xml:space="preserve"><value>Accumulated cost by centre</value></data>
+  <data name="Run.NodeBalances" xml:space="preserve"><value>Node breakdown and traceability</value></data>
+  <data name="Run.Center" xml:space="preserve"><value>Physical centre</value></data>
+  <data name="Run.Node" xml:space="preserve"><value>Centre / node</value></data>
+  <data name="Run.Role" xml:space="preserve"><value>Role</value></data>
+  <data name="Run.PrimaryBalance" xml:space="preserve"><value>Primary allocation</value></data>
+  <data name="Run.SecondaryNet" xml:space="preserve"><value>Net secondary (+/−)</value></data>
+  <data name="Run.FinalBalance" xml:space="preserve"><value>Final cost in centres</value></data>
+  <data name="Run.Balanced" xml:space="preserve"><value>No differences</value></data>
+  <data name="Run.Unbalanced" xml:space="preserve"><value>Review differences</value></data>
+  <data name="Run.BalanceEmpty" xml:space="preserve"><value>There is no complete published result for this run. Review its status and diagnostics.</value></data>
+  <data name="Run.BalanceHelp" xml:space="preserve"><value>Primary + net secondary = final cost. Net means received less transferred, including published result adjustments; it is not gross circulation. Centres aggregate their nodes without double counting.</value></data>
+  <data name="Run.BalanceTraceHelp" xml:space="preserve"><value>Select a node to inspect its allocations and highlight its path in the diagrams. A settled auxiliary has zero final cost; its cost is already included in the principals.</value></data>
+  <data name="Run.BalancePrecision" xml:space="preserve"><value>Visual summary to two decimals. Detail and reconciliation retain posted precision. These columns describe stages: do not add them together.</value></data>
+  <data name="Run.ShowAllFlowLabels" xml:space="preserve"><value>Show all amounts on connections</value></data>
 </root>

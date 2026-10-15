@@ -147,6 +147,10 @@ public partial class MainWindow
         CostFlowsPanel.Visibility = workflowStep == 8 ? Visibility.Visible : Visibility.Collapsed;
         DistributionDetails.Visibility = workflowStep == 5 ? Visibility.Visible : Visibility.Collapsed;
         AllocationPanel.IsEnabled = !DistributionDetails.IsExpanded;
+        var allocationActions = workflowStep == 5 ? AllocationPanel : workflowStep == 7 ? SecondaryPanel.Workspace : null;
+        AllocationActionsHost.Visibility = allocationActions is null ? Visibility.Collapsed : Visibility.Visible;
+        var footer = allocationActions?.FooterActions();
+        if (!ReferenceEquals(AllocationActionsHost.Content, footer)) AllocationActionsHost.Content = footer;
         ImportHome.Visibility = workflowStep == 3 ? Visibility.Visible : Visibility.Collapsed;
         PreferencesPanel.Visibility = DevelopmentTools.Visibility = workflowStep == 6 ? Visibility.Visible : Visibility.Collapsed;
         WorkflowTitle.Text = vm.Guide(keys[workflowStep]);

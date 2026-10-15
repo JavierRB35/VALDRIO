@@ -165,6 +165,7 @@
                 Visibility="{Binding Company.IsProcessing, Converter={StaticResource BooleanVisibility}}"
                 AutomationProperties.Name="{Binding Company.WorkingLabel}"/>
   <StackPanel x:Name="ActionFooter" Margin="{StaticResource Space.Page}" DockPanel.Dock="Bottom">
+   <ContentControl x:Name="AllocationActionsHost" Visibility="Collapsed"/>
    <TextBlock TextWrapping="Wrap" Height="48" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" AutomationProperties.LiveSetting="Polite" x:Name="FieldHelpText" />
    <WrapPanel>
     <Button Click="PreviousStep" Padding="14,7" Margin="0,4,8,0" ContentTemplate="{StaticResource Button.WrappedText}" MaxWidth="{Binding ActualWidth, ElementName=ActionFooter}" x:Name="WorkflowBack" />

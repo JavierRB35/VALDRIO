@@ -68,7 +68,7 @@ try {
         }
         $checks = Get-Content -LiteralPath (Join-Path $visual 'checks.json') -Raw | ConvertFrom-Json
         if ($checks.Status -ne 'passed' -or $checks.ExpectedTotal -ne $case.Total -or
-            @($checks.Checks).Count -ne 46) {
+            @($checks.Checks).Count -ne 52) {
             throw "Incomplete T13/$($case.Id) WPF verification: status=$($checks.Status), count=$(@($checks.Checks).Count)."
         }
         $actualImages = @(Get-ChildItem -LiteralPath $visual -File -Filter '*.png' | ForEach-Object { $_.Name })
@@ -80,7 +80,7 @@ try {
             $hash = (Get-FileHash -LiteralPath (Join-Path $visual $name) -Algorithm SHA256).Hash
             if ([string]::IsNullOrWhiteSpace($hash)) { throw "Unreadable capture: $name" }
         }
-        Write-Host "T13/T12 $($case.Id): 46 WPF checks, 8 ES/EN screenshots passed."
+        Write-Host "T13/T12 $($case.Id): 52 WPF checks, 8 ES/EN screenshots passed."
     }
     $after = (& git rev-parse HEAD).Trim()
     if ($after -ne $head) { throw 'HEAD changed during acceptance.' }

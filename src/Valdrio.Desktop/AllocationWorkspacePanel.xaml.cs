@@ -69,11 +69,24 @@ public partial class AllocationWorkspacePanel : UserControl
         Card(ResultsSection, !secondary);
         Card(SecondaryResultsSection, secondary);
         SecondaryPhaseBar.Visibility = secondary ? Visibility.Visible : Visibility.Collapsed;
-        ((FrameworkElement)((FrameworkElement)TogglePrimaryButton.Parent).Parent).Visibility = secondary ? Visibility.Collapsed : Visibility.Visible;
+        PrimaryPhaseBar.Visibility = PrimaryFooterState.Visibility = secondary ? Visibility.Collapsed : Visibility.Visible;
+        SecondaryCalculationActions.Visibility = SecondaryFooterState.Visibility = SecondaryPhaseBar.Visibility;
         for (var i = 0; i < RuleTabs.Items.Count; i++)
             ((TabItem)RuleTabs.Items[i]).Visibility = (i == 1) == secondary ? Visibility.Visible : Visibility.Collapsed;
         RuleTabs.SelectedIndex = secondary ? 1 : 0;
         RulesSection.IsExpanded = true;
+    }
+    internal FrameworkElement FooterActions()
+    {
+        // Reuse the real controls in the fixed shell footer: commands, automation
+        // names and handlers remain identical to the standalone workspace.
+        if (BottomActions.Parent == WorkspaceBody)
+        {
+            WorkspaceBody.Children.Remove(BottomActions);
+            BottomActions.SetBinding(DataContextProperty, new System.Windows.Data.Binding(nameof(DataContext)) { Source = this });
+            BottomActions.SetBinding(IsEnabledProperty, new System.Windows.Data.Binding(nameof(IsEnabled)) { Source = this });
+        }
+        return BottomActions;
     }
     private void Changed(object? sender, PropertyChangedEventArgs e)
     {

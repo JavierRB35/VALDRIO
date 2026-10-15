@@ -12,6 +12,8 @@ public sealed record FlowRow(string Stage, string Resource, string Source, strin
 public sealed record FlowNode(string Id, int Stage, string Label, string Amount, string? DisplayAmount = null);
 public sealed record FlowArrow(string SourceId, string DestinationId, string Label, FlowRow? Row, bool Internal = false, string? DisplayLabel = null);
 public sealed record RunChoice(CalculationRun Run, string Label);
+public sealed record RunBalanceRow(string Label, string Role, string Primary, string SecondaryNet, string Final,
+    decimal PrimaryValue, decimal SecondaryNetValue, decimal FinalValue, string? GraphId, string Exact);
 public sealed partial class CostFlowViewModel : ObservableObject
 {
     private readonly CompanyFileViewModel company;
@@ -37,6 +39,15 @@ public sealed partial class CostFlowViewModel : ObservableObject
     public ObservableCollection<RunChoice> Runs { get; } = [];
     public ObservableCollection<FlowRow> Rows { get; } = [];
     public ObservableCollection<FlowRow> Reconciliation { get; } = [];
+    public ObservableCollection<RunBalanceRow> CenterBalances { get; } = [];
+    public ObservableCollection<RunBalanceRow> NodeBalances { get; } = [];
+    [ObservableProperty] private RunBalanceRow? selectedBalance;
+    [ObservableProperty] private string effectiveTotal = "—";
+    [ObservableProperty] private string finalTotal = "—";
+    [ObservableProperty] private string reconciliationState = "—";
+    [ObservableProperty] private bool showAllFlowLabels;
+    partial void OnShowAllFlowLabelsChanged(bool value) => GraphChanged?.Invoke(this, EventArgs.Empty);
+    partial void OnSelectedBalanceChanged(RunBalanceRow? value) { if (value?.GraphId is { } id) SelectNode(id); }
     public List<FlowNode> Nodes { get; } = [];
     public List<FlowArrow> Arrows { get; } = [];
     private readonly HashSet<string> highlightedNodes = new(StringComparer.Ordinal);
@@ -162,6 +173,7 @@ public sealed partial class CostFlowViewModel : ObservableObject
     }
     public void SelectNode(string? id)
     {
+        if (SelectedBalance?.GraphId != id) SelectedBalance = null;
         SelectedRow = null;
         Rows.Clear();
         foreach (var row in allRows.Where(r => id is null || r.SourceId == id || r.DestinationId == id)) Rows.Add(row);
@@ -170,6 +182,7 @@ public sealed partial class CostFlowViewModel : ObservableObject
     }
     public void SelectArrow(FlowArrow arrow)
     {
+        SelectedBalance = null;
         if (arrow.Row is null)
         {
             SelectNode(arrow.SourceId);
@@ -182,6 +195,8 @@ public sealed partial class CostFlowViewModel : ObservableObject
     private void Present()
     {
         Nodes.Clear(); Arrows.Clear(); Rows.Clear(); Reconciliation.Clear(); allRows.Clear();
+        SelectedBalance = null; CenterBalances.Clear(); NodeBalances.Clear();
+        EffectiveTotal = FinalTotal = ReconciliationState = "—";
         highlightedNodes.Clear(); highlightedArrows.Clear();
         Summary = Diagnostics = CurrentState = ""; Selection = this["SelectHint"];
         OnPropertyChanged(nameof(HasError));
@@ -266,6 +281,23 @@ public sealed partial class CostFlowViewModel : ObservableObject
                     this["Adjustments"]+": "+Amount(fact.NumericAdjustment+fact.RoundingAdjustment),nodeId(0,fact.ResourceId),nodeId(3,fact.TerminalNodeId)));
             }
             Summary=string.Format(Format,this["Summary"],Amount(secondary.ResourceBridges.Sum(r=>r.Effective.Amount)),Amount(secondary.Facts.Sum(f=>f.PostedAmount.Amount)),Amount(secondary.ResourceBridges.Sum(r=>r.Difference.Amount)));
+            if (run.Status == CalculationRunStatus.Completed)
+            {
+                EffectiveTotal = GraphAmount(secondary.ResourceBridges.Sum(r => r.Effective.Amount));
+                FinalTotal = GraphAmount(secondary.Facts.Sum(f => f.PostedAmount.Amount));
+                ReconciliationState = this[secondary.ResourceBridges.All(r => r.Difference.Amount == 0m) ? "Balanced" : "Unbalanced"];
+                var balances = Valdrio.Reporting.RunCostBalanceProjector.Build(run);
+                RunBalanceRow Balance(string label, string role, decimal p, decimal s, decimal f, string? id) =>
+                    new(label, role, GraphAmount(p), GraphAmount(s), GraphAmount(f), p, s, f, id,
+                        this["PrimaryBalance"] + ": " + Amount(p) + Environment.NewLine +
+                        this["SecondaryNet"] + ": " + Amount(s) + Environment.NewLine + this["FinalBalance"] + ": " + Amount(f));
+                foreach (var balance in balances.OrderBy(b => Node(b.NodeId), StringComparer.CurrentCulture))
+                    NodeBalances.Add(Balance(Node(balance.NodeId), this[balance.Role.ToString()], balance.Primary,
+                        balance.SecondaryNet, balance.Final, nodeId(balance.Role == NodeRole.Principal ? 3 : 1, balance.NodeId)));
+                foreach (var group in balances.GroupBy(b => b.CenterId).OrderBy(g => centers[g.Key].Code, StringComparer.CurrentCulture))
+                    CenterBalances.Add(Balance(centers[group.Key].Code + " · " + centers[group.Key].Name, "",
+                        group.Sum(b => b.Primary), group.Sum(b => b.SecondaryNet), group.Sum(b => b.Final), null));
+            }
         }
         foreach(var row in allRows) Rows.Add(row);
         OnPropertyChanged(nameof(HasError)); GraphChanged?.Invoke(this,EventArgs.Empty);

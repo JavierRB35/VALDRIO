@@ -239,6 +239,13 @@ public partial class App : System.Windows.Application
                             await window.RunAdjustmentChecks(captureDirectory, (QueuedModelEditorDialogs)modelDialogs);
                             Shutdown(0); return;
                         }
+                        if (e.Args.Contains("--allocation-layout-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("Layout smoke requires a disposable T12 demo.");
+                            await company.OpenPath(requestedPath);
+                            await window.RunAllocationLayoutChecks(captureDirectory, e.Args.Contains("--layout-baseline", StringComparer.Ordinal));
+                            Shutdown(0); return;
+                        }
                         if (e.Args.Contains("--cost-flow-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("Cost flow smoke requires persisted fixture.");
