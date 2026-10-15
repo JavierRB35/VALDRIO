@@ -1,6 +1,32 @@
+# Revisión local de T14 y reutilización de reglas — 15/10/2026
+
+Este apartado es posterior a los cortes históricos siguientes. T14 ya compila en Windows: se corrigen migración v11, validaciones físicas, importación, concurrencia y estado de edición. Se mejora la tabla y su calculadora con el sistema visual V1. Se implementa una primera entrega funcional RP-01 de adopción explícita desde Reparto primario, después de importar, con diagnóstico de compatibilidad, conflictos y auditoría.
+
+Validación local: solución sin errores/advertencias; regresión **714/714**; después, prueba adicional Excel y retoques WPF, suite específica **21/21**. Referencias v0.4 **39/39** y catálogo de mensajes ES/EN comprobado. Ningún workflow ejecutado. Fusión solicitada expresamente por el propietario; no equivale a cerrar toda la aceptación comercial de T14/RP-01 ni autoriza T15.
+
+Ver [informe de cambios, criterios y límites](docs/evidencias/t14-revision-local-20261015/README.md). Quedan la aceptación de comprensión con analista, la matriz completa DPI, la homologación de históricos económicos y las ampliaciones RP-01 detalladas en el informe. Las afirmaciones antiguas «no compilado» y «sin implementación RP-01» describen sus cortes anteriores.
+
+---
 ## T14 — desarrollo candidato ampliado a T14.1–T14.4, 15/10/2026
 
 El PR #55 en borrador incluye contratos y SQLite v11 con historia física inmutable, tabla WPF, métodos asistidos de capacidad normal (histórico revisado/calendario/declarado), importación física CSV/XLSX con previsualización y sustitución transaccional, y **selector de estudio interno de T14** que muestra proyecto, estudio y período, protege los cambios sin guardar y separa enero/febrero/marzo. Código aún **no compilado ni ejecutado en Windows**, con brechas de aceptación señaladas en [informe T14](docs/evidencias/t14-candidato-20261015/README.md). No fusionar como T14 terminada hasta ejecutar y corregir compilación, MSTest, migraciones y recorrido WPF. No se ejecuta GitHub Actions y no hay gasto autorizado.
+# Estado funcional contrastado — corte documental 15/10/2026
+
+**Priorizar este corte frente a las referencias históricas que siguen.** Código de referencia: `main@8b6c89e47d69d53bb5adad2fe0a2b215b4d68a95`. El [inventario de pantallas, comandos y flujos implementados](docs/revision/REALIDAD_FUNCIONAL_2026-10-15.md) contrasta el frontend WPF, ViewModels, servicios, pruebas y capturas Windows existentes. La [matriz de verificación para el manual](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md) indica explícitamente qué **no se ha probado interactivamente sobre ese SHA en esta auditoría**.
+
+**Disponible en el código de `main` del corte:** ocho pasos repartidos en tres fases; T12 de flujos, cálculo e historial de ejecuciones; importación, preparación de cuentas y ajustes reutilizables por análisis; primario y secundario recíproco. Hay evidencias previas Windows, pero no un nuevo pase WPF realizado durante este corte. **Fuera del `main` examinado:** T14 físico en PR #55 (borrador) y ampliaciones metodológicas/comerciales T15+. Ver también [README](README.md).
+
+**Convención de lectura de este archivo:** cada sección antigua conserva la verdad del SHA y fecha que ella misma indica; menciones a «T12 pendiente», «sin motor» o «candidata no fusionada» en apartados anteriores **no invalidan** la implementación integrada posterior. No convertir un resultado de pruebas previo en certificación automática del HEAD actual. Este ajuste es solo documental y no ejecuta GitHub Actions.
+
+---
+
+## PEND-RP-01 — Reutilización de repartos entre estudios (15/10/2026)
+
+**DESARROLLO OBLIGATORIO PENDIENTE, ANTES DE CONTINUAR T15.** El propietario solicita reutilizar, tras revisión y adopción explícitas, las claves/reglas compatibles de un estudio anterior cuando se crea el siguiente período. La asignación posterior de cuentas a claves ya adoptadas será automática y determinista. **Se mantiene el acceso actual a Primario con importaciones confirmadas, aunque existan nuevas cuentas o recursos pendientes en Recursos: no se crea ningún cierre ni puerta nueva en Recursos.** Las incidencias de cobertura se corrigen y bloquean únicamente el **cierre de Primario** cuando proceda; los nuevos auxiliares y rutas incompatibles se revisan en Secundario conforme a sus controles de cierre actuales. Debe cubrir cuentas incorporadas/eliminadas/renumeradas, nuevos centros/nodos/pools, modelos versionados, partes, unidades, agrupaciones, importes absolutos, cierres y trazabilidad, sin copiar cifras ni resultados históricos.
+
+**Contrato y matriz de escenarios:** [PEND-RP-01](docs/pendientes/PEND-RP-01_REUTILIZACION_REPARTOS_Y_PUERTAS_ENTRE_ESTUDIOS.md). Especificación pendiente de desarrollar y validar; **ninguna funcionalidad nueva se considera implementada**, no se fusiona ni se ejecutan Actions. La consolidación temporal entre estudios sigue siendo un asunto independiente **pendiente de decisión**.
+
+---
 
 ## Integración T13–T12 — aceptación integral completada (14/10/2026)
 
