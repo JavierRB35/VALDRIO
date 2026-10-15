@@ -42,7 +42,7 @@ Fuentes verificadas: `SqliteCompanyFileService.Studies.cs`, `SqliteCompanyFileSe
 
 ## 4. Matriz de casos y acción esperada
 
-| Cambio o situación al abrir febrero | Comprobación y comportamiento | Puerta que debe bloquear |
+| Cambio o situación al abrir febrero | Comprobación y comportamiento | Control existente aplicable |
 |---|---|---|
 | Misma empresa, modelo y reglas; cambian solo importes | Reutilizar claves y reglas **adoptadas**, resolver automáticamente cuentas existentes contra febrero y recalcular importes | Ninguna, si hay cobertura válida |
 | Cuenta nueva sin clasificación/partes/destino | Mostrar cuenta/parte pendiente en Recursos sin prohibir entrar a Primario; intentar cobertura según las reglas existentes y solicitar corrección solo si falta | Cierre de Primario si no hay cobertura válida; nunca entrada a Primario |
@@ -54,10 +54,10 @@ Fuentes verificadas: `SqliteCompanyFileService.Studies.cs`, `SqliteCompanyFileSe
 | Cuenta desdoblada, fusionada, renumerada o de otro plan contable | No presumir equivalencias; comparar códigos/identidades actuales y exigir mapeo expreso para configuraciones manuales que cambian | Cierre de Primario si falta cobertura o correspondencia |
 | Recursos nuevos por ajustes extracontables o por nuevas partes | No reaplicar ajustes previos ni trasladar IDs de parte; mostrar diagnóstico y permitir entrar a Primario para resolver nuevas partes | Cierre de Primario si faltan claves/destinos válidos |
 | Recursos con neto cero, importes negativos o suma de positivos/negativos igual a cero | Verificar cobertura por parte, incluida `Pending` y partes con neto cero; permitir resolución por regla compatible en Primario | Cierre de Primario solo ante hueco o descuadre |
-| Reparto manual vinculado a `PartId` de enero | No copiar ID ni asignación directa; propuesta sujeta a identificación comprobada de parte equivalente y revisión | Primario |
-| Asignación absoluta por importe y revisión de origen | **Nunca** copiar cantidades, límites ni referencia económica obsoleta; recalcular/introducir y justificar en febrero | Primario |
-| Clave porcentual sin cambios en modelo | Reutilizar el criterio aprobado y validar cobertura, destinos, suma 100 % y política de autorreparto | Primario/ Secundario si falla |
-| Clave por unidades/driver | No trasladar mediciones mensuales sin evidencia; revisar unidades, cantidades vigentes y suma de pesos | Primario/ Secundario si falla |
+| Reparto manual vinculado a `PartId` de enero | No copiar ID ni asignación directa; propuesta sujeta a identificación comprobada de parte equivalente y revisión | Cierre de Primario si no existe cobertura válida |
+| Asignación absoluta por importe y revisión de origen | **Nunca** copiar cantidades, límites ni referencia económica obsoleta; recalcular/introducir y justificar en febrero | Cierre de Primario si no se sustituye por reparto válido |
+| Clave porcentual sin cambios en modelo | Reutilizar el criterio aprobado y validar cobertura, destinos, suma 100 % y política de autorreparto | Cierre de Primario o Secundario si la clave falla |
+| Clave por unidades/driver | No trasladar mediciones mensuales sin evidencia; revisar unidades, cantidades vigentes y suma de pesos | Cierre de Primario o Secundario si la clave falla |
 | Cambio de prioridad, regla exacta o prefijo; empate | Previsualizar ganadora/colisiones; no escoger clave arbitrariamente | Cierre de Primario |
 | Centro/nodo/pool nuevo | Revisar modelo y correspondencias; no introducir automáticamente el nuevo nodo en una clave publicada. Mantener Primario accesible para adaptar la clave | Cierre de Primario o Secundario según la incidencia |
 | Centro/nodo/pool eliminado, desactivado o sustituido | No redistribuir porcentajes ni reasignar por nombre; destacar claves/rutas incompatibles y mantener accesible su reparación | Cierre de Primario o Secundario según cobertura |
@@ -75,7 +75,7 @@ Fuentes verificadas: `SqliteCompanyFileService.Studies.cs`, `SqliteCompanyFileSe
 
 - El usuario **elige** adoptar configuración de otro estudio. Una vez adoptadas válidamente las reglas en febrero, su **aplicación por cuenta es automática y determinista**; no confirmar una por una las coincidencias sin incidencia.
 - Previsualización con contadores: reutilizadas, pendientes, incompatibles, sin uso, sustituciones solicitadas y elementos omitidos. Cada incidencia incluye fuente/etapa/acción recomendada. Mostrar antes/después para diferencias económicas.
-- **No copiar estados de cierre:** nuevo estudio siempre debe acreditar por sí mismo la preparación, reparto y cierre. No copiar publicación T11/T12 ni revisión/hashes del origen.
+- **No copiar estados de cierre:** cada estudio debe acreditar por sí mismo los repartos y sus cierres actuales (Primario y Secundario), sin introducir un cierre de Recursos. No copiar publicación T11/T12 ni revisión/hashes del origen.
 - Guardado de la configuración de destino bajo revisión/versión propia y en una transacción con auditoría: origen, revisión y versión de claves/reglas, mapeos explícitos, usuario, fecha, elecciones, sustituciones y diagnósticos. No mutar el estudio origen.
 - Evitar reglas obsoletas activas que apunten a identidades inválidas. Conservarlas como referencias históricas/inactivas o propuestas, no como cobertura vigente.
 - Aplicación idempotente: reabrir o repetir una propuesta no duplica reglas ni líneas. Si febrero tiene reglas propias, no reemplazarlas silenciosamente. Controlar concurrencia y revisiones obsoletas.
