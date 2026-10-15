@@ -100,6 +100,11 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     private readonly CompanyFileSnapshot company;
     private readonly CultureInfo uiCulture, formatCulture;
     public CultureInfo NumericCulture => formatCulture;
+    public CultureInfo LanguageCulture => uiCulture;
+    public IReadOnlyList<UnitDefinition> Units => company.Units;
+    public ModelStructure Structure => models.ReadModels().Single(m =>
+        m.Structure.Id == study.SelectedModelVersionId &&
+        m.Status == ModelStatus.Published).Structure;
     private readonly UiTextCatalog texts;
     [ObservableProperty] private PhysicalActivityRow? selectedRow;
     [ObservableProperty] private string feedback = "";
