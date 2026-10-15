@@ -97,6 +97,24 @@ public partial class MainWindow
             Check(PhysicalActivityStep.IsEnabled ==
                 (main.Company?.WorkspaceIdle != false && main.Studies?.CanOpenPhysical == true),
                 "T14 entry honors the same readiness and study validation as its existing launch button");
+            physicalActivityDialogOpen = true;
+            try
+            {
+                UpdateWorkflow();
+                Check(AllocationPhase.IsExpanded && NavigationPhases.Count(phase => phase.IsExpanded) == 1 &&
+                    Equals(PhysicalActivityStep.Tag, "Active") &&
+                    PhysicalActivityStepMarker.Background is SolidColorBrush physicalBrush &&
+                    physicalBrush.Color == Colors.White &&
+                    !Equals(AllocationsStep.Tag, "Active"),
+                    "T14 dialog keeps a single highlighted active entry in the third phase");
+            }
+            finally
+            {
+                physicalActivityDialogOpen = false;
+                UpdateWorkflow();
+            }
+            Check(Equals(AllocationsStep.Tag, "Active") && PhysicalActivityStep.Tag is null,
+                "closing T14 restores the preceding navigation selection");
             var keyCount = AllocationPanel.KeyGrid.Items.Count;
             var selectedKey = AllocationPanel.KeyGrid.SelectedItem;
             Check(ContextDetails.Visibility == Visibility.Collapsed, "context starts compact without removing the full text");
