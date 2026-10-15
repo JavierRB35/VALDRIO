@@ -1,11 +1,3 @@
-## PEND-RP-01 — Reutilización de repartos entre estudios (15/10/2026)
-
-**DESARROLLO OBLIGATORIO PENDIENTE, ANTES DE CONTINUAR T15.** El propietario solicita reutilizar, tras revisión y adopción explícitas, las claves/reglas compatibles de un estudio anterior cuando se crea el siguiente período. La asignación posterior de cuentas a claves ya adoptadas será automática y determinista; cuentas nuevas sin destino bloquean la salida de Recursos, partidas preparadas pero sin clave bloquean el cierre de Primario y cambios de auxiliares/rutas bloquean Secundario. Debe cubrir cuentas incorporadas/eliminadas/renumeradas, nuevos centros/nodos/pools, modelos versionados, partes, unidades, agrupaciones, importes absolutos, cierres y trazabilidad, sin copiar cifras ni resultados históricos.
-
-**Contrato y matriz de escenarios:** [PEND-RP-01](docs/pendientes/PEND-RP-01_REUTILIZACION_REPARTOS_Y_PUERTAS_ENTRE_ESTUDIOS.md). Especificación pendiente de desarrollar y validar; **ninguna funcionalidad nueva se considera implementada**, no se fusiona ni se ejecutan Actions. La consolidación temporal entre estudios sigue siendo un asunto independiente **pendiente de decisión**.
-
----
-
 # Estado funcional contrastado — corte documental 15/10/2026
 
 **Priorizar este corte frente a las referencias históricas que siguen.** Código de referencia: `main@8b6c89e47d69d53bb5adad2fe0a2b215b4d68a95`. El [inventario de pantallas, comandos y flujos implementados](docs/revision/REALIDAD_FUNCIONAL_2026-10-15.md) contrasta el frontend WPF, ViewModels, servicios, pruebas y capturas Windows existentes. La [matriz de verificación para el manual](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md) indica explícitamente qué **no se ha probado interactivamente sobre ese SHA en esta auditoría**.
@@ -16,6 +8,13 @@
 
 ---
 
+## PEND-RP-01 — Reutilización de repartos entre estudios (15/10/2026)
+
+**DESARROLLO OBLIGATORIO PENDIENTE, ANTES DE CONTINUAR T15.** El propietario solicita reutilizar, tras revisión y adopción explícitas, las claves/reglas compatibles de un estudio anterior cuando se crea el siguiente período. La asignación posterior de cuentas a claves ya adoptadas será automática y determinista; cuentas nuevas sin destino bloquean la salida de Recursos, partidas preparadas pero sin clave bloquean el cierre de Primario y cambios de auxiliares/rutas bloquean Secundario. Debe cubrir cuentas incorporadas/eliminadas/renumeradas, nuevos centros/nodos/pools, modelos versionados, partes, unidades, agrupaciones, importes absolutos, cierres y trazabilidad, sin copiar cifras ni resultados históricos.
+
+**Contrato y matriz de escenarios:** [PEND-RP-01](docs/pendientes/PEND-RP-01_REUTILIZACION_REPARTOS_Y_PUERTAS_ENTRE_ESTUDIOS.md). Especificación pendiente de desarrollar y validar; **ninguna funcionalidad nueva se considera implementada**, no se fusiona ni se ejecutan Actions. La consolidación temporal entre estudios sigue siendo un asunto independiente **pendiente de decisión**.
+
+---
 
 ## Integración T13–T12 — aceptación integral completada (14/10/2026)
 
