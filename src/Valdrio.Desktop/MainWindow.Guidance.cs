@@ -132,6 +132,12 @@ public partial class MainWindow
         SecondaryStep.ToolTip = SecondaryStep.IsEnabled ? null : vm.Guide("NeedPrimaryClosedForSecondary");
         CostFlowStep.IsEnabled = hasAnalysis;
         CostFlowStep.ToolTip = hasAnalysis ? null : vm.Guide("NeedAnalysisForImportShort");
+        // T14 opens the existing physical-activity workspace. It is a modal
+        // operation, not an economic workflow step or a new persisted state.
+        PhysicalActivityStep.Content = vm.Studies?.PhysicalOpenLabel;
+        PhysicalActivityStep.IsEnabled = vm.Company?.WorkspaceIdle != false && vm.Studies?.CanOpenPhysical == true;
+        PhysicalActivityStep.ToolTip = PhysicalActivityStep.IsEnabled
+            ? null : vm.Guide("NeedSavedStudyForPhysical");
         SettingsStep.IsEnabled = true;
 
         ModelStep.ToolTip = hasProject ? null : vm.Guide("NeedProjectShort");
@@ -265,6 +271,14 @@ public partial class MainWindow
     private async void ChooseAllocations(object sender, RoutedEventArgs e) => await NavigateWorkflow(5);
     private async void ChooseSecondary(object sender, RoutedEventArgs e) => await NavigateWorkflow(7);
     private async void ChooseCostFlows(object sender, RoutedEventArgs e) => await NavigateWorkflow(8);
+    private void ChoosePhysicalActivity(object sender, RoutedEventArgs e)
+    {
+        if (viewModel?.Company?.WorkspaceIdle == false || viewModel?.Studies?.CanOpenPhysical != true) return;
+        // Reuse the same entry point as T05; preserve the user's current page,
+        // unsaved edits in other modules and the existing dialog guards.
+        StudyPanel.ShowPhysicalActivity();
+        UpdateWorkflow();
+    }
     private async void ChooseSettings(object sender, RoutedEventArgs e) => await NavigateWorkflow(6);
     private bool changingDistributionDetails;
     private async void OpenDistributionDetails(object sender, RoutedEventArgs e)
