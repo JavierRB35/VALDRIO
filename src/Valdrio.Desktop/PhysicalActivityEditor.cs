@@ -17,6 +17,8 @@ public sealed partial class PhysicalActivityRow : ObservableObject
     public required string Node { get; init; }
     public required string Unit { get; init; }
     [ObservableProperty] private string normalText = "";
+    [ObservableProperty] private string theoreticalText = "";
+    [ObservableProperty] private string practicalText = "";
     [ObservableProperty] private string realText = "";
     [ObservableProperty] private string normalSource = "";
     [ObservableProperty] private string realSource = "";
@@ -37,6 +39,8 @@ public sealed partial class PhysicalActivityRow : ObservableObject
         Version = data?.Version ?? 0;
         var available = data?.State != PhysicalObservationState.Annulled;
         NormalText = available ? data?.NormalQuantity?.ToString(culture) ?? "" : "";
+        TheoreticalText = available ? data?.TheoreticalQuantity?.ToString(culture) ?? "" : "";
+        PracticalText = available ? data?.PracticalQuantity?.ToString(culture) ?? "" : "";
         RealText = available ? data?.RealQuantity?.ToString(culture) ?? "" : "";
         NormalSource = available ? data?.NormalEvidence?.Source ?? "" : "";
         RealSource = available ? data?.RealEvidence?.Source ?? "" : "";
@@ -64,11 +68,14 @@ public sealed partial class PhysicalActivityRow : ObservableObject
 public sealed partial class PhysicalActivityEditor : ObservableObject
 {
     private readonly StudyDefinition study;
+    public StudyDefinition Study => study;
     private readonly IPhysicalActivityWorkspace activity;
+    public IPhysicalActivityWorkspace Activity => activity;
     private readonly IModelWorkspace models;
     private readonly IRunStore? runs;
     private readonly CompanyFileSnapshot company;
     private readonly CultureInfo uiCulture, formatCulture;
+    public CultureInfo NumericCulture => formatCulture;
     private readonly UiTextCatalog texts;
     [ObservableProperty] private PhysicalActivityRow? selectedRow;
     [ObservableProperty] private string feedback = "";
@@ -111,7 +118,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     public string CostLabel => Label("Activity.Cost");
     public string HistoryLabel => Label("Activity.History");
     public string StatusLabel => Label("Activity.Status");
-    private string Label(string key) => texts.Get(key, uiCulture);
+    public string Label(string key) => texts.Get(key, uiCulture);
 
     private decimal? Parse(string raw)
     {
@@ -170,7 +177,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
             var real = Parse(row.RealText);
             var command = new SavePhysicalObservation(study.CompanyId, study.Id, study.Revision, row.NodeId, row.PoolId,
                 row.Version, confirm ? PhysicalObservationState.Confirmed : PhysicalObservationState.Draft,
-                null, null, normal, real,
+                Parse(row.TheoreticalText), Parse(row.PracticalText), normal, real,
                 Evidence(normal, row.NormalQuality, row.NormalSource, row.NormalDescription),
                 Evidence(real, row.RealQuality, row.RealSource, row.RealDescription),
                 string.IsNullOrWhiteSpace(row.NormalZeroReason) ? null : row.NormalZeroReason.Trim(),
