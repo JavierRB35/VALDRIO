@@ -1,111 +1,69 @@
 # VALDRIO
 
-Aplicación Windows local para cálculo y gestión de costes, en construcción guiada por especificación v0.4 y evidencia verificable.
+**Aplicación local de escritorio para Windows (WPF/.NET 10)** orientada a proyectos de cálculo y gestión de costes. El archivo de trabajo es `.valdrio`; se conservan estructura, análisis, importaciones, preparación, repartos y ejecuciones según el estado/versión de cada proyecto.
 
-## Diseño de interfaz aprobado (obligatorio)
+> **Estado documental actualizado el 15/10/2026.** Esta portada describe la implementación inspeccionada en `main@8b6c89e47d69d53bb5adad2fe0a2b215b4d68a95`. «Existe en el código» no equivale a «ha sido aceptada interactivamente en esta revisión». Para comportamiento, pruebas y límites, consultar [inventario de la aplicación real](docs/revision/REALIDAD_FUNCIONAL_2026-10-15.md) y [matriz de aceptación Windows](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md).
 
-Todas las pantallas futuras y los rediseños deben seguir el [sistema visual V1 y referencia T08](docs/diseno/SISTEMA_VISUAL_VALDRIO_V1.md), aprobado el 08/10/2026, y el [plan de migración de todas las pantallas](docs/diseno/PLAN_MIGRACION_FRONTEND.md). Las reglas también figuran en [AGENTS.md](AGENTS.md) para quien edite XAML/XML.
+## Recorrido disponible en la aplicación
 
-V1 está implementada: tema global y navegación lateral sobre la integración funcional `5cf45b4`. [Implementación y evidencia local de V1](docs/evidencias/VISUAL_V1_2026-10-08.md). La adaptación específica de los módulos continúa en las fases V2–V6; no se considera completada por incorporar el tema.
+El menú real consta de **tres fases operativas desplegables** y ocho pasos (más Preferencias). Se avanza cuando se cumplen los requisitos de proyecto/análisis/importación/cierre:
 
-## Estado actual
+| Fase | Pasos de la interfaz |
+|---|---|
+| **Proyecto y estructura** | **1. Proyecto** · **2. Diseñar estructura** |
+| **Análisis y datos económicos** | **3. Periodo / análisis** · **4. Importar saldos** · **5. Preparar cuentas** |
+| **Repartos y cálculo** | **6. Reparto primario** · **7. Reparto secundario y cierre** · **8. Flujos y ejecuciones** |
+| Fuera del proceso | **Preferencias** (idioma, región, zona horaria y herramientas de desarrollo) |
 
-**T08 integrada en la base principal autorizada:** biblioteca de claves, versiones publicadas, reglas
-primarias/secundarias, cobertura y nombres de cuentas conservados desde CSV/XLSX.
-Acceso: **6. Claves y reglas**, o continuar desde **5. Preparar cuentas**.
-Formato actual v9 y snapshots v7; históricos legibles y actualización a copia.
-[T08 y validación](docs/tareas/T08.md). Promoción a main autorizada tras comprobar todas las ramas.
-[Consolidación](docs/evidencias/PROMOCION_T08_MAIN_2026-10-08.md).
+### Qué hace realmente cada etapa
 
-Los párrafos siguientes documentan el alcance previo T07.
+1. **Proyecto:** crear/abrir archivo de proyecto, abrir **copia** del ejemplo, copiar/restaurar/actualizar archivo y gestionar unidades de actividad.
+2. **Diseñar estructura:** centros, nodos, pools y unidades; borradores, validación, publicación y versiones de la estructura.
+3. **Periodo/análisis:** análisis por modelo, fechas, moneda y escenario; selección/reapertura, instantáneas, estados y revisión.
+4. **Importar saldos:** asistente CSV/XLSX, mapeo de cuentas/descripciones e importes (columna o Debe/Haber), interpretación, selección, agrupación, revisión y confirmación.
+5. **Preparar cuentas:** correcciones manuales en tabla, clasificación, partes/destinos, exclusiones, costes directos y reglas de ajustes extracontables **guardables y aplicables expresamente por análisis** (con vista previa, confirmación y reversión según estado).
+6. **Reparto primario:** biblioteca de claves versionadas, reglas por cuenta/prefijo, asignación y cobertura, composición, reparto, resultados explicativos y cierre/reapertura.
+7. **Reparto secundario y cierre:** claves para auxiliares, prestaciones recíprocas, diagnóstico de viabilidad, cálculo y resultados conciliados por principal; circulación bruta no aditiva y cierre/reapertura.
+8. **Flujos y ejecuciones (T12):** crear/publicar una ejecución de costes, consultar histórico vigente/anterior, gráficos por etapas y detalle de flujos y conciliaciones sin recalcular al consultar.
 
-T00–T06A y el recorrido guiado previo están integrados en la base de esta rama.
-**T07 implementada completa:** recursos por cuenta, ajustes firmados, clasificación
-contextual, partes y destinos, conservación por recurso, auditoría y guardado SQLite.
-Se reutiliza `codex/t07-resource-rules` y se conserva toda la funcionalidad T06/T06A.
+El **cierre primario/secundario** no es un cierre integral del período. El cálculo recíproco disponible no significa que existan ABC, TDABC ni selector de métodos. Los campos de «capacidad» que puedan figurar en estructuras/recursos **no implementan por sí mismos** tarifas u ociosidad.
 
-La aplicación guía Empresa → Estructura → Estudio → Importación → Recursos.
-En Recursos: seleccionar cuenta, aplicar ajustes si hacen falta, editar sus partes,
-revisar y **Guardar cuenta**. La pantalla muestra el archivo donde guarda. Los
-formularios intermedios son borradores; el resultado de guardar aparece explícitamente.
-Ayuda contextual con ratón y teclado, textos EN/ES y región independiente.
+## Estado de desarrollo y límites
 
-Formato de empresa v8; actualizar un archivo anterior crea una copia. Snapshots v6
-con lectura de los históricos v1–v5. Historial, reinicio y revaloración con tipos
-explícitos en Opciones avanzadas. [Alcance T07](docs/tareas/T07.md),
-[aceptación reproducible](docs/evidencias/T07_CIERRE_2026-10-07.md) y
-[estado detallado](ESTADO_PROYECTO.md).
+- **Integradas en el código de `main`:** bases T00–T11 (proyecto, estructura, importación, recursos, claves y repartos), ejecuciones persistidas/historial **T12**, ejemplos de verificación **T13** y editor de ajustes reutilizables. La existencia se ha comprobado sobre archivos de producción, no únicamente fichas de tareas.
+- **Verificación histórica:** constan pruebas y recorridos WPF Windows en [auditoría integral](docs/auditorias/2026-10-14/VALIDACION.md), [ergonomía visual](docs/auditorias/2026-10-14-visual/VALIDACION.md), [T12](docs/tareas/T12.md), [T13](docs/tareas/T13.md) y [reglas](docs/evidencias/2026-10-14-ajustes-reutilizables/INFORME.md). Sus resultados corresponden a **commits/escenarios documentados**, no son un pase nuevo del HEAD.
+- **En desarrollo, no disponible en `main` de este corte:** T14 (observaciones físicas y capacidad, [PR #55 en borrador](https://github.com/JavierRB35/VALDRIO/pull/55)). Tampoco se anuncian como disponibles T15+ (tarifas/absorción, producción y objetos, rentabilidad, escenarios, informes comerciales, presupuestos, ABC/TDABC).
+- **Pendiente para el futuro manual:** recorrido manual Windows sobre el binario final, mensajes exactos, casos negativos, resultados representativos, accesibilidad y escalado. Véase [matriz con estado por caso](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md).
 
-D04/D05/D07/D11 siguen siendo propuestas económicas. El cálculo de repartos,
-tarifas, capacidad y fases posteriores no forma parte de esta entrega.
+## Ejemplos de comprobación económica
 
-## Evidencia
+Se incluyen dos proyectos ficticios de aceptación, `Synthetic Projects/Service Company/` y `Synthetic Projects/Industrial Company/`, con resultados de referencia **17.500 EUR** y **36.000 EUR**, respectivamente. Los archivos `.valdrio` originales se conservan para probar reapertura/migración; no se deben modificar. Véase [T13](docs/tareas/T13.md) para expectativas independientes, signos, auxiliares recíprocos y ejecución histórica T12 sobre **copias generadas**.
 
-- [Cierre de auditoría A01–A06](docs/evidencias/AUDITORIA_CIERRE_2026-10-05.md)
-- [Evidencia T03](docs/evidencias/T03_2026-10-05.md)
-- [Evidencia T04](docs/evidencias/T04_2026-10-05.md)
-- [ADR de modelos y formato v2](docs/adr/ADR-0003-modelos-y-esquema-v2.md)
-- [Evidencia T05](docs/evidencias/T05_2026-10-05.md)
-- [ADR de estudios y formato v3](docs/adr/ADR-0004-estudios-y-snapshots-v3.md)
-- [Ficha T06](docs/tareas/T06.md) · [Evidencia T06](docs/evidencias/T06_2026-10-05.md) · [ADR-0005](docs/adr/ADR-0005-import-staging-profile-v1.md)
-- [Directrices de la siguiente fase T06](docs/directrices/T06_SIGUIENTE_FASE.md)
-- [Contrato técnico del archivo](docs/adr/ADR-0002-archivo-empresa.md)
+## Desarrollo y verificación local
 
-- [Estado del proyecto](ESTADO_PROYECTO.md)
-- [Decisiones D01-D12](docs/decisiones/DECISIONES_PENDIENTES.md)
-- [T02A](docs/tareas/T02A.md)
-- [Evidencia T02A subentrega 1](docs/evidencias/T02A_SUB1_2026-10-04.md)
-- [Evidencia T02A subentrega 2](docs/evidencias/T02A_SUB2_2026-10-04.md)
-- [Evidencia T02A subentrega 3](docs/evidencias/T02A_SUB3_2026-10-05.md)
-- [Evidencia R07](docs/evidencias/R07_2026-10-05.md)
-- [T02](docs/tareas/T02.md)
-- [Fuentes y huellas](docs/fuentes/FUENTES_DISPONIBLES.md)
-
-## Límites actuales
-
-Todavía no se declara implementado:
-
-- catálogo monetario completo de producto;
-- motor económico de repartos posterior.
-
-La internacionalización, precisión decimal, moneda y tiempo permanecen explícitos y desacoplados.
-
-## Probar el archivo de empresa
-
-En Windows, ejecutar Valdrio.Desktop y usar Crear archivo con nombre, moneda sugerida y una ruta nueva `.valdrio`. Guardar una unidad, crear copia, cerrar y volver a abrir. Restaurar pide un destino nuevo. El archivo activo se conserva si falla otra apertura. No utilizar una carpeta de red o con sincronización activa.
-
-Para reproducir los ejemplos sintéticos de CI: `Valdrio.Desktop.exe --capture-dir=<carpeta-de-evidencia>`; genera `company-file/interaction.json`, ejemplos SQLite y capturas. El artifact Windows es de desarrollo, todavía sin instalador/cifrado comercial ni motor económico completo.
-
-## Probar modelos y centros
-
-Abrir/crear archivo v3. Para un archivo v1/v2, usar **Actualizar archivo**, seleccionando origen y destino sin sobrescribir. Añadir unidades `lot` (batch, discreta) y `h` (time), centros PRENSA/MANT y un modelo con descripción. Aplicar nodos SETUP/lote y PROCESO/hora en PRENSA y un auxiliar MANT/hora. Guardar el borrador, validar y publicar. Duplicar para editar la siguiente versión; consultar el publicado conserva nombres y unidades históricos.
-
-El editor es estructural. Los estudios se describen a continuación; las políticas económicas y el cálculo completo siguen pendientes.
-
-## T05 — Estudios e instantáneas (cierre pendiente de CI)
-
-Los archivos actuales son v3. Actualiza los v1/v2 mediante **Actualizar archivo**, con destino nuevo. El original se conserva. En Estudios, actualiza la lista de modelos, selecciona un publicado, introduce nombre/periodo mediante calendario/moneda/escenario y crea el estudio. Guardar contexto aumenta su revisión; **Capturar instantánea** conserva sus datos y dos huellas. Selecciona fotos anteriores para consultar lo aplicado. Las preferencias de idioma/región/zona no alteran esas fotos.
-
-La captura registra contexto y explica qué falta; todavía no calcula costes. El runner puede verificar un receipt exportado:
-
-```sh
-dotnet run --project src/Valdrio.Runner -c Release -- --study-snapshot ruta/snapshot.json
-```
-
-Las correcciones B01/B02/G02 están incorporadas en T05. `64aac29f` fue verificado con 188/188; después G02 se amplió con manifest v2 y hashes recursivos y B01 añadió diez recorridos reales permanentes. Esos commits posteriores aún requieren ejecución .NET/Windows del HEAD final.
-
-[Directrices T06](docs/directrices/T06_SIGUIENTE_FASE.md): importación con perfiles/preview/confirmación y puerta D03 antes de una fuente real.
-
-El cierre y la integración de T05 esperan la verificación de Windows del HEAD final. Los últimos intentos de Actions terminaron sin pasos ni runner; el aviso de GitHub aportado el 5 de octubre confirma que la cuenta ha agotado sus minutos incluidos. [Auditoría de estado y pendientes](docs/evidencias/AUDITORIA_ESTADO_2026-10-05.md). No utilizar los checks de un commit anterior como cierre de esta corrección.
-
-## Verificación Windows independiente
-
-Desde un clon de la rama `t05/studies`, en Windows con Git, .NET SDK 10.0.401, Python 3 y PowerShell 7.3 o posterior, ejecutar
+Requisitos de ejecución: **Windows y .NET SDK 10.0.401** según [global.json](global.json); consulta las dependencias de [Valdrio.slnx](Valdrio.slnx). El frontend está en `src/Valdrio.Desktop`, el motor económico en `Application`/`Calculation`, la persistencia en `Infrastructure`, el modelo en `Domain` y las vistas de reporting en `Reporting`.
 
 ```powershell
-pwsh -File .github/scripts/Verify-Windows.ps1
+dotnet restore Valdrio.slnx
+dotnet build Valdrio.slnx -c Release --no-restore
+dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj -c Release --no-build --no-restore
+# Ejecución interactiva (Windows):
+dotnet run --project src/Valdrio.Desktop -c Release
 ```
 
-El script exige un árbol Git limpio, compila, ejecuta pruebas/guards/corpus/runners, publica el binario de desarrollo y recorre los botones WPF. Exige los 73 checks finales de estudios, 53 de modelos, 24 de archivo y 12 FX; comprueba las fechas visibles de cuatro regiones, ocho PNG y ambos manifests. Genera `artifacts/acceptance-build.json` ligado al commit y a los hashes de Desktop/Runner/tests/TRX; `-UseExistingBuild` solo es válido si ese manifest coincide. `artifacts/visual/verification.json` registra además esos hashes y vuelve a comprobar HEAD/limpieza al finalizar. Un directorio de evidencia ocupado se conserva; para repetir, indicar `-EvidenceDirectory artifacts/visual-nueva`. Un directorio de evidencia ocupado se conserva; para repetir, indicar `-EvidenceDirectory artifacts/visual-nueva`.
+La verificación más amplia y los escenarios WPF se describen en [Verify-Windows.ps1](.github/scripts/Verify-Windows.ps1) y [matriz de aceptación](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md). Puede necesitarse un directorio de evidencias nuevo y el árbol limpio; **no ejecutar tests con archivos reales del usuario**.
 
-La ejecución Windows y la inspección de los PNG aún están pendientes. Para reanudar CI cuando Actions vuelva a estar disponible, ejecutar el workflow sobre el HEAD final de `t05/studies`, con `verify_timezones=true`. Si el workflow de esa rama aún no aparece en Run workflow porque no está en main, enviar un único commit sin instrucción de omisión para activar el evento del PR. No reintentar mientras persista el bloqueo ni integrar T05 sin su evidencia final.
+### Política GitHub Actions
+
+**Objetivo: 0 USD; gasto sin autorización expresa: 0 USD; límite de seguridad absoluto: 20 USD.** El único workflow `windows-ci.yml` usa actualmente `workflow_dispatch` y un runner alojado Windows: no lo lanzar sin autorización. Priorizar PC Windows local o runner Windows self-hosted. Las modificaciones exclusivamente documentales no justifican compilaciones remotas. Esta actualización documental no ha lanzado workflows ni consumido GitHub Actions.
+
+## Documentación por finalidad
+
+- **Realidad funcional observable:** [inventario actual](docs/revision/REALIDAD_FUNCIONAL_2026-10-15.md) y [protocolo de validación del futuro manual](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md).
+- **Estado e historia del proyecto:** [ESTADO_PROYECTO.md](ESTADO_PROYECTO.md); sus capítulos antiguos son registros de fases pasadas, **no** una descripción vigente alternativa.
+- **Instrucciones para agentes/desarrollo:** [AGENTS.md](AGENTS.md) y [usabilidad](docs/directrices/USABILIDAD.md).
+- **Diseño vigente como directriz:** [sistema visual V1](docs/diseno/SISTEMA_VISUAL_VALDRIO_V1.md) y [plan de migración](docs/diseno/PLAN_MIGRACION_FRONTEND.md); el estilo aprobado no garantiza aceptación visual completa.
+- **Decisiones técnicas y trazabilidad:** [ADR](docs/adr), [fichas de tareas](docs/tareas), [evidencias fechadas](docs/evidencias), [auditorías](docs/auditorias).
+- **Visión de producto y contratos de referencia:** [especificación v0.4](specification/v0.4), [directrices T14](docs/directrices/T14_INTEGRACION_Y_HOJA_DE_RUTA.md).
+
+**Convención:** conservar los históricos de desarrollo como fuentes con fecha y SHA. La documentación de «cómo se usa hoy» debe seguir el inventario y el binario aceptado, no un `README` de T05/T07/T08 ni una maqueta futura.

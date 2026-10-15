@@ -1,3 +1,20 @@
+# Estado funcional contrastado — corte documental 15/10/2026
+
+**Priorizar este corte frente a las referencias históricas que siguen.** Código de referencia: `main@8b6c89e47d69d53bb5adad2fe0a2b215b4d68a95`. El [inventario de pantallas, comandos y flujos implementados](docs/revision/REALIDAD_FUNCIONAL_2026-10-15.md) contrasta el frontend WPF, ViewModels, servicios, pruebas y capturas Windows existentes. La [matriz de verificación para el manual](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md) indica explícitamente qué **no se ha probado interactivamente sobre ese SHA en esta auditoría**.
+
+**Disponible en el código de `main` del corte:** ocho pasos repartidos en tres fases; T12 de flujos, cálculo e historial de ejecuciones; importación, preparación de cuentas y ajustes reutilizables por análisis; primario y secundario recíproco. Hay evidencias previas Windows, pero no un nuevo pase WPF realizado durante este corte. **Fuera del `main` examinado:** T14 físico en PR #55 (borrador) y ampliaciones metodológicas/comerciales T15+. Ver también [README](README.md).
+
+**Convención de lectura de este archivo:** cada sección antigua conserva la verdad del SHA y fecha que ella misma indica; menciones a «T12 pendiente», «sin motor» o «candidata no fusionada» en apartados anteriores **no invalidan** la implementación integrada posterior. No convertir un resultado de pruebas previo en certificación automática del HEAD actual. Este ajuste es solo documental y no ejecuta GitHub Actions.
+
+---
+
+## PEND-RP-01 — Reutilización de repartos entre estudios (15/10/2026)
+
+**DESARROLLO OBLIGATORIO PENDIENTE, ANTES DE CONTINUAR T15.** El propietario solicita reutilizar, tras revisión y adopción explícitas, las claves/reglas compatibles de un estudio anterior cuando se crea el siguiente período. La asignación posterior de cuentas a claves ya adoptadas será automática y determinista. **Se mantiene el acceso actual a Primario con importaciones confirmadas, aunque existan nuevas cuentas o recursos pendientes en Recursos: no se crea ningún cierre ni puerta nueva en Recursos.** Las incidencias de cobertura se corrigen y bloquean únicamente el **cierre de Primario** cuando proceda; los nuevos auxiliares y rutas incompatibles se revisan en Secundario conforme a sus controles de cierre actuales. Debe cubrir cuentas incorporadas/eliminadas/renumeradas, nuevos centros/nodos/pools, modelos versionados, partes, unidades, agrupaciones, importes absolutos, cierres y trazabilidad, sin copiar cifras ni resultados históricos.
+
+**Contrato y matriz de escenarios:** [PEND-RP-01](docs/pendientes/PEND-RP-01_REUTILIZACION_REPARTOS_Y_PUERTAS_ENTRE_ESTUDIOS.md). Especificación pendiente de desarrollar y validar; **ninguna funcionalidad nueva se considera implementada**, no se fusiona ni se ejecutan Actions. La consolidación temporal entre estudios sigue siendo un asunto independiente **pendiente de decisión**.
+
+---
 
 ## Integración T13–T12 — aceptación integral completada (14/10/2026)
 
