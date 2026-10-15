@@ -1,17 +1,22 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.ComponentModel;
+using Valdrio.Domain;
 
 namespace Valdrio.Desktop;
 
 public partial class PhysicalActivityWindow : Window
 {
     private readonly PhysicalActivityEditor editor;
+    private bool suppressStudyChange;
 
     public PhysicalActivityWindow(StudyWorkspaceViewModel study)
     {
         InitializeComponent();
         editor = new PhysicalActivityEditor(study);
         DataContext = editor;
+        SetStudyChoice();
+        Closing += GuardUnsavedOnClose;
         NodeColumn.Header = editor.NodeLabel;
         UnitColumn.Header = editor.UnitLabel;
         NormalColumn.Header = editor.NormalLabel;
@@ -19,6 +24,55 @@ public partial class PhysicalActivityWindow : Window
         UtilizationColumn.Header = editor.UtilizationLabel;
         CostColumn.Header = editor.CostLabel;
         StatusColumn.Header = editor.StatusLabel;
+    }
+
+    private void SetStudyChoice()
+    {
+        suppressStudyChange = true;
+        try { StudySelector.SelectedItem = editor.CurrentStudyChoice; }
+        finally { suppressStudyChange = false; }
+    }
+
+    private void StudySelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (suppressStudyChange || editor is null || StudySelector.SelectedItem is not PhysicalStudyChoice choice)
+            return;
+        if (choice.Value.Id == editor.Study.Id) return;
+        CommitTableEdit();
+        if (editor.HasPendingEdits &&
+            MessageBox.Show(this, editor.UnsavedBody, editor.UnsavedTitle,
+                MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+        {
+            SetStudyChoice();
+            return;
+        }
+        try
+        {
+            editor.ChangeStudy(choice.Value.Id, discardPendingEdits: true);
+            SetStudyChoice();
+        }
+        catch (DomainRuleException error)
+        {
+            MessageBox.Show(this, editor.Label(error.Diagnostic.MessageKey), editor.Title,
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+            SetStudyChoice();
+        }
+        catch (Exception error)
+        {
+            System.Diagnostics.Trace.TraceError("T14 switch study: {0}", error);
+            MessageBox.Show(this, editor.Label("Activity.SwitchFailed"), editor.Title,
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+            SetStudyChoice();
+        }
+    }
+
+    private void GuardUnsavedOnClose(object? sender, CancelEventArgs e)
+    {
+        CommitTableEdit();
+        if (editor.HasPendingEdits &&
+            MessageBox.Show(this, editor.UnsavedBody, editor.UnsavedTitle,
+                MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+            e.Cancel = true;
     }
 
     private void CommitTableEdit()
