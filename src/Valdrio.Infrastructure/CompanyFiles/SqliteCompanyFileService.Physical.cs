@@ -174,38 +174,67 @@ public sealed partial class SqliteCompanyFileService
                 .OrderBy(r => r.PeriodStart.Value).ThenBy(r => r.PoolId));
         });
 
+        private PhysicalObservation InsertPhysical(PhysicalDbContext db, CompanyFileSnapshot file,
+            SavePhysicalObservation command)
+        {
+            Scope(command.CompanyId, file);
+            PhysicalActivityRules.Validate(command, file.PrecisionPolicy);
+            var study = Study(RequiredStudy(db, file.Id, command.StudyId));
+            if (study.State != StudyState.Open)
+                throw PhysicalActivityRules.Error("ACT_STUDY_CLOSED", "Activity.StudyClosed");
+            StudyRules.CheckRevision(command.ExpectedStudyRevision, study.Revision, study.Id);
+            var model = RequiredPublication(db, file.Id, study.SelectedModelVersionId);
+            var pool = model.Structure.Pools.SingleOrDefault(p => p.Id == command.PoolId);
+            var node = model.Structure.Nodes.SingleOrDefault(n => n.Id == command.NodeId &&
+                n.Role == NodeRole.Principal && n.IsActive);
+            if (pool is null || node is null || pool.NodeId != command.NodeId)
+                throw PhysicalActivityRules.Error("ACT_SCOPE_INVALID", "Activity.ScopeInvalid");
+
+            var before = Latest(db, file.Id, study, pool.Id);
+            if ((before?.Version ?? 0) != command.ExpectedPhysicalVersion)
+                throw PhysicalActivityRules.Error("ACT_CONFLICT", "Activity.Conflict");
+            PhysicalActivityRules.EnsureCorrectionReason(before, command.CorrectionReason);
+            var after = new PhysicalObservation(new EntityId(Guid.NewGuid()), file.Id, study.Id,
+                study.SelectedModelVersionId, command.NodeId, pool.Id, pool.DriverUnitId,
+                study.PeriodStart, study.PeriodEnd, checked((before?.Version ?? 0) + 1),
+                command.State, command.TheoreticalQuantity, command.PracticalQuantity,
+                command.NormalQuantity, command.RealQuantity, command.NormalEvidence, command.RealEvidence,
+                command.NormalZeroReason, command.ExceptionReason, command.CorrectionReason,
+                command.Actor, owner.time.GetUtcNow());
+            db.PhysicalObservations.Add(ToPhysicalRow(after));
+            Audit<PhysicalObservation>(db, file, "PhysicalObservation", after.Id, 0,
+                "RecordPhysicalVersion", command.Actor, before, after);
+            return after;
+        }
+
         public PhysicalObservation Save(SavePhysicalObservation command, CancellationToken cancellationToken = default) =>
+            PhysicalWorkspace(true, cancellationToken, (db, file) => InsertPhysical(db, file, command));
+
+        public IReadOnlyList<PhysicalObservation> ApplyImport(ApplyPhysicalImport command,
+            CancellationToken cancellationToken = default) =>
             PhysicalWorkspace(true, cancellationToken, (db, file) =>
             {
-                Scope(command.CompanyId, file);
-                PhysicalActivityRules.Validate(command, file.PrecisionPolicy);
-                var study = Study(RequiredStudy(db, file.Id, command.StudyId));
-                if (study.State != StudyState.Open)
-                    throw PhysicalActivityRules.Error("ACT_STUDY_CLOSED", "Activity.StudyClosed");
-                StudyRules.CheckRevision(command.ExpectedStudyRevision, study.Revision, study.Id);
-                var model = RequiredPublication(db, file.Id, study.SelectedModelVersionId);
-                var pool = model.Structure.Pools.SingleOrDefault(p => p.Id == command.PoolId);
-                var node = model.Structure.Nodes.SingleOrDefault(n => n.Id == command.NodeId &&
-                    n.Role == NodeRole.Principal && n.IsActive);
-                if (pool is null || node is null || pool.NodeId != command.NodeId)
-                    throw PhysicalActivityRules.Error("ACT_SCOPE_INVALID", "Activity.ScopeInvalid");
-
-                var before = Latest(db, file.Id, study, pool.Id);
-                if ((before?.Version ?? 0) != command.ExpectedPhysicalVersion)
-                    throw PhysicalActivityRules.Error("ACT_CONFLICT", "Activity.Conflict");
-                PhysicalActivityRules.EnsureCorrectionReason(before, command.CorrectionReason);
-                // A new observation may follow an annulment. Its new version is never a revival
-                // of the invalidated value, and must pass normal validation and confirmation rules.
-                var after = new PhysicalObservation(new EntityId(Guid.NewGuid()), file.Id, study.Id,
-                    study.SelectedModelVersionId, command.NodeId, pool.Id, pool.DriverUnitId,
-                    study.PeriodStart, study.PeriodEnd, checked((before?.Version ?? 0) + 1),
-                    command.State, command.TheoreticalQuantity, command.PracticalQuantity,
-                    command.NormalQuantity, command.RealQuantity, command.NormalEvidence, command.RealEvidence,
-                    command.NormalZeroReason, command.ExceptionReason, command.CorrectionReason, command.Actor, owner.time.GetUtcNow());
-                db.PhysicalObservations.Add(ToPhysicalRow(after));
-                Audit<PhysicalObservation>(db, file, "PhysicalObservation", after.Id, 0, "RecordPhysicalVersion",
-                    command.Actor, before, after);
-                return after;
+                ArgumentNullException.ThrowIfNull(command);
+                ArgumentNullException.ThrowIfNull(command.Operations);
+                if (command.Operations.Count == 0 || command.Operations.Count > 10_000 ||
+                    command.Operations.Any(x => x is null || !Enum.IsDefined(x.Choice)))
+                    throw PhysicalActivityRules.Error("ACT_IMPORT_INVALID", "Activity.ImportInvalid");
+                var replace = command.Operations.Where(x => x.Choice == PhysicalImportChoice.Replace)
+                    .Select(x => x.Draft).ToArray();
+                if (replace.Length == 0)
+                    return FrozenList.Copy(Array.Empty<PhysicalObservation>());
+                if (replace.Any(x => x is null || x.State != PhysicalObservationState.Draft) ||
+                    replace.Select(x => (x.CompanyId, x.StudyId, x.PoolId)).Distinct().Count() != replace.Length)
+                    throw PhysicalActivityRules.Error("ACT_IMPORT_DUPLICATE", "Activity.ImportDuplicate");
+                var updates = new List<PhysicalObservation>(replace.Length);
+                foreach (var entry in replace)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    updates.Add(InsertPhysical(db, file, entry));
+                }
+                // PhysicalWorkspace issues exactly one SaveChanges and one SQLite COMMIT.
+                // Any conflict rolls back *every* imported version and audit envelope.
+                return FrozenList.Copy(updates);
             });
 
         public PhysicalObservation Annul(AnnulPhysicalObservation command, CancellationToken cancellationToken = default) =>
