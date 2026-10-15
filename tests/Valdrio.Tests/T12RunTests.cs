@@ -69,6 +69,28 @@ public sealed partial class T06ImportConfirmationTests
         Assert.AreEqual(json,CanonicalSnapshotJson.Serialize(reopened.Runs.ReadRuns(company,study).Runs.Single(r=>r.Id==runId)));
     }
     [TestMethod]
+    public async Task T12_CenterBalanceUsesPostedStocksWithoutAddingReciprocalCirculation()
+    {
+        using var file = Baseline();
+        var w = await T12Fixture(file);
+        var study = w.Resources.Study;
+        var run = file.Runs.PrepareRun(new(study.CompanyId, study.Id, study.Revision, Id(), "test"));
+        Assert.AreEqual(0, Valdrio.Reporting.RunCostBalanceProjector.Build(run).Count);
+        var completed = file.Runs.PublishRun(run.Id, CalculationRunService.Calculate(run));
+        var before = CanonicalSnapshotJson.Serialize(completed);
+        var rows = Valdrio.Reporting.RunCostBalanceProjector.Build(completed);
+        Assert.AreEqual(3, rows.Count);
+        var principal = rows.Single(r => r.Role == NodeRole.Principal);
+        Assert.AreEqual(2660m, principal.Primary);
+        Assert.AreEqual(3840m, principal.SecondaryNet);
+        Assert.AreEqual(6500m, principal.Final);
+        Assert.IsTrue(rows.Where(r => r.Role == NodeRole.Auxiliary).All(r => r.Final == 0m && r.SecondaryNet == -r.Primary));
+        Assert.AreEqual(0m, rows.Sum(r => r.SecondaryNet));
+        Assert.AreEqual(6500m, rows.Sum(r => r.Final));
+        Assert.AreEqual(before, CanonicalSnapshotJson.Serialize(completed));
+        Assert.AreEqual(0, Valdrio.Reporting.RunCostBalanceProjector.Build(completed with { Status = CalculationRunStatus.Failed }).Count);
+    }
+    [TestMethod]
     public async Task T12_RevisionChangeWhileCalculatingPublishesHistoryOnly()
     {
         using var file=Baseline();var w=await T12Fixture(file);var s=w.Resources.Study;

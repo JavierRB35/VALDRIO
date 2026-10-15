@@ -1566,7 +1566,6 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Run.Execution" xml:space="preserve"><value>Historial de ejecuciones</value></data>
   <data name="Run.PrimaryGraph" xml:space="preserve"><value>Reparto primario · cuentas → centros</value></data>
   <data name="Run.SecondaryGraph" xml:space="preserve"><value>Reparto secundario y costes finales</value></data>
-  <data name="Run.GraphTraceHelp" xml:space="preserve"><value>Al elegir una casilla se iluminan sus conexiones anteriores y posteriores en ambos gráficos; cada línea muestra importes y, cuando existen, porcentajes. Los flujos recíprocos son brutos, no importes finales atribuibles a una cuenta. Consulta el detalle para importes exactos y trazabilidad por recurso.</value></data>
   <data name="Run.GrossGraphHelp" xml:space="preserve"><value>Las flechas entre auxiliares muestran movimientos brutos internos, que no se suman al coste final. Los porcentajes son las participaciones guardadas en cada transferencia.</value></data>
   <data name="Run.GrossAmount" xml:space="preserve"><value>Coste bruto</value></data>
   <data name="Run.NoGraphData" xml:space="preserve"><value>Esta ejecución todavía no tiene datos para mostrar el gráfico.</value></data>
@@ -1616,4 +1615,21 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.CostFlows" xml:space="preserve"><value>8. Flujos y ejecuciones</value></data>
   <data name="Run.Available" xml:space="preserve"><value>{0} + {1} recibidos = {2}</value></data>
   <data name="Run.PanGraph" xml:space="preserve"><value>Desplazar el gráfico horizontalmente</value></data>
+  <data name="Run.GraphTraceHelp" xml:space="preserve"><value>Selecciona un nodo o una conexión para seguir su recorrido. Las conexiones se pueden recorrer con Tab y seleccionar con Intro o Espacio. Activa todos los importes para ver sus etiquetas; el detalle conserva los valores exactos.</value></data>
+  <data name="Run.ReportTitle" xml:space="preserve"><value>Resultado del reparto de costes</value></data>
+  <data name="Run.CenterBalances" xml:space="preserve"><value>Coste acumulado por centro</value></data>
+  <data name="Run.NodeBalances" xml:space="preserve"><value>Desglose por nodo y trazabilidad</value></data>
+  <data name="Run.Center" xml:space="preserve"><value>Centro físico</value></data>
+  <data name="Run.Node" xml:space="preserve"><value>Centro / nodo</value></data>
+  <data name="Run.Role" xml:space="preserve"><value>Función</value></data>
+  <data name="Run.PrimaryBalance" xml:space="preserve"><value>Recibido del primario</value></data>
+  <data name="Run.SecondaryNet" xml:space="preserve"><value>Secundario neto (+/−)</value></data>
+  <data name="Run.FinalBalance" xml:space="preserve"><value>Coste final en centros</value></data>
+  <data name="Run.Balanced" xml:space="preserve"><value>Sin diferencias</value></data>
+  <data name="Run.Unbalanced" xml:space="preserve"><value>Revisar diferencias</value></data>
+  <data name="Run.BalanceEmpty" xml:space="preserve"><value>No hay un resultado completo publicado para esta ejecución. Consulta su estado y los diagnósticos.</value></data>
+  <data name="Run.BalanceHelp" xml:space="preserve"><value>Primario + secundario neto = coste final. El neto representa lo recibido menos lo cedido, incluidos los ajustes del resultado publicado; no es la circulación bruta. Los centros agrupan sus nodos sin duplicar costes.</value></data>
+  <data name="Run.BalanceTraceHelp" xml:space="preserve"><value>Selecciona un nodo para consultar sus asignaciones y destacar su recorrido en los gráficos. Un auxiliar liquidado tiene coste final cero; su coste ya está incluido en los principales.</value></data>
+  <data name="Run.BalancePrecision" xml:space="preserve"><value>Resumen visual a dos decimales. El detalle y la conciliación conservan la precisión del importe publicado. Estas columnas describen etapas: no deben sumarse entre sí.</value></data>
+  <data name="Run.ShowAllFlowLabels" xml:space="preserve"><value>Mostrar todos los importes sobre las conexiones</value></data>
 </root>

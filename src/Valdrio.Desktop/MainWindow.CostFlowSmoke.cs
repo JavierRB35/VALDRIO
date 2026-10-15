@@ -23,6 +23,10 @@ public partial class MainWindow
             Check(flows.Arrows.Count(a=>a.Internal)==2,"reciprocal arrows "+language);
             Check(flows.Nodes.Single(n=>n.Stage==3).Amount=="6500 EUR","final 6500 "+language);
             Check(flows.CurrentState==flows["Current"],"current revision "+language);
+            Check(flows.CenterBalances.Sum(r=>r.FinalValue)==6500m && flows.NodeBalances.Sum(r=>r.SecondaryNetValue)==0m,
+                "centre summary conserves final cost without reciprocal double counting "+language);
+            Check(flows.NodeBalances.All(r=>r.PrimaryValue+r.SecondaryNetValue==r.FinalValue),"node bridge reconciles "+language);
+            Check(flows.ReconciliationState==flows["Balanced"],"resource reconciliation state "+language);
             var original=CanonicalSnapshotJson.Serialize(flows.SelectedRun!.Run);
             var originalId=flows.SelectedRun.Run.Id;var originalCount=flows.Runs.Count;
             Check(flows.CalculateCommand.CanExecute(null),"explicit calculation enabled "+language);
@@ -46,6 +50,9 @@ public partial class MainWindow
                   n.DisplayAmount is { } label && Regex.IsMatch(label, @"[.,][0-9]{2} EUR$")),
                   "node money uses exactly two decimals "+language);
             flows.ClearSelectionCommand.Execute(null);
+            flows.SelectedBalance=flows.NodeBalances.First(r=>r.FinalValue==6500m);
+            Check(flows.Rows.Any(r=>r.Stage==flows["FinalStage"]) && flows.HasHighlightedRoute,"summary selects final trace "+language);
+            flows.SelectedBalance=null; flows.ClearSelectionCommand.Execute(null);
             Check(!flows.HasHighlightedRoute,"clearing detail removes route highlight "+language);
             RootScrollViewer.ScrollToTop();await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
             VisualEvidenceCapture.Capture(this,Path.Combine(directory,language+"-screen.png"));
@@ -68,6 +75,24 @@ public partial class MainWindow
             VisualEvidenceCapture.Capture(this,Path.Combine(directory,language+"-narrow.png"));
             var first=CostFlowsPanel.PrimaryGraphCanvas.Children.OfType<Button>().First();
             Check(first.Focus()&&first.IsKeyboardFocusWithin,"graph keyboard focus "+language);
+            flows.ShowAllFlowLabels=true;
+            Check(CostFlowsPanel.PrimaryGraphCanvas.Children.OfType<Button>().Count() > flows.Nodes.Count(n=>n.Stage is 0 or 1),
+                "all transfer labels remain available "+language);
+            flows.ShowAllFlowLabels=false;
+            var edgePath=CostFlowsPanel.PrimaryGraphCanvas.Children.OfType<System.Windows.Shapes.Path>().First();
+            Check(edgePath.Focus(),"connection accepts keyboard focus "+language);
+            edgePath.RaiseEvent(new System.Windows.Input.KeyEventArgs(System.Windows.Input.Keyboard.PrimaryDevice,
+                PresentationSource.FromVisual(edgePath)!,0,System.Windows.Input.Key.Enter) { RoutedEvent=System.Windows.Input.Keyboard.KeyDownEvent });
+            Check(flows.Rows.Count==1 && flows.HasHighlightedRoute,"enter selects connection "+language);
+            flows.ClearSelectionCommand.Execute(null);
+            foreach(var scale in new[]{1.25,1.5,2.0})
+            {
+                CostFlowsPanel.LayoutTransform=new System.Windows.Media.ScaleTransform(scale,scale);
+                await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);UpdateLayout();
+                Check(CostFlowsPanel.CenterBalanceGrid.ActualWidth>0 && CostFlowsPanel.DetailsGrid.IsVisible,
+                    "scaled layout remains accessible "+scale+" "+language);
+            }
+            CostFlowsPanel.LayoutTransform=System.Windows.Media.Transform.Identity;
         }
         File.WriteAllText(Path.Combine(directory,"checks.json"),JsonSerializer.Serialize(new{Status="passed",Checks=checks},new JsonSerializerOptions{WriteIndented=true}));
     }
@@ -88,6 +113,10 @@ public partial class MainWindow
                 flows.SelectedRun?.Run.Output?.Secondary?.Facts.Sum(f=>f.PostedAmount.Amount)==expectedTotal,
                 "T13 final total and principal nodes "+language);
             Check(flows.CurrentState==flows["Current"],"current revision "+language);
+            Check(flows.CenterBalances.Sum(r=>r.FinalValue)==expectedTotal && flows.NodeBalances.Sum(r=>r.SecondaryNetValue)==0m,
+                "centre summary conserves final cost without reciprocal double counting "+language);
+            Check(flows.NodeBalances.All(r=>r.PrimaryValue+r.SecondaryNetValue==r.FinalValue),"node bridge reconciles "+language);
+            Check(flows.ReconciliationState==flows["Balanced"],"resource reconciliation state "+language);
             var original=CanonicalSnapshotJson.Serialize(flows.SelectedRun!.Run);
             var originalId=flows.SelectedRun.Run.Id;var originalCount=flows.Runs.Count;
             Check(flows.CalculateCommand.CanExecute(null),"explicit calculation enabled "+language);
