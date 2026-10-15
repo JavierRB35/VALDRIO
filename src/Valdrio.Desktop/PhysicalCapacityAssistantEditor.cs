@@ -14,6 +14,7 @@ public sealed partial class PhysicalHistoricalChoice : ObservableObject
 {
     public required PhysicalObservation Observation { get; init; }
     public required string Label { get; init; }
+    [ObservableProperty] private bool reviewed;
     [ObservableProperty] private bool include;
     [ObservableProperty] private bool exceptional;
     [ObservableProperty] private string reviewReason = "";
@@ -79,6 +80,7 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
     public string FactorReasonLabel => L("Activity.Calendar.FactorReason");
     public string HistoryHelp => L("Activity.History.Help");
     public string ReviewLabel => L("Activity.History.Exceptional");
+    public string ReviewedLabel => L("Activity.History.Reviewed");
     public string IncludeLabel => L("Activity.History.Include");
     public string SourceLabel => L("Activity.Source");
     public string QualityLabel => L("Activity.Quality");
@@ -126,8 +128,9 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
             }
             case PhysicalCapacityMethod.Historical:
             {
-                var chosen = Historical.Where(p => p.Include || p.Exceptional).ToArray();
-                if (chosen.Length == 0 || chosen.Any(p => p.Exceptional && string.IsNullOrWhiteSpace(p.ReviewReason)))
+                var chosen = Historical.ToArray();
+                if (chosen.Length == 0 || chosen.Any(p => !p.Reviewed ||
+                    ((!p.Include || p.Exceptional) && string.IsNullOrWhiteSpace(p.ReviewReason))))
                     throw PhysicalActivityRules.Error("ACT_HISTORY_INVALID", "Activity.HistoryInvalid");
                 var periods = chosen.Select(p => new PhysicalHistoryPeriod(
                     p.Observation.PeriodStart, p.Observation.PeriodEnd, p.Observation.RealQuantity!.Value,
