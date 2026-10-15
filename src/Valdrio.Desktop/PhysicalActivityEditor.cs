@@ -154,10 +154,38 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
             throw new InvalidOperationException("Pending T14 edits must be resolved first.");
         var next = studyWorkspace.ReadStudies().Single(s => s.Id == studyId &&
             s.CompanyId == company.Id);
-        study = next;
-        IsReadOnly = !companyWritable || study.State == StudyState.Closed;
-        RefreshStudyChoices();
-        Reload();
+        if (next.Id == study.Id) return;
+
+        // Do not discard the current rows on an invalid target or failed read.
+        // The UI confirms potential loss before calling this method, but a failed
+        // navigation must still restore the user's original values and selection.
+        var original = study;
+        var previousReadOnly = IsReadOnly;
+        var originalRows = Rows.ToArray();
+        var originalSelection = SelectedRow;
+        try
+        {
+            study = next;
+            IsReadOnly = !companyWritable || study.State == StudyState.Closed;
+            Reload();
+            RefreshStudyChoices();
+        }
+        catch
+        {
+            study = original;
+            IsReadOnly = previousReadOnly;
+            Rows.Clear();
+            foreach (var row in originalRows) Rows.Add(row);
+            SelectedRow = originalSelection;
+            RefreshStudyChoices();
+            NotifyStudyContext();
+            throw;
+        }
+        NotifyStudyContext();
+    }
+
+    private void NotifyStudyContext()
+    {
         OnPropertyChanged(nameof(ProjectName));
         OnPropertyChanged(nameof(StudyName));
         OnPropertyChanged(nameof(StudyPeriod));
