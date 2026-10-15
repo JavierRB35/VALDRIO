@@ -88,6 +88,18 @@ public partial class PhysicalActivityWindow : Window
             new PhysicalCapacityAssistantWindow(editor) { Owner = this }.ShowDialog();
     }
 
+    private void OpenPhysicalImport(object sender, RoutedEventArgs e)
+    {
+        CommitTableEdit();
+        if (editor.HasPendingEdits)
+        {
+            MessageBox.Show(this, editor.OtherRowsPendingLabel, editor.UnsavedTitle,
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+        new PhysicalImportWindow(editor) { Owner = this }.ShowDialog();
+    }
+
     private void SaveDraft(object sender, RoutedEventArgs e)
     {
         CommitTableEdit();
