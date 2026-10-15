@@ -14,7 +14,7 @@ public partial class MainWindow
     {
         0 or 1 => 0,
         2 or 3 or 4 => 1,
-        5 or 7 or 8 => 2,
+        5 or 7 or 8 or 9 => 2,
         _ => -1
     };
 
@@ -46,6 +46,7 @@ public partial class MainWindow
     }
 
     private int workflowStep;
+    private bool physicalActivityDialogOpen;
     private readonly List<INotifyPropertyChanged> workflowSources = [];
     private void InitializeGuidance()
     {
@@ -81,7 +82,7 @@ public partial class MainWindow
         ProjectPhase.Header = vm.Guide("PhaseProjectStructure");
         AnalysisPhase.Header = vm.Guide("PhaseAnalysisData");
         AllocationPhase.Header = vm.Guide("PhaseAllocations");
-        ShowNavigationPhase(workflowStep);
+        ShowNavigationPhase(physicalActivityDialogOpen ? 9 : workflowStep);
         var keys = new[] { "Company", "Model", "Study", "Import", "Resources", "Allocations", "Settings", "SecondaryAllocations", "CostFlows" };
         Button[] buttons = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, AllocationsStep, SettingsStep, SecondaryStep, CostFlowStep];
         for (var i = 0; i < buttons.Length; i++)
@@ -93,7 +94,7 @@ public partial class MainWindow
                 label[1] == '.' && label[2] == ' ')
                 label = label[3..];
             buttons[i].Content = label;
-            buttons[i].Tag = i == workflowStep ? "Active" : null;
+            buttons[i].Tag = !physicalActivityDialogOpen && i == workflowStep ? "Active" : null;
             // Do not set a local FontWeight on phase buttons: it would
             // override the lightweight active-state trigger in their style.
             if (i == 6)
@@ -105,7 +106,7 @@ public partial class MainWindow
         int[] markerSteps = [0, 1, 2, 3, 4, 5, 7, 8];
         for (var i = 0; i < markers.Length; i++)
         {
-            var active = markerSteps[i] == workflowStep;
+            var active = !physicalActivityDialogOpen && markerSteps[i] == workflowStep;
             markers[i].Background = active
                 ? System.Windows.Media.Brushes.White
                 : System.Windows.Media.Brushes.Transparent;
@@ -138,6 +139,13 @@ public partial class MainWindow
         PhysicalActivityStep.IsEnabled = vm.Company?.WorkspaceIdle != false && vm.Studies?.CanOpenPhysical == true;
         PhysicalActivityStep.ToolTip = PhysicalActivityStep.IsEnabled
             ? null : vm.Guide("NeedSavedStudyForPhysical");
+        PhysicalActivityStep.Tag = physicalActivityDialogOpen ? "Active" : null;
+        PhysicalActivityStepMarker.Background = physicalActivityDialogOpen
+            ? System.Windows.Media.Brushes.White : System.Windows.Media.Brushes.Transparent;
+        PhysicalActivityStepMarker.Opacity = physicalActivityDialogOpen ? 1d : 0.7d;
+        if (PhysicalActivityStepMarker.Child is TextBlock activityNumber)
+            activityNumber.Foreground = physicalActivityDialogOpen
+                ? Sidebar.Background : System.Windows.Media.Brushes.White;
         SettingsStep.IsEnabled = true;
 
         ModelStep.ToolTip = hasProject ? null : vm.Guide("NeedProjectShort");
@@ -276,8 +284,17 @@ public partial class MainWindow
         if (viewModel?.Company?.WorkspaceIdle == false || viewModel?.Studies?.CanOpenPhysical != true) return;
         // Reuse the same entry point as T05; preserve the user's current page,
         // unsaved edits in other modules and the existing dialog guards.
-        StudyPanel.ShowPhysicalActivity();
-        UpdateWorkflow();
+        physicalActivityDialogOpen = true;
+        try
+        {
+            UpdateWorkflow();
+            StudyPanel.ShowPhysicalActivity();
+        }
+        finally
+        {
+            physicalActivityDialogOpen = false;
+            UpdateWorkflow();
+        }
     }
     private async void ChooseSettings(object sender, RoutedEventArgs e) => await NavigateWorkflow(6);
     private bool changingDistributionDetails;
