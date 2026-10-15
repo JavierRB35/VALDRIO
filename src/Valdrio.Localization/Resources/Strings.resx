@@ -1493,7 +1493,8 @@ Difference to distribute: {7}</value></data>
   <data name="ActivityUnit.cycle" xml:space="preserve"><value>Cycle</value></data>
   <data name="Guide.PhaseProjectStructure" xml:space="preserve"><value>Project and structure</value></data>
   <data name="Guide.PhaseAnalysisData" xml:space="preserve"><value>Analysis and economic data</value></data>
-  <data name="Guide.PhaseAllocations" xml:space="preserve"><value>Allocations and calculation</value></data>
+  <data name="Guide.PhaseAllocations" xml:space="preserve"><value>Allocations and capacity</value></data>
+  <data name="Guide.NeedSavedStudyForPhysical" xml:space="preserve"><value>Select a saved study, finish pending edits, and wait for loading to complete before opening Activity and capacities.</value></data>
   <data name="Guide.ShowContext" xml:space="preserve"><value>Details</value></data>
   <data name="Guide.HideContext" xml:space="preserve"><value>Hide details</value></data>
   <data name="Guide.CompactTables" xml:space="preserve"><value>Compact tables</value></data>
