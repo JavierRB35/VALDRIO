@@ -8,6 +8,13 @@ using Valdrio.Localization;
 namespace Valdrio.Desktop;
 
 public sealed record PhysicalQualityOption(PhysicalEvidenceQuality Value, string Label);
+public sealed record PhysicalStudyChoice(StudyDefinition Value, string Label);
+
+internal sealed record PhysicalRowInputs(
+    string Normal, string Real, string Theoretical, string Practical,
+    string NormalSource, string RealSource, string NormalDescription, string RealDescription,
+    PhysicalEvidenceQuality NormalQuality, PhysicalEvidenceQuality RealQuality,
+    string NormalZeroReason, string ExceptionReason, string CorrectionReason);
 
 // Presentation-only row. Numeric input remains text until parsed with the explicit user's format culture.
 public sealed partial class PhysicalActivityRow : ObservableObject
@@ -33,6 +40,12 @@ public sealed partial class PhysicalActivityRow : ObservableObject
     [ObservableProperty] private string utilization = "";
     public required string Cost { get; init; }
     public long Version { get; set; }
+    private PhysicalRowInputs? savedInputs;
+    private PhysicalRowInputs Inputs() => new(
+        NormalText, RealText, TheoreticalText, PracticalText,
+        NormalSource, RealSource, NormalDescription, RealDescription,
+        NormalQuality, RealQuality, NormalZeroReason, ExceptionReason, CorrectionReason);
+    public bool HasChanges => savedInputs is not null && !Equals(savedInputs, Inputs());
 
     public void ReadFrom(PhysicalObservation? data, CultureInfo culture, string pending, string undefined, string annulled, string draft, string confirmed)
     {
@@ -61,14 +74,25 @@ public sealed partial class PhysicalActivityRow : ObservableObject
         Utilization = data?.State == PhysicalObservationState.Annulled || data?.NormalQuantity is null ||
             data?.RealQuantity is null ? pending :
             data.UtilizationPercent is decimal percentage ? percentage.ToString("0.##", culture) + " %" : undefined;
+        savedInputs = Inputs();
     }
 }
 
 // The form holds no independent cost calculation. T12 is read only via IRunStore.
 public sealed partial class PhysicalActivityEditor : ObservableObject
 {
-    private readonly StudyDefinition study;
+    private StudyDefinition study;
+    private readonly IStudyWorkspace studyWorkspace;
+    private readonly bool companyWritable;
     public StudyDefinition Study => study;
+    public string ProjectName => company.Name;
+    public string StudyName => study.Name;
+    public string StudyPeriod => study.PeriodStart.Value.ToString("d", formatCulture) +
+        " – " + study.PeriodEnd.Value.ToString("d", formatCulture);
+    public bool HasPendingEdits => Rows.Any(r => r.HasChanges);
+    public ObservableCollection<PhysicalStudyChoice> StudyChoices { get; } = [];
+    public PhysicalStudyChoice? CurrentStudyChoice =>
+        StudyChoices.FirstOrDefault(x => x.Value.Id == study.Id);
     private readonly IPhysicalActivityWorkspace activity;
     public IPhysicalActivityWorkspace Activity => activity;
     private readonly IModelWorkspace models;
@@ -83,13 +107,16 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     public PhysicalActivityEditor(StudyWorkspaceViewModel host)
     {
         study = host.Current ?? throw new InvalidOperationException("Select a saved study first.");
+        studyWorkspace = host.PhysicalStudies ?? throw new InvalidOperationException("Studies unavailable.");
+        companyWritable = host.PhysicalCompanyWritable;
         activity = host.ActivePhysicalActivity ?? throw new InvalidOperationException("Physical store unavailable.");
         models = host.PhysicalModels ?? throw new InvalidOperationException("Published model unavailable.");
         runs = host.PhysicalRuns;
         company = host.PhysicalCompany ?? throw new InvalidOperationException("Company unavailable.");
         uiCulture = host.PhysicalUiCulture; formatCulture = host.PhysicalFormatCulture;
         texts = new UiTextCatalog();
-        IsReadOnly = !host.PhysicalWritable;
+        RefreshStudyChoices();
+        IsReadOnly = !companyWritable || study.State == StudyState.Closed;
         QualityOptions = Enum.GetValues<PhysicalEvidenceQuality>()
             .Select(q => new PhysicalQualityOption(q, Label("Activity.Quality." + q))).ToArray();
         Reload();
@@ -97,8 +124,42 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
 
     public ObservableCollection<PhysicalActivityRow> Rows { get; } = [];
     public IReadOnlyList<PhysicalQualityOption> QualityOptions { get; }
-    public bool IsReadOnly { get; }
+    public bool IsReadOnly { get; private set; }
     public bool IsWritable => !IsReadOnly;
+    public string ProjectLabel => Label("Activity.Project");
+    public string StudyLabel => Label("Activity.Study");
+    public string PeriodLabel => Label("Activity.Period");
+    public string UnsavedTitle => Label("Activity.UnsavedTitle");
+    public string UnsavedBody => Label("Activity.UnsavedBody");
+    public void RefreshStudyChoices()
+    {
+        StudyChoices.Clear();
+        foreach (var value in studyWorkspace.ReadStudies().Where(s => s.CompanyId == company.Id)
+            .OrderBy(s => s.PeriodStart.Value).ThenBy(s => s.Name))
+        {
+            StudyChoices.Add(new(value, value.Name + " · " +
+                value.PeriodStart.Value.ToString("d", formatCulture) + " – " +
+                value.PeriodEnd.Value.ToString("d", formatCulture)));
+        }
+    }
+    // The caller must explicitly resolve pending edits before switching.
+    public void ChangeStudy(EntityId studyId)
+    {
+        if (HasPendingEdits)
+            throw new InvalidOperationException("Pending T14 edits must be resolved first.");
+        var next = studyWorkspace.ReadStudies().Single(s => s.Id == studyId &&
+            s.CompanyId == company.Id);
+        study = next;
+        IsReadOnly = !companyWritable || study.State == StudyState.Closed;
+        RefreshStudyChoices();
+        Reload();
+        OnPropertyChanged(nameof(ProjectName));
+        OnPropertyChanged(nameof(StudyName));
+        OnPropertyChanged(nameof(StudyPeriod));
+        OnPropertyChanged(nameof(CurrentStudyChoice));
+        OnPropertyChanged(nameof(IsReadOnly));
+        OnPropertyChanged(nameof(IsWritable));
+    }
     public string Title => Label("Activity.Title");
     public string Help => Label("Activity.Help");
     public string SourceLabel => Label("Activity.Source");
