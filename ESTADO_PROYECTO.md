@@ -1,3 +1,13 @@
+# Estado funcional contrastado — corte documental 15/10/2026
+
+**Priorizar este corte frente a las referencias históricas que siguen.** Código de referencia: `main@8b6c89e47d69d53bb5adad2fe0a2b215b4d68a95`. El [inventario de pantallas, comandos y flujos implementados](docs/revision/REALIDAD_FUNCIONAL_2026-10-15.md) contrasta el frontend WPF, ViewModels, servicios, pruebas y capturas Windows existentes. La [matriz de verificación para el manual](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md) indica explícitamente qué **no se ha probado interactivamente sobre ese SHA en esta auditoría**.
+
+**Disponible en el código de `main` del corte:** ocho pasos repartidos en tres fases; T12 de flujos, cálculo e historial de ejecuciones; importación, preparación de cuentas y ajustes reutilizables por análisis; primario y secundario recíproco. Hay evidencias previas Windows, pero no un nuevo pase WPF realizado durante este corte. **Fuera del `main` examinado:** T14 físico en PR #55 (borrador) y ampliaciones metodológicas/comerciales T15+. Ver también [README](README.md).
+
+**Convención de lectura de este archivo:** cada sección antigua conserva la verdad del SHA y fecha que ella misma indica; menciones a «T12 pendiente», «sin motor» o «candidata no fusionada» en apartados anteriores **no invalidan** la implementación integrada posterior. No convertir un resultado de pruebas previo en certificación automática del HEAD actual. Este ajuste es solo documental y no ejecuta GitHub Actions.
+
+---
+
 
 ## Integración T13–T12 — aceptación integral completada (14/10/2026)
 
