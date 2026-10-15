@@ -1667,4 +1667,54 @@ Difference to distribute: {7}</value></data>
   <data name="Activity.State.Draft" xml:space="preserve"><value>Draft</value></data>
   <data name="Activity.State.Confirmed" xml:space="preserve"><value>Confirmed</value></data>
   <data name="Activity.State.Annulled" xml:space="preserve"><value>Annulled</value></data>
+  <data name="Activity.Project" xml:space="preserve"><value>Project</value></data>
+  <data name="Activity.Study" xml:space="preserve"><value>Study</value></data>
+  <data name="Activity.Period" xml:space="preserve"><value>Period</value></data>
+  <data name="Activity.UnsavedTitle" xml:space="preserve"><value>Unsaved physical observations</value></data>
+  <data name="Activity.UnsavedBody" xml:space="preserve"><value>There are unsaved changes in T14. Discard them and switch studies or close? Choose No to stay and save your work.</value></data>
+  <data name="Activity.OtherRowsPending" xml:space="preserve"><value>Other rows have unsaved changes. Save or review each row before reloading this table.</value></data>
+  <data name="Activity.SwitchFailed" xml:space="preserve"><value>The study could not be opened. Your saved records have not been modified.</value></data>
+  <data name="Activity.Method.Calendar" xml:space="preserve"><value>Operating calendar</value></data>
+  <data name="Activity.Method.Historical" xml:space="preserve"><value>Historical representative activity</value></data>
+  <data name="Activity.Method.Declared" xml:space="preserve"><value>Declared normal capacity</value></data>
+  <data name="Activity.Calendar.Days" xml:space="preserve"><value>Operating days in the period</value></data>
+  <data name="Activity.Calendar.Shifts" xml:space="preserve"><value>Shifts per day</value></data>
+  <data name="Activity.Calendar.Hours" xml:space="preserve"><value>Hours per shift</value></data>
+  <data name="Activity.Calendar.Resources" xml:space="preserve"><value>Equivalent resources (comparable)</value></data>
+  <data name="Activity.Calendar.Stoppages" xml:space="preserve"><value>Planned stoppage hours</value></data>
+  <data name="Activity.Calendar.Factor" xml:space="preserve"><value>Normal operating factor (0 to 1)</value></data>
+  <data name="Activity.Calendar.FactorReason" xml:space="preserve"><value>Source or explanation of the chosen method</value></data>
+  <data name="Activity.History.Help" xml:space="preserve"><value>Select comparable historical periods. Excluded anomalous periods require a written reason; nothing is excluded automatically.</value></data>
+  <data name="Activity.History.Exceptional" xml:space="preserve"><value>Flag anomaly or explain an exclusion</value></data>
+  <data name="Activity.History.Include" xml:space="preserve"><value>Include</value></data>
+  <data name="Activity.Preview" xml:space="preserve"><value>Preview</value></data>
+  <data name="Activity.Adopt" xml:space="preserve"><value>Adopt this proposed capacity</value></data>
+  <data name="Activity.Advanced" xml:space="preserve"><value>Additional capacities (optional)</value></data>
+  <data name="Activity.Theoretical" xml:space="preserve"><value>Theoretical capacity</value></data>
+  <data name="Activity.Practical" xml:space="preserve"><value>Practical capacity</value></data>
+  <data name="Activity.Import.Title" xml:space="preserve"><value>Import physical hours — CSV / XLSX</value></data>
+  <data name="Activity.Import.Help" xml:space="preserve"><value>Preview source rows and choose which rows to replace. No figures will be summed automatically; imported data remain drafts until confirmed.</value></data>
+  <data name="Activity.Import.Browse" xml:space="preserve"><value>Choose file</value></data>
+  <data name="Activity.Import.Sheet" xml:space="preserve"><value>Worksheet</value></data>
+  <data name="Activity.Import.Delimiter" xml:space="preserve"><value>Separator</value></data>
+  <data name="Activity.Import.Apply" xml:space="preserve"><value>Import selected drafts</value></data>
+  <data name="Activity.Import.Choose" xml:space="preserve"><value>Replace</value></data>
+  <data name="Activity.Import.Warning" xml:space="preserve"><value>Review</value></data>
+  <data name="Activity.Import.Existing" xml:space="preserve"><value>Existing value</value></data>
+  <data name="Activity.Import.Version" xml:space="preserve"><value>Version</value></data>
+  <data name="Activity.Import.NoExisting" xml:space="preserve"><value>No data</value></data>
+  <data name="Activity.Import.Partial" xml:space="preserve"><value>The row's period differs from the study period; review manually.</value></data>
+  <data name="Activity.Import.Duplicate" xml:space="preserve"><value>Multiple rows refer to this pool/period; choose only one.</value></data>
+  <data name="Activity.Import.Invalid" xml:space="preserve"><value>The file could not be read as an applicable physical-data source.</value></data>
+  <data name="Activity.Import.Summary" xml:space="preserve"><value>{0} source rows; {1} eligible for replacement.</value></data>
+  <data name="Activity.Import.Applied" xml:space="preserve"><value>{0} physical rows were saved as drafts.</value></data>
+  <data name="Activity.ImportHeader" xml:space="preserve"><value>Missing or duplicated column headers. Required: node, unit, period_start, period_end and normal or real.</value></data>
+  <data name="Activity.ImportNumber" xml:space="preserve"><value>Invalid physical quantity in an imported row.</value></data>
+  <data name="Activity.ImportNode" xml:space="preserve"><value>Unknown principal node in the selected study model.</value></data>
+  <data name="Activity.ImportUnit" xml:space="preserve"><value>Unit does not match this pool.</value></data>
+  <data name="Activity.ImportPeriod" xml:space="preserve"><value>Invalid date range in physical source.</value></data>
+  <data name="Activity.ImportEmpty" xml:space="preserve"><value>Both physical quantities are missing.</value></data>
+  <data name="Activity.ImportSource" xml:space="preserve"><value>Source provenance exceeds permitted length.</value></data>
+  <data name="Activity.ImportInvalid" xml:space="preserve"><value>Review source rows and replace choices.</value></data>
+  <data name="Activity.ImportDuplicate" xml:space="preserve"><value>Cannot import multiple replacement rows for one pool.</value></data>
 </root>
