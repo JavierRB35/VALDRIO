@@ -8,6 +8,7 @@ namespace Valdrio.Desktop;
 
 // The assistant owns proposals, never persisted observations. Adoption populates the grid cell.
 public enum PhysicalCapacityMethod { Calendar, Historical, Declared }
+public sealed record PhysicalCapacityMethodOption(PhysicalCapacityMethod Value, string Label);
 
 public sealed partial class PhysicalHistoricalChoice : ObservableObject
 {
@@ -56,11 +57,16 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
     }
 
     public ObservableCollection<PhysicalHistoricalChoice> Historical { get; } = [];
+    public IReadOnlyList<PhysicalCapacityMethodOption> Methods =>
+    [new(PhysicalCapacityMethod.Calendar, CalendarLabel),
+     new(PhysicalCapacityMethod.Historical, HistoryLabel),
+     new(PhysicalCapacityMethod.Declared, DeclaredLabel)];
     public bool Adopted { get; private set; }
     public bool CalendarVisible => Method == PhysicalCapacityMethod.Calendar;
     public bool HistoryVisible => Method == PhysicalCapacityMethod.Historical;
     public bool DeclaredVisible => Method == PhysicalCapacityMethod.Declared;
     public string Title => L("Activity.Method");
+    public string NormalLabel => L("Activity.Normal");
     public string CalendarLabel => L("Activity.Method.Calendar");
     public string HistoryLabel => L("Activity.Method.Historical");
     public string DeclaredLabel => L("Activity.Method.Declared");
