@@ -20,6 +20,10 @@
     <PackageReference Include="CommunityToolkit.Mvvm" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="../../src/Valdrio.Desktop/PhysicalActivityEditor.cs" Link="Desktop/PhysicalActivityEditor.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/AllocationReuseEditor.cs" Link="Desktop/AllocationReuseEditor.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/PhysicalCapacityAssistantEditor.cs" Link="Desktop/PhysicalCapacityAssistantEditor.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/PhysicalImportEditor.cs" Link="Desktop/PhysicalImportEditor.cs" />
     <Compile Include="../../src/Valdrio.Desktop/CompanyFileViewModel.cs" Link="Desktop/CompanyFileViewModel.cs" />
     <Compile Include="../../src/Valdrio.Desktop/CompanyFileDialogs.cs" Link="Desktop/CompanyFileDialogs.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ModelWorkspaceViewModel.StudyNodes.cs" Link="Desktop/ModelWorkspaceViewModel.StudyNodes.cs" />

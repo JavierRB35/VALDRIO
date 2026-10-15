@@ -300,7 +300,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private void RuleEdited() { if (loading) return; ruleDirty = true; RefreshEditor(); }
     private void RefreshEditor()
     {
-        foreach (var property in new[] { nameof(IsDirty), nameof(HasUnappliedRule), nameof(KeyState), nameof(KeyDeleteHelp), nameof(CanDeleteSelectedKey), nameof(CanEditConfiguration),
+        foreach (var property in new[] { nameof(CanReuse), nameof(IsDirty), nameof(HasUnappliedRule), nameof(KeyState), nameof(KeyDeleteHelp), nameof(CanDeleteSelectedKey), nameof(CanEditConfiguration),
             nameof(CanAssignCoverage), nameof(CanShowCoverageEditor), nameof(CanEditClassification), nameof(CanEditKey), nameof(CanEditComposition), nameof(CanEditWeights), nameof(IsPercentage), nameof(IsDriver), nameof(IsSecondary),
             nameof(IsExact), nameof(IsPrefix), nameof(KeyNameMissing), nameof(KeyValidationHasError), nameof(Total), nameof(PrimaryAbsoluteTotal), nameof(Validation) }) OnPropertyChanged(property);
         Commands();
@@ -346,6 +346,16 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         if (!force && workspace?.Resources.Study.Id == current.Id && workspace.Resources.Study.Revision == current.Revision && path == company.ActivePath) return;
         if (IsDirty) { statusKey = "PendingBody"; Refresh(); return; }
         await Run(async () => { workspace = await Task.Run(() => port.ReadAllocations(current.CompanyId, current.Id)); path = company.ActivePath; LoadKey(null); ClearRule(); Rebuild(); });
+    }
+    public string ReuseLabel => texts.Get("Reuse.Title", CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag));
+    public bool CanReuse => CanEdit && !IsDirty;
+    public AllocationReuseEditor? CreateReuseEditor() => !CanReuse || workspace is null ? null :
+        new(company.ActiveAllocations!, company.ActiveStudies!, workspace.Resources.Study,
+            CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag));
+    public async Task RefreshAfterReuse(AllocationChangeReceipt receipt)
+    {
+        await studies.ApplyResourceReceiptAsync(receipt.ConfirmedStudy);
+        await EnterAsync(true);
     }
     private SaveAllocationKey BuildKey(bool publish)
     {

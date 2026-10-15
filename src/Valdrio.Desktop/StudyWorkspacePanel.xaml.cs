@@ -18,6 +18,15 @@ public partial class StudyWorkspacePanel : UserControl
             ActionStatus.BringIntoView();
         };
     }
+    private void OpenPhysicalActivity(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is StudyWorkspaceViewModel { CanOpenPhysical: true } vm)
+        {
+            var window = new PhysicalActivityWindow(vm) { Owner = Window.GetWindow(this) };
+            window.ShowDialog();
+        }
+    }
+
     private async void GoToModels(object sender, RoutedEventArgs e)
     {
         if (Window.GetWindow(this) is MainWindow main)

@@ -4,6 +4,12 @@
 
 Este documento complementa [T14](../tareas/T14.md), la [directriz de capacidad normal asistida](T14_CAPACIDAD_NORMAL_ASISTIDA.md), la [ficha canónica T14 v0.4](../../specification/v0.4/tareas/T14.md) y CM08. **No altera la especificación canónica ni aprueba D04**. En caso de discrepancia metodológica, registrar una decisión explícita antes de desarrollar; no inferir una política económica.
 
+## Requisito UX añadido (15/10/2026): selector multiestudio propio de T14
+
+El propietario solicita visualizar en la cabecera de T14 el nombre del **proyecto**, el **estudio** y las fechas de su **período**, y elegir directamente otro estudio desde un desplegable en T14, sin regresar a T05. La navegación debe mantener **completamente separados** los valores físicos de cada estudio y período, respetar estudios cerrados en solo lectura y advertir antes de descartar cualquier cambio local no guardado. No se copiará enero a febrero/marzo ni se adoptarán capacidades heredadas automáticamente. Es una decisión funcional complementaria a las 16 decisiones técnicas y **no cambia** el tratamiento económico D04/T15.
+
+La rama `feat/t14-physical-observations-20261015` implementa la cabecera, selector y pruebas de aislamiento físico mensual como candidata pendiente de validación WPF en Windows.
+
 ## 1. Acuerdos funcionales cerrados
 
 1. **T07 → T14.** Centralizar toda **nueva captura de capacidad física** (teórica, práctica, normal y actividad real) en T14. T07 conserva clasificación económica, comportamiento fijo/variable, capa, tratamiento de capacidad (None / AssessAtPool / PeriodCost), asociación del propietario al pool y destinos. **Decisión adicional aprobada: opción A.** Si hay capacidades físicas antiguas de T07, T14 las mostrará como **referencias heredadas pendientes de revisión**, con su origen y contexto. El usuario podrá adoptar expresamente las comparables o introducir otras nuevas. Nunca se sumarán, trasladarán o sobrescribirán automáticamente; los originales permanecen conservados. La ausencia de datos antiguos no implica cero. El editor avanzado reutilizado en Repartos/T07 no debe seguir siendo una segunda entrada de cantidades físicas nuevas.

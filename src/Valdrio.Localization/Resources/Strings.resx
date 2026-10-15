@@ -1615,6 +1615,145 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.CostFlows" xml:space="preserve"><value>8. Cost flows and executions</value></data>
   <data name="Run.Available" xml:space="preserve"><value>{0} + {1} received = {2}</value></data>
   <data name="Run.PanGraph" xml:space="preserve"><value>Move diagram horizontally</value></data>
+  <data name="Activity.EvidenceRequired" xml:space="preserve"><value>Identify both a source and the evidence quality before confirming.</value></data>
+  <data name="Activity.EvidenceTooLong" xml:space="preserve"><value>The source description is too long. Shorten it without losing its provenance.</value></data>
+  <data name="Activity.InputInvalid" xml:space="preserve"><value>Review the entered physical data and the recorded author.</value></data>
+  <data name="Activity.NegativeQuantity" xml:space="preserve"><value>Physical quantities cannot be negative.</value></data>
+  <data name="Activity.CapacityOrder" xml:space="preserve"><value>Practical capacity cannot exceed theoretical capacity.</value></data>
+  <data name="Activity.Incomplete" xml:space="preserve"><value>Enter valid normal capacity and actual activity to confirm this node.</value></data>
+  <data name="Activity.ZeroNormalReason" xml:space="preserve"><value>Explain why normal capacity is zero.</value></data>
+  <data name="Activity.ExceptionReason" xml:space="preserve"><value>Review and explain activity exceeding the normal reference.</value></data>
+  <data name="Activity.CorrectionReason" xml:space="preserve"><value>Explain why a previously confirmed observation must be corrected.</value></data>
+  <data name="Activity.CalendarInvalid" xml:space="preserve"><value>Check the operating days, shifts, resources, stoppages and justified normal factor.</value></data>
+  <data name="Activity.HistoryInvalid" xml:space="preserve"><value>Select historical periods and explain every excluded observation.</value></data>
+  <data name="Activity.HistoryNotComparable" xml:space="preserve"><value>The selected periods are not comparable. Use equal durations or review normalization.</value></data>
+  <data name="Activity.StudyClosed" xml:space="preserve"><value>Reopen the study explicitly before modifying physical observations.</value></data>
+  <data name="Activity.ScopeInvalid" xml:space="preserve"><value>The selected principal node and pool do not belong to the current published model.</value></data>
+  <data name="Activity.Conflict" xml:space="preserve"><value>These physical data have changed. Refresh and review before saving again.</value></data>
+  <data name="Activity.Annulled" xml:space="preserve"><value>This observation was annulled and cannot be changed. Review its history.</value></data>
+  <data name="Activity.AnnulReason" xml:space="preserve"><value>Explain why this observation must be annulled.</value></data>
+  <data name="Activity.Quality.Recorded" xml:space="preserve"><value>Supported by records</value></data>
+  <data name="Activity.Quality.Declared" xml:space="preserve"><value>Declared by a responsible person</value></data>
+  <data name="Activity.Quality.Calculated" xml:space="preserve"><value>Calculated using a justified method</value></data>
+  <data name="Activity.UtilizationUndefined" xml:space="preserve"><value>Utilization not calculable: zero normal capacity</value></data>
+  <data name="Activity.OverNormal" xml:space="preserve"><value>Actual activity exceeds normal capacity. Review its source.</value></data>
+  <data name="Activity.ZeroException" xml:space="preserve"><value>Actual work was recorded despite zero normal capacity.</value></data>
+  <data name="Activity.Title" xml:space="preserve"><value>Activity and capacities</value></data>
+  <data name="Activity.Open" xml:space="preserve"><value>Activity and capacities</value></data>
+  <data name="Activity.Help" xml:space="preserve"><value>Enter normal capacity and actual activity for the study period. Confirm only after checking their sources.</value></data>
+  <data name="Activity.Normal" xml:space="preserve"><value>Normal capacity</value></data>
+  <data name="Activity.Real" xml:space="preserve"><value>Actual activity</value></data>
+  <data name="Activity.Utilization" xml:space="preserve"><value>Utilization</value></data>
+  <data name="Activity.Source" xml:space="preserve"><value>Source</value></data>
+  <data name="Activity.Quality" xml:space="preserve"><value>Quality</value></data>
+  <data name="Activity.Exception" xml:space="preserve"><value>Exception explanation</value></data>
+  <data name="Activity.ZeroReason" xml:space="preserve"><value>Zero normal explanation</value></data>
+  <data name="Activity.Correction" xml:space="preserve"><value>Correction reason</value></data>
+  <data name="Activity.SaveDraft" xml:space="preserve"><value>Save draft</value></data>
+  <data name="Activity.Confirm" xml:space="preserve"><value>Confirm row</value></data>
+  <data name="Activity.Annul" xml:space="preserve"><value>Annul row</value></data>
+  <data name="Activity.Cancel" xml:space="preserve"><value>Close</value></data>
+  <data name="Activity.Pending" xml:space="preserve"><value>Pending physical data</value></data>
+  <data name="Activity.AnnulledRow" xml:space="preserve"><value>Observation annulled</value></data>
+  <data name="Activity.Node" xml:space="preserve"><value>Node / activity</value></data>
+  <data name="Activity.Unit" xml:space="preserve"><value>Unit</value></data>
+  <data name="Activity.Cost" xml:space="preserve"><value>Published cost</value></data>
+  <data name="Activity.CostUnavailable" xml:space="preserve"><value>No current published cost</value></data>
+  <data name="Activity.Method" xml:space="preserve"><value>How to calculate normal capacity</value></data>
+  <data name="Activity.History" xml:space="preserve"><value>View observation history</value></data>
+  <data name="Activity.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Activity.SaveFailed" xml:space="preserve"><value>The physical observation could not be saved. Review the file and try again.</value></data>
+  <data name="Activity.State.Draft" xml:space="preserve"><value>Draft</value></data>
+  <data name="Activity.State.Confirmed" xml:space="preserve"><value>Confirmed</value></data>
+  <data name="Activity.State.Annulled" xml:space="preserve"><value>Annulled</value></data>
+  <data name="Activity.Project" xml:space="preserve"><value>Project</value></data>
+  <data name="Activity.Study" xml:space="preserve"><value>Study</value></data>
+  <data name="Activity.Period" xml:space="preserve"><value>Period</value></data>
+  <data name="Activity.UnsavedTitle" xml:space="preserve"><value>Unsaved physical observations</value></data>
+  <data name="Activity.UnsavedBody" xml:space="preserve"><value>There are unsaved activity changes. Discard them and switch studies or close? Choose No to stay and save your work.</value></data>
+  <data name="Activity.OtherRowsPending" xml:space="preserve"><value>Other rows have unsaved changes. Save or review each row before reloading this table.</value></data>
+  <data name="Activity.SwitchFailed" xml:space="preserve"><value>The study could not be opened. Your saved records have not been modified.</value></data>
+  <data name="Activity.Method.Calendar" xml:space="preserve"><value>Operating calendar</value></data>
+  <data name="Activity.Method.Historical" xml:space="preserve"><value>Historical representative activity</value></data>
+  <data name="Activity.Method.Declared" xml:space="preserve"><value>Declared normal capacity</value></data>
+  <data name="Activity.Calendar.Days" xml:space="preserve"><value>Operating days in the period</value></data>
+  <data name="Activity.Calendar.Shifts" xml:space="preserve"><value>Shifts per day</value></data>
+  <data name="Activity.Calendar.Hours" xml:space="preserve"><value>Hours per shift</value></data>
+  <data name="Activity.Calendar.Resources" xml:space="preserve"><value>Equivalent resources (comparable)</value></data>
+  <data name="Activity.Calendar.Stoppages" xml:space="preserve"><value>Planned stoppage hours</value></data>
+  <data name="Activity.Calendar.Factor" xml:space="preserve"><value>Normal operating factor (0 to 1)</value></data>
+  <data name="Activity.Calendar.FactorReason" xml:space="preserve"><value>Source or explanation of the chosen method</value></data>
+  <data name="Activity.History.Help" xml:space="preserve"><value>Select comparable historical periods. Excluded anomalous periods require a written reason; nothing is excluded automatically.</value></data>
+  <data name="Activity.History.Exceptional" xml:space="preserve"><value>Flag anomaly or explain an exclusion</value></data>
+  <data name="Activity.History.Include" xml:space="preserve"><value>Include</value></data>
+  <data name="Activity.Preview" xml:space="preserve"><value>Preview</value></data>
+  <data name="Activity.Adopt" xml:space="preserve"><value>Adopt this proposed capacity</value></data>
+  <data name="Activity.Advanced" xml:space="preserve"><value>Additional capacities (optional)</value></data>
+  <data name="Activity.Theoretical" xml:space="preserve"><value>Theoretical capacity</value></data>
+  <data name="Activity.Practical" xml:space="preserve"><value>Practical capacity</value></data>
+  <data name="Activity.Import.Title" xml:space="preserve"><value>Import physical hours — CSV / XLSX</value></data>
+  <data name="Activity.Import.Help" xml:space="preserve"><value>Preview source rows and choose which rows to replace. No figures will be summed automatically; imported data remain drafts until confirmed.</value></data>
+  <data name="Activity.Import.Browse" xml:space="preserve"><value>Choose file</value></data>
+  <data name="Activity.Import.Sheet" xml:space="preserve"><value>Worksheet</value></data>
+  <data name="Activity.Import.Delimiter" xml:space="preserve"><value>Separator</value></data>
+  <data name="Activity.Import.Apply" xml:space="preserve"><value>Import selected drafts</value></data>
+  <data name="Activity.Import.Choose" xml:space="preserve"><value>Replace</value></data>
+  <data name="Activity.Import.Warning" xml:space="preserve"><value>Review</value></data>
+  <data name="Activity.Import.Existing" xml:space="preserve"><value>Existing value</value></data>
+  <data name="Activity.Import.Version" xml:space="preserve"><value>Version</value></data>
+  <data name="Activity.Import.NoExisting" xml:space="preserve"><value>No data</value></data>
+  <data name="Activity.Import.Partial" xml:space="preserve"><value>The row's period differs from the study period; review manually.</value></data>
+  <data name="Activity.Import.Duplicate" xml:space="preserve"><value>Multiple rows refer to this pool/period; choose only one.</value></data>
+  <data name="Activity.Import.Invalid" xml:space="preserve"><value>The file could not be read as an applicable physical-data source.</value></data>
+  <data name="Activity.Import.Summary" xml:space="preserve"><value>{0} source rows; {1} eligible for replacement.</value></data>
+  <data name="Activity.Import.Applied" xml:space="preserve"><value>{0} physical rows were saved as drafts.</value></data>
+  <data name="Activity.ImportHeader" xml:space="preserve"><value>Missing or duplicated column headers. Required: node, unit, period_start, period_end and normal or real.</value></data>
+  <data name="Activity.ImportNumber" xml:space="preserve"><value>Invalid physical quantity in an imported row.</value></data>
+  <data name="Activity.ImportNode" xml:space="preserve"><value>Unknown principal node in the selected study model.</value></data>
+  <data name="Activity.ImportUnit" xml:space="preserve"><value>Unit does not match this pool.</value></data>
+  <data name="Activity.ImportPeriod" xml:space="preserve"><value>Invalid date range in physical source.</value></data>
+  <data name="Activity.ImportEmpty" xml:space="preserve"><value>Both physical quantities are missing.</value></data>
+  <data name="Activity.ImportSource" xml:space="preserve"><value>Source provenance exceeds permitted length.</value></data>
+  <data name="Activity.ImportInvalid" xml:space="preserve"><value>Review source rows and replace choices.</value></data>
+  <data name="Activity.ImportDuplicate" xml:space="preserve"><value>Cannot import multiple replacement rows for one pool.</value></data>
+  <data name="Activity.History.Reviewed" xml:space="preserve"><value>Reviewed</value></data>
+  <data name="Activity.Import.Open" xml:space="preserve"><value>Import physical CSV/XLSX</value></data>
+  <data name="Reuse.Title" xml:space="preserve"><value>Reuse rules from another analysis</value></data>
+  <data name="Reuse.Help" xml:space="preserve"><value>Choose a source analysis, review the proposal and select rules to adopt. Your existing assignments are retained. Balances, hours, adjustments, absolute allocations and closures are not copied. Adopted rules automatically resolve accounts in the current analysis.</value></data>
+  <data name="Reuse.Source" xml:space="preserve"><value>Source analysis</value></data>
+  <data name="Reuse.Adopt" xml:space="preserve"><value>Adopt selected rules</value></data>
+  <data name="Reuse.Replace" xml:space="preserve"><value>I authorize replacing current rules that conflict with the selected rules</value></data>
+  <data name="Reuse.Selector" xml:space="preserve"><value>Account, prefix or auxiliary</value></data>
+  <data name="Reuse.Key" xml:space="preserve"><value>Allocation key</value></data>
+  <data name="Reuse.NoSources" xml:space="preserve"><value>Select another analysis as a reference. If none exists, configure this analysis from scratch.</value></data>
+  <data name="Reuse.Summary" xml:space="preserve"><value>{0} reusable · {1} need review · {2} conflicts · {3} without current accounts · {4} part assignments omitted. Review coverage and recalculate after adopting.</value></data>
+  <data name="Reuse.SourceChanged" xml:space="preserve"><value>The source analysis or keys changed. Refresh the preview and review again.</value></data>
+  <data name="Reuse.TargetClosed" xml:space="preserve"><value>Reopen the analysis and its allocations before adopting rules. Previous results are retained.</value></data>
+  <data name="Reuse.SelectionInvalid" xml:space="preserve"><value>Select compatible rules. Authorize replacement to resolve selected conflicts; other rules are retained.</value></data>
+  <data name="Reuse.Status.Compatible" xml:space="preserve"><value>Compatible: ready to select</value></data>
+  <data name="Reuse.Status.Present" xml:space="preserve"><value>Already adopted: will not be duplicated</value></data>
+  <data name="Reuse.Status.Conflict" xml:space="preserve"><value>Conflict: replaces a current rule only with authorization</value></data>
+  <data name="Reuse.Status.Unused" xml:space="preserve"><value>Compatible, no current accounts: retains the criterion for future accounts</value></data>
+  <data name="Reuse.Status.Model" xml:space="preserve"><value>Different structure: review destinations and publish compatible keys</value></data>
+  <data name="Reuse.Status.Inactive" xml:space="preserve"><value>Inactive: reference only</value></data>
+  <data name="Reuse.Status.Key" xml:space="preserve"><value>Invalid or unpublished key: review destinations</value></data>
+  <data name="Reuse.Status.Driver" xml:space="preserve"><value>Measurements from another period: enter current values in a new key</value></data>
+  <data name="Reuse.Status.Group" xml:space="preserve"><value>Custom group: review the new analysis parts before assigning it</value></data>
+  <data name="Activity.Assistant.Help" xml:space="preserve"><value>Calculate a normal capacity proposal. Applying updates this row only; save it afterwards. Enter actual activity separately.</value></data>
+  <data name="Activity.Assistant.CalendarHelp" xml:space="preserve"><value>Use this period&apos;s calendar and resources with comparable schedules. Days × shifts × hours × resources gives ideal capacity; subtract stoppages and apply the justified factor.</value></data>
+  <data name="Activity.Assistant.DaysHelp" xml:space="preserve"><value>Operating days within the analysis dates, excluding holidays and closures. Example: 22.</value></data>
+  <data name="Activity.Assistant.ShiftsHelp" xml:space="preserve"><value>Shifts per day from the planned operating schedule. Example: 2 shifts.</value></data>
+  <data name="Activity.Assistant.HoursHelp" xml:space="preserve"><value>Hours per shift. Use the documented schedule; eight hours is not assumed.</value></data>
+  <data name="Activity.Assistant.ResourcesHelp" xml:space="preserve"><value>Machines or equivalent people sharing a calendar. Justify schedule differences before aggregating.</value></data>
+  <data name="Activity.Assistant.StoppagesHelp" xml:space="preserve"><value>Total stoppage hours across these resources in this period. Enter 0 if none are planned.</value></data>
+  <data name="Activity.Assistant.FactorHelp" xml:space="preserve"><value>Representative fraction between 0 and 1. Example: 0.9 means 90%. Explain the source and reason.</value></data>
+  <data name="Activity.CalendarUnit" xml:space="preserve"><value>This calendar calculates hours. For other units use comparable history or a justified declared value.</value></data>
+  <data name="Activity.SelectionHelp" xml:space="preserve"><value>Edit normal and actual activity in the table. Save and confirm affect the selected row only. Complete its sources and quality to confirm. Changes in other rows are retained.</value></data>
+  <data name="Activity.EvidenceDetails" xml:space="preserve"><value>Sources, quality and justification for the selected row</value></data>
+  <data name="Activity.RowSaved" xml:space="preserve"><value>Row saved</value></data>
+  <data name="Activity.UnsavedRow" xml:space="preserve"><value>Unsaved changes</value></data>
+  <data name="Activity.Calculator" xml:space="preserve"><value>Calculator</value></data>
+  <data name="Reuse.NoDescription" xml:space="preserve"><value>No source description</value></data>
   <data name="Run.GraphTraceHelp" xml:space="preserve"><value>Select a node or connection to follow its path. Use Tab to reach connections and Enter or Space to select. Enable all amounts to show their labels; the detail retains exact values.</value></data>
   <data name="Run.ReportTitle" xml:space="preserve"><value>Cost allocation results</value></data>
   <data name="Run.CenterBalances" xml:space="preserve"><value>Accumulated cost by centre</value></data>

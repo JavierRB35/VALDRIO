@@ -1,3 +1,15 @@
+# Revisión local de T14 y reutilización de reglas — 15/10/2026
+
+Este apartado es posterior a los cortes históricos siguientes. T14 ya compila en Windows: se corrigen migración v11, validaciones físicas, importación, concurrencia y estado de edición. Se mejora la tabla y su calculadora con el sistema visual V1. Se implementa una primera entrega funcional RP-01 de adopción explícita desde Reparto primario, después de importar, con diagnóstico de compatibilidad, conflictos y auditoría.
+
+Validación final integrada con main@dad33f9: solución sin errores/advertencias, regresión **717/717** y **41 controles WPF ES/EN**; suite específica previa **22/22**. Referencias v0.4 **39/39** y catálogo de mensajes ES/EN comprobado. Ningún workflow ejecutado. Fusión solicitada expresamente por el propietario; no equivale a cerrar toda la aceptación comercial de T14/RP-01 ni autoriza T15.
+
+Ver [informe de cambios, criterios y límites](docs/evidencias/t14-revision-local-20261015/README.md). Quedan la aceptación de comprensión con analista, la matriz completa DPI, la homologación de históricos económicos y las ampliaciones RP-01 detalladas en el informe. Las afirmaciones antiguas «no compilado» y «sin implementación RP-01» describen sus cortes anteriores.
+
+---
+## T14 — desarrollo candidato ampliado a T14.1–T14.4, 15/10/2026
+
+El PR #55 en borrador incluye contratos y SQLite v11 con historia física inmutable, tabla WPF, métodos asistidos de capacidad normal (histórico revisado/calendario/declarado), importación física CSV/XLSX con previsualización y sustitución transaccional, y **selector de estudio interno de T14** que muestra proyecto, estudio y período, protege los cambios sin guardar y separa enero/febrero/marzo. Código aún **no compilado ni ejecutado en Windows**, con brechas de aceptación señaladas en [informe T14](docs/evidencias/t14-candidato-20261015/README.md). No fusionar como T14 terminada hasta ejecutar y corregir compilación, MSTest, migraciones y recorrido WPF. No se ejecuta GitHub Actions y no hay gasto autorizado.
 # Estado funcional contrastado — corte documental 15/10/2026
 
 **Priorizar este corte frente a las referencias históricas que siguen.** Código de referencia: `main@8b6c89e47d69d53bb5adad2fe0a2b215b4d68a95`. El [inventario de pantallas, comandos y flujos implementados](docs/revision/REALIDAD_FUNCIONAL_2026-10-15.md) contrasta el frontend WPF, ViewModels, servicios, pruebas y capturas Windows existentes. La [matriz de verificación para el manual](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md) indica explícitamente qué **no se ha probado interactivamente sobre ese SHA en esta auditoría**.

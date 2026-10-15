@@ -125,6 +125,10 @@ public sealed partial class SqliteCompanyFileService
             Workspace(true, token, (context, file) =>
             {
                 Scope(request.CompanyId, file); var db = (AllocationDbContext)context;
+                if (request.Reuse is { } selection)
+                    request = request with { Reuse = selection with {
+                        PrimaryRuleIds = FrozenList.Copy(selection.PrimaryRuleIds),
+                        SecondaryRuleIds = FrozenList.Copy(selection.SecondaryRuleIds) } };
                 var saved = db.AllocationChanges.AsNoTracking().SingleOrDefault(r => r.Id == request.RequestId.ToString());
                 if (saved is not null)
                 {
@@ -135,6 +139,13 @@ public sealed partial class SqliteCompanyFileService
                 var row = RequiredStudy(db, file.Id, request.StudyId); var before = Study(row);
                 var current = AllocationWorkspace(db, file, before);
                 var config = request.Configuration;
+                if (request.Reuse is { } reuse)
+                {
+                    var source = AllocationWorkspace(db, file, Study(RequiredStudy(db, file.Id, reuse.SourceStudyId)));
+                    var expected = AllocationReuse.Adopt(source, current, reuse);
+                    if (Json(expected) != Json(config))
+                        throw PhysicalActivityRules.Error("REUSE_SELECTION_INVALID", "Reuse.SelectionInvalid");
+                }
                 var existing = current.Configuration;
                 if (existing.SecondaryClosed)
                 {

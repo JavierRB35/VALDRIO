@@ -31,6 +31,7 @@ public sealed class CompanyFileSnapshot
 public interface ICompanyFileSession : IDisposable
 {
     IRunStore Runs => throw new NotSupportedException();
+    IPhysicalActivityWorkspace PhysicalActivity => throw new NotSupportedException();
     IResourceWorkspace Resources { get; }
     IAllocationWorkspace Allocations => throw new NotSupportedException();
     IImportWorkspace Imports { get; }

@@ -70,6 +70,7 @@
       <Button x:Name="SaveStudyButton" Content="{Binding SaveLabel}" Command="{Binding SaveCommand}" TabIndex="71" Visibility="{Binding SaveVisibility}" FontWeight="SemiBold" Style="{StaticResource Button.Primary}"/>
       <Button x:Name="NewStudyButton" Content="{Binding NewLabel}" Command="{Binding NewCommand}" TabIndex="69"/>
      </WrapPanel>
+     <Button x:Name="PhysicalActivityButton" Content="{Binding PhysicalOpenLabel}" IsEnabled="{Binding CanOpenPhysical}" Click="OpenPhysicalActivity" HorizontalAlignment="Left" TabIndex="72"/>
      <TextBlock Text="{Binding Details}" FontWeight="SemiBold"/>
      <TextBlock x:Name="ActionStatus" Text="{Binding Status}" Foreground="{DynamicResource Accent.ActiveGreen}" FontWeight="SemiBold" AutomationProperties.LiveSetting="Assertive"/>
     </StackPanel>

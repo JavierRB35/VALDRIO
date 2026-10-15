@@ -80,7 +80,11 @@ public sealed class AllocationConfiguration
     public static AllocationConfiguration Empty => new([], [], [], [], []);
 }
 public sealed record ChangeAllocations(EntityId CompanyId, EntityId StudyId, long ExpectedRevision,
-    EntityId RequestId, string Actor, AllocationConfiguration Configuration);
+    EntityId RequestId, string Actor, AllocationConfiguration Configuration)
+{
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public AllocationReuseSelection? Reuse { get; init; }
+}
 public sealed record AllocationChangeReceipt(ChangeAllocations Request, StudyDefinition PreviousStudy,
     StudyDefinition ConfirmedStudy, IReadOnlyList<AllocationKeyVersion> ReferencedKeys, UtcInstant AtUtc)
 {

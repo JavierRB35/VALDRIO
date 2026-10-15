@@ -39,6 +39,23 @@ public partial class AllocationWorkspacePanel : UserControl
         };
     }
     public bool SecondaryOnly { set => ConfigurePage(value); }
+    private async void ReuseMethodology(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (viewModel?.CreateReuseEditor() is not { } editor) return;
+            var window = new AllocationReuseWindow(editor) { Owner = Window.GetWindow(this) };
+            if (window.ShowDialog() == true && editor.Receipt is { } receipt)
+                await viewModel.RefreshAfterReuse(receipt);
+        }
+        catch (Exception error)
+        {
+            System.Diagnostics.Trace.TraceError("Allocation reuse: {0}", error);
+            if (viewModel is { } vm)
+                MessageBox.Show(Window.GetWindow(this), vm["BulkAssignError"], vm.ReuseLabel,
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
     private void ConfigurePage(bool secondary)
     {
         secondaryOnly = secondary;

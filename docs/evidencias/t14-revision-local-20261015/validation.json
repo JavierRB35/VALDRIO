@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-15",
+  "sdk": "10.0.401",
+  "platform": "Windows",
+  "buildErrors": 0,
+  "buildWarnings": 0,
+  "runs": [
+    {
+      "file": "artifacts\\t14-review\\final-regression.trx",
+      "sha256": "17cfa6812d14229e108eab2fb31cef849aae321a0100507f5611575001d5a964",
+      "total": 714,
+      "passed": 714,
+      "failed": 0,
+      "finish": "2026-10-15T10:36:36.6989765+02:00"
+    },
+    {
+      "file": "artifacts\\t14-review\\focused-final.trx",
+      "sha256": "379852012efe8c3f6acce6d26bc49e36723dfab73ab70576ade32c54440391f6",
+      "total": 22,
+      "passed": 22,
+      "failed": 0,
+      "finish": "2026-10-15T10:50:06.0458388+02:00"
+    },
+    {
+      "file": "artifacts/t14-review/integrated-regression.trx",
+      "sha256": "902a0a9174e09a882f70bac957cdf7b6f0eaab622c6f7677a8e72ca5bc3adfc7",
+      "total": 717,
+      "passed": 717,
+      "failed": 0,
+      "finish": "2026-10-15T10:59:10.5598512+02:00"
+    }
+  ],
+  "referenceCases": 39,
+  "productionMessageKeys": 543,
+  "githubActionsDispatched": 0,
+  "note": "Integración final sobre 99ad66e, incluyendo main@dad33f9: 717/717 y 41 comprobaciones WPF ES/EN. Cambios posteriores únicamente documentales.",
+  "integratedWpfChecks": 41
+}

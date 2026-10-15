@@ -93,6 +93,18 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         return true;
     }
     public string ImportColumnsLabel => Text("ImportMapping.OpenMapping");
+    public IPhysicalActivityWorkspace? ActivePhysicalActivity => company.ActivePhysicalActivity;
+    public IModelWorkspace? PhysicalModels => company.ActiveModels;
+    public IRunStore? PhysicalRuns => company.ActiveRuns;
+    public CompanyFileSnapshot? PhysicalCompany => company.Snapshot;
+    public IStudyWorkspace? PhysicalStudies => company.ActiveStudies;
+    public bool PhysicalCompanyWritable => company.CanWrite;
+    public CultureInfo PhysicalUiCulture => Ui;
+    public CultureInfo PhysicalFormatCulture => Format;
+    public string PhysicalOpenLabel => Text("Activity.Open");
+    public bool CanOpenPhysical => Current is not null && !IsDirty && Ready &&
+        company.ActivePhysicalActivity is not null && company.ActiveModels is not null;
+    public bool PhysicalWritable => company.CanWrite && Current?.State == StudyState.Open;
     public bool HasStudies => Studies.Count > 0;
     public bool HasPublishedModels => PublishedModels.Count > 0;
     public string StudyListHelp => Text(HasStudies ? "Study.ChooseExisting" : "Study.NoStudiesYet");
