@@ -89,6 +89,14 @@ public partial class MainWindow
             }
             main.ApplyPresentationPreset("es", "es-ES", "Europe/Madrid", false, false);
             await NavigateWorkflow(5); await Idle();
+            Check(AllocationPhase.IsExpanded && NavigationPhases.Count(phase => phase.IsExpanded) == 1,
+                "T14 entry belongs to the existing allocations/capacity accordion phase");
+            Check(Equals(PhysicalActivityStep.Style, FindResource("NavigationStepButton")) &&
+                PhysicalActivityStep.Content?.ToString() == main.Studies?.PhysicalOpenLabel,
+                "T14 entry uses the approved sidebar style and localized study label");
+            Check(PhysicalActivityStep.IsEnabled ==
+                (main.Company?.WorkspaceIdle != false && main.Studies?.CanOpenPhysical == true),
+                "T14 entry honors the same readiness and study validation as its existing launch button");
             var keyCount = AllocationPanel.KeyGrid.Items.Count;
             var selectedKey = AllocationPanel.KeyGrid.SelectedItem;
             Check(ContextDetails.Visibility == Visibility.Collapsed, "context starts compact without removing the full text");
