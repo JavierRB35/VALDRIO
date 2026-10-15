@@ -27,6 +27,13 @@ public partial class PhysicalActivityWindow : Window
         ActivityTable.CommitEdit(DataGridEditingUnit.Row, true);
     }
 
+    private void AssistNormal(object sender, RoutedEventArgs e)
+    {
+        CommitTableEdit();
+        if (editor.SelectedRow is not null)
+            new PhysicalCapacityAssistantWindow(editor) { Owner = this }.ShowDialog();
+    }
+
     private void SaveDraft(object sender, RoutedEventArgs e)
     {
         CommitTableEdit();
