@@ -98,7 +98,7 @@ public partial class MainWindow
             // Do not set a local FontWeight on phase buttons: it would
             // override the lightweight active-state trigger in their style.
             if (i == 6)
-                buttons[i].FontWeight = i == workflowStep
+                buttons[i].FontWeight = !physicalActivityDialogOpen && i == workflowStep
                     ? FontWeights.Bold : FontWeights.Normal;
         }
         Border[] markers = [CompanyStepMarker, ModelStepMarker, StudyStepMarker,
