@@ -97,6 +97,8 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public IModelWorkspace? PhysicalModels => company.ActiveModels;
     public IRunStore? PhysicalRuns => company.ActiveRuns;
     public CompanyFileSnapshot? PhysicalCompany => company.Snapshot;
+    public IStudyWorkspace? PhysicalStudies => company.ActiveStudies;
+    public bool PhysicalCompanyWritable => company.CanWrite;
     public CultureInfo PhysicalUiCulture => Ui;
     public CultureInfo PhysicalFormatCulture => Format;
     public string PhysicalOpenLabel => Text("Activity.Open");
