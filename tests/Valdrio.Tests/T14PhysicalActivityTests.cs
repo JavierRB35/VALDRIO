@@ -233,4 +233,70 @@ public sealed class T14PhysicalActivityTests
             Assert.AreEqual(changed.Revision, file.Studies.ReadStudies().Single(s => s.Id == study.Id).Revision);
         }
     }
+
+    [TestMethod]
+    public void T14_JanuaryFebruaryMarchRemainSeparateWithOwnPhysicalVersions()
+    {
+        var (file, first, node, pool) = Fixture();
+        using (file)
+        {
+            var february = file.Studies.Create(new(first.CompanyId, Id(), "Febrero",
+                BusinessDate.ParseIso("2027-02-01"), BusinessDate.ParseIso("2027-02-28"),
+                first.Purpose, first.ScenarioKind, first.SelectedModelVersionId,
+                first.Currency.FunctionalCurrencyCode, "test"));
+            var march = file.Studies.Create(new(first.CompanyId, Id(), "Marzo",
+                BusinessDate.ParseIso("2027-03-01"), BusinessDate.ParseIso("2027-03-31"),
+                first.Purpose, first.ScenarioKind, first.SelectedModelVersionId,
+                first.Currency.FunctionalCurrencyCode, "test"));
+            var january = file.PhysicalActivity.Save(Save(first, node, pool, 0, 700m, 610m));
+            var feb = file.PhysicalActivity.Save(Save(february, node, pool, 0, 680m, 625m));
+            var mar = file.PhysicalActivity.Save(Save(march, node, pool, 0, 720m, 590m));
+            Assert.AreEqual(1L, january.Version);
+            Assert.AreEqual(1L, feb.Version);
+            Assert.AreEqual(1L, mar.Version);
+            Assert.AreEqual(610m, file.PhysicalActivity.ReadCurrent(first.CompanyId, first.Id).Single().RealQuantity);
+            Assert.AreEqual(625m, file.PhysicalActivity.ReadCurrent(first.CompanyId, february.Id).Single().RealQuantity);
+            Assert.AreEqual(590m, file.PhysicalActivity.ReadCurrent(first.CompanyId, march.Id).Single().RealQuantity);
+            Assert.AreEqual(january.Id, file.PhysicalActivity.ReadHistory(first.CompanyId, first.Id, pool.Id).Single().Id);
+            Assert.AreEqual(1, file.PhysicalActivity.ReadHistory(first.CompanyId, march.Id, pool.Id).Count);
+        }
+    }
+
+    [TestMethod]
+    public void T14_PhysicalCsvPreviewFlagsDuplicatePeriodsAndImportRemainsDraft()
+    {
+        var (file, study, node, pool) = Fixture();
+        using (file)
+        {
+            var model = file.Models.ReadModels().Single(m => m.Structure.Id == study.SelectedModelVersionId);
+            var headers = new[] { "node", "unit", "period_start", "period_end", "normal", "real", "real_source" };
+            var unit = file.Read().Units.Single(u => u.Id == pool.DriverUnitId);
+            SourceRow CreateRow(int number, string period) =>
+                new(number, number, new[]
+                {
+                    node.Code, unit.Code, period, "2026-10-31", "700", "610", "Production summary"
+                }.Select((text, index) => new SourceCell(index + 1, SourceValueKind.Text, text, text, false)).ToArray());
+            var document = new ImportSourceDocument(ImportSourceKind.Csv, "physical.csv",
+                new string('a', 64), null, headers,
+                [CreateRow(2, "2026-10-01"), CreateRow(3, "2026-10-01"),
+                 CreateRow(4, "2026-09-01")]);
+            var preview = PhysicalImportMapper.Preview(document, model.Structure,
+                file.Read().Units, study, System.Globalization.CultureInfo.InvariantCulture);
+            Assert.AreEqual(3, preview.Lines.Count);
+            Assert.IsTrue(preview.Lines[0].Duplicate);
+            Assert.IsTrue(preview.Lines[1].Duplicate);
+            Assert.IsTrue(preview.Lines[2].PartialPeriod);
+
+            var selected = preview.Lines[0];
+            Assert.IsTrue(selected.CanChoose);
+            var draft = Save(study, node, pool, 0, selected.NormalQuantity, selected.RealQuantity,
+                PhysicalObservationState.Draft) with { NormalEvidence = selected.NormalEvidence,
+                RealEvidence = selected.RealEvidence };
+            var imported = file.PhysicalActivity.ApplyImport(new(
+                [new(draft, PhysicalImportChoice.Replace)]));
+            Assert.AreEqual(1, imported.Count);
+            Assert.AreEqual(PhysicalObservationState.Draft, imported[0].State);
+            Assert.AreEqual(610m, file.PhysicalActivity.ReadCurrent(study.CompanyId, study.Id).Single().RealQuantity);
+        }
+    }
 }
