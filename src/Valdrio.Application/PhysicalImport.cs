@@ -69,7 +69,8 @@ public static class PhysicalImportMapper
             var unit = Read(record, "unit");
             var issue = (string?)null;
             var validNode = nodes.TryGetValue(code, out var node);
-            var validPool = validNode && pools.TryGetValue(node!.Id, out var pool);
+            CostPoolDefinition? pool = null;
+            var validPool = validNode && pools.TryGetValue(node!.Id, out pool);
             if (!validNode || !validPool) issue = "Activity.ImportNode";
             else if (!units.Any(u => u.Id == pool!.DriverUnitId && u.Code == unit))
                 issue = "Activity.ImportUnit";
