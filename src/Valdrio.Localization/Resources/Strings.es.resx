@@ -1717,4 +1717,6 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Activity.ImportSource" xml:space="preserve"><value>La procedencia supera la longitud permitida.</value></data>
   <data name="Activity.ImportInvalid" xml:space="preserve"><value>Revisa las filas de origen y las opciones de sustitución.</value></data>
   <data name="Activity.ImportDuplicate" xml:space="preserve"><value>No se pueden importar varias filas sustitutivas del mismo pool.</value></data>
+  <data name="Activity.History.Reviewed" xml:space="preserve"><value>Revisado</value></data>
+  <data name="Activity.Import.Open" xml:space="preserve"><value>Importar datos físicos CSV/XLSX</value></data>
 </root>
