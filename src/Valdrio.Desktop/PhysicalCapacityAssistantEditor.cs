@@ -44,6 +44,13 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
         this.host = host;
         row = host.SelectedRow ?? throw new InvalidOperationException("Select a physical pool.");
         culture = host.NumericCulture;
+        DeclaredQuantity = row.NormalText;
+        if (row.NormalQuality == PhysicalEvidenceQuality.Declared)
+        {
+            DeclaredSource = row.NormalSource;
+            DeclaredDescription = row.NormalDescription;
+        }
+        if (!CalendarSupported) Method = PhysicalCapacityMethod.Declared;
         foreach (var observation in host.Activity.ReadReferences(host.Study.CompanyId, host.Study.Id)
             .Where(o => o.PoolId == row.PoolId && o.RealQuantity is not null))
         {
@@ -63,6 +70,25 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
      new(PhysicalCapacityMethod.Historical, HistoryLabel),
      new(PhysicalCapacityMethod.Declared, DeclaredLabel)];
     public bool Adopted { get; private set; }
+    private bool CalendarSupported
+    {
+        get
+        {
+            var pool = host.Structure.Pools.Single(p => p.Id == row.PoolId);
+            var unit = host.Units.Single(u => u.Id == pool.DriverUnitId);
+            return unit.Dimension == "time" && unit.Symbol == "h";
+        }
+    }
+    public string Context => row.Node + " · " + row.Unit + " · " + host.StudyPeriod;
+    public string ExistingCost => host.CostLabel + ": " + row.Cost;
+    public string ProposalHelp => L("Activity.Assistant.Help");
+    public string CalendarHelp => L("Activity.Assistant.CalendarHelp");
+    public string DaysHelp => L("Activity.Assistant.DaysHelp");
+    public string ShiftsHelp => L("Activity.Assistant.ShiftsHelp");
+    public string HoursHelp => L("Activity.Assistant.HoursHelp");
+    public string ResourcesHelp => L("Activity.Assistant.ResourcesHelp");
+    public string StoppagesHelp => L("Activity.Assistant.StoppagesHelp");
+    public string FactorHelp => L("Activity.Assistant.FactorHelp");
     public bool CalendarVisible => Method == PhysicalCapacityMethod.Calendar;
     public bool HistoryVisible => Method == PhysicalCapacityMethod.Historical;
     public bool DeclaredVisible => Method == PhysicalCapacityMethod.Declared;
@@ -99,7 +125,7 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
 
     private decimal Number(string text)
     {
-        if (!decimal.TryParse(text, NumberStyles.Number, culture, out var result))
+        if (!decimal.TryParse(text.Trim(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, culture, out var result))
             throw PhysicalActivityRules.Error("ACT_INPUT_INVALID", "Activity.InputInvalid");
         return result;
     }
@@ -110,8 +136,11 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
         {
             case PhysicalCapacityMethod.Calendar:
             {
+                if (!CalendarSupported)
+                    throw PhysicalActivityRules.Error("ACT_CALENDAR_UNIT", "Activity.CalendarUnit");
                 var days = Number(OperatingDays);
-                if (days != decimal.Truncate(days) || days < 0 || days > int.MaxValue)
+                if (days != decimal.Truncate(days) || days < 0 ||
+                    days > host.Study.PeriodEnd.Value.DayNumber - host.Study.PeriodStart.Value.DayNumber + 1)
                     throw PhysicalActivityRules.Error("ACT_CALENDAR_INVALID", "Activity.CalendarInvalid");
                 var parameters = new PhysicalCalendarInput((int)days,
                     Number(ShiftsPerDay), Number(HoursPerShift), Number(EquivalentResources),
@@ -134,7 +163,10 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
                     throw PhysicalActivityRules.Error("ACT_HISTORY_INVALID", "Activity.HistoryInvalid");
                 var periods = chosen.Select(p => new PhysicalHistoryPeriod(
                     p.Observation.PeriodStart, p.Observation.PeriodEnd, p.Observation.RealQuantity!.Value,
-                    p.Include, p.Exceptional ? p.ReviewReason : null)).ToArray();
+                    p.Include, p.ReviewReason)).ToArray();
+                var duration = host.Study.PeriodEnd.Value.DayNumber - host.Study.PeriodStart.Value.DayNumber + 1;
+                if (periods.Any(p => p.Include && p.End.Value.DayNumber - p.Start.Value.DayNumber + 1 != duration))
+                    throw PhysicalActivityRules.Error("ACT_HISTORY_NOT_COMPARABLE", "Activity.HistoryNotComparable");
                 var result = PhysicalNormalCalculator.History(periods);
                 var refs = string.Join("; ", chosen.Select(p =>
                     string.Format(CultureInfo.InvariantCulture, "{0}/{1}:real={2}:include={3}:reason={4}:version={5}",
@@ -145,7 +177,7 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
             }
             case PhysicalCapacityMethod.Declared:
             {
-                if (string.IsNullOrWhiteSpace(DeclaredSource))
+                if (string.IsNullOrWhiteSpace(DeclaredSource) || string.IsNullOrWhiteSpace(DeclaredDescription))
                     throw PhysicalActivityRules.Error("ACT_EVIDENCE_REQUIRED", "Activity.EvidenceRequired");
                 return (Number(DeclaredQuantity), null, null,
                     new(PhysicalEvidenceQuality.Declared, DeclaredSource.Trim(), DeclaredDescription.Trim()));

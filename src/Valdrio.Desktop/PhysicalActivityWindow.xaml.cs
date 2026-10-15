@@ -84,6 +84,7 @@ public partial class PhysicalActivityWindow : Window
     private void AssistNormal(object sender, RoutedEventArgs e)
     {
         CommitTableEdit();
+        if (sender is FrameworkElement { DataContext: PhysicalActivityRow row }) editor.SelectedRow = row;
         if (editor.SelectedRow is not null)
             new PhysicalCapacityAssistantWindow(editor) { Owner = this }.ShowDialog();
     }

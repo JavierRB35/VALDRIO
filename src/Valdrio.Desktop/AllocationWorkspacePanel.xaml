@@ -22,6 +22,7 @@
     <DataTrigger Binding="{Binding IsBusy}" Value="True"><Setter Property="Cursor" Value="Wait"/></DataTrigger>
   </Style.Triggers></Style></StackPanel.Style>
   <!-- Activity feedback belongs to MainWindow.GlobalActivityBar, shared by all pages. -->
+  <Button Content="{Binding ReuseLabel}" IsEnabled="{Binding CanReuse}" Click="ReuseMethodology" HorizontalAlignment="Left" Margin="0,0,0,12"/>
   <Border Margin="0,0,0,12">
    <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Diagnostic}">
     <Style.Triggers><DataTrigger Binding="{Binding HasStatusError}" Value="True">

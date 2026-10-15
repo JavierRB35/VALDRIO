@@ -32,8 +32,7 @@ public sealed record PhysicalObservation(
 {
     [JsonIgnore]
     public decimal? UtilizationPercent =>
-        State != PhysicalObservationState.Annulled && NormalQuantity is > 0 && RealQuantity is >= 0
-            ? checked(RealQuantity.Value / NormalQuantity.Value * 100m) : null;
+        State == PhysicalObservationState.Annulled ? null : PhysicalActivityRules.Utilization(NormalQuantity, RealQuantity);
     [JsonIgnore]
     public bool ExceedsNormal => NormalQuantity is > 0 && RealQuantity > NormalQuantity;
     [JsonIgnore]
@@ -66,6 +65,8 @@ public interface IPhysicalActivityWorkspace
 
 public static class PhysicalActivityRules
 {
+    public static decimal? Utilization(decimal? normal, decimal? real) =>
+        normal is > 0 && real is >= 0 ? checked(real.Value / normal.Value * 100m) : null;
     public static DomainRuleException Error(string code, string key) => new(new(code, key, []));
 
     public static void Validate(SavePhysicalObservation input, PrecisionPolicy precision)
@@ -93,7 +94,6 @@ public static class PhysicalActivityRules
                 evidence.Description is null || evidence.Source.Length > 500 ||
                 evidence.Description.Length > 4000)
                 throw Error("ACT_EVIDENCE_TOO_LONG", "Activity.EvidenceTooLong");
-            if (input.State == PhysicalObservationState.Confirmed) evidence.EnsureValid();
         }
         if (input.NormalZeroReason?.Length > 4000 || input.ExceptionReason?.Length > 4000 ||
             input.CorrectionReason?.Length > 4000)
@@ -104,6 +104,8 @@ public static class PhysicalActivityRules
             throw Error("ACT_INCOMPLETE", "Activity.Incomplete");
         if (input.NormalEvidence is null || input.RealEvidence is null)
             throw Error("ACT_EVIDENCE_REQUIRED", "Activity.EvidenceRequired");
+        input.NormalEvidence.EnsureValid();
+        input.RealEvidence.EnsureValid();
         if (input.NormalQuantity == 0m && string.IsNullOrWhiteSpace(input.NormalZeroReason))
             throw Error("ACT_ZERO_NORMAL_REASON", "Activity.ZeroNormalReason");
         if ((input.NormalQuantity == 0m && input.RealQuantity > 0m ||
@@ -134,6 +136,7 @@ public static class PhysicalNormalCalculator
         ArgumentNullException.ThrowIfNull(input);
         if (input.OperatingDays < 0 || input.ShiftsPerDay <= 0 || input.HoursPerShift <= 0 ||
             input.EquivalentResources <= 0 || input.PlannedStoppageHours < 0 ||
+            input.HoursPerShift > 24 || input.ShiftsPerDay > 24 / input.HoursPerShift ||
             input.NormalFactor is < 0 or > 1 || string.IsNullOrWhiteSpace(input.FactorJustification))
             throw PhysicalActivityRules.Error("ACT_CALENDAR_INVALID", "Activity.CalendarInvalid");
         var theoretical = checked(input.OperatingDays * input.ShiftsPerDay * input.HoursPerShift * input.EquivalentResources);

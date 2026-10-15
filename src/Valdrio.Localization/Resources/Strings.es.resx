@@ -1639,8 +1639,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Activity.UtilizationUndefined" xml:space="preserve"><value>Utilización no calculable: capacidad normal cero</value></data>
   <data name="Activity.OverNormal" xml:space="preserve"><value>La actividad real supera la capacidad normal. Revisa su procedencia.</value></data>
   <data name="Activity.ZeroException" xml:space="preserve"><value>Se ha registrado actividad real pese a existir capacidad normal cero.</value></data>
-  <data name="Activity.Title" xml:space="preserve"><value>T14 — Actividad y capacidades</value></data>
-  <data name="Activity.Open" xml:space="preserve"><value>Abrir actividad y capacidades (T14)</value></data>
+  <data name="Activity.Title" xml:space="preserve"><value>Actividad y capacidades</value></data>
+  <data name="Activity.Open" xml:space="preserve"><value>Actividad y capacidades</value></data>
   <data name="Activity.Help" xml:space="preserve"><value>Introduce capacidad normal y actividad real del período. Confirma solo tras comprobar sus fuentes.</value></data>
   <data name="Activity.Normal" xml:space="preserve"><value>Capacidad normal</value></data>
   <data name="Activity.Real" xml:space="preserve"><value>Actividad real</value></data>
@@ -1658,8 +1658,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Activity.AnnulledRow" xml:space="preserve"><value>Observación anulada</value></data>
   <data name="Activity.Node" xml:space="preserve"><value>Nodo / actividad</value></data>
   <data name="Activity.Unit" xml:space="preserve"><value>Unidad</value></data>
-  <data name="Activity.Cost" xml:space="preserve"><value>Coste publicado T12</value></data>
-  <data name="Activity.CostUnavailable" xml:space="preserve"><value>Sin coste T12 vigente</value></data>
+  <data name="Activity.Cost" xml:space="preserve"><value>Coste publicado</value></data>
+  <data name="Activity.CostUnavailable" xml:space="preserve"><value>Sin coste publicado vigente</value></data>
   <data name="Activity.Method" xml:space="preserve"><value>Cómo calcular la capacidad normal</value></data>
   <data name="Activity.History" xml:space="preserve"><value>Ver historial de observaciones</value></data>
   <data name="Activity.Status" xml:space="preserve"><value>Estado</value></data>
@@ -1671,7 +1671,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Activity.Study" xml:space="preserve"><value>Estudio</value></data>
   <data name="Activity.Period" xml:space="preserve"><value>Período</value></data>
   <data name="Activity.UnsavedTitle" xml:space="preserve"><value>Observaciones físicas sin guardar</value></data>
-  <data name="Activity.UnsavedBody" xml:space="preserve"><value>Hay cambios sin guardar en T14. ¿Quieres descartarlos para cambiar de estudio o cerrar? Elige No para permanecer y guardar tus datos.</value></data>
+  <data name="Activity.UnsavedBody" xml:space="preserve"><value>Hay cambios de actividad sin guardar. ¿Quieres descartarlos para cambiar de estudio o cerrar? Elige No para permanecer y guardar tus datos.</value></data>
   <data name="Activity.OtherRowsPending" xml:space="preserve"><value>Hay otras filas con cambios sin guardar. Guarda o revisa cada fila antes de actualizar esta tabla.</value></data>
   <data name="Activity.SwitchFailed" xml:space="preserve"><value>No se pudo abrir el estudio. Los registros guardados no se han modificado.</value></data>
   <data name="Activity.Method.Calendar" xml:space="preserve"><value>Calendario operativo</value></data>
@@ -1719,4 +1719,40 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Activity.ImportDuplicate" xml:space="preserve"><value>No se pueden importar varias filas sustitutivas del mismo pool.</value></data>
   <data name="Activity.History.Reviewed" xml:space="preserve"><value>Revisado</value></data>
   <data name="Activity.Import.Open" xml:space="preserve"><value>Importar datos físicos CSV/XLSX</value></data>
+  <data name="Reuse.Title" xml:space="preserve"><value>Reutilizar reglas de otro análisis</value></data>
+  <data name="Reuse.Help" xml:space="preserve"><value>Elige un análisis de origen, revisa la propuesta y marca las reglas que quieras adoptar. Se conservan tus asignaciones actuales. No se copian saldos, horas, ajustes, repartos por importe ni cierres. Las reglas adoptadas se aplicarán automáticamente a las cuentas del análisis actual.</value></data>
+  <data name="Reuse.Source" xml:space="preserve"><value>Análisis de origen</value></data>
+  <data name="Reuse.Adopt" xml:space="preserve"><value>Adoptar reglas seleccionadas</value></data>
+  <data name="Reuse.Replace" xml:space="preserve"><value>Autorizo sustituir las reglas actuales que entren en conflicto con las seleccionadas</value></data>
+  <data name="Reuse.Selector" xml:space="preserve"><value>Cuenta, prefijo o auxiliar</value></data>
+  <data name="Reuse.Key" xml:space="preserve"><value>Clave de reparto</value></data>
+  <data name="Reuse.NoSources" xml:space="preserve"><value>Selecciona otro análisis como referencia. Si no existe, configura las reglas de este análisis desde cero.</value></data>
+  <data name="Reuse.Summary" xml:space="preserve"><value>{0} reutilizables · {1} requieren revisión · {2} conflictos · {3} sin cuentas actuales · {4} asignaciones por partida omitidas. Revisa la cobertura y calcula de nuevo después de adoptar.</value></data>
+  <data name="Reuse.SourceChanged" xml:space="preserve"><value>El análisis o las claves de origen han cambiado. Actualiza la vista previa y revisa de nuevo.</value></data>
+  <data name="Reuse.TargetClosed" xml:space="preserve"><value>Reabre el análisis y sus repartos antes de adoptar reglas. Los resultados anteriores se conservan.</value></data>
+  <data name="Reuse.SelectionInvalid" xml:space="preserve"><value>Selecciona reglas compatibles. Para sustituir conflictos, marca la autorización de sustitución; las demás reglas se conservan.</value></data>
+  <data name="Reuse.Status.Compatible" xml:space="preserve"><value>Compatible: lista para seleccionar</value></data>
+  <data name="Reuse.Status.Present" xml:space="preserve"><value>Ya adoptada: no se duplicará</value></data>
+  <data name="Reuse.Status.Conflict" xml:space="preserve"><value>Conflicto: sustituirá una regla actual solo con autorización</value></data>
+  <data name="Reuse.Status.Unused" xml:space="preserve"><value>Compatible, sin cuentas actuales: conserva el criterio para futuras cuentas</value></data>
+  <data name="Reuse.Status.Model" xml:space="preserve"><value>Estructura diferente: revisa destinos y publica claves compatibles</value></data>
+  <data name="Reuse.Status.Inactive" xml:space="preserve"><value>Inactiva: referencia, no se adopta</value></data>
+  <data name="Reuse.Status.Key" xml:space="preserve"><value>Clave no válida o no publicada: revisa sus destinos</value></data>
+  <data name="Reuse.Status.Driver" xml:space="preserve"><value>Mediciones de otro período: introduce los valores actuales en una nueva clave</value></data>
+  <data name="Reuse.Status.Group" xml:space="preserve"><value>Grupo específico: revisa las partidas del nuevo análisis antes de asignarlo</value></data>
+  <data name="Activity.Assistant.Help" xml:space="preserve"><value>Calcula una propuesta de capacidad normal. Aplicarla actualiza solo esta fila; después debes guardarla. La actividad real se introduce por separado.</value></data>
+  <data name="Activity.Assistant.CalendarHelp" xml:space="preserve"><value>Usa el calendario de este período y recursos con jornadas comparables. Días × turnos × horas × recursos da la capacidad ideal; resta las paradas y aplica el factor justificado.</value></data>
+  <data name="Activity.Assistant.DaysHelp" xml:space="preserve"><value>Días operativos dentro de las fechas del análisis, descontando festivos y cierres. Ejemplo: 22.</value></data>
+  <data name="Activity.Assistant.ShiftsHelp" xml:space="preserve"><value>Turnos por día según el horario real previsto. Ejemplo: 2 turnos.</value></data>
+  <data name="Activity.Assistant.HoursHelp" xml:space="preserve"><value>Horas de cada turno. Usa la jornada documentada; no se presuponen ocho horas.</value></data>
+  <data name="Activity.Assistant.ResourcesHelp" xml:space="preserve"><value>Máquinas o personas equivalentes con el mismo calendario. Justifica diferencias de jornada antes de agregarlas.</value></data>
+  <data name="Activity.Assistant.StoppagesHelp" xml:space="preserve"><value>Horas de parada del conjunto de recursos en este período. Introduce 0 si no hay paradas previstas.</value></data>
+  <data name="Activity.Assistant.FactorHelp" xml:space="preserve"><value>Fracción representativa entre 0 y 1. Ejemplo: 0,9 representa el 90 %. Explica la fuente y el motivo.</value></data>
+  <data name="Activity.CalendarUnit" xml:space="preserve"><value>Este calendario calcula horas. Para otra unidad utiliza un histórico comparable o una cifra declarada y justificada.</value></data>
+  <data name="Activity.SelectionHelp" xml:space="preserve"><value>Edita normal y real en la tabla. Guardar y confirmar afectan solo a la fila seleccionada. Para confirmar, completa sus fuentes y calidad. Los cambios de las demás filas se conservan.</value></data>
+  <data name="Activity.EvidenceDetails" xml:space="preserve"><value>Fuentes, calidad y justificación de la fila seleccionada</value></data>
+  <data name="Activity.RowSaved" xml:space="preserve"><value>Fila guardada</value></data>
+  <data name="Activity.UnsavedRow" xml:space="preserve"><value>Cambios sin guardar</value></data>
+  <data name="Activity.Calculator" xml:space="preserve"><value>Calculadora</value></data>
+  <data name="Reuse.NoDescription" xml:space="preserve"><value>Sin descripción de origen</value></data>
 </root>

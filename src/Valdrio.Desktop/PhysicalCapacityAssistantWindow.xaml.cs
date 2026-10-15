@@ -11,6 +11,12 @@ public partial class PhysicalCapacityAssistantWindow : Window
         InitializeComponent();
         editor = new PhysicalCapacityAssistantEditor(host);
         DataContext = editor;
+        ContentRendered += (_, _) =>
+        {
+            var first = editor.CalendarVisible ? DaysInput :
+                string.IsNullOrWhiteSpace(editor.DeclaredQuantity) ? DeclaredQuantityInput : DeclaredSourceInput;
+            first.Focus();
+        };
     }
     private void Preview(object sender, RoutedEventArgs e) => editor.Preview();
     private void Adopt(object sender, RoutedEventArgs e)

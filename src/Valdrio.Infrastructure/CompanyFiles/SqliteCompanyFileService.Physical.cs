@@ -260,7 +260,6 @@ public sealed partial class SqliteCompanyFileService
                     Id = new EntityId(Guid.NewGuid()),
                     Version = checked(before.Version + 1),
                     State = PhysicalObservationState.Annulled,
-                    ExceptionReason = command.Reason,
                     CorrectionReason = command.Reason,
                     Actor = command.Actor,
                     RecordedAtUtc = owner.time.GetUtcNow()

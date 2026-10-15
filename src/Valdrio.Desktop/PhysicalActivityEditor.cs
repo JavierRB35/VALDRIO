@@ -41,14 +41,22 @@ public sealed partial class PhysicalActivityRow : ObservableObject
     public required string Cost { get; init; }
     public long Version { get; set; }
     private PhysicalRowInputs? savedInputs;
+    public string SavedStatus { get; private set; } = "";
+    public bool IsLoading { get; private set; }
     private PhysicalRowInputs Inputs() => new(
         NormalText, RealText, TheoreticalText, PracticalText,
         NormalSource, RealSource, NormalDescription, RealDescription,
         NormalQuality, RealQuality, NormalZeroReason, ExceptionReason, CorrectionReason);
     public bool HasChanges => savedInputs is not null && !Equals(savedInputs, Inputs());
+    protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+        if (e.PropertyName != nameof(HasChanges)) base.OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(HasChanges)));
+    }
 
     public void ReadFrom(PhysicalObservation? data, CultureInfo culture, string pending, string undefined, string annulled, string draft, string confirmed)
     {
+        IsLoading = true;
         Version = data?.Version ?? 0;
         var available = data?.State != PhysicalObservationState.Annulled;
         NormalText = available ? data?.NormalQuantity?.ToString(culture) ?? "" : "";
@@ -75,6 +83,8 @@ public sealed partial class PhysicalActivityRow : ObservableObject
             data?.RealQuantity is null ? pending :
             data.UtilizationPercent is decimal percentage ? percentage.ToString("0.##", culture) + " %" : undefined;
         savedInputs = Inputs();
+        SavedStatus = Status;
+        IsLoading = false;
     }
 }
 
@@ -110,15 +120,24 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     [ObservableProperty] private string feedback = "";
 
     public PhysicalActivityEditor(StudyWorkspaceViewModel host)
+        : this(host.Current ?? throw new InvalidOperationException("Select a saved study first."),
+            host.PhysicalStudies!, host.ActivePhysicalActivity!, host.PhysicalModels!,
+            host.PhysicalRuns, host.PhysicalCompany!, host.PhysicalCompanyWritable,
+            host.PhysicalUiCulture, host.PhysicalFormatCulture)
+    { }
+
+    public PhysicalActivityEditor(StudyDefinition study, IStudyWorkspace studyWorkspace,
+        IPhysicalActivityWorkspace activity, IModelWorkspace models, IRunStore? runs,
+        CompanyFileSnapshot company, bool writable, CultureInfo uiCulture, CultureInfo formatCulture)
     {
-        study = host.Current ?? throw new InvalidOperationException("Select a saved study first.");
-        studyWorkspace = host.PhysicalStudies ?? throw new InvalidOperationException("Studies unavailable.");
-        companyWritable = host.PhysicalCompanyWritable;
-        activity = host.ActivePhysicalActivity ?? throw new InvalidOperationException("Physical store unavailable.");
-        models = host.PhysicalModels ?? throw new InvalidOperationException("Published model unavailable.");
-        runs = host.PhysicalRuns;
-        company = host.PhysicalCompany ?? throw new InvalidOperationException("Company unavailable.");
-        uiCulture = host.PhysicalUiCulture; formatCulture = host.PhysicalFormatCulture;
+        this.study = study;
+        this.studyWorkspace = studyWorkspace;
+        companyWritable = writable;
+        this.activity = activity;
+        this.models = models;
+        this.runs = runs;
+        this.company = company;
+        this.uiCulture = uiCulture; this.formatCulture = formatCulture;
         texts = new UiTextCatalog();
         RefreshStudyChoices();
         IsReadOnly = !companyWritable || study.State == StudyState.Closed;
@@ -131,6 +150,16 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     public IReadOnlyList<PhysicalQualityOption> QualityOptions { get; }
     public bool IsReadOnly { get; private set; }
     public bool IsWritable => !IsReadOnly;
+    public bool CanSaveDraft => IsWritable && SelectedRow?.HasChanges == true;
+    public bool CanConfirm => IsWritable && SelectedRow is not null;
+    public string SelectionHelp => Label("Activity.SelectionHelp");
+    public string EvidenceLabel => Label("Activity.EvidenceDetails");
+    public string SelectedContext => SelectedRow?.Node ?? "";
+    partial void OnSelectedRowChanged(PhysicalActivityRow? value)
+    {
+        OnPropertyChanged(nameof(CanSaveDraft)); OnPropertyChanged(nameof(CanConfirm));
+        OnPropertyChanged(nameof(SelectedContext));
+    }
     public string ProjectLabel => Label("Activity.Project");
     public string StudyLabel => Label("Activity.Study");
     public string PeriodLabel => Label("Activity.Period");
@@ -206,6 +235,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     public string CloseLabel => Label("Activity.Cancel");
     public string NormalLabel => Label("Activity.Normal");
     public string NormalMethodLabel => Label("Activity.Method");
+    public string CalculatorLabel => Label("Activity.Calculator");
     public string PhysicalImportLabel => Label("Activity.Import.Open");
     public string OtherRowsPendingLabel => Label("Activity.OtherRowsPending");
     public string AdvancedCapacityLabel => Label("Activity.Advanced");
@@ -223,7 +253,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     private decimal? Parse(string raw)
     {
         if (string.IsNullOrWhiteSpace(raw)) return null;
-        if (!decimal.TryParse(raw.Trim(), NumberStyles.Number, formatCulture, out var number))
+        if (!decimal.TryParse(raw.Trim(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, formatCulture, out var number))
             throw PhysicalActivityRules.Error("ACT_INPUT_INVALID", "Activity.InputInvalid");
         return number;
     }
@@ -262,6 +292,22 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
                 Label("Activity.UtilizationUndefined"), Label("Activity.AnnulledRow"),
                 Label("Activity.State.Draft"), Label("Activity.State.Confirmed"));
             Rows.Add(row);
+            row.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(PhysicalActivityRow.HasChanges)) OnPropertyChanged(nameof(CanSaveDraft));
+                if (row.IsLoading || e.PropertyName is nameof(PhysicalActivityRow.HasChanges) or
+                    nameof(PhysicalActivityRow.Status) or nameof(PhysicalActivityRow.Utilization)) return;
+                row.Status = row.HasChanges ? Label("Activity.UnsavedRow") : row.SavedStatus;
+                try
+                {
+                    var normal = Parse(row.NormalText); var real = Parse(row.RealText);
+                    var percent = PhysicalActivityRules.Utilization(normal, real);
+                    row.Utilization = percent is { } value ? value.ToString("0.##", formatCulture) + " %" :
+                        Label(normal == 0 ? "Activity.UtilizationUndefined" : "Activity.Pending");
+                }
+                catch (Exception error) when (error is DomainRuleException or OverflowException)
+                { row.Utilization = Label("Activity.Pending"); }
+            };
         }
         SelectedRow = Rows.FirstOrDefault(r => r.PoolId == selectedId) ?? Rows.FirstOrDefault();
         Feedback = "";
@@ -271,11 +317,6 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     {
         var row = SelectedRow;
         if (row is null || IsReadOnly) return;
-        if (Rows.Any(r => !ReferenceEquals(r, row) && r.HasChanges))
-        {
-            Feedback = Label("Activity.OtherRowsPending");
-            return;
-        }
         try
         {
             var normal = Parse(row.NormalText);
@@ -288,8 +329,8 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
                 string.IsNullOrWhiteSpace(row.NormalZeroReason) ? null : row.NormalZeroReason.Trim(),
                 string.IsNullOrWhiteSpace(row.ExceptionReason) ? null : row.ExceptionReason.Trim(),
                 string.IsNullOrWhiteSpace(row.CorrectionReason) ? null : row.CorrectionReason.Trim(), "local-user");
-            _ = activity.Save(command);
-            Reload();
+            var saved = activity.Save(command);
+            ReadSavedRow(row, saved);
         }
         catch (DomainRuleException e) { Feedback = Label(e.Diagnostic.MessageKey); }
         catch (CompanyFileException e) { Feedback = Label(e.Diagnostic.MessageKey); }
@@ -304,16 +345,11 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     {
         var row = SelectedRow;
         if (row is null || IsReadOnly) return;
-        if (Rows.Any(r => !ReferenceEquals(r, row) && r.HasChanges))
-        {
-            Feedback = Label("Activity.OtherRowsPending");
-            return;
-        }
         try
         {
-            _ = activity.Annul(new(study.CompanyId, study.Id, study.Revision, row.NodeId, row.PoolId,
+            var saved = activity.Annul(new(study.CompanyId, study.Id, study.Revision, row.NodeId, row.PoolId,
                 row.Version, row.CorrectionReason, "local-user"));
-            Reload();
+            ReadSavedRow(row, saved);
         }
         catch (DomainRuleException e) { Feedback = Label(e.Diagnostic.MessageKey); }
         catch (CompanyFileException e) { Feedback = Label(e.Diagnostic.MessageKey); }
@@ -322,6 +358,14 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
             System.Diagnostics.Trace.TraceError("T14 annul: {0}", ex);
             Feedback = Label("Activity.SaveFailed");
         }
+    }
+
+    private void ReadSavedRow(PhysicalActivityRow row, PhysicalObservation saved)
+    {
+        row.ReadFrom(saved, formatCulture, Label("Activity.Pending"), Label("Activity.UtilizationUndefined"),
+            Label("Activity.AnnulledRow"), Label("Activity.State.Draft"), Label("Activity.State.Confirmed"));
+        OnPropertyChanged(nameof(CanSaveDraft));
+        Feedback = Label("Activity.RowSaved") + " · " + row.Node;
     }
 
     public string History()

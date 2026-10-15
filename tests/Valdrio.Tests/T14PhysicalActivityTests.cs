@@ -8,7 +8,7 @@ using Valdrio.Infrastructure.CompanyFiles;
 namespace Valdrio.Tests;
 
 [TestClass]
-public sealed class T14PhysicalActivityTests
+public sealed partial class T14PhysicalActivityTests
 {
     private string directory = null!;
     private sealed class Clock : IClock

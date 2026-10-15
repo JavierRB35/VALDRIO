@@ -132,10 +132,10 @@ public sealed partial class SqliteCompanyFileService
             var before = CanonicalSnapshotJson.Deserialize<FormatUpgrade>(a.Row.BeforeJson);
             var after = CanonicalSnapshotJson.Deserialize<FormatUpgrade>(a.Row.AfterJson);
             Invalid(a.AggregateId != file.Id.ToString() || a.Row.Revision != i || a.Row.Operation != "UpgradeFormat" ||
-                before.FromSchema is not (1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9) || before.FromSchema != before.ToSchema || after.FromSchema != before.FromSchema ||
+                before.FromSchema is not (1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9 or 10) || before.FromSchema != before.ToSchema || after.FromSchema != before.FromSchema ||
                 after.ToSchema != before.FromSchema + 1 || (previousSchema.HasValue && before.FromSchema != previousSchema) ||
-                before.MigrationId != (before.FromSchema switch { 1 => MigrationId, 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, 5 => GroupedImportMigrationId, 6 => ImportLedgerMigrationId, 7 => InternationalImportMigrationId, 8 => ResourceMigrationId, _ => AllocationMigrationId }) ||
-                after.MigrationId != (after.ToSchema switch { 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, 5 => GroupedImportMigrationId, 6 => ImportLedgerMigrationId, 7 => InternationalImportMigrationId, 8 => ResourceMigrationId, 9 => AllocationMigrationId, _ => RunMigrationId }), "Format upgrade audit invalid");
+                before.MigrationId != (before.FromSchema switch { 1 => MigrationId, 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, 5 => GroupedImportMigrationId, 6 => ImportLedgerMigrationId, 7 => InternationalImportMigrationId, 8 => ResourceMigrationId, 9 => AllocationMigrationId, _ => RunMigrationId }) ||
+                after.MigrationId != (after.ToSchema switch { 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, 5 => GroupedImportMigrationId, 6 => ImportLedgerMigrationId, 7 => InternationalImportMigrationId, 8 => ResourceMigrationId, 9 => AllocationMigrationId, 10 => RunMigrationId, _ => PhysicalMigrationId }), "Format upgrade audit invalid");
             previousSchema = after.ToSchema;
         }
         Invalid(previousSchema.HasValue && previousSchema.Value != file.SchemaVersion, "Format upgrade history incomplete");

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Valdrio.Application;
@@ -17,6 +18,7 @@ public sealed partial class PhysicalImportCandidate : ObservableObject
     public required string Real { get; init; }
     public required string Warning { get; init; }
     public required string Existing { get; init; }
+    public PhysicalObservation? Prior { get; init; }
     [ObservableProperty] private bool replace;
 }
 
@@ -119,7 +121,8 @@ public sealed partial class PhysicalImportEditor : ObservableObject
                     Source = line, Node = line.NodeCode, Unit = line.UnitCode,
                     Normal = line.NormalQuantity?.ToString(numeric) ?? "—",
                     Real = line.RealQuantity?.ToString(numeric) ?? "—",
-                    Warning = problem, Existing = existing
+                    Warning = problem, Existing = existing,
+                    Prior = line.PoolId is { } id ? current.GetValueOrDefault(id) : null
                 };
                 item.PropertyChanged += (_, _) => OnPropertyChanged(nameof(CanApply));
                 Lines.Add(item);
@@ -143,12 +146,12 @@ public sealed partial class PhysicalImportEditor : ObservableObject
             if (chosen.Any(l => !l.CanChoose) ||
                 chosen.Select(l => l.PoolId).Distinct().Count() != chosen.Length)
                 throw PhysicalActivityRules.Error("ACT_IMPORT_DUPLICATE", "Activity.ImportDuplicate");
-            var current = host.Activity.ReadCurrent(host.Study.CompanyId, host.Study.Id)
-                .ToDictionary(r => r.PoolId);
             var commands = new List<PhysicalImportOperation>();
             foreach (var line in chosen)
             {
-                var prior = current.GetValueOrDefault(line.PoolId!.Value);
+                // Compare against the version reviewed, never silently refresh it at adoption.
+                var reviewed = Lines.Single(l => ReferenceEquals(l.Source, line)).Prior;
+                var prior = reviewed?.State == PhysicalObservationState.Annulled ? null : reviewed;
                 if (prior?.State == PhysicalObservationState.Confirmed &&
                     string.IsNullOrWhiteSpace(CorrectionReason))
                     throw PhysicalActivityRules.Error("ACT_CORRECTION_REASON", "Activity.CorrectionReason");
@@ -158,7 +161,7 @@ public sealed partial class PhysicalImportEditor : ObservableObject
                 var realEvidence = line.RealQuantity.HasValue ? line.RealEvidence : prior?.RealEvidence;
                 var command = new SavePhysicalObservation(host.Study.CompanyId, host.Study.Id,
                     host.Study.Revision, line.NodeId!.Value, line.PoolId!.Value,
-                    prior?.Version ?? 0L, PhysicalObservationState.Draft,
+                    reviewed?.Version ?? 0L, PhysicalObservationState.Draft,
                     prior?.TheoreticalQuantity, prior?.PracticalQuantity,
                     normal, real, normalEvidence, realEvidence,
                     string.IsNullOrWhiteSpace(NormalZeroReason) ? prior?.NormalZeroReason : NormalZeroReason.Trim(),

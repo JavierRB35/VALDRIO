@@ -49,12 +49,18 @@ public static class PhysicalImportMapper
             map.TryGetValue(key, out var values)
                 ? row.GetCell(values[0]).TextValue?.Trim() ?? "" : "";
 
-        decimal? Number(string raw)
+        decimal? Number(SourceRow row, string key)
         {
+            var cell = map.TryGetValue(key, out var columns) ? row.GetCell(columns[0]) : SourceCell.Missing(0);
+            var raw = cell.TextValue?.Trim() ?? "";
+            var kind = cell.Kind == SourceValueKind.FormulaWithCachedValue ? cell.CachedValueKind : cell.Kind;
+            if (kind is not (SourceValueKind.Missing or SourceValueKind.Empty or SourceValueKind.Text or SourceValueKind.Number))
+                throw PhysicalActivityRules.Error("ACT_IMPORT_NUMBER", "Activity.ImportNumber");
             if (raw.Length == 0) return null;
             // No group separators or scientific notation: lexical and culture are explicit.
             if (!decimal.TryParse(raw, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
-                document.SourceKind == ImportSourceKind.Xlsx ? CultureInfo.InvariantCulture : numericCulture, out var val) ||
+                document.SourceKind == ImportSourceKind.Xlsx && kind == SourceValueKind.Number
+                    ? CultureInfo.InvariantCulture : numericCulture, out var val) ||
                 val < 0) throw PhysicalActivityRules.Error("ACT_IMPORT_NUMBER", "Activity.ImportNumber");
             return val;
         }
@@ -81,12 +87,12 @@ public static class PhysicalImportMapper
                 end = BusinessDate.ParseIso(Read(record, "period_end"));
                 if (start.Value.Value > end.Value.Value) issue ??= "Activity.ImportPeriod";
             }
-            catch (FormatException) { issue ??= "Activity.ImportPeriod"; }
+            catch (Exception e) when (e is FormatException or ArgumentException) { issue ??= "Activity.ImportPeriod"; }
             decimal? normal = null, real = null;
             try
             {
-                normal = Number(Read(record, "normal"));
-                real = Number(Read(record, "real"));
+                normal = Number(record, "normal");
+                real = Number(record, "real");
             }
             catch (DomainRuleException) { issue ??= "Activity.ImportNumber"; }
             if (!normal.HasValue && !real.HasValue) issue ??= "Activity.ImportEmpty";
