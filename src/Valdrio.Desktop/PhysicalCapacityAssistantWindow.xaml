@@ -52,6 +52,8 @@
          <StackPanel>
           <TextBlock Text="{Binding Label}" TextWrapping="Wrap"/>
           <WrapPanel>
+           <CheckBox Content="{Binding DataContext.ReviewedLabel,RelativeSource={RelativeSource AncestorType=Window}}"
+                     IsChecked="{Binding Reviewed,Mode=TwoWay}" Margin="0,4,16,4"/>
            <CheckBox Content="{Binding DataContext.IncludeLabel,RelativeSource={RelativeSource AncestorType=Window}}"
                      IsChecked="{Binding Include,Mode=TwoWay}" Margin="0,4,16,4"/>
            <CheckBox Content="{Binding DataContext.ReviewLabel,RelativeSource={RelativeSource AncestorType=Window}}"
