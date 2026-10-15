@@ -111,6 +111,10 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     public string AnnulLabel => Label("Activity.Annul");
     public string CloseLabel => Label("Activity.Cancel");
     public string NormalLabel => Label("Activity.Normal");
+    public string NormalMethodLabel => Label("Activity.Method");
+    public string AdvancedCapacityLabel => Label("Activity.Advanced");
+    public string TheoreticalLabel => Label("Activity.Theoretical");
+    public string PracticalLabel => Label("Activity.Practical");
     public string RealLabel => Label("Activity.Real");
     public string NodeLabel => Label("Activity.Node");
     public string UnitLabel => Label("Activity.Unit");
