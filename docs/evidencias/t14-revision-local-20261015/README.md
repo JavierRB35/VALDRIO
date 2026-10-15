@@ -2,6 +2,10 @@
 
 Fecha: 15/10/2026. Base funcional: PR #55, `85ef4cfd311fa8d2e709f9f79192f41429aaeedd`. Rama de revisión: `fix/t14-local-validation-20261015`. Se integra también el corte documental `main@4aa747c`, conservando su contenido histórico. El propietario autoriza expresamente la fusión después de finalizar las comprobaciones.
 
+**Resultado final de integración:** durante la revisión, `main` avanzó a `dad33f9` con mejoras paralelas de composición de repartos y presentación T12. Se integraron en `99ad66e2cd493f11cab5ee6895937fa720f96127`, conservando ambos conjuntos de traducciones y las barras de acciones. Sobre esa combinación: compilación sin errores/advertencias, **717/717 pruebas** (5 min 58 s) y **41/41 controles WPF ES/EN** con cierre/reapertura, cálculo de 6.500 EUR, teclado y ventana de 960 px. El [PR #57](https://github.com/JavierRB35/VALDRIO/pull/57) incorpora T14 y sus correcciones; no sobrescribe las mejoras paralelas. Cambios posteriores a estas pruebas: solo documentación y evidencias.
+
+[Recibo WPF integrado](integrated-wpf-checks.json) · [Primario final ES](integrated-primary-es.png) · [Secundario estrecho EN](integrated-secondary-en.png) · [Resultados y hashes](validation.json).
+
 ## Fuentes contrastadas
 
 - Código real de la rama T14, `AGENTS.md`, ficha T14 y directrices de capacidad asistida, integración, usabilidad y sistema visual V1.
@@ -52,10 +56,14 @@ SDK .NET 10.0.401, Windows. Ningún workflow, runner alojado ni cambio de factur
 |---|---|
 | Compilación de `Valdrio.slnx`, Release | Sin errores ni advertencias |
 | Regresión completa tras correcciones de motor/persistencia | 714/714, 6 min 14 s |
-| Pruebas adicionales y ajustes posteriores | Ver `validation.json` y `focused-final.trx` local |
+| Pruebas específicas adicionales y ajustes posteriores | 22/22 |
+| Regresión completa de la integración final | 717/717, 5 min 58 s |
+| Controles WPF de repartos integrados | 41/41, español/inglés y ventana estrecha |
 | Referencias racionales v0.4 | 39/39; no sustituyen pruebas C#/WPF |
 | Claves de mensajes de producción | 543 encontradas, completas ES/EN |
 | Integración documental de main | Sin cambios de código respecto al estado probado |
+
+La última integración con `dad33f9` sí incluía código paralelo; por eso se recompiló y repitió la regresión completa y el control WPF. No se reutiliza la primera ejecución como prueba de esa combinación.
 
 Los casos específicos comprueban migración/reapertura, versiones físicas, ceros/ausentes/excesos, separación de estudios, conservación de revisión y ejecuciones T12, calendario, histórico, declaración, CSV/XLSX, concurrencia, anulación y edición. RP-01 cubre cuentas nuevas por prefijo, importes cero/negativos, conservación del origen, repetición y auditoría, conflictos expresos, rutas secundarias, destino cerrado, revisiones obsoletas y rechazo sin escritura de una configuración alterada. Una prueba del editor comprueba que previsualizar y seleccionar son requisitos para adoptar y que cambiar origen invalida la selección.
 

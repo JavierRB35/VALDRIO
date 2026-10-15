@@ -20,10 +20,19 @@
       "passed": 22,
       "failed": 0,
       "finish": "2026-10-15T10:50:06.0458388+02:00"
+    },
+    {
+      "file": "artifacts/t14-review/integrated-regression.trx",
+      "sha256": "902a0a9174e09a882f70bac957cdf7b6f0eaab622c6f7677a8e72ca5bc3adfc7",
+      "total": 717,
+      "passed": 717,
+      "failed": 0,
+      "finish": "2026-10-15T10:59:10.5598512+02:00"
     }
   ],
   "referenceCases": 39,
   "productionMessageKeys": 543,
   "githubActionsDispatched": 0,
-  "note": "La regresión completa precede a dos pruebas adicionales y últimos retoques WPF; la suite específica final cubre los cambios posteriores."
+  "note": "Integración final sobre 99ad66e, incluyendo main@dad33f9: 717/717 y 41 comprobaciones WPF ES/EN. Cambios posteriores únicamente documentales.",
+  "integratedWpfChecks": 41
 }
