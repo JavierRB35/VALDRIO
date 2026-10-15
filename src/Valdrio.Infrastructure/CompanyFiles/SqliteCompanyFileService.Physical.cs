@@ -160,6 +160,20 @@ public sealed partial class SqliteCompanyFileService
                 .OrderBy(v => v.PeriodStart.Value).ThenBy(v => v.ModelVersionId).ThenBy(v => v.Version));
         });
 
+        public IReadOnlyList<PhysicalObservation> ReadReferences(EntityId companyId, EntityId studyId,
+            CancellationToken cancellationToken = default) => PhysicalWorkspace(false, cancellationToken, (db, file) =>
+        {
+            Scope(companyId, file);
+            _ = RequiredStudy(db, companyId, studyId);
+            var all = db.PhysicalObservations.AsNoTracking()
+                .Where(r => r.CompanyId == companyId.ToString()).ToArray().Select(RestorePhysical);
+            return FrozenList.Copy(all.GroupBy(r => (r.StudyId, r.ModelVersionId, r.PoolId, r.PeriodStart, r.PeriodEnd))
+                .Select(g => g.OrderByDescending(r => r.Version).First())
+                .Where(r => r.State == PhysicalObservationState.Confirmed &&
+                    (r.StudyId != studyId || r.PeriodStart != Study(RequiredStudy(db, companyId, studyId)).PeriodStart))
+                .OrderBy(r => r.PeriodStart.Value).ThenBy(r => r.PoolId));
+        });
+
         public PhysicalObservation Save(SavePhysicalObservation command, CancellationToken cancellationToken = default) =>
             PhysicalWorkspace(true, cancellationToken, (db, file) =>
             {
