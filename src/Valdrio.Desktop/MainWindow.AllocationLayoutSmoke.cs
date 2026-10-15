@@ -31,6 +31,7 @@ public partial class MainWindow
         await NavigateWorkflow(2);
         studies.StudyChoice = studies.Studies.Single(s => s.Value.Name.StartsWith("T12 DEMO", StringComparison.Ordinal));
         await studies.LoadCommand.ExecuteAsync(null);
+        Check(!AllocationActionsHost.IsVisible, "allocation footer hidden outside allocation screens");
         foreach (var language in new[] { "es", "en" })
         {
             main.ApplyPresentationPreset(language, language == "es" ? "es-ES" : "en-US", "UTC", false, false);
@@ -82,6 +83,11 @@ public partial class MainWindow
             Check(Math.Abs(top.Y - bottom.Y) < 1 && bottom.Y > ActualHeight / 2 && bottom.Y + button.ActualHeight < ActualHeight,
                 "closure remains fixed at bottom " + label);
             Check(button.Focus() && button.IsKeyboardFocusWithin, "footer keyboard focus " + label);
+            var panel = button == AllocationPanel.TogglePrimaryButton ? AllocationPanel : SecondaryPanel.Workspace;
+            panel.IsEnabled = false; await Idle();
+            Check(!button.IsEnabled, "footer preserves workspace disabled state " + label);
+            panel.IsEnabled = true; await Idle();
+            Check(button.IsEnabled, "footer restores workspace enabled state " + label);
         }
     }
 }
