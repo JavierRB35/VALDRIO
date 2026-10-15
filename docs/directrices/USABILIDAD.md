@@ -1,4 +1,4 @@
-﻿# Usabilidad — decisión permanente del propietario (2026-10-07)
+# Usabilidad — decisión permanente del propietario (2026-10-07)
 
 «Una aplicación de este tipo ya es lo suficientemente compleja en su metodología
 como para complicarla en su uso y funcionamiento».
@@ -64,7 +64,7 @@ de cambios pendientes y la validación del rango.
 
 ### Claves y resultados automáticos — 2026-10-11
 
-- En primario y secundario, agrupar nombre, criterio y guardar en una fila.
+- En primario y secundario, agrupar nombre y criterio; situar guardar debajo de los destinos (decisión del propietario, 2026-10-15).
   Las tablas de claves y destinos deben aprovechar la altura de la ventana;
   evitar alturas fijas pequeñas y grandes espacios vacíos en la cabecera.
 - «Asignar claves a cuentas» permite ordenar cada columna en ambos sentidos.
@@ -73,7 +73,7 @@ de cambios pendientes y la validación del rango.
   un cierre guardado. No exigir una comprobación adicional. Si el cálculo falla,
   mostrar el diagnóstico en rojo; no confundir cualquier error con falta de
   viabilidad matemática de las rutas. Invalidar la información al cambiar datos.
-- Situar cerrar/reabrir al comienzo de las pantallas 6 y 7, en el mismo lugar.
+- Situar cerrar/reabrir en una barra inferior fija de primario y secundario, junto al cálculo y descarte; mantener las acciones locales debajo de sus datos (decisión del propietario, 2026-10-15, sustituye la posición superior).
 - Suprimir la tabla «Conciliación por recurso» de la pantalla secundaria por
   decisión del propietario. Conservar las comprobaciones económicas internas.
 

@@ -491,3 +491,15 @@ Sobre el HEAD T05 posterior a `dacf2dd15ecf438f465ca3658cb06c6659c5fdd3` se inco
 La verificación independiente detectó tres ubicaciones que impedían compilar el HEAD T06 `b8b09ad2799c1471f62dafdd85e401d63e27886e`: declaración múltiple con `var` en el parser, posible `Worksheet` nulo y patrones `CellValues` no constantes. En una copia diagnóstica, cambiando únicamente esos puntos, la solución compiló sin avisos/errores y pasó 203/203.
 
 El commit publicado `473a4d153c09da94dc462185a08769e6430189c6` aplica exactamente esos tres ajustes, sin cambiar reglas económicas, fixtures ni expected. El entorno de publicación sigue sin SDK .NET; por honestidad, los 203/203 se atribuyen a la copia diagnóstica equivalente y no todavía a este SHA remoto.
+
+## T12 — revisión y presentación local, 2026-10-15
+
+Rama aislada `fix/t12-presentation-20261015`, base `85ef4cf`. Autorización posterior del propietario para aplicar mejoras visuales. Resumen de costes por centro/nodo (primario, neto secundario y final), indicadores y diagramas adaptables; conservados historial, detalle, conciliación y ES/EN. No modifica el motor de reparto. Véase `docs/diseno/REVISION_T12_PRESENTACION_20261015.md` y evidencia `docs/evidencias/t12-presentacion-20261015/README.md`. No fusionado ni publicado; GitHub Actions: 0 ejecuciones.
+
+Validación de esta entrega: compilación Release sin errores/avisos, 16/16 pruebas T12/T13 y 66 comprobaciones WPF. Suite completa 705/706: fallo previo de orden de diagnósticos T14 (`ACT_INCOMPLETE` frente a `ACT_EVIDENCE_REQUIRED`); no se declara validación global completa.
+
+## Presentación T12 y composición de repartos — 15/10/2026
+
+Mejoras visuales integradas sobre `main@4aa747c`: puente primario/secundario/final por centro y nodo, gráficos T12 más legibles y barra inferior fija de cierre/reapertura en ambos repartos. Las acciones locales quedan debajo de sus datos y el resumen secundario aprovecha el ancho de ventana. Fusión solicitada expresamente por el propietario. T14 y su trabajo paralelo quedan fuera de esta integración.
+
+Validación local: 695/695 pruebas, 41 controles WPF de repartos y 66 de T12; compilación sin errores ni advertencias. Ver [evidencia actual](docs/evidencias/repartos-composicion-20261015/README.md), que distingue la aceptación actual de los ensayos históricos sobre T14. GitHub Actions no ejecutado.

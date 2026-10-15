@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text.Json;
 using System.Windows;
 using System.ComponentModel;
@@ -71,7 +71,7 @@ public partial class MainWindow
                 "closed primary opens at saved results " + language);
             RootScrollViewer.ScrollToTop(); await Idle();
             var primaryToggleY = AllocationPanel.TogglePrimaryButton.TranslatePoint(new Point(), this).Y;
-            Check(AllocationPanel.LinesGrid.ActualHeight > 300, "primary destinations use available height " + language);
+            Check(AllocationPanel.LinesGrid.ActualHeight >= 200, "primary destinations use available height " + language);
             Check(vm.IsPrimaryClosed && vm.PrimaryResults.All(r => !string.IsNullOrWhiteSpace(r.Behavior)), "closed primary shows behavior " + language);
             Check(vm.PrimaryAccounts.Count > 0 && vm.PrimaryAccounts.Sum(row => row.PresentedAssigned) == vm.PrimaryNodeTotals.Sum(row => row.PresentedAmount),
                 "primary grouped-account assignments reconcile to the primary node totals " + language);
@@ -107,8 +107,8 @@ public partial class MainWindow
                 "closed secondary opens at saved results " + language);
             RootScrollViewer.ScrollToTop(); await Idle();
             Check(Math.Abs(panel.ToggleSecondaryButton.TranslatePoint(new Point(), this).Y - primaryToggleY) < 2,
-                "secondary reopen occupies same top position as primary " + language);
-            Check(panel.ToggleSecondaryButton.IsEnabled && panel.LinesGrid.ActualHeight > 300,
+                "secondary reopen occupies same bottom position as primary " + language);
+            Check(panel.ToggleSecondaryButton.IsEnabled && panel.LinesGrid.ActualHeight >= 200,
                 "secondary reopen available and destinations expanded " + language);
             Check(vm.IsSecondaryClosed && vm.SecondaryResults.Count > 0, "publication loaded without calculating " + language);
             var snapshot = company.ActiveAllocations!.ReadAllocations(studies.Current!.CompanyId, studies.Current.Id);
@@ -179,7 +179,7 @@ public partial class MainWindow
             {
                 panel.PrincipalCostsGrid.SelectedItem = nextCentre; await Idle();
                 Check(vm.SelectedPrincipalCostRow == nextCentre && vm.PrincipalOriginRows.Sum(r => r.NumericAmount) == nextCentre.PresentedTotalAmount,
-                    "changing principal centre updates the adjacent cost-origin table " + language);
+                    "changing principal centre updates the cost-origin table below the summary " + language);
             }
             ScrollToElement(panel.PrincipalCostFlowSection); await Idle();
             VisualEvidenceCapture.Capture(this, Path.Combine(directory, language + "-principal-flow.png"));
@@ -269,7 +269,7 @@ public partial class MainWindow
         MainContent.LayoutTransform = Transform.Identity;
         await vm.ToggleSecondaryCommand.ExecuteAsync(null); await Idle();
         Check(!vm.IsSecondaryClosed && vm.CanEditSecondaryConfiguration && vm.ReciprocalChecks.Count == 0,
-            "top reopen command unlocks editing and invalidates prior feasibility");
+            "bottom reopen command unlocks editing and invalidates prior feasibility");
         await vm.CalculateSecondaryCommand.ExecuteAsync(null); await vm.ToggleSecondaryCommand.ExecuteAsync(null); await Idle();
         Check(vm.IsSecondaryClosed && vm.ReciprocalChecks.Count > 0, "recalculation and closure restore automatic viability");
         var path = company.ActivePath!;
