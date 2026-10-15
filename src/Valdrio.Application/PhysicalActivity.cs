@@ -60,6 +60,7 @@ public interface IPhysicalActivityWorkspace
     // Read-only source catalogue. Only exact pool identity is automatically comparable.
     IReadOnlyList<PhysicalObservation> ReadReferences(EntityId companyId, EntityId studyId, CancellationToken cancellationToken = default);
     PhysicalObservation Save(SavePhysicalObservation command, CancellationToken cancellationToken = default);
+    IReadOnlyList<PhysicalObservation> ApplyImport(ApplyPhysicalImport command, CancellationToken cancellationToken = default);
     PhysicalObservation Annul(AnnulPhysicalObservation command, CancellationToken cancellationToken = default);
 }
 
