@@ -1493,7 +1493,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="ActivityUnit.cycle" xml:space="preserve"><value>Ciclo</value></data>
   <data name="Guide.PhaseProjectStructure" xml:space="preserve"><value>Proyecto y estructura</value></data>
   <data name="Guide.PhaseAnalysisData" xml:space="preserve"><value>Análisis y datos económicos</value></data>
-  <data name="Guide.PhaseAllocations" xml:space="preserve"><value>Repartos y cálculo</value></data>
+  <data name="Guide.PhaseAllocations" xml:space="preserve"><value>Repartos y capacidad</value></data>
+  <data name="Guide.NeedSavedStudyForPhysical" xml:space="preserve"><value>Selecciona un estudio guardado, termina los cambios pendientes y espera a que finalice la carga para abrir Actividad y capacidades.</value></data>
   <data name="Guide.ShowContext" xml:space="preserve"><value>Detalles</value></data>
   <data name="Guide.HideContext" xml:space="preserve"><value>Ocultar detalles</value></data>
   <data name="Guide.CompactTables" xml:space="preserve"><value>Tablas compactas</value></data>
