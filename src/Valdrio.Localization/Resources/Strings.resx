@@ -1717,4 +1717,6 @@ Difference to distribute: {7}</value></data>
   <data name="Activity.ImportSource" xml:space="preserve"><value>Source provenance exceeds permitted length.</value></data>
   <data name="Activity.ImportInvalid" xml:space="preserve"><value>Review source rows and replace choices.</value></data>
   <data name="Activity.ImportDuplicate" xml:space="preserve"><value>Cannot import multiple replacement rows for one pool.</value></data>
+  <data name="Activity.History.Reviewed" xml:space="preserve"><value>Reviewed</value></data>
+  <data name="Activity.Import.Open" xml:space="preserve"><value>Import physical CSV/XLSX</value></data>
 </root>
