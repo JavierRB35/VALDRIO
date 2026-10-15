@@ -18,7 +18,11 @@ public partial class StudyWorkspacePanel : UserControl
             ActionStatus.BringIntoView();
         };
     }
-    private void OpenPhysicalActivity(object sender, RoutedEventArgs e)
+    private void OpenPhysicalActivity(object sender, RoutedEventArgs e) => ShowPhysicalActivity();
+
+    // Shared by the study screen and T14's phase-navigation item.
+    // The existing validation is the single source of truth for both.
+    internal void ShowPhysicalActivity()
     {
         if (DataContext is StudyWorkspaceViewModel { CanOpenPhysical: true } vm)
         {
