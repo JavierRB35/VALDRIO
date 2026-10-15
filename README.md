@@ -1,5 +1,7 @@
 # VALDRIO
 
+**Actualización posterior al corte documental:** T14 incorpora correcciones verificadas en Windows local y mejoras de tabla/calculadora. Reparto primario permite previsualizar y adoptar reglas compatibles de otro análisis, sin copiar saldos, actividad ni cierres. Véase el [informe de pruebas, capturas y aceptación pendiente](docs/evidencias/t14-revision-local-20261015/README.md). Esta entrega no completa la aceptación comercial de T14/RP-01 ni implementa T15.
+
 **Aplicación local de escritorio para Windows (WPF/.NET 10)** orientada a proyectos de cálculo y gestión de costes. El archivo de trabajo es `.valdrio`; se conservan estructura, análisis, importaciones, preparación, repartos y ejecuciones según el estado/versión de cada proyecto.
 
 > **Estado documental actualizado el 15/10/2026.** Esta portada describe la implementación inspeccionada en `main@8b6c89e47d69d53bb5adad2fe0a2b215b4d68a95`. «Existe en el código» no equivale a «ha sido aceptada interactivamente en esta revisión». Para comportamiento, pruebas y límites, consultar [inventario de la aplicación real](docs/revision/REALIDAD_FUNCIONAL_2026-10-15.md) y [matriz de aceptación Windows](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md).
@@ -32,7 +34,7 @@ El **cierre primario/secundario** no es un cierre integral del período. El cál
 
 - **Integradas en el código de `main`:** bases T00–T11 (proyecto, estructura, importación, recursos, claves y repartos), ejecuciones persistidas/historial **T12**, ejemplos de verificación **T13** y editor de ajustes reutilizables. La existencia se ha comprobado sobre archivos de producción, no únicamente fichas de tareas.
 - **Verificación histórica:** constan pruebas y recorridos WPF Windows en [auditoría integral](docs/auditorias/2026-10-14/VALIDACION.md), [ergonomía visual](docs/auditorias/2026-10-14-visual/VALIDACION.md), [T12](docs/tareas/T12.md), [T13](docs/tareas/T13.md) y [reglas](docs/evidencias/2026-10-14-ajustes-reutilizables/INFORME.md). Sus resultados corresponden a **commits/escenarios documentados**, no son un pase nuevo del HEAD.
-- **En desarrollo, no disponible en `main` de este corte:** T14 (observaciones físicas y capacidad, [PR #55 en borrador](https://github.com/JavierRB35/VALDRIO/pull/55)). Tampoco se anuncian como disponibles T15+ (tarifas/absorción, producción y objetos, rentabilidad, escenarios, informes comerciales, presupuestos, ABC/TDABC).
+- **Posterior al corte original:** T14 (observaciones físicas y capacidad, originadas en [PR #55](https://github.com/JavierRB35/VALDRIO/pull/55)) y reutilización de reglas disponen de implementación revisada localmente; consultar el informe enlazado al inicio para alcance y límites. T15+ (tarifas/absorción, producción y objetos, rentabilidad, escenarios, informes comerciales, presupuestos, ABC/TDABC) sigue fuera de esta entrega.
 - **Pendiente para el futuro manual:** recorrido manual Windows sobre el binario final, mensajes exactos, casos negativos, resultados representativos, accesibilidad y escalado. Véase [matriz con estado por caso](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md).
 
 ## Ejemplos de comprobación económica

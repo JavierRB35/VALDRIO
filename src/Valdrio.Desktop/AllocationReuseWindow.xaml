@@ -10,7 +10,7 @@
    <TextBlock Text="{Binding TargetLabel}" Margin="0,6" FontWeight="SemiBold"/>
    <TextBlock Text="{Binding Help}" TextWrapping="Wrap" Margin="0,0,0,12"/>
    <TextBlock Text="{Binding SourceLabel}"/>
-   <DockPanel><Button DockPanel.Dock="Right" Content="{Binding PreviewLabel}" Click="Preview" Margin="12,0,0,0"/>
+   <DockPanel><Button DockPanel.Dock="Right" Content="{Binding PreviewLabel}" Click="Preview" IsEnabled="{Binding CanPreview}" Margin="12,0,0,0"/>
     <ComboBox ItemsSource="{Binding Sources}" DisplayMemberPath="Label" SelectedItem="{Binding Source}" AutomationProperties.Name="{Binding SourceLabel}"/>
    </DockPanel>
   </StackPanel>
@@ -29,7 +29,7 @@
   <StackPanel Grid.Row="2" Margin="0,12,0,0">
    <CheckBox Content="{Binding ReplaceLabel}" IsChecked="{Binding ReplaceConflicts}" Margin="0,0,0,8"/>
    <TextBlock Text="{Binding Feedback}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" Margin="0,0,0,12"/>
-   <WrapPanel><Button Content="{Binding AdoptLabel}" Click="Adopt" Style="{StaticResource Button.Primary}" Margin="0,0,8,0"/>
+   <WrapPanel><Button Content="{Binding AdoptLabel}" Click="Adopt" IsEnabled="{Binding CanAdopt}" Style="{StaticResource Button.Primary}" Margin="0,0,8,0"/>
     <Button Content="{Binding CancelLabel}" IsCancel="True"/>
    </WrapPanel>
   </StackPanel>

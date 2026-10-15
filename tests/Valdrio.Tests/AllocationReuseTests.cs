@@ -6,6 +6,33 @@ namespace Valdrio.Tests;
 
 public sealed partial class T06ImportConfirmationTests
 {
+    [TestMethod]
+    public async Task RP01_EditorRequiresPreviewAndSelectionAndInvalidatesWhenSourceChanges()
+    {
+        using var file = Baseline();
+        var first = await ImportedResources(file);
+        var key = file.Allocations.SaveAllocationKey(KeyCommand(first)).After;
+        var rule = new PrimaryRule(Id(), first.Study.CompanyId, first.Model.Structure.Id,
+            AccountSelectorKind.Prefix, "6", 1, key.Id, true);
+        file.Allocations.ChangeAllocations(AllocationCommand(first, new([rule], [], [], [], [])));
+        var second = await ImportedResources(file);
+        var editor = new Valdrio.Desktop.AllocationReuseEditor(file.Allocations, file.Studies, second.Study,
+            System.Globalization.CultureInfo.GetCultureInfo("es"));
+        Assert.IsFalse(editor.CanAdopt);
+        Assert.IsFalse(editor.CanPreview);
+        editor.Source = editor.Sources.Single(s => s.Value.Id == first.Study.Id);
+        Assert.IsTrue(editor.CanPreview);
+        editor.Preview();
+        Assert.IsFalse(editor.CanAdopt);
+        editor.Items.Single().Selected = true;
+        Assert.IsTrue(editor.CanAdopt);
+        Assert.IsTrue(editor.Adopt());
+        Assert.IsNotNull(editor.Receipt);
+        editor.Source = null;
+        Assert.IsFalse(editor.CanAdopt);
+        Assert.AreEqual(0, editor.Items.Count);
+    }
+
     private static AllocationReuseSelection SelectReuse(AllocationWorkspaceSnapshot source, params EntityId[] ids) =>
         new(source.Resources.Study.Id, source.Resources.Study.Revision, AllocationReuse.Fingerprint(source), ids, [], false);
     private static ChangeAllocations ReuseCommand(AllocationWorkspaceSnapshot source, AllocationWorkspaceSnapshot target, AllocationReuseSelection selection) =>

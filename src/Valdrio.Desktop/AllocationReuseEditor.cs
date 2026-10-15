@@ -37,6 +37,9 @@ public sealed partial class AllocationReuseEditor : ObservableObject
     public string AdoptLabel => L("Reuse.Adopt");
     public string CancelLabel => L("Activity.Cancel");
     public string ReplaceLabel => L("Reuse.Replace");
+    public bool CanPreview => Source is not null;
+    public bool CanAdopt => sourceSnapshot is not null && Items.Any(i => i.Selected && i.CanSelect) &&
+        (ReplaceConflicts || !Items.Any(i => i.Selected && i.Item.Conflict));
     public string TargetLabel => target.Name + " · " + target.PeriodStart + " – " + target.PeriodEnd;
     public string L(string key) => texts.Get(key, culture);
     public AllocationReuseEditor(IAllocationWorkspace port, IStudyWorkspace studies, StudyDefinition target, CultureInfo culture)
@@ -47,7 +50,12 @@ public sealed partial class AllocationReuseEditor : ObservableObject
             Sources.Add(new(study, study.Name + " · " + study.PeriodStart + " – " + study.PeriodEnd));
         if (Sources.Count == 0) Feedback = L("Reuse.NoSources");
     }
-    partial void OnSourceChanged(StudyOption? value) { Items.Clear(); sourceSnapshot = null; targetSnapshot = null; ReplaceConflicts = false; Feedback = ""; }
+    partial void OnSourceChanged(StudyOption? value)
+    {
+        Items.Clear(); sourceSnapshot = null; targetSnapshot = null; ReplaceConflicts = false; Feedback = "";
+        OnPropertyChanged(nameof(CanPreview)); OnPropertyChanged(nameof(CanAdopt));
+    }
+    partial void OnReplaceConflictsChanged(bool value) => OnPropertyChanged(nameof(CanAdopt));
     public void Preview()
     {
         Items.Clear(); sourceSnapshot = null; targetSnapshot = null;
@@ -71,7 +79,9 @@ public sealed partial class AllocationReuseEditor : ObservableObject
                     }
                     else selector += "…";
                 }
-                Items.Add(new(item, L("Reuse.Status." + item.Status), selector));
+                var choice = new AllocationReuseChoice(item, L("Reuse.Status." + item.Status), selector);
+                choice.PropertyChanged += (_, _) => OnPropertyChanged(nameof(CanAdopt));
+                Items.Add(choice);
             }
             Feedback = string.Format(culture, L("Reuse.Summary"), result.Items.Count(i => i.Compatible && !i.AlreadyPresent),
                 result.Items.Count(i => !i.Compatible), result.Items.Count(i => i.Conflict),
@@ -79,10 +89,11 @@ public sealed partial class AllocationReuseEditor : ObservableObject
         }
         catch (DomainRuleException e) { Feedback = L(e.Diagnostic.MessageKey); }
         catch (CompanyFileException e) { Feedback = L(e.Diagnostic.MessageKey); }
+        finally { OnPropertyChanged(nameof(CanAdopt)); }
     }
     public bool Adopt()
     {
-        if (sourceSnapshot is null || targetSnapshot is null) return false;
+        if (!CanAdopt || sourceSnapshot is null || targetSnapshot is null) return false;
         try
         {
             var selection = new AllocationReuseSelection(sourceSnapshot.Resources.Study.Id, sourceSnapshot.Resources.Study.Revision,
