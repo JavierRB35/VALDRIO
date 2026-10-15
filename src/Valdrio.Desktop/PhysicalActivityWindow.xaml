@@ -59,6 +59,14 @@
       <TextBox Text="{Binding SelectedRow.ExceptionReason, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
      </StackPanel>
     </Grid>
+    <Expander Header="{Binding AdvancedCapacityLabel}">
+      <WrapPanel>
+       <StackPanel Margin="0,6,16,6"><TextBlock Text="{Binding TheoreticalLabel}"/>
+        <TextBox Width="180" Text="{Binding SelectedRow.TheoreticalText,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/></StackPanel>
+       <StackPanel Margin="0,6,16,6"><TextBlock Text="{Binding PracticalLabel}"/>
+        <TextBox Width="180" Text="{Binding SelectedRow.PracticalText,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/></StackPanel>
+      </WrapPanel>
+     </Expander>
     <TextBlock Text="{Binding CorrectionLabel}" Margin="0,8,0,2"/>
     <TextBox Text="{Binding SelectedRow.CorrectionReason, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
              MaxLength="4000"/>
@@ -68,6 +76,7 @@
    <TextBlock Text="{Binding Feedback}" Foreground="{DynamicResource Brand.Red}"
               TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" Margin="0,0,0,6"/>
    <WrapPanel>
+    <Button Content="{Binding NormalMethodLabel}" Click="AssistNormal" Margin="0,0,8,0" IsEnabled="{Binding IsWritable}"/>
     <Button Content="{Binding SaveDraftLabel}" Click="SaveDraft" IsEnabled="{Binding IsWritable}" Margin="0,0,8,0"/>
     <Button Content="{Binding ConfirmLabel}" Click="Confirm" IsEnabled="{Binding IsWritable}" Style="{StaticResource Button.Primary}" Margin="0,0,8,0"/>
     <Button Content="{Binding AnnulLabel}" Click="Annul" IsEnabled="{Binding IsWritable}" Margin="0,0,8,0"/>
