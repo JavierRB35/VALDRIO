@@ -237,28 +237,29 @@ public sealed class T14PhysicalActivityTests
     [TestMethod]
     public void T14_JanuaryFebruaryMarchRemainSeparateWithOwnPhysicalVersions()
     {
-        var (file, first, node, pool) = Fixture();
+        var (file, baseStudy, node, pool) = Fixture();
         using (file)
         {
-            var february = file.Studies.Create(new(first.CompanyId, Id(), "Febrero",
-                BusinessDate.ParseIso("2027-02-01"), BusinessDate.ParseIso("2027-02-28"),
-                first.Purpose, first.ScenarioKind, first.SelectedModelVersionId,
-                first.Currency.FunctionalCurrencyCode, "test"));
-            var march = file.Studies.Create(new(first.CompanyId, Id(), "Marzo",
-                BusinessDate.ParseIso("2027-03-01"), BusinessDate.ParseIso("2027-03-31"),
-                first.Purpose, first.ScenarioKind, first.SelectedModelVersionId,
-                first.Currency.FunctionalCurrencyCode, "test"));
-            var january = file.PhysicalActivity.Save(Save(first, node, pool, 0, 700m, 610m));
+            StudyDefinition Month(string name, string start, string end) =>
+                file.Studies.Create(new(baseStudy.CompanyId, Id(), name,
+                    BusinessDate.ParseIso(start), BusinessDate.ParseIso(end),
+                    baseStudy.Purpose, baseStudy.ScenarioKind, baseStudy.SelectedModelVersionId,
+                    baseStudy.Currency.FunctionalCurrencyCode, "test"));
+            var january = Month("Enero", "2027-01-01", "2027-01-31");
+            var february = Month("Febrero", "2027-02-01", "2027-02-28");
+            var march = Month("Marzo", "2027-03-01", "2027-03-31");
+
+            var jan = file.PhysicalActivity.Save(Save(january, node, pool, 0, 700m, 610m));
             var feb = file.PhysicalActivity.Save(Save(february, node, pool, 0, 680m, 625m));
             var mar = file.PhysicalActivity.Save(Save(march, node, pool, 0, 720m, 590m));
-            Assert.AreEqual(1L, january.Version);
+            Assert.AreEqual(1L, jan.Version);
             Assert.AreEqual(1L, feb.Version);
             Assert.AreEqual(1L, mar.Version);
-            Assert.AreEqual(610m, file.PhysicalActivity.ReadCurrent(first.CompanyId, first.Id).Single().RealQuantity);
-            Assert.AreEqual(625m, file.PhysicalActivity.ReadCurrent(first.CompanyId, february.Id).Single().RealQuantity);
-            Assert.AreEqual(590m, file.PhysicalActivity.ReadCurrent(first.CompanyId, march.Id).Single().RealQuantity);
-            Assert.AreEqual(january.Id, file.PhysicalActivity.ReadHistory(first.CompanyId, first.Id, pool.Id).Single().Id);
-            Assert.AreEqual(1, file.PhysicalActivity.ReadHistory(first.CompanyId, march.Id, pool.Id).Count);
+            Assert.AreEqual(610m, file.PhysicalActivity.ReadCurrent(baseStudy.CompanyId, january.Id).Single().RealQuantity);
+            Assert.AreEqual(625m, file.PhysicalActivity.ReadCurrent(baseStudy.CompanyId, february.Id).Single().RealQuantity);
+            Assert.AreEqual(590m, file.PhysicalActivity.ReadCurrent(baseStudy.CompanyId, march.Id).Single().RealQuantity);
+            Assert.AreEqual(jan.Id, file.PhysicalActivity.ReadHistory(baseStudy.CompanyId, january.Id, pool.Id).Single().Id);
+            Assert.AreEqual(1, file.PhysicalActivity.ReadHistory(baseStudy.CompanyId, march.Id, pool.Id).Count);
         }
     }
 
