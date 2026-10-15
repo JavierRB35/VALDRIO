@@ -143,9 +143,9 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         }
     }
     // The caller must explicitly resolve pending edits before switching.
-    public void ChangeStudy(EntityId studyId)
+    public void ChangeStudy(EntityId studyId, bool discardPendingEdits = false)
     {
-        if (HasPendingEdits)
+        if (HasPendingEdits && !discardPendingEdits)
             throw new InvalidOperationException("Pending T14 edits must be resolved first.");
         var next = studyWorkspace.ReadStudies().Single(s => s.Id == studyId &&
             s.CompanyId == company.Id);
@@ -236,6 +236,11 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     {
         var row = SelectedRow;
         if (row is null || IsReadOnly) return;
+        if (Rows.Any(r => !ReferenceEquals(r, row) && r.HasChanges))
+        {
+            Feedback = Label("Activity.OtherRowsPending");
+            return;
+        }
         try
         {
             var normal = Parse(row.NormalText);
@@ -264,6 +269,11 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     {
         var row = SelectedRow;
         if (row is null || IsReadOnly) return;
+        if (Rows.Any(r => !ReferenceEquals(r, row) && r.HasChanges))
+        {
+            Feedback = Label("Activity.OtherRowsPending");
+            return;
+        }
         try
         {
             _ = activity.Annul(new(study.CompanyId, study.Id, study.Revision, row.NodeId, row.PoolId,
