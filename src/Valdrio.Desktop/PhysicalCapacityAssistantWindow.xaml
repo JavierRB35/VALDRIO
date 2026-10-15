@@ -18,12 +18,9 @@
   </StackPanel>
   <TextBlock DockPanel.Dock="Top" Text="{Binding Title}" FontSize="21" FontWeight="SemiBold"
              Foreground="{DynamicResource Brand.DeepGreen}" Margin="0,0,0,10"/>
-  <ComboBox DockPanel.Dock="Top" SelectedValuePath="Tag" SelectedValue="{Binding Method,Mode=TwoWay}"
-            AutomationProperties.Name="{Binding Title}" Margin="0,0,0,14">
-   <ComboBoxItem Content="{Binding CalendarLabel}" Tag="Calendar"/>
-   <ComboBoxItem Content="{Binding HistoryLabel}" Tag="Historical"/>
-   <ComboBoxItem Content="{Binding DeclaredLabel}" Tag="Declared"/>
-  </ComboBox>
+  <ComboBox DockPanel.Dock="Top" ItemsSource="{Binding Methods}" DisplayMemberPath="Label"
+            SelectedValuePath="Value" SelectedValue="{Binding Method,Mode=TwoWay}"
+            AutomationProperties.Name="{Binding Title}" Margin="0,0,0,14"/>
   <ScrollViewer VerticalScrollBarVisibility="Auto">
    <StackPanel>
     <StackPanel Visibility="{Binding CalendarVisible,Converter={StaticResource Visibility}}">
