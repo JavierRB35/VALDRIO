@@ -1,7 +1,7 @@
 <Window x:Class="Valdrio.Desktop.PhysicalCapacityAssistantWindow"
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
- Title="{Binding Title}" Width="880" Height="760" MinWidth="620" MinHeight="510"
+ Title="{Binding Title}" Width="1040" Height="860" MinWidth="620" MinHeight="510"
  WindowStartupLocation="CenterOwner" Background="{DynamicResource Surface.Canvas}">
  <Window.Resources>
   <BooleanToVisibilityConverter x:Key="Visibility"/>
@@ -14,13 +14,19 @@
  </Window.Resources>
  <DockPanel Margin="20">
   <StackPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
+   <Border Background="{DynamicResource Surface.Subtle}" BorderBrush="{DynamicResource Border.Soft}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,8">
+    <StackPanel>
+     <TextBlock Text="{Binding ResultLabel}" FontWeight="SemiBold"/>
+     <TextBlock Text="{Binding CalculationSteps}" TextWrapping="Wrap" Margin="0,6,0,0"/>
    <TextBlock Text="{Binding Proposed}" FontSize="19" FontWeight="SemiBold"
-              Foreground="{DynamicResource Accent.ActiveGreen}"/>
+              Foreground="{DynamicResource Accent.ActiveGreen}" TextWrapping="Wrap"/>
+    </StackPanel>
+   </Border>
    <TextBlock Text="{Binding Feedback}" TextWrapping="Wrap"
               Foreground="{DynamicResource Brand.Red}" AutomationProperties.LiveSetting="Polite"/>
    <WrapPanel Margin="0,10,0,0">
     <Button Content="{Binding PreviewLabel}" Click="Preview" Margin="0,0,8,0"/>
-    <Button Content="{Binding AdoptLabel}" Click="Adopt" Style="{StaticResource Button.Primary}" Margin="0,0,8,0"/>
+    <Button Content="{Binding AdoptLabel}" Click="Adopt" IsEnabled="{Binding CanAdopt}" Style="{StaticResource Button.Primary}" Margin="0,0,8,0"/>
     <Button Content="{Binding CancelLabel}" IsCancel="True" Click="Cancel"/>
    </WrapPanel>
   </StackPanel>
@@ -33,33 +39,38 @@
   <ComboBox DockPanel.Dock="Top" ItemsSource="{Binding Methods}" DisplayMemberPath="Label"
             SelectedValuePath="Value" SelectedValue="{Binding Method,Mode=TwoWay}"
             AutomationProperties.Name="{Binding Title}" Margin="0,0,0,14"/>
-  <ScrollViewer VerticalScrollBarVisibility="Auto">
+  <ScrollViewer x:Name="FieldsScroll" VerticalScrollBarVisibility="Auto">
+   <Border Background="{DynamicResource Brand.White}" BorderBrush="{DynamicResource Border.Soft}" BorderThickness="1" CornerRadius="6" Padding="16">
    <StackPanel>
     <StackPanel Visibility="{Binding CalendarVisible,Converter={StaticResource Visibility}}">
      <TextBlock Text="{Binding CalendarLabel}" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,8"/>
      <TextBlock Text="{Binding CalendarHelp}" TextWrapping="Wrap" Margin="0,0,0,12"/>
-     <UniformGrid Columns="2">
-      <StackPanel Margin="0,0,12,9"><TextBlock Text="{Binding DaysLabel}"/>
+     <Grid>
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+      <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,16,14"><TextBlock FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding DaysLabel}"/>
        <TextBox x:Name="DaysInput" Text="{Binding OperatingDays,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding DaysLabel}"/>
        <TextBlock Text="{Binding DaysHelp}" TextWrapping="Wrap" Margin="0,4,0,0"/></StackPanel>
-      <StackPanel Margin="0,0,12,9"><TextBlock Text="{Binding ShiftsLabel}"/>
-       <TextBox Text="{Binding ShiftsPerDay,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding ShiftsLabel}"/>
+      <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,16,14"><TextBlock FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding ShiftsLabel}"/>
+       <TextBox x:Name="ShiftsPerDayInput" Text="{Binding ShiftsPerDay,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding ShiftsLabel}"/>
        <TextBlock Text="{Binding ShiftsHelp}" TextWrapping="Wrap" Margin="0,4,0,0"/></StackPanel>
-      <StackPanel Margin="0,0,12,9"><TextBlock Text="{Binding HoursLabel}"/>
-       <TextBox Text="{Binding HoursPerShift,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding HoursLabel}"/>
+      <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,16,14"><TextBlock FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding HoursLabel}"/>
+       <TextBox x:Name="HoursPerShiftInput" Text="{Binding HoursPerShift,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding HoursLabel}"/>
        <TextBlock Text="{Binding HoursHelp}" TextWrapping="Wrap" Margin="0,4,0,0"/></StackPanel>
-      <StackPanel Margin="0,0,12,9"><TextBlock Text="{Binding ResourcesLabel}"/>
-       <TextBox Text="{Binding EquivalentResources,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding ResourcesLabel}"/>
+      <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,16,14"><TextBlock FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding ResourcesLabel}"/>
+       <TextBox x:Name="EquivalentResourcesInput" Text="{Binding EquivalentResources,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding ResourcesLabel}"/>
        <TextBlock Text="{Binding ResourcesHelp}" TextWrapping="Wrap" Margin="0,4,0,0"/></StackPanel>
-      <StackPanel Margin="0,0,12,9"><TextBlock Text="{Binding StoppagesLabel}"/>
-       <TextBox Text="{Binding Stoppages,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding StoppagesLabel}"/>
+      <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,16,14"><TextBlock FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding StoppagesLabel}"/>
+       <ComboBox ItemsSource="{Binding StoppageOptions}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                 SelectedValue="{Binding StoppageBasis,Mode=TwoWay}" AutomationProperties.Name="{Binding StoppageBasisLabel}"/>
+       <TextBox x:Name="StoppagesInput" Text="{Binding Stoppages,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding StoppagesLabel}"/>
        <TextBlock Text="{Binding StoppagesHelp}" TextWrapping="Wrap" Margin="0,4,0,0"/></StackPanel>
-      <StackPanel Margin="0,0,12,9"><TextBlock Text="{Binding FactorLabel}"/>
-       <TextBox Text="{Binding NormalFactor,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding FactorLabel}"/>
+      <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,0,16,14"><TextBlock FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding FactorLabel}"/>
+       <TextBox x:Name="NormalFactorInput" Text="{Binding NormalFactor,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding FactorLabel}"/>
        <TextBlock Text="{Binding FactorHelp}" TextWrapping="Wrap" Margin="0,4,0,0"/></StackPanel>
-     </UniformGrid>
+     </Grid>
      <TextBlock Text="{Binding FactorReasonLabel}"/>
-     <TextBox Text="{Binding FactorReason,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+     <TextBox x:Name="FactorReasonInput" Text="{Binding FactorReason,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding FactorReasonLabel}"
               AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60"/>
     </StackPanel>
     <StackPanel Visibility="{Binding HistoryVisible,Converter={StaticResource Visibility}}">
@@ -96,6 +107,7 @@
               TextWrapping="Wrap" AcceptsReturn="True" MinHeight="75"/>
     </StackPanel>
    </StackPanel>
+   </Border>
   </ScrollViewer>
  </DockPanel>
 </Window>

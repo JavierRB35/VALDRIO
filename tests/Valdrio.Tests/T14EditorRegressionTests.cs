@@ -9,6 +9,57 @@ namespace Valdrio.Tests;
 public sealed partial class T14PhysicalActivityTests
 {
     [TestMethod]
+    public void T14_DowntimeFrequencyRecalculatesAndPersistsTheAppliedProposal()
+    {
+        var (file, study, _, _) = Fixture();
+        var path = file.Path;
+        using (file)
+        {
+            var host = Editor(file, study);
+            var assistant = new PhysicalCapacityAssistantEditor(host)
+            {
+                OperatingDays = "20", ShiftsPerDay = "2", HoursPerShift = "8",
+                EquivalentResources = "3", Stoppages = "0,5", NormalFactor = "90",
+                FactorReason = "Calendario y referencia aprobados"
+            };
+            Assert.IsTrue(assistant.CanAdopt, assistant.Feedback);
+            StringAssert.StartsWith(assistant.Proposed, "810"); // (960 - 60) * 90%
+            Assert.IsFalse(host.HasPendingEdits);
+            assistant.StoppageBasis = PhysicalStoppageBasis.PerResourceDay;
+            StringAssert.StartsWith(assistant.Proposed, "837"); // 30 total hours
+            assistant.StoppageBasis = PhysicalStoppageBasis.PerResourcePeriod;
+            StringAssert.StartsWith(assistant.Proposed, "862,65"); // 1.5 total hours
+            assistant.StoppageBasis = PhysicalStoppageBasis.TotalPeriod;
+            assistant.Stoppages = "60";
+            StringAssert.StartsWith(assistant.Proposed, "810");
+            assistant.StoppageBasis = PhysicalStoppageBasis.PerResourceShift;
+            Assert.IsFalse(assistant.CanAdopt);
+            Assert.AreEqual("", assistant.Proposed); // no stale result after invalid changes
+            assistant.Stoppages = "0,5";
+            assistant.OperatingDays = "10";
+            StringAssert.StartsWith(assistant.Proposed, "405");
+            assistant.Adopt();
+            host.SelectedRow!.RealText = "400";
+            host.SelectedRow.RealSource = "Partes del período";
+            host.Save(true);
+            Assert.IsFalse(host.HasPendingEdits, host.Feedback);
+            var restored = new PhysicalCapacityAssistantEditor(host);
+            Assert.AreEqual("0,5", restored.Stoppages);
+            Assert.AreEqual(PhysicalStoppageBasis.PerResourceShift, restored.StoppageBasis);
+            Assert.AreEqual("90", restored.NormalFactor);
+            Assert.AreEqual("Calendario y referencia aprobados", restored.FactorReason);
+            StringAssert.StartsWith(restored.Proposed, "405");
+        }
+        using var reopened = Service().Open(path);
+        var saved = reopened.PhysicalActivity.ReadCurrent(study.CompanyId, study.Id).Single();
+        Assert.AreEqual(405m, saved.NormalQuantity);
+        Assert.AreEqual(480m, saved.TheoreticalQuantity);
+        Assert.AreEqual(450m, saved.PracticalQuantity);
+        Assert.AreEqual(400m, saved.RealQuantity);
+        StringAssert.Contains(saved.NormalEvidence!.Description, "stopsBasis=PerResourceShift");
+    }
+
+    [TestMethod]
     public void T14_DesktopFixtureReopensWithIndependentPeriods()
     {
         var (file, study, node, pool) = Fixture();
@@ -65,7 +116,7 @@ public sealed partial class T14PhysicalActivityTests
             var assistant = new PhysicalCapacityAssistantEditor(editor)
             {
                 OperatingDays = "32", ShiftsPerDay = "1", HoursPerShift = "8",
-                EquivalentResources = "1", Stoppages = "0", NormalFactor = "1", FactorReason = "Registro"
+                EquivalentResources = "1", Stoppages = "0", NormalFactor = "100", FactorReason = "Registro"
             };
             assistant.Adopt();
             Assert.IsFalse(assistant.Adopted);

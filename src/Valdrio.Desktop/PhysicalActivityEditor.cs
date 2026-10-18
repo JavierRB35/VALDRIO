@@ -118,6 +118,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     private readonly UiTextCatalog texts;
     [ObservableProperty] private PhysicalActivityRow? selectedRow;
     [ObservableProperty] private string feedback = "";
+    [ObservableProperty] private bool evidenceExpanded;
 
     public PhysicalActivityEditor(StudyWorkspaceViewModel host)
         : this(host.Current ?? throw new InvalidOperationException("Select a saved study first."),
@@ -332,7 +333,12 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
             var saved = activity.Save(command);
             ReadSavedRow(row, saved);
         }
-        catch (DomainRuleException e) { Feedback = Label(e.Diagnostic.MessageKey); }
+        catch (DomainRuleException e)
+        {
+            Feedback = Label(e.Diagnostic.MessageKey);
+            if (e.Diagnostic.MessageKey is "Activity.EvidenceRequired" or "Activity.ZeroNormalReason" or
+                "Activity.ExceptionReason" or "Activity.CorrectionReason") EvidenceExpanded = true;
+        }
         catch (CompanyFileException e) { Feedback = Label(e.Diagnostic.MessageKey); }
         catch (Exception ex)
         {
