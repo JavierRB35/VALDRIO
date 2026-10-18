@@ -1793,4 +1793,76 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
   <data name="Activity.Stoppages.TotalPeriod" xml:space="preserve"><value>Total del período, todos los recursos</value></data>
   <data name="Activity.Stoppages.Exceeds" xml:space="preserve"><value>Las paradas calculadas ({0} h) superan las horas de calendario ({1} h). Revisa las horas y si son por turno, día o totales.</value></data>
   <data name="Activity.Stoppages.Calculation" xml:space="preserve"><value>Paradas: {0} h ({1}) × {2} = {3} h totales</value></data>
+  <data name="Rates.Title" xml:space="preserve"><value>Tarifas de centros principales</value></data>
+  <data name="Rates.Centers" xml:space="preserve"><value>Centros principales</value></data>
+  <data name="Rates.Center" xml:space="preserve"><value>Centro</value></data>
+  <data name="Rates.Unit" xml:space="preserve"><value>Unidad</value></data>
+  <data name="Rates.Cost" xml:space="preserve"><value>Coste del período</value></data>
+  <data name="Rates.Rate" xml:space="preserve"><value>Tarifa calculada</value></data>
+  <data name="Rates.Status" xml:space="preserve"><value>Estado</value></data>
+  <data name="Rates.Question" xml:space="preserve"><value>Pregunta</value></data>
+  <data name="Rates.Answer" xml:space="preserve"><value>Respuesta</value></data>
+  <data name="Rates.Answers" xml:space="preserve"><value>Respuestas para el analista</value></data>
+  <data name="Rates.Attention" xml:space="preserve"><value>Requieren atención</value></data>
+  <data name="Rates.Detail" xml:space="preserve"><value>Ver detalle y procedencia</value></data>
+  <data name="Rates.Component" xml:space="preserve"><value>Componente</value></data>
+  <data name="Rates.Behavior" xml:space="preserve"><value>Naturaleza</value></data>
+  <data name="Rates.Base" xml:space="preserve"><value>Base de actividad</value></data>
+  <data name="Rates.Refresh" xml:space="preserve"><value>Actualizar tarifas</value></data>
+  <data name="Rates.EditActivity" xml:space="preserve"><value>Ver actividad y capacidades</value></data>
+  <data name="Rates.ViewCosts" xml:space="preserve"><value>Ver origen de costes</value></data>
+  <data name="Rates.Export" xml:space="preserve"><value>Exportar versión</value></data>
+  <data name="Rates.Close" xml:space="preserve"><value>Cerrar</value></data>
+  <data name="Rates.Exported" xml:space="preserve"><value>Versión exportada con su procedencia y datos físicos.</value></data>
+  <data name="Rates.ExportFailed" xml:space="preserve"><value>No se pudo guardar el archivo. Revisa la ubicación y sus permisos.</value></data>
+  <data name="Rates.Policy" xml:space="preserve"><value>Fijo propio sobre actividad normal; variable y costes consumidos sobre actividad real. Tarifas de gestión, no precios de venta.</value></data>
+  <data name="Rates.Version" xml:space="preserve"><value>Versión de tarifas</value></data>
+  <data name="Rates.EconomicRun" xml:space="preserve"><value>Ejecución de costes</value></data>
+  <data name="Rates.PhysicalVersion" xml:space="preserve"><value>Versión de actividad</value></data>
+  <data name="Rates.Unavailable" xml:space="preserve"><value>No disponible</value></data>
+  <data name="Rates.Calculated" xml:space="preserve"><value>Calculada</value></data>
+  <data name="Rates.NoCenters" xml:space="preserve"><value>No hay centros principales activos en este análisis.</value></data>
+  <data name="Rates.AssignmentLater" xml:space="preserve"><value>Información de consumos por producto u orden no disponible. Se registra en T19 · Consumo real.</value></data>
+  <data name="Rates.UnknownAssignment" xml:space="preserve"><value>No se puede determinar: falta conocer la actividad asignada a productos u órdenes.</value></data>
+  <data name="Rates.LoadFailed" xml:space="preserve"><value>No se pudieron cargar las tarifas. Revisa el análisis seleccionado y actualiza.</value></data>
+  <data name="Rates.NotApplicable" xml:space="preserve"><value>No aplicable</value></data>
+  <data name="Rates.OwnFixed" xml:space="preserve"><value>Fijo propio sujeto a capacidad</value></data>
+  <data name="Rates.Variable" xml:space="preserve"><value>Variable observado</value></data>
+  <data name="Rates.Consumed" xml:space="preserve"><value>Recibido / sin evaluación de capacidad</value></data>
+  <data name="Rates.Period" xml:space="preserve"><value>Coste de período</value></data>
+  <data name="Rates.Normal" xml:space="preserve"><value>Actividad normal</value></data>
+  <data name="Rates.Real" xml:space="preserve"><value>Actividad real</value></data>
+  <data name="Rates.Capacity" xml:space="preserve"><value>variación de capacidad</value></data>
+  <data name="Rates.Performed" xml:space="preserve"><value>actividad realizada</value></data>
+  <data name="Rates.Partial" xml:space="preserve"><value>Conciliación parcial:</value></data>
+  <data name="Rates.Overactivity" xml:space="preserve"><value>Sobreactividad. No es un ahorro real.</value></data>
+  <data name="Rates.Underactivity" xml:space="preserve"><value>Capacidad no utilizada; no incluye trabajo sin asignar.</value></data>
+  <data name="Rates.MissingActivity" xml:space="preserve"><value>Faltan datos de actividad. Revísalos en Actividad y capacidades.</value></data>
+  <data name="Rates.ZeroDenominator" xml:space="preserve"><value>La actividad base es cero y el componente tiene coste. Revisa costes y actividad.</value></data>
+  <data name="Rates.ExcessConsumption" xml:space="preserve"><value>El consumo asignado supera la actividad real. Revisa los registros.</value></data>
+  <data name="Rates.MissingCosts" xml:space="preserve"><value>Falta una ejecución de costes vigente. Ve a Flujos y ejecuciones.</value></data>
+  <data name="Rates.UnconfirmedActivity" xml:space="preserve"><value>Faltan datos físicos confirmados. Revisa y confirma Actividad y capacidades.</value></data>
+  <data name="Rates.MultiplePools" xml:space="preserve"><value>Este centro tiene varias bases de actividad. No se puede repartir su coste sin una asignación por base.</value></data>
+  <data name="Rates.SourceMismatch" xml:space="preserve"><value>Los costes no coinciden con su procedencia. Revisa la ejecución de costes.</value></data>
+  <data name="Rates.ClassificationRequired" xml:space="preserve"><value>Hay costes sin clasificación fija o variable válida. Revisa el reparto primario.</value></data>
+  <data name="Rates.CapacityOriginRequired" xml:space="preserve"><value>Un coste requiere evaluar capacidad en su centro de origen. No se aplica de nuevo en este centro.</value></data>
+  <data name="Rates.Overflow" xml:space="preserve"><value>Los importes o cantidades exceden los límites del cálculo. Revisa los datos de origen.</value></data>
+  <data name="Rates.Question1" xml:space="preserve"><value>¿Cuánto cuesta una hora o unidad de este centro?</value></data>
+  <data name="Rates.Question2" xml:space="preserve"><value>¿De dónde sale esa tarifa?</value></data>
+  <data name="Rates.Question3" xml:space="preserve"><value>¿Cuánto coste se ha aplicado a productos u órdenes?</value></data>
+  <data name="Rates.Question4" xml:space="preserve"><value>¿Qué coste corresponde a capacidad no utilizada?</value></data>
+  <data name="Rates.Question5" xml:space="preserve"><value>¿Hay trabajo realizado pendiente de asignación?</value></data>
+  <data name="Rates.Question6" xml:space="preserve"><value>¿Qué debo revisar?</value></data>
+  <data name="Rates.Question7" xml:space="preserve"><value>¿Cuadra el reparto con el coste del centro?</value></data>
+  <data name="Rates.Behavior.Fixed" xml:space="preserve"><value>Fijo</value></data>
+  <data name="Rates.Behavior.AssumedFixed" xml:space="preserve"><value>Fijo asumido</value></data>
+  <data name="Rates.Behavior.Variable" xml:space="preserve"><value>Variable</value></data>
+  <data name="Guide.Rates" xml:space="preserve"><value>Tarifas de centros</value></data>
+  <data name="Guide.RatesHelp" xml:space="preserve"><value>Consulta las tarifas y las respuestas para el centro seleccionado. Los costes y las horas proceden del análisis guardado.</value></data>
+<data name="Rates.Source" xml:space="preserve"><value>Cuenta de origen</value></data>
+<data name="Rates.UndefinedRate" xml:space="preserve"><value>No hay una tarifa unitaria definida para esta base. Revisa los componentes y la actividad.</value></data>
+<data name="Rates.ZeroNormal" xml:space="preserve"><value>La actividad normal es cero y hay coste fijo propio. Revisa la referencia de capacidad en T14.</value></data>
+<data name="Rates.NoCapacityAssessment" xml:space="preserve"><value>No hay coste fijo propio sujeto a evaluación de capacidad. Esto no permite concluir que no exista capacidad ociosa.</value></data>
+<data name="Rates.SelectCenter" xml:space="preserve"><value>Selecciona un centro para consultar sus respuestas.</value></data>
+<data name="Rates.NoIssues" xml:space="preserve"><value>No hay incidencias para calcular la tarifa. Los consumos por orden se incorporarán en T19.</value></data>
 </root>

@@ -86,7 +86,7 @@ expresa. No se deduce una aprobación productiva de su Excel de prueba.
 | D01 Finalidad | **ACEPTADA** | R1 se centra en gestión de costes, capacidad, productos, órdenes y rentabilidad. Valoración contable de existencias y producción en curso queda en T32. | T32; no adelantar salvo nueva decisión. |
 | D02 Colaboración | **ACEPTADA** | Primera versión: un editor por archivo, funcionamiento local, sin edición simultánea desde equipos distintos. Arquitectura desacoplada. | Revisar solo si cambia el modo de colaboración. |
 | D03 Fuente contable | **PENDIENTE DE EJEMPLO** | Perfil explícito para modalidad del saldo, signos, periodo e interpretación. No inferir por idioma ni convenciones españolas. | Antes de importación definitiva/T06, con archivo representativo. |
-| D04 Capacidad | **PROPUESTA** | `NormalizedManagement`: fijo propio sobre normal y variable observado sobre real. | Antes de T15: datos, fórmula, resultado y alternativas. |
+| D04 Capacidad | **ACEPTADA PARA T15 R1 — 18/10/2026** | El propietario solicita desarrollar y fusionar T15 en los términos debatidos: `NormalizedManagement`, fijo propio sujeto a capacidad sobre normal, variable y consumido sobre real. | Conservar procedencia y validaciones; D05 y las políticas alternativas no quedan aprobadas por esta decisión. |
 | D05 Auxiliares | **PROPUESTA** | `OwnerOnceCapacity` para auxiliares medidos; `ThroughFlow` deja capacidad auxiliar sin evaluar. | Antes de T16: datos, fórmula, resultado y alternativas. |
 | D06 Recetas y lotes | **PROPUESTA** | Setup por lote iniciado completo; unidades continuas sin redondeo a pieza; merma explícita. | Antes de T17-T18: datos, fórmula, resultado y alternativas. |
 | D07 Perímetro de márgenes | **PROPUESTA** | Coste productivo y capas comercial/estructura separadas y visibles. | Antes de T20: datos, fórmula, resultado y alternativas. |
@@ -218,3 +218,9 @@ especificidad y los empates se diagnostican. Publicados requieren nueva versión
 importe absoluto queda vinculado a parte/revisión. Autoasignación secundaria
 prohibida por defecto; configurar su política no aprueba las decisiones económicas
 pendientes. No modifica D01–D12 ni referencias canónicas.
+
+## Aplicación de D04 en T15 — 18/10/2026
+
+La petición expresa del propietario «Desarrolla la T15 en los términos comentados en esta conversación y cuando verifiques su correcto funcionamiento y estética adecuada la fusionas» autoriza implementar el criterio normalizado debatido y fusionarlo tras validación local. Sustituye el estado anterior de propuesta únicamente para esta política de T15 R1. Los ejemplos 1.000/100 + 600/60 = 20 por hora y la distinción entre 400 de capacidad y 1.200 de actividad realizada forman parte del alcance explicado.
+
+No convertir costes con tratamiento `None` en capacidad propia, ni evaluar de nuevo capacidad de auxiliares. Si una aportación `AssessAtPool` exige evaluación en otro propietario y no hay resultado que la acredite, mostrar diagnóstico; esta entrega no aprueba D05/T16. Las vistas alternativas ActualManagement/VariableCostView no se añaden al flujo simple acordado. Las referencias de la especificación canónica y los cortes históricos anteriores se conservan sin reescribir.

@@ -116,3 +116,21 @@ de cambios pendientes y la validación del rango.
 - **Lenguaje de usuario**, no nombres de clases ni fórmulas sin interpretación. Si se muestra un porcentaje, explicar numerador, denominador, significado y límites; un campo sin dato no se convierte silenciosamente en cero.
 - **Validación de comprensión:** un analista no desarrollador debe poder realizar el flujo sin explicaciones externas; si no comprende una etiqueta, reducir pasos y mejorar microtexto antes de aceptarlo.
 - Aplicación concreta en [T14 — Capacidad normal asistida](T14_CAPACIDAD_NORMAL_ASISTIDA.md). Esta regla también orienta futuros desarrollos, sin autorizar cambios funcionales ni eliminar validaciones existentes.
+
+## Preguntas y respuestas para el analista desde T15 — decisión del propietario (2026-10-18)
+
+**Requisito obligatorio para T15 y las pantallas de las fases posteriores:** mostrar preguntas de negocio útiles para el analista junto a respuestas concretas obtenidas de la información disponible hasta ese momento. La pantalla debe explicar qué puede concluir el usuario, además de presentar cifras y controles.
+
+- Presentar una tabla sencilla «Pregunta / Respuesta», adaptada a la finalidad de cada pantalla. En T15 corresponde al centro de coste seleccionado; cambiar la selección debe actualizar todas las respuestas y conservar visible el contexto de análisis, período y unidad.
+- Seleccionar preguntas relevantes para la fase y la información disponible. No copiar indiscriminadamente las mismas preguntas en todas las pantallas ni añadir configuraciones para poder consultarlas.
+- Responder con importes, cantidades, unidades y una explicación breve, en lenguaje comprensible. Evitar términos técnicos como «objetos» cuando puede decirse «productos u órdenes».
+- Obtener las respuestas de los mismos datos y resultados validados que utiliza la pantalla. No inventar cifras, deducir hechos desconocidos, presentar estimaciones como consumos reales ni convertir ausencia de datos en cero.
+- Cuando una pregunta relevante todavía no pueda responderse, indicar qué información falta y dónde se registra o en qué fase estará disponible. Diferenciar «pendiente de datos», cero comprobado y «no aplicable»; no presentar como error un dato perteneciente a una fase aún no disponible.
+- Mostrar las respuestas directamente; dejar fórmulas completas, desglose y procedencia en «Ver detalle» o acceso equivalente. Para incidencias corregibles, facilitar acceso al dato de origen cuando exista.
+- Actualizar o invalidar las respuestas cuando cambien los datos, el centro, el análisis o el cálculo. No conservar respuestas antiguas como si fueran vigentes.
+- Una conciliación parcial debe identificarse como parcial y explicar qué falta. No afirmar conciliación final sin conocer todos los destinos necesarios.
+- Conservar sencillez, accesibilidad por teclado, traducciones ES/EN y formatos de cantidades/monedas coherentes con la aplicación.
+
+**Aceptación:** para cada nueva pantalla, comprobar preguntas pertinentes, respuestas con datos completos, ausencia de datos, cero real, cambios de selección y resultados desactualizados. El analista debe distinguir qué sabe la aplicación, qué falta y qué puede revisar sin explicaciones externas.
+
+La aplicación comienza en **T15**; esta decisión no ordena rediseñar retroactivamente T01–T14 ni modifica las políticas económicas pendientes. Véase la [aplicación concreta a T15](../tareas/T15.md).

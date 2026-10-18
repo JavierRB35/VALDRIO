@@ -14,7 +14,7 @@ public partial class MainWindow
     {
         0 or 1 => 0,
         2 or 3 or 4 => 1,
-        5 or 7 or 8 or 9 => 2,
+        5 or 7 or 8 or 9 or 10 => 2,
         _ => -1
     };
 
@@ -82,8 +82,8 @@ public partial class MainWindow
         AnalysisPhase.Header = vm.Guide("PhaseAnalysisData");
         AllocationPhase.Header = vm.Guide("PhaseAllocations");
         ShowNavigationPhase(workflowStep);
-        var keys = new[] { "Company", "Model", "Study", "Import", "Resources", "Allocations", "Settings", "SecondaryAllocations", "CostFlows", "PhysicalActivity" };
-        Button[] buttons = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, AllocationsStep, SettingsStep, SecondaryStep, CostFlowStep, PhysicalStep];
+        var keys = new[] { "Company", "Model", "Study", "Import", "Resources", "Allocations", "Settings", "SecondaryAllocations", "CostFlows", "PhysicalActivity", "Rates" };
+        Button[] buttons = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, AllocationsStep, SettingsStep, SecondaryStep, CostFlowStep, PhysicalStep, RatesStep];
         for (var i = 0; i < buttons.Length; i++)
         {
             var label = vm.Guide(keys[i]);
@@ -101,8 +101,8 @@ public partial class MainWindow
                     ? FontWeights.Bold : FontWeights.Normal;
         }
         Border[] markers = [CompanyStepMarker, ModelStepMarker, StudyStepMarker,
-            ImportStepMarker, ResourcesStepMarker, AllocationsStepMarker, SecondaryStepMarker, CostFlowStepMarker, PhysicalStepMarker];
-        int[] markerSteps = [0, 1, 2, 3, 4, 5, 7, 8, 9];
+            ImportStepMarker, ResourcesStepMarker, AllocationsStepMarker, SecondaryStepMarker, CostFlowStepMarker, PhysicalStepMarker, RatesStepMarker];
+        int[] markerSteps = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10];
         for (var i = 0; i < markers.Length; i++)
         {
             var active = markerSteps[i] == workflowStep;
@@ -136,6 +136,9 @@ public partial class MainWindow
         PhysicalStep.ToolTip = hasProject ? vm.Guide("PhysicalActivityHelp") : vm.Guide("NeedProjectShort");
         PhysicalHelp.Text = vm.Guide("PhysicalActivityHelp");
         PhysicalStudyButton.Content = vm.Guide("PhysicalChooseStudy");
+        RatesStep.IsEnabled = hasProject && vm.Company?.WorkspaceIdle != false;
+        RatesHelp.Text = vm.Guide("RatesHelp");
+        OpenRatesButton.Content = vm.Guide("Rates");
         SettingsStep.IsEnabled = true;
 
         ModelStep.ToolTip = hasProject ? null : vm.Guide("NeedProjectShort");
@@ -149,6 +152,7 @@ public partial class MainWindow
         AllocationPanel.Visibility = workflowStep == 5 ? Visibility.Visible : Visibility.Collapsed;
         SecondaryPanel.Visibility = workflowStep == 7 ? Visibility.Visible : Visibility.Collapsed;
         CostFlowsPanel.Visibility = workflowStep == 8 ? Visibility.Visible : Visibility.Collapsed;
+        RatesHome.Visibility = workflowStep == 10 ? Visibility.Visible : Visibility.Collapsed;
         PhysicalHome.Visibility = workflowStep == 9 ? Visibility.Visible : Visibility.Collapsed;
         DistributionDetails.Visibility = workflowStep == 5 ? Visibility.Visible : Visibility.Collapsed;
         AllocationPanel.IsEnabled = !DistributionDetails.IsExpanded;
@@ -167,6 +171,7 @@ public partial class MainWindow
             4 => vm.Resources?.Requirement ?? vm.Guide("NeedCompany"),
             7 => vm.Allocations?.SecondaryDiagnostic ?? vm.Guide("HelpHint"),
             8 => vm.CostFlows?.Status ?? vm.Guide("HelpHint"),
+            10 => vm.Guide(vm.Studies?.CanOpenPhysical == true ? "RatesHelp" : "PhysicalActivityNeedsStudy"),
             9 => vm.Guide(vm.Studies?.CanOpenPhysical == true ? "PhysicalActivityReady" : "PhysicalActivityNeedsStudy"),
             5 => DistributionDetails.IsExpanded
                 ? vm.Guide("CloseAccountDetailsForKeys")
@@ -207,7 +212,7 @@ public partial class MainWindow
             _ => "Next"
         });
         if (workflowStep == 4 && vm.Resources is { } resources) WorkflowNext.Content = resources.ShowParts ? resources.NextAction : vm.Guide("ContinueAllocations");
-        WorkflowNext.Visibility = workflowStep is 6 or 7 or 8 or 9 ? Visibility.Collapsed : Visibility.Visible;
+        WorkflowNext.Visibility = workflowStep is 6 or 7 or 8 or 9 or 10 ? Visibility.Collapsed : Visibility.Visible;
         WorkflowNext.IsEnabled = vm.Company?.WorkspaceIdle != false &&
             (workflowStep is not (1 or 2) || vm.Company?.CanWrite == true) &&
             (workflowStep != 4 || vm.Resources?.CanAdvance == true) &&
@@ -232,7 +237,7 @@ public partial class MainWindow
         if ((workflowStep is 5 or 7) && step != workflowStep && vm.Resources is { ShowParts: true } detail)
             await detail.CloseDestinationsAsync();
         if (workflowStep == 1 && step != 1 && vm.Models is { } modelEditor && !await modelEditor.CanLeaveAsync()) return;
-        if (step == 9 && vm.Studies is { IsDirty: true } studyEditor && !await studyEditor.CanLeaveAsync()) return;
+        if (step is 9 or 10 && vm.Studies is { IsDirty: true } studyEditor && !await studyEditor.CanLeaveAsync()) return;
         var enteringAllocation = step is 5 or 7 && vm.Allocations?.IsDirty != true;
         lastHelpKey = null;
         workflowStep = step;
@@ -282,6 +287,21 @@ public partial class MainWindow
         if (viewModel?.Company?.WorkspaceIdle != false && viewModel?.Studies is { CanOpenPhysical: true } studies)
         {
             new PhysicalActivityWindow(studies) { Owner = this }.ShowDialog();
+            UpdateWorkflow();
+        }
+    }
+    private async void ChooseRates(object sender, RoutedEventArgs e)
+    {
+        await NavigateWorkflow(10);
+        if (workflowStep == 10) OpenRatesFromMenu(sender, e);
+    }
+    private async void OpenRatesFromMenu(object sender, RoutedEventArgs e)
+    {
+        if (viewModel?.Company?.WorkspaceIdle != false && viewModel?.Studies is { CanOpenPhysical: true } studies)
+        {
+            var window = new PrincipalRatesWindow(studies) { Owner = this };
+            window.ShowDialog();
+            if (window.OpenCostsRequested) await NavigateWorkflow(8);
             UpdateWorkflow();
         }
     }

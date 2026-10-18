@@ -131,3 +131,7 @@ validación local, diseño, requisitos y política de workflows exclusivamente m
 Todo lo que pueda editarse en las tablas se hará en las tablas, sin duplicarlo en
 campos o formularios adicionales. Priorizar simplicidad. Ver la decisión de
 2026-10-09 en `docs/directrices/USABILIDAD.md`.
+
+## Preguntas y respuestas para el analista — obligatorio desde T15
+
+Decisión del propietario, 2026-10-18: desde T15, las pantallas deben mostrar preguntas útiles para el analista y respuestas basadas en la información disponible en esa fase. En T15, mostrar la tabla para cada centro de coste seleccionado. Explicar datos faltantes y dependencias posteriores sin inventar respuestas ni confundir ausencia con cero. Mantener lenguaje sencillo y detalle ampliable. Leer [USABILIDAD](docs/directrices/USABILIDAD.md) y la [directriz T15](docs/tareas/T15.md). Esta instrucción no exige rediseñar T01–T14 ni aprueba políticas económicas pendientes.
