@@ -117,6 +117,6 @@ public static class AllocationReuse
         }
         var current = target.Configuration;
         return new(primary, secondary, current.ExplicitAssignments, current.AbsoluteAssignments,
-            current.Descriptions, secondaryPartRoutingGroups: current.SecondaryPartRoutingGroups);
+            current.Descriptions, secondaryPartRoutingGroups: current.SecondaryPartRoutingGroups, auxiliaryCapacity: current.AuxiliaryCapacity);
     }
 }

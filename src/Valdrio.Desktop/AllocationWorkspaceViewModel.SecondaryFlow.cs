@@ -106,10 +106,7 @@ public sealed partial class AllocationWorkspaceViewModel
             // published keys. This is projection, NOT recalculation of a run.
             foreach (var group in groups.OrderBy(g => g.ComponentRoutingGroup, StringComparer.Ordinal))
             {
-                var graph = ReciprocalGraphBuilder.FromPublishedSecondaryKeys(
-                    workspace.Resources.Model.Structure, workspace.Keys,
-                    workspace.Configuration.SecondaryRules, workspace.Resources.Model.DriverUnits,
-                    workspace.Resources.Precision, group.ComponentRoutingGroup);
+                var graph = AuxiliaryCapacityService.Graph(workspace, group.ComponentRoutingGroup);
                 var projected = SecondaryFlowProjector.Project(graph, group.Solution);
                 var secondaryTotals = projected.Where(edge => edge.Stage == SecondaryFlowStage.Final)
                     .GroupBy(edge => edge.TargetId, StringComparer.Ordinal)
@@ -143,6 +140,7 @@ public sealed partial class AllocationWorkspaceViewModel
             SecondaryFlowNotice = string.Format(Format, this["SecondaryFlowCompleteNotice"],
                 SecondaryFlowArcs.Count,
                 StudyMoney(PrincipalCosts.Sum(p => p.PresentedTotalAmount)));
+            if (auxiliaryVarianceFacts.Count > 0) SecondaryFlowNotice += " " + string.Format(Format, Text("Aux.FlowVariance"), StudyMoney(auxiliaryVarianceFacts.Sum(f => f.PostedAmount.Amount)));
         }
         catch (Exception ex) when (ex is DomainRuleException or InvalidOperationException or OverflowException)
         {

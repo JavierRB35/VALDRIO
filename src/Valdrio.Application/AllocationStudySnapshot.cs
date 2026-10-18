@@ -88,6 +88,12 @@ public static class AllocationStudySnapshotJson
     }
     public static string EconomicJson(AllocationStudySnapshotInput input)
     {
+        var legacy = LegacyEconomicJson(input);
+        return input.Allocations.Configuration.AuxiliaryCapacity is null ? legacy :
+            CanonicalSnapshotJson.Serialize(new { Legacy = legacy, input.Allocations.Configuration.AuxiliaryCapacity });
+    }
+    private static string LegacyEconomicJson(AllocationStudySnapshotInput input)
+    {
         var context = new StudySnapshotInput(StudySnapshotInput.Schema, StudySnapshotInput.PreparationVersion,
             input.StudyContext, input.PrecisionPolicy, input.Workspace.Model, input.Provenance, [], [], [], []);
         return CanonicalSnapshotJson.Serialize(new

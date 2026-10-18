@@ -6,7 +6,11 @@ namespace Valdrio.Application;
 public sealed record PrincipalRateRow(EntityId NodeId, EntityId PoolId, string Name, UnitId UnitId,
     PhysicalObservation? Observation, PrincipalRateResult? Result, IReadOnlyList<string> Diagnostics, decimal? Cost);
 public sealed record PrincipalRateReport(StudyDefinition Study, EntityId? EconomicRunId, string? EconomicHash,
-    string Algorithm, string Version, IReadOnlyList<PrincipalRateRow> Rows);
+    string Algorithm, string Version, IReadOnlyList<PrincipalRateRow> Rows)
+{
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public bool AuxiliaryCapacityPartiallyAssessed { get; init; }
+}
 
 // Read-only projection of immutable T12 and T14 versions. Never recalculates the upstream ledger.
 public static class PrincipalRateReportService
@@ -22,7 +26,8 @@ public static class PrincipalRateReportService
         var physical = reference.Rows.Where(r => r.Observation is not null).Select(r =>
             activity.ReadHistory(reference.Study.CompanyId, reference.Study.Id, r.PoolId)
                 .Single(o => o.Id == r.Observation!.Id && o.Version == r.Observation.Version)).ToArray();
-        var restored = Read(reference.Study, input.Model, new(reference.Study.Revision, [run]), physical);
+        var restored = Read(reference.Study, input.Model, new(reference.Study.Revision, [run]), physical.Concat(input.Allocations.Configuration.AuxiliaryCapacity?.Rows
+            .Where(r => r.Observation is not null).Select(r => r.Observation!) ?? []).ToArray());
         if (CanonicalSnapshotJson.Serialize(restored) != CanonicalSnapshotJson.Serialize(reference))
             throw new InvalidOperationException("Rate reference differs from its saved sources");
         return restored;
@@ -34,7 +39,7 @@ public static class PrincipalRateReportService
         var input = run?.Snapshot.Input as AllocationStudySnapshotInput;
         if (run?.Snapshot.StudyId != study.Id || run.Snapshot.CompanyId != study.CompanyId ||
             input?.Model.Structure.Id != study.SelectedModelVersionId) { run = null; input = null; }
-        var publication = run?.Output?.Secondary;
+        var publication = AuxiliaryCapacityRules.IsCurrent(input?.Allocations.Configuration.AuxiliaryCapacity, observations) ? run?.Output?.Secondary : null;
         var structure = input?.Allocations.Resources.Model.Structure ?? model.Structure;
         var rows = new List<PrincipalRateRow>();
         foreach (var node in structure.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Principal).OrderBy(n => n.Code))
@@ -63,6 +68,7 @@ public static class PrincipalRateReportService
                         else if (fact.Behavior is ResourceBehavior.Unclassified or ResourceBehavior.MixedPending or ResourceBehavior.Mixed)
                         { errors.Add("Rates.ClassificationRequired"); continue; }
                         else if (fact.Behavior == ResourceBehavior.Variable) kind = RateComponentKind.Variable;
+                        else if (fact.CapacityNotEvaluated || fact.AssessmentId is not null && fact.CapacityOwnerPoolId is not null) kind = RateComponentKind.Consumed;
                         else if (fact.CapacityTreatment == ResourceCapacityTreatment.AssessAtPool)
                         {
                             // T11 transfers do not certify an auxiliary capacity assessment. Never silently assess it again.
@@ -71,8 +77,9 @@ public static class PrincipalRateReportService
                             { errors.Add("Rates.CapacityOriginRequired"); continue; }
                             kind = RateComponentKind.OwnFixed;
                         }
-                        sources.Add(new(fact.PartId + ":" + fact.Behavior + ":" + fact.CostLayer + ":" + fact.CapacityTreatment,
-                            fact.Behavior, kind, fact.PostedAmount.Amount, fact.Account));
+                        sources.Add(new(fact.PartId + ":" + fact.Behavior + ":" + fact.CostLayer + ":" + fact.CapacityTreatment + (fact.AssessmentId is null ? "" : ":" + fact.AssessmentId) + (fact.CapacityNotEvaluated ? ":unassessed" : ""),
+                            fact.Behavior, kind, fact.PostedAmount.Amount, fact.Account)
+                            { CapacityOwnerPoolId = fact.CapacityOwnerPoolId, AssessmentId = fact.AssessmentId });
                     }
                     if (publication.Totals.Where(t => t.TerminalNodeId == node.Id).Sum(t => t.PostedAmount.Amount) != sources.Sum(s => s.Amount) && errors.Count == 0)
                         errors.Add("Rates.SourceMismatch");
@@ -93,6 +100,7 @@ public static class PrincipalRateReportService
         var version = PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new { Algorithm = PrincipalRateCalculator.Version,
             study.CompanyId, Study = study.Id, study.Revision, study.SelectedModelVersionId, study.PeriodStart, study.PeriodEnd,
             Run = run?.Id, Rows = rows.Select(r => new { r.NodeId, r.PoolId, Physical = r.Observation?.Id, r.Observation?.Version }).ToArray() }));
-        return new(study, run?.Id, run?.EconomicInputHash, PrincipalRateCalculator.Version, version, FrozenList.Copy(rows));
+        return new(study, run?.Id, run?.EconomicInputHash, PrincipalRateCalculator.Version, version, FrozenList.Copy(rows))
+        { AuxiliaryCapacityPartiallyAssessed = input?.Allocations.Configuration.AuxiliaryCapacity?.Rows.Any(r => r.Mode != AuxiliaryCapacityMode.OwnerOnceCapacity) == true };
     }
 }

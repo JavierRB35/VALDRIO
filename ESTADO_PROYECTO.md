@@ -1,3 +1,10 @@
+# T16 — capacidad y servicios auxiliares · 18/10/2026
+
+Implementada la evaluación única en el propietario de capacidad, servicios físicos por destino/componente, cobertura selectiva explícita y variaciones firmadas. Integración T14 → T16 → T11/T12 → T15, con historial reproducible y siete respuestas por auxiliar. C20 concilia 1.600 = 800 a principales + 800 de variaciones; C29 conserva la sobreactividad firmada.
+
+Validación local: regresión **734/734**; comprobación final del ajuste de clasificación, T15 y traducciones **20/20**; **39 controles WPF ES/EN**. Véanse [evidencias y límites](docs/evidencias/t16-20261018/README.md) y [alcance T16](docs/tareas/T16.md). Fusión autorizada por el propietario tras verificación. GitHub Actions no ejecutado; coste **0 USD**. Las mediciones reales y la elección de auxiliares corresponden a cada empresa; T19 sigue pendiente.
+
+Los apartados siguientes son cortes históricos y no sustituyen este estado.
 # T15 — tarifas y respuestas por centro · 18/10/2026
 
 Implementada T15 R1 conforme al debate y autorización del propietario: tarifa normalizada por componente, variación de capacidad, conciliación parcial y siete preguntas/respuestas por centro. Costes T12 y actividad T14 confirmada; consumos por orden pendientes de T19, expresamente identificados. Se añaden versiones reproducibles y exportación, sin modificar snapshots ni órdenes históricas.

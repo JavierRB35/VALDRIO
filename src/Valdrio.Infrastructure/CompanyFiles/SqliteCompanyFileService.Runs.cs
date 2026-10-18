@@ -90,8 +90,12 @@ public sealed partial class SqliteCompanyFileService
         public RunHistory ReadRuns(EntityId companyId, EntityId studyId, CancellationToken token = default) => RunWorkspace(false, token, db =>
         {
             var study = RequiredStudy(db, companyId, studyId);
-            return new RunHistory(study.Revision, db.Runs.FromSqlInterpolated($"SELECT * FROM CalculationRuns WHERE CompanyId={companyId.ToString()} AND StudyId={studyId.ToString()} ORDER BY rowid").AsNoTracking()
+            var history = new RunHistory(study.Revision, db.Runs.FromSqlInterpolated($"SELECT * FROM CalculationRuns WHERE CompanyId={companyId.ToString()} AND StudyId={studyId.ToString()} ORDER BY rowid").AsNoTracking()
                 .ToArray().Select(Run).ToArray());
+            var physical = ((PhysicalDbContext)db).PhysicalObservations.AsNoTracking().Where(o => o.StudyId == studyId.ToString() && o.ModelVersionId == study.SelectedModelVersionId && o.PeriodStart == study.PeriodStart && o.PeriodEnd == study.PeriodEnd)
+                .ToArray().Select(RestorePhysical).GroupBy(o => o.PoolId).Select(g => g.OrderByDescending(o => o.Version).First()).ToArray();
+            return history with { StalePhysicalRuns = history.Runs.Where(r => r.Snapshot.Input is AllocationStudySnapshotInput i &&
+                !AuxiliaryCapacityRules.IsCurrent(i.Allocations.Configuration.AuxiliaryCapacity, physical)).Select(r => r.Id).ToArray() };
         });
         // No ValidateAllocations/replay here: querying a saved execution must not call any cost solver.
         private T RunWorkspace<T>(bool write, CancellationToken token, Func<RunDbContext, T> action)
@@ -104,7 +108,7 @@ public sealed partial class SqliteCompanyFileService
                 {
                 token.ThrowIfCancellationRequested();
                 using var connection = Connect(Path, write ? SqliteOpenMode.ReadWrite : SqliteOpenMode.ReadOnly);
-                using var db = new RunDbContext(connection); using var tx = db.Database.BeginTransaction();
+                using var db = new PhysicalDbContext(connection); using var tx = db.Database.BeginTransaction();
                 var result = action(db);
                 if (write) { db.SaveChanges(); owner.onCheckpoint?.Invoke(CompanyWriteCheckpoint.BeforeCommit); }
                 token.ThrowIfCancellationRequested();

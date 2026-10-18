@@ -252,6 +252,8 @@ public sealed partial class CostFlowViewModel : ObservableObject
                 var graphId = nodeId(2,id)+":"+group.ComponentRoutingGroup;
 
                 var initial = primary!.Facts.Where(f => f.NodeId == id && (w.Configuration.SecondaryPartRoutingGroups?.FirstOrDefault(g=>g.PartId==f.PartId)?.ComponentRoutingGroup ?? "all")==group.ComponentRoutingGroup).Sum(f=>f.PostedAmount.Amount);
+                initial -= secondary.Facts.Where(f => f.IsCapacityVariance && f.TerminalNodeId == id &&
+                    (w.Configuration.SecondaryPartRoutingGroups?.FirstOrDefault(g=>g.PartId==f.PartId)?.ComponentRoutingGroup ?? "all")==group.ComponentRoutingGroup).Sum(f=>f.PostedAmount.Amount);
                 var received=output.Transfers.Where(t=>t.Internal && t.DestinationNodeId==id && t.Group==group.ComponentRoutingGroup).Sum(t=>t.Amount);
                 Nodes.Add(new(graphId,2,Node(id)+(group.ComponentRoutingGroup=="all"?"":" · "+group.ComponentRoutingGroup),
                     string.Format(Format,this["Available"],initial.ToString("0.############################",Format),received.ToString("0.############################",Format),Amount(group.Solution.Gross[i])),
@@ -259,13 +261,15 @@ public sealed partial class CostFlowViewModel : ObservableObject
                 Arrows.Add(new(nodeId(1,id),graphId,Amount(initial),null,DisplayLabel:GraphAmount(initial)));
             }
             foreach (var group in secondary.Facts.GroupBy(f=>f.TerminalNodeId))
-                Nodes.Add(new(nodeId(3,group.Key),3,Node(group.Key),Amount(group.Sum(f=>f.PostedAmount.Amount)),GraphAmount(group.Sum(f=>f.PostedAmount.Amount))));
+                Nodes.Add(new(nodeId(3,group.Key),3,Node(group.Key) + (group.Any(f=>f.IsCapacityVariance) ? " · " + texts.Get("Aux.Variance", CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)) : ""),Amount(group.Sum(f=>f.PostedAmount.Amount)),GraphAmount(group.Sum(f=>f.PostedAmount.Amount))));
+            foreach (var capacity in secondary.Facts.Where(f=>f.IsCapacityVariance))
+                Arrows.Add(new(nodeId(1,capacity.TerminalNodeId),nodeId(3,capacity.TerminalNodeId),Amount(capacity.PostedAmount.Amount),null,DisplayLabel:GraphAmount(capacity.PostedAmount.Amount)));
             foreach (var flow in output.Transfers)
             {
                 var source=nodeId(2,flow.SourceNodeId)+":"+flow.Group;
                 var dest=flow.Internal ? nodeId(2,flow.DestinationNodeId)+":"+flow.Group : nodeId(3,flow.DestinationNodeId);
-                var row=new FlowRow(this["SecondaryStage"],this["AllResources"],Node(flow.SourceNodeId),Node(flow.DestinationNodeId),Key(flow.KeyId),Amount(flow.Amount),Amount(flow.Amount),flow.Internal?"—":Node(flow.DestinationNodeId),
-                    this["GrossHelp"]+" · "+flow.Group+" · "+Key(flow.KeyId)+" · "+(flow.Share*100m).ToString("0.########",Format)+" %",source,dest);
+                var row=new FlowRow(this["SecondaryStage"],this["AllResources"],Node(flow.SourceNodeId),Node(flow.DestinationNodeId),(flow.MeasuredServices ? texts.Get("Aux.MeasuredServices", CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)) : Key(flow.KeyId)),Amount(flow.Amount),Amount(flow.Amount),flow.Internal?"—":Node(flow.DestinationNodeId),
+                    this["GrossHelp"]+" · "+flow.Group+" · "+(flow.MeasuredServices ? texts.Get("Aux.MeasuredServices", CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)) : Key(flow.KeyId))+" · "+(flow.Share*100m).ToString("0.########",Format)+" %",source,dest);
                 allRows.Add(row); Arrows.Add(new(source,dest,(flow.Internal ? nodes[flow.SourceNodeId].Code+" → "+nodes[flow.DestinationNodeId].Code+"\n" : "")+(flow.Share*100m).ToString("0.####",Format)+" % · "+Amount(flow.Amount),row,flow.Internal,
                     (flow.Internal ? nodes[flow.SourceNodeId].Code+" → "+nodes[flow.DestinationNodeId].Code+" · " : "")+GraphAmount(flow.Amount)+" · "+GraphPercent(flow.Share)));
             }

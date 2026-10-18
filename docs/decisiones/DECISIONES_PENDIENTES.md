@@ -224,3 +224,12 @@ pendientes. No modifica D01–D12 ni referencias canónicas.
 La petición expresa del propietario «Desarrolla la T15 en los términos comentados en esta conversación y cuando verifiques su correcto funcionamiento y estética adecuada la fusionas» autoriza implementar el criterio normalizado debatido y fusionarlo tras validación local. Sustituye el estado anterior de propuesta únicamente para esta política de T15 R1. Los ejemplos 1.000/100 + 600/60 = 20 por hora y la distinción entre 400 de capacidad y 1.200 de actividad realizada forman parte del alcance explicado.
 
 No convertir costes con tratamiento `None` en capacidad propia, ni evaluar de nuevo capacidad de auxiliares. Si una aportación `AssessAtPool` exige evaluación en otro propietario y no hay resultado que la acredite, mostrar diagnóstico; esta entrega no aprueba D05/T16. Las vistas alternativas ActualManagement/VariableCostView no se añaden al flujo simple acordado. Las referencias de la especificación canónica y los cortes históricos anteriores se conservan sin reescribir.
+
+
+## Aplicación de D05 en T16 — 18/10/2026
+
+El propietario autoriza desarrollar la propuesta T16 con los ajustes debatidos y fusionarla al terminar. Se adopta evaluación una vez por propietario para auxiliares medidos, con reparto sin evaluación explícito para los demás y estado pendiente que bloquea el cálculo. La cobertura parcial se muestra sin afirmar que toda la ociosidad esté medida.
+
+C20: 1.600 = 800 transmitidos a principales + 500 de A + 300 de B. Los 100 de A recibidos por B no se vuelven a evaluar. C29 admite variación negativa firmada por sobreactividad sin llamarla ahorro. La normal y real proceden de T14, los servicios se registran en T16 y los costes evaluados se reciben en T15 como consumidos, conservando naturaleza y origen.
+
+La autorización cubre este método y los ejemplos del debate; no sustituye la selección y evidencia de servicios reales de cada empresa. No habilita automáticamente todos los auxiliares, ni cambia contratos canónicos o cálculos históricos. Detalle en [T16](../tareas/T16.md).

@@ -61,6 +61,7 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
             }).ToArray();
             Filter(); SelectedRow = Rows.FirstOrDefault(r => r.Value.PoolId == selected) ?? Rows.FirstOrDefault();
             Feedback = allRows.Length == 0 ? this["NoCenters"] : this["SelectCenter"];
+            if (Report.AuxiliaryCapacityPartiallyAssessed) Feedback += " " + texts.Get("Aux.NotEvaluated", host.PhysicalUiCulture);
         }
         catch (Exception ex) when (ex is DomainRuleException or CompanyFileException or InvalidOperationException)
         { Feedback = this["LoadFailed"]; }

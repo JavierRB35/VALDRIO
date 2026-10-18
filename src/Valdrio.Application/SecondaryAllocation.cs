@@ -8,7 +8,17 @@ namespace Valdrio.Application;
 public sealed record SecondaryAllocationFact(
     EntityId ResourceId, EntityId PartId, string Account, EntityId TerminalNodeId,
     ResourceBehavior Behavior, ResourceCostLayer CostLayer, ResourceCapacityTreatment CapacityTreatment,
-    decimal RawAmount, decimal NumericAdjustment, decimal RoundingAdjustment, Money PostedAmount);
+    decimal RawAmount, decimal NumericAdjustment, decimal RoundingAdjustment, Money PostedAmount)
+{
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public EntityId? CapacityOwnerPoolId { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? AssessmentId { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public bool IsCapacityVariance { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public bool CapacityNotEvaluated { get; init; }
+}
 
 public sealed record SecondaryExplanationLink(
     EntityId ResourceId, EntityId PartId, EntityId PrimaryNodeId, EntityId TerminalNodeId,
@@ -19,6 +29,11 @@ public sealed record SecondaryExplanationLink(
 {
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public ResourceBehavior? SourceBehavior { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? AssessmentId { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public bool CapacityNotEvaluated { get; init; }
+
 }
 
 public sealed record SecondaryTerminalTotal(
@@ -105,6 +120,12 @@ public static class SecondaryAllocationService
         CancellationToken cancellation = default)
     {
         ArgumentNullException.ThrowIfNull(workspace);
+        if (!workspace.AuxiliaryPhysicalCurrent) throw AuxiliaryCapacityRules.Error("AUX_PHYSICAL_STALE", "Stale");
+        if (workspace.Configuration.AuxiliaryCapacity is not null)
+        {
+            try { return AuxiliaryCapacityService.Calculate(workspace, cancellation); }
+            catch (OverflowException) { throw Error("SECONDARY_NUMERIC_OVERFLOW", "Secondary.NumericOverflow"); }
+        }
         try
         {
             var primary = PrimaryAllocationService.Calculate(workspace);
@@ -269,7 +290,7 @@ public static class SecondaryAllocationService
             .Select(i => keyByNode[ids[i]]).Distinct().Order());
     }
 
-    private static ReciprocalSolution AggregateCirculation(
+    internal static ReciprocalSolution AggregateCirculation(
         IReadOnlyList<SecondaryGroupCirculation> groups)
     {
         var first = groups[0].Solution;
@@ -355,7 +376,8 @@ public static class SecondaryAllocationService
 
     // Pure seam for corpus C09 and for tests independent from SQLite/WPF.
     public static SecondaryAllocationResult Calculate(PrimaryAllocationResult primary,
-        ReciprocalInput graph, PrecisionPolicy precision, CancellationToken cancellation = default)
+        ReciprocalInput graph, PrecisionPolicy precision, CancellationToken cancellation = default,
+        ReciprocalFactorization? preparedFactor = null)
     {
         ArgumentNullException.ThrowIfNull(primary);
         ArgumentNullException.ThrowIfNull(graph);
@@ -365,7 +387,7 @@ public static class SecondaryAllocationService
         if (!StringComparer.Ordinal.Equals(primary.PolicyVersion, precision.Version))
             throw Error("SECONDARY_PRECISION_POLICY_INVALID", "Secondary.PrecisionMismatch");
         ValidatePrimaryMoney(primary, precision);
-        var factor = ReciprocalFactorization.Prepare(graph, cancellation);
+        var factor = preparedFactor ?? ReciprocalFactorization.Prepare(graph, cancellation);
         var auxIds = factor.AuxiliaryIds.ToArray();
         var terminalIds = factor.TerminalIds.ToArray();
         var auxIndex = auxIds.Select((id, index) => (id, index)).ToDictionary(t => t.id, t => t.index, StringComparer.Ordinal);
@@ -475,6 +497,10 @@ public static class SecondaryAllocationService
     // Persist only a reproducible seal, not an opaque mutable balance cache.
     // Include adopted secondary rules even when two rules happen to yield equal amounts.
     public static string ResultFingerprint(SecondaryAllocationResult result, AllocationConfiguration config) =>
+        config.AuxiliaryCapacity is null ? LegacyResultFingerprint(result, config) :
+        PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new { Version = "owner-once-t16-v1", Legacy = LegacyResultFingerprint(result, config), config.AuxiliaryCapacity }));
+
+    private static string LegacyResultFingerprint(SecondaryAllocationResult result, AllocationConfiguration config) =>
         PublishedModelStructure.Hash(CanonicalSnapshotJson.Serialize(new
         {
             Schema = SecondaryAllocationResult.Schema,
@@ -522,7 +548,7 @@ public static class SecondaryAllocationService
     // Direct-to-object and excluded amounts never pass through the auxiliary
     // solver. Publish an explicit resource-level bridge so they cannot be
     // mistaken for missing cost or counted twice as terminal contributions.
-    private static IReadOnlyList<SecondaryEconomicBridge> BuildResourceBridges(
+    internal static IReadOnlyList<SecondaryEconomicBridge> BuildResourceBridges(
         PrimaryAllocationResult primary, IReadOnlyList<SecondaryAllocationFact> terminal,
         PrecisionPolicy precision)
     {

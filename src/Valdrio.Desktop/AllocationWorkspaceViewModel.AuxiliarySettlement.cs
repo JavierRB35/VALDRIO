@@ -12,6 +12,7 @@ public sealed record AuxiliarySettlementRow(
 
 public sealed partial class AllocationWorkspaceViewModel
 {
+    private IReadOnlyList<SecondaryAllocationFact> auxiliaryVarianceFacts = [];
     public ObservableCollection<AuxiliarySettlementRow> AuxiliarySettlements { get; } = [];
     public string AuxiliarySettlementResidual { get; private set; } = "";
     public string AuxiliarySettlementHelp => AuxiliarySettlements.Count == 0
@@ -49,6 +50,8 @@ public sealed partial class AllocationWorkspaceViewModel
                         (mappedGroups.TryGetValue(fact.PartId, out var selectedGroup) ?
                             selectedGroup : "all") == group.ComponentRoutingGroup)
                     .Sum(fact => fact.PostedAmount.Amount);
+                initial -= auxiliaryVarianceFacts.Where(f => f.TerminalNodeId == id &&
+                    (mappedGroups.TryGetValue(f.PartId,out var g) ? g : "all") == group.ComponentRoutingGroup).Sum(f=>f.PostedAmount.Amount);
                 var gross = solution.Gross[i];
                 // Balance equation: gross = primary + net receipts from reciprocal auxiliaries.
                 // We cannot claim a per-hop ledger of signed receipts that T11 does not store.

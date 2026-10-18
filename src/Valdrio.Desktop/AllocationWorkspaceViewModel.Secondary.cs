@@ -342,6 +342,8 @@ public sealed partial class AllocationWorkspaceViewModel
     private void RestorePublishedSecondary()
     {
         var published = workspace?.SecondaryPublication;
+        if (workspace is not null && !workspace.AuxiliaryPhysicalCurrent)
+        { SecondaryDiagnostic = Text("Aux.Stale"); SecondarySummary = ""; return; }
         if (workspace is null || published is null ||
             !StringComparer.Ordinal.Equals(published.CalculationFingerprint,
                 workspace.Configuration.SecondaryCalculationHash))
@@ -495,7 +497,8 @@ public sealed partial class AllocationWorkspaceViewModel
     {
         if (workspace is null) return;
         var nodes = workspace.Resources.Model.Structure.Nodes.ToDictionary(n => n.Id);
-        secondaryContributions.AddRange(SecondaryResultPresentation.Build(facts, links, nodes));
+        auxiliaryVarianceFacts = facts.Where(f => f.IsCapacityVariance).ToArray();
+        secondaryContributions.AddRange(SecondaryResultPresentation.Build(facts.Where(f => !f.IsCapacityVariance).ToArray(), links, nodes));
         var currency = workspace.Resources.Study.Currency.FunctionalCurrencyCode;
         var precision = workspace.Resources.Precision;
         var quantum = DisplayCurrencyQuantum;

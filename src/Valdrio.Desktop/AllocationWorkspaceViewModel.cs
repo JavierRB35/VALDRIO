@@ -481,7 +481,9 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
                 config = new AllocationConfiguration(config.PrimaryRules, config.SecondaryRules,
                     config.ExplicitAssignments, config.AbsoluteAssignments, config.Descriptions,
                     config.PrimaryClosed, config.SecondaryClosed, config.SecondaryCalculationHash,
-                    previous.SecondaryPartRoutingGroups);
+                    previous.SecondaryPartRoutingGroups, config.AuxiliaryCapacity);
+            if (config.AuxiliaryCapacity is null && previous.AuxiliaryCapacity is not null)
+                config = config.WithAuxiliaryCapacity(previous.AuxiliaryCapacity);
             var port = company.ActiveAllocations!;
             var receipt = await Task.Run(() => port.ChangeAllocations(new(study.CompanyId, study.Id, study.Revision, new(Guid.NewGuid()), "local-user", config)));
             // Retain the committed revision even if a dependent refresh fails.
