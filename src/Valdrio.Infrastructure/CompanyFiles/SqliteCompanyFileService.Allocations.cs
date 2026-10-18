@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore;
 using Valdrio.Application;
 using Valdrio.Domain;
@@ -79,10 +80,15 @@ public sealed partial class SqliteCompanyFileService
                 return AllocationKeys((AllocationDbContext)context, companyId, modelId);
             });
         public AllocationWorkspaceSnapshot ReadAllocations(EntityId companyId, EntityId studyId, CancellationToken token = default) =>
-            Workspace(false, token, (context, file) =>
+            PhysicalWorkspace(false, token, (context, file) =>
             {
                 Scope(companyId, file);
-                return AllocationWorkspace((AllocationDbContext)context, file, Study(RequiredStudy((StudyDbContext)context, file.Id, studyId)));
+                var study = Study(RequiredStudy(context, file.Id, studyId));
+                var result = AllocationWorkspace(context, file, study);
+                var plan = result.Configuration.AuxiliaryCapacity;
+                var current = plan?.Rows.Select(r => Latest(context,file.Id,study,r.PoolId)).Where(o => o is not null).Select(o => o!).ToArray() ?? [];
+                return new AllocationWorkspaceSnapshot(result.Resources,result.Keys,result.Configuration,result.ConfigurationRevision,result.IncludeUnroutedAccounts,
+                    result.UsedKeyIds,result.SecondaryPublication,result.ProtectedKeyIds) { AuxiliaryPhysicalCurrent = AuxiliaryCapacityRules.IsCurrent(plan,current) };
             });
         public IReadOnlyList<AllocationChangeReceipt> ReadAllocationHistory(EntityId companyId, EntityId studyId, CancellationToken token = default) =>
             Workspace(false, token, (context, file) =>
@@ -173,6 +179,12 @@ public sealed partial class SqliteCompanyFileService
                         throw AllocationDiagnostics.Error("SECONDARY_CLOSE_INVALID", "Secondary.CloseInvalid");
                     var proposed = new AllocationWorkspaceSnapshot(current.Resources, current.Keys,
                         config, current.ConfigurationRevision);
+                    if (config.AuxiliaryCapacity is not null)
+                    {
+                        using var physicalDb = new PhysicalDbContext(db.Database.GetDbConnection() as Microsoft.Data.Sqlite.SqliteConnection ?? throw new InvalidOperationException());
+                        physicalDb.Database.UseTransaction(db.Database.CurrentTransaction!.GetDbTransaction());
+                        EnsureAuxiliaryPhysicalCurrent(physicalDb, before, config.AuxiliaryCapacity);
+                    }
                     var calculated = Valdrio.Application.SecondaryAllocationService.Calculate(proposed, token);
                     var expected = Valdrio.Application.SecondaryAllocationService.ResultFingerprint(calculated, config);
                     if (!StringComparer.Ordinal.Equals(config.SecondaryCalculationHash, expected))

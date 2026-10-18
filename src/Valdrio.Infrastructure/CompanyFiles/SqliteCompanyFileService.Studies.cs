@@ -117,7 +117,7 @@ public sealed partial class SqliteCompanyFileService
             return after;
         });
 
-        public StudySnapshotReceipt Capture(CaptureStudySnapshot command, CancellationToken token = default) => Workspace(true, token, (context, file) =>
+        public StudySnapshotReceipt Capture(CaptureStudySnapshot command, CancellationToken token = default) => PhysicalWorkspace(true, token, (context, file) =>
         {
             Scope(command.CompanyId, file); command.RequestId.EnsureValid(); var db = (StudyDbContext)context;
             var existing = db.StudySnapshots.AsNoTracking().SingleOrDefault(s => s.Id == command.RequestId.ToString());
@@ -147,6 +147,8 @@ public sealed partial class SqliteCompanyFileService
             if (allocations.Count > 0)
                 input = new AllocationStudySnapshotInput(study, file.PrecisionPolicy, model,
                     new(command.RequestId, command.RequestId, instant, command.Actor), imports, history, allocations, includeUnroutedAccounts: true);
+            if (input is AllocationStudySnapshotInput auxInput)
+                EnsureAuxiliaryPhysicalCurrent(context, study, auxInput.Allocations.Configuration.AuxiliaryCapacity);
             var json = StudySnapshotJson.Serialize(input);
             var result = new StudySnapshotReceipt(command.RequestId, file.Id, study.Id, study.Revision, instant, input.SnapshotSchemaVersion,
                 StudySnapshotJson.EconomicHash(input), PublishedModelStructure.Hash(json), json);

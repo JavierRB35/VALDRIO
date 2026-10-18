@@ -27,7 +27,8 @@ public sealed class AllocationConfiguration
         IReadOnlyList<ExplicitPrimaryAssignment> explicitAssignments, IReadOnlyList<AbsolutePartAllocation> absoluteAssignments,
         IReadOnlyList<AccountDescriptionChoice> descriptions, bool primaryClosed = false,
         bool secondaryClosed = false, string? secondaryCalculationHash = null,
-        IReadOnlyList<SecondaryPartRoutingGroup>? secondaryPartRoutingGroups = null)
+        IReadOnlyList<SecondaryPartRoutingGroup>? secondaryPartRoutingGroups = null,
+        AuxiliaryCapacityPlan? auxiliaryCapacity = null)
     {
         if (primaryRules is null || secondaryRules is null || explicitAssignments is null || absoluteAssignments is null || descriptions is null ||
             primaryRules.Any(r => r is null) || secondaryRules.Any(r => r is null) || explicitAssignments.Any(r => r is null) ||
@@ -40,6 +41,7 @@ public sealed class AllocationConfiguration
             throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
         if (secondaryClosed && (!primaryClosed || string.IsNullOrWhiteSpace(secondaryCalculationHash)))
             throw AllocationDiagnostics.Error("SECONDARY_CLOSE_INVALID", "Secondary.CloseInvalid");
+        AuxiliaryCapacity = auxiliaryCapacity;
         PrimaryClosed = primaryClosed;
         SecondaryClosed = secondaryClosed;
         SecondaryCalculationHash = secondaryClosed ? secondaryCalculationHash : null;
@@ -59,19 +61,24 @@ public sealed class AllocationConfiguration
     public string? SecondaryCalculationHash { get; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IReadOnlyList<SecondaryPartRoutingGroup>? SecondaryPartRoutingGroups { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public AuxiliaryCapacityPlan? AuxiliaryCapacity { get; }
+    public AllocationConfiguration WithAuxiliaryCapacity(AuxiliaryCapacityPlan? plan) =>
+        new(PrimaryRules, SecondaryRules, ExplicitAssignments, AbsoluteAssignments, Descriptions, PrimaryClosed,
+            secondaryPartRoutingGroups: SecondaryPartRoutingGroups, auxiliaryCapacity: plan);
     // Reopening primary necessarily invalidates a previously closed secondary run.
     public AllocationConfiguration WithPrimaryClosed(bool closed) =>
         new(PrimaryRules, SecondaryRules, ExplicitAssignments, AbsoluteAssignments, Descriptions,
-            closed, secondaryPartRoutingGroups: SecondaryPartRoutingGroups);
+            closed, secondaryPartRoutingGroups: SecondaryPartRoutingGroups, auxiliaryCapacity: AuxiliaryCapacity);
     public AllocationConfiguration WithSecondaryClosed(bool closed, string? calculationHash = null) =>
         new(PrimaryRules, SecondaryRules, ExplicitAssignments, AbsoluteAssignments, Descriptions,
-            PrimaryClosed || closed, closed, closed ? calculationHash : null, SecondaryPartRoutingGroups);
+            PrimaryClosed || closed, closed, closed ? calculationHash : null, SecondaryPartRoutingGroups, AuxiliaryCapacity);
     public AllocationConfiguration WithSecondaryRules(IReadOnlyList<SecondaryRule> rules) =>
         new(PrimaryRules, rules, ExplicitAssignments, AbsoluteAssignments, Descriptions,
-            PrimaryClosed, secondaryPartRoutingGroups: SecondaryPartRoutingGroups);
+            PrimaryClosed, secondaryPartRoutingGroups: SecondaryPartRoutingGroups, auxiliaryCapacity: AuxiliaryCapacity);
     public AllocationConfiguration WithSecondaryPartRoutingGroups(IReadOnlyList<SecondaryPartRoutingGroup> groups) =>
         new(PrimaryRules, SecondaryRules, ExplicitAssignments, AbsoluteAssignments, Descriptions,
-            PrimaryClosed, secondaryPartRoutingGroups: groups);
+            PrimaryClosed, secondaryPartRoutingGroups: groups, auxiliaryCapacity: AuxiliaryCapacity);
     public IReadOnlyList<PrimaryRule> PrimaryRules { get; }
     public IReadOnlyList<SecondaryRule> SecondaryRules { get; }
     public IReadOnlyList<ExplicitPrimaryAssignment> ExplicitAssignments { get; }
@@ -123,6 +130,7 @@ public sealed class AllocationWorkspaceSnapshot
     public ResourceWorkspaceSnapshot Resources { get; }
     public IReadOnlyList<AllocationKeyVersion> Keys { get; }
     public AllocationConfiguration Configuration { get; }
+    [JsonIgnore] public bool AuxiliaryPhysicalCurrent { get; init; } = true;
     public long ConfigurationRevision { get; }
     public bool IncludeUnroutedAccounts { get; }
     [JsonIgnore] public IReadOnlyList<EntityId> UsedKeyIds { get; }
@@ -167,6 +175,7 @@ public static class AllocationWorkspaceRules
         IReadOnlyList<AllocationKeyVersion> keys, ChangeAllocations request)
     {
         var study = resources.Study; var model = resources.Model.Structure; var config = request.Configuration;
+        AuxiliaryCapacityRules.Validate(resources, config.AuxiliaryCapacity);
         request.RequestId.EnsureValid();
         if (request.CompanyId != study.CompanyId || request.StudyId != study.Id || string.IsNullOrWhiteSpace(request.Actor))
             throw AllocationDiagnostics.Error("KEY_SCOPE_INVALID", "Allocation.ScopeInvalid");

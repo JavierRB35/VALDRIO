@@ -5,7 +5,11 @@ namespace Valdrio.Application;
 
 public enum CalculationRunStatus { Started, Completed, Failed, Cancelled }
 public sealed record RunTransfer(string Group, EntityId SourceNodeId, EntityId DestinationNodeId,
-    EntityId KeyId, decimal Share, decimal Amount, bool Internal);
+    EntityId KeyId, decimal Share, decimal Amount, bool Internal)
+{
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public bool MeasuredServices { get; init; }
+}
 public sealed record RunOutput(PrimaryAllocationResult? Primary, SecondaryCalculationPublication? Secondary,
     IReadOnlyList<RunTransfer> Transfers, IReadOnlyList<DomainDiagnostic> Diagnostics);
 public sealed record CalculationRun(EntityId Id, StudySnapshotReceipt Snapshot, string AlgorithmVersion,
@@ -26,13 +30,14 @@ public sealed record CalculationRun(EntityId Id, StudySnapshotReceipt Snapshot, 
 }
 public sealed record RunHistory(long StudyRevision, IReadOnlyList<CalculationRun> Runs)
 {
-    public EntityId? CurrentRunId => Runs.LastOrDefault(r => r.IsCurrentFor(StudyRevision))?.Id;
+    public IReadOnlyList<EntityId> StalePhysicalRuns { get; init; } = [];
+    public EntityId? CurrentRunId => Runs.LastOrDefault(r => r.IsCurrentFor(StudyRevision) && !StalePhysicalRuns.Contains(r.Id))?.Id;
 
     // A completed calculation for the identical, frozen revision/algorithm
     // is reusable; failed/cancelled/in-progress and historical runs are not.
     public CalculationRun? MatchingCompleted(long revision) =>
         StudyRevision == revision
-            ? Runs.LastOrDefault(r => r.IsCurrentFor(revision))
+            ? Runs.LastOrDefault(r => r.IsCurrentFor(revision) && !StalePhysicalRuns.Contains(r.Id))
             : null;
 }
 public interface IRunStore
@@ -63,19 +68,18 @@ public static class CalculationRunService
             foreach (var group in result.GroupCirculations)
             {
                 var w = input.Allocations;
-                var graph = ReciprocalGraphBuilder.FromPublishedSecondaryKeys(w.Resources.Model.Structure,
-                    w.Keys, w.Configuration.SecondaryRules, w.Resources.Model.DriverUnits,
-                    w.Resources.Precision, group.ComponentRoutingGroup);
+                var graph = AuxiliaryCapacityService.Graph(w, group.ComponentRoutingGroup);
                 for (var i = 0; i < graph.AuxiliaryIds.Length; i++)
                 {
                     token.ThrowIfCancellationRequested();
                     var source = EntityId.Parse(graph.AuxiliaryIds[i]);
                     var gross = group.Solution.Gross[group.Solution.AuxiliaryIds.ToList().IndexOf(graph.AuxiliaryIds[i])];
+                    var measured = w.Configuration.AuxiliaryCapacity?.Rows.Any(r => r.NodeId == source && r.Mode == AuxiliaryCapacityMode.OwnerOnceCapacity) == true;
                     var key = w.Configuration.SecondaryRules.Single(r => r.IsActive && r.AuxiliaryNodeId == source && r.ComponentRoutingGroup == group.ComponentRoutingGroup).KeyVersionId;
                     for (var j = 0; j < graph.AuxiliaryIds.Length; j++)
-                        if (graph.Q[i][j] != 0) transfers.Add(new(group.ComponentRoutingGroup, source, EntityId.Parse(graph.AuxiliaryIds[j]), key, graph.Q[i][j], checked(gross * graph.Q[i][j]), true));
+                        if (graph.Q[i][j] != 0) transfers.Add(new(group.ComponentRoutingGroup, source, EntityId.Parse(graph.AuxiliaryIds[j]), key, graph.Q[i][j], checked(gross * graph.Q[i][j]), true) { MeasuredServices = measured });
                     for (var j = 0; j < graph.TerminalIds.Length; j++)
-                        if (graph.B[i][j] != 0) transfers.Add(new(group.ComponentRoutingGroup, source, EntityId.Parse(graph.TerminalIds[j]), key, graph.B[i][j], checked(gross * graph.B[i][j]), false));
+                        if (graph.B[i][j] != 0) transfers.Add(new(group.ComponentRoutingGroup, source, EntityId.Parse(graph.TerminalIds[j]), key, graph.B[i][j], checked(gross * graph.B[i][j]), false) { MeasuredServices = measured });
                 }
             }
             return new(primary, SecondaryAllocationService.Publish(result, input.Allocations.Configuration, run.Snapshot.InputRevision),

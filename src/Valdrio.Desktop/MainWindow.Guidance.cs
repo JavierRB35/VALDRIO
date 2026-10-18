@@ -76,6 +76,8 @@ public partial class MainWindow
     {
         if (viewModel is not { } vm) return;
         UpdatePresentationLabels();
+        AuxiliaryStep.Content = new Valdrio.Localization.UiTextCatalog().Get("Aux.Title", vm.Studies!.PhysicalUiCulture);
+        AuxiliaryStep.IsEnabled = vm.Studies.CanOpenPhysical;
         if (workflowStep == 4 && lastResourceStage != vm.Resources?.Stage) { lastHelpKey = null; lastResourceStage = vm.Resources?.Stage ?? -1; }
         NavigationGroupLabel.Text = vm.Guide("WorkspaceNavigation");
         ProjectPhase.Header = vm.Guide("PhaseProjectStructure");
@@ -302,6 +304,17 @@ public partial class MainWindow
             var window = new PrincipalRatesWindow(studies) { Owner = this };
             window.ShowDialog();
             if (window.OpenCostsRequested) await NavigateWorkflow(8);
+            UpdateWorkflow();
+        }
+    }
+    private async void OpenAuxiliary(object sender, RoutedEventArgs e)
+    {
+        if (viewModel?.Allocations is { } a && !await a.CanLeaveAsync()) return;
+        if (viewModel?.Company?.WorkspaceIdle != false && viewModel?.Studies is { CanOpenPhysical: true } studies)
+        {
+            new AuxiliaryCapacityWindow(studies) { Owner = this }.ShowDialog();
+            await studies.LoadCommand.ExecuteAsync(null);
+            if (viewModel.Allocations is { } allocations) await allocations.EnterAsync();
             UpdateWorkflow();
         }
     }

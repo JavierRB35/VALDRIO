@@ -3,7 +3,13 @@ using Valdrio.Domain;
 namespace Valdrio.Calculation;
 
 public enum RateComponentKind { OwnFixed, Variable, Consumed, Period }
-public sealed record RateSource(string Id, ResourceBehavior Behavior, RateComponentKind Kind, decimal Amount, string? Account = null);
+public sealed record RateSource(string Id, ResourceBehavior Behavior, RateComponentKind Kind, decimal Amount, string? Account = null)
+{
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public EntityId? CapacityOwnerPoolId { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? AssessmentId { get; init; }
+}
 public sealed record ActualObjectActivity(string Id, decimal Quantity);
 public sealed record RateComponent(RateSource Source, decimal? Denominator, decimal? Rate, string? Diagnostic,
     IReadOnlyList<RoundedContribution> Destinations);

@@ -1313,8 +1313,8 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.PrimaryFlowSelectionHelp" xml:space="preserve"><value>Read-only explanation of posted primary allocation amounts; not a new allocation or an invented reconstruction of auxiliary services.</value></data>
   <data name="AllocationUI.AuxiliarySettlementTitle" xml:space="preserve"><value>Auxiliary node cost settlement</value></data>
   <data name="AllocationUI.AuxiliarySettlementNotAvailable" xml:space="preserve"><value>No valid settlement is available. Calculate secondary allocation first.</value></data>
-  <data name="AllocationUI.AuxiliarySettlementExplanation" xml:space="preserve"><value>By routing group: initial primary costs + net reciprocal receipts = gross distributed cost. The ending balance is theoretical after complete distribution; internal receipts are not added again to final costs. The engine does not record fictitious per-account intermediate movements.</value></data>
-  <data name="AllocationUI.AuxiliarySettlementInitial" xml:space="preserve"><value>Primary cost</value></data>
+  <data name="AllocationUI.AuxiliarySettlementExplanation" xml:space="preserve"><value>Own applied service + received services = outgoing circulation. View own capacity variance in Auxiliary capacity and services; it is not allocated again.</value></data>
+  <data name="AllocationUI.AuxiliarySettlementInitial" xml:space="preserve"><value>Own cost transferred</value></data>
   <data name="AllocationUI.AuxiliarySettlementIncoming" xml:space="preserve"><value>Net receipts (derived)</value></data>
   <data name="AllocationUI.AuxiliarySettlementGross" xml:space="preserve"><value>Gross allocated out</value></data>
   <data name="AllocationUI.AuxiliarySettlementBalance" xml:space="preserve"><value>Theoretical balance</value></data>
@@ -1559,7 +1559,7 @@ Difference to distribute: {7}</value></data>
   <data name="Run.OriginStage" xml:space="preserve"><value>1 · Source accounts</value></data>
   <data name="Run.PrimaryStage" xml:space="preserve"><value>2 · Primary allocation</value></data>
   <data name="Run.SecondaryStage" xml:space="preserve"><value>3 · Auxiliary circulation</value></data>
-  <data name="Run.FinalStage" xml:space="preserve"><value>4 · Final principal costs</value></data>
+  <data name="Run.FinalStage" xml:space="preserve"><value>4 · Final costs and variances</value></data>
   <data name="Run.Calculate" xml:space="preserve"><value>Calculate and save execution</value></data>
   <data name="Run.Cancel" xml:space="preserve"><value>Cancel</value></data>
   <data name="Run.Refresh" xml:space="preserve"><value>Reload saved executions</value></data>
@@ -1575,7 +1575,7 @@ Difference to distribute: {7}</value></data>
   <data name="Run.ClearSelection" xml:space="preserve"><value>Show all details</value></data>
   <data name="Run.Details" xml:space="preserve"><value>Verifiable detail</value></data>
   <data name="Run.Reconciliation" xml:space="preserve"><value>Source reconciliation</value></data>
-  <data name="Run.ReconcileHelp" xml:space="preserve"><value>Effective = direct to objects + excluded + pending + final principal costs. The difference must be zero; gross auxiliary transfers are excluded from this sum.</value></data>
+  <data name="Run.ReconcileHelp" xml:space="preserve"><value>Effective = direct to products or orders + excluded + pending + principal cost + auxiliary capacity variance. The difference must be zero; gross auxiliary transfers are not added.</value></data>
   <data name="Run.Stage" xml:space="preserve"><value>Stage</value></data>
   <data name="Run.Resource" xml:space="preserve"><value>Resource / account</value></data>
   <data name="Run.Source" xml:space="preserve"><value>Source centre / account</value></data>
@@ -1607,7 +1607,7 @@ Difference to distribute: {7}</value></data>
   <data name="Run.Auxiliary" xml:space="preserve"><value>Auxiliary</value></data>
   <data name="Run.AllResources" xml:space="preserve"><value>All resources in the routing group</value></data>
   <data name="Run.Adjustments" xml:space="preserve"><value>Numeric and rounding adjustments</value></data>
-  <data name="Run.Summary" xml:space="preserve"><value>Source: {0} · Final principal costs: {1} · Reconciliation difference: {2}</value></data>
+  <data name="Run.Summary" xml:space="preserve"><value>Source: {0} · Final costs and variances: {1} · Reconciliation difference: {2}</value></data>
   <data name="Run.Interrupted" xml:space="preserve"><value>This attempt did not finish. Its input is preserved, but no final results were published. Create a new execution to retry.</value></data>
   <data name="Run.InputRequired" xml:space="preserve"><value>Configure primary allocation keys and rules before creating an execution.</value></data>
   <data name="Run.Incomplete" xml:space="preserve"><value>Primary allocation is incomplete. Review pending resources and missing assignments; no final costs were published.</value></data>
@@ -1628,7 +1628,7 @@ Difference to distribute: {7}</value></data>
   <data name="Activity.HistoryInvalid" xml:space="preserve"><value>Select historical periods and explain every excluded observation.</value></data>
   <data name="Activity.HistoryNotComparable" xml:space="preserve"><value>The selected periods are not comparable. Use equal durations or review normalization.</value></data>
   <data name="Activity.StudyClosed" xml:space="preserve"><value>Reopen the study explicitly before modifying physical observations.</value></data>
-  <data name="Activity.ScopeInvalid" xml:space="preserve"><value>The selected principal node and pool do not belong to the current published model.</value></data>
+  <data name="Activity.ScopeInvalid" xml:space="preserve"><value>The selected centre and capacity do not belong to the current published model.</value></data>
   <data name="Activity.Conflict" xml:space="preserve"><value>These physical data have changed. Refresh and review before saving again.</value></data>
   <data name="Activity.Annulled" xml:space="preserve"><value>This observation was annulled and cannot be changed. Review its history.</value></data>
   <data name="Activity.AnnulReason" xml:space="preserve"><value>Explain why this observation must be annulled.</value></data>
@@ -1709,7 +1709,7 @@ Difference to distribute: {7}</value></data>
   <data name="Activity.Import.Applied" xml:space="preserve"><value>{0} physical rows were saved as drafts.</value></data>
   <data name="Activity.ImportHeader" xml:space="preserve"><value>Missing or duplicated column headers. Required: node, unit, period_start, period_end and normal or real.</value></data>
   <data name="Activity.ImportNumber" xml:space="preserve"><value>Invalid physical quantity in an imported row.</value></data>
-  <data name="Activity.ImportNode" xml:space="preserve"><value>Unknown principal node in the selected study model.</value></data>
+  <data name="Activity.ImportNode" xml:space="preserve"><value>Unknown centre in the analysis model.</value></data>
   <data name="Activity.ImportUnit" xml:space="preserve"><value>Unit does not match this pool.</value></data>
   <data name="Activity.ImportPeriod" xml:space="preserve"><value>Invalid date range in physical source.</value></data>
   <data name="Activity.ImportEmpty" xml:space="preserve"><value>Both physical quantities are missing.</value></data>
@@ -1768,11 +1768,11 @@ Difference to distribute: {7}</value></data>
   <data name="Run.Unbalanced" xml:space="preserve"><value>Review differences</value></data>
   <data name="Run.BalanceEmpty" xml:space="preserve"><value>There is no complete published result for this run. Review its status and diagnostics.</value></data>
   <data name="Run.BalanceHelp" xml:space="preserve"><value>Primary + net secondary = final cost. Net means received less transferred, including published result adjustments; it is not gross circulation. Centres aggregate their nodes without double counting.</value></data>
-  <data name="Run.BalanceTraceHelp" xml:space="preserve"><value>Select a node to inspect its allocations and highlight its path in the diagrams. A settled auxiliary has zero final cost; its cost is already included in the principals.</value></data>
+  <data name="Run.BalanceTraceHelp" xml:space="preserve"><value>Select a centre to inspect its allocations and path. An auxiliary may retain its capacity variance; only applied services reach principals.</value></data>
   <data name="Run.BalancePrecision" xml:space="preserve"><value>Visual summary to two decimals. Detail and reconciliation retain posted precision. These columns describe stages: do not add them together.</value></data>
   <data name="Run.ShowAllFlowLabels" xml:space="preserve"><value>Show all amounts on connections</value></data>
   <data name="Guide.PhysicalChooseStudy" xml:space="preserve"><value>Select or save analysis</value></data>
-  <data name="Guide.PhysicalActivityHelp" xml:space="preserve"><value>Record normal capacity and actual activity for the analysis principal nodes. Includes a calculator and physical data import. Costs come from Cost flows and runs; unit rates are not calculated here.</value></data>
+  <data name="Guide.PhysicalActivityHelp" xml:space="preserve"><value>Record normal capacity and actual activity for principal and auxiliary centres. Includes a calculator and physical data import. View costs in Flows and runs.</value></data>
   <data name="Guide.PhysicalActivityReady" xml:space="preserve"><value>View or edit physical data for the selected analysis.</value></data>
   <data name="Guide.PhysicalActivity" xml:space="preserve"><value>Activity and capacity</value></data>
   <data name="Guide.PhysicalActivityNeedsStudy" xml:space="preserve"><value>Select and save an analysis to open its activity and capacity data.</value></data>
@@ -1865,4 +1865,73 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
 <data name="Rates.NoCapacityAssessment" xml:space="preserve"><value>There is no own fixed cost subject to capacity assessment. This does not establish that idle capacity is absent.</value></data>
 <data name="Rates.SelectCenter" xml:space="preserve"><value>Select a centre to view its answers.</value></data>
 <data name="Rates.NoIssues" xml:space="preserve"><value>There are no issues preventing rate calculation. Order consumption will be added in T19.</value></data>
+  <data name="Aux.Title" xml:space="preserve"><value>Auxiliary capacity and services</value></data>
+  <data name="Aux.Center" xml:space="preserve"><value>Auxiliary centre</value></data>
+  <data name="Aux.Unit" xml:space="preserve"><value>Unit</value></data>
+  <data name="Aux.Normal" xml:space="preserve"><value>Normal capacity</value></data>
+  <data name="Aux.Real" xml:space="preserve"><value>Actual activity</value></data>
+  <data name="Aux.Mode" xml:space="preserve"><value>Treatment</value></data>
+  <data name="Aux.Group" xml:space="preserve"><value>Routing group</value></data>
+  <data name="Aux.Destination" xml:space="preserve"><value>Destination</value></data>
+  <data name="Aux.Quantity" xml:space="preserve"><value>Service delivered</value></data>
+  <data name="Aux.Question" xml:space="preserve"><value>Question</value></data>
+  <data name="Aux.Answer" xml:space="preserve"><value>Answer</value></data>
+  <data name="Aux.Pending" xml:space="preserve"><value>Pending assessment</value></data>
+  <data name="Aux.ThroughFlow" xml:space="preserve"><value>Allocate without capacity assessment</value></data>
+  <data name="Aux.OwnerOnceCapacity" xml:space="preserve"><value>Assess own capacity</value></data>
+  <data name="Aux.Help" xml:space="preserve"><value>Select an auxiliary. Normal capacity and actual activity come from T14. Treatment determines whether its own capacity is assessed. Not assessed does not mean no idle capacity.</value></data>
+  <data name="Aux.ServicesHelp" xml:space="preserve"><value>Enter actual service quantities by destination in the auxiliary unit (for example, 10 hours). Each routing group must cover actual activity. Hours with no destination are not idle capacity. Groups match components configured in Secondary; do not add groups together.</value></data>
+  <data name="Aux.ImportHelp" xml:space="preserve"><value>UTF-8 CSV separated by semicolons. Exact header: Center;Group;Destination;Quantity. Use centre codes, the displayed group and your regional decimal separator, without thousands separators. Example: MAINT;all;PROD;10. Imports quantities for review; does not change treatment or save automatically.</value></data>
+  <data name="Aux.PrincipalTotal" xml:space="preserve"><value>Cost at principals</value></data>
+  <data name="Aux.Variance" xml:space="preserve"><value>Auxiliary capacity variance</value></data>
+  <data name="Aux.Difference" xml:space="preserve"><value>Reconciliation difference</value></data>
+  <data name="Aux.NoResult" xml:space="preserve"><value>No current result: save and calculate; review missing inputs.</value></data>
+  <data name="Aux.Unknown" xml:space="preserve"><value>No data</value></data>
+  <data name="Aux.NoCenters" xml:space="preserve"><value>This analysis has no auxiliaries.</value></data>
+  <data name="Aux.Closed" xml:space="preserve"><value>Secondary allocation is closed. Reopen it to edit services or treatment.</value></data>
+  <data name="Aux.Unsaved" xml:space="preserve"><value>Unsaved changes. Previous economic answers are no longer current.</value></data>
+  <data name="Aux.Saved" xml:space="preserve"><value>Draft saved. Validate and calculate for updated results.</value></data>
+  <data name="Aux.Valid" xml:space="preserve"><value>Services and calculation checked. Validation does not publish a run.</value></data>
+  <data name="Aux.SaveFirst" xml:space="preserve"><value>Save changes before calculating or viewing results.</value></data>
+  <data name="Aux.Calculated" xml:space="preserve"><value>Calculation saved in history; available to principal rates.</value></data>
+  <data name="Aux.Failed" xml:space="preserve"><value>Operation did not complete. Refresh and review the open analysis.</value></data>
+  <data name="Aux.Imported" xml:space="preserve"><value>Quantities imported for review. Select treatment and save the draft.</value></data>
+  <data name="Aux.NotEvaluated" xml:space="preserve"><value>Auxiliary capacity not assessed; this does not mean zero idle capacity.</value></data>
+  <data name="Aux.QCost" xml:space="preserve"><value>How much does this auxiliary cost?</value></data>
+  <data name="Aux.Own" xml:space="preserve"><value>Own cost</value></data>
+  <data name="Aux.Received" xml:space="preserve"><value>Services received</value></data>
+  <data name="Aux.QUse" xml:space="preserve"><value>What activity was performed relative to normal capacity?</value></data>
+  <data name="Aux.QVariance" xml:space="preserve"><value>What cost relates to unused capacity?</value></data>
+  <data name="Aux.QTransfer" xml:space="preserve"><value>How much cost is transferred to other centres?</value></data>
+  <data name="Aux.QDestinations" xml:space="preserve"><value>Who received its services?</value></data>
+  <data name="Aux.QCoverage" xml:space="preserve"><value>Are all service destinations recorded?</value></data>
+  <data name="Aux.QBalance" xml:space="preserve"><value>Does the auxiliary cost reconcile?</value></data>
+  <data name="Aux.CirculationHelp" xml:space="preserve"><value>Own + received = transferred + variance. Reciprocal exchanges are circulation, not additional company cost.</value></data>
+  <data name="Aux.Overactivity" xml:space="preserve"><value>Overactivity: negative variance, not realised savings.</value></data>
+  <data name="Aux.ZeroNormal" xml:space="preserve"><value>Own fixed cost cannot be assessed with zero normal capacity. Review T14.</value></data>
+  <data name="Aux.Invalid" xml:space="preserve"><value>Review centres, units and quantities. Enter non-negative numbers without thousands separators.</value></data>
+  <data name="Aux.CoverageMismatch" xml:space="preserve"><value>Services do not cover the auxiliary actual activity. Complete destinations; work without a destination is not idle capacity.</value></data>
+  <data name="Aux.ZeroRealReceived" xml:space="preserve"><value>An auxiliary with no activity receives services with no effective exit. Review activity and destinations.</value></data>
+  <data name="Aux.ZeroRealCost" xml:space="preserve"><value>Consumed costs exist with zero activity. Review costs and activity; a service rate cannot be calculated.</value></data>
+  <data name="Aux.PrimaryIncomplete" xml:space="preserve"><value>Complete primary allocations.</value></data>
+  <data name="Aux.OwnerInvalid" xml:space="preserve"><value>The cost capacity owner does not match the auxiliary. Review its classification in Resources.</value></data>
+  <data name="Aux.Stale" xml:space="preserve"><value>T14 activity has changed. Refresh this screen, review services and save before recalculating.</value></data>
+  <data name="Aux.Save" xml:space="preserve"><value>Save draft</value></data>
+  <data name="Aux.Validate" xml:space="preserve"><value>Validate</value></data>
+  <data name="Aux.Calculate" xml:space="preserve"><value>Calculate</value></data>
+  <data name="Aux.Import" xml:space="preserve"><value>Import CSV services</value></data>
+  <data name="Aux.Activity" xml:space="preserve"><value>Activity and capacity</value></data>
+  <data name="Aux.Rates" xml:space="preserve"><value>Principal rates</value></data>
+  <data name="Aux.Reopen" xml:space="preserve"><value>Reopen secondary</value></data>
+  <data name="Aux.Refresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="Aux.Export" xml:space="preserve"><value>Export run</value></data>
+  <data name="Aux.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Aux.Discard" xml:space="preserve"><value>There are unsaved changes. Discard them?</value></data>
+  <data name="Aux.Exported" xml:space="preserve"><value>Run exported with its inputs and results.</value></data>
+<data name="Aux.MeasuredServices" xml:space="preserve"><value>Measured services</value></data>
+<data name="Aux.AllComponents" xml:space="preserve"><value>All components</value></data>
+<data name="Aux.Coverage" xml:space="preserve"><value>{0} of {1} auxiliaries assessed</value></data>
+<data name="Aux.PendingHelp" xml:space="preserve"><value>Assessment pending: confirm capacity and activity in T14 and complete services. The system will not automatically switch to allocation without assessment.</value></data>
+<data name="Aux.ClassificationRequired" xml:space="preserve"><value>Classify auxiliary costs as fixed, variable or mixed with a defined proportion before assessing capacity. Review Resources and Primary.</value></data>
+<data name="Aux.FlowVariance" xml:space="preserve"><value>Of primary cost, {0} is retained as auxiliary capacity variance and does not circulate in services. See Auxiliary capacity and services for details.</value></data>
 </root>

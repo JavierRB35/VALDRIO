@@ -125,6 +125,14 @@ public sealed partial class SqliteCompanyFileService
             }
         }
 
+        private static void EnsureAuxiliaryPhysicalCurrent(PhysicalDbContext db, StudyDefinition study, AuxiliaryCapacityPlan? plan)
+        {
+            if (plan is null) return;
+            foreach (var row in plan.Rows.Where(r => r.Mode == AuxiliaryCapacityMode.OwnerOnceCapacity))
+                if (row.Observation is null || Json(Latest(db, study.CompanyId, study, row.PoolId)) != Json(row.Observation))
+                    throw AuxiliaryCapacityRules.Error("AUX_PHYSICAL_STALE", "Stale");
+        }
+
         private static PhysicalObservation? Latest(PhysicalDbContext db, EntityId company, StudyDefinition study,
             EntityId poolId) => db.PhysicalObservations.AsNoTracking()
             .Where(r => r.CompanyId == company.ToString() && r.StudyId == study.Id.ToString() &&
@@ -186,7 +194,7 @@ public sealed partial class SqliteCompanyFileService
             var model = RequiredPublication(db, file.Id, study.SelectedModelVersionId);
             var pool = model.Structure.Pools.SingleOrDefault(p => p.Id == command.PoolId);
             var node = model.Structure.Nodes.SingleOrDefault(n => n.Id == command.NodeId &&
-                n.Role == NodeRole.Principal && n.IsActive);
+                n.Role is NodeRole.Principal or NodeRole.Auxiliary && n.IsActive);
             if (pool is null || node is null || pool.NodeId != command.NodeId)
                 throw PhysicalActivityRules.Error("ACT_SCOPE_INVALID", "Activity.ScopeInvalid");
 

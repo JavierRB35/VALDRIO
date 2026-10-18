@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-18",
+  "fullRegression": {
+    "passed": 734,
+    "failed": 0,
+    "skipped": 0,
+    "source": "tests/regression-final.trx",
+    "scope": "Before final classification guard and explanatory text adjustment"
+  },
+  "finalTargeted": {
+    "passed": 20,
+    "failed": 0,
+    "skipped": 0,
+    "source": "tests/final-targeted.trx",
+    "scope": "T16, T15 and localization on final code"
+  },
+  "wpf": {
+    "passed": 39,
+    "source": "wpf-verified/checks.json",
+    "dpi": "Simulated layout scale, not physical monitor certification"
+  },
+  "githubActionsCostUsd": 0,
+  "build": {
+    "command": "dotnet build Valdrio.slnx --no-restore -m:1",
+    "errors": 0,
+    "warnings": 0
+  }
+}

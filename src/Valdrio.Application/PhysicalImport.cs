@@ -64,7 +64,7 @@ public static class PhysicalImportMapper
                 val < 0) throw PhysicalActivityRules.Error("ACT_IMPORT_NUMBER", "Activity.ImportNumber");
             return val;
         }
-        var nodes = model.Nodes.Where(n => n.Role == NodeRole.Principal && n.IsActive)
+        var nodes = model.Nodes.Where(n => n.Role is NodeRole.Principal or NodeRole.Auxiliary && n.IsActive)
             .GroupBy(n => n.Code, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Single(), StringComparer.Ordinal);
         var pools = model.Pools.ToDictionary(p => p.NodeId);
         var lines = new List<PhysicalImportLine>();

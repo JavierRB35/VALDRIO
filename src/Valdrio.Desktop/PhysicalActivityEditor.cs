@@ -274,12 +274,13 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         var result = currentRunId is null ? null : publishedRun!.Runs
             .FirstOrDefault(r => r.Id == currentRunId)?.Output?.Secondary;
         Rows.Clear();
-        foreach (var node in model.Structure.Nodes.Where(n => n.Role == NodeRole.Principal && n.IsActive).OrderBy(n => n.Code))
+        foreach (var node in model.Structure.Nodes.Where(n => n.Role is NodeRole.Principal or NodeRole.Auxiliary && n.IsActive).OrderBy(n => n.Code))
         {
             var pool = model.Structure.Pools.Single(p => p.NodeId == node.Id);
             var unit = company.Units.Single(u => u.Id == pool.DriverUnitId);
             var cost = result is null ? Label("Activity.CostUnavailable") :
-                result.Totals.Where(x => x.TerminalNodeId == node.Id).Sum(x => x.PostedAmount.Amount)
+                (node.Role == NodeRole.Auxiliary ? publishedRun!.Runs.Single(r => r.Id == currentRunId).Output!.Primary!.Facts.Where(f => f.NodeId == node.Id).Sum(f => f.PostedAmount.Amount)
+                    : result.Totals.Where(x => x.TerminalNodeId == node.Id).Sum(x => x.PostedAmount.Amount))
                     .ToString("N2", formatCulture) + " " + study.Currency.FunctionalCurrencyCode;
             var center = model.Publication?.PhysicalCenters.SingleOrDefault(c => c.Id == node.PhysicalCenterId)?.Name;
             var row = new PhysicalActivityRow

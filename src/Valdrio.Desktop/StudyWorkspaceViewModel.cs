@@ -96,6 +96,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public IPhysicalActivityWorkspace? ActivePhysicalActivity => company.ActivePhysicalActivity;
     public IModelWorkspace? PhysicalModels => company.ActiveModels;
     public IRunStore? PhysicalRuns => company.ActiveRuns;
+    public IAllocationWorkspace? AuxiliaryAllocations => company.ActiveAllocations;
     public CompanyFileSnapshot? PhysicalCompany => company.Snapshot;
     public IStudyWorkspace? PhysicalStudies => company.ActiveStudies;
     public bool PhysicalCompanyWritable => company.CanWrite;

@@ -20,7 +20,7 @@ public static class SecondaryContributionProjector
         foreach (var fact in facts)
         {
             var groups = byFact[(fact.ResourceId, fact.PartId, fact.TerminalNodeId)]
-                .Where(l => l.SourceBehavior is null || l.SourceBehavior == fact.Behavior)
+                .Where(l => (l.SourceBehavior is null || l.SourceBehavior == fact.Behavior) && l.AssessmentId == fact.AssessmentId && l.CapacityNotEvaluated == fact.CapacityNotEvaluated)
                 .GroupBy(l => l.PrimaryNodeId).OrderBy(g => g.Key).ToArray();
             if (groups.Length == 0) throw new InvalidOperationException("Published cost has no explanatory origins.");
             var raw = groups.ToDictionary(g => g.Key, g => g.Sum(l => l.RawContribution));
