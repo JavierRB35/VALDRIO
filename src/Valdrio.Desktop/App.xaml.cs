@@ -239,6 +239,18 @@ public partial class App : System.Windows.Application
                             await window.RunAdjustmentChecks(captureDirectory, (QueuedModelEditorDialogs)modelDialogs);
                             Shutdown(0); return;
                         }
+                        if (e.Args.Contains("--capacity-checks-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("Capacity checks require a disposable company.");
+                            await window.RunCapacityChecks(captureDirectory, requestedPath);
+                            Shutdown(0); return;
+                        }
+                        if (e.Args.Contains("--physical-menu-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("Physical menu smoke requires a disposable company.");
+                            await window.RunPhysicalMenuChecks(captureDirectory, requestedPath, (QueuedModelEditorDialogs)modelDialogs);
+                            Shutdown(0); return;
+                        }
                         if (e.Args.Contains("--allocation-layout-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("Layout smoke requires a disposable T12 demo.");

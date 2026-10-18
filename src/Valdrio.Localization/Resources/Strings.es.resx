@@ -1615,7 +1615,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.CostFlows" xml:space="preserve"><value>8. Flujos y ejecuciones</value></data>
   <data name="Run.Available" xml:space="preserve"><value>{0} + {1} recibidos = {2}</value></data>
   <data name="Run.PanGraph" xml:space="preserve"><value>Desplazar el gráfico horizontalmente</value></data>
-  <data name="Activity.EvidenceRequired" xml:space="preserve"><value>Identifica la fuente y la calidad de los datos antes de confirmar.</value></data>
+  <data name="Activity.EvidenceRequired" xml:space="preserve"><value>Completa las fuentes de capacidad normal y de actividad real en «Fuentes, calidad y justificación de la fila seleccionada». Ejemplo: calendario aprobado o partes de trabajo del período.</value></data>
   <data name="Activity.EvidenceTooLong" xml:space="preserve"><value>La descripción de la fuente es demasiado larga. Acórtala sin perder la procedencia.</value></data>
   <data name="Activity.InputInvalid" xml:space="preserve"><value>Revisa los datos físicos introducidos y el autor registrado.</value></data>
   <data name="Activity.NegativeQuantity" xml:space="preserve"><value>Las magnitudes físicas no pueden ser negativas.</value></data>
@@ -1679,9 +1679,9 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Activity.Calendar.Days" xml:space="preserve"><value>Días operativos del período</value></data>
   <data name="Activity.Calendar.Shifts" xml:space="preserve"><value>Turnos por día</value></data>
   <data name="Activity.Calendar.Hours" xml:space="preserve"><value>Horas por turno</value></data>
-  <data name="Activity.Calendar.Resources" xml:space="preserve"><value>Recursos equivalentes (comparables)</value></data>
-  <data name="Activity.Calendar.Stoppages" xml:space="preserve"><value>Horas de paradas previstas</value></data>
-  <data name="Activity.Calendar.Factor" xml:space="preserve"><value>Factor de normalidad (de 0 a 1)</value></data>
+  <data name="Activity.Calendar.Resources" xml:space="preserve"><value>Máquinas o personas equivalentes por turno</value></data>
+  <data name="Activity.Calendar.Stoppages" xml:space="preserve"><value>Paradas habituales (horas)</value></data>
+  <data name="Activity.Calendar.Factor" xml:space="preserve"><value>Actividad habitual sobre las horas disponibles (%)</value></data>
   <data name="Activity.Calendar.FactorReason" xml:space="preserve"><value>Fuente o explicación del método empleado</value></data>
   <data name="Activity.History.Help" xml:space="preserve"><value>Selecciona períodos históricos comparables. Las anomalías excluidas requieren explicación; ninguna se descarta automáticamente.</value></data>
   <data name="Activity.History.Exceptional" xml:space="preserve"><value>Marcar anomalía o explicar exclusión</value></data>
@@ -1740,13 +1740,13 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Reuse.Status.Driver" xml:space="preserve"><value>Mediciones de otro período: introduce los valores actuales en una nueva clave</value></data>
   <data name="Reuse.Status.Group" xml:space="preserve"><value>Grupo específico: revisa las partidas del nuevo análisis antes de asignarlo</value></data>
   <data name="Activity.Assistant.Help" xml:space="preserve"><value>Calcula una propuesta de capacidad normal. Aplicarla actualiza solo esta fila; después debes guardarla. La actividad real se introduce por separado.</value></data>
-  <data name="Activity.Assistant.CalendarHelp" xml:space="preserve"><value>Usa el calendario de este período y recursos con jornadas comparables. Días × turnos × horas × recursos da la capacidad ideal; resta las paradas y aplica el factor justificado.</value></data>
+  <data name="Activity.Assistant.CalendarHelp" xml:space="preserve"><value>Introduce el horario habitual de este período. Las paradas y la capacidad se calculan automáticamente al cambiar los datos.</value></data>
   <data name="Activity.Assistant.DaysHelp" xml:space="preserve"><value>Días operativos dentro de las fechas del análisis, descontando festivos y cierres. Ejemplo: 22.</value></data>
   <data name="Activity.Assistant.ShiftsHelp" xml:space="preserve"><value>Turnos por día según el horario real previsto. Ejemplo: 2 turnos.</value></data>
   <data name="Activity.Assistant.HoursHelp" xml:space="preserve"><value>Horas de cada turno. Usa la jornada documentada; no se presuponen ocho horas.</value></data>
-  <data name="Activity.Assistant.ResourcesHelp" xml:space="preserve"><value>Máquinas o personas equivalentes con el mismo calendario. Justifica diferencias de jornada antes de agregarlas.</value></data>
-  <data name="Activity.Assistant.StoppagesHelp" xml:space="preserve"><value>Horas de parada del conjunto de recursos en este período. Introduce 0 si no hay paradas previstas.</value></data>
-  <data name="Activity.Assistant.FactorHelp" xml:space="preserve"><value>Fracción representativa entre 0 y 1. Ejemplo: 0,9 representa el 90 %. Explica la fuente y el motivo.</value></data>
+  <data name="Activity.Assistant.ResourcesHelp" xml:space="preserve"><value>Equipos o personas que trabajan a la vez en cada turno. Dos personas a media jornada = 1 equivalente. No sumes otra vez los de otros turnos.</value></data>
+  <data name="Activity.Assistant.StoppagesHelp" xml:space="preserve"><value>VALDRIO multiplica por días, turnos y recursos según la opción elegida. Ejemplo: 0,5 h por turno × 2 turnos × 20 días × 3 máquinas = 60 h. Escribe 0 si no hay paradas. No repitas descansos ya excluidos del turno.</value></data>
+  <data name="Activity.Assistant.FactorHelp" xml:space="preserve"><value>De cada 100 horas disponibles, cuántas representan la actividad habitual. Escribe 90 para el 90 %. Justifica tu referencia abajo.</value></data>
   <data name="Activity.CalendarUnit" xml:space="preserve"><value>Este calendario calcula horas. Para otra unidad utiliza un histórico comparable o una cifra declarada y justificada.</value></data>
   <data name="Activity.SelectionHelp" xml:space="preserve"><value>Edita normal y real en la tabla. Guardar y confirmar afectan solo a la fila seleccionada. Para confirmar, completa sus fuentes y calidad. Los cambios de las demás filas se conservan.</value></data>
   <data name="Activity.EvidenceDetails" xml:space="preserve"><value>Fuentes, calidad y justificación de la fila seleccionada</value></data>
@@ -1771,4 +1771,26 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Run.BalanceTraceHelp" xml:space="preserve"><value>Selecciona un nodo para consultar sus asignaciones y destacar su recorrido en los gráficos. Un auxiliar liquidado tiene coste final cero; su coste ya está incluido en los principales.</value></data>
   <data name="Run.BalancePrecision" xml:space="preserve"><value>Resumen visual a dos decimales. El detalle y la conciliación conservan la precisión del importe publicado. Estas columnas describen etapas: no deben sumarse entre sí.</value></data>
   <data name="Run.ShowAllFlowLabels" xml:space="preserve"><value>Mostrar todos los importes sobre las conexiones</value></data>
+  <data name="Guide.PhysicalChooseStudy" xml:space="preserve"><value>Seleccionar o guardar análisis</value></data>
+  <data name="Guide.PhysicalActivityHelp" xml:space="preserve"><value>Registra la capacidad normal y la actividad real de los nodos principales del análisis. Incluye calculadora e importación de datos físicos. Los costes se consultan desde Flujos y ejecuciones; aquí no se calculan tarifas unitarias.</value></data>
+  <data name="Guide.PhysicalActivityReady" xml:space="preserve"><value>Consulta o edita los datos físicos del análisis seleccionado.</value></data>
+  <data name="Guide.PhysicalActivity" xml:space="preserve"><value>Actividad y capacidades</value></data>
+  <data name="Guide.PhysicalActivityNeedsStudy" xml:space="preserve"><value>Selecciona y guarda un análisis para abrir sus datos de actividad y capacidades.</value></data>
+  <data name="Activity.Assistant.Result" xml:space="preserve"><value>Propuesta para todo el período</value></data>
+  <data name="Activity.Assistant.NumberRequired" xml:space="preserve"><value>{0}: introduce un número. Ejemplo de formato decimal: {1}.</value></data>
+  <data name="Activity.Assistant.Range" xml:space="preserve"><value>{0}: introduce un valor entre {1} y {2}.</value></data>
+  <data name="Activity.Assistant.WholeDays" xml:space="preserve"><value>Días operativos: introduce un número entero dentro del período del análisis.</value></data>
+  <data name="Activity.Assistant.PositiveCalendar" xml:space="preserve"><value>Turnos, horas por turno y recursos deben ser mayores que cero. Para un período sin funcionamiento, indica 0 días.</value></data>
+  <data name="Activity.Assistant.DayLimit" xml:space="preserve"><value>Turnos × horas por turno no puede superar 24 horas al día por recurso. Revisa ambos campos.</value></data>
+  <data name="Activity.Assistant.ReasonRequired" xml:space="preserve"><value>Explica la fuente del calendario y por qué ese porcentaje representa la actividad habitual para poder aplicar la propuesta.</value></data>
+  <data name="Activity.Assistant.Calculation" xml:space="preserve"><value>Calendario: {0} días × {1} turnos/día × {2} h/turno × {3} recursos = {4} h
+Disponibles: {4} − {5} h de paradas totales = {6} h
+Capacidad normal: {6} h × {7} % = {8} h</value></data>
+  <data name="Activity.Stoppages.Basis" xml:space="preserve"><value>Cómo introduces las paradas</value></data>
+  <data name="Activity.Stoppages.PerResourceShift" xml:space="preserve"><value>Por turno y por máquina/persona</value></data>
+  <data name="Activity.Stoppages.PerResourceDay" xml:space="preserve"><value>Por día y por máquina/persona</value></data>
+  <data name="Activity.Stoppages.PerResourcePeriod" xml:space="preserve"><value>Por período y por máquina/persona</value></data>
+  <data name="Activity.Stoppages.TotalPeriod" xml:space="preserve"><value>Total del período, todos los recursos</value></data>
+  <data name="Activity.Stoppages.Exceeds" xml:space="preserve"><value>Las paradas calculadas ({0} h) superan las horas de calendario ({1} h). Revisa las horas y si son por turno, día o totales.</value></data>
+  <data name="Activity.Stoppages.Calculation" xml:space="preserve"><value>Paradas: {0} h ({1}) × {2} = {3} h totales</value></data>
 </root>

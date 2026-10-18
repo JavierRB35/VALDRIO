@@ -1,0 +1,20 @@
+[
+  "no project: physical menu disabled",
+  "no selected analysis: guidance without opening an editor",
+  "cancel preserves pending study edit and current page",
+  "explicit discard permits physical navigation",
+  "menu visible and keyboard focusable es",
+  "menu opens populated physical table es",
+  "physical title localized es",
+  "menu opens editor and returns to physical phase es",
+  "correct phase and active marker es",
+  "opening physical editor does not change study revision es",
+  "back returns to cost flows es",
+  "menu visible and keyboard focusable en",
+  "menu opens populated physical table en",
+  "physical title localized en",
+  "menu opens editor and returns to physical phase en",
+  "correct phase and active marker en",
+  "opening physical editor does not change study revision en",
+  "back returns to cost flows en"
+]

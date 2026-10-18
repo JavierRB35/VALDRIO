@@ -1615,7 +1615,7 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.CostFlows" xml:space="preserve"><value>8. Cost flows and executions</value></data>
   <data name="Run.Available" xml:space="preserve"><value>{0} + {1} received = {2}</value></data>
   <data name="Run.PanGraph" xml:space="preserve"><value>Move diagram horizontally</value></data>
-  <data name="Activity.EvidenceRequired" xml:space="preserve"><value>Identify both a source and the evidence quality before confirming.</value></data>
+  <data name="Activity.EvidenceRequired" xml:space="preserve"><value>Complete the normal-capacity and actual-activity sources in the selected row’s sources, quality and justification section. Example: approved schedule or work logs for the period.</value></data>
   <data name="Activity.EvidenceTooLong" xml:space="preserve"><value>The source description is too long. Shorten it without losing its provenance.</value></data>
   <data name="Activity.InputInvalid" xml:space="preserve"><value>Review the entered physical data and the recorded author.</value></data>
   <data name="Activity.NegativeQuantity" xml:space="preserve"><value>Physical quantities cannot be negative.</value></data>
@@ -1679,9 +1679,9 @@ Difference to distribute: {7}</value></data>
   <data name="Activity.Calendar.Days" xml:space="preserve"><value>Operating days in the period</value></data>
   <data name="Activity.Calendar.Shifts" xml:space="preserve"><value>Shifts per day</value></data>
   <data name="Activity.Calendar.Hours" xml:space="preserve"><value>Hours per shift</value></data>
-  <data name="Activity.Calendar.Resources" xml:space="preserve"><value>Equivalent resources (comparable)</value></data>
-  <data name="Activity.Calendar.Stoppages" xml:space="preserve"><value>Planned stoppage hours</value></data>
-  <data name="Activity.Calendar.Factor" xml:space="preserve"><value>Normal operating factor (0 to 1)</value></data>
+  <data name="Activity.Calendar.Resources" xml:space="preserve"><value>Equivalent machines or people per shift</value></data>
+  <data name="Activity.Calendar.Stoppages" xml:space="preserve"><value>Usual downtime (hours)</value></data>
+  <data name="Activity.Calendar.Factor" xml:space="preserve"><value>Usual activity as a share of available hours (%)</value></data>
   <data name="Activity.Calendar.FactorReason" xml:space="preserve"><value>Source or explanation of the chosen method</value></data>
   <data name="Activity.History.Help" xml:space="preserve"><value>Select comparable historical periods. Excluded anomalous periods require a written reason; nothing is excluded automatically.</value></data>
   <data name="Activity.History.Exceptional" xml:space="preserve"><value>Flag anomaly or explain an exclusion</value></data>
@@ -1740,13 +1740,13 @@ Difference to distribute: {7}</value></data>
   <data name="Reuse.Status.Driver" xml:space="preserve"><value>Measurements from another period: enter current values in a new key</value></data>
   <data name="Reuse.Status.Group" xml:space="preserve"><value>Custom group: review the new analysis parts before assigning it</value></data>
   <data name="Activity.Assistant.Help" xml:space="preserve"><value>Calculate a normal capacity proposal. Applying updates this row only; save it afterwards. Enter actual activity separately.</value></data>
-  <data name="Activity.Assistant.CalendarHelp" xml:space="preserve"><value>Use this period&apos;s calendar and resources with comparable schedules. Days × shifts × hours × resources gives ideal capacity; subtract stoppages and apply the justified factor.</value></data>
+  <data name="Activity.Assistant.CalendarHelp" xml:space="preserve"><value>Enter the usual schedule for this period. Downtime and capacity recalculate automatically when inputs change.</value></data>
   <data name="Activity.Assistant.DaysHelp" xml:space="preserve"><value>Operating days within the analysis dates, excluding holidays and closures. Example: 22.</value></data>
   <data name="Activity.Assistant.ShiftsHelp" xml:space="preserve"><value>Shifts per day from the planned operating schedule. Example: 2 shifts.</value></data>
   <data name="Activity.Assistant.HoursHelp" xml:space="preserve"><value>Hours per shift. Use the documented schedule; eight hours is not assumed.</value></data>
-  <data name="Activity.Assistant.ResourcesHelp" xml:space="preserve"><value>Machines or equivalent people sharing a calendar. Justify schedule differences before aggregating.</value></data>
-  <data name="Activity.Assistant.StoppagesHelp" xml:space="preserve"><value>Total stoppage hours across these resources in this period. Enter 0 if none are planned.</value></data>
-  <data name="Activity.Assistant.FactorHelp" xml:space="preserve"><value>Representative fraction between 0 and 1. Example: 0.9 means 90%. Explain the source and reason.</value></data>
+  <data name="Activity.Assistant.ResourcesHelp" xml:space="preserve"><value>Machines or people working at the same time each shift. Two half-time people = 1 equivalent. Do not count other shifts again.</value></data>
+  <data name="Activity.Assistant.StoppagesHelp" xml:space="preserve"><value>VALDRIO multiplies by days, shifts and resources as selected. Example: 0.5 h per shift × 2 shifts × 20 days × 3 machines = 60 h. Enter 0 for no downtime. Do not repeat breaks already excluded from shift hours.</value></data>
+  <data name="Activity.Assistant.FactorHelp" xml:space="preserve"><value>Out of every 100 available hours, how many represent usual activity. Enter 90 for 90%. Justify your reference below.</value></data>
   <data name="Activity.CalendarUnit" xml:space="preserve"><value>This calendar calculates hours. For other units use comparable history or a justified declared value.</value></data>
   <data name="Activity.SelectionHelp" xml:space="preserve"><value>Edit normal and actual activity in the table. Save and confirm affect the selected row only. Complete its sources and quality to confirm. Changes in other rows are retained.</value></data>
   <data name="Activity.EvidenceDetails" xml:space="preserve"><value>Sources, quality and justification for the selected row</value></data>
@@ -1771,4 +1771,26 @@ Difference to distribute: {7}</value></data>
   <data name="Run.BalanceTraceHelp" xml:space="preserve"><value>Select a node to inspect its allocations and highlight its path in the diagrams. A settled auxiliary has zero final cost; its cost is already included in the principals.</value></data>
   <data name="Run.BalancePrecision" xml:space="preserve"><value>Visual summary to two decimals. Detail and reconciliation retain posted precision. These columns describe stages: do not add them together.</value></data>
   <data name="Run.ShowAllFlowLabels" xml:space="preserve"><value>Show all amounts on connections</value></data>
+  <data name="Guide.PhysicalChooseStudy" xml:space="preserve"><value>Select or save analysis</value></data>
+  <data name="Guide.PhysicalActivityHelp" xml:space="preserve"><value>Record normal capacity and actual activity for the analysis principal nodes. Includes a calculator and physical data import. Costs come from Cost flows and runs; unit rates are not calculated here.</value></data>
+  <data name="Guide.PhysicalActivityReady" xml:space="preserve"><value>View or edit physical data for the selected analysis.</value></data>
+  <data name="Guide.PhysicalActivity" xml:space="preserve"><value>Activity and capacity</value></data>
+  <data name="Guide.PhysicalActivityNeedsStudy" xml:space="preserve"><value>Select and save an analysis to open its activity and capacity data.</value></data>
+  <data name="Activity.Assistant.Result" xml:space="preserve"><value>Proposal for the entire period</value></data>
+  <data name="Activity.Assistant.NumberRequired" xml:space="preserve"><value>{0}: enter a number. Decimal format example: {1}.</value></data>
+  <data name="Activity.Assistant.Range" xml:space="preserve"><value>{0}: enter a value from {1} to {2}.</value></data>
+  <data name="Activity.Assistant.WholeDays" xml:space="preserve"><value>Operating days: enter a whole number within the analysis period.</value></data>
+  <data name="Activity.Assistant.PositiveCalendar" xml:space="preserve"><value>Shifts, hours per shift and resources must be greater than zero. For a period with no operation, enter 0 days.</value></data>
+  <data name="Activity.Assistant.DayLimit" xml:space="preserve"><value>Shifts × hours per shift cannot exceed 24 hours per day per resource. Check both fields.</value></data>
+  <data name="Activity.Assistant.ReasonRequired" xml:space="preserve"><value>Explain the schedule source and why this percentage represents usual activity before applying the proposal.</value></data>
+  <data name="Activity.Assistant.Calculation" xml:space="preserve"><value>Schedule: {0} days × {1} shifts/day × {2} h/shift × {3} resources = {4} h
+Available: {4} − {5} h total downtime = {6} h
+Normal capacity: {6} h × {7}% = {8} h</value></data>
+  <data name="Activity.Stoppages.Basis" xml:space="preserve"><value>How you enter downtime</value></data>
+  <data name="Activity.Stoppages.PerResourceShift" xml:space="preserve"><value>Per shift per machine/person</value></data>
+  <data name="Activity.Stoppages.PerResourceDay" xml:space="preserve"><value>Per day per machine/person</value></data>
+  <data name="Activity.Stoppages.PerResourcePeriod" xml:space="preserve"><value>Per period per machine/person</value></data>
+  <data name="Activity.Stoppages.TotalPeriod" xml:space="preserve"><value>Period total, all resources</value></data>
+  <data name="Activity.Stoppages.Exceeds" xml:space="preserve"><value>Calculated downtime ({0} h) exceeds scheduled hours ({1} h). Check the hours and whether they are per shift, day or total.</value></data>
+  <data name="Activity.Stoppages.Calculation" xml:space="preserve"><value>Downtime: {0} h ({1}) × {2} = {3} h total</value></data>
 </root>

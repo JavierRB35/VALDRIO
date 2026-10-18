@@ -73,7 +73,7 @@
     <DataGridTextColumn x:Name="StatusColumn" Binding="{Binding Status}" IsReadOnly="True" Width="*" ElementStyle="{StaticResource ActivityCell}"/>
    </DataGrid.Columns>
   </DataGrid>
-  <Expander Grid.Row="2" Header="{Binding EvidenceLabel}" Margin="0,12,0,8">
+  <Expander Grid.Row="2" Header="{Binding EvidenceLabel}" IsExpanded="{Binding EvidenceExpanded,Mode=TwoWay}" Margin="0,12,0,8">
   <ScrollViewer MaxHeight="230" VerticalScrollBarVisibility="Auto">
    <StackPanel IsEnabled="{Binding IsWritable}">
     <TextBlock Text="{Binding SelectedContext}" FontWeight="SemiBold" Margin="0,0,0,8"/>
