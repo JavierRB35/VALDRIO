@@ -1,0 +1,106 @@
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Valdrio.Application;
+using Valdrio.Calculation;
+using Valdrio.Domain;
+using Valdrio.Localization;
+
+namespace Valdrio.Desktop;
+
+public sealed record AnalystAnswer(string Question, string Answer);
+public sealed record PrincipalRateDisplay(PrincipalRateRow Value, string Name, string Unit, string Symbol, string Cost, string Rate, string Status);
+public sealed record RateDetailDisplay(string Component, string Behavior, string Cost, string Base, string Rate, string Source);
+public sealed partial class PrincipalRatesEditor : ObservableObject
+{
+    private readonly StudyWorkspaceViewModel host;
+    private readonly UiTextCatalog texts = new();
+    public PrincipalRateReport? Report { get; private set; }
+    public ObservableCollection<PrincipalRateDisplay> Rows { get; } = [];
+    public ObservableCollection<AnalystAnswer> Answers { get; } = [];
+    public ObservableCollection<RateDetailDisplay> Details { get; } = [];
+    [ObservableProperty] private PrincipalRateDisplay? selectedRow;
+    [ObservableProperty] private bool attentionOnly;
+    [ObservableProperty] private string feedback = "";
+    private PrincipalRateDisplay[] allRows = [];
+    public PrincipalRatesEditor(StudyWorkspaceViewModel host) { this.host = host; Reload(); }
+    public string this[string key] => texts.Get("Rates." + key, host.PhysicalUiCulture);
+    public string Context => host.PhysicalCompany?.Name + " · " + Report?.Study.Name + " · " +
+        Report?.Study.PeriodStart.Value.ToString("d", host.PhysicalFormatCulture) + " – " +
+        Report?.Study.PeriodEnd.Value.ToString("d", host.PhysicalFormatCulture);
+    public string Provenance => Report is null ? "" : this["Version"] + ": " + Report.Version + "\n" +
+        this["EconomicRun"] + ": " + Report.EconomicRunId + "\n" + this["Policy"] + "\n" +
+        this["PhysicalVersion"] + ": " + SelectedRow?.Value.Observation?.Version + "\n" +
+        SelectedRow?.Value.Observation?.NormalEvidence?.Source + " · " + SelectedRow?.Value.Observation?.RealEvidence?.Source;
+    public bool CanExport => Report?.Rows.Any(r => r.Result is not null) == true;
+    private string Quantity(decimal? value) => value?.ToString("0.############", host.PhysicalFormatCulture) ?? this["Unavailable"];
+    private string Money(decimal? value)
+    {
+        var digits = Report!.Study.Currency.CurrencyMetadataSnapshot.MinorUnitDigits;
+        var format = "#,0" + (digits > 0 ? "." + new string('0', digits) + new string('#', Math.Max(0, 8-digits)) : ".########");
+        return value.HasValue ? value.Value.ToString(format, host.PhysicalFormatCulture) + " " + Report.Study.Currency.FunctionalCurrencyCode : this["Unavailable"];
+    }
+    private string Rate(decimal? value, string unit) => value.HasValue ?
+        (decimal.Round(value.Value, 6) == value.Value ? "" : "≈ ") + value.Value.ToString("0.######", host.PhysicalFormatCulture) + " " + Report!.Study.Currency.FunctionalCurrencyCode + "/" + unit : this["Unavailable"];
+    public void Reload()
+    {
+        var selected = SelectedRow?.Value.PoolId;
+        Rows.Clear(); Answers.Clear(); Details.Clear(); allRows = []; SelectedRow = null; Report = null;
+        try
+        {
+            var old = host.Current ?? throw new InvalidOperationException();
+            var study = host.PhysicalStudies!.ReadStudies().Single(s => s.Id == old.Id);
+            var model = host.PhysicalModels!.ReadModels().Single(m => m.Structure.Id == study.SelectedModelVersionId).Publication!;
+            Report = PrincipalRateReportService.Read(study, model, host.PhysicalRuns?.ReadRuns(study.CompanyId, study.Id),
+                host.ActivePhysicalActivity!.ReadCurrent(study.CompanyId, study.Id));
+            allRows = Report.Rows.Select(row =>
+            {
+                var definition = host.PhysicalCompany!.Units.Single(u => u.Id == row.UnitId);
+                var unit = DefaultActivityUnitCatalog.IsPreset(definition) ? texts.Get("ActivityUnit." + definition.Code, host.PhysicalUiCulture) : definition.Code;
+                return new PrincipalRateDisplay(row, row.Name, unit, definition.Symbol, Money(row.Cost), Rate(row.Result?.CombinedRate, definition.Symbol),
+                    row.Diagnostics.Count == 0 ? this["Calculated"] : string.Join(" ", row.Diagnostics.Select(k => texts.Get(k, host.PhysicalUiCulture))));
+            }).ToArray();
+            Filter(); SelectedRow = Rows.FirstOrDefault(r => r.Value.PoolId == selected) ?? Rows.FirstOrDefault();
+            Feedback = allRows.Length == 0 ? this["NoCenters"] : this["SelectCenter"];
+        }
+        catch (Exception ex) when (ex is DomainRuleException or CompanyFileException or InvalidOperationException)
+        { Feedback = this["LoadFailed"]; }
+        OnPropertyChanged(nameof(Context)); OnPropertyChanged(nameof(Provenance)); OnPropertyChanged(nameof(CanExport));
+    }
+    partial void OnAttentionOnlyChanged(bool value) => Filter();
+    private void Filter()
+    {
+        var id = SelectedRow?.Value.PoolId;
+        Rows.Clear(); foreach (var row in allRows.Where(r => !AttentionOnly || r.Value.Diagnostics.Count > 0)) Rows.Add(row);
+        SelectedRow = Rows.FirstOrDefault(r => r.Value.PoolId == id) ?? Rows.FirstOrDefault();
+    }
+    partial void OnSelectedRowChanged(PrincipalRateDisplay? value)
+    {
+        Answers.Clear(); Details.Clear(); OnPropertyChanged(nameof(Provenance));
+        if (value is null) return;
+        var row = value.Value; var result = row.Result;
+        var reason = row.Diagnostics.Count > 0 ? value.Status : result?.CombinedRate is null ? this["UndefinedRate"] : this["AssignmentLater"];
+        var composition = reason;
+        if (result is not null)
+        {
+            foreach (var c in result.Components)
+                Details.Add(new(this[c.Source.Kind.ToString()], this["Behavior." + c.Source.Behavior], Money(c.Source.Amount),
+                    c.Source.Kind == RateComponentKind.Period ? this["NotApplicable"] : Quantity(c.Denominator) + " " + value.Unit,
+                    Rate(c.Rate, value.Symbol), c.Source.Account ?? c.Source.Id));
+            composition = string.Join(" · ", result.Components.GroupBy(c => c.Source.Kind).OrderBy(g => g.Key).Select(g =>
+                this[g.Key.ToString()] + ": " + Money(g.Sum(c => c.Source.Amount)) +
+                (g.Key == RateComponentKind.Period ? "" : " / " + Quantity(g.First().Denominator) + " " + value.Symbol + " = " +
+                Rate(g.All(c => c.Rate.HasValue) ? g.Sum(c => c.Rate!.Value) : null, value.Symbol)))) + ". " +
+                this["Normal"] + ": " + Quantity(row.Observation?.NormalQuantity) + " " + value.Unit + "; " +
+                this["Real"] + ": " + Quantity(row.Observation?.RealQuantity) + " " + value.Unit + ".";
+        }
+        var variance = result?.CapacityVariance is { } v ? Money(v) + " · " + this[v < 0 ? "Overactivity" : "Underactivity"] : reason;
+        if (result?.CapacityVariance is not null && !result.Components.Any(c => c.Source.Kind == RateComponentKind.OwnFixed))
+            variance = this["NoCapacityAssessment"];
+        var reconciliation = result?.PerformedCost is { } performed ?
+            this["Partial"] + " " + Money(result.SourceCost) + " = " + Money(result.CapacityVariance) + " (" + this["Capacity"] + ") + " +
+            Money(performed) + " (" + this["Performed"] + ")" + (result.PeriodCost == 0 ? "" : " + " + Money(result.PeriodCost) + " (" + this["Period"] + ")") + ". " + this["AssignmentLater"] : reason;
+        string[] answers = [result?.CombinedRate is not null ? value.Rate : reason, composition,
+            this["AssignmentLater"], variance, this["UnknownAssignment"], row.Diagnostics.Count == 0 && result?.CombinedRate is not null ? this["NoIssues"] : reason, reconciliation];
+        for (int i = 0; i < answers.Length; i++) Answers.Add(new(this["Question" + (i + 1)], answers[i]));
+    }
+}

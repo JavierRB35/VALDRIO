@@ -239,6 +239,12 @@ public partial class App : System.Windows.Application
                             await window.RunAdjustmentChecks(captureDirectory, (QueuedModelEditorDialogs)modelDialogs);
                             Shutdown(0); return;
                         }
+                        if (e.Args.Contains("--rates-checks-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("Rates checks require a disposable company.");
+                            await window.RunRatesChecks(captureDirectory, requestedPath);
+                            Shutdown(0); return;
+                        }
                         if (e.Args.Contains("--capacity-checks-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("Capacity checks require a disposable company.");

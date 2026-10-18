@@ -1,3 +1,11 @@
+# T15 — tarifas y respuestas por centro · 18/10/2026
+
+Implementada T15 R1 conforme al debate y autorización del propietario: tarifa normalizada por componente, variación de capacidad, conciliación parcial y siete preguntas/respuestas por centro. Costes T12 y actividad T14 confirmada; consumos por orden pendientes de T19, expresamente identificados. Se añaden versiones reproducibles y exportación, sin modificar snapshots ni órdenes históricas.
+
+Validación: regresión **726/726**, comprobaciones focalizadas finales **12/12**, **50 controles WPF ES/EN**, compilación sin errores/advertencias e inspección de capturas estrechas y escaladas. Véanse [entrega y límites](docs/evidencias/t15-20261018/README.md) y [requisito T15](docs/tareas/T15.md). D04 adoptada para este alcance; D05/T16 y T19 conservan sus dependencias. Fusión autorizada tras verificación. GitHub Actions no ejecutado.
+
+Los apartados siguientes son cortes históricos y no sustituyen este estado.
+
 # Revisión local de T14 y reutilización de reglas — 15/10/2026
 
 Este apartado es posterior a los cortes históricos siguientes. T14 ya compila en Windows: se corrigen migración v11, validaciones físicas, importación, concurrencia y estado de edición. Se mejora la tabla y su calculadora con el sistema visual V1. Se implementa una primera entrega funcional RP-01 de adopción explícita desde Reparto primario, después de importar, con diagnóstico de compatibilidad, conflictos y auditoría.

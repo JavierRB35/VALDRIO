@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="61c9c824-4661-46b0-9952-b686eab8bbfe" name="cjrui@JAVIYMAR 2026-10-18 02:56:40" runUser="JAVIYMAR\cjrui" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-18T02:56:40.1993146+02:00" queuing="2026-10-18T02:56:40.1993150+02:00" start="2026-10-18T02:56:28.3330468+02:00" finish="2026-10-18T02:56:40.3011605+02:00" />
+  <TestSettings name="default" id="fefbf96f-cf2d-4932-8622-d17eb39c5598">
+    <Deployment runDeploymentRoot="cjrui_JAVIYMAR_2026-10-18_02_56_40" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="30e59d15-fa1f-43f0-badb-7dc806b8b377" testId="19ba4fd7-afea-800c-ae6a-464e18a829df" testName="T15_ExcessRealConsumptionBlocksRatherThanInventingNegativeUnassigned" computerName="JAVIYMAR" duration="00:00:00.0004715" startTime="2026-10-18T02:56:40.2357174+02:00" endTime="2026-10-18T02:56:40.2362175+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="30e59d15-fa1f-43f0-badb-7dc806b8b377" />
+    <UnitTestResult executionId="ccb8604c-772c-419c-805f-08044df34485" testId="11d2a817-35f9-818a-97b6-b91d7bb49d8a" testName="AllocationResults_HaveLabelsForEveryResourceBehavior" computerName="JAVIYMAR" duration="00:00:00.0005528" startTime="2026-10-18T02:56:40.2214498+02:00" endTime="2026-10-18T02:56:40.2220351+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ccb8604c-772c-419c-805f-08044df34485" />
+    <UnitTestResult executionId="db6ea28a-7be7-4f5e-b6a0-541c3d87a3f3" testId="1123df4d-6d24-8a78-bbe2-98e4bbc9fea1" testName="T15_C17SignedOveractivityConserves2200" computerName="JAVIYMAR" duration="00:00:00.0003443" startTime="2026-10-18T02:56:40.2318959+02:00" endTime="2026-10-18T02:56:40.2322624+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="db6ea28a-7be7-4f5e-b6a0-541c3d87a3f3" />
+    <UnitTestResult executionId="191f766f-b6f9-4060-8d9e-10218bfd9daa" testId="1ac5fd05-6ec2-8d90-a859-bc0669ac1abb" testName="RelevantRoundingCorpusCases_MatchExactly" computerName="JAVIYMAR" duration="00:00:00.0050830" startTime="2026-10-18T02:56:40.2220475+02:00" endTime="2026-10-18T02:56:40.2271984+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="191f766f-b6f9-4060-8d9e-10218bfd9daa" />
+    <UnitTestResult executionId="9f5106ff-259a-4c7b-92ec-5e840f495439" testId="1b266647-0adc-87f8-8c71-738ace81652b" testName="T15_ConsumedFixedIsNotAssessedAgainAndPeriodIsSeparate" computerName="JAVIYMAR" duration="00:00:00.0009935" startTime="2026-10-18T02:56:40.2339026+02:00" endTime="2026-10-18T02:56:40.2349250+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9f5106ff-259a-4c7b-92ec-5e840f495439" />
+    <UnitTestResult executionId="19a67c8e-22ad-4f14-90b4-0da7fccab2e8" testId="1b64c86b-715c-8a51-bb15-ccd7e774699d" testName="PublishedCatalogs_AreCompleteAndNonEmpty" computerName="JAVIYMAR" duration="00:00:00.0046025" startTime="2026-10-18T02:56:40.2163856+02:00" endTime="2026-10-18T02:56:40.2214047+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="19a67c8e-22ad-4f14-90b4-0da7fccab2e8" />
+    <UnitTestResult executionId="cb2801e0-e7db-4128-a94b-0bb8923d9c26" testId="12c08d41-e565-85a3-bd8f-ffcceca8bfaf" testName="T15_FrozenCostsPhysicalVersionsReopeningAndStaleRuns" computerName="JAVIYMAR" duration="00:00:10.9514918" startTime="2026-10-18T02:56:29.2014761+02:00" endTime="2026-10-18T02:56:40.1755407+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cb2801e0-e7db-4128-a94b-0bb8923d9c26" />
+    <UnitTestResult executionId="3105d303-65f2-4560-af81-48a7fa80665f" testId="143258af-2c18-8401-8a42-04bfd77e823c" testName="EnglishAndSpanishPublishedCatalogs_HaveExactlySameKeysAndPlaceholderSignatures" computerName="JAVIYMAR" duration="00:00:00.0313518" startTime="2026-10-18T02:56:40.1842248+02:00" endTime="2026-10-18T02:56:40.2159193+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3105d303-65f2-4560-af81-48a7fa80665f" />
+    <UnitTestResult executionId="34a23307-a6a5-419b-93a0-a50800c2e9b9" testId="1ef09dd4-7166-8cff-98bb-2c6cca1e382e" testName="T15_ZeroAndMissingDenominatorsRemainDistinct" computerName="JAVIYMAR" duration="00:00:00.0015886" startTime="2026-10-18T02:56:40.2322740+02:00" endTime="2026-10-18T02:56:40.2338877+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="34a23307-a6a5-419b-93a0-a50800c2e9b9" />
+    <UnitTestResult executionId="f4b4ed6f-2fe1-4aff-8a97-a04cb1d298b0" testId="1953a119-b6e9-898a-bb90-83a1007a2930" testName="T15_MissingObjectDataIsNotZeroConsumption" computerName="JAVIYMAR" duration="00:00:00.0006077" startTime="2026-10-18T02:56:40.2312485+02:00" endTime="2026-10-18T02:56:40.2318855+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f4b4ed6f-2fe1-4aff-8a97-a04cb1d298b0" />
+    <UnitTestResult executionId="4072507f-a865-459b-a141-4eca734c0a4d" testId="1c352d7d-b985-8ca1-9bad-1bed01a7be8c" testName="T15_C15AndC18SeparateCapacityAndUnassignedWork" computerName="JAVIYMAR" duration="00:00:00.0039449" startTime="2026-10-18T02:56:40.2272104+02:00" endTime="2026-10-18T02:56:40.2312100+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4072507f-a865-459b-a141-4eca734c0a4d" />
+    <UnitTestResult executionId="32fcac10-36f7-45fc-975f-362389ecd67d" testId="152126c8-e60d-8cc3-a4d8-2bc0505c21b4" testName="T15_RoundingConservesEachSignedSourceAtLedgerPrecision" computerName="JAVIYMAR" duration="00:00:00.0007654" startTime="2026-10-18T02:56:40.2362278+02:00" endTime="2026-10-18T02:56:40.2385350+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="32fcac10-36f7-45fc-975f-362389ecd67d" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AllocationResults_HaveLabelsForEveryResourceBehavior" storage="c:\users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\valdrio.tests\bin\release\net10.0-windows\valdrio.tests.dll" id="11d2a817-35f9-818a-97b6-b91d7bb49d8a">
+      <Execution id="ccb8604c-772c-419c-805f-08044df34485" />
+      <TestMethod codeBase="C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\Valdrio.Tests\bin\Release\net10.0-windows\Valdrio.Tests.dll" adapterTypeName="executor://mstestadapter/v4" className="Valdrio.Tests.LocalizationCatalogTests" name="AllocationResults_HaveLabelsForEveryResourceBehavior" />
+    </UnitTest>
+    <UnitTest name="T15_FrozenCostsPhysicalVersionsReopeningAndStaleRuns" storage="c:\users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\valdrio.tests\bin\release\net10.0-windows\valdrio.tests.dll" id="12c08d41-e565-85a3-bd8f-ffcceca8bfaf">
+      <Execution id="cb2801e0-e7db-4128-a94b-0bb8923d9c26" />
+      <TestMethod codeBase="C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\Valdrio.Tests\bin\Release\net10.0-windows\Valdrio.Tests.dll" adapterTypeName="executor://mstestadapter/v4" className="Valdrio.Tests.T06ImportConfirmationTests" name="T15_FrozenCostsPhysicalVersionsReopeningAndStaleRuns" />
+    </UnitTest>
+    <UnitTest name="T15_C17SignedOveractivityConserves2200" storage="c:\users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\valdrio.tests\bin\release\net10.0-windows\valdrio.tests.dll" id="1123df4d-6d24-8a78-bbe2-98e4bbc9fea1">
+      <Execution id="db6ea28a-7be7-4f5e-b6a0-541c3d87a3f3" />
+      <TestMethod codeBase="C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\Valdrio.Tests\bin\Release\net10.0-windows\Valdrio.Tests.dll" adapterTypeName="executor://mstestadapter/v4" className="Valdrio.Tests.T15RatesTests" name="T15_C17SignedOveractivityConserves2200" />
+    </UnitTest>
+    <UnitTest name="T15_RoundingConservesEachSignedSourceAtLedgerPrecision" storage="c:\users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\valdrio.tests\bin\release\net10.0-windows\valdrio.tests.dll" id="152126c8-e60d-8cc3-a4d8-2bc0505c21b4">
+      <Execution id="32fcac10-36f7-45fc-975f-362389ecd67d" />
+      <TestMethod codeBase="C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\Valdrio.Tests\bin\Release\net10.0-windows\Valdrio.Tests.dll" adapterTypeName="executor://mstestadapter/v4" className="Valdrio.Tests.T15RatesTests" name="T15_RoundingConservesEachSignedSourceAtLedgerPrecision" />
+    </UnitTest>
+    <UnitTest name="T15_ConsumedFixedIsNotAssessedAgainAndPeriodIsSeparate" storage="c:\users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\valdrio.tests\bin\release\net10.0-windows\valdrio.tests.dll" id="1b266647-0adc-87f8-8c71-738ace81652b">
+      <Execution id="9f5106ff-259a-4c7b-92ec-5e840f495439" />
+      <TestMethod codeBase="C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\Valdrio.Tests\bin\Release\net10.0-windows\Valdrio.Tests.dll" adapterTypeName="executor://mstestadapter/v4" className="Valdrio.Tests.T15RatesTests" name="T15_ConsumedFixedIsNotAssessedAgainAndPeriodIsSeparate" />
+    </UnitTest>
+    <UnitTest name="RelevantRoundingCorpusCases_MatchExactly" storage="c:\users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\valdrio.tests\bin\release\net10.0-windows\valdrio.tests.dll" id="1ac5fd05-6ec2-8d90-a859-bc0669ac1abb">
+      <Execution id="191f766f-b6f9-4060-8d9e-10218bfd9daa" />
+      <TestMethod codeBase="C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\Valdrio.Tests\bin\Release\net10.0-windows\Valdrio.Tests.dll" adapterTypeName="executor://mstestadapter/v4" className="Valdrio.Tests.T02ReferenceCorpusTests" name="RelevantRoundingCorpusCases_MatchExactly" />
+    </UnitTest>
+    <UnitTest name="PublishedCatalogs_AreCompleteAndNonEmpty" storage="c:\users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\valdrio.tests\bin\release\net10.0-windows\valdrio.tests.dll" id="1b64c86b-715c-8a51-bb15-ccd7e774699d">
+      <Execution id="19a67c8e-22ad-4f14-90b4-0da7fccab2e8" />
+      <TestMethod codeBase="C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\Valdrio.Tests\bin\Release\net10.0-windows\Valdrio.Tests.dll" adapterTypeName="executor://mstestadapter/v4" className="Valdrio.Tests.LocalizationCatalogTests" name="PublishedCatalogs_AreCompleteAndNonEmpty" />
+    </UnitTest>
+    <UnitTest name="EnglishAndSpanishPublishedCatalogs_HaveExactlySameKeysAndPlaceholderSignatures" storage="c:\users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\valdrio.tests\bin\release\net10.0-windows\valdrio.tests.dll" id="143258af-2c18-8401-8a42-04bfd77e823c">
+      <Execution id="3105d303-65f2-4560-af81-48a7fa80665f" />
+      <TestMethod codeBase="C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\Valdrio.Tests\bin\Release\net10.0-windows\Valdrio.Tests.dll" adapterTypeName="executor://mstestadapter/v4" className="Valdrio.Tests.LocalizationCatalogTests" name="EnglishAndSpanishPublishedCatalogs_HaveExactlySameKeysAndPlaceholderSignatures" />
+    </UnitTest>
+    <UnitTest name="T15_MissingObjectDataIsNotZeroConsumption" storage="c:\users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\valdrio.tests\bin\release\net10.0-windows\valdrio.tests.dll" id="1953a119-b6e9-898a-bb90-83a1007a2930">
+      <Execution id="f4b4ed6f-2fe1-4aff-8a97-a04cb1d298b0" />
+      <TestMethod codeBase="C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\Valdrio.Tests\bin\Release\net10.0-windows\Valdrio.Tests.dll" adapterTypeName="executor://mstestadapter/v4" className="Valdrio.Tests.T15RatesTests" name="T15_MissingObjectDataIsNotZeroConsumption" />
+    </UnitTest>
+    <UnitTest name="T15_C15AndC18SeparateCapacityAndUnassignedWork" storage="c:\users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\valdrio.tests\bin\release\net10.0-windows\valdrio.tests.dll" id="1c352d7d-b985-8ca1-9bad-1bed01a7be8c">
+      <Execution id="4072507f-a865-459b-a141-4eca734c0a4d" />
+      <TestMethod codeBase="C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\Valdrio.Tests\bin\Release\net10.0-windows\Valdrio.Tests.dll" adapterTypeName="executor://mstestadapter/v4" className="Valdrio.Tests.T15RatesTests" name="T15_C15AndC18SeparateCapacityAndUnassignedWork" />
+    </UnitTest>
+    <UnitTest name="T15_ZeroAndMissingDenominatorsRemainDistinct" storage="c:\users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\valdrio.tests\bin\release\net10.0-windows\valdrio.tests.dll" id="1ef09dd4-7166-8cff-98bb-2c6cca1e382e">
+      <Execution id="34a23307-a6a5-419b-93a0-a50800c2e9b9" />
+      <TestMethod codeBase="C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\Valdrio.Tests\bin\Release\net10.0-windows\Valdrio.Tests.dll" adapterTypeName="executor://mstestadapter/v4" className="Valdrio.Tests.T15RatesTests" name="T15_ZeroAndMissingDenominatorsRemainDistinct" />
+    </UnitTest>
+    <UnitTest name="T15_ExcessRealConsumptionBlocksRatherThanInventingNegativeUnassigned" storage="c:\users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\valdrio.tests\bin\release\net10.0-windows\valdrio.tests.dll" id="19ba4fd7-afea-800c-ae6a-464e18a829df">
+      <Execution id="30e59d15-fa1f-43f0-badb-7dc806b8b377" />
+      <TestMethod codeBase="C:\Users\cjrui\.codex\.chatgpt-projects\g-p-6ac26a3da2ec819186c985b6c0d1f6de\valdrio-t14\tests\Valdrio.Tests\bin\Release\net10.0-windows\Valdrio.Tests.dll" adapterTypeName="executor://mstestadapter/v4" className="Valdrio.Tests.T15RatesTests" name="T15_ExcessRealConsumptionBlocksRatherThanInventingNegativeUnassigned" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="19ba4fd7-afea-800c-ae6a-464e18a829df" executionId="30e59d15-fa1f-43f0-badb-7dc806b8b377" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="11d2a817-35f9-818a-97b6-b91d7bb49d8a" executionId="ccb8604c-772c-419c-805f-08044df34485" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1123df4d-6d24-8a78-bbe2-98e4bbc9fea1" executionId="db6ea28a-7be7-4f5e-b6a0-541c3d87a3f3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1ac5fd05-6ec2-8d90-a859-bc0669ac1abb" executionId="191f766f-b6f9-4060-8d9e-10218bfd9daa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1b266647-0adc-87f8-8c71-738ace81652b" executionId="9f5106ff-259a-4c7b-92ec-5e840f495439" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1b64c86b-715c-8a51-bb15-ccd7e774699d" executionId="19a67c8e-22ad-4f14-90b4-0da7fccab2e8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="12c08d41-e565-85a3-bd8f-ffcceca8bfaf" executionId="cb2801e0-e7db-4128-a94b-0bb8923d9c26" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="143258af-2c18-8401-8a42-04bfd77e823c" executionId="3105d303-65f2-4560-af81-48a7fa80665f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1ef09dd4-7166-8cff-98bb-2c6cca1e382e" executionId="34a23307-a6a5-419b-93a0-a50800c2e9b9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1953a119-b6e9-898a-bb90-83a1007a2930" executionId="f4b4ed6f-2fe1-4aff-8a97-a04cb1d298b0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1c352d7d-b985-8ca1-9bad-1bed01a7be8c" executionId="4072507f-a865-459b-a141-4eca734c0a4d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="152126c8-e60d-8cc3-a4d8-2bc0505c21b4" executionId="32fcac10-36f7-45fc-975f-362389ecd67d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Resultados sin formato de lista" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Todos los resultados cargados" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="12" executed="12" passed="12" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+  </ResultSummary>
+</TestRun>

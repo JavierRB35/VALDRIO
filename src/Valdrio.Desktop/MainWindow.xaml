@@ -139,6 +139,13 @@
         </Border>
         <Button Grid.Column="1" x:Name="PhysicalStep" Click="ChoosePhysicalActivity" Style="{StaticResource NavigationStepButton}" />
        </Grid>
+       <Grid Margin="8,2,2,10">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Border x:Name="RatesStepMarker" Width="22" Height="22" CornerRadius="11" BorderBrush="{DynamicResource Brand.White}" BorderThickness="1">
+         <TextBlock Text="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" Foreground="{DynamicResource Brand.White}"/>
+        </Border>
+        <Button Grid.Column="1" x:Name="RatesStep" Click="ChooseRates" Style="{StaticResource NavigationStepButton}"/>
+       </Grid>
       </StackPanel>
      </Expander>
      <Border BorderBrush="{DynamicResource Accent.ActiveGreen}" BorderThickness="0,1,0,0" Margin="16,16,16,8" />
@@ -234,6 +241,12 @@
       <Button x:Name="OpenPhysicalButton" Content="{Binding Studies.PhysicalOpenLabel}" Click="OpenPhysicalFromMenu"
               IsEnabled="{Binding Studies.CanOpenPhysical}" Style="{StaticResource Button.Primary}" HorizontalAlignment="Left"/>
       <Button x:Name="PhysicalStudyButton" Click="ChooseStudy" HorizontalAlignment="Left" Margin="0,8,0,0"/>
+     </StackPanel>
+    </Border>
+    <Border x:Name="RatesHome" Grid.Row="8" Style="{StaticResource Card}" Visibility="Collapsed">
+     <StackPanel>
+      <TextBlock x:Name="RatesHelp" TextWrapping="Wrap" Margin="0,0,0,12"/>
+      <Button x:Name="OpenRatesButton" Click="OpenRatesFromMenu" IsEnabled="{Binding Studies.CanOpenPhysical}" Style="{StaticResource Button.Primary}" HorizontalAlignment="Left"/>
      </StackPanel>
     </Border>
     <Expander x:Name="DistributionDetails" Grid.Row="9" Header="{Binding Allocations[AccountDetails]}" Expanded="OpenDistributionDetails" Collapsed="CloseDistributionDetails">
