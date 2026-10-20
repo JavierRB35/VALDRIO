@@ -1,3 +1,12 @@
+# T17 — composición y cantidades · 20/10/2026
+
+Implementación candidata en `feat/t17-compositions-20261020`, desde main `e956771`. Catálogo físico, recetas por unidad/lote iniciado/orden, conversiones, mermas y rendimiento, semielaborados sin ciclos y versiones publicadas inmutables. Página integrada ES/EN con tablas y siete preguntas/respuestas. Formato 12 mediante actualización de una copia; AURORA original conservado y verificado por SHA-256.
+
+Revisión previa NIC 2 documentada. Se mantiene el cálculo de gestión T15/T16; los precios y la valoración económica quedan en T18 por instrucción expresa del propietario. Consumos reales, T19. No se declara todavía conformidad de valoración contable.
+
+Validación local: regresión **748/748**, comprobaciones finales T17/localización **24/24**, **33 controles WPF** de edición/publicación/navegación y **15 comprobaciones visuales finales** ES/EN. Apertura local de T17 con AURORA ya abierto: **106 ms ES / 64 ms EN**. Véanse [alcance y decisiones](docs/tareas/T17.md) y [evidencia y límites](docs/evidencias/t17-20261020/README.md). GitHub Actions no ejecutado: **0 USD**. Sin nueva distribución local ni fusión de esta fase a main.
+
+Los apartados siguientes son cortes históricos.
 # T16 — capacidad y servicios auxiliares · 18/10/2026
 
 Implementada la evaluación única en el propietario de capacidad, servicios físicos por destino/componente, cobertura selectiva explícita y variaciones firmadas. Integración T14 → T16 → T11/T12 → T15, con historial reproducible y siete respuestas por auxiliar. C20 concilia 1.600 = 800 a principales + 800 de variaciones; C29 conserva la sobreactividad firmada.

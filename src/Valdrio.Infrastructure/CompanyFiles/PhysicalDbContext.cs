@@ -5,7 +5,7 @@ using Valdrio.Infrastructure.CompanyFiles.Migrations;
 namespace Valdrio.Infrastructure.CompanyFiles;
 
 // V10 remains frozen: the last model alone owns new migrations and data.
-internal sealed class PhysicalDbContext(SqliteConnection connection) : RunDbContext(connection)
+internal class PhysicalDbContext(SqliteConnection connection) : RunDbContext(connection)
 {
     public DbSet<PhysicalObservationRow> PhysicalObservations => Set<PhysicalObservationRow>();
     protected override void OnModelCreating(ModelBuilder model) => V11Model.Configure(model);

@@ -1,0 +1,17 @@
+[
+  "Industrial preview es",
+  "Published table read-only es",
+  "Selection invalidates old result es",
+  "Unopened selection cannot calculate old recipe es",
+  "Draft table editable es",
+  "Service preview es",
+  "Service without per-batch consumption does not imply batch preparation es",
+  "Industrial preview en",
+  "Published table read-only en",
+  "Selection invalidates old result en",
+  "Unopened selection cannot calculate old recipe en",
+  "Draft table editable en",
+  "Service preview en",
+  "Service without per-batch consumption does not imply batch preparation en",
+  "Language and preview leave persisted quantities unchanged"
+]
