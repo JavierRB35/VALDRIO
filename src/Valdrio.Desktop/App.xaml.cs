@@ -146,10 +146,18 @@ public partial class App : System.Windows.Application
             company.OpenFailure = message =>
             {
                 var legacy = company.DiagnosticCode == "FILE_UPGRADE_REQUIRED";
-                MessageBox.Show(message,
-                    texts.Get(legacy ? "CompanyUpgradeNoticeTitle" : "CompanyOpenFailureTitle",
-                        CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)),
-                    MessageBoxButton.OK, legacy ? MessageBoxImage.Information : MessageBoxImage.Warning);
+                var title = texts.Get(legacy ? "CompanyUpgradeNoticeTitle" : "CompanyOpenFailureTitle",
+                    CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag));
+                if (legacy)
+                {
+                    // The view model remembers the chosen source. Confirming launches
+                    // the existing copy-upgrade flow; the original is not overwritten.
+                    if (MessageBox.Show(message, title, MessageBoxButton.YesNo, MessageBoxImage.Question)
+                        == MessageBoxResult.Yes)
+                        company.UpgradeCommand.Execute(null);
+                    return;
+                }
+                MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Warning);
             };
         }
         var modelDialogs = captureDirectory is null ? (IModelEditorDialogs)new ModelEditorDialogs() : new QueuedModelEditorDialogs();

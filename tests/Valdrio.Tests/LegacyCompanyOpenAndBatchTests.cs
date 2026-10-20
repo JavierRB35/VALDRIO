@@ -86,6 +86,38 @@ public sealed partial class T06ImportConfirmationTests
     }
 
     [TestMethod]
+    public async Task ConfirmingUpgradeFromOpenWarningStartsCopyWithoutReselectingSource()
+    {
+        var older = Fixture(3);
+        var originalHash = Hash(older);
+        var destination = FileOf("confirmed-upgrade-from-warning.valdrio");
+        var dialogs = new QueuedCompanyFileDialogs();
+        // The confirmation must request only a NEW destination, not another source.
+        dialogs.Paths.Enqueue(destination);
+        var preferences = new PresentationPreferencesService(new LanguageCatalog(), UserPresentationPreferences.Default);
+        using var vm = new CompanyFileViewModel(Service(), dialogs, Catalog, new UiTextCatalog(), preferences,
+            new PresentationFormatter(new DisplayTimeZoneResolver()));
+
+        var warningShown = false;
+        vm.OpenFailure = _ =>
+        {
+            warningShown = true;
+            // Use the same ICommand path as the confirmation button.
+            vm.UpgradeCommand.Execute(null);
+        };
+
+        await vm.OpenPath(older);
+        Assert.IsTrue(warningShown, "Opening the previous-format file should offer a direct upgrade.");
+        Assert.IsNotNull(vm.UpgradeCommand.ExecutionTask, "The confirmation must start the upgrade command.");
+        await vm.UpgradeCommand.ExecutionTask!;
+
+        Assert.IsNotNull(vm.Snapshot, vm.Status);
+        Assert.AreEqual(destination, vm.ActivePath);
+        Assert.AreEqual(SqliteCompanyFileService.SchemaVersion, vm.Snapshot.SchemaVersion);
+        Assert.AreEqual(originalHash, Hash(older), "Upgrade confirmation must not alter the source.");
+    }
+
+    [TestMethod]
     public async Task FailureInPendingEditCoordinationCannotCrashCompanyOpen()
     {
         using var ui = await ResourceUiReady();
