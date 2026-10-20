@@ -206,11 +206,15 @@ public partial class App : System.Windows.Application
         };
 
         MainWindow = window;
+        var previousCompanyChange = company.BeforeChangeAsync;
+        company.BeforeChangeAsync = async () =>
+            (previousCompanyChange is null || await previousCompanyChange()) && window.LeaveIntegratedWorkspace();
         allocations.AfterPrimaryStateChanged = async () => { await resources.EnterAsync(true); window.UpdateWorkflow(); };
         window.Show();
         bool allowClose = false;
         window.Closing += async (_, args) =>
         {
+            if (!window.LeaveIntegratedWorkspace()) { args.Cancel = true; return; }
             if (!company.IsIdle || models.IsBusy || studies.IsBusy || resources.IsBusy || allocations.IsBusy || viewModel.CostFlows?.CalculateCommand.IsRunning == true)
             {
                 args.Cancel = true; company.CancelCommand.Execute(null); models.CancelCommand.Execute(null); studies.CancelCommand.Execute(null); resources.CancelCommand.Execute(null); viewModel.CostFlows?.CancelCommand.Execute(null); return;
@@ -233,6 +237,12 @@ public partial class App : System.Windows.Application
                     {
                         try
                         {
+                        if (e.Args.Contains("--performance-checks-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("Performance checks require a disposable company.");
+                            await window.RunPerformanceChecks(captureDirectory, requestedPath);
+                            Shutdown(0); return;
+                        }
                         if (e.Args.Contains("--adjustments-only", StringComparer.Ordinal))
                         {
                             await window.RunGuidedWorkflowChecks(captureDirectory, (QueuedCompanyFileDialogs)companyDialogs, (QueuedImportSourceDialogs)importDialogs);

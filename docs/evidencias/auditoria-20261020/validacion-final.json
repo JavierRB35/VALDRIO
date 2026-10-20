@@ -1,0 +1,24 @@
+{
+  "Base": "246284c9ecd69fe66edc200d152f7776bc6de3b1",
+  "Build": "passed; 0 errors; 0 warnings",
+  "Tests": [
+    {
+      "Name": "all-local",
+      "Total": 736,
+      "Passed": 736,
+      "Failed": 0
+    },
+    {
+      "Name": "final-targeted",
+      "Total": 48,
+      "Passed": 48,
+      "Failed": 0
+    }
+  ],
+  "GraphChecks": 74,
+  "MenuChecks": 22,
+  "IntegratedRowIcons": "passed; two different row icons with another row selected; ES/EN; no native child windows; stack released",
+  "DataHash": "A45A39592D07284C464C042AD17E3EDE54A866F3DA1D4AFDCB6904CF224DB108",
+  "GithubActionsSpendUSD": 0,
+  "AuditAcceptance": "partial; original 30-40 second incident not reproduced; see README pending items"
+}

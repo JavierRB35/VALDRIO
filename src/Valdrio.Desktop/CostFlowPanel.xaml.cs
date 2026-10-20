@@ -35,6 +35,13 @@ public partial class CostFlowPanel : UserControl
     }
 
     private void Changed(object? sender, EventArgs e) => Draw();
+    private void ToggleAnalysis(object sender, RoutedEventArgs e)
+    {
+        ExecutionCard.Visibility = ExpandedAnalysis.IsChecked == true && vm?.HasError != true &&
+            vm?.CalculateCommand.IsRunning != true
+            ? Visibility.Collapsed : Visibility.Visible;
+        // Keep economic totals visible in expanded mode.
+    }
 
     // Resizing only changes geometry. No model, persistence or calculations are touched.
     private void ResizeGraph(object sender, SizeChangedEventArgs e)
@@ -48,6 +55,11 @@ public partial class CostFlowPanel : UserControl
         PrimaryGraphCanvas.Children.Clear();
         SecondaryGraphCanvas.Children.Clear();
         if (vm is null) return;
+        if (vm.HasError)
+        {
+            ExpandedAnalysis.IsChecked = false;
+            ExecutionCard.Visibility = Visibility.Visible;
+        }
         var headers = new[] { "Stage", "Resource", "Source", "Destination", "Rule", "Assigned", "Received", "Terminal" };
         for (var i = 0; i < headers.Length; i++) DetailsGrid.Columns[i].Header = vm[headers[i]];
         headers = ["Resource", "Effective", "Direct", "Excluded", "Pending", "Terminal", "Difference"];

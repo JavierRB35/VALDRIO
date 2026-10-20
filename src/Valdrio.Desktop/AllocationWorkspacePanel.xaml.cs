@@ -45,8 +45,21 @@ public partial class AllocationWorkspacePanel : UserControl
         {
             if (viewModel?.CreateReuseEditor() is not { } editor) return;
             var window = new AllocationReuseWindow(editor) { Owner = Window.GetWindow(this) };
-            if (window.ShowDialog() == true && editor.Receipt is { } receipt)
-                await viewModel.RefreshAfterReuse(receipt);
+            var target = viewModel;
+            window.ShowIntegrated(async () =>
+            {
+                try
+                {
+                    if (window.DialogResult == true && editor.Receipt is { } receipt)
+                        await target.RefreshAfterReuse(receipt);
+                }
+                catch (Exception error)
+                {
+                    System.Diagnostics.Trace.TraceError("Allocation reuse refresh: {0}", error);
+                    MessageBox.Show(Window.GetWindow(this), target["BulkAssignError"], target.ReuseLabel,
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            });
         }
         catch (Exception error)
         {

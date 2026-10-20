@@ -1,0 +1,1 @@
+Calculator and T14/T15/T16 rendered in the main content; no native window handles; stack released.

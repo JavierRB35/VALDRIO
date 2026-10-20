@@ -1,0 +1,200 @@
+[
+  {
+    "View": "PhysicalActivityWindow",
+    "OriginalNamedControls": [
+      "StudySelector",
+      "ActivityTable",
+      "NodeColumn",
+      "UnitColumn",
+      "NormalColumn",
+      "RealColumn",
+      "UtilizationColumn",
+      "CostColumn",
+      "StatusColumn"
+    ],
+    "MissingNamedControls": [],
+    "OriginalCommands": [],
+    "MissingCommands": []
+  },
+  {
+    "View": "PhysicalCapacityAssistantWindow",
+    "OriginalNamedControls": [
+      "FieldsScroll",
+      "DaysInput",
+      "ShiftsPerDayInput",
+      "HoursPerShiftInput",
+      "EquivalentResourcesInput",
+      "StoppagesInput",
+      "NormalFactorInput",
+      "FactorReasonInput",
+      "DeclaredQuantityInput",
+      "DeclaredSourceInput"
+    ],
+    "MissingNamedControls": [],
+    "OriginalCommands": [],
+    "MissingCommands": []
+  },
+  {
+    "View": "PhysicalImportWindow",
+    "OriginalNamedControls": [
+      "PreviewTable",
+      "ChoiceColumn",
+      "NodeColumn",
+      "UnitColumn",
+      "NormalColumn",
+      "RealColumn",
+      "ExistingColumn",
+      "WarningColumn"
+    ],
+    "MissingNamedControls": [],
+    "OriginalCommands": [],
+    "MissingCommands": []
+  },
+  {
+    "View": "PrincipalRatesWindow",
+    "OriginalNamedControls": [
+      "RatesScroll",
+      "CentersTable",
+      "CenterColumn",
+      "UnitColumn",
+      "CostColumn",
+      "RateColumn",
+      "StatusColumn",
+      "AnswersTable",
+      "QuestionColumn",
+      "AnswerColumn",
+      "DetailTable",
+      "SourceColumn",
+      "ComponentColumn",
+      "BehaviorColumn",
+      "AmountColumn",
+      "BaseColumn",
+      "ComponentRateColumn"
+    ],
+    "MissingNamedControls": [],
+    "OriginalCommands": [],
+    "MissingCommands": []
+  },
+  {
+    "View": "AuxiliaryCapacityWindow",
+    "OriginalNamedControls": [
+      "AuxScroll",
+      "CentersTable",
+      "CenterColumn",
+      "UnitColumn",
+      "NormalColumn",
+      "RealColumn",
+      "ModeColumn",
+      "ServicesTable",
+      "GroupColumn",
+      "DestinationColumn",
+      "QuantityColumn",
+      "AnswersTable",
+      "QuestionColumn",
+      "AnswerColumn"
+    ],
+    "MissingNamedControls": [],
+    "OriginalCommands": [],
+    "MissingCommands": []
+  },
+  {
+    "View": "ImportColumnMappingWindow",
+    "OriginalNamedControls": [
+      "ImportStepHelp",
+      "ImportFieldHelp",
+      "ImportBack",
+      "ImportNext",
+      "ConfirmImportButton",
+      "CloseMappingButton",
+      "ImportSteps",
+      "ImportTab0",
+      "OpenSourceButton",
+      "WorksheetBox",
+      "AmountModeBox",
+      "HeaderRowBox",
+      "FirstDataRowBox",
+      "DelimiterBox",
+      "ImportAdvancedOptions",
+      "ReplaceBatchBox",
+      "ReplacementBox",
+      "ComparisonPanel",
+      "FiscalStartPicker",
+      "FiscalEndPicker",
+      "PreviousEndPicker",
+      "ComparisonScopeBox",
+      "FreezeComparisonButton",
+      "ReadSourceButton",
+      "ImportTab1",
+      "AmountLayoutBox",
+      "AccountColumnBox",
+      "DescriptionColumnBox",
+      "AmountColumnBox",
+      "DebitColumnBox",
+      "CreditColumnBox",
+      "NumberFormatPanel",
+      "NumericAccountsBox",
+      "ValidateMappingButton",
+      "PreviewGrid",
+      "ImportTab2",
+      "SelectAllRecordsButton",
+      "DeselectAllRecordsButton",
+      "AccountSelectionGrid",
+      "SelectionReconciliationText",
+      "SelectionPreviewGrid",
+      "ImportTab3",
+      "ConversionPreviewPanel",
+      "ConversionGrid",
+      "ConfirmationSummaryText",
+      "ComparisonGrid",
+      "GroupedPreviewGrid",
+      "ApprovalReferenceBox",
+      "ApproveInterpretationBox"
+    ],
+    "MissingNamedControls": [],
+    "OriginalCommands": [
+      "{Binding CancelCommand}",
+      "{Binding ClearComparisonCommand}",
+      "{Binding ConfirmCommand}",
+      "{Binding DeselectAllRecordsCommand}",
+      "{Binding FreezeComparisonCommand}",
+      "{Binding OpenCommand}",
+      "{Binding ReadCommand}",
+      "{Binding SelectAllRecordsCommand}",
+      "{Binding ValidateCommand}"
+    ],
+    "MissingCommands": []
+  },
+  {
+    "View": "AllocationReuseWindow",
+    "OriginalNamedControls": [
+      "Table",
+      "SelectorColumn",
+      "KeyColumn",
+      "StatusColumn"
+    ],
+    "MissingNamedControls": [],
+    "OriginalCommands": [],
+    "MissingCommands": []
+  },
+  {
+    "View": "CostFlowPanel",
+    "OriginalNamedControls": [
+      "CenterBalanceGrid",
+      "NodeBalanceGrid",
+      "DetailsGrid",
+      "ReconciliationGrid",
+      "PrimaryGraphViewport",
+      "PrimaryGraphCanvas",
+      "SecondaryGraphViewport",
+      "SecondaryGraphCanvas"
+    ],
+    "MissingNamedControls": [],
+    "OriginalCommands": [
+      "{Binding CalculateCommand}",
+      "{Binding CancelCommand}",
+      "{Binding ClearSelectionCommand}",
+      "{Binding RefreshCommand}"
+    ],
+    "MissingCommands": []
+  }
+]

@@ -1934,4 +1934,4 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
 <data name="Aux.PendingHelp" xml:space="preserve"><value>Evaluación pendiente: confirma capacidad y actividad en T14 y completa los servicios. No se cambiará automáticamente a reparto sin evaluación.</value></data>
 <data name="Aux.ClassificationRequired" xml:space="preserve"><value>Clasifica los costes del auxiliar como fijos, variables o mixtos con proporción definida antes de evaluar su capacidad. Revisa Recursos y Primario.</value></data>
 <data name="Aux.FlowVariance" xml:space="preserve"><value>Del coste primario, {0} queda como variación de capacidad auxiliar y no circula en los servicios. Consulta su detalle en Capacidad y servicios auxiliares.</value></data>
-</root>
+<data name="Run.Zoom" xml:space="preserve"><value>Zoom del gráfico</value></data><data name="Run.ExpandGraph" xml:space="preserve"><value>Ampliar zona de análisis</value></data><data name="Run.Duration" xml:space="preserve"><value>Tiempo transcurrido de ejecución: {0:N2} s</value></data><data name="Run.DurationUnavailable" xml:space="preserve"><value>Duración de ejecución no disponible</value></data></root>

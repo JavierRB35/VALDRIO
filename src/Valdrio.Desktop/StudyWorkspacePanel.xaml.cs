@@ -23,7 +23,7 @@ public partial class StudyWorkspacePanel : UserControl
         if (DataContext is StudyWorkspaceViewModel { CanOpenPhysical: true } vm)
         {
             var window = new PhysicalActivityWindow(vm) { Owner = Window.GetWindow(this) };
-            window.ShowDialog();
+            window.ShowIntegrated();
         }
     }
 
@@ -38,7 +38,7 @@ public partial class StudyWorkspacePanel : UserControl
     private async void OpenImportColumns(object sender, RoutedEventArgs e)
     {
         if (DataContext is StudyWorkspaceViewModel { ImportColumns: { } vm } studies && await studies.AttachImportTarget(previewOnly: true))
-            new ImportColumnMappingWindow { Owner = Window.GetWindow(this), DataContext = vm }.ShowDialog();
+            new ImportColumnMappingWindow { Owner = Window.GetWindow(this), DataContext = vm }.ShowIntegrated();
     }
 }
 

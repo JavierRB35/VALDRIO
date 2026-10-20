@@ -9,6 +9,32 @@ namespace Valdrio.Tests;
 public sealed partial class T14PhysicalActivityTests
 {
     [TestMethod]
+    public void T14_CalendarOpeningAndTypingDoNotReadPersistenceAndKeepZeroDistinctFromEmpty()
+    {
+        var (file, study, _, _) = Fixture();
+        var host = Editor(file, study);
+        var structure = host.Structure;
+        // A disposed session turns any accidental database read into a failure.
+        // Calculator proposals must depend only on the already validated row snapshot.
+        file.Dispose();
+        host.SelectedRow!.NormalText = "0";
+        var first = new PhysicalCapacityAssistantEditor(host);
+        Assert.AreEqual("0", first.DeclaredQuantity);
+        Assert.AreSame(structure, host.Structure);
+        first.OperatingDays = "20"; first.ShiftsPerDay = "1"; first.HoursPerShift = "8";
+        first.EquivalentResources = "1"; first.Stoppages = "0";
+        first.NormalFactor = "100"; first.FactorReason = "Calendario aprobado";
+        Assert.IsTrue(first.CanAdopt, first.Feedback);
+        Assert.AreEqual("0", host.SelectedRow.NormalText); // typing is only a proposal
+        host.SelectedRow.NormalText = "";
+        var second = new PhysicalCapacityAssistantEditor(host);
+        Assert.AreEqual("", second.DeclaredQuantity);
+        Assert.AreEqual("", second.OperatingDays); // no prior form's temporary inputs
+        Assert.IsFalse(second.CanAdopt);
+        Assert.IsEmpty(second.Historical); // history is not loaded for calendar use
+    }
+
+    [TestMethod]
     public void T14_DowntimeFrequencyRecalculatesAndPersistsTheAppliedProposal()
     {
         var (file, study, _, _) = Fixture();

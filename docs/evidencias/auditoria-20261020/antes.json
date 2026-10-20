@@ -1,0 +1,412 @@
+[
+  {
+    "operation": "project-and-study",
+    "iteration": 0,
+    "milliseconds": 2768.3266
+  },
+  {
+    "operation": "activity-editor",
+    "iteration": 0,
+    "milliseconds": 149.7963
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 0,
+    "milliseconds": 27.7597
+  },
+  {
+    "operation": "history-read",
+    "iteration": 0,
+    "milliseconds": 37.1057
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 0,
+    "milliseconds": 127.379
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 0,
+    "milliseconds": 264.6183
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 1,
+    "milliseconds": 48.4816
+  },
+  {
+    "operation": "history-read",
+    "iteration": 1,
+    "milliseconds": 38.0967
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 1,
+    "milliseconds": 127.4982
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 1,
+    "milliseconds": 158.546
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 2,
+    "milliseconds": 49.0373
+  },
+  {
+    "operation": "history-read",
+    "iteration": 2,
+    "milliseconds": 49.9026
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 2,
+    "milliseconds": 142.0462
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 2,
+    "milliseconds": 154.8259
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 3,
+    "milliseconds": 54.2567
+  },
+  {
+    "operation": "history-read",
+    "iteration": 3,
+    "milliseconds": 54.1404
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 3,
+    "milliseconds": 124.2387
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 3,
+    "milliseconds": 166.3746
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 4,
+    "milliseconds": 39.4498
+  },
+  {
+    "operation": "history-read",
+    "iteration": 4,
+    "milliseconds": 31.9024
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 4,
+    "milliseconds": 119.0145
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 4,
+    "milliseconds": 110.7809
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 5,
+    "milliseconds": 44.1802
+  },
+  {
+    "operation": "history-read",
+    "iteration": 5,
+    "milliseconds": 32.5309
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 5,
+    "milliseconds": 119.662
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 5,
+    "milliseconds": 156.0626
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 6,
+    "milliseconds": 37.1173
+  },
+  {
+    "operation": "history-read",
+    "iteration": 6,
+    "milliseconds": 36.5103
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 6,
+    "milliseconds": 109.482
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 6,
+    "milliseconds": 144.305
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 7,
+    "milliseconds": 36.1606
+  },
+  {
+    "operation": "history-read",
+    "iteration": 7,
+    "milliseconds": 29.6045
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 7,
+    "milliseconds": 110.677
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 7,
+    "milliseconds": 112.4416
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 8,
+    "milliseconds": 43.2792
+  },
+  {
+    "operation": "history-read",
+    "iteration": 8,
+    "milliseconds": 29.2051
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 8,
+    "milliseconds": 119.518
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 8,
+    "milliseconds": 106.8174
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 9,
+    "milliseconds": 37.7177
+  },
+  {
+    "operation": "history-read",
+    "iteration": 9,
+    "milliseconds": 31.7108
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 9,
+    "milliseconds": 124.5702
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 9,
+    "milliseconds": 133.7658
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 10,
+    "milliseconds": 37.2011
+  },
+  {
+    "operation": "history-read",
+    "iteration": 10,
+    "milliseconds": 27.5124
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 10,
+    "milliseconds": 103.9106
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 10,
+    "milliseconds": 131.4055
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 11,
+    "milliseconds": 41.783
+  },
+  {
+    "operation": "history-read",
+    "iteration": 11,
+    "milliseconds": 26.9146
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 11,
+    "milliseconds": 130.9787
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 11,
+    "milliseconds": 120.0683
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 12,
+    "milliseconds": 35.6119
+  },
+  {
+    "operation": "history-read",
+    "iteration": 12,
+    "milliseconds": 31.9938
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 12,
+    "milliseconds": 98.4957
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 12,
+    "milliseconds": 142.053
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 13,
+    "milliseconds": 38.3183
+  },
+  {
+    "operation": "history-read",
+    "iteration": 13,
+    "milliseconds": 45.226
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 13,
+    "milliseconds": 140.6578
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 13,
+    "milliseconds": 128.8443
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 14,
+    "milliseconds": 38.7649
+  },
+  {
+    "operation": "history-read",
+    "iteration": 14,
+    "milliseconds": 26.4999
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 14,
+    "milliseconds": 145.8968
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 14,
+    "milliseconds": 162.0955
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 15,
+    "milliseconds": 45.8306
+  },
+  {
+    "operation": "history-read",
+    "iteration": 15,
+    "milliseconds": 36.0787
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 15,
+    "milliseconds": 147.6686
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 15,
+    "milliseconds": 159.6768
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 16,
+    "milliseconds": 35.1226
+  },
+  {
+    "operation": "history-read",
+    "iteration": 16,
+    "milliseconds": 32.235
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 16,
+    "milliseconds": 111.1625
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 16,
+    "milliseconds": 175.4106
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 17,
+    "milliseconds": 40.9951
+  },
+  {
+    "operation": "history-read",
+    "iteration": 17,
+    "milliseconds": 36.5914
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 17,
+    "milliseconds": 103.4771
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 17,
+    "milliseconds": 126.4982
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 18,
+    "milliseconds": 39.6683
+  },
+  {
+    "operation": "history-read",
+    "iteration": 18,
+    "milliseconds": 25.0462
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 18,
+    "milliseconds": 135.8122
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 18,
+    "milliseconds": 124.8839
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 19,
+    "milliseconds": 33.6618
+  },
+  {
+    "operation": "history-read",
+    "iteration": 19,
+    "milliseconds": 28.9104
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 19,
+    "milliseconds": 99.1122
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 19,
+    "milliseconds": 113.5267
+  }
+]

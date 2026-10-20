@@ -3,7 +3,7 @@ using Microsoft.Win32;
 
 namespace Valdrio.Desktop;
 
-public partial class ImportColumnMappingWindow : Window
+public partial class ImportColumnMappingWindow : IntegratedWorkspaceWindow
 {
     private ImportColumnMappingViewModel? viewModel;
     public ImportColumnMappingWindow()

@@ -1,0 +1,412 @@
+[
+  {
+    "operation": "project-and-study",
+    "iteration": 0,
+    "milliseconds": 2054.7225
+  },
+  {
+    "operation": "activity-editor",
+    "iteration": 0,
+    "milliseconds": 121.5236
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 0,
+    "milliseconds": 0.0665
+  },
+  {
+    "operation": "history-read",
+    "iteration": 0,
+    "milliseconds": 32.9563
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 0,
+    "milliseconds": 13.0264
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 0,
+    "milliseconds": 190.4047
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 1,
+    "milliseconds": 0.0007
+  },
+  {
+    "operation": "history-read",
+    "iteration": 1,
+    "milliseconds": 27.8208
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 1,
+    "milliseconds": 5.1773
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 1,
+    "milliseconds": 80.4831
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 2,
+    "milliseconds": 0.0006
+  },
+  {
+    "operation": "history-read",
+    "iteration": 2,
+    "milliseconds": 26.0478
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 2,
+    "milliseconds": 5.0272
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 2,
+    "milliseconds": 91.3811
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 3,
+    "milliseconds": 0.0012
+  },
+  {
+    "operation": "history-read",
+    "iteration": 3,
+    "milliseconds": 32.5177
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 3,
+    "milliseconds": 6.8549
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 3,
+    "milliseconds": 110.9464
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 4,
+    "milliseconds": 0.0005
+  },
+  {
+    "operation": "history-read",
+    "iteration": 4,
+    "milliseconds": 24.4388
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 4,
+    "milliseconds": 6.2949
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 4,
+    "milliseconds": 102.6311
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 5,
+    "milliseconds": 0.0005
+  },
+  {
+    "operation": "history-read",
+    "iteration": 5,
+    "milliseconds": 23.8623
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 5,
+    "milliseconds": 6.223
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 5,
+    "milliseconds": 111.3032
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 6,
+    "milliseconds": 0.0007
+  },
+  {
+    "operation": "history-read",
+    "iteration": 6,
+    "milliseconds": 28.6538
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 6,
+    "milliseconds": 6.4132
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 6,
+    "milliseconds": 94.9874
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 7,
+    "milliseconds": 0.0005
+  },
+  {
+    "operation": "history-read",
+    "iteration": 7,
+    "milliseconds": 23.8913
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 7,
+    "milliseconds": 5.7737
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 7,
+    "milliseconds": 99.5939
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 8,
+    "milliseconds": 0.0006
+  },
+  {
+    "operation": "history-read",
+    "iteration": 8,
+    "milliseconds": 24.7701
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 8,
+    "milliseconds": 5.8254
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 8,
+    "milliseconds": 95.869
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 9,
+    "milliseconds": 0.0003
+  },
+  {
+    "operation": "history-read",
+    "iteration": 9,
+    "milliseconds": 23.7523
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 9,
+    "milliseconds": 5.6737
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 9,
+    "milliseconds": 81.4056
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 10,
+    "milliseconds": 0.0005
+  },
+  {
+    "operation": "history-read",
+    "iteration": 10,
+    "milliseconds": 27.5084
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 10,
+    "milliseconds": 5.7615
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 10,
+    "milliseconds": 125.7632
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 11,
+    "milliseconds": 0.0002
+  },
+  {
+    "operation": "history-read",
+    "iteration": 11,
+    "milliseconds": 25.2057
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 11,
+    "milliseconds": 5.5507
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 11,
+    "milliseconds": 81.3857
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 12,
+    "milliseconds": 0.0003
+  },
+  {
+    "operation": "history-read",
+    "iteration": 12,
+    "milliseconds": 25.0401
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 12,
+    "milliseconds": 5.9245
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 12,
+    "milliseconds": 129.0648
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 13,
+    "milliseconds": 0.0005
+  },
+  {
+    "operation": "history-read",
+    "iteration": 13,
+    "milliseconds": 25.386
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 13,
+    "milliseconds": 5.4938
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 13,
+    "milliseconds": 112.6972
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 14,
+    "milliseconds": 0.0005
+  },
+  {
+    "operation": "history-read",
+    "iteration": 14,
+    "milliseconds": 26.7958
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 14,
+    "milliseconds": 5.514
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 14,
+    "milliseconds": 97.0414
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 15,
+    "milliseconds": 0.0002
+  },
+  {
+    "operation": "history-read",
+    "iteration": 15,
+    "milliseconds": 22.725
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 15,
+    "milliseconds": 5.5285
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 15,
+    "milliseconds": 114.8464
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 16,
+    "milliseconds": 0.0003
+  },
+  {
+    "operation": "history-read",
+    "iteration": 16,
+    "milliseconds": 24.0302
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 16,
+    "milliseconds": 5.5448
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 16,
+    "milliseconds": 99.784
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 17,
+    "milliseconds": 0.0005
+  },
+  {
+    "operation": "history-read",
+    "iteration": 17,
+    "milliseconds": 23.1597
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 17,
+    "milliseconds": 5.5856
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 17,
+    "milliseconds": 113.3585
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 18,
+    "milliseconds": 0.0004
+  },
+  {
+    "operation": "history-read",
+    "iteration": 18,
+    "milliseconds": 26.4484
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 18,
+    "milliseconds": 5.5817
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 18,
+    "milliseconds": 95.4373
+  },
+  {
+    "operation": "structure-read",
+    "iteration": 19,
+    "milliseconds": 0.0003
+  },
+  {
+    "operation": "history-read",
+    "iteration": 19,
+    "milliseconds": 23.6731
+  },
+  {
+    "operation": "calculator-constructor",
+    "iteration": 19,
+    "milliseconds": 5.5118
+  },
+  {
+    "operation": "calculator-render",
+    "iteration": 19,
+    "milliseconds": 82.6545
+  }
+]

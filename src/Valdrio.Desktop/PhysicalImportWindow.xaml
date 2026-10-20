@@ -1,4 +1,4 @@
-<Window x:Class="Valdrio.Desktop.PhysicalImportWindow"
+<local:IntegratedWorkspaceWindow xmlns:local="clr-namespace:Valdrio.Desktop" x:Class="Valdrio.Desktop.PhysicalImportWindow"
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  Title="{Binding Title}" Width="1100" Height="740" MinWidth="840" MinHeight="550"
@@ -69,4 +69,4 @@
    </WrapPanel>
   </StackPanel>
  </Grid>
-</Window>
+</local:IntegratedWorkspaceWindow>

@@ -220,6 +220,23 @@ public partial class MainWindow
             (workflowStep != 4 || vm.Resources?.CanAdvance == true) &&
             (workflowStep != 5 || vm.Allocations?.IsPrimaryClosed == true);
         FieldHelpText.Text = vm.Guide(lastHelpKey is null ? "HelpHint" : "Help." + lastHelpKey);
+        if (workspacePages.Count > 0)
+        {
+            WorkflowBack.IsEnabled = vm.Company?.WorkspaceIdle != false;
+            WorkflowNext.Visibility = Visibility.Collapsed;
+            AllocationActionsHost.Visibility = Visibility.Collapsed;
+            var active = workspacePages.LastOrDefault(p =>
+                p is PhysicalActivityWindow or PrincipalRatesWindow or AuxiliaryCapacityWindow);
+            if (active is not null)
+            {
+                ShowNavigationPhase(9);
+                foreach (var button in buttons) button.Tag = null;
+                PhysicalStep.Tag = active is PhysicalActivityWindow ? "Active" : null;
+                RatesStep.Tag = active is PrincipalRatesWindow ? "Active" : null;
+                AuxiliaryStep.Tag = active is AuxiliaryCapacityWindow ? "Active" : null;
+            }
+        }
+        else AuxiliaryStep.Tag = null;
     }
     internal async Task NavigateWorkflow(int step)
     {
@@ -230,6 +247,7 @@ public partial class MainWindow
         if (step is 4 or 5 or 7 && vm.Studies?.HasConfirmedImports != true) step = 3;
         if (step == 7 && vm.Allocations?.IsPrimaryClosed != true) step = 5;
         if (vm.Company?.WorkspaceIdle == false) return;
+        if (!LeaveIntegratedWorkspace()) return;
         if (workflowStep == 4 && step != 4 && vm.Resources is { } oldResources && !await oldResources.CanLeaveAsync())
         { ResourcePanel.ActionStatus.BringIntoView(); return; }
         if ((workflowStep is 5 or 7) && step != workflowStep && vm.Allocations is { } oldAllocations && !await oldAllocations.CanLeaveAsync())
@@ -288,7 +306,7 @@ public partial class MainWindow
     {
         if (viewModel?.Company?.WorkspaceIdle != false && viewModel?.Studies is { CanOpenPhysical: true } studies)
         {
-            new PhysicalActivityWindow(studies) { Owner = this }.ShowDialog();
+            new PhysicalActivityWindow(studies) { Owner = this }.ShowIntegrated();
             UpdateWorkflow();
         }
     }
@@ -302,8 +320,7 @@ public partial class MainWindow
         if (viewModel?.Company?.WorkspaceIdle != false && viewModel?.Studies is { CanOpenPhysical: true } studies)
         {
             var window = new PrincipalRatesWindow(studies) { Owner = this };
-            window.ShowDialog();
-            if (window.OpenCostsRequested) await NavigateWorkflow(8);
+            window.ShowIntegrated(async () => { if (window.OpenCostsRequested) await NavigateWorkflow(8); });
             UpdateWorkflow();
         }
     }
@@ -312,9 +329,13 @@ public partial class MainWindow
         if (viewModel?.Allocations is { } a && !await a.CanLeaveAsync()) return;
         if (viewModel?.Company?.WorkspaceIdle != false && viewModel?.Studies is { CanOpenPhysical: true } studies)
         {
-            new AuxiliaryCapacityWindow(studies) { Owner = this }.ShowDialog();
-            await studies.LoadCommand.ExecuteAsync(null);
-            if (viewModel.Allocations is { } allocations) await allocations.EnterAsync();
+            if (!LeaveIntegratedWorkspace()) return;
+            new AuxiliaryCapacityWindow(studies) { Owner = this }.ShowIntegrated(async () =>
+            {
+                await studies.LoadCommand.ExecuteAsync(null);
+                if (viewModel.Allocations is { } allocations) await allocations.EnterAsync();
+                UpdateWorkflow();
+            });
             UpdateWorkflow();
         }
     }
@@ -376,6 +397,7 @@ public partial class MainWindow
     private async void PreviousStep(object sender, RoutedEventArgs e) => await GoBackWorkflow();
     internal async Task GoBackWorkflow()
     {
+        if (workspacePages.Count > 0) { PopWorkspace(workspacePages[^1]); return; }
         if (viewModel?.Company?.WorkspaceIdle == false) return;
         if (workflowStep == 1 && ModelPanel.PreviousModelStep()) { UpdateWorkflow(); return; }
         if (workflowStep == 4 && viewModel?.Resources is { ShowParts: true } resources)
@@ -418,8 +440,8 @@ public partial class MainWindow
         if (await studies.AttachImportTarget())
         {
             var importCountBefore = studies.ConfirmedImportCount;
-            new ImportColumnMappingWindow { Owner = this, DataContext = studies.ImportColumns }.ShowDialog();
-            await ContinueAfterGuidedImport(importCountBefore);
+            new ImportColumnMappingWindow { Owner = this, DataContext = studies.ImportColumns }
+                .ShowIntegrated(async () => await ContinueAfterGuidedImport(importCountBefore));
             return;
         }
         UpdateWorkflow();

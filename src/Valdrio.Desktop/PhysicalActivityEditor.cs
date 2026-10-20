@@ -112,9 +112,9 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     public CultureInfo NumericCulture => formatCulture;
     public CultureInfo LanguageCulture => uiCulture;
     public IReadOnlyList<UnitDefinition> Units => company.Units;
-    public ModelStructure Structure => models.ReadModels().Single(m =>
-        m.Structure.Id == study.SelectedModelVersionId &&
-        m.Status == ModelStatus.Published).Structure;
+    // Published structures are immutable. Keep the exact snapshot used to build
+    // the rows; property access from bindings/calculators must never perform I/O.
+    public ModelStructure Structure { get; private set; } = null!;
     private readonly UiTextCatalog texts;
     [ObservableProperty] private PhysicalActivityRow? selectedRow;
     [ObservableProperty] private string feedback = "";
@@ -190,6 +190,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         // The UI confirms potential loss before calling this method, but a failed
         // navigation must still restore the user's original values and selection.
         var original = study;
+        var originalStructure = Structure;
         var previousReadOnly = IsReadOnly;
         var originalRows = Rows.ToArray();
         var originalSelection = SelectedRow;
@@ -203,6 +204,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         catch
         {
             study = original;
+            Structure = originalStructure;
             IsReadOnly = previousReadOnly;
             Rows.Clear();
             foreach (var row in originalRows) Rows.Add(row);
@@ -273,6 +275,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         var currentRunId = publishedRun?.CurrentRunId;
         var result = currentRunId is null ? null : publishedRun!.Runs
             .FirstOrDefault(r => r.Id == currentRunId)?.Output?.Secondary;
+        Structure = model.Structure;
         Rows.Clear();
         foreach (var node in model.Structure.Nodes.Where(n => n.Role is NodeRole.Principal or NodeRole.Auxiliary && n.IsActive).OrderBy(n => n.Code))
         {

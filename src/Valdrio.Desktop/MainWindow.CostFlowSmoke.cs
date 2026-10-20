@@ -56,11 +56,20 @@ public partial class MainWindow
             Check(!flows.HasHighlightedRoute,"clearing detail removes route highlight "+language);
             RootScrollViewer.ScrollToTop();await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
             VisualEvidenceCapture.Capture(this,Path.Combine(directory,language+"-screen.png"));
+            CostFlowsPanel.ExpandedAnalysis.IsChecked = true;
+            CostFlowsPanel.ExpandedAnalysis.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+            CostFlowsPanel.FlowZoom.Value = 1.25; UpdateLayout();
+            Check(CostFlowsPanel.ExecutionCard.Visibility == Visibility.Collapsed && CostFlowsPanel.TotalsPanel.IsVisible, "expanded analysis retains totals " + language);
+            VisualEvidenceCapture.Capture(this,Path.Combine(directory,language+"-expanded.png"));
+            CostFlowsPanel.FlowZoom.Value = 1;
+            CostFlowsPanel.ExpandedAnalysis.IsChecked = false;
+            CostFlowsPanel.ExpandedAnalysis.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
             // Both graphs must render separately, not as a clipped giant fixed-width canvas.
             foreach (var (graph, label) in new[] {
                 (CostFlowsPanel.PrimaryGraphCanvas,"primary"),
                 (CostFlowsPanel.SecondaryGraphCanvas,"secondary") })
             {
+                CostFlowsPanel.AnalysisTabs.SelectedIndex = label == "primary" ? 0 : 1; UpdateLayout();
                 Check(graph.Children.OfType<Button>().Any(),"graph has selectable nodes "+label+" "+language);
                 var parent=(ScrollViewer)graph.Parent;
                 Check(graph.Width<=Math.Max(550,parent.ActualWidth+40),"diagram fits viewport when possible "+label+" "+language);
@@ -71,8 +80,10 @@ public partial class MainWindow
                 holder.Content=null;holder.Close();parent.Content=graph;
             }
             Width=960;await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);UpdateLayout();
+            CostFlowsPanel.AnalysisTabs.SelectedIndex = 3; UpdateLayout();
             Check(CostFlowsPanel.DetailsGrid.IsVisible,"narrow details accessible "+language);
             VisualEvidenceCapture.Capture(this,Path.Combine(directory,language+"-narrow.png"));
+            CostFlowsPanel.AnalysisTabs.SelectedIndex = 0; UpdateLayout();
             var first=CostFlowsPanel.PrimaryGraphCanvas.Children.OfType<Button>().First();
             Check(first.Focus()&&first.IsKeyboardFocusWithin,"graph keyboard focus "+language);
             flows.ShowAllFlowLabels=true;
@@ -89,7 +100,10 @@ public partial class MainWindow
             {
                 CostFlowsPanel.LayoutTransform=new System.Windows.Media.ScaleTransform(scale,scale);
                 await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);UpdateLayout();
-                Check(CostFlowsPanel.CenterBalanceGrid.ActualWidth>0 && CostFlowsPanel.DetailsGrid.IsVisible,
+                CostFlowsPanel.AnalysisTabs.SelectedIndex = 2; UpdateLayout();
+                Check(CostFlowsPanel.CenterBalanceGrid.IsVisible, "scaled balances accessible " + scale);
+                CostFlowsPanel.AnalysisTabs.SelectedIndex = 3; UpdateLayout();
+                Check(CostFlowsPanel.DetailsGrid.IsVisible,
                     "scaled layout remains accessible "+scale+" "+language);
             }
             CostFlowsPanel.LayoutTransform=System.Windows.Media.Transform.Identity;
@@ -143,11 +157,20 @@ public partial class MainWindow
             Check(!flows.HasHighlightedRoute,"clearing detail removes route highlight "+language);
             RootScrollViewer.ScrollToTop();await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
             VisualEvidenceCapture.Capture(this,Path.Combine(directory,language+"-screen.png"));
+            CostFlowsPanel.ExpandedAnalysis.IsChecked = true;
+            CostFlowsPanel.ExpandedAnalysis.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+            CostFlowsPanel.FlowZoom.Value = 1.25; UpdateLayout();
+            Check(CostFlowsPanel.ExecutionCard.Visibility == Visibility.Collapsed && CostFlowsPanel.TotalsPanel.IsVisible, "expanded analysis retains totals " + language);
+            VisualEvidenceCapture.Capture(this,Path.Combine(directory,language+"-expanded.png"));
+            CostFlowsPanel.FlowZoom.Value = 1;
+            CostFlowsPanel.ExpandedAnalysis.IsChecked = false;
+            CostFlowsPanel.ExpandedAnalysis.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
             // Both graphs must render separately, not as a clipped giant fixed-width canvas.
             foreach (var (graph, label) in new[] {
                 (CostFlowsPanel.PrimaryGraphCanvas,"primary"),
                 (CostFlowsPanel.SecondaryGraphCanvas,"secondary") })
             {
+                CostFlowsPanel.AnalysisTabs.SelectedIndex = label == "primary" ? 0 : 1; UpdateLayout();
                 Check(graph.Children.OfType<Button>().Any(),"graph has selectable nodes "+label+" "+language);
                 var parent=(ScrollViewer)graph.Parent;
                 Check(graph.Width<=Math.Max(550,parent.ActualWidth+40),"diagram fits viewport when possible "+label+" "+language);
@@ -158,8 +181,10 @@ public partial class MainWindow
                 holder.Content=null;holder.Close();parent.Content=graph;
             }
             Width=960;await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);UpdateLayout();
+            CostFlowsPanel.AnalysisTabs.SelectedIndex = 3; UpdateLayout();
             Check(CostFlowsPanel.DetailsGrid.IsVisible,"narrow details accessible "+language);
             VisualEvidenceCapture.Capture(this,Path.Combine(directory,language+"-narrow.png"));
+            CostFlowsPanel.AnalysisTabs.SelectedIndex = 0; UpdateLayout();
             var first=CostFlowsPanel.PrimaryGraphCanvas.Children.OfType<Button>().First();
             Check(first.Focus()&&first.IsKeyboardFocusWithin,"graph keyboard focus "+language);
         }

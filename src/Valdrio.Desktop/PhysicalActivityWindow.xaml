@@ -1,16 +1,16 @@
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<local:IntegratedWorkspaceWindow xmlns:local="clr-namespace:Valdrio.Desktop" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="Valdrio.Desktop.PhysicalActivityWindow"
         Title="{Binding Title}" Height="780" Width="1180" MinHeight="640" MinWidth="820"
         WindowStartupLocation="CenterOwner" Background="{DynamicResource Surface.Canvas}">
- <Window.Resources>
+ <local:IntegratedWorkspaceWindow.Resources>
   <Style x:Key="ActivityCell" TargetType="TextBlock">
    <Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="6,4"/>
   </Style>
   <Style x:Key="ActivityNumber" TargetType="TextBlock" BasedOn="{StaticResource ActivityCell}">
    <Setter Property="TextAlignment" Value="Right"/>
   </Style>
- </Window.Resources>
+ </local:IntegratedWorkspaceWindow.Resources>
  <Grid Margin="20">
   <Grid.RowDefinitions>
    <RowDefinition Height="Auto"/>
@@ -61,10 +61,13 @@
     <DataGridTextColumn x:Name="NormalColumn" Binding="{Binding NormalText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="*" ElementStyle="{StaticResource ActivityNumber}"/>
     <DataGridTemplateColumn Width="Auto" IsReadOnly="True">
      <DataGridTemplateColumn.CellTemplate><DataTemplate>
-      <Button Content="{Binding DataContext.CalculatorLabel,RelativeSource={RelativeSource AncestorType=Window}}"
-              ToolTip="{Binding DataContext.NormalMethodLabel,RelativeSource={RelativeSource AncestorType=Window}}"
-              IsEnabled="{Binding DataContext.IsWritable,RelativeSource={RelativeSource AncestorType=Window}}"
-              Click="AssistNormal" Padding="8,4" Margin="2"/>
+      <Button AutomationProperties.Name="{Binding DataContext.CalculatorLabel,RelativeSource={RelativeSource AncestorType=DataGrid}}"
+              ToolTip="{Binding DataContext.NormalMethodLabel,RelativeSource={RelativeSource AncestorType=DataGrid}}"
+              IsEnabled="{Binding DataContext.IsWritable,RelativeSource={RelativeSource AncestorType=DataGrid}}"
+              Click="AssistNormal" Padding="6,4" Margin="2" MinWidth="32" Width="32">
+       <Path Width="16" Height="18" Stretch="Uniform" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=Button}}"
+             StrokeThickness="1.4" Data="M2,1 L14,1 14,19 2,19 Z M5,4 L11,4 11,7 5,7 Z M5,10 L7,10 M9,10 L11,10 M5,13 L7,13 M9,13 L11,13 M5,16 L7,16 M9,16 L11,16"/>
+      </Button>
      </DataTemplate></DataGridTemplateColumn.CellTemplate>
     </DataGridTemplateColumn>
     <DataGridTextColumn x:Name="RealColumn" Binding="{Binding RealText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="*" ElementStyle="{StaticResource ActivityNumber}"/>
@@ -131,4 +134,4 @@
    </WrapPanel>
   </StackPanel>
  </Grid>
-</Window>
+</local:IntegratedWorkspaceWindow>

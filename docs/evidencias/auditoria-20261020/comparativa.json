@@ -1,0 +1,152 @@
+[
+  {
+    "Operation": "calculator-constructor",
+    "Before": {
+      "All": {
+        "Count": 20,
+        "MedianMs": 121.95035,
+        "P95Ms": 145.8968
+      },
+      "FirstMs": 127.379,
+      "Subsequent": {
+        "Count": 19,
+        "MedianMs": 119.662,
+        "P95Ms": 147.6686
+      }
+    },
+    "After": {
+      "All": {
+        "Count": 20,
+        "MedianMs": 5.62965,
+        "P95Ms": 6.8549
+      },
+      "FirstMs": 13.0264,
+      "Subsequent": {
+        "Count": 19,
+        "MedianMs": 5.5856,
+        "P95Ms": 6.8549
+      }
+    },
+    "MedianReductionPercent": 95.38365408545363
+  },
+  {
+    "Operation": "calculator-render",
+    "Before": {
+      "All": {
+        "Count": 20,
+        "MedianMs": 137.9094,
+        "P95Ms": 175.4106
+      },
+      "FirstMs": 264.6183,
+      "Subsequent": {
+        "Count": 19,
+        "MedianMs": 133.7658,
+        "P95Ms": 175.4106
+      }
+    },
+    "After": {
+      "All": {
+        "Count": 20,
+        "MedianMs": 99.68895,
+        "P95Ms": 129.0648
+      },
+      "FirstMs": 190.4047,
+      "Subsequent": {
+        "Count": 19,
+        "MedianMs": 99.5939,
+        "P95Ms": 129.0648
+      }
+    },
+    "MedianReductionPercent": 27.71417321806925
+  },
+  {
+    "Operation": "calculator-total",
+    "Before": {
+      "All": {
+        "Count": 20,
+        "MedianMs": 259.51605,
+        "P95Ms": 307.9923
+      },
+      "FirstMs": 391.9973,
+      "Subsequent": {
+        "Count": 19,
+        "MedianMs": 258.336,
+        "P95Ms": 307.9923
+      }
+    },
+    "After": {
+      "All": {
+        "Count": 20,
+        "MedianMs": 105.3482,
+        "P95Ms": 134.9893
+      },
+      "FirstMs": 203.4311,
+      "Subsequent": {
+        "Count": 19,
+        "MedianMs": 105.3288,
+        "P95Ms": 134.9893
+      }
+    },
+    "MedianReductionPercent": 59.40590187003848
+  },
+  {
+    "Operation": "structure-read",
+    "Before": {
+      "All": {
+        "Count": 20,
+        "MedianMs": 39.10735,
+        "P95Ms": 49.0373
+      },
+      "FirstMs": 27.7597,
+      "Subsequent": {
+        "Count": 19,
+        "MedianMs": 39.4498,
+        "P95Ms": 54.2567
+      }
+    },
+    "After": {
+      "All": {
+        "Count": 20,
+        "MedianMs": 0.0005,
+        "P95Ms": 0.0012
+      },
+      "FirstMs": 0.0665,
+      "Subsequent": {
+        "Count": 19,
+        "MedianMs": 0.0005,
+        "P95Ms": 0.0012
+      }
+    },
+    "MedianReductionPercent": 99.99872146795936
+  },
+  {
+    "Operation": "history-read",
+    "Before": {
+      "All": {
+        "Count": 20,
+        "MedianMs": 32.1144,
+        "P95Ms": 49.9026
+      },
+      "FirstMs": 37.1057,
+      "Subsequent": {
+        "Count": 19,
+        "MedianMs": 31.9938,
+        "P95Ms": 54.1404
+      }
+    },
+    "After": {
+      "All": {
+        "Count": 20,
+        "MedianMs": 25.1229,
+        "P95Ms": 32.5177
+      },
+      "FirstMs": 32.9563,
+      "Subsequent": {
+        "Count": 19,
+        "MedianMs": 25.0401,
+        "P95Ms": 32.5177
+      }
+    },
+    "MedianReductionPercent": 21.770607577908983
+  }
+]

@@ -188,6 +188,7 @@
     <Button Style="{StaticResource Button.Primary}" Click="ContinueWorkflow" Padding="14,7" Margin="0,4,8,0" ContentTemplate="{StaticResource Button.WrappedText}" MaxWidth="{Binding ActualWidth, ElementName=ActionFooter}" x:Name="WorkflowNext" />
    </WrapPanel>
   </StackPanel>
+  <Grid>
   <ScrollViewer x:Name="RootScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
    <Border Width="{Binding ViewportWidth, ElementName=RootScrollViewer}" MinWidth="520" Padding="{StaticResource Space.Page}">
    <Grid x:Name="MainContent">
@@ -514,6 +515,9 @@
    </Grid>
    </Border>
   </ScrollViewer>
+  <ContentControl x:Name="WorkspaceContent" Visibility="Collapsed"
+                  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+  </Grid>
   </DockPanel>
  </Grid>
 </Window>

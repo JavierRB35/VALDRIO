@@ -1934,4 +1934,4 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
 <data name="Aux.PendingHelp" xml:space="preserve"><value>Assessment pending: confirm capacity and activity in T14 and complete services. The system will not automatically switch to allocation without assessment.</value></data>
 <data name="Aux.ClassificationRequired" xml:space="preserve"><value>Classify auxiliary costs as fixed, variable or mixed with a defined proportion before assessing capacity. Review Resources and Primary.</value></data>
 <data name="Aux.FlowVariance" xml:space="preserve"><value>Of primary cost, {0} is retained as auxiliary capacity variance and does not circulate in services. See Auxiliary capacity and services for details.</value></data>
-</root>
+<data name="Run.Zoom" xml:space="preserve"><value>Graph zoom</value></data><data name="Run.ExpandGraph" xml:space="preserve"><value>Expand analysis area</value></data><data name="Run.Duration" xml:space="preserve"><value>Elapsed execution time: {0:N2} s</value></data><data name="Run.DurationUnavailable" xml:space="preserve"><value>Execution duration unavailable</value></data></root>

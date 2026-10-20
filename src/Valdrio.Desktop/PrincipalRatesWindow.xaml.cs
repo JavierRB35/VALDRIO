@@ -4,7 +4,7 @@ using Microsoft.Win32;
 using Valdrio.Application;
 
 namespace Valdrio.Desktop;
-public partial class PrincipalRatesWindow : Window
+public partial class PrincipalRatesWindow : IntegratedWorkspaceWindow
 {
     private readonly StudyWorkspaceViewModel host;
     public PrincipalRatesEditor Editor { get; }
@@ -21,7 +21,7 @@ public partial class PrincipalRatesWindow : Window
     }
     private void Refresh(object sender, RoutedEventArgs e) => Editor.Reload();
     private void EditActivity(object sender, RoutedEventArgs e)
-    { new PhysicalActivityWindow(host) { Owner = this }.ShowDialog(); Editor.Reload(); }
+    { new PhysicalActivityWindow(host) { Owner = WorkspaceHost ?? (Window)this }.ShowIntegrated(Editor.Reload); }
     private void ViewCosts(object sender, RoutedEventArgs e) { OpenCostsRequested = true; Close(); }
     private void CloseWindow(object sender, RoutedEventArgs e) => Close();
     private void Export(object sender, RoutedEventArgs e)
@@ -29,7 +29,7 @@ public partial class PrincipalRatesWindow : Window
         Editor.Reload();
         if (!Editor.CanExport) return;
         var dialog = new SaveFileDialog { Filter = "JSON|*.json", FileName = "VALDRIO-T15-" + Editor.Report!.Version[..12] + ".json" };
-        if (dialog.ShowDialog(this) != true) return;
+        if (dialog.ShowDialog(WorkspaceHost ?? (Window)this) != true) return;
         try { File.WriteAllText(dialog.FileName, CanonicalSnapshotJson.Serialize(Editor.Report)); Editor.Feedback = Editor["Exported"]; }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { Editor.Feedback = Editor["ExportFailed"]; }
     }

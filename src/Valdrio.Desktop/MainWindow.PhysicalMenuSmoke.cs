@@ -45,32 +45,21 @@ public partial class MainWindow
             UpdateLayout();
             Check(PhysicalStep.IsVisible && PhysicalStep.IsEnabled && PhysicalStep.Focus(), "menu visible and keyboard focusable " + language);
             VisualEvidenceCapture.Capture(this, Path.Combine(directory, "menu-" + language + ".png"));
-            Exception? failure = null;
-            bool opened = false;
-            var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
-            timer.Tick += (_, _) =>
-            {
-                var window = OwnedWindows.OfType<PhysicalActivityWindow>().FirstOrDefault();
-                if (window is null) return;
-                timer.Stop();
-                try
-                {
-                    opened = true;
-                    Check(window.DataContext is PhysicalActivityEditor editor && editor.Rows.Count > 0,
-                        "menu opens populated physical table " + language);
-                    Check(window.Title == studies.PhysicalOpenLabel, "physical title localized " + language);
-                    VisualEvidenceCapture.Capture(window, Path.Combine(directory, "activity-" + language + ".png"));
-                }
-                catch (Exception error) { failure = error; }
-                finally { window.Close(); }
-            };
-            timer.Start();
             ((IInvokeProvider)new ButtonAutomationPeer(PhysicalStep).GetPattern(PatternInterface.Invoke)).Invoke();
-            // The real Click handler enters a modal dispatcher loop; pumping the dispatcher lets it finish.
+            for (var attempt = 0; attempt < 200 && workspacePages.LastOrDefault() is not PhysicalActivityWindow; attempt++)
+                await Task.Delay(25);
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
-            timer.Stop();
-            if (failure is not null) throw failure;
-            Check(opened && workflowStep == 9 && PhysicalHome.IsVisible, "menu opens editor and returns to physical phase " + language);
+            Check(workspacePages.LastOrDefault() is PhysicalActivityWindow, "menu opens integrated activity " + language);
+            var page = (PhysicalActivityWindow)workspacePages[^1];
+            Check(page.DataContext is PhysicalActivityEditor editor && editor.Rows.Count > 0,
+                "menu opens populated physical table " + language);
+            Check(page.Title == studies.PhysicalOpenLabel, "physical title localized " + language);
+            Check(new System.Windows.Interop.WindowInteropHelper(page).Handle == IntPtr.Zero && WorkspaceContent.IsVisible,
+                "no independent native window " + language);
+            VisualEvidenceCapture.Capture(this, Path.Combine(directory, "activity-" + language + ".png"));
+            await GoBackWorkflow();
+            Check(workspacePages.Count == 0 && workflowStep == 9 && PhysicalHome.IsVisible,
+                "back returns to physical phase " + language);
             VisualEvidenceCapture.Capture(this, Path.Combine(directory, "physical-home-" + language + ".png"));
             Check(AllocationPhase.IsExpanded && (string?)PhysicalStep.Tag == "Active", "correct phase and active marker " + language);
             Check(studies.Current!.Revision == revision, "opening physical editor does not change study revision " + language);

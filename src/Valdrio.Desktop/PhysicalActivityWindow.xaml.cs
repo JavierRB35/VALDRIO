@@ -5,13 +5,15 @@ using Valdrio.Domain;
 
 namespace Valdrio.Desktop;
 
-public partial class PhysicalActivityWindow : Window
+public partial class PhysicalActivityWindow : IntegratedWorkspaceWindow
 {
     private readonly PhysicalActivityEditor editor;
+    private readonly StudyWorkspaceViewModel studyHost;
     private bool suppressStudyChange;
 
     public PhysicalActivityWindow(StudyWorkspaceViewModel study)
     {
+        studyHost = study;
         InitializeComponent();
         editor = new PhysicalActivityEditor(study);
         DataContext = editor;
@@ -33,14 +35,14 @@ public partial class PhysicalActivityWindow : Window
         finally { suppressStudyChange = false; }
     }
 
-    private void StudySelectionChanged(object sender, SelectionChangedEventArgs e)
+    private async void StudySelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (suppressStudyChange || editor is null || StudySelector.SelectedItem is not PhysicalStudyChoice choice)
             return;
         if (choice.Value.Id == editor.Study.Id) return;
         CommitTableEdit();
         if (editor.HasPendingEdits &&
-            MessageBox.Show(this, editor.UnsavedBody, editor.UnsavedTitle,
+            MessageBox.Show(WorkspaceHost ?? (Window)this, editor.UnsavedBody, editor.UnsavedTitle,
                 MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
         {
             SetStudyChoice();
@@ -49,18 +51,20 @@ public partial class PhysicalActivityWindow : Window
         try
         {
             editor.ChangeStudy(choice.Value.Id, discardPendingEdits: true);
+            studyHost.StudyChoice = studyHost.Studies.Single(s => s.Value.Id == choice.Value.Id);
+            await studyHost.LoadCommand.ExecuteAsync(null);
             SetStudyChoice();
         }
         catch (DomainRuleException error)
         {
-            MessageBox.Show(this, editor.Label(error.Diagnostic.MessageKey), editor.Title,
+            MessageBox.Show(WorkspaceHost ?? (Window)this, editor.Label(error.Diagnostic.MessageKey), editor.Title,
                 MessageBoxButton.OK, MessageBoxImage.Warning);
             SetStudyChoice();
         }
         catch (Exception error)
         {
             System.Diagnostics.Trace.TraceError("T14 switch study: {0}", error);
-            MessageBox.Show(this, editor.Label("Activity.SwitchFailed"), editor.Title,
+            MessageBox.Show(WorkspaceHost ?? (Window)this, editor.Label("Activity.SwitchFailed"), editor.Title,
                 MessageBoxButton.OK, MessageBoxImage.Warning);
             SetStudyChoice();
         }
@@ -70,7 +74,7 @@ public partial class PhysicalActivityWindow : Window
     {
         CommitTableEdit();
         if (editor.HasPendingEdits &&
-            MessageBox.Show(this, editor.UnsavedBody, editor.UnsavedTitle,
+            MessageBox.Show(WorkspaceHost ?? (Window)this, editor.UnsavedBody, editor.UnsavedTitle,
                 MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
             e.Cancel = true;
     }
@@ -86,7 +90,7 @@ public partial class PhysicalActivityWindow : Window
         CommitTableEdit();
         if (sender is FrameworkElement { DataContext: PhysicalActivityRow row }) editor.SelectedRow = row;
         if (editor.SelectedRow is not null)
-            new PhysicalCapacityAssistantWindow(editor) { Owner = this }.ShowDialog();
+            new PhysicalCapacityAssistantWindow(editor) { Owner = WorkspaceHost ?? (Window)this }.ShowIntegrated();
     }
 
     private void OpenPhysicalImport(object sender, RoutedEventArgs e)
@@ -94,11 +98,11 @@ public partial class PhysicalActivityWindow : Window
         CommitTableEdit();
         if (editor.HasPendingEdits)
         {
-            MessageBox.Show(this, editor.OtherRowsPendingLabel, editor.UnsavedTitle,
+            MessageBox.Show(WorkspaceHost ?? (Window)this, editor.OtherRowsPendingLabel, editor.UnsavedTitle,
                 MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
-        new PhysicalImportWindow(editor) { Owner = this }.ShowDialog();
+        new PhysicalImportWindow(editor) { Owner = WorkspaceHost ?? (Window)this }.ShowIntegrated();
     }
 
     private void SaveDraft(object sender, RoutedEventArgs e)
@@ -117,6 +121,6 @@ public partial class PhysicalActivityWindow : Window
         editor.Annul();
     }
     private void History(object sender, RoutedEventArgs e) =>
-        MessageBox.Show(this, editor.History(), editor.HistoryLabel, MessageBoxButton.OK, MessageBoxImage.Information);
+        MessageBox.Show(WorkspaceHost ?? (Window)this, editor.History(), editor.HistoryLabel, MessageBoxButton.OK, MessageBoxImage.Information);
     private void CloseWindow(object sender, RoutedEventArgs e) => Close();
 }

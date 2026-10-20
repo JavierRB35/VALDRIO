@@ -2,7 +2,7 @@ using System.Windows;
 
 namespace Valdrio.Desktop;
 
-public partial class PhysicalCapacityAssistantWindow : Window
+public partial class PhysicalCapacityAssistantWindow : IntegratedWorkspaceWindow
 {
     private readonly PhysicalCapacityAssistantEditor editor;
     public bool Adopted => editor.Adopted;
@@ -11,6 +11,13 @@ public partial class PhysicalCapacityAssistantWindow : Window
         InitializeComponent();
         editor = new PhysicalCapacityAssistantEditor(host);
         DataContext = editor;
+        Closing += (_, args) =>
+        {
+            if (WorkspaceHost is not null && !editor.Adopted && editor.HasPendingProposal &&
+                MessageBox.Show(WorkspaceHost, host.UnsavedBody, host.UnsavedTitle,
+                    MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+                args.Cancel = true;
+        };
         ContentRendered += (_, _) =>
         {
             var first = editor.CalendarVisible ? DaysInput :

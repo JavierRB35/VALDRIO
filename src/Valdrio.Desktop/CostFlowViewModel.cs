@@ -68,7 +68,14 @@ public sealed partial class CostFlowViewModel : ObservableObject
     public IRelayCommand CancelCommand { get; }
     public IRelayCommand ClearSelectionCommand { get; }
     public bool HasError => SelectedRun?.Run.Status == CalculationRunStatus.Failed;
-    partial void OnSelectedRunChanged(RunChoice? value) => Present();
+    public string ExecutionDuration => SelectedRun?.Run is { CompletedAtUtc: { } completed } run
+        ? string.Format(Format, this["Duration"], (completed.Value - run.StartedAtUtc.Value).TotalSeconds)
+        : this["DurationUnavailable"];
+    partial void OnSelectedRunChanged(RunChoice? value)
+    {
+        Present();
+        OnPropertyChanged(nameof(ExecutionDuration));
+    }
     partial void OnSelectedRowChanged(FlowRow? value) { if (value is not null) Selection = value.Detail; }
     public async Task EnterAsync()
     {

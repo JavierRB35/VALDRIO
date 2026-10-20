@@ -56,8 +56,17 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
             DeclaredSource = row.NormalSource;
             DeclaredDescription = row.NormalDescription;
         }
-        if (!CalendarSupported) Method = PhysicalCapacityMethod.Declared;
+        if (!CalendarSupported || row.NormalQuality == PhysicalEvidenceQuality.Declared)
+            Method = PhysicalCapacityMethod.Declared;
         RestoreCalendar();
+        initialized = true;
+        Preview();
+    }
+
+    private bool historyLoaded;
+    private void LoadHistory()
+    {
+        if (historyLoaded) return;
         foreach (var observation in host.Activity.ReadReferences(host.Study.CompanyId, host.Study.Id)
             .Where(o => o.PoolId == row.PoolId && o.RealQuantity is not null))
         {
@@ -69,9 +78,9 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
                     observation.RealQuantity, row.Unit, observation.RealEvidence?.Source ?? "")
             });
         }
-        foreach (var choice in Historical) choice.PropertyChanged += (_, _) => Preview();
-        initialized = true;
-        Preview();
+        foreach (var choice in Historical) choice.PropertyChanged += (_, _) =>
+        { HasPendingProposal = true; Preview(); };
+        historyLoaded = true;
     }
 
     public ObservableCollection<PhysicalHistoricalChoice> Historical { get; } = [];
@@ -80,6 +89,7 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
      new(PhysicalCapacityMethod.Historical, HistoryLabel),
      new(PhysicalCapacityMethod.Declared, DeclaredLabel)];
     public bool Adopted { get; private set; }
+    public bool HasPendingProposal { get; private set; }
     public IReadOnlyList<PhysicalStoppageOption> StoppageOptions => Enum.GetValues<PhysicalStoppageBasis>()
         .Select(value => new PhysicalStoppageOption(value, L("Activity.Stoppages." + value))).ToArray();
     public string StoppageBasisLabel => L("Activity.Stoppages.Basis");
@@ -157,6 +167,7 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
 
     partial void OnMethodChanged(PhysicalCapacityMethod value)
     {
+        if (value == PhysicalCapacityMethod.Historical) LoadHistory();
         Proposed = "";
         OnPropertyChanged(nameof(CalendarVisible));
         OnPropertyChanged(nameof(HistoryVisible));
@@ -169,7 +180,8 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
         if (initialized && e.PropertyName is nameof(Method) or nameof(OperatingDays) or
             nameof(ShiftsPerDay) or nameof(HoursPerShift) or nameof(EquivalentResources) or
             nameof(Stoppages) or nameof(StoppageBasis) or nameof(NormalFactor) or nameof(FactorReason) or
-            nameof(DeclaredQuantity) or nameof(DeclaredSource) or nameof(DeclaredDescription)) Preview();
+            nameof(DeclaredQuantity) or nameof(DeclaredSource) or nameof(DeclaredDescription))
+        { HasPendingProposal = true; Preview(); }
     }
 
     private decimal Input(string text, string label, decimal minimum, decimal maximum)

@@ -134,3 +134,25 @@ de cambios pendientes y la validación del rango.
 **Aceptación:** para cada nueva pantalla, comprobar preguntas pertinentes, respuestas con datos completos, ausencia de datos, cero real, cambios de selección y resultados desactualizados. El analista debe distinguir qué sabe la aplicación, qué falta y qué puede revisar sin explicaciones externas.
 
 La aplicación comienza en **T15**; esta decisión no ordena rediseñar retroactivamente T01–T14 ni modifica las políticas económicas pendientes. Véase la [aplicación concreta a T15](../tareas/T15.md).
+
+## Ventana única de trabajo — decisión del propietario, 2026-10-20
+
+Las pantallas funcionales, formularios completos, configuración ordinaria,
+tablas extensas, gráficos principales y flujos de cálculo/edición se muestran
+dentro de la ventana principal. Usar páginas, pestañas o paneles internos
+no flotantes, conservando menú, contexto y navegación. Ampliar un gráfico
+también se hace dentro de la aplicación.
+
+Reservar ventanas emergentes para información adicional de campos, ayuda
+contextual, mensajes, avisos, errores y confirmaciones necesarias. No introducir
+`Show`/`ShowDialog` para presentar módulos funcionales. Los selectores nativos
+de archivos conservan su función específica.
+
+Antes de abandonar una edición, resolver explícitamente los cambios pendientes;
+cancelar la navegación conserva la página y sus datos. Adoptar una propuesta de
+calculadora no equivale a guardarla: el guardado continúa siendo explícito.
+Una vista contextual pertenece al registro seleccionado y no reutiliza campos
+temporales de otro registro.
+
+La integración actual y sus límites están documentados en la
+[auditoría de 20/10/2026](../evidencias/auditoria-20261020/README.md).
