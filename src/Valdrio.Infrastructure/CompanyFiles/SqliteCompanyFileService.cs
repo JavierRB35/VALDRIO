@@ -17,7 +17,8 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
     private readonly Action<CompanyWriteCheckpoint>? onCheckpoint = checkpoint;
     private readonly IClock time = clock;
     public const string FormatId = "VALDRIO-COMPANY";
-    public const int SchemaVersion = 11;
+    public const int SchemaVersion = 12;
+    public const string CompositionMigrationId = "202610200012_Compositions";
     public const string PhysicalMigrationId = "202610150011_PhysicalObservations";
     public const string RunMigrationId = "202610110010_CalculationRuns";
     public const string AllocationMigrationId = "202610080009_AllocationKeys";
@@ -48,7 +49,7 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 using (var connection = Connect(temporary, SqliteOpenMode.ReadWriteCreate))
-                using (var db = new PhysicalDbContext(connection))
+                using (var db = new CompositionDbContext(connection))
                 {
                     // Only our unpublished temporary file can receive migrations.
                     using (var legacy = new CompanyDbContext(connection)) legacy.Database.Migrate();
@@ -61,6 +62,7 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
                     using (var v8 = new ResourceDbContext(connection)) v8.Database.Migrate();
                     using (var v9 = new AllocationDbContext(connection)) v9.Database.Migrate();
                     using (var runs = new RunDbContext(connection)) runs.Database.Migrate();
+                    using (var physical = new PhysicalDbContext(connection)) physical.Database.Migrate();
                     db.Database.Migrate();
                     Execute(connection, "PRAGMA journal_mode=DELETE;");
                     using var transaction = db.Database.BeginTransaction();
@@ -173,7 +175,7 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
                 using var reader = check.ExecuteReader();
                 if (reader.Read()) throw new InvalidDataException("Foreign key check failed");
             }
-            if (!db.Database.GetAppliedMigrations().SequenceEqual(detected switch { 1 => [MigrationId], 2 => [MigrationId, UpgradeMigrationId], 3 => [MigrationId, UpgradeMigrationId, StudyMigrationId], 4 => [MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId], 5 => [MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId, GroupedImportMigrationId], 6 => [MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId, GroupedImportMigrationId, ImportLedgerMigrationId], 7 => [MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId, GroupedImportMigrationId, ImportLedgerMigrationId, InternationalImportMigrationId], 8 => [MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId, GroupedImportMigrationId, ImportLedgerMigrationId, InternationalImportMigrationId, ResourceMigrationId], 9 => new[] { MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId, GroupedImportMigrationId, ImportLedgerMigrationId, InternationalImportMigrationId, ResourceMigrationId, AllocationMigrationId }, 10 => new[] { MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId, GroupedImportMigrationId, ImportLedgerMigrationId, InternationalImportMigrationId, ResourceMigrationId, AllocationMigrationId, RunMigrationId }, _ => new[] { MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId, GroupedImportMigrationId, ImportLedgerMigrationId, InternationalImportMigrationId, ResourceMigrationId, AllocationMigrationId, RunMigrationId, PhysicalMigrationId } })) throw new InvalidDataException("Migration history differs");
+            if (!db.Database.GetAppliedMigrations().SequenceEqual(detected switch { 1 => [MigrationId], 2 => [MigrationId, UpgradeMigrationId], 3 => [MigrationId, UpgradeMigrationId, StudyMigrationId], 4 => [MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId], 5 => [MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId, GroupedImportMigrationId], 6 => [MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId, GroupedImportMigrationId, ImportLedgerMigrationId], 7 => [MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId, GroupedImportMigrationId, ImportLedgerMigrationId, InternationalImportMigrationId], 8 => [MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId, GroupedImportMigrationId, ImportLedgerMigrationId, InternationalImportMigrationId, ResourceMigrationId], 9 => new[] { MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId, GroupedImportMigrationId, ImportLedgerMigrationId, InternationalImportMigrationId, ResourceMigrationId, AllocationMigrationId }, 10 => new[] { MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId, GroupedImportMigrationId, ImportLedgerMigrationId, InternationalImportMigrationId, ResourceMigrationId, AllocationMigrationId, RunMigrationId }, 11 => new[] { MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId, GroupedImportMigrationId, ImportLedgerMigrationId, InternationalImportMigrationId, ResourceMigrationId, AllocationMigrationId, RunMigrationId, PhysicalMigrationId }, _ => new[] { MigrationId, UpgradeMigrationId, StudyMigrationId, ImportMigrationId, GroupedImportMigrationId, ImportLedgerMigrationId, InternationalImportMigrationId, ResourceMigrationId, AllocationMigrationId, RunMigrationId, PhysicalMigrationId, CompositionMigrationId } })) throw new InvalidDataException("Migration history differs");
             var company = db.Companies.AsNoTracking().Single();
             var policyRow = db.Policies.AsNoTracking().Single();
             var id = EntityId.Parse(company.Id);
@@ -195,7 +197,7 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
             }).OrderBy(unit => unit.Id).ToArray();
             if (units.Select(x => x.Code).Distinct(StringComparer.Ordinal).Count() != units.Length)
                 throw new InvalidDataException("Duplicate unit code");
-            using ModelDbContext? current = detected switch { 2 => new ModelDbContext(connection), 3 => new StudyDbContext(connection), 4 => new ImportDbContext(connection), 5 => new GroupedImportDbContext(connection), 6 => new ImportLedgerDbContext(connection), 7 => new InternationalImportDbContext(connection), 8 => new ResourceDbContext(connection), 9 => new AllocationDbContext(connection), 10 => new RunDbContext(connection), 11 => new PhysicalDbContext(connection), _ => null };
+            using ModelDbContext? current = detected switch { 2 => new ModelDbContext(connection), 3 => new StudyDbContext(connection), 4 => new ImportDbContext(connection), 5 => new GroupedImportDbContext(connection), 6 => new ImportLedgerDbContext(connection), 7 => new InternationalImportDbContext(connection), 8 => new ResourceDbContext(connection), 9 => new AllocationDbContext(connection), 10 => new RunDbContext(connection), 11 => new PhysicalDbContext(connection), 12 => new CompositionDbContext(connection), _ => null };
             if (current is not null) current.Database.UseTransaction(transaction.GetDbTransaction());
             var audit = current is null ? db.Audit.AsNoTracking().OrderBy(x => x.Revision).ToArray()
                 : current.Audit.AsNoTracking().Where(x => EF.Property<string>(x, "AggregateType") == "Company").OrderBy(x => x.Revision).ToArray();
@@ -238,6 +240,7 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
                 if (current is AllocationDbContext allocations) ValidateAllocations(allocations, file);
                 if (current is RunDbContext runs) ValidateRuns(runs, file);
                 if (current is PhysicalDbContext physical) ValidatePhysical(physical, file);
+                if (current is CompositionDbContext compositions) ValidateCompositions(compositions, file);
             }
             token.ThrowIfCancellationRequested();
             return new(id, company.Name, currency, created, company.Revision, policy, units, metadata.SchemaVersion);

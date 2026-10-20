@@ -23,7 +23,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     private readonly Func<bool>? earlierBusy;
     private readonly Func<Task<bool>>? earlierBefore;
     private readonly Func<Task>? earlierAfter;
-    private bool busy, loading, dirty, pseudo, committedRefreshPending;
+    private bool busy, loading, dirty, pseudo, committedRefreshPending, compositionBusy;
     private string name = "", currency = "EUR", statusKey = "Study.NoFile";
     private DateTime? start, end;
     private ModelOption? modelChoice;
@@ -55,7 +55,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         DiscardCommand = new RelayCommand(() => SetCurrent(Current), () => Ready && IsDirty);
         CancelCommand = new RelayCommand(() => cancellation?.Cancel(), () => busy);
         earlierBusy = company.WorkspaceBusy; earlierBefore = company.BeforeChangeAsync; earlierAfter = company.AfterChangeAsync;
-        company.WorkspaceBusy = () => busy || ImportColumns?.IsBusy == true || earlierBusy?.Invoke() == true;
+        company.WorkspaceBusy = () => busy || compositionBusy || ImportColumns?.IsBusy == true || earlierBusy?.Invoke() == true;
         company.BeforeChangeAsync = async () => await CanLeaveAsync() && (earlierBefore is null || await earlierBefore());
         company.AfterChangeAsync = async () => { if (earlierAfter is not null) await earlierAfter(); await CompanyChanged(); };
         preferences.Changed += PreferencesChanged; company.PropertyChanged += CompanyStateChanged; Reformat();
@@ -94,6 +94,8 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     }
     public string ImportColumnsLabel => Text("ImportMapping.OpenMapping");
     public IPhysicalActivityWorkspace? ActivePhysicalActivity => company.ActivePhysicalActivity;
+    public ICompositionWorkspace? ActiveCompositions => company.ActiveCompositions;
+    public void SetCompositionBusy(bool value) { compositionBusy = value; company.NotifyWorkspaceStateChanged(); }
     public IModelWorkspace? PhysicalModels => company.ActiveModels;
     public IRunStore? PhysicalRuns => company.ActiveRuns;
     public IAllocationWorkspace? AuxiliaryAllocations => company.ActiveAllocations;

@@ -233,3 +233,7 @@ El propietario autoriza desarrollar la propuesta T16 con los ajustes debatidos y
 C20: 1.600 = 800 transmitidos a principales + 500 de A + 300 de B. Los 100 de A recibidos por B no se vuelven a evaluar. C29 admite variación negativa firmada por sobreactividad sin llamarla ahorro. La normal y real proceden de T14, los servicios se registran en T16 y los costes evaluados se reciben en T15 como consumidos, conservando naturaleza y origen.
 
 La autorización cubre este método y los ejemplos del debate; no sustituye la selección y evidencia de servicios reales de cada empresa. No habilita automáticamente todos los auxiliares, ni cambia contratos canónicos o cálculos históricos. Detalle en [T16](../tareas/T16.md).
+
+## D06 — aprobación acotada T17, 20/10/2026
+
+El propietario autoriza la revisión NIC 2 y la implementación de composición y cantidades; valoración económica en T18. Se adoptan las reglas físicas descritas en [T17](../tareas/T17.md): unidad/lote iniciado/orden, lote parcial completo, merma explícita como exceso o rendimiento, conversión dimensional, redondeo discreto al final y semielaborados publicados sin ciclos. La política económica de gestión T15/T16 permanece inalterada. Los precios de referencia originalmente previstos en T17 pasan a T18 por instrucción posterior del propietario.

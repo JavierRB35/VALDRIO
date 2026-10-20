@@ -78,6 +78,9 @@ public partial class MainWindow
         UpdatePresentationLabels();
         AuxiliaryStep.Content = new Valdrio.Localization.UiTextCatalog().Get("Aux.Title", vm.Studies!.PhysicalUiCulture);
         AuxiliaryStep.IsEnabled = vm.Studies.CanOpenPhysical;
+        CompositionStep.Content = new Valdrio.Localization.UiTextCatalog().Get("Composition.Title", vm.Studies.PhysicalUiCulture);
+        CompositionStep.IsEnabled = vm.Studies.CanOpenPhysical;
+        CompositionStep.Tag = workspacePages.LastOrDefault() is CompositionWindow ? "Active" : null;
         if (workflowStep == 4 && lastResourceStage != vm.Resources?.Stage) { lastHelpKey = null; lastResourceStage = vm.Resources?.Stage ?? -1; }
         NavigationGroupLabel.Text = vm.Guide("WorkspaceNavigation");
         ProjectPhase.Header = vm.Guide("PhaseProjectStructure");
@@ -226,7 +229,7 @@ public partial class MainWindow
             WorkflowNext.Visibility = Visibility.Collapsed;
             AllocationActionsHost.Visibility = Visibility.Collapsed;
             var active = workspacePages.LastOrDefault(p =>
-                p is PhysicalActivityWindow or PrincipalRatesWindow or AuxiliaryCapacityWindow);
+                p is PhysicalActivityWindow or PrincipalRatesWindow or AuxiliaryCapacityWindow or CompositionWindow);
             if (active is not null)
             {
                 ShowNavigationPhase(9);
@@ -321,6 +324,17 @@ public partial class MainWindow
         {
             var window = new PrincipalRatesWindow(studies) { Owner = this };
             window.ShowIntegrated(async () => { if (window.OpenCostsRequested) await NavigateWorkflow(8); });
+            UpdateWorkflow();
+        }
+    }
+    private async void OpenCompositions(object sender, RoutedEventArgs e)
+    {
+        if (viewModel?.Allocations is { } a && !await a.CanLeaveAsync()) return;
+        if (viewModel?.Resources is { } r && !await r.CanLeaveAsync()) return;
+        if (viewModel?.Company?.WorkspaceIdle != false && viewModel?.Studies is { CanOpenPhysical: true } studies)
+        {
+            if (!LeaveIntegratedWorkspace()) return;
+            new CompositionWindow(studies) { Owner = this }.ShowIntegrated();
             UpdateWorkflow();
         }
     }

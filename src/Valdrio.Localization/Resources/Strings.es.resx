@@ -1934,4 +1934,99 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
 <data name="Aux.PendingHelp" xml:space="preserve"><value>Evaluación pendiente: confirma capacidad y actividad en T14 y completa los servicios. No se cambiará automáticamente a reparto sin evaluación.</value></data>
 <data name="Aux.ClassificationRequired" xml:space="preserve"><value>Clasifica los costes del auxiliar como fijos, variables o mixtos con proporción definida antes de evaluar su capacidad. Revisa Recursos y Primario.</value></data>
 <data name="Aux.FlowVariance" xml:space="preserve"><value>Del coste primario, {0} queda como variación de capacidad auxiliar y no circula en los servicios. Consulta su detalle en Capacidad y servicios auxiliares.</value></data>
-<data name="Run.Zoom" xml:space="preserve"><value>Zoom del gráfico</value></data><data name="Run.ExpandGraph" xml:space="preserve"><value>Ampliar zona de análisis</value></data><data name="Run.Duration" xml:space="preserve"><value>Tiempo transcurrido de ejecución: {0:N2} s</value></data><data name="Run.DurationUnavailable" xml:space="preserve"><value>Duración de ejecución no disponible</value></data></root>
+<data name="Run.Zoom" xml:space="preserve"><value>Zoom del gráfico</value></data><data name="Run.ExpandGraph" xml:space="preserve"><value>Ampliar zona de análisis</value></data><data name="Run.Duration" xml:space="preserve"><value>Tiempo transcurrido de ejecución: {0:N2} s</value></data><data name="Run.DurationUnavailable" xml:space="preserve"><value>Duración de ejecución no disponible</value></data>  <data name="Composition.Title" xml:space="preserve"><value>Productos y servicios</value></data>
+  <data name="Composition.Scope" xml:space="preserve"><value>Composición y necesidades físicas. La valoración económica corresponde a T18; los consumos reales, a T19.</value></data>
+  <data name="Composition.Catalog" xml:space="preserve"><value>Catálogo</value></data>
+  <data name="Composition.CatalogHelp" xml:space="preserve"><value>Crea materiales, productos, servicios y semielaborados. Guarda el catálogo antes de componer. La identidad guardada se conserva; puedes desactivar un elemento. Las unidades se crean en Proyecto.</value></data>
+  <data name="Composition.AddItem" xml:space="preserve"><value>Añadir elemento</value></data>
+  <data name="Composition.Save" xml:space="preserve"><value>Guardar</value></data>
+  <data name="Composition.Recipe" xml:space="preserve"><value>Composición</value></data>
+  <data name="Composition.Product" xml:space="preserve"><value>Producto</value></data>
+  <data name="Composition.Service" xml:space="preserve"><value>Servicio</value></data>
+  <data name="Composition.SemiFinished" xml:space="preserve"><value>Semielaborado</value></data>
+  <data name="Composition.Material" xml:space="preserve"><value>Material</value></data>
+  <data name="Composition.Activity" xml:space="preserve"><value>Actividad</value></data>
+  <data name="Composition.Version" xml:space="preserve"><value>Versión</value></data>
+  <data name="Composition.Open" xml:space="preserve"><value>Abrir versión</value></data>
+  <data name="Composition.NewVersion" xml:space="preserve"><value>Nueva versión</value></data>
+  <data name="Composition.BatchSize" xml:space="preserve"><value>Tamaño del lote</value></data>
+  <data name="Composition.Note" xml:space="preserve"><value>Nota de la versión</value></data>
+  <data name="Composition.LineHelp" xml:space="preserve"><value>Cantidad por unidad, lote iniciado u orden. Factor: unidades de destino por unidad introducida. Exceso de entrada añade un porcentaje; rendimiento indica qué porcentaje de la entrada es útil. Los materiales directos se registran aquí; la actividad del nodo representa sus costes indirectos.</value></data>
+  <data name="Composition.AddLine" xml:space="preserve"><value>Añadir componente</value></data>
+  <data name="Composition.RemoveLine" xml:space="preserve"><value>Quitar componente</value></data>
+  <data name="Composition.SaveDraft" xml:space="preserve"><value>Guardar borrador</value></data>
+  <data name="Composition.Publish" xml:space="preserve"><value>Publicar versión</value></data>
+  <data name="Composition.OutputQuantity" xml:space="preserve"><value>Cantidad a producir o prestar</value></data>
+  <data name="Composition.Preview" xml:space="preserve"><value>Calcular necesidades</value></data>
+  <data name="Composition.Detail" xml:space="preserve"><value>Ver detalle de cantidades</value></data>
+  <data name="Composition.Close" xml:space="preserve"><value>Volver</value></data>
+  <data name="Composition.Reload" xml:space="preserve"><value>Recargar</value></data>
+  <data name="Composition.Code" xml:space="preserve"><value>Código</value></data>
+  <data name="Composition.Name" xml:space="preserve"><value>Nombre</value></data>
+  <data name="Composition.Kind" xml:space="preserve"><value>Tipo</value></data>
+  <data name="Composition.Unit" xml:space="preserve"><value>Unidad</value></data>
+  <data name="Composition.Active" xml:space="preserve"><value>Activo</value></data>
+  <data name="Composition.Component" xml:space="preserve"><value>Componente</value></data>
+  <data name="Composition.Quantity" xml:space="preserve"><value>Cantidad</value></data>
+  <data name="Composition.Factor" xml:space="preserve"><value>Factor</value></data>
+  <data name="Composition.Basis" xml:space="preserve"><value>Aplicación</value></data>
+  <data name="Composition.Loss" xml:space="preserve"><value>Merma / rendimiento</value></data>
+  <data name="Composition.Percent" xml:space="preserve"><value>Porcentaje</value></data>
+  <data name="Composition.Question" xml:space="preserve"><value>Pregunta</value></data>
+  <data name="Composition.Answer" xml:space="preserve"><value>Respuesta</value></data>
+  <data name="Composition.Path" xml:space="preserve"><value>Composición de origen</value></data>
+  <data name="Composition.Base" xml:space="preserve"><value>Cantidad base</value></data>
+  <data name="Composition.Adjusted" xml:space="preserve"><value>Con merma / rendimiento</value></data>
+  <data name="Composition.Required" xml:space="preserve"><value>Necesidad en destino</value></data>
+  <data name="Composition.PerUnit" xml:space="preserve"><value>Por unidad</value></data>
+  <data name="Composition.PerStartedBatch" xml:space="preserve"><value>Por lote iniciado</value></data>
+  <data name="Composition.PerOrder" xml:space="preserve"><value>Por orden</value></data>
+  <data name="Composition.None" xml:space="preserve"><value>Sin merma</value></data>
+  <data name="Composition.ExtraInput" xml:space="preserve"><value>Exceso de entrada</value></data>
+  <data name="Composition.Yield" xml:space="preserve"><value>Rendimiento útil</value></data>
+  <data name="Composition.Draft" xml:space="preserve"><value>Borrador</value></data>
+  <data name="Composition.Published" xml:space="preserve"><value>Publicado</value></data>
+  <data name="Composition.ChooseRecipe" xml:space="preserve"><value>Selecciona un producto y abre o crea una versión.</value></data>
+  <data name="Composition.QNeeds" xml:space="preserve"><value>¿Qué materiales y actividad necesito?</value></data>
+  <data name="Composition.QBatches" xml:space="preserve"><value>¿Cuántos lotes debo iniciar?</value></data>
+  <data name="Composition.QVersion" xml:space="preserve"><value>¿Qué composición estoy utilizando?</value></data>
+  <data name="Composition.QCost" xml:space="preserve"><value>¿Cuánto cuesta producir o prestar esta cantidad?</value></data>
+  <data name="Composition.QActual" xml:space="preserve"><value>¿Cuánto se consumió realmente?</value></data>
+  <data name="Composition.PreviewPending" xml:space="preserve"><value>Pendiente de calcular con la composición y cantidad actuales.</value></data>
+  <data name="Composition.T18" xml:space="preserve"><value>Pendiente de T18: precios, tasas y criterios de valoración. Las cantidades no son importes ni acreditan una valoración conforme a NIC 2.</value></data>
+  <data name="Composition.T19" xml:space="preserve"><value>Pendiente de T19: consumos reales. Esta pantalla calcula necesidades previstas.</value></data>
+  <data name="Composition.StartedHelp" xml:space="preserve"><value>El lote incompleto consume la preparación completa de un lote iniciado.</value></data>
+  <data name="Composition.Unsaved" xml:space="preserve"><value>Cambios sin guardar</value></data>
+  <data name="Composition.ExistingDraft" xml:space="preserve"><value>Este producto ya tiene un borrador. Ábrelo antes de crear otra versión.</value></data>
+  <data name="Composition.Saved" xml:space="preserve"><value>Guardado correctamente.</value></data>
+  <data name="Composition.PreviewReady" xml:space="preserve"><value>Necesidades calculadas. Los semielaborados se desglosan; el resumen suma solo los componentes finales.</value></data>
+  <data name="Composition.Leave" xml:space="preserve"><value>Hay cambios sin guardar. ¿Quieres guardarlos? Sí: guardar; No: descartar; Cancelar: seguir editando.</value></data>
+  <data name="Composition.PublishHelp" xml:space="preserve"><value>La versión publicada no se podrá modificar. Para cambiarla tendrás que crear otra versión.</value></data>
+  <data name="Composition.InvalidCatalog" xml:space="preserve"><value>El catálogo contiene datos duplicados o no válidos.</value></data>
+  <data name="Composition.InvalidItem" xml:space="preserve"><value>Completa código, nombre, tipo y unidad de cada elemento.</value></data>
+  <data name="Composition.InvalidVersion" xml:space="preserve"><value>Revisa el producto, el tamaño de lote y la secuencia de versiones.</value></data>
+  <data name="Composition.Empty" xml:space="preserve"><value>Añade al menos un componente para calcular o publicar.</value></data>
+  <data name="Composition.Inactive" xml:space="preserve"><value>No se puede publicar con un producto o componente inactivo.</value></data>
+  <data name="Composition.InvalidLine" xml:space="preserve"><value>Completa el componente y revisa cantidades, factor y porcentaje.</value></data>
+  <data name="Composition.UnitMismatch" xml:space="preserve"><value>Las unidades deben ser compatibles; para la misma unidad el factor debe ser 1.</value></data>
+  <data name="Composition.Cycle" xml:space="preserve"><value>La composición contiene una dependencia circular.</value></data>
+  <data name="Composition.TooDeep" xml:space="preserve"><value>La composición supera el límite de profundidad o de componentes.</value></data>
+  <data name="Composition.MissingTarget" xml:space="preserve"><value>Falta un componente o una versión publicada compatible con este modelo.</value></data>
+  <data name="Composition.InvalidQuantity" xml:space="preserve"><value>La cantidad debe ser positiva; las unidades discretas y sus lotes requieren números enteros.</value></data>
+  <data name="Composition.Overflow" xml:space="preserve"><value>La cantidad calculada supera el intervalo admitido.</value></data>
+  <data name="Composition.Conflict" xml:space="preserve"><value>Otro cambio se guardó antes. Recarga el catálogo y revisa tus cambios.</value></data>
+  <data name="Composition.Immutable" xml:space="preserve"><value>No se puede modificar una identidad guardada ni una versión publicada.</value></data>
+  <data name="Composition.Number" xml:space="preserve"><value>Introduce un número con el separador decimal regional, sin separador de miles. No dejes cantidades vacías.</value></data>
+  <data name="Composition.Count" xml:space="preserve"><value>Veces que se aplica</value></data>
+  <data name="Composition.InputUnit" xml:space="preserve"><value>Unidad de entrada</value></data>
+  <data name="Composition.Converted" xml:space="preserve"><value>Antes de redondear</value></data>
+  <data name="Composition.QLoss" xml:space="preserve"><value>¿Qué merma o rendimiento he previsto?</value></data>
+  <data name="Composition.QChanges" xml:space="preserve"><value>¿Ha cambiado la composición anterior?</value></data>
+  <data name="Composition.FirstVersion" xml:space="preserve"><value>Primera versión; no existe una anterior para comparar.</value></data>
+  <data name="Composition.SameComposition" xml:space="preserve"><value>Mismas cantidades, componentes, modelo y tamaño de lote que la versión anterior.</value></data>
+  <data name="Composition.ChangedComposition" xml:space="preserve"><value>Han cambiado componentes, cantidades, modelo o lote. Puedes abrir la versión anterior para comparar:</value></data>
+  <data name="Composition.RemoveItem" xml:space="preserve"><value>Quitar elemento nuevo</value></data>
+  <data name="Composition.DeactivateHelp" xml:space="preserve"><value>Los elementos guardados se conservan. Desmarca Activo para desactivarlos.</value></data>
+  <data name="Composition.Saving" xml:space="preserve"><value>Guardando y comprobando el archivo…</value></data>
+  <data name="Composition.NoBatches" xml:space="preserve"><value>Esta versión no utiliza componentes por lote. Revisa el detalle de los semielaborados, si los hay.</value></data>
+</root>

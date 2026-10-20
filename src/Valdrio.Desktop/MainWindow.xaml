@@ -147,6 +147,7 @@
         <Button Grid.Column="1" x:Name="RatesStep" Click="ChooseRates" Style="{StaticResource NavigationStepButton}"/>
        </Grid>
        <Button x:Name="AuxiliaryStep" Click="OpenAuxiliary" Style="{StaticResource NavigationStepButton}" Margin="38,2,2,10"/>
+       <Button x:Name="CompositionStep" Click="OpenCompositions" Style="{StaticResource NavigationStepButton}" Margin="38,2,2,10"/>
       </StackPanel>
      </Expander>
      <Border BorderBrush="{DynamicResource Accent.ActiveGreen}" BorderThickness="0,1,0,0" Margin="16,16,16,8" />

@@ -237,6 +237,18 @@ public partial class App : System.Windows.Application
                     {
                         try
                         {
+                        if (e.Args.Contains("--composition-view-checks-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("Composition view checks require a prepared copy.");
+                            await window.RunCompositionViewChecks(captureDirectory, requestedPath);
+                            Shutdown(0); return;
+                        }
+                        if (e.Args.Contains("--composition-checks-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("Composition checks require an AURORA source.");
+                            await window.RunCompositionChecks(captureDirectory, requestedPath);
+                            Shutdown(0); return;
+                        }
                         if (e.Args.Contains("--aurora-load-checks-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("AURORA checks require a disposable company.");
