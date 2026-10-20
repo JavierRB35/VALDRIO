@@ -144,7 +144,7 @@ Archivo: {8}</value></data>
   <data name="CompanyUpgradeNoticeTitle" xml:space="preserve"><value>Este proyecto necesita actualizarse</value></data>
   <data name="CompanyOpenFailureTitle" xml:space="preserve"><value>No se ha podido abrir el proyecto</value></data>
   <data name="CompanyUpgrade" xml:space="preserve"><value>Abrir y actualizar un archivo antiguo en una copia nueva</value></data>
-  <data name="File.UpgradeRequired" xml:space="preserve"><value>Este archivo anterior requiere actualización a un archivo nuevo. Seleccione Actualizar y conserve el original.</value></data>
+  <data name="File.UpgradeRequired" xml:space="preserve"><value>Este proyecto utiliza un formato anterior. ¿Quieres actualizarlo ahora y guardarlo en una copia nueva? El archivo original no se modificará.</value></data>
   <data name="File.UpgradeNotRequired" xml:space="preserve"><value>El archivo ya tiene la versión actual; no se ha actualizado.</value></data>
   <data name="File.MigrationLocked" xml:space="preserve"><value>El origen contiene un bloqueo de migración activo o antiguo. Consérvelo y revise su procedencia antes de recuperarlo.</value></data>
   <data name="Model.PolicyInvalid" xml:space="preserve"><value>Una referencia de política está incompleta o no es válida.</value></data>
