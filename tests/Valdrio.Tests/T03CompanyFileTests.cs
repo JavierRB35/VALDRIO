@@ -36,6 +36,56 @@ public sealed class T03CompanyFileTests
     [TestInitialize] public void Init() { directory = Path.Combine(Path.GetTempPath(), "valdrio-t03-" + Guid.NewGuid()); Directory.CreateDirectory(directory); }
     [TestCleanup] public void Clean() => Directory.Delete(directory, true);
 
+    [TestMethod]
+    public void RepeatedReadsStillRejectSameLengthTamperingWithRestoredTimestamp()
+    {
+        using var session = Service().Create(Command());
+        _ = session.Read();
+        _ = session.Models.ReadModels();
+        var stamp = File.GetLastWriteTimeUtc(PathOf());
+        var length = new FileInfo(PathOf()).Length;
+        Sql(PathOf(), "UPDATE Companies SET Name=replace(Name,'00123','00999')");
+        File.SetLastWriteTimeUtc(PathOf(), stamp);
+        Assert.AreEqual(length, new FileInfo(PathOf()).Length);
+        Assert.ThrowsExactly<CompanyFileException>(() => session.Read());
+        Assert.ThrowsExactly<CompanyFileException>(() => session.Models.ReadModels());
+    }
+
+    [TestMethod]
+    public void RepeatedReadsSeeCommittedUnitsAndRejectChangesOutsideCompanyRevision()
+    {
+        using var session = Service().Create(Command());
+        var first = session.Read();
+        session.AddUnits([Unit("hours")], first.Revision, "test");
+        Assert.AreEqual("hours", session.Read().Units.Single().Code);
+        var center = session.Models.CreateCenter(new(first.Id, "MEC", "Mecanizado", "test"));
+        Assert.AreEqual(center.Id, session.Models.ReadCenters().Single().Id);
+        _ = session.Read();
+        // Alter an aggregate whose edits do not increment the company revision.
+        Sql(PathOf(), "UPDATE PhysicalCenters SET Name='altered'");
+        Assert.ThrowsExactly<CompanyFileException>(() => session.Read());
+    }
+
+    [TestMethod]
+    public void RepeatedReadsRejectWalTamperingAndHonorCancellation()
+    {
+        using (var created = Service().Create(Command())) _ = created.Read();
+        using var connection = new SqliteConnection("Data Source=" + PathOf() + ";Pooling=False");
+        connection.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = "PRAGMA journal_mode=WAL; PRAGMA wal_autocheckpoint=0;";
+        command.ExecuteNonQuery();
+        using var reader = Service().Open(PathOf(), CompanyFileOpenMode.ReadOnly);
+        _ = reader.Read();
+        command.CommandText = "UPDATE Companies SET Name='tampered in WAL'";
+        command.ExecuteNonQuery();
+        Assert.IsTrue(File.Exists(PathOf() + "-wal"));
+        Assert.ThrowsExactly<CompanyFileException>(() => reader.Read());
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        Assert.ThrowsExactly<OperationCanceledException>(() => reader.Read(cancellation.Token));
+    }
+
     [TestMethod] public void F01_CreateReopenRetainsIdentityPolicyUnitsAndAudit()
     {
         var service = Service(); CompanyFileSnapshot original;

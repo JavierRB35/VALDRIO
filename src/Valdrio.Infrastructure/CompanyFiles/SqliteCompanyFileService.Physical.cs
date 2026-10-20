@@ -107,7 +107,7 @@ public sealed partial class SqliteCompanyFileService
                 if (write && Mode != CompanyFileOpenMode.Edit) throw Error("FILE_READ_ONLY", "File.ReadOnly");
                 return Guard(() =>
                 {
-                    var file = Validate(Path, token);
+                    var file = write ? Validate(Path, token) : ReadValidated(token);
                     token.ThrowIfCancellationRequested();
                     using var connection = Connect(Path, write ? SqliteOpenMode.ReadWrite : SqliteOpenMode.ReadOnly);
                     using var db = new PhysicalDbContext(connection);

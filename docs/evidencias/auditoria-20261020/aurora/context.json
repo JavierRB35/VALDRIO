@@ -1,0 +1,57 @@
+{
+  "ProjectName": "AURORA Industrial y Servicios \u00B7 EMPRESA FICTICIA",
+  "StudyName": "01 \u00B7 Industrial completo y reparto rec\u00EDproco",
+  "StudyPeriod": "1/10/2026 \u2013 31/10/2026",
+  "nodes": [
+    {
+      "Code": "MEC",
+      "Role": 0
+    },
+    {
+      "Code": "MON",
+      "Role": 0
+    },
+    {
+      "Code": "ADM",
+      "Role": 1
+    },
+    {
+      "Code": "ENV",
+      "Role": 0
+    },
+    {
+      "Code": "MAN",
+      "Role": 1
+    }
+  ],
+  "rows": [
+    {
+      "Node": "Administraci\u00F3n \u00B7 ADM",
+      "NormalText": "",
+      "RealText": ""
+    },
+    {
+      "Node": "Envasado \u00B7 ENV",
+      "NormalText": "100",
+      "RealText": "50"
+    },
+    {
+      "Node": "Mantenimiento \u00B7 MAN",
+      "NormalText": "",
+      "RealText": ""
+    },
+    {
+      "Node": "Mecanizado \u00B7 MEC",
+      "NormalText": "100",
+      "RealText": "60"
+    },
+    {
+      "Node": "Montaje \u00B7 MON",
+      "NormalText": "100",
+      "RealText": "80"
+    }
+  ],
+  "effective": "3.475,00 EUR",
+  "final": "3.250,00 EUR",
+  "reconciliation": "Sin diferencias"
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "file": "AURORA_Industrial_y_Servicios.valdrio",
+    "copy": "../entregables/AURORA-final/AURORA_Industrial_y_Servicios.valdrio",
+    "sha256": "756977CF952456620CEEB657B1A836A2C2668746C6CB42B3746282F4B794DE7F",
+    "bytes": 15802368
+  },
+  {
+    "file": "aurora.valdrio",
+    "copy": "artifacts/aurora-baseline/aurora.valdrio",
+    "sha256": "756977CF952456620CEEB657B1A836A2C2668746C6CB42B3746282F4B794DE7F",
+    "bytes": 15802368
+  },
+  {
+    "file": "aurora.valdrio",
+    "copy": "artifacts/aurora-after/aurora.valdrio",
+    "sha256": "756977CF952456620CEEB657B1A836A2C2668746C6CB42B3746282F4B794DE7F",
+    "bytes": 15802368
+  }
+]

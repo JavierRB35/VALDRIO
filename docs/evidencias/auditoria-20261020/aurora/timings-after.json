@@ -1,0 +1,562 @@
+[
+  {
+    "operation": "company-open",
+    "iteration": 0,
+    "milliseconds": 11166.0556
+  },
+  {
+    "operation": "study-load",
+    "iteration": 0,
+    "milliseconds": 1098.4419
+  },
+  {
+    "operation": "navigation-prepare-1",
+    "iteration": 0,
+    "milliseconds": 249.5639
+  },
+  {
+    "operation": "navigation-render-1",
+    "iteration": 0,
+    "milliseconds": 1.4503
+  },
+  {
+    "operation": "navigation-prepare-2",
+    "iteration": 0,
+    "milliseconds": 1142.5396
+  },
+  {
+    "operation": "navigation-render-2",
+    "iteration": 0,
+    "milliseconds": 0.0796
+  },
+  {
+    "operation": "navigation-prepare-4",
+    "iteration": 0,
+    "milliseconds": 428.6648
+  },
+  {
+    "operation": "navigation-render-4",
+    "iteration": 0,
+    "milliseconds": 0.0641
+  },
+  {
+    "operation": "navigation-prepare-5",
+    "iteration": 0,
+    "milliseconds": 374.2144
+  },
+  {
+    "operation": "navigation-render-5",
+    "iteration": 0,
+    "milliseconds": 272.8604
+  },
+  {
+    "operation": "navigation-prepare-7",
+    "iteration": 0,
+    "milliseconds": 1043.9794
+  },
+  {
+    "operation": "navigation-render-7",
+    "iteration": 0,
+    "milliseconds": 481.1145
+  },
+  {
+    "operation": "navigation-prepare-8",
+    "iteration": 0,
+    "milliseconds": 735.9533
+  },
+  {
+    "operation": "navigation-render-8",
+    "iteration": 0,
+    "milliseconds": 0.0865
+  },
+  {
+    "operation": "activity-prepare",
+    "iteration": 0,
+    "milliseconds": 436.1717
+  },
+  {
+    "operation": "activity-render",
+    "iteration": 0,
+    "milliseconds": 78.5932
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 0,
+    "milliseconds": 193.8263
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 1,
+    "milliseconds": 127.3594
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 2,
+    "milliseconds": 113.1792
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 3,
+    "milliseconds": 96.5929
+  },
+  {
+    "operation": "rates-prepare",
+    "iteration": 0,
+    "milliseconds": 538.3284
+  },
+  {
+    "operation": "rates-render",
+    "iteration": 0,
+    "milliseconds": 164.8245
+  },
+  {
+    "operation": "auxiliary-prepare",
+    "iteration": 0,
+    "milliseconds": 459.444
+  },
+  {
+    "operation": "auxiliary-render",
+    "iteration": 0,
+    "milliseconds": 154.8711
+  },
+  {
+    "operation": "navigation-prepare-1",
+    "iteration": 1,
+    "milliseconds": 228.4882
+  },
+  {
+    "operation": "navigation-render-1",
+    "iteration": 1,
+    "milliseconds": 0.0765
+  },
+  {
+    "operation": "navigation-prepare-2",
+    "iteration": 1,
+    "milliseconds": 887.1419
+  },
+  {
+    "operation": "navigation-render-2",
+    "iteration": 1,
+    "milliseconds": 0.0608
+  },
+  {
+    "operation": "navigation-prepare-4",
+    "iteration": 1,
+    "milliseconds": 4.1302
+  },
+  {
+    "operation": "navigation-render-4",
+    "iteration": 1,
+    "milliseconds": 48.9697
+  },
+  {
+    "operation": "navigation-prepare-5",
+    "iteration": 1,
+    "milliseconds": 646.6102
+  },
+  {
+    "operation": "navigation-render-5",
+    "iteration": 1,
+    "milliseconds": 594.7048
+  },
+  {
+    "operation": "navigation-prepare-7",
+    "iteration": 1,
+    "milliseconds": 675.9311
+  },
+  {
+    "operation": "navigation-render-7",
+    "iteration": 1,
+    "milliseconds": 603.5432
+  },
+  {
+    "operation": "navigation-prepare-8",
+    "iteration": 1,
+    "milliseconds": 617.6808
+  },
+  {
+    "operation": "navigation-render-8",
+    "iteration": 1,
+    "milliseconds": 0.0891
+  },
+  {
+    "operation": "activity-prepare",
+    "iteration": 1,
+    "milliseconds": 374.9606
+  },
+  {
+    "operation": "activity-render",
+    "iteration": 1,
+    "milliseconds": 98.0736
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 4,
+    "milliseconds": 92.3158
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 5,
+    "milliseconds": 89.4082
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 6,
+    "milliseconds": 125.1397
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 7,
+    "milliseconds": 107.4163
+  },
+  {
+    "operation": "rates-prepare",
+    "iteration": 1,
+    "milliseconds": 463.7484
+  },
+  {
+    "operation": "rates-render",
+    "iteration": 1,
+    "milliseconds": 189.5073
+  },
+  {
+    "operation": "auxiliary-prepare",
+    "iteration": 1,
+    "milliseconds": 462.9365
+  },
+  {
+    "operation": "auxiliary-render",
+    "iteration": 1,
+    "milliseconds": 152.8922
+  },
+  {
+    "operation": "navigation-prepare-1",
+    "iteration": 2,
+    "milliseconds": 217.9199
+  },
+  {
+    "operation": "navigation-render-1",
+    "iteration": 2,
+    "milliseconds": 0.0829
+  },
+  {
+    "operation": "navigation-prepare-2",
+    "iteration": 2,
+    "milliseconds": 885.9778
+  },
+  {
+    "operation": "navigation-render-2",
+    "iteration": 2,
+    "milliseconds": 0.0945
+  },
+  {
+    "operation": "navigation-prepare-4",
+    "iteration": 2,
+    "milliseconds": 3.9295
+  },
+  {
+    "operation": "navigation-render-4",
+    "iteration": 2,
+    "milliseconds": 8.2561
+  },
+  {
+    "operation": "navigation-prepare-5",
+    "iteration": 2,
+    "milliseconds": 598.8139
+  },
+  {
+    "operation": "navigation-render-5",
+    "iteration": 2,
+    "milliseconds": 609.4079
+  },
+  {
+    "operation": "navigation-prepare-7",
+    "iteration": 2,
+    "milliseconds": 589.2509
+  },
+  {
+    "operation": "navigation-render-7",
+    "iteration": 2,
+    "milliseconds": 472.9892
+  },
+  {
+    "operation": "navigation-prepare-8",
+    "iteration": 2,
+    "milliseconds": 597.4059
+  },
+  {
+    "operation": "navigation-render-8",
+    "iteration": 2,
+    "milliseconds": 0.0615
+  },
+  {
+    "operation": "activity-prepare",
+    "iteration": 2,
+    "milliseconds": 366.0472
+  },
+  {
+    "operation": "activity-render",
+    "iteration": 2,
+    "milliseconds": 78.2924
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 8,
+    "milliseconds": 64.0722
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 9,
+    "milliseconds": 87.3672
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 10,
+    "milliseconds": 123.3619
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 11,
+    "milliseconds": 100.9198
+  },
+  {
+    "operation": "rates-prepare",
+    "iteration": 2,
+    "milliseconds": 473.7294
+  },
+  {
+    "operation": "rates-render",
+    "iteration": 2,
+    "milliseconds": 110.6894
+  },
+  {
+    "operation": "auxiliary-prepare",
+    "iteration": 2,
+    "milliseconds": 467.4191
+  },
+  {
+    "operation": "auxiliary-render",
+    "iteration": 2,
+    "milliseconds": 112.432
+  },
+  {
+    "operation": "navigation-prepare-1",
+    "iteration": 3,
+    "milliseconds": 247.1384
+  },
+  {
+    "operation": "navigation-render-1",
+    "iteration": 3,
+    "milliseconds": 0.0694
+  },
+  {
+    "operation": "navigation-prepare-2",
+    "iteration": 3,
+    "milliseconds": 912.1829
+  },
+  {
+    "operation": "navigation-render-2",
+    "iteration": 3,
+    "milliseconds": 0.0825
+  },
+  {
+    "operation": "navigation-prepare-4",
+    "iteration": 3,
+    "milliseconds": 3.101
+  },
+  {
+    "operation": "navigation-render-4",
+    "iteration": 3,
+    "milliseconds": 6.9963
+  },
+  {
+    "operation": "navigation-prepare-5",
+    "iteration": 3,
+    "milliseconds": 453.854
+  },
+  {
+    "operation": "navigation-render-5",
+    "iteration": 3,
+    "milliseconds": 364.4949
+  },
+  {
+    "operation": "navigation-prepare-7",
+    "iteration": 3,
+    "milliseconds": 455.0618
+  },
+  {
+    "operation": "navigation-render-7",
+    "iteration": 3,
+    "milliseconds": 341.6708
+  },
+  {
+    "operation": "navigation-prepare-8",
+    "iteration": 3,
+    "milliseconds": 607.7619
+  },
+  {
+    "operation": "navigation-render-8",
+    "iteration": 3,
+    "milliseconds": 0.0555
+  },
+  {
+    "operation": "activity-prepare",
+    "iteration": 3,
+    "milliseconds": 392.7824
+  },
+  {
+    "operation": "activity-render",
+    "iteration": 3,
+    "milliseconds": 69.4044
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 12,
+    "milliseconds": 96.0996
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 13,
+    "milliseconds": 63.2671
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 14,
+    "milliseconds": 49.9978
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 15,
+    "milliseconds": 96.2785
+  },
+  {
+    "operation": "rates-prepare",
+    "iteration": 3,
+    "milliseconds": 481.2037
+  },
+  {
+    "operation": "rates-render",
+    "iteration": 3,
+    "milliseconds": 99.2403
+  },
+  {
+    "operation": "auxiliary-prepare",
+    "iteration": 3,
+    "milliseconds": 464.3692
+  },
+  {
+    "operation": "auxiliary-render",
+    "iteration": 3,
+    "milliseconds": 107.5408
+  },
+  {
+    "operation": "navigation-prepare-1",
+    "iteration": 4,
+    "milliseconds": 241.6431
+  },
+  {
+    "operation": "navigation-render-1",
+    "iteration": 4,
+    "milliseconds": 0.055
+  },
+  {
+    "operation": "navigation-prepare-2",
+    "iteration": 4,
+    "milliseconds": 1013.3859
+  },
+  {
+    "operation": "navigation-render-2",
+    "iteration": 4,
+    "milliseconds": 0.082
+  },
+  {
+    "operation": "navigation-prepare-4",
+    "iteration": 4,
+    "milliseconds": 2.7186
+  },
+  {
+    "operation": "navigation-render-4",
+    "iteration": 4,
+    "milliseconds": 6.3525
+  },
+  {
+    "operation": "navigation-prepare-5",
+    "iteration": 4,
+    "milliseconds": 430.3859
+  },
+  {
+    "operation": "navigation-render-5",
+    "iteration": 4,
+    "milliseconds": 360.588
+  },
+  {
+    "operation": "navigation-prepare-7",
+    "iteration": 4,
+    "milliseconds": 421.4868
+  },
+  {
+    "operation": "navigation-render-7",
+    "iteration": 4,
+    "milliseconds": 347.8055
+  },
+  {
+    "operation": "navigation-prepare-8",
+    "iteration": 4,
+    "milliseconds": 533.3318
+  },
+  {
+    "operation": "navigation-render-8",
+    "iteration": 4,
+    "milliseconds": 0.058
+  },
+  {
+    "operation": "activity-prepare",
+    "iteration": 4,
+    "milliseconds": 371.5526
+  },
+  {
+    "operation": "activity-render",
+    "iteration": 4,
+    "milliseconds": 62.0483
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 16,
+    "milliseconds": 55.9089
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 17,
+    "milliseconds": 60.6019
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 18,
+    "milliseconds": 104.7649
+  },
+  {
+    "operation": "calculator-click-to-ready",
+    "iteration": 19,
+    "milliseconds": 50.2156
+  },
+  {
+    "operation": "rates-prepare",
+    "iteration": 4,
+    "milliseconds": 495.5187
+  },
+  {
+    "operation": "rates-render",
+    "iteration": 4,
+    "milliseconds": 103.4298
+  },
+  {
+    "operation": "auxiliary-prepare",
+    "iteration": 4,
+    "milliseconds": 459.8345
+  },
+  {
+    "operation": "auxiliary-render",
+    "iteration": 4,
+    "milliseconds": 98.1229
+  }
+]

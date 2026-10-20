@@ -1,0 +1,1 @@
+AURORA: 5 screen passes; 20 real calculator clicks; no writes requested.

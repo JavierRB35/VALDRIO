@@ -98,14 +98,22 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
             var target = Normalize(path);
             if (!File.Exists(target)) throw Error("FILE_NOT_FOUND", "File.NotFound");
             // Never acquire a write connection or migrate an incompatible file.
-            Validate(target, cancellationToken);
-            if (mode == CompanyFileOpenMode.ReadOnly) return new Session(this, target, mode, null);
-            using var reservation = Acquire(target, cancellationToken);
-            Validate(target, cancellationToken);
-            using (var connection = Connect(target, SqliteOpenMode.ReadOnly))
-                if (!string.Equals(Scalar(connection, "PRAGMA journal_mode;"), "delete", StringComparison.OrdinalIgnoreCase))
-                    throw Error("FILE_JOURNAL_UNSUPPORTED", "File.JournalUnsupported");
-            return new Session(this, target, mode, reservation.Detach());
+            var session = new Session(this, target, mode, null);
+            try
+            {
+                session.Read(cancellationToken);
+                if (mode == CompanyFileOpenMode.ReadOnly) return session;
+                using var reservation = Acquire(target, cancellationToken);
+                // Recheck after acquiring the edit lock. A byte-identical file may
+                // reuse the validation above; any intervening change is validated.
+                session.Read(cancellationToken);
+                using (var connection = Connect(target, SqliteOpenMode.ReadOnly))
+                    if (!string.Equals(Scalar(connection, "PRAGMA journal_mode;"), "delete", StringComparison.OrdinalIgnoreCase))
+                        throw Error("FILE_JOURNAL_UNSUPPORTED", "File.JournalUnsupported");
+                session.AttachEditLock(reservation.Detach());
+                return session;
+            }
+            catch { session.Dispose(); throw; }
         });
 
     public ICompanyFileSession Restore(string source, string destination, CancellationToken cancellationToken = default) => Guard(() =>
@@ -324,6 +332,7 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
     {
         private readonly object gate = new();
         private bool disposed;
+        internal void AttachEditLock(FileStream value) => editLock = value;
         public IModelWorkspace Models => this;
         public IStudyWorkspace Studies => this;
         public IResourceWorkspace Resources => this;
@@ -333,7 +342,7 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
         public string Path { get; } = path;
         public CompanyFileOpenMode Mode { get; } = mode;
         public CompanyFileSnapshot Read(CancellationToken cancellationToken = default)
-        { lock (gate) { ObjectDisposedException.ThrowIf(disposed, this); return Guard(() => Validate(Path, cancellationToken)); } }
+        { lock (gate) { ObjectDisposedException.ThrowIf(disposed, this); return Guard(() => ReadValidated(cancellationToken)); } }
 
         public CompanyFileSnapshot AddUnits(IEnumerable<UnitDefinition> units, long expectedRevision, string actor,
             CancellationToken cancellationToken = default)

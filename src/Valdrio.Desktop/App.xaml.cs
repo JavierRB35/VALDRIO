@@ -237,6 +237,12 @@ public partial class App : System.Windows.Application
                     {
                         try
                         {
+                        if (e.Args.Contains("--aurora-load-checks-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("AURORA checks require a disposable company.");
+                            await window.RunAuroraLoadChecks(captureDirectory, requestedPath);
+                            Shutdown(0); return;
+                        }
                         if (e.Args.Contains("--performance-checks-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("Performance checks require a disposable company.");

@@ -2,6 +2,15 @@
 
 ## Estado y alcance comprobado
 
+**Ampliación con el archivo solicitado por el propietario:**
+[prueba AURORA](AURORA.md) y [tabla de tiempos](aurora/TIEMPOS.md).
+Se detectó y corrigió la repetición de validaciones integrales con el archivo
+de 26 análisis: actividad pasa de 14,13 a 0,46 s; tarifas de 14,39 a 0,60 s;
+auxiliares de 9,79 a 0,58 s de mediana. La primera apertura pasa de 35,67 a
+11,17 s. Se conserva el contenido del archivo y los resultados económicos.
+Los apartados siguientes documentan la primera fase y sus mediciones con
+el ejemplo pequeño; la ampliación aporta la evidencia representativa.
+
 Base: `main` de GitHub, SHA `246284c9ecd69fe66edc200d152f7776bc6de3b1`,
 contrastado con `git ls-remote`. Rama local:
 `fix/integrated-workspace-performance-20261020`.
@@ -14,8 +23,8 @@ el proyecto sintético disponible y falta la aceptación interactiva de todos
 los avisos de descarte. No equiparar los resultados de un ejemplo pequeño
 con los de un proyecto real de gran volumen.
 
-No se han ejecutado workflows, enviado cambios a GitHub ni modificado
-facturación. Gasto provocado en GitHub Actions: **0 USD**.
+No se han ejecutado workflows ni modificado facturación.
+Gasto provocado en GitHub Actions: **0 USD**.
 Los archivos sincronizados de `sources/` permanecen sin cambios.
 
 ## Diagnóstico técnico y correcciones

@@ -29,7 +29,7 @@ public partial class PhysicalCapacityAssistantWindow : IntegratedWorkspaceWindow
     private void Adopt(object sender, RoutedEventArgs e)
     {
         editor.Adopt();
-        if (editor.Adopted) { DialogResult = true; Close(); }
+        if (editor.Adopted) DialogResult = true;
     }
-    private void Cancel(object sender, RoutedEventArgs e) { DialogResult = false; Close(); }
+    private void Cancel(object sender, RoutedEventArgs e) => DialogResult = false;
 }

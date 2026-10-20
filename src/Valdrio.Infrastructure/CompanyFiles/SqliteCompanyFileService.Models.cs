@@ -90,7 +90,7 @@ public sealed partial class SqliteCompanyFileService
                     throw Error("FILE_READ_ONLY", "File.ReadOnly");
                 return Guard(() =>
                 {
-                    var file = Validate(Path, token);
+                    var file = write ? Validate(Path, token) : ReadValidated(token);
                     using var connection = Connect(Path, write ? Microsoft.Data.Sqlite.SqliteOpenMode.ReadWrite : Microsoft.Data.Sqlite.SqliteOpenMode.ReadOnly);
                     using var db = new RunDbContext(connection);
                     using var tx = db.Database.BeginTransaction();
