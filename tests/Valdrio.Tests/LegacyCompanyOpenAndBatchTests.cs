@@ -98,12 +98,18 @@ public sealed partial class T06ImportConfirmationTests
         using var vm = new CompanyFileViewModel(Service(), dialogs, Catalog, new UiTextCatalog(), preferences,
             new PresentationFormatter(new DisplayTimeZoneResolver()));
 
-        Task? upgrade = null;
-        vm.OpenFailure = _ => upgrade = vm.UpgradeCommand.ExecuteAsync(null);
+        var warningShown = false;
+        vm.OpenFailure = _ =>
+        {
+            warningShown = true;
+            // Use the same ICommand path as the confirmation button.
+            vm.UpgradeCommand.Execute(null);
+        };
 
         await vm.OpenPath(older);
-        Assert.IsNotNull(upgrade, "Opening the previous-format file should offer a direct upgrade.");
-        await upgrade;
+        Assert.IsTrue(warningShown, "Opening the previous-format file should offer a direct upgrade.");
+        Assert.IsNotNull(vm.UpgradeCommand.ExecutionTask, "The confirmation must start the upgrade command.");
+        await vm.UpgradeCommand.ExecutionTask!;
 
         Assert.IsNotNull(vm.Snapshot, vm.Status);
         Assert.AreEqual(destination, vm.ActivePath);
