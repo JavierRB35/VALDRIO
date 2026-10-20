@@ -76,8 +76,13 @@ public partial class MainWindow
     {
         if (viewModel is not { } vm) return;
         UpdatePresentationLabels();
-        AuxiliaryStep.Content = new Valdrio.Localization.UiTextCatalog().Get("Aux.Title", vm.Studies!.PhysicalUiCulture);
-        AuxiliaryStep.IsEnabled = vm.Studies.CanOpenPhysical;
+        var menuTexts = new Valdrio.Localization.UiTextCatalog();
+        string Menu(string key) => menuTexts.Get("Menu." + key, vm.Studies!.PhysicalUiCulture);
+        AuxiliaryStep.Content = Menu("Auxiliary");
+        AllocationMenuGroup.Text = Menu("Allocations");
+        CapacityMenuGroup.Text = Menu("Capacity");
+        ResultsMenuGroup.Text = Menu("Results");
+        AuxiliaryStep.IsEnabled = vm.Studies!.CanOpenPhysical;
         CompositionStep.Content = new Valdrio.Localization.UiTextCatalog().Get("Composition.Title", vm.Studies.PhysicalUiCulture);
         CompositionStep.IsEnabled = vm.Studies.CanOpenPhysical;
         CompositionStep.Tag = workspacePages.LastOrDefault() is CompositionWindow ? "Active" : null;
@@ -85,7 +90,7 @@ public partial class MainWindow
         NavigationGroupLabel.Text = vm.Guide("WorkspaceNavigation");
         ProjectPhase.Header = vm.Guide("PhaseProjectStructure");
         AnalysisPhase.Header = vm.Guide("PhaseAnalysisData");
-        AllocationPhase.Header = vm.Guide("PhaseAllocations");
+        AllocationPhase.Header = Menu("Calculation");
         ShowNavigationPhase(workflowStep);
         var keys = new[] { "Company", "Model", "Study", "Import", "Resources", "Allocations", "Settings", "SecondaryAllocations", "CostFlows", "PhysicalActivity", "Rates" };
         Button[] buttons = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, AllocationsStep, SettingsStep, SecondaryStep, CostFlowStep, PhysicalStep, RatesStep];
@@ -105,6 +110,9 @@ public partial class MainWindow
                 buttons[i].FontWeight = i == workflowStep
                     ? FontWeights.Bold : FontWeights.Normal;
         }
+        CostFlowStep.Content = Menu("CostFlows");
+        AuxiliaryStep.ToolTip = AuxiliaryStep.IsEnabled ? Menu("AuxiliaryHelp") : Menu("NeedStudy");
+        CompositionStep.ToolTip = CompositionStep.IsEnabled ? Menu("CompositionHelp") : Menu("NeedStudy");
         Border[] markers = [CompanyStepMarker, ModelStepMarker, StudyStepMarker,
             ImportStepMarker, ResourcesStepMarker, AllocationsStepMarker, SecondaryStepMarker, CostFlowStepMarker, PhysicalStepMarker, RatesStepMarker];
         int[] markerSteps = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10];
