@@ -2029,4 +2029,13 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
   <data name="Composition.DeactivateHelp" xml:space="preserve"><value>Los elementos guardados se conservan. Desmarca Activo para desactivarlos.</value></data>
   <data name="Composition.Saving" xml:space="preserve"><value>Guardando y comprobando el archivo…</value></data>
   <data name="Composition.NoBatches" xml:space="preserve"><value>Esta versión no utiliza componentes por lote. Revisa el detalle de los semielaborados, si los hay.</value></data>
+  <data name="Menu.Calculation" xml:space="preserve"><value>Cálculo de costes</value></data>
+  <data name="Menu.Allocations" xml:space="preserve"><value>REPARTOS</value></data>
+  <data name="Menu.Capacity" xml:space="preserve"><value>CAPACIDAD Y TARIFAS</value></data>
+  <data name="Menu.Results" xml:space="preserve"><value>COMPOSICIONES Y RESULTADOS</value></data>
+  <data name="Menu.Auxiliary" xml:space="preserve"><value>Servicios auxiliares</value></data>
+  <data name="Menu.CostFlows" xml:space="preserve"><value>Resultados y trazabilidad</value></data>
+  <data name="Menu.AuxiliaryHelp" xml:space="preserve"><value>Capacidad de auxiliares y servicios prestados a otros centros.</value></data>
+  <data name="Menu.CompositionHelp" xml:space="preserve"><value>Materiales, versiones de composición y cantidades necesarias para productos y servicios.</value></data>
+  <data name="Menu.NeedStudy" xml:space="preserve"><value>Selecciona un análisis guardado y resuelve los cambios pendientes para abrir esta pantalla.</value></data>
 </root>

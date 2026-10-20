@@ -2029,4 +2029,13 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Composition.DeactivateHelp" xml:space="preserve"><value>Saved items are preserved. Clear Active to deactivate them.</value></data>
   <data name="Composition.Saving" xml:space="preserve"><value>Saving and checking the file…</value></data>
   <data name="Composition.NoBatches" xml:space="preserve"><value>This version has no per-batch components. Check semi-finished item details, if any.</value></data>
+  <data name="Menu.Calculation" xml:space="preserve"><value>Cost calculation</value></data>
+  <data name="Menu.Allocations" xml:space="preserve"><value>ALLOCATIONS</value></data>
+  <data name="Menu.Capacity" xml:space="preserve"><value>CAPACITY AND RATES</value></data>
+  <data name="Menu.Results" xml:space="preserve"><value>COMPOSITIONS AND RESULTS</value></data>
+  <data name="Menu.Auxiliary" xml:space="preserve"><value>Auxiliary services</value></data>
+  <data name="Menu.CostFlows" xml:space="preserve"><value>Results and traceability</value></data>
+  <data name="Menu.AuxiliaryHelp" xml:space="preserve"><value>Auxiliary capacity and services provided to other centres.</value></data>
+  <data name="Menu.CompositionHelp" xml:space="preserve"><value>Materials, composition versions and quantities required for products and services.</value></data>
+  <data name="Menu.NeedStudy" xml:space="preserve"><value>Select a saved analysis and resolve pending changes to open this screen.</value></data>
 </root>
