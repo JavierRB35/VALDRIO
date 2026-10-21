@@ -41,7 +41,7 @@ public partial class MainWindow
             if (IsVisible && helpPreviousFocus is not null) Keyboard.Focus(helpPreviousFocus);
         };
         RefreshContextHelp(force: true);
-        contextHelpWindow.Show();
+        contextHelpWindow?.Show();
     }
 
     private void RefreshContextHelp(bool force = false)
@@ -66,10 +66,11 @@ public partial class MainWindow
         {
             var text = english ? "Help is not available in this installation."
                                : "La ayuda no está disponible en esta instalación.";
-            contextHelpWindow.Title = text;
             System.Diagnostics.Trace.TraceError("Context help unavailable: {0}", error);
-            MessageBox.Show(this, text, "VALDRIO", MessageBoxButton.OK, MessageBoxImage.Warning);
-            contextHelpWindow.Close();
+            contextHelpWindow.Present(new ContextHelpCatalog.Article(viewId,
+                "# " + text + "\n\n" + text + "\n", false), english);
+            shownHelpView = viewId;
+            shownHelpLanguage = language;
         }
     }
 }

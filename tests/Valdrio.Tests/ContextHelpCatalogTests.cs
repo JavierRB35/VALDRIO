@@ -43,15 +43,16 @@ public sealed class ContextHelpCatalogTests
     }
 
     [TestMethod]
-    public void EnglishFallback_IsExplicitAndNeverSilentlyReportedAsEnglish()
+    public void EnglishArticles_AreTranslatedAndDoNotRequireFallback()
     {
         var catalog = Open();
         foreach (var id in catalog.ViewIds)
         {
             var article = catalog.Load(id, "en");
             Assert.IsFalse(string.IsNullOrWhiteSpace(article.Markdown));
-            if (article.SpanishFallback)
-                StringAssert.Contains(article.Markdown, "## 1. Objetivo");
+            Assert.IsFalse(article.SpanishFallback, $"English missing for {id}");
+            StringAssert.Contains(article.Markdown, "## 1. Purpose");
+            StringAssert.Contains(article.Markdown, "## 4. Use cases");
         }
     }
 }

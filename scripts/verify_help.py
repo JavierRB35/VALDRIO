@@ -42,6 +42,17 @@ def run(base=None):
             issues.append("Faltan los 4 apartados: " + path)
         if content.count("|") < 12 or "[Campo]" in content:
             issues.append("Tabla incompleta o plantilla sin adaptar: " + path)
+        en_doc = ROOT / "docs/help/en" / v["file"]
+        if not en_doc.is_file():
+            issues.append("English help missing: " + str(en_doc.relative_to(ROOT)))
+        else:
+            english = en_doc.read_text(encoding="utf-8")
+            if any(header not in english for header in (
+                "## 1. Purpose and financial function", "## 2. Fields and inputs",
+                "## 3. Results and interpretation", "## 4. Use cases, validation and common errors")):
+                issues.append("English sections missing: " + str(en_doc.relative_to(ROOT)))
+            if english.count("|") < 12:
+                issues.append("English table incomplete: " + str(en_doc.relative_to(ROOT)))
         for source in v["uiSources"] + v["codeSources"]:
             if not (ROOT / source).is_file():
                 issues.append("Referencia a archivo inexistente: " + source)
@@ -64,6 +75,9 @@ def run(base=None):
                 if expected not in changed:
                     issues.append("Se modificó UI/VM sin actualizar ayuda: " + v["viewId"] +
                                   " (" + expected + ")")
+                english = "docs/help/en/" + v["file"]
+                if english not in changed:
+                    issues.append("UI/VM changed without English help revision: " + english)
     for issue in issues:
         print("ERROR:", issue, file=sys.stderr)
     if issues:
