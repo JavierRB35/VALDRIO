@@ -83,7 +83,7 @@ internal sealed class ContextHelpWindow : Window
     }
 
     private static Brush Brush(string key, Brush fallback) =>
-        Application.Current?.TryFindResource(key) as Brush ?? fallback;
+        System.Windows.Application.Current?.TryFindResource(key) as Brush ?? fallback;
 }
 
 /// <summary>Restricted Markdown renderer: headings, text, emphasis, lists and tables; no HTML or external execution.</summary>
@@ -204,5 +204,5 @@ internal static class ContextHelpMarkdown
     }
 
     private static Brush Resource(string key, Brush fallback) =>
-        Application.Current?.TryFindResource(key) as Brush ?? fallback;
+        System.Windows.Application.Current?.TryFindResource(key) as Brush ?? fallback;
 }
