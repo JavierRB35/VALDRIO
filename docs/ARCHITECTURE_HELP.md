@@ -19,7 +19,7 @@ Cada `.md` contiene exactamente un `ID Vista UI` único, fecha y cuatro seccione
 
 La ayuda se redacta sobre controles realmente presentes en XAML y su lógica verificada en ViewModel/servicio. No convertir planes R1–R4 en capacidades actuales. *Pendiente* no es `0`; borrador no es publicado; volumen bruto de auxiliares no es coste adicional; tarifa de gestión no es automáticamente valoración NIC 2.
 
-## Diseño de integración WPF (pendiente de desarrollo)
+## Diseño de integración WPF (implementación inicial en rama de desarrollo; aceptación pendiente)
 
 1. Crear `HelpRegistry` con las entradas estables de `help-map.json` y servicio `IContextHelpProvider.Get(viewId, culture)`. El ID depende de la operación lógica, no del nombre físico del panel. En `MainWindow.Guidance.cs` mantener la selección activa para los pasos `0,1,2,4,5,7,8,9,10,6`; la importación `3` tiene contenido propio en su ventana. Para los modales, asociar ID en el controlador de ventana.
 2. Empaquetar el contenido MD versionado **con el ejecutable** (p. ej. recursos embebidos o ficheros `Content` con copia controlada) y mostrar su SHA/versión de publicación cuando proceda. En producción no depender de HTTP/GitHub para leer ayuda, ni acceder al repositorio privado desde cliente.
@@ -27,7 +27,7 @@ La ayuda se redacta sobre controles realmente presentes en XAML y su lógica ver
 4. Renderizar Markdown mediante parser controlado y componentes WPF (p. ej. `FlowDocument`, tablas y enlaces permitidos), sin HTML/script arbitrario ni ejecución de código desde archivos. Mantener scroll, lectores de pantalla, ampliación, alto contraste y estilo VALDRIO.
 5. Internacionalización: estos primeros contenidos son ES; antes de aceptación bilingüe añadir `docs/help/en/` sincronizada y cargar por `UiLanguageTag`, con fallback indicado. La existencia de cadenas UI en inglés no supone que estas ayudas estén traducidas.
 
-**Situación real de esta entrega:** inventario y borradores Markdown + comprobación documental. **No** está integrado aún el lector/renderizador WPF ni se han ejecutado pruebas de escritorio en Windows. Por ello, los DoD de pantalla completa no están cumplidos todavía.
+**Estado actualizado de la fase de implementación:** el PR de integración WPF incorpora lector offline de Markdown, acceso mediante barra superior/F1, mapeo de vistas lógicas y 16 traducciones inglesas. Se preservan los tooltip y la microayuda existente. **Aún no hay compilación, ejecución de pruebas ni validación visual real en Windows sobre ese PR**: los criterios de aceptación final siguen abiertos hasta recibir evidencia local.
 
 ## Trazabilidad y cambios
 

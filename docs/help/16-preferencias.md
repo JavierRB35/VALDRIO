@@ -21,8 +21,10 @@ Configurar presentación de idioma, números, fechas y zona horaria de la aplica
 | Vista previa de formatos | Moneda, fecha e instante | Comprueba legibilidad regional. |
 | Estado de persistencia | Aviso o confirmación de preferencia | Indica si quedó guardada la configuración. |
 | Ayuda de campos | Tooltip, foco y texto accesible | Proporciona explicaciones breves en controles instrumentados. |
+| Ayuda de esta pantalla (F1) | Catálogo local versionado de vistas | Abre una guía de lectura independiente sin modificar el proyecto ni los cálculos. |
 
 ## 4. Casos de uso, validaciones y errores frecuentes
+- El botón **Ayuda (F1)** de la barra superior abre la ficha de la vista activa, también en asistentes integrados. Se puede cerrar con **Escape**.
 - Cambiar región de formato no convierte saldos de un estudio.
 - La zona horaria no altera fechas contables fijadas por el análisis.
 - Herramientas de desarrollo no deben confundirse con funciones comerciales de gestión.

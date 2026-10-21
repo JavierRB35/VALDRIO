@@ -18,6 +18,10 @@
     <PackageReference Include="MSTest.TestAdapter" />
     <PackageReference Include="MSTest.TestFramework" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
+    <Compile Include="../../src/Valdrio.Desktop/ContextHelpCatalog.cs" Link="Desktop/ContextHelpCatalog.cs" />
+    <Content Include="../../docs/help/help-map.json" Link="help/help-map.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../docs/help/*.md" Link="help/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../docs/help/en/*.md" Link="help/en/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="../../src/Valdrio.Desktop/PhysicalActivityEditor.cs" Link="Desktop/PhysicalActivityEditor.cs" />

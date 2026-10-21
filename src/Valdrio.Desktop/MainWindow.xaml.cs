@@ -12,6 +12,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         InitializeGuidance();
+        InitializeContextHelp();
         DataContextChanged += OnDataContextChanged;
     }
 
