@@ -34,6 +34,10 @@ public partial class MainWindow
         ContextDetailsButton.Content = vm.Guide(ContextDetails.Visibility == Visibility.Visible ? "HideContext" : "ShowContext");
         CompactTables.Content = vm.Guide("CompactTables");
         CompactTables.ToolTip = vm.Guide("CompactTablesHelp");
+        var english = vm.SelectedUiLanguageTag.StartsWith("en", StringComparison.OrdinalIgnoreCase);
+        ContextHelpButton.Content = english ? "Help (F1)" : "Ayuda (F1)";
+        ContextHelpButton.ToolTip = english ? "Help for this screen (F1)" : "Ayuda de esta pantalla (F1)";
+        AutomationProperties.SetName(ContextHelpButton, ContextHelpButton.ToolTip.ToString());
         AutomationProperties.SetName(ContextDetailsButton, ContextDetailsButton.Content.ToString());
         NavigationToggle.Content = vm.Guide("NavigationMenu");
         NavigationToggle.ToolTip = vm.Guide(Sidebar.Visibility == Visibility.Visible ? "HideNavigation" : "ShowNavigation");

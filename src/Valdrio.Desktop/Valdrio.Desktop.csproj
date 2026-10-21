@@ -30,4 +30,10 @@
     <Content Include="../../tests/Valdrio.Tests/Fixtures/t04-v2.json" Link="reference/t04-v2.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../../tests/Valdrio.Tests/Fixtures/t03-v1.json" Link="reference/t03-v1.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Offline help delivered with desktop binaries; no runtime GitHub dependency. -->
+    <Content Include="../../docs/help/help-map.json" Link="help/help-map.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../../docs/help/*.md" Link="help/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../../docs/help/en/*.md" Link="help/en/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

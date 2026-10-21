@@ -248,6 +248,7 @@ public partial class MainWindow
             }
         }
         else AuxiliaryStep.Tag = null;
+        RefreshContextHelp();
     }
     internal async Task NavigateWorkflow(int step)
     {
