@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VALDRIO contextual help manifest",
+  "description": "Manifest validation; required markdown sections are checked by scripts/verify_help.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "referenceCommit",
+    "updated",
+    "language",
+    "views"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "referenceCommit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date"
+    },
+    "language": {
+      "enum": [
+        "es"
+      ]
+    },
+    "views": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "viewId",
+          "file",
+          "uiSources",
+          "codeSources",
+          "trigger"
+        ],
+        "properties": {
+          "viewId": {
+            "type": "string",
+            "pattern": "^View_[A-Za-z]+$"
+          },
+          "file": {
+            "type": "string",
+            "pattern": "^[0-9]{2}-[a-z0-9-]+\\.md$"
+          },
+          "uiSources": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^src/Valdrio.Desktop/.+\\.xaml$"
+            }
+          },
+          "codeSources": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^src/Valdrio.Desktop/.+\\.cs$"
+            }
+          },
+          "trigger": {
+            "type": "string",
+            "minLength": 3
+          }
+        }
+      }
+    }
+  }
+}
