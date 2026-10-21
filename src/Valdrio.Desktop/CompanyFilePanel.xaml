@@ -120,7 +120,7 @@
      </Grid>
     </Expander>
     <Button x:Name="AddUnitButton" Content="{Binding AddUnitLabel}" Command="{Binding AddUnitCommand}" HorizontalAlignment="Left" TabIndex="23" FontWeight="SemiBold" Style="{StaticResource Button.Primary}"/>
-    <TextBlock x:Name="UnitActionStatus" Text="{Binding Status}" AutomationProperties.LiveSetting="Assertive" Margin="0,6,0,8"/>
+    <TextBlock x:Name="UnitActionStatus" Text="{Binding Status}" Style="{StaticResource Text.ContextualStatus}" AutomationProperties.LiveSetting="Assertive" Margin="0,6,0,8"/>
    </StackPanel>
   </StackPanel>
  </GroupBox>

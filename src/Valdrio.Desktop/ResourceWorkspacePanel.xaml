@@ -50,7 +50,7 @@
      </local:AdaptiveColumnsPanel>
      <TextBlock Text="{Binding [ActionHelp]}" Margin="0,4,0,6" TextWrapping="Wrap"/>
      <WrapPanel><Button Content="{Binding [Save]}" Command="{Binding SaveCommand}"/><Button Content="{Binding [Apply]}" Command="{Binding ApplyCommand}"/><Button Content="{Binding [Undo]}" Command="{Binding UndoCommand}"/><Button Content="{Binding [Duplicate]}" Command="{Binding DuplicateCommand}"/><Button Content="{Binding [Delete]}" Command="{Binding DeleteCommand}"/></WrapPanel>
-     <TextBlock Text="{Binding Feedback}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
+     <TextBlock Text="{Binding Feedback}" Style="{StaticResource Text.ContextualStatus}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
      <Border Background="{DynamicResource Surface.Subtle}" Padding="12" Visibility="{Binding HasPreview,Converter={StaticResource Visible}}"><StackPanel>
       <TextBlock Text="{Binding PreviewText}" AutomationProperties.LiveSetting="Polite"/>
       <WrapPanel><Button Content="{Binding [Confirm]}" Command="{Binding ConfirmCommand}" Style="{StaticResource Button.Primary}"/><Button Content="{Binding [Cancel]}" Command="{Binding CancelCommand}"/></WrapPanel>
