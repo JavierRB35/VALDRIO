@@ -28,3 +28,4 @@ Create or reopen an analysis for a defined accounting period, scenario and publi
 - Save the study and verify dates before importing amounts.
 - Closed analyses remain viewable until explicitly reopened.
 - Changing periods does not transfer prior amounts or physical hours automatically.
+- Validation failures when creating or saving an analysis are shown in red in the contextual status; once corrected, normal operation feedback resumes.

@@ -32,6 +32,8 @@ Crear o seleccionar un análisis ligado a una estructura publicada y a un perío
 - Un análisis cerrado es de consulta hasta su reapertura explícita.
 - Cambiar períodos no traslada automáticamente importaciones ni horas físicas de otro período.
 
+- Si falla la validación al crear o guardar un análisis, el mensaje contextual se destaca en rojo; tras corregirlo, el estado de operación vuelve a su presentación normal.
+
 ### Referencias al código
 - [`src/Valdrio.Desktop/StudyWorkspacePanel.xaml`](../../src/Valdrio.Desktop/StudyWorkspacePanel.xaml)
 - [`src/Valdrio.Desktop/StudyWorkspaceViewModel.cs`](../../src/Valdrio.Desktop/StudyWorkspaceViewModel.cs)

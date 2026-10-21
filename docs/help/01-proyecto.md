@@ -32,6 +32,8 @@ Crear, abrir y proteger el archivo de empresa `.valdrio` que conserva el trabajo
 - La carga de un ejemplo abre una copia de trabajo: no modificar los ejemplos de referencia.
 - Una unidad física incorrecta puede hacer incomparables las cantidades que se registren después.
 
+- Los errores al crear, abrir o recuperar un proyecto se destacan en rojo junto al estado de la operación; los mensajes informativos no se presentan como errores. Los diálogos de confirmación existentes se mantienen.
+
 ### Referencias al código
 - [`src/Valdrio.Desktop/CompanyFilePanel.xaml`](../../src/Valdrio.Desktop/CompanyFilePanel.xaml)
 - [`src/Valdrio.Desktop/CompanyFileViewModel.cs`](../../src/Valdrio.Desktop/CompanyFileViewModel.cs)

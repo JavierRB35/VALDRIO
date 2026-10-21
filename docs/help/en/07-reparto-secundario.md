@@ -28,3 +28,4 @@ Redistribute costs of auxiliary nodes into final principal destinations, includi
 - Do not add gross auxiliary circulation to total company cost.
 - The reciprocal solver does not imply a user-selectable ABC or TDABC method.
 - T16 auxiliary capacity requires its own explicit treatment and verified data.
+- When assigning keys to auxiliary nodes or absolute amounts, Tab and Shift+Tab move across row editors and skip read-only values. Assignment errors are shown in red and existing dialogs are not replaced.

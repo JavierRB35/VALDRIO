@@ -32,6 +32,8 @@ Redistribuir costes de nodos auxiliares hacia nodos principales, incluidos servi
 - El solver recíproco disponible no implica selector de método directo, escalonado, ABC ni TDABC.
 - La capacidad auxiliar evaluada por T16 requiere datos y tratamiento explícitos, nunca imputación implícita.
 
+- Al asignar claves a nodos auxiliares o importes absolutos, Tab y Mayús+Tab recorren los controles editables de las filas y omiten datos de solo lectura. Los errores de asignación se distinguen en rojo y no se sustituyen los diálogos existentes.
+
 ### Referencias al código
 - [`src/Valdrio.Desktop/SecondaryWorkspacePanel.xaml`](../../src/Valdrio.Desktop/SecondaryWorkspacePanel.xaml)
 - [`src/Valdrio.Desktop/AllocationWorkspacePanel.xaml`](../../src/Valdrio.Desktop/AllocationWorkspacePanel.xaml)

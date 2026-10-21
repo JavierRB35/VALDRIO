@@ -35,3 +35,4 @@ Review imported account balances, apply explicit extra-accounting adjustments, r
 - Editing accounts governed by active rules may need further confirmation.
 - Previewing or saving a rule does not apply it to the study.
 - Outstanding and excluded amounts must not be silently redistributed.
+- Resource-preparation diagnostics use red text, unlike informational messages. Economic confirmation dialogs are unchanged. Read-only fields are skipped by Tab without hiding their content.
