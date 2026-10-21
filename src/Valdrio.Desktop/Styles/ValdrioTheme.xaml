@@ -71,6 +71,19 @@
   <Style x:Key="Text.Help" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
     <Setter Property="Foreground" Value="{DynamicResource Text.Primary}"/>
   </Style>
+  <!-- UI-02: semantic state comes from the ViewModel; informational feedback stays neutral. -->
+  <Style x:Key="Text.ContextualStatus" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+    <Style.Triggers>
+      <DataTrigger Binding="{Binding HasStatusError}" Value="True">
+        <Setter Property="Foreground" Value="{DynamicResource Brand.Red}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+      </DataTrigger>
+    </Style.Triggers>
+  </Style>
+  <Style x:Key="Text.ContextualError" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+    <Setter Property="Foreground" Value="{DynamicResource Brand.Red}"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+  </Style>
   <Style x:Key="Text.Number" TargetType="TextBlock">
     <Setter Property="TextAlignment" Value="Right"/>
     <Setter Property="FlowDirection" Value="LeftToRight"/>
@@ -257,6 +270,12 @@
         </ControlTemplate>
       </Setter.Value>
     </Setter>
+    <!-- UI-03: read-only fields stay selectable with a mouse or screen reader, but Tab skips them. -->
+    <Style.Triggers>
+      <Trigger Property="IsReadOnly" Value="True">
+        <Setter Property="IsTabStop" Value="False"/>
+      </Trigger>
+    </Style.Triggers>
   </Style>
   <Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}"/>
   <Style x:Key="Input.Combo" TargetType="ComboBox">

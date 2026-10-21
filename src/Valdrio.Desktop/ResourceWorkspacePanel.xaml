@@ -27,7 +27,7 @@
 <TextBlock Text="{Binding [Introduction]}" Margin="0,4,0,5"/>
  <TextBlock Text="{Binding CurrentAccount}" FontSize="20" FontWeight="SemiBold"/>
  <TextBlock Text="{Binding CoverageText}" Margin="0,6,0,8" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite"/>
- <TextBlock x:Name="ActionStatus" Text="{Binding Status}" Margin="0,0,0,8" AutomationProperties.LiveSetting="Assertive"/>
+ <TextBlock x:Name="ActionStatus" Text="{Binding Status}" Style="{StaticResource Text.ContextualStatus}" Margin="0,0,0,8" AutomationProperties.LiveSetting="Assertive"/>
  <StackPanel Visibility="{Binding CultureChanged, Converter={StaticResource Visible}}">
  <TextBlock Text="{Binding CultureMessage}"/>
 <Button x:Name="AcknowledgeCultureButton" Content="{Binding [KeepCulture]}" Command="{Binding AcknowledgeCultureCommand}" local:FieldHelp.Key="Resource.KeepCulture" Margin="0,4,8,6" Padding="10,6"/></StackPanel>

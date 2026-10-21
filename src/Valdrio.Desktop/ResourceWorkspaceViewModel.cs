@@ -158,6 +158,8 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     public string NextAction => this[stage == 0 ? "EditAccount" : IsRevaluing ? "KeepRevalueParts" : "SaveAccount"];
     public string Requirement => this[primaryClosed ? "PrimaryClosed" : workspace is null ? "NeedStudy" : workspace.Resources.Count == 0 ? "NeedImport" : !company.CanWrite ? "ReadOnly" :
         workspace.Study.State == StudyState.Closed ? "Closed" : stage == 0 ? "ChooseAccount" : "PartsHelp"];
+    // UI-02: distinguish a domain validation error from neutral operation feedback.
+    public bool HasStatusError => diagnostic is not null;
     public string Status => diagnostic is null ? this[statusKey] : new DomainDiagnosticFormatter(texts)
         .Format(diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message;
     public string ProgressSummary

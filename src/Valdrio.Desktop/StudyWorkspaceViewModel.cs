@@ -194,6 +194,8 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
                           b.Prepared.Reconciliation.Currency, bridge.RoundingAdjustment))));
         }
     }
+    // UI-02: distinguish a domain validation error from neutral operation feedback.
+    public bool HasStatusError => diagnostic is not null;
     public string Status => diagnostic is null ? Text(statusKey) : DiagnosticText(diagnostic);
     public string? DiagnosticCode => diagnostic?.Code;
     public string Details => Current is null ? Text("Study.NoneSelected") : string.Format(Format, Text("Study.Details"), Current.Name,
