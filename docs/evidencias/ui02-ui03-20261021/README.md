@@ -27,3 +27,13 @@
 5. No cerrar issues ni fusionar hasta registrar los resultados y resolver cualquier error de compilación o foco.
 
 **GitHub Actions:** sin ejecuciones ni autorización de coste; objetivo 0 USD.
+
+## Incidencia de aceptación UI-03 y corrección candidata (21/10/2026)
+
+La prueba real en Windows reporta que Tab desde la casilla `Incluir` no llega a `Peso / %`. El screenshot confirma por separado que la validación de nombre vacío aparece en rojo (UI-02 en este caso).
+
+Se cambia el manejador de Tab para escuchar eventos de previsualización ya tratados por WPF y para examinar cada editor de `CellTemplate` **sin descartar la columna porque su DataGrid padre sea de solo lectura**. Se comprueba existencia, visibilidad, habilitación y carácter editable real del `TextBox`. La dirección inversa y el paso a otra fila comparten la misma lógica. El cursor debe abandonar la tabla al llegar al extremo.
+
+**Requisito adicional explícito del propietario:** al llegar por Tab/Mayús+Tab a cualquier `TextBox` editable, seleccionar todo su valor, permitiendo reemplazarlo o dejarlo intacto sin ratón. El comportamiento se centraliza en el tema de inputs; el clic del ratón conserva la colocación normal del cursor. No seleccionar campos deshabilitados ni de solo lectura. Para `ComboBox`, se conserva la interacción nativa.
+
+**Pendiente:** repetir compilación y pruebas Windows sobre el nuevo commit y verificar a mano la secuencia exacta `Incluir → Peso / % → Incluir de la fila siguiente → Peso / % siguiente`, su regreso con Mayús+Tab y la selección completa del texto. Confirmar el mismo patrón en repartos primario/secundario y que Tab nunca modifica ni guarda automáticamente el contenido.

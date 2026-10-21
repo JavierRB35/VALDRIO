@@ -35,4 +35,20 @@ public sealed class EditableGridTabOrderTests
         Assert.AreEqual(0, EditableGridTabOrder.After(2, 3, -1, 0, false).Count());
         Assert.AreEqual(0, EditableGridTabOrder.After(2, 3, 0, 4, false).Count());
     }
+
+    [TestMethod]
+    public void Forward_FromIncludedCheckbox_VisitsWeightThenNextRowCheckbox()
+    {
+        var cells = EditableGridTabOrder.After(3, 4, 0, 0, backwards: false)
+            .Where(x => x.Column is 0 or 3).Take(3).ToArray();
+        CollectionAssert.AreEqual(new[] { (0, 3), (1, 0), (1, 3) }, cells);
+    }
+
+    [TestMethod]
+    public void Backward_FromWeight_VisitsCheckboxOfSameRowThenPriorWeight()
+    {
+        var cells = EditableGridTabOrder.After(3, 4, 1, 3, backwards: true)
+            .Where(x => x.Column is 0 or 3).Take(3).ToArray();
+        CollectionAssert.AreEqual(new[] { (1, 0), (0, 3), (0, 0) }, cells);
+    }
 }
