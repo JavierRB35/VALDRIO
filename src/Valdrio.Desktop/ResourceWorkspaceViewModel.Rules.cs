@@ -169,7 +169,7 @@ public sealed class AdjustmentRuleCard : ObservableObject
     public string Name { get => name; set { Edit(ref name, value); UpdateSuggestedCode(); } }
     public string Pattern { get => pattern; set { Edit(ref pattern, value); UpdateSuggestedCode(); } }
     public string SelectionSummary => owner.RuleSelectionSummary(Pattern);
-    public bool HasStatusError => owner.diagnostic is not null;
+    public bool HasStatusError => owner.HasStatusError;
     public string Feedback => !string.IsNullOrEmpty(owner.RuleFeedback) ? owner.RuleFeedback :
         feedbackKey is not null ? this[feedbackKey] : IsDirty ? this["SaveFirst"] : "";
     public string Code { get => code; set { suggestCode = false; Edit(ref code, value); } }
