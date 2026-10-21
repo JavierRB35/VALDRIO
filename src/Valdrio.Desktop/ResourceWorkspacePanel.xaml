@@ -27,7 +27,7 @@
 <TextBlock Text="{Binding [Introduction]}" Margin="0,4,0,5"/>
  <TextBlock Text="{Binding CurrentAccount}" FontSize="20" FontWeight="SemiBold"/>
  <TextBlock Text="{Binding CoverageText}" Margin="0,6,0,8" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite"/>
- <TextBlock x:Name="ActionStatus" Text="{Binding Status}" Margin="0,0,0,8" AutomationProperties.LiveSetting="Assertive"/>
+ <TextBlock x:Name="ActionStatus" Text="{Binding Status}" Style="{StaticResource Text.ContextualStatus}" Margin="0,0,0,8" AutomationProperties.LiveSetting="Assertive"/>
  <StackPanel Visibility="{Binding CultureChanged, Converter={StaticResource Visible}}">
  <TextBlock Text="{Binding CultureMessage}"/>
 <Button x:Name="AcknowledgeCultureButton" Content="{Binding [KeepCulture]}" Command="{Binding AcknowledgeCultureCommand}" local:FieldHelp.Key="Resource.KeepCulture" Margin="0,4,8,6" Padding="10,6"/></StackPanel>
@@ -50,7 +50,7 @@
      </local:AdaptiveColumnsPanel>
      <TextBlock Text="{Binding [ActionHelp]}" Margin="0,4,0,6" TextWrapping="Wrap"/>
      <WrapPanel><Button Content="{Binding [Save]}" Command="{Binding SaveCommand}"/><Button Content="{Binding [Apply]}" Command="{Binding ApplyCommand}"/><Button Content="{Binding [Undo]}" Command="{Binding UndoCommand}"/><Button Content="{Binding [Duplicate]}" Command="{Binding DuplicateCommand}"/><Button Content="{Binding [Delete]}" Command="{Binding DeleteCommand}"/></WrapPanel>
-     <TextBlock Text="{Binding Feedback}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
+     <TextBlock Text="{Binding Feedback}" Style="{StaticResource Text.ContextualStatus}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
      <Border Background="{DynamicResource Surface.Subtle}" Padding="12" Visibility="{Binding HasPreview,Converter={StaticResource Visible}}"><StackPanel>
       <TextBlock Text="{Binding PreviewText}" AutomationProperties.LiveSetting="Polite"/>
       <WrapPanel><Button Content="{Binding [Confirm]}" Command="{Binding ConfirmCommand}" Style="{StaticResource Button.Primary}"/><Button Content="{Binding [Cancel]}" Command="{Binding CancelCommand}"/></WrapPanel>

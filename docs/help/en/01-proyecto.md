@@ -27,3 +27,4 @@ Create, open and protect the company project file (.valdrio). This establishes t
 - Upgrade older project formats using the separate copy, not the original.
 - Examples are opened as working copies; do not alter reference examples.
 - Incompatible physical units make later activity comparisons invalid.
+- Errors while creating, opening or recovering a project are highlighted in red next to the operation status; informational messages remain neutral. Existing confirmation dialogs are retained.

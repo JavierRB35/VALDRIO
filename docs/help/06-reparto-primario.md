@@ -39,6 +39,8 @@ Asignar costes preparados a nodos/centros mediante claves e inductores con cober
 - Comprobar signos y redondeo con importes positivos y negativos.
 - Cambiar composición o recursos puede exigir recalcular resultados.
 
+- Para editar una clave, Tab y Mayús+Tab recorren los controles editables habilitados de líneas, pesos, clasificación y cobertura; se omiten las columnas informativas. Los diagnósticos contextuales aparecen en rojo; los avisos modales siguen existiendo.
+
 ### Referencias al código
 - [`src/Valdrio.Desktop/AllocationWorkspacePanel.xaml`](../../src/Valdrio.Desktop/AllocationWorkspacePanel.xaml)
 - [`src/Valdrio.Desktop/AllocationWorkspaceViewModel.Primary.cs`](../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Primary.cs)

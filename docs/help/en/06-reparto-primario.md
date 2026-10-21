@@ -33,3 +33,4 @@ Distribute effective resource costs to the analytical cost nodes by published al
 - Do not close while allocable parts or keys remain invalid.
 - Historically referenced published keys require dependency checks before deletion.
 - Account descriptions support identification but do not change code identity.
+- While editing an allocation key, Tab and Shift+Tab traverse enabled editors in key lines, weights, classification and coverage, skipping informational columns. Contextual validation errors appear in red; existing modal messages remain available.

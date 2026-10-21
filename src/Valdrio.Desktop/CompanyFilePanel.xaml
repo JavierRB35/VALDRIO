@@ -51,7 +51,7 @@
     <Button x:Name="NewProjectButton" Content="{Binding NewProjectTitle}" Command="{Binding NewProjectCommand}" Style="{StaticResource Button.Primary}" HorizontalAlignment="Left" TabIndex="11" ToolTip="{Binding NewProjectHelp}"/>
    </StackPanel>
 
-   <TextBlock Text="{Binding Status}" Margin="0,4,0,8" AutomationProperties.LiveSetting="Assertive"/>
+   <TextBlock Text="{Binding Status}" Style="{StaticResource Text.ContextualStatus}" Margin="0,4,0,8" AutomationProperties.LiveSetting="Assertive"/>
    <Button x:Name="UpgradeSuggestionButton" Content="{Binding UpgradeLabel}" Command="{Binding UpgradeCommand}"
            Visibility="{Binding UpgradeSuggested, Converter={StaticResource BoolVis}}"
            HorizontalAlignment="Left" Margin="0,2,8,12" Style="{StaticResource Button.Primary}"/>
@@ -120,7 +120,7 @@
      </Grid>
     </Expander>
     <Button x:Name="AddUnitButton" Content="{Binding AddUnitLabel}" Command="{Binding AddUnitCommand}" HorizontalAlignment="Left" TabIndex="23" FontWeight="SemiBold" Style="{StaticResource Button.Primary}"/>
-    <TextBlock x:Name="UnitActionStatus" Text="{Binding Status}" AutomationProperties.LiveSetting="Assertive" Margin="0,6,0,8"/>
+    <TextBlock x:Name="UnitActionStatus" Text="{Binding Status}" Style="{StaticResource Text.ContextualStatus}" AutomationProperties.LiveSetting="Assertive" Margin="0,6,0,8"/>
    </StackPanel>
   </StackPanel>
  </GroupBox>

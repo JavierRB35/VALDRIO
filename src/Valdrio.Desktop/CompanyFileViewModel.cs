@@ -160,6 +160,8 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public string AddUnitLabel => Text("CompanyAddUnit");
     public string Notes => Text("CompanyNotes");
     private CultureInfo UiCulture => CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag);
+    // UI-02: distinguish a domain validation error from neutral operation feedback.
+    public bool HasStatusError => diagnostic is not null;
     public string Status => diagnostic is null ? Text(statusKey)
         : new DomainDiagnosticFormatter(texts).Format(diagnostic, UiCulture,
             CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)).Message;

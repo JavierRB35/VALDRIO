@@ -40,6 +40,8 @@ Transformar recursos importados en costes analíticos clasificables y repartible
 - Deshacer reglas después de cálculo requiere respetar estados de cierre/reapertura.
 - No interpretar magnitudes teóricas heredadas de recursos como tarifas calculadas.
 
+- Los diagnósticos de preparación de cuentas se distinguen de los avisos informativos mediante texto rojo. Los cuadros de confirmación económica no cambian. Los campos de solo lectura se omiten al tabular, sin perder su contenido.
+
 ### Referencias al código
 - [`src/Valdrio.Desktop/ResourceWorkspacePanel.xaml`](../../src/Valdrio.Desktop/ResourceWorkspacePanel.xaml)
 - [`src/Valdrio.Desktop/ResourceWorkspaceViewModel.cs`](../../src/Valdrio.Desktop/ResourceWorkspaceViewModel.cs)
