@@ -1,0 +1,190 @@
+{
+  "version": 1,
+  "referenceCommit": "211af0dab39b32902a8cd98f4f377c91638e8920",
+  "updated": "2026-10-21",
+  "language": "es",
+  "views": [
+    {
+      "viewId": "View_Project",
+      "file": "01-proyecto.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/CompanyFilePanel.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/CompanyFileViewModel.cs"
+      ],
+      "trigger": "nav:0"
+    },
+    {
+      "viewId": "View_Structure",
+      "file": "02-estructura.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/ModelWorkspacePanel.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/ModelWorkspaceViewModel.cs"
+      ],
+      "trigger": "nav:1"
+    },
+    {
+      "viewId": "View_Study",
+      "file": "03-analisis.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/StudyWorkspacePanel.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/StudyWorkspaceViewModel.cs"
+      ],
+      "trigger": "nav:2"
+    },
+    {
+      "viewId": "View_ImportBalances",
+      "file": "04-importacion-saldos.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/ImportColumnMappingWindow.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/ImportColumnMappingViewModel.cs",
+        "src/Valdrio.Desktop/ImportColumnMappingViewModel.Confirmation.cs"
+      ],
+      "trigger": "modal:import"
+    },
+    {
+      "viewId": "View_ResourcePreparation",
+      "file": "05-preparacion-cuentas.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/ResourceWorkspacePanel.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/ResourceWorkspaceViewModel.cs",
+        "src/Valdrio.Desktop/ResourceWorkspaceViewModel.Rules.cs",
+        "src/Valdrio.Desktop/ResourceWorkspaceViewModel.Editing.cs"
+      ],
+      "trigger": "nav:4"
+    },
+    {
+      "viewId": "View_PrimaryAllocation",
+      "file": "06-reparto-primario.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/AllocationWorkspacePanel.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/AllocationWorkspaceViewModel.Primary.cs",
+        "src/Valdrio.Desktop/AllocationWorkspaceViewModel.cs"
+      ],
+      "trigger": "nav:5"
+    },
+    {
+      "viewId": "View_SecondaryAllocation",
+      "file": "07-reparto-secundario.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/SecondaryWorkspacePanel.xaml",
+        "src/Valdrio.Desktop/AllocationWorkspacePanel.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/AllocationWorkspaceViewModel.Secondary.cs"
+      ],
+      "trigger": "nav:7"
+    },
+    {
+      "viewId": "View_CostRuns",
+      "file": "08-flujos-ejecuciones.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/CostFlowPanel.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/CostFlowViewModel.cs"
+      ],
+      "trigger": "nav:8"
+    },
+    {
+      "viewId": "View_PhysicalActivity",
+      "file": "09-actividad-capacidad.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/PhysicalActivityWindow.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/PhysicalActivityEditor.cs"
+      ],
+      "trigger": "nav:9"
+    },
+    {
+      "viewId": "View_NormalCapacityAssistant",
+      "file": "10-capacidad-normal-asistida.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/PhysicalCapacityAssistantWindow.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/PhysicalCapacityAssistantEditor.cs"
+      ],
+      "trigger": "modal:normal-capacity"
+    },
+    {
+      "viewId": "View_PhysicalImport",
+      "file": "11-importacion-fisica.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/PhysicalImportWindow.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/PhysicalImportEditor.cs"
+      ],
+      "trigger": "modal:physical-import"
+    },
+    {
+      "viewId": "View_AuxiliaryServices",
+      "file": "12-servicios-auxiliares.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/AuxiliaryCapacityWindow.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/AuxiliaryCapacityEditor.cs"
+      ],
+      "trigger": "modal:auxiliary"
+    },
+    {
+      "viewId": "View_PrincipalRates",
+      "file": "13-tarifas-centros.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/PrincipalRatesWindow.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/PrincipalRatesEditor.cs"
+      ],
+      "trigger": "nav:10"
+    },
+    {
+      "viewId": "View_Compositions",
+      "file": "14-productos-servicios.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/CompositionWindow.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/CompositionEditor.cs"
+      ],
+      "trigger": "modal:composition"
+    },
+    {
+      "viewId": "View_AllocationReuse",
+      "file": "15-reutilizacion-claves.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/AllocationReuseWindow.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/AllocationReuseEditor.cs"
+      ],
+      "trigger": "modal:reuse"
+    },
+    {
+      "viewId": "View_Preferences",
+      "file": "16-preferencias.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/MainWindow.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/MainWindowViewModel.cs",
+        "src/Valdrio.Desktop/FieldHelp.cs"
+      ],
+      "trigger": "nav:6"
+    }
+  ]
+}
