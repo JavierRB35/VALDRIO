@@ -11,7 +11,7 @@ namespace Valdrio.Desktop;
 /// Applied only to grids whose templates contain edit controls, not read-only
 /// analytical grids that users browse using arrow keys and screen readers.
 /// </summary>
-internal static class EditableGridTabNavigation
+public static class EditableGridTabNavigation
 {
     public static readonly DependencyProperty EnabledProperty = DependencyProperty.RegisterAttached(
         "Enabled", typeof(bool), typeof(EditableGridTabNavigation),
@@ -62,7 +62,7 @@ internal static class EditableGridTabNavigation
 
             grid.ScrollIntoView(item, column);
             grid.UpdateLayout();
-            var candidate = GetCell(grid, item, next.Column);
+            var candidate = GetCell(grid, item, column);
             var editor = candidate is null ? null : FindEditable(candidate);
             if (editor?.Focus() == true)
             {
@@ -76,14 +76,14 @@ internal static class EditableGridTabNavigation
         if (grid.MoveFocus(new TraversalRequest(direction))) e.Handled = true;
     }
 
-    private static DataGridCell? GetCell(DataGrid grid, object item, int displayColumn)
+    private static DataGridCell? GetCell(DataGrid grid, object item, DataGridColumn column)
     {
         if (grid.ItemContainerGenerator.ContainerFromItem(item) is not DataGridRow row)
             return null;
         row.ApplyTemplate();
         var presenter = Descendant<DataGridCellsPresenter>(row);
         presenter?.ApplyTemplate();
-        return presenter?.ItemContainerGenerator.ContainerFromIndex(displayColumn) as DataGridCell;
+        return presenter?.ItemContainerGenerator.ContainerFromIndex(grid.Columns.IndexOf(column)) as DataGridCell;
     }
 
     private static UIElement? FindEditable(DependencyObject root)
