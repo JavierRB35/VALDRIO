@@ -30,7 +30,7 @@ public sealed partial class SqliteCompanyFileService
         foreach (var item in before.Items)
         {
             var next = after.Items.SingleOrDefault(i => i.Id == item.Id);
-            Invalid(next is null || next.Code != item.Code || next.Name != item.Name ||
+            Invalid(next is null || next.Code != item.Code ||
                 next.UnitId != item.UnitId || next.Kind != item.Kind, "Composition item identity changed");
         }
         foreach (var version in before.Versions)

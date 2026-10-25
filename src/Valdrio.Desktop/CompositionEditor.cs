@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Valdrio.Application;
 using Valdrio.Calculation;
@@ -19,8 +20,14 @@ public sealed partial class CompositionItemRow : ObservableObject
     [ObservableProperty] private CompositionItemKind kind;
     [ObservableProperty] private UnitId unit;
     [ObservableProperty] private bool active = true;
+    [ObservableProperty] private decimal? referenceUnitCost;
+    [ObservableProperty] private string referenceCostSource = "";
     public string Label => Code + " · " + Name;
-    public CompositionItem Value => new(Id, Code.Trim(), Name.Trim(), Unit, Kind, Active);
+    public CompositionItem Value => new(Id, Code.Trim(), Name.Trim(), Unit, Kind, Active)
+    {
+        ReferenceUnitCost = ReferenceUnitCost,
+        ReferenceCostSource = ReferenceUnitCost.HasValue ? ReferenceCostSource : null
+    };
 }
 public sealed partial class CompositionLineRow : ObservableObject
 {
@@ -48,6 +55,7 @@ public sealed partial class CompositionEditor : ObservableObject
     public ObservableCollection<CompositionAnswer> Answers { get; } = [];
     public IReadOnlyList<CompositionChoice<UnitId>> Units => host.PhysicalCompany!.Units.Select(u => new CompositionChoice<UnitId>(u.Id, u.Code + " · " + u.Symbol)).ToArray();
     public IReadOnlyList<CompositionChoice<CompositionItemKind>> Kinds => Enum.GetValues<CompositionItemKind>().Select(v => new CompositionChoice<CompositionItemKind>(v, this[v.ToString()])).ToArray();
+    public IReadOnlyList<CompositionChoice<CompositionItemKind>> ImportKinds => new[] { CompositionItemKind.Product, CompositionItemKind.Material, CompositionItemKind.Service }.Select(v => new CompositionChoice<CompositionItemKind>(v, this[v.ToString()])).ToArray();
     public IReadOnlyList<CompositionChoice<ConsumptionBasis>> Bases => Enum.GetValues<ConsumptionBasis>().Select(v => new CompositionChoice<ConsumptionBasis>(v, this[v.ToString()])).ToArray();
     public IReadOnlyList<CompositionChoice<CompositionLossKind>> Losses => Enum.GetValues<CompositionLossKind>().Select(v => new CompositionChoice<CompositionLossKind>(v, this[v.ToString()])).ToArray();
     public IReadOnlyList<CompositionChoice<EntityId>> Products => catalog.Items.Where(i => i.Kind != CompositionItemKind.Material).Select(i => new CompositionChoice<EntityId>(i.Id, i.Code + " · " + i.Name)).ToArray();
@@ -58,6 +66,7 @@ public sealed partial class CompositionEditor : ObservableObject
     [ObservableProperty] private string batchSize = "1";
     [ObservableProperty] private string note = "";
     [ObservableProperty] private string outputQuantity = "1";
+    [ObservableProperty] private CompositionItemKind importKind = CompositionItemKind.Product;
     [ObservableProperty] private string feedback = "";
     public bool Dirty { get; private set; }
     public bool Busy { get; private set; }
@@ -102,7 +111,8 @@ public sealed partial class CompositionEditor : ObservableObject
             Items.Clear();
             foreach (var i in catalog.Items)
             {
-                var row = new CompositionItemRow { Id = i.Id, Persisted = true, Code = i.Code, Name = i.Name, Kind = i.Kind, Unit = i.UnitId, Active = i.Active };
+                var row = new CompositionItemRow { Id = i.Id, Persisted = true, Code = i.Code, Name = i.Name, Kind = i.Kind, Unit = i.UnitId, Active = i.Active,
+                    ReferenceUnitCost = i.ReferenceUnitCost, ReferenceCostSource = i.ReferenceCostSource ?? "" };
                 row.PropertyChanged += (_, _) => Changed(); Items.Add(row);
             }
             Targets = catalog.Items.Where(i => i.Kind == CompositionItemKind.Material).Select(i => new CompositionTarget(i.Id, 0, i.UnitId, this["Material"] + " · " + i.Code + " · " + i.Name))
@@ -124,6 +134,49 @@ public sealed partial class CompositionEditor : ObservableObject
         if (!Writable || row is null) return;
         if (row.Persisted) { Feedback = this["DeactivateHelp"]; return; }
         Items.Remove(row); Changed();
+    }
+    public void ImportProducts(string path)
+    {
+        if (!Writable) { Feedback = this["ReadOnlyImport"]; return; }
+        try
+        {
+            var imported = ProductCostImport.Read(path, host.PhysicalFormatCulture);
+            var source = Path.GetFileName(path) + " · " + DateTimeOffset.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            var units = host.PhysicalCompany!.Units;
+            var merged = ProductCostImport.Merge(catalog.Items, imported, units, ImportKind, source);
+            var rowsById = Items.ToDictionary(item => item.Id);
+            foreach (var item in merged)
+            {
+                if (rowsById.TryGetValue(item.Id, out var existing))
+                {
+                    existing.Name = item.Name;
+                    existing.ReferenceUnitCost = item.ReferenceUnitCost;
+                    existing.ReferenceCostSource = item.ReferenceCostSource ?? "";
+                }
+                else
+                {
+                    var row = new CompositionItemRow { Id = item.Id, Code = item.Code, Name = item.Name, Kind = item.Kind,
+                        Unit = item.UnitId, Active = item.Active, ReferenceUnitCost = item.ReferenceUnitCost,
+                        ReferenceCostSource = item.ReferenceCostSource ?? "" };
+                    row.PropertyChanged += (_, _) => Changed(); Items.Add(row); rowsById.Add(row.Id, row);
+                }
+            }
+            Changed(); Feedback = string.Format(host.PhysicalUiCulture, this["ImportComplete"], imported.Count, source);
+        }
+        catch (InvalidDataException ex)
+        {
+            var details = ex.Message.Split(':');
+            Feedback = details[0] switch
+            {
+                "Unit" => string.Format(host.PhysicalUiCulture, this["ImportUnknownUnit"], details.Last()),
+                "UnitMismatch" => string.Format(host.PhysicalUiCulture, this["ImportUnitMismatch"], details.Last()),
+                "Cost" or "Data" or "Columns" => string.Format(host.PhysicalUiCulture, this["ImportInvalidRow"], details.Last()),
+                "Empty" => this["ImportEmpty"], "Headers" => this["ImportHeaders"], "Quotes" => this["ImportQuotes"],
+                "ReferenceAmbiguous" => this["ImportReferenceAmbiguous"], _ => this["ImportFailed"]
+            };
+        }
+        catch (IOException) { Feedback = this["ImportFailed"]; }
+        catch (UnauthorizedAccessException) { Feedback = this["ImportFailed"]; }
     }
     public void Open()
     {
@@ -227,7 +280,22 @@ public sealed partial class CompositionEditor : ObservableObject
                 previous.ModelVersionId == selected.ModelVersionId &&
                 previous.Lines.Select(l => l with { Id = default }).SequenceEqual(selected.Lines.Select(l => l with { Id = default }));
             Answers.Add(new(this["QChanges"], previous is null ? this["FirstVersion"] : same ? this["SameComposition"] : this["ChangedComposition"] + " v" + previous.Number));
-            Answers.Add(new(this["QCost"], this["T18"])); Answers.Add(new(this["QActual"], this["T19"]));
+            var estimate = CompositionCostEstimator.Estimate(p, result, selected.ProductId, host.PhysicalCompany!.DefaultCurrency);
+            var costParts = new List<string>
+            {
+                string.Format(host.PhysicalUiCulture, this["EstimatedComponents"], estimate.PricedComponents!.Value.ToString("N2", host.PhysicalFormatCulture), estimate.Currency)
+            };
+            if (estimate.UnpricedComponents.Count > 0) costParts.Add(string.Format(host.PhysicalUiCulture, this["MissingPrices"], string.Join(", ", estimate.UnpricedComponents)));
+            if (estimate.HasActivity) costParts.Add(this["ActivityNotIncluded"]);
+            if (estimate.ImportedOutputReference is { } reference)
+            {
+                var outputItem = p.Items.Single(i => i.Id == selected.ProductId);
+                var outputUnit = host.PhysicalCompany.Units.Single(u => u.Id == outputItem.UnitId).Symbol;
+                costParts.Add(string.Format(host.PhysicalUiCulture, this["ImportedOutputReference"], outputItem.ReferenceUnitCost!.Value.ToString("N2", host.PhysicalFormatCulture), estimate.Currency,
+                    outputUnit, reference.ToString("N2", host.PhysicalFormatCulture), result.OutputQuantity.ToString("N2", host.PhysicalFormatCulture)));
+            }
+            else costParts.Add(this["NoOutputReference"]);
+            Answers.Add(new(this["QCost"], string.Join(" · ", costParts))); Answers.Add(new(this["QActual"], this["T19"]));
             Feedback = this["PreviewReady"];
         }
         catch (DomainRuleException e) { Feedback = texts.Get(e.Diagnostic.MessageKey, host.PhysicalUiCulture); }

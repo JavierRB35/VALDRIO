@@ -1935,9 +1935,9 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
 <data name="Aux.ClassificationRequired" xml:space="preserve"><value>Classify auxiliary costs as fixed, variable or mixed with a defined proportion before assessing capacity. Review Resources and Primary.</value></data>
 <data name="Aux.FlowVariance" xml:space="preserve"><value>Of primary cost, {0} is retained as auxiliary capacity variance and does not circulate in services. See Auxiliary capacity and services for details.</value></data>
 <data name="Run.Zoom" xml:space="preserve"><value>Graph zoom</value></data><data name="Run.ExpandGraph" xml:space="preserve"><value>Expand analysis area</value></data><data name="Run.Duration" xml:space="preserve"><value>Elapsed execution time: {0:N2} s</value></data><data name="Run.DurationUnavailable" xml:space="preserve"><value>Execution duration unavailable</value></data>  <data name="Composition.Title" xml:space="preserve"><value>Products and services</value></data>
-  <data name="Composition.Scope" xml:space="preserve"><value>Physical composition and planned requirements. This page calculates quantities; monetary valuation and actual consumption are not available here.</value></data>
+  <data name="Composition.Scope" xml:space="preserve"><value>Physical composition, planned quantities and management cost estimates from reference unit costs. Estimates are not actual consumption or accounting inventory valuation.</value></data>
   <data name="Composition.Catalog" xml:space="preserve"><value>Catalogue</value></data>
-  <data name="Composition.CatalogHelp" xml:space="preserve"><value>Create materials, products, services and semi-finished items. Save the catalog before composing. Saved identities are retained; you can deactivate them. Create units in Design structure → Centres → Unit catalog, or while configuring a node.</value></data>
+  <data name="Composition.CatalogHelp" xml:space="preserve"><value>Create items or import a CSV/TSV with Reference, Name, Unit of measure and Unit cost. Imported unit costs use the company default currency and remain reference data. Save the catalog before composing. Saved identities are retained; you can deactivate them. Create units in Design structure → Centres → Unit catalog.</value></data>
   <data name="Composition.AddItem" xml:space="preserve"><value>Add item</value></data>
   <data name="Composition.Save" xml:space="preserve"><value>Save catalog and pending changes</value></data>
   <data name="Composition.Recipe" xml:space="preserve"><value>Composition</value></data>
@@ -1961,7 +1961,7 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Composition.Detail" xml:space="preserve"><value>View quantity details</value></data>
   <data name="Composition.Close" xml:space="preserve"><value>Back</value></data>
   <data name="Composition.Reload" xml:space="preserve"><value>Reload</value></data>
-  <data name="Composition.Code" xml:space="preserve"><value>Code</value></data>
+  <data name="Composition.Code" xml:space="preserve"><value>Reference</value></data>
   <data name="Composition.Name" xml:space="preserve"><value>Name</value></data>
   <data name="Composition.Kind" xml:space="preserve"><value>Type</value></data>
   <data name="Composition.Unit" xml:space="preserve"><value>Unit</value></data>
@@ -1993,7 +1993,7 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Composition.QCost" xml:space="preserve"><value>How much does this output cost?</value></data>
   <data name="Composition.QActual" xml:space="preserve"><value>How much was actually consumed?</value></data>
   <data name="Composition.PreviewPending" xml:space="preserve"><value>Calculate using the current composition and quantity.</value></data>
-  <data name="Composition.T18" xml:space="preserve"><value>Monetary valuation is not available on this page.</value></data>
+  <data name="Composition.T18" xml:space="preserve"><value>Uses reference prices for a management estimate. It is not actual consumption or accounting inventory valuation.</value></data>
   <data name="Composition.T19" xml:space="preserve"><value>Actual consumption by product or order is not available in this version.</value></data>
   <data name="Composition.StartedHelp" xml:space="preserve"><value>An incomplete batch consumes the full setup of a started batch.</value></data>
   <data name="Composition.Unsaved" xml:space="preserve"><value>Unsaved changes</value></data>
@@ -2112,4 +2112,24 @@ The selected destination will be written. Review both files before continuing. C
   <data name="Guide.ResumeReviewBlockedHelp" xml:space="preserve"><value>After saving the period and importing balances, review accounts and adjustments here.</value></data>
   <data name="Guide.TaskOpenImport" xml:space="preserve"><value>Open import</value></data>
   <data name="Guide.ResumeChooseAnalysis" xml:space="preserve"><value>Choose or create period</value></data>
+  <data name="Composition.ImportProducts" xml:space="preserve"><value>Import products and unit costs</value></data>
+  <data name="Composition.ImportAs" xml:space="preserve"><value>Import as</value></data>
+  <data name="Composition.ReferenceUnitCost" xml:space="preserve"><value>Reference unit cost</value></data>
+  <data name="Composition.ReferenceCostSource" xml:space="preserve"><value>Cost source</value></data>
+  <data name="Composition.ImportComplete" xml:space="preserve"><value>Processed {0} rows from {1}. Save the catalog to keep the changes.</value></data>
+  <data name="Composition.ImportHeaders" xml:space="preserve"><value>Required columns: Reference, Name, Unit of measure, Unit cost.</value></data>
+  <data name="Composition.ImportUnknownUnit" xml:space="preserve"><value>Unit on row {0} does not match exactly one unit in the company catalogue.</value></data>
+  <data name="Composition.ImportUnitMismatch" xml:space="preserve"><value>Unit on row {0} differs from the saved item. Existing item units are preserved.</value></data>
+  <data name="Composition.ImportInvalidRow" xml:space="preserve"><value>Check the reference, name, unit and non-negative unit cost on row {0}.</value></data>
+  <data name="Composition.ImportEmpty" xml:space="preserve"><value>The import file has no data rows.</value></data>
+  <data name="Composition.ImportQuotes" xml:space="preserve"><value>The import file contains an unclosed quotation mark.</value></data>
+  <data name="Composition.ImportFailed" xml:space="preserve"><value>The import file could not be read.</value></data>
+  <data name="Composition.ImportSaveFirst" xml:space="preserve"><value>Save or discard current changes before importing.</value></data>
+  <data name="Composition.ReadOnlyImport" xml:space="preserve"><value>Open the company file in edit mode to import costs.</value></data>
+  <data name="Composition.EstimatedComponents" xml:space="preserve"><value>Priced component subtotal: {0} {1}</value></data>
+  <data name="Composition.MissingPrices" xml:space="preserve"><value>Missing component reference prices: {0}</value></data>
+  <data name="Composition.ActivityNotIncluded" xml:space="preserve"><value>Indirect activity is not included: no matching activity-rate valuation has been applied.</value></data>
+  <data name="Composition.ImportedOutputReference" xml:space="preserve"><value>Imported output reference: {0} {1}/{2}; for this quantity: {3} {1} ({4} units)</value></data>
+  <data name="Composition.NoOutputReference" xml:space="preserve"><value>No imported unit cost for this output.</value></data>
+  <data name="Composition.ImportReferenceAmbiguous" xml:space="preserve"><value>The catalogue contains references that differ only by letter case. Resolve them before importing.</value></data>
 </root>
