@@ -39,3 +39,8 @@ Las tarifas se multiplican con toda su precisión, antes del redondeo de importe
 - Se usan el cálculo económico elegido y las observaciones de actividad vigentes al previsualizar; ambos quedan identificados en la versión aceptada.
 - Los archivos anteriores se actualizan a formato 13 en una copia, conservando el original.
 - El registro de consumos reales y las desviaciones corresponden a T19. La valoración contable corresponde a T32.
+
+## Recorrido recomendado
+1. Prepara una receta publicada, precios de materiales y un cálculo económico guardado con las tarifas de actividad necesarias.
+2. Introduce referencia, cantidad, receta y cálculo; ejecuta la estimación y revisa desglose, fuentes y respuestas antes de aceptarla.
+3. Acepta y congela la versión; consulta su historial o compara dos versiones de la misma orden, sin interpretar diferencias como consumos reales.

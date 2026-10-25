@@ -36,3 +36,8 @@ Publicar y consultar ejecuciones persistidas del cálculo de costes y explicar f
 - [`src/Valdrio.Desktop/CostFlowPanel.xaml`](../../src/Valdrio.Desktop/CostFlowPanel.xaml)
 - [`src/Valdrio.Desktop/CostFlowViewModel.cs`](../../src/Valdrio.Desktop/CostFlowViewModel.cs)
 - [`src/Valdrio.Application/CalculationRuns.cs`](../../src/Valdrio.Application/CalculationRuns.cs)
+
+## Recorrido recomendado
+1. Completa los repartos y guarda una ejecución económica antes de consultar sus resultados históricos.
+2. Selecciona una ejecución concreta y recorre los flujos de costes por recurso, regla, nodo y centro para justificar los importes.
+3. Compara el resultado con el análisis vigente sin confundir una ejecución guardada con un recálculo automático; consulta el origen de cada cifra.

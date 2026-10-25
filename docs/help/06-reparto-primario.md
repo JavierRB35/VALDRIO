@@ -48,3 +48,8 @@ Asignar costes preparados a nodos/centros mediante claves e inductores con cober
 
 ### Gráfico de Pareto
 El gráfico ordena todos los nodos que reciben coste en el primario de mayor a menor coste. Cada barra muestra el coste agregado del nodo; la línea representa el porcentaje del coste total acumulado. Puedes consultar la tabla de valores y desplazar horizontalmente el gráfico. Con abonos negativos, el acumulado puede superar el 100 % antes de descender; si el total es cero o negativo, no se calcula porcentaje. Sin resultados se indica que todavía no hay datos.
+
+## Recorrido recomendado
+1. Crea o selecciona las claves de reparto y verifica el criterio y los destinos de cada cuenta o recurso.
+2. Asigna las claves en las tablas, guarda los cambios y calcula solo cuando la cobertura y los porcentajes sean válidos.
+3. Examina importes por nodo y el Pareto (barras de coste, línea de porcentaje acumulado); consulta el detalle y cierra el reparto cuando esté revisado.

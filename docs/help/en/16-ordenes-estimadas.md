@@ -39,3 +39,8 @@ Rates retain their full precision before amount rounding. Semi-finished items ar
 - Preview uses the chosen economic run and current activity observations, retaining their identities in the accepted version.
 - Older files upgrade to schema 13 in a copy, preserving the original.
 - Actual consumption and variances belong to T19; accounting valuation belongs to T32.
+
+## Recommended workflow
+1. Prepare a published recipe, material prices and saved economic run with the required activity rates.
+2. Enter the order reference, quantity, recipe and run; calculate and inspect the breakdown, sources and answers before acceptance.
+3. Accept and freeze the version; inspect history or compare two versions of one order, without treating the difference as actual consumption.

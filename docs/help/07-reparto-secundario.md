@@ -42,3 +42,8 @@ Redistribuir costes de nodos auxiliares hacia nodos principales, incluidos servi
 
 ### Gráfico de Pareto
 El gráfico ordena los nodos principales con su coste final, sin volver a sumar la circulación entre auxiliares de mayor a menor coste. Cada barra muestra el coste agregado del nodo; la línea representa el porcentaje del coste total acumulado. Puedes consultar la tabla de valores y desplazar horizontalmente el gráfico. Con abonos negativos, el acumulado puede superar el 100 % antes de descender; si el total es cero o negativo, no se calcula porcentaje. Sin resultados se indica que todavía no hay datos.
+
+## Recorrido recomendado
+1. Comprueba los nodos auxiliares con coste y define las claves que transfieren servicios a los nodos principales; la autoprestación está permitida.
+2. Guarda destinos y porcentajes, ejecuta el cálculo y revisa la viabilidad de las rutas, incluidos posibles circuitos sin salida.
+3. Contrasta el detalle de aportaciones, totales por principal y Pareto; resuelve los diagnósticos antes de cerrar el reparto secundario.

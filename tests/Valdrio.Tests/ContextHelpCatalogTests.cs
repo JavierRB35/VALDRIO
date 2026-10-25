@@ -20,6 +20,7 @@ public sealed class ContextHelpCatalogTests
             Assert.IsFalse(article.SpanishFallback);
             StringAssert.Contains(article.Markdown, "## 1.");
             StringAssert.Contains(article.Markdown, "## 4.");
+            StringAssert.Contains(article.Markdown, "## Recorrido recomendado");
         }
     }
 
@@ -54,6 +55,7 @@ public sealed class ContextHelpCatalogTests
             Assert.IsFalse(article.SpanishFallback, $"English missing for {id}");
             StringAssert.Contains(article.Markdown, "## 1. Purpose");
             StringAssert.Contains(article.Markdown, "## 4. Use cases");
+            StringAssert.Contains(article.Markdown, "## Recommended workflow");
         }
     }
 }

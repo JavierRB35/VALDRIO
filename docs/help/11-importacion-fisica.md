@@ -38,3 +38,8 @@ Preparar y aplicar observaciones físicas de capacidad normal y actividad real d
 - [`src/Valdrio.Desktop/PhysicalImportWindow.xaml`](../../src/Valdrio.Desktop/PhysicalImportWindow.xaml)
 - [`src/Valdrio.Desktop/PhysicalImportEditor.cs`](../../src/Valdrio.Desktop/PhysicalImportEditor.cs)
 - [`src/Valdrio.Application/PhysicalImport.cs`](../../src/Valdrio.Application/PhysicalImport.cs)
+
+## Recorrido recomendado
+1. Prepara el CSV/XLSX y asigna campos de nodo, unidad, período y magnitud física.
+2. Revisa la vista previa y corrige incompatibilidades o filas incompletas sin asumir que el archivo ya se ha aplicado.
+3. Aplica las filas válidas y confirma las observaciones; comprueba después su presencia y fuente en Actividad y capacidades.

@@ -32,3 +32,8 @@ Import normal and actual observations from CSV or XLSX into the selected analysi
 - A row without a valid current node or pool must not be applied.
 - Preview is not saving or confirming every observation.
 - Respect protected revisions when replacing or annulling.
+
+## Recommended workflow
+1. Prepare the CSV/XLSX and map node, unit, period and physical quantity fields.
+2. Review the preview and fix incompatible or incomplete rows; preview alone does not apply the import.
+3. Apply valid rows and confirm the observations; inspect their values and sources in Activity and capacity.

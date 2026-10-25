@@ -40,3 +40,8 @@ Crear, abrir y proteger el archivo de empresa `.valdrio` que conserva el trabajo
 
 ### Órdenes estimadas y formato de archivo
 Las órdenes estimadas aceptadas se guardan dentro de la empresa en formato 13. Al abrir un archivo anterior, actualiza una copia: el original se conserva. Las copias de seguridad incluyen el historial congelado.
+
+## Recorrido recomendado
+1. Crea un proyecto o abre una copia de trabajo de un archivo existente; comprueba que el nombre y la ubicación son los previstos.
+2. Elige la moneda y define las unidades físicas que necesitarán los centros; revisa dimensión, escala y si cada unidad es discreta.
+3. Confirma que el proyecto está abierto y guardado antes de pasar a Diseñar estructura; si el formato es antiguo, actualiza una copia conservando el original.

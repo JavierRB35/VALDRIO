@@ -104,11 +104,20 @@ internal static class ContextHelpMarkdown
             Background = Resource("Brand.White", Brushes.White)
         };
         var lines = markdown.Replace("\r\n", "\n").Split('\n');
+        var skippingTechnicalReferences = false;
         for (var i = 0; i < lines.Length; i++)
         {
             var line = lines[i].Trim();
             if (line.StartsWith("### Referencias al código", StringComparison.OrdinalIgnoreCase))
-                break; // Implementation paths are not business-user help.
+            {
+                skippingTechnicalReferences = true;
+                continue; // Hide implementation paths, not the business sections that follow.
+            }
+            if (skippingTechnicalReferences)
+            {
+                if (!Regex.IsMatch(line, @"^#{1,3} ")) continue;
+                skippingTechnicalReferences = false;
+            }
             if (line.Length == 0 || line.StartsWith("**ID Vista UI:**", StringComparison.Ordinal) ||
                 line.StartsWith("**Última actualización:**", StringComparison.Ordinal) ||
                 line.StartsWith("**Estado:**", StringComparison.Ordinal))

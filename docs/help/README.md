@@ -15,7 +15,7 @@ El segundo comando compara cambios con la base Git indicada y exige actualizar e
 
 ## Integración en escritorio
 
-La cabecera de VALDRIO presenta `Ayuda (F1)` / `Help (F1)` y abre una ventana de lectura no modal. Su ficha se resuelve a partir de la vista lógica activa, también en subpantallas integradas: primario/secundario tienen IDs distintos. La ventana se actualiza cuando cambia la vista o el idioma mientras está abierta, no almacena datos económicos y no sustituye la ayuda breve de campos. El foco y el puntero muestran la microayuda de campo; Tab mantiene la navegación normal.
+La cabecera de VALDRIO presenta `Ayuda (F1)` / `Help (F1)` y abre una ventana de lectura no modal. Su ficha se resuelve a partir de la vista lógica activa, también en subpantallas integradas: primario/secundario tienen IDs distintos. La acción **Leer explicación completa** del pie de pantalla abre esa misma guía de la vista activa (no repite únicamente la microayuda del último campo). La ventana se actualiza cuando cambia la vista o el idioma mientras está abierta, no almacena datos económicos y conserva la ayuda breve de campos. Cada ficha incorpora un **Recorrido recomendado** en español y su equivalente **Recommended workflow** en inglés. El foco y el puntero muestran la microayuda de campo; Tab mantiene la navegación normal.
 
 Los recursos Markdown y `help-map.json` se copian junto al ejecutable (`help/`); los idiomas se buscan en `help/en/` para inglés y en `help/` para español. Si falta traducción, el lector avisa expresamente de que muestra el español; el catálogo validado requiere las 17 traducciones completas. No realiza peticiones web.
 

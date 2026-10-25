@@ -36,3 +36,8 @@ Definir y versionar centros, nodos de coste, pools y unidades. Esta estructura p
 ### Referencias al código
 - [`src/Valdrio.Desktop/ModelWorkspacePanel.xaml`](../../src/Valdrio.Desktop/ModelWorkspacePanel.xaml)
 - [`src/Valdrio.Desktop/ModelWorkspaceViewModel.cs`](../../src/Valdrio.Desktop/ModelWorkspaceViewModel.cs)
+
+## Recorrido recomendado
+1. Crea los centros y nodos necesarios y asigna los pools y unidades físicas compatibles.
+2. Revisa códigos, descripciones y relaciones en la estructura en borrador antes de publicar.
+3. Publica la versión cuando sea consistente; selecciónala desde el análisis para que los repartos utilicen destinos válidos.

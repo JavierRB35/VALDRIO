@@ -30,3 +30,8 @@ Review normalised management rates for principal cost centres from compatible pu
 - Cost of performed activity is not an amount allocated to orders without actual consumption (unavailable in this version).
 - Unused capacity is not equivalent to unassigned completed service.
 - Management normalisation does not by itself establish IAS 2 inventory valuation.
+
+## Recommended workflow
+1. Select a saved economic run compatible with the current analysis and period.
+2. Check the principal centre has confirmed activity and capacity observations; missing data is not zero.
+3. Review the rate, capacity variance, unit and provenance; make corrections in source screens, not this analysis table.

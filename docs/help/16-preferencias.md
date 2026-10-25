@@ -37,3 +37,8 @@ Configurar presentación de idioma, números, fechas y zona horaria de la aplica
 
 ### Presentación de órdenes estimadas
 Las cantidades de órdenes usan el separador decimal de presentación, sin agrupadores al introducir datos. Las fechas del historial indican UTC explícitamente y usan el formato regional. Cambiar idioma o formato no modifica los valores congelados.
+
+## Recorrido recomendado
+1. Selecciona idioma y formatos regionales para leer fechas, importes y cantidades; verifica los ejemplos mostrados.
+2. Ajusta la zona horaria y las opciones de presentación que necesites, manteniéndolas separadas de la moneda económica del análisis.
+3. Comprueba que la interfaz y las ayudas se actualizan; estas preferencias no recalculan ni convierten costes.

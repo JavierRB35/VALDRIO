@@ -31,3 +31,8 @@ Choose the UI language, number and date formatting and display time zone. Presen
 
 ### Estimated order presentation
 Order quantities use the configured decimal separator, without grouping separators during entry. History dates explicitly show UTC using the regional format. Language and format changes do not alter frozen values.
+
+## Recommended workflow
+1. Choose language and regional formats for dates, amounts and quantities, checking the displayed examples.
+2. Set time zone and the necessary presentation options separately from the analysis's economic currency.
+3. Confirm that the UI and help follow your choices; preferences do not recalculate or convert costs.

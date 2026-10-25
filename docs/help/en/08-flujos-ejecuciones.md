@@ -28,3 +28,8 @@ Inspect and compare persisted calculation runs, their diagrams and the provenanc
 - Graphic scale does not change monetary totals.
 - Gross reciprocal movement is not a fresh cost.
 - A calculation view is not evidence that a later production-consumption stage is available.
+
+## Recommended workflow
+1. Complete allocations and save an economic run before browsing historical results.
+2. Select a specific saved run and trace costs by resource, rule, node and centre.
+3. Compare results with the current analysis without treating saved history as an automatic recalculation; inspect each figure's source.

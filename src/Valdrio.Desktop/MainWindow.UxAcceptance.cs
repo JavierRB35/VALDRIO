@@ -130,14 +130,18 @@ public partial class MainWindow
         Check(Descendants<TextBlock>(FormatCultureSelector).Any(t => t.Text.Contains("España", StringComparison.Ordinal)), "friendly region name and format example");
         VisualEvidenceCapture.Capture(this, Path.Combine(directory, "preferences.png"));
         ReadFieldHelpButton.Focus();
-        _ = Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(() =>
-        {
-            var reader = System.Windows.Application.Current.Windows.OfType<EconomicConfirmationWindow>().Single();
-            Check(!reader.AcceptButton.IsVisible, "help reader has no economic action");
-            Check(Descendants<TextBlock>(reader).Any(t => t.Text == FieldHelpText.Text), "full field help available");
-            reader.Close();
-        }));
         ReadFieldHelp(ReadFieldHelpButton, new RoutedEventArgs());
+        var helpReader = System.Windows.Application.Current.Windows.OfType<ContextHelpWindow>().Single();
+        Check(helpReader.IsVisible && ReferenceEquals(helpReader.Owner, this),
+            "full explanation opens the contextual guide for this screen");
+        var helpContent = Descendants<FlowDocumentScrollViewer>(helpReader)
+            .Select(view => view.Document is null ? "" : new System.Windows.Documents.TextRange(
+                view.Document.ContentStart, view.Document.ContentEnd).Text)
+            .FirstOrDefault() ?? "";
+        Check(helpContent.Contains("Recommended workflow", StringComparison.Ordinal) ||
+              helpContent.Contains("Recorrido recomendado", StringComparison.Ordinal),
+            "complete workflow is rendered, including content after technical references");
+        helpReader.Close();
         Check(ReadFieldHelpButton.IsKeyboardFocused, "help reader restores keyboard focus");
         var physical = new PhysicalActivityEditor(vm.Studies!);
         var import = new PhysicalImportEditor(physical);

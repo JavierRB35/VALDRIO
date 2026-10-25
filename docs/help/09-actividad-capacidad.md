@@ -40,3 +40,8 @@ Registrar observaciones físicas por nodo/pool, análisis y período, manteniend
 - [`src/Valdrio.Desktop/PhysicalActivityWindow.xaml`](../../src/Valdrio.Desktop/PhysicalActivityWindow.xaml)
 - [`src/Valdrio.Desktop/PhysicalActivityEditor.cs`](../../src/Valdrio.Desktop/PhysicalActivityEditor.cs)
 - [`src/Valdrio.Application/PhysicalActivity.cs`](../../src/Valdrio.Application/PhysicalActivity.cs)
+
+## Recorrido recomendado
+1. Selecciona nodo, unidad y período para registrar la actividad real y la capacidad normal que correspondan.
+2. Introduce o importa observaciones con sus fuentes; confirma el dato y verifica unidad, período y estado antes de comparar.
+3. Examina desviaciones de actividad y capacidad; para obtener tarifas será necesario combinar estos datos con una ejecución económica compatible.

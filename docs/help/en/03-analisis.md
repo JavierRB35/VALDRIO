@@ -34,3 +34,8 @@ Create or reopen an analysis for a defined accounting period, scenario and publi
 
 ### Estimated orders for this analysis
 With a saved analysis, open **Products and results → Estimated orders**. Acceptance requires an open analysis and a writable file. Reading history does not change resources, allocations or the economic revision.
+
+## Recommended workflow
+1. Select a published structure and create or open an analysis for the intended period.
+2. Check dates, functional currency and analysis status; imported balances must already use that currency.
+3. Save the analysis before importing balances; return to Project or Structure design if a prerequisite is missing.
