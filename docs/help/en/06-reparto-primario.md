@@ -39,3 +39,8 @@ Distribute effective resource costs to the analytical cost nodes by published al
 
 ### Pareto chart
 The chart sorts all nodes receiving primary costs by descending cost. Bars show each node’s aggregate cost; the line shows cumulative cost as a percentage of the total. An exact-value table and horizontal scrolling are available. Negative credits may make the cumulative percentage exceed 100% before decreasing. A zero or negative total has no percentage; missing results are shown as unavailable.
+
+## Recommended workflow
+1. Create or select allocation keys and verify each account or resource's driver and destinations.
+2. Assign keys in the tables, save changes and calculate only after coverage and percentages are valid.
+3. Inspect cost by node and the Pareto (cost bars and cumulative-percentage line); review details and close primary allocation when satisfied.

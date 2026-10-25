@@ -57,3 +57,8 @@ Example: a recipe needs 3 kg of material at €4/kg and 2 hours of activity. VAL
 
 ## Complete estimated orders
 To include activity costs and retain an accepted version, open **Products and results → Estimated orders**. Use a published composition and a saved economic run. This screen retains its reference subtotal preview. See the [estimated order guide](16-ordenes-estimadas.md).
+
+## Recommended workflow
+1. Import or review the catalogue and reference unit costs in the project currency.
+2. Build the component list, quantities, units and bases of a composition; validate and publish the recipe.
+3. Review the estimated subtotal and breakdown, then use Estimated orders for a specific order without confusing estimates with actual consumption.

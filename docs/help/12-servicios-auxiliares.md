@@ -38,3 +38,8 @@ Definir tratamiento y cantidades de servicios prestados por auxiliares, evaluand
 - [`src/Valdrio.Desktop/AuxiliaryCapacityWindow.xaml`](../../src/Valdrio.Desktop/AuxiliaryCapacityWindow.xaml)
 - [`src/Valdrio.Desktop/AuxiliaryCapacityEditor.cs`](../../src/Valdrio.Desktop/AuxiliaryCapacityEditor.cs)
 - [`src/Valdrio.Application/SecondaryAllocation.cs`](../../src/Valdrio.Application/SecondaryAllocation.cs)
+
+## Recorrido recomendado
+1. Selecciona los auxiliares y registra las cantidades de servicio prestado y la capacidad relevante con unidades coherentes.
+2. Comprueba que las transferencias y reciprocidades permiten llegar a centros principales sin contar dos veces costes recibidos.
+3. Revisa diagnósticos y resultados de la ejecución antes de utilizar los servicios auxiliares para análisis de tarifas o productos.

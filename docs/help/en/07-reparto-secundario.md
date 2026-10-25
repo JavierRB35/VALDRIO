@@ -34,3 +34,8 @@ Redistribute costs of auxiliary nodes into final principal destinations, includi
 
 ### Pareto chart
 The chart sorts principal nodes at their final cost, without counting internal auxiliary circulation again by descending cost. Bars show each node’s aggregate cost; the line shows cumulative cost as a percentage of the total. An exact-value table and horizontal scrolling are available. Negative credits may make the cumulative percentage exceed 100% before decreasing. A zero or negative total has no percentage; missing results are shown as unavailable.
+
+## Recommended workflow
+1. Check auxiliary nodes carrying costs and define service transfer keys towards principal nodes; self-allocation is allowed.
+2. Save destinations and percentages, run the calculation and inspect route viability, including closed loops.
+3. Review contributions, principal totals and the Pareto; resolve diagnostics before closing secondary allocation.

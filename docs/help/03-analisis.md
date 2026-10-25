@@ -40,3 +40,8 @@ Crear o seleccionar un análisis ligado a una estructura publicada y a un perío
 
 ### Órdenes estimadas del análisis
 Con el análisis guardado puedes abrir **Productos y resultados → Órdenes estimadas**. La aceptación requiere un análisis abierto y escritura habilitada. El historial se consulta sin alterar los recursos, los repartos ni la revisión económica del análisis.
+
+## Recorrido recomendado
+1. Selecciona una estructura publicada y crea o abre el análisis correspondiente al período de trabajo.
+2. Comprueba fechas, moneda funcional y estado del análisis; los saldos que importes deben estar expresados en esa moneda.
+3. Guarda el análisis y continúa con la importación de saldos; si faltan datos previos, vuelve a Proyecto o Diseñar estructura.

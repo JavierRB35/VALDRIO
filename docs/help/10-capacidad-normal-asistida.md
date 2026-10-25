@@ -40,3 +40,8 @@ Proponer una capacidad normal a partir de calendario operativo, histórico compa
 ### Referencias al código
 - [`src/Valdrio.Desktop/PhysicalCapacityAssistantWindow.xaml`](../../src/Valdrio.Desktop/PhysicalCapacityAssistantWindow.xaml)
 - [`src/Valdrio.Desktop/PhysicalCapacityAssistantEditor.cs`](../../src/Valdrio.Desktop/PhysicalCapacityAssistantEditor.cs)
+
+## Recorrido recomendado
+1. Selecciona la base disponible para proponer la capacidad normal: calendario, histórico comparable o valor declarado.
+2. Revisa el cálculo y sus hipótesis; distingue siempre una propuesta de una observación ya confirmada.
+3. Adopta expresamente la propuesta si es adecuada y confirma su registro en Actividad y capacidades; si no, modifica la base o cancela sin cambiar los datos.

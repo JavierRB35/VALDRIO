@@ -32,3 +32,8 @@ Evaluate measured auxiliary services and the treatment of auxiliary capacity, di
 - Gross circulation through auxiliaries does not create extra company cost.
 - Changing the related Activity and capacities observation can invalidate existing runs.
 - This services import accepts CSV, while Activity and capacities physical observations also allow XLSX.
+
+## Recommended workflow
+1. Select auxiliary services and enter quantities provided and relevant capacity in consistent units.
+2. Check transfers and reciprocal flows can reach principal centres without counting received costs twice.
+3. Review diagnostics and economic-run results before using auxiliary services in rates or product analysis.

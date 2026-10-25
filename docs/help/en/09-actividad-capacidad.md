@@ -34,3 +34,8 @@ Record normal capacity and actual activity for each analytical node, study and p
 - Utilisation above 100% may be valid if justified; never truncate it.
 - Resolve unsaved edits before switching studies.
 - Closed studies permit consultation but not editing.
+
+## Recommended workflow
+1. Select the node, unit and period for actual activity and normal capacity observations.
+2. Enter or import observations with their sources, then confirm units, dates and status before comparing.
+3. Review activity and capacity differences; rates also require a compatible saved economic run.

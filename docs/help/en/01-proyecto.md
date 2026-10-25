@@ -33,3 +33,8 @@ Create, open and protect the company project file (.valdrio). This establishes t
 
 ### Estimated orders and file format
 Accepted estimated orders are stored inside the company file in schema 13. Upgrade older files into a copy, retaining the original. Backups include the frozen order history.
+
+## Recommended workflow
+1. Create a project or open a working copy of an existing file; check its name and location.
+2. Select the currency and define the physical units needed by your cost centres; check dimension, scale and whether each unit is discrete.
+3. Confirm the project is open and saved before moving to Structure design; upgrade old file formats into a copy while keeping the original.

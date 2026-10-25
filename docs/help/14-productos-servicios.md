@@ -66,3 +66,8 @@ Ejemplo: si la receta requiere 3 kg de material a 4 €/kg y 2 horas de activida
 
 ## Órdenes estimadas completas
 Para valorar también la actividad y conservar una versión aceptada, abre **Productos y resultados → Órdenes estimadas**. Usa una composición publicada y un cálculo económico guardado. El subtotal de esta pantalla sigue siendo una consulta de referencia. Consulta la [guía de órdenes estimadas](16-ordenes-estimadas.md).
+
+## Recorrido recomendado
+1. Importa o revisa el catálogo y los costes unitarios de referencia en la moneda del proyecto.
+2. Define los componentes, cantidades, unidades y bases de una composición; valida la receta y publícala cuando esté completa.
+3. Consulta el subtotal estimado y su desglose; para valorar una orden concreta continúa en Órdenes estimadas, sin confundir esta cifra con un consumo real.

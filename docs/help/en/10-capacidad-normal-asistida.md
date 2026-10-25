@@ -34,3 +34,8 @@ Propose a normal-capacity figure from calendar availability, comparable history 
 - A normal-capacity proposal never determines actual activity.
 - Cancel does not change the originating activity row.
 - After adoption, explicitly save or confirm in Activity and capacity.
+
+## Recommended workflow
+1. Choose an available normal-capacity basis: operating calendar, comparable history or declared amount.
+2. Inspect the proposed result and its assumptions; a proposal is not yet a confirmed observation.
+3. Explicitly adopt and confirm the proposal in Activity and capacity, or revise/cancel without changing saved data.

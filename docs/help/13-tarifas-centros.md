@@ -37,3 +37,8 @@ Interpretar tarifas y variaciones de capacidad por centro principal, usando cost
 - [`src/Valdrio.Desktop/PrincipalRatesEditor.cs`](../../src/Valdrio.Desktop/PrincipalRatesEditor.cs)
 - [`src/Valdrio.Application/PrincipalRateReport.cs`](../../src/Valdrio.Application/PrincipalRateReport.cs)
 - [`src/Valdrio.Calculation/PrincipalRates.cs`](../../src/Valdrio.Calculation/PrincipalRates.cs)
+
+## Recorrido recomendado
+1. Selecciona una ejecución económica guardada que sea compatible con el análisis y el período.
+2. Verifica que el centro principal dispone de observaciones de actividad y capacidad confirmadas; los datos ausentes no equivalen a cero.
+3. Consulta la tarifa y la explicación de las variaciones, su unidad y su procedencia; corrige los datos en las pantallas de origen, no en esta tabla de análisis.

@@ -30,3 +30,8 @@ Define and publish the structure of physical centres, analytical nodes and cost 
 - Do not edit a published version as if it were a draft; create a new version or copy where required.
 - Incorrect auxiliary roles affect secondary allocation.
 - Resolve pending edits before leaving the screen.
+
+## Recommended workflow
+1. Create the required centres and nodes, assigning compatible pools and physical units.
+2. Check codes, descriptions and relationships in the draft structure before publication.
+3. Publish the consistent structure version and select it for the analysis so allocation destinations are valid.

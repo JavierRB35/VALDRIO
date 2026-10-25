@@ -46,3 +46,8 @@ Leer CSV/XLSX, interpretar saldos de cuentas, seleccionar registros, agruparlos 
 - [`src/Valdrio.Desktop/ImportColumnMappingWindow.xaml`](../../src/Valdrio.Desktop/ImportColumnMappingWindow.xaml)
 - [`src/Valdrio.Desktop/ImportColumnMappingViewModel.cs`](../../src/Valdrio.Desktop/ImportColumnMappingViewModel.cs)
 - [`src/Valdrio.Application/ImportConfirmation.cs`](../../src/Valdrio.Application/ImportConfirmation.cs)
+
+## Recorrido recomendado
+1. Selecciona CSV o XLSX y revisa las columnas, fechas, delimitadores y el perfil explícito de separadores numéricos.
+2. Comprueba el resultado de la vista previa, las cuentas con código y descripción y los importes ambiguos; corrige el origen o la asignación de columnas cuando haya errores.
+3. Confirma el lote en el análisis correcto y verifica su estado guardado antes de continuar con Preparar cuentas.

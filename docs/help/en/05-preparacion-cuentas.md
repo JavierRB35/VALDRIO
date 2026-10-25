@@ -38,3 +38,8 @@ Review imported account balances, apply explicit extra-accounting adjustments, r
 - Previewing or saving a rule does not apply it to the study.
 - Outstanding and excluded amounts must not be silently redistributed.
 - Resource-preparation diagnostics use red text, unlike informational messages. Economic confirmation dialogs are unchanged. Read-only fields are skipped by Tab without hiding their content.
+
+## Recommended workflow
+1. Review accounts from confirmed batches, their descriptions and opening balances.
+2. Classify, adjust or exclude amounts only as appropriate; check fixed, variable or mixed treatment and save table changes.
+3. Review totals and accounting-to-analytical reconciliation; proceed to primary allocation once amounts have been handled.

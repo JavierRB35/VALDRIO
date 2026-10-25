@@ -47,3 +47,8 @@ Transformar recursos importados en costes analíticos clasificables y repartible
 - [`src/Valdrio.Desktop/ResourceWorkspaceViewModel.cs`](../../src/Valdrio.Desktop/ResourceWorkspaceViewModel.cs)
 - [`src/Valdrio.Desktop/ResourceWorkspaceViewModel.Rules.cs`](../../src/Valdrio.Desktop/ResourceWorkspaceViewModel.Rules.cs)
 - [`src/Valdrio.Application/ReusableAdjustments.cs`](../../src/Valdrio.Application/ReusableAdjustments.cs)
+
+## Recorrido recomendado
+1. Revisa las cuentas procedentes de los lotes confirmados, sus descripciones y los saldos de partida.
+2. Clasifica, ajusta o excluye solo lo que proceda; comprueba el tratamiento fijo, variable o mixto y guarda las modificaciones de las tablas.
+3. Revisa totales y conciliación contable-analítica; cuando no haya importes sin tratar, continúa hacia el reparto primario.

@@ -37,3 +37,8 @@ Read source accounting balances from CSV or XLSX, interpret codes, descriptions 
 - Do not drop leading zeros from account identifiers.
 - Inspect descriptions, signs, missing or inconsistent columns and conversion provenance.
 - Replacing an imported lot is not automatic; review the exact selection and approval.
+
+## Recommended workflow
+1. Choose a CSV or XLSX file and explicitly map columns, dates, delimiters and numeric separators.
+2. Review the preview, account codes/descriptions and ambiguous amounts; correct source data or mappings where necessary.
+3. Confirm the batch for the correct analysis and verify it is saved before preparing accounts.
