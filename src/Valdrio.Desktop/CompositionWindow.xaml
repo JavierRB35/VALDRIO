@@ -9,7 +9,7 @@
   <TabControl Grid.Row="1">
    <TabItem Header="{Binding [Catalog]}"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="12">
     <TextBlock Text="{Binding [CatalogHelp]}" TextWrapping="Wrap" Margin="0,0,0,12"/>
-    <WrapPanel Margin="0,0,0,12"><Button Content="{Binding [AddItem]}" Click="AddItem" IsEnabled="{Binding Writable}"/><Button Content="{Binding [RemoveItem]}" Click="RemoveItem" IsEnabled="{Binding Writable}" Margin="8,0,0,0"/><Button Content="{Binding [Save]}" Click="Save" IsEnabled="{Binding Writable}" Margin="8,0,0,0"/></WrapPanel>
+    <WrapPanel Margin="0,0,0,12" VerticalAlignment="Center"><Button Content="{Binding [AddItem]}" Click="AddItem" IsEnabled="{Binding Writable}"/><Button Content="{Binding [ImportProducts]}" Click="ImportProducts" IsEnabled="{Binding Writable}" Margin="8,0,0,0"/><TextBlock Text="{Binding [ImportAs]}" VerticalAlignment="Center" Margin="12,0,6,0"/><ComboBox Width="150" ItemsSource="{Binding ImportKinds}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding ImportKind}"/><Button Content="{Binding [RemoveItem]}" Click="RemoveItem" IsEnabled="{Binding Writable}" Margin="8,0,0,0"/><Button Content="{Binding [Save]}" Click="Save" IsEnabled="{Binding Writable}" Margin="8,0,0,0"/></WrapPanel>
     <DataGrid x:Name="CatalogGrid" ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" BeginningEdit="CatalogBeginningEdit" MinHeight="200" MaxHeight="600"/>
    </StackPanel></ScrollViewer></TabItem>
    <TabItem Header="{Binding [Recipe]}"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="12">

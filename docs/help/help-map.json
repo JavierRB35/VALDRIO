@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "referenceCommit": "211af0dab39b32902a8cd98f4f377c91638e8920",
-  "updated": "2026-10-21",
+  "referenceCommit": "8ae6d90e16ae18101e28e2bce558310eea70b10b",
+  "updated": "2026-10-25",
   "language": "es",
   "views": [
     {
@@ -159,7 +159,9 @@
         "src/Valdrio.Desktop/CompositionWindow.xaml"
       ],
       "codeSources": [
-        "src/Valdrio.Desktop/CompositionEditor.cs"
+        "src/Valdrio.Desktop/CompositionEditor.cs",
+        "src/Valdrio.Desktop/ProductCostImport.cs",
+        "src/Valdrio.Calculation/CompositionCostEstimator.cs"
       ],
       "trigger": "modal:composition"
     },

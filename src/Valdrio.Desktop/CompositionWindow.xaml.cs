@@ -20,6 +20,8 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
         Text(CatalogGrid,"Code","Code",120); Text(CatalogGrid,"Name","Name",250);
         Choice(CatalogGrid,"Kind","Kind",Editor.Kinds,140); Choice(CatalogGrid,"Unit","Unit",Editor.Units,160);
         CatalogGrid.Columns.Add(new DataGridCheckBoxColumn { Header=Editor["Active"],Binding=new Binding("Active"),Width=85 });
+        CatalogGrid.Columns.Add(new DataGridTextColumn { Header=Editor["ReferenceUnitCost"], Binding=new Binding("ReferenceUnitCost"), IsReadOnly=true, Width=130 });
+        CatalogGrid.Columns.Add(new DataGridTextColumn { Header=Editor["ReferenceCostSource"], Binding=new Binding("ReferenceCostSource"), IsReadOnly=true, Width=220 });
         LinesGrid.Columns.Add(new DataGridComboBoxColumn { Header=Editor["Component"],SelectedItemBinding=new Binding("Target") { UpdateSourceTrigger=UpdateSourceTrigger.PropertyChanged }, ItemsSource=Editor.Targets,DisplayMemberPath="Label",Width=270 });
         Text(LinesGrid,"Quantity","Quantity",90); Choice(LinesGrid,"Unit","Unit",Editor.Units,140); Text(LinesGrid,"Factor","Factor",90);
         Choice(LinesGrid,"Basis","Basis",Editor.Bases,140); Choice(LinesGrid,"Loss","Loss",Editor.Losses,140); Text(LinesGrid,"Percent","Percent",80);
@@ -57,6 +59,11 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
     private void CatalogBeginningEdit(object? sender,DataGridBeginningEditEventArgs e)
     { if(e.Row.Item is CompositionItemRow { Persisted:true } && e.Column.DisplayIndex!=4) e.Cancel=true; }
     private void AddItem(object sender,RoutedEventArgs e) { Editor.AddItem(); CatalogGrid.ScrollIntoView(Editor.Items.Last()); }
+    private void ImportProducts(object sender,RoutedEventArgs e)
+    {
+        var dialog = new Microsoft.Win32.OpenFileDialog { Filter = "CSV/TSV (*.csv;*.tsv;*.txt)|*.csv;*.tsv;*.txt|Todos los archivos (*.*)|*.*", CheckFileExists = true };
+        if (dialog.ShowDialog(this) == true) Editor.ImportProducts(dialog.FileName);
+    }
     private void RemoveItem(object sender,RoutedEventArgs e) { if (Commit()) Editor.RemoveItem(CatalogGrid.SelectedItem as CompositionItemRow); }
     private async Task SavePage(bool publish)
     {
