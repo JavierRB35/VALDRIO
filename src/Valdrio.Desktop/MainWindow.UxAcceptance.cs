@@ -60,6 +60,25 @@ public partial class MainWindow
             }
         }
         vm.ApplyPresentationPreset("es", "es-ES", "UTC", false, false);
+        Width = 1280; Height = 860; UpdateLayout();
+        await NavigateWorkflow(0); UpdateWorkflow();
+        Check(ProjectTaskPanel.IsVisible, "project resume panel is visible");
+        Check(ResumeStructureCard.IsVisible && ResumeStudyCard.IsVisible && ResumeImportCard.IsVisible && ResumeReviewCard.IsVisible,
+            "four real project stages are visible together");
+        Check(new[] { ResumeStructureState.Text, ResumeStudyState.Text, ResumeImportState.Text, ResumeReviewState.Text,
+                ResumeStructureDetail.Text, ResumeStudyDetail.Text, ResumeImportDetail.Text, ResumeReviewDetail.Text }
+                .All(text => !string.IsNullOrWhiteSpace(text)),
+            "all resume stages explain actual state and prerequisites");
+        Check(TaskImportButton.IsEnabled == vm.Studies!.HasImportDestination, "import action follows saved analysis");
+        Check(TaskContinueButton.IsEnabled == vm.Studies.HasPublishedModels, "continue action requires a published cost structure");
+        VisualEvidenceCapture.Capture(this, Path.Combine(directory, "project-resume.png"));
+        if (vm.Studies.HasPublishedModels)
+        {
+            await ContinueProjectWorkAsync();
+            Check(workflowStep == (vm.Studies.HasConfirmedImports ? 4 : vm.Studies.HasImportDestination ? 3 : 2),
+                "continue action opens the next real task for the saved project");
+            await NavigateWorkflow(0);
+        }
         await NavigateWorkflow(1);
         var model = vm.Models!;
         ModelPanel.ModelSteps.SelectedIndex = 1;

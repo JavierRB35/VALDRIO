@@ -221,10 +221,39 @@
     <StackPanel>
      <TextBlock x:Name="ProjectTaskTitle" FontSize="17" FontWeight="SemiBold" />
      <TextBlock x:Name="ProjectTaskHelp" Margin="0,4,0,8" Foreground="{DynamicResource Text.Primary}" />
-     <WrapPanel>
-      <Button x:Name="TaskStructureButton" Click="ChooseProjectStructure" Padding="12,7" Margin="0,4,8,4" />
-      <Button x:Name="TaskAnalysisButton" Click="ChooseProjectAnalysis" Padding="12,7" Margin="0,4,8,4" />
-      <Button x:Name="TaskContinueButton" Click="ContinueProjectWork" Padding="12,7" Margin="0,4,8,4" FontWeight="SemiBold" />
+     <WrapPanel KeyboardNavigation.TabNavigation="Local">
+      <Border x:Name="ResumeStructureCard" Style="{StaticResource Card}" Background="{DynamicResource Surface.Subtle}" Width="222" MinHeight="150" Margin="4" Padding="12">
+       <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <TextBlock x:Name="ResumeStructureTitle" FontWeight="SemiBold"/>
+        <TextBlock x:Name="ResumeStructureState" Grid.Row="1" FontWeight="SemiBold" Margin="0,5,0,3" AutomationProperties.LiveSetting="Polite"/>
+        <TextBlock x:Name="ResumeStructureDetail" Grid.Row="2" TextWrapping="Wrap"/>
+        <Button x:Name="TaskStructureButton" Grid.Row="3" Click="ChooseProjectStructure" Padding="12,7" Margin="0,8,0,0" HorizontalAlignment="Left"/>
+       </Grid>
+      </Border>
+      <Border x:Name="ResumeStudyCard" Style="{StaticResource Card}" Background="{DynamicResource Surface.Subtle}" Width="222" MinHeight="150" Margin="4" Padding="12">
+       <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <TextBlock x:Name="ResumeStudyTitle" FontWeight="SemiBold"/>
+        <TextBlock x:Name="ResumeStudyState" Grid.Row="1" FontWeight="SemiBold" Margin="0,5,0,3" AutomationProperties.LiveSetting="Polite"/>
+        <TextBlock x:Name="ResumeStudyDetail" Grid.Row="2" TextWrapping="Wrap"/>
+        <Button x:Name="TaskAnalysisButton" Grid.Row="3" Click="ChooseProjectAnalysis" Padding="12,7" Margin="0,8,0,0" HorizontalAlignment="Left"/>
+       </Grid>
+      </Border>
+      <Border x:Name="ResumeImportCard" Style="{StaticResource Card}" Background="{DynamicResource Surface.Subtle}" Width="222" MinHeight="150" Margin="4" Padding="12">
+       <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <TextBlock x:Name="ResumeImportTitle" FontWeight="SemiBold"/>
+        <TextBlock x:Name="ResumeImportState" Grid.Row="1" FontWeight="SemiBold" Margin="0,5,0,3" AutomationProperties.LiveSetting="Polite"/>
+        <TextBlock x:Name="ResumeImportDetail" Grid.Row="2" TextWrapping="Wrap"/>
+        <Button x:Name="TaskImportButton" Grid.Row="3" Click="ChooseProjectImport" Padding="12,7" Margin="0,8,0,0" HorizontalAlignment="Left"/>
+       </Grid>
+      </Border>
+      <Border x:Name="ResumeReviewCard" Style="{StaticResource Card}" Background="{DynamicResource Surface.Subtle}" Width="222" MinHeight="150" Margin="4" Padding="12">
+       <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <TextBlock x:Name="ResumeReviewTitle" FontWeight="SemiBold"/>
+        <TextBlock x:Name="ResumeReviewState" Grid.Row="1" FontWeight="SemiBold" Margin="0,5,0,3" AutomationProperties.LiveSetting="Polite"/>
+        <TextBlock x:Name="ResumeReviewDetail" Grid.Row="2" TextWrapping="Wrap"/>
+        <Button x:Name="TaskContinueButton" Grid.Row="3" Click="ContinueProjectWork" Padding="12,7" Margin="0,8,0,0" HorizontalAlignment="Left" FontWeight="SemiBold"/>
+       </Grid>
+      </Border>
      </WrapPanel>
     </StackPanel>
    </Border>

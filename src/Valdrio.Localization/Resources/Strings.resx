@@ -2090,4 +2090,26 @@ The selected destination will be written. Review both files before continuing. C
   <data name="Preference.UTC" xml:space="preserve"><value>Universal time (UTC)</value></data>
   <data name="Preference.America.Los_Angeles" xml:space="preserve"><value>Los Angeles (local time)</value></data>
 <data name="Aux.ReviewResults" xml:space="preserve"><value>Saved results: review answers and reconciliation</value></data>
+  <data name="Guide.ResumeTitle" xml:space="preserve"><value>Resume work in this project</value></data>
+  <data name="Guide.ResumeStructureTitle" xml:space="preserve"><value>Cost structure</value></data>
+  <data name="Guide.ResumeStudyTitle" xml:space="preserve"><value>Analysis period</value></data>
+  <data name="Guide.ResumeImportTitle" xml:space="preserve"><value>Imported balances</value></data>
+  <data name="Guide.ResumeReviewTitle" xml:space="preserve"><value>Account preparation</value></data>
+  <data name="Guide.ResumeReady" xml:space="preserve"><value>Ready</value></data>
+  <data name="Guide.ResumePending" xml:space="preserve"><value>Pending</value></data>
+  <data name="Guide.ResumeUnsaved" xml:space="preserve"><value>Unsaved changes</value></data>
+  <data name="Guide.ResumeStructureCount" xml:space="preserve"><value>{0} finalised structure(s) are available for new analysis periods.</value></data>
+  <data name="Guide.ResumeStructureHelp" xml:space="preserve"><value>Finalise a structure of cost centres and units before creating an analysis period.</value></data>
+  <data name="Guide.ResumeStudyHelp" xml:space="preserve"><value>Choose a saved period or create one with the dates and structure you need.</value></data>
+  <data name="Guide.ResumeStudyNeedsStructure" xml:space="preserve"><value>Finalise a cost structure first; then you can open or create an analysis period.</value></data>
+  <data name="Guide.ResumeOpen" xml:space="preserve"><value>Open for editing</value></data>
+  <data name="Guide.ResumeClosed" xml:space="preserve"><value>Closed for editing</value></data>
+  <data name="Guide.ResumeImportHelp" xml:space="preserve"><value>You can load another batch into the saved period. Review the amount basis and totals before confirming.</value></data>
+  <data name="Guide.ResumeImportNeedsSavedStudy" xml:space="preserve"><value>Save the analysis period to enable importing its balances.</value></data>
+  <data name="Guide.ResumeImportReadyHelp" xml:space="preserve"><value>The saved period accepts new imports. Confirm each batch after reviewing accounts and amounts.</value></data>
+  <data name="Guide.ResumeImportBlockedHelp" xml:space="preserve"><value>Save or select an analysis period; imported balances belong to that period.</value></data>
+  <data name="Guide.ResumeReviewHelp" xml:space="preserve"><value>{0} batch(es) are confirmed in this period. Review accounts, adjustments and reconciliation before allocating.</value></data>
+  <data name="Guide.ResumeReviewBlockedHelp" xml:space="preserve"><value>After saving the period and importing balances, review accounts and adjustments here.</value></data>
+  <data name="Guide.TaskOpenImport" xml:space="preserve"><value>Open import</value></data>
+  <data name="Guide.ResumeChooseAnalysis" xml:space="preserve"><value>Choose or create period</value></data>
 </root>

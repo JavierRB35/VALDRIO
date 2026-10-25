@@ -2090,4 +2090,26 @@ Se escribirá en el destino elegido. Revisa ambos archivos antes de continuar. C
   <data name="Preference.UTC" xml:space="preserve"><value>Hora universal (UTC)</value></data>
   <data name="Preference.America.Los_Angeles" xml:space="preserve"><value>Los Ángeles (hora local)</value></data>
 <data name="Aux.ReviewResults" xml:space="preserve"><value>Resultados guardados: revisar respuestas y conciliación</value></data>
+  <data name="Guide.ResumeTitle" xml:space="preserve"><value>Sigue el trabajo de este proyecto</value></data>
+  <data name="Guide.ResumeStructureTitle" xml:space="preserve"><value>Estructura de costes</value></data>
+  <data name="Guide.ResumeStudyTitle" xml:space="preserve"><value>Periodo de análisis</value></data>
+  <data name="Guide.ResumeImportTitle" xml:space="preserve"><value>Saldos importados</value></data>
+  <data name="Guide.ResumeReviewTitle" xml:space="preserve"><value>Preparación de cuentas</value></data>
+  <data name="Guide.ResumeReady" xml:space="preserve"><value>Disponible</value></data>
+  <data name="Guide.ResumePending" xml:space="preserve"><value>Pendiente</value></data>
+  <data name="Guide.ResumeUnsaved" xml:space="preserve"><value>Cambios sin guardar</value></data>
+  <data name="Guide.ResumeStructureCount" xml:space="preserve"><value>Hay {0} estructura(s) finalizada(s) disponible(s) para nuevos periodos.</value></data>
+  <data name="Guide.ResumeStructureHelp" xml:space="preserve"><value>Finaliza una estructura de centros y unidades para poder crear un periodo de análisis.</value></data>
+  <data name="Guide.ResumeStudyHelp" xml:space="preserve"><value>Elige un periodo guardado o crea uno nuevo con las fechas y la estructura que vas a analizar.</value></data>
+  <data name="Guide.ResumeStudyNeedsStructure" xml:space="preserve"><value>Primero finaliza una estructura de costes; luego podrás abrir o crear un periodo.</value></data>
+  <data name="Guide.ResumeOpen" xml:space="preserve"><value>Abierto para edición</value></data>
+  <data name="Guide.ResumeClosed" xml:space="preserve"><value>Cerrado para edición</value></data>
+  <data name="Guide.ResumeImportHelp" xml:space="preserve"><value>Puedes cargar otro lote al periodo guardado. Antes de confirmar, revisa el significado y el total de los importes.</value></data>
+  <data name="Guide.ResumeImportNeedsSavedStudy" xml:space="preserve"><value>Guarda el periodo de análisis para habilitar la importación de sus saldos.</value></data>
+  <data name="Guide.ResumeImportReadyHelp" xml:space="preserve"><value>El periodo guardado admite nuevas importaciones. Confirma cada lote tras revisar las cuentas y los importes.</value></data>
+  <data name="Guide.ResumeImportBlockedHelp" xml:space="preserve"><value>Guarda o selecciona un periodo de análisis; los saldos importados pertenecen a ese periodo.</value></data>
+  <data name="Guide.ResumeReviewHelp" xml:space="preserve"><value>Hay {0} lote(s) confirmado(s) en este periodo. Revisa las cuentas, los ajustes y la conciliación antes del reparto.</value></data>
+  <data name="Guide.ResumeReviewBlockedHelp" xml:space="preserve"><value>Cuando guardes el periodo e importes saldos, podrás revisar aquí las cuentas y sus ajustes.</value></data>
+  <data name="Guide.TaskOpenImport" xml:space="preserve"><value>Abrir importación</value></data>
+  <data name="Guide.ResumeChooseAnalysis" xml:space="preserve"><value>Elegir o crear periodo</value></data>
 </root>

@@ -93,6 +93,12 @@ Los archivos de empresa empleados por los comprobadores son copias o datos sint�
 
 La entrega es local. No se ha publicado una rama ni activado CI remoto.
 
+## Panel de reanudación del analista
+
+Seguimiento del 25-10-2026 tras revisar la utilidad visible de la entrega. La portada del proyecto ahora reúne cuatro tarjetas de trabajo: estructura de costes, periodo de análisis, saldos importados y preparación de cuentas. Cada tarjeta muestra el estado y el dato disponible, explica el requisito del siguiente paso y ofrece una acción directa. «Continuar» abre revisión de cuentas, importación o selección/creación del periodo según lo guardado; permanece disponible con una estructura publicada para empezar un periodo.
+
+La prueba WPF `--ux-acceptance` pasó 45 comprobaciones, incluidas las cuatro etapas visibles, sus estados y explicaciones, el requisito de importación y la navegación de «Continuar». La captura a 1280×860 y el resultado están en `resume-panel/project-resume.png` y `resume-panel/ux-acceptance.json`.
+
 ## Aplicación entregada
 
 Carpeta local `../entregables/VALDRIO-UX-20261025` respecto del repositorio. Ejecutar `Valdrio.Desktop.exe` conservando los archivos y subcarpetas acompañantes. Es la compilación Release dependiente de .NET Desktop Runtime 10 para Windows, disponible en este equipo. Se verificó nuevamente el recorrido `--ux-acceptance` desde esta carpeta, con resultado correcto.

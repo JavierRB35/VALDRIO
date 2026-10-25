@@ -204,15 +204,40 @@ public partial class MainWindow
             : "";
 
         ProjectTaskPanel.Visibility = workflowStep == 0 && hasProject ? Visibility.Visible : Visibility.Collapsed;
-        ProjectTaskTitle.Text = vm.Guide("ProjectTasksTitle");
+        ProjectTaskTitle.Text = vm.Guide("ResumeTitle");
+        ((TextBlock)FindName("ResumeStructureTitle")).Text = vm.Guide("ResumeStructureTitle");
+        ((TextBlock)FindName("ResumeStudyTitle")).Text = vm.Guide("ResumeStudyTitle");
+        ((TextBlock)FindName("ResumeImportTitle")).Text = vm.Guide("ResumeImportTitle");
+        ((TextBlock)FindName("ResumeReviewTitle")).Text = vm.Guide("ResumeReviewTitle");
         ProjectTaskHelp.Text = vm.Guide("ProjectTasksHelp");
         TaskStructureButton.Content = vm.Guide("TaskStructure");
         TaskAnalysisButton.Content = vm.Guide("TaskAnalysis");
         TaskAnalysisButton.IsEnabled = vm.Studies?.HasPublishedModels == true;
         TaskAnalysisButton.ToolTip = TaskAnalysisButton.IsEnabled ? null : vm.Guide("NeedPublishedShort");
-        TaskContinueButton.Visibility = hasAnalysis ? Visibility.Visible : Visibility.Collapsed;
+        TaskImportButton.Content = vm.Guide("TaskOpenImport");
+        TaskImportButton.IsEnabled = hasImportDestination;
+        TaskImportButton.ToolTip = hasImportDestination ? vm.Guide("ResumeImportReadyHelp") : vm.Guide("ResumeImportBlockedHelp");
+        TaskContinueButton.Visibility = Visibility.Visible;
+        TaskContinueButton.IsEnabled = vm.Studies?.HasPublishedModels == true;
+        TaskContinueButton.ToolTip = TaskContinueButton.IsEnabled ? null : vm.Guide("ResumeReviewBlockedHelp");
         TaskContinueButton.Content = vm.Guide(hasImports ? "TaskContinueResources" :
-            hasImportDestination ? "TaskContinueImport" : "TaskContinueAnalysis");
+            hasImportDestination ? "TaskContinueImport" : "ResumeChooseAnalysis");
+        ResumeStructureState.Text = vm.Guide(vm.Studies?.HasPublishedModels == true ? "ResumeReady" : "ResumePending");
+        ResumeStructureDetail.Text = vm.Studies?.HasPublishedModels == true
+            ? string.Format(vm.Studies.PhysicalFormatCulture, vm.Guide("ResumeStructureCount"), vm.Studies.PublishedModels.Count)
+            : vm.Guide("ResumeStructureHelp");
+        ResumeStudyState.Text = vm.Guide(hasAnalysis ? vm.Studies?.IsDirty == true ? "ResumeUnsaved" : "ResumeReady" : "ResumePending");
+        ResumeStudyDetail.Text = hasAnalysis
+            ? vm.Studies!.Current!.Name + " · " + vm.Studies.Current.Currency.FunctionalCurrencyCode + " · " + vm.Guide(vm.Studies.Current.State == Valdrio.Domain.StudyState.Closed ? "ResumeClosed" : "ResumeOpen")
+            : vm.Guide(vm.Studies?.HasPublishedModels == true ? "ResumeStudyHelp" : "ResumeStudyNeedsStructure");
+        ResumeImportState.Text = vm.Guide(hasImportDestination ? "ResumeReady" : "ResumePending");
+        ResumeImportDetail.Text = hasImportDestination
+            ? vm.Guide("ResumeImportHelp")
+            : vm.Guide(hasAnalysis ? "ResumeImportNeedsSavedStudy" : "ResumeStudyNeedsStructure");
+        ResumeReviewState.Text = vm.Guide(hasImports ? "ResumeReady" : "ResumePending");
+        ResumeReviewDetail.Text = hasImports
+            ? string.Format(vm.Studies!.PhysicalFormatCulture, vm.Guide("ResumeReviewHelp"), vm.Studies.ConfirmedImportCount)
+            : vm.Guide("ResumeReviewBlockedHelp");
         WorkflowBack.Content = workflowStep == 4 && vm.Resources is { ShowParts: true } resourceEditor ? resourceEditor["BackToCorrectionsButton"] : vm.Guide("Back"); WorkflowBack.IsEnabled = workflowStep > 0 && vm.Company?.WorkspaceIdle != false;
         WorkflowNext.Content = vm.Guide(workflowStep switch
         {
@@ -409,12 +434,13 @@ public partial class MainWindow
     }
     private async void ChooseProjectStructure(object sender, RoutedEventArgs e) => await NavigateWorkflow(1);
     private async void ChooseProjectAnalysis(object sender, RoutedEventArgs e) => await NavigateWorkflow(2);
+    private async void ChooseProjectImport(object sender, RoutedEventArgs e) => await NavigateWorkflow(3);
     private async void ContinueProjectWork(object sender, RoutedEventArgs e) => await ContinueProjectWorkAsync();
     internal async Task ContinueProjectWorkAsync()
     {
-        if (viewModel?.Studies?.Current is null) return;
-        if (viewModel.Studies.HasConfirmedImports) await NavigateWorkflow(4);
-        else if (viewModel.Studies.HasImportDestination) await NavigateWorkflow(3);
+        if (viewModel?.Studies is not { } studies) return;
+        if (studies.HasConfirmedImports) await NavigateWorkflow(4);
+        else if (studies.HasImportDestination) await NavigateWorkflow(3);
         else await NavigateWorkflow(2);
     }
     private async void OpenAnotherImport(object sender, RoutedEventArgs e) => await OpenGuidedImport();
