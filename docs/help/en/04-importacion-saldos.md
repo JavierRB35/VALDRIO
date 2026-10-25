@@ -1,4 +1,6 @@
 # Contextual help: Import accounting balances
+**Last updated:** `2026-10-25`
+
 
 ## 1. Purpose and financial function
 Read source accounting balances from CSV or XLSX, interpret codes, descriptions and monetary amounts, review their provenance and confirm the import into the chosen analysis.

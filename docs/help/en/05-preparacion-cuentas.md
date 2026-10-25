@@ -1,4 +1,6 @@
 # Contextual help: Prepare accounts and resources
+**Last updated:** `2026-10-25`
+
 
 ## 1. Purpose and financial function
 Review imported account balances, apply explicit extra-accounting adjustments, reconcile effective amounts and classify resources into destinations, exclusions or outstanding items.

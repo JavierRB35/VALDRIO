@@ -1,4 +1,6 @@
 # Contextual help: Secondary allocation and closing
+**Last updated:** `2026-10-25`
+
 
 ## 1. Purpose and financial function
 Redistribute costs of auxiliary nodes into final principal destinations, including supported reciprocal flows. A closed primary allocation is a prerequisite.

@@ -1,3 +1,17 @@
+# Estado vigente del proyecto — `main@6885eca` · 25/10/2026
+
+El estado de código de referencia es [`6885eca675cce04127b709a7d98cc35aea9ad697`](https://github.com/JavierRB35/VALDRIO/commit/6885eca675cce04127b709a7d98cc35aea9ad697). T17 (composiciones físicas) y T18 (importación de costes de referencia y estimación económica) están integradas en `main`. La reimportación por referencia actualiza nombre y coste sin sustituir identidad, unidad o tipo, y agrega referencias nuevas. La ayuda ES/EN de las 16 vistas se empaqueta en la aplicación.
+
+Esta ficha de estado es la referencia vigente; los bloques con fecha que siguen son actas históricas de implementación y conservan sus SHA, resultados y límites. No presentar un estado de una rama candidata como estado actual. El inventario de pantalla vigente es [REALIDAD_FUNCIONAL_2026-10-25.md](docs/revision/REALIDAD_FUNCIONAL_2026-10-25.md); la aceptación WPF debe atribuirse al SHA exacto documentado en cada evidencia.
+
+## T18 — Costes económicos de referencia · 25/10/2026
+
+Integrada en `main`: importación CSV/TSV del catálogo con referencia, nombre, unidad de medida y coste unitario; actualización por referencia existente y alta de nuevas; coste parcial de componentes para una composición; precio de referencia del producto de salida en línea separada. Los faltantes se identifican y no se tratan como cero. No incluye consumos reales T19 ni valoración contable T32.
+
+La ayuda funcional completa está en [ES](docs/help/14-productos-servicios.md) y [EN](docs/help/en/14-productos-servicios.md). Las pruebas de T18 están en [T18CompositionCostTests.cs](tests/Valdrio.Tests/T18CompositionCostTests.cs); la ficha de alcance es [T18](docs/tareas/T18.md). Este bloque no declara un recorrido manual WPF nuevo sobre el binario final. GitHub Actions no se ha ejecutado.
+
+---
+
 # T17 — composición y cantidades · 20/10/2026
 
 Implementación candidata en `feat/t17-compositions-20261020`, desde main `e956771`. Catálogo físico, recetas por unidad/lote iniciado/orden, conversiones, mermas y rendimiento, semielaborados sin ciclos y versiones publicadas inmutables. Página integrada ES/EN con tablas y siete preguntas/respuestas. Formato 12 mediante actualización de una copia; AURORA original conservado y verificado por SHA-256.

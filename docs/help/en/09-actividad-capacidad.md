@@ -1,4 +1,6 @@
 # Contextual help: Activity and capacity
+**Last updated:** `2026-10-25`
+
 
 ## 1. Purpose and financial function
 Record normal capacity and actual activity for each analytical node, study and period. Observations are versioned and must be confirmed with identifiable sources; they are not inferred from each other.

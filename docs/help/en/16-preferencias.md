@@ -1,4 +1,6 @@
 # Contextual help: Preferences and presentation formats
+**Last updated:** `2026-10-25`
+
 
 ## 1. Purpose and financial function
 Choose the UI language, number and date formatting and display time zone. Presentation preferences do not change economic cost values or carry out foreign-exchange conversions.

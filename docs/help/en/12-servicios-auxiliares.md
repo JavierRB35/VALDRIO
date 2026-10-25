@@ -1,4 +1,6 @@
 # Contextual help: Auxiliary capacity and services
+**Last updated:** `2026-10-25`
+
 
 ## 1. Purpose and financial function
 Evaluate measured auxiliary services and the treatment of auxiliary capacity, distinguishing owner-once capacity, throughput and pending treatment. Do not add reciprocal gross circulation to company cost.

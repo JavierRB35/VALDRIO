@@ -1,4 +1,6 @@
 # Contextual help: Project
+**Last updated:** `2026-10-25`
+
 
 ## 1. Purpose and financial function
 Create, open and protect the company project file (.valdrio). This establishes the monetary and physical-unit context for cost accounting but does not itself calculate costs.

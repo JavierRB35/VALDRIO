@@ -1,7 +1,7 @@
 # Ayuda contextual: Proyecto
 **ID Vista UI:** `View_Project`  
-**Última actualización:** `2026-10-21`  
-**Estado:** borrador documental contrastado con código de `main@211af0d`; pendiente de prueba interactiva Windows.
+**Última actualización:** `2026-10-25`
+**Estado:** guía funcional mantenida para `main@6885eca` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
 
 ## 1. Objetivo y función financiera
 Crear, abrir y proteger el archivo de empresa `.valdrio` que conserva el trabajo analítico. Permite elegir el proyecto y sus unidades antes de definir estructuras, períodos y repartos. No calcula costes por sí solo.

@@ -1,71 +1,65 @@
 # VALDRIO
 
-**Actualización posterior al corte documental:** T14 incorpora correcciones verificadas en Windows local y mejoras de tabla/calculadora. Reparto primario permite previsualizar y adoptar reglas compatibles de otro análisis, sin copiar saldos, actividad ni cierres. Véase el [informe de pruebas, capturas y aceptación pendiente](docs/evidencias/t14-revision-local-20261015/README.md). Esta entrega no completa la aceptación comercial de T14/RP-01 ni implementa T15.
+Aplicación de escritorio para Windows (WPF/.NET 10) que guía al analista desde el proyecto y el modelo de costes hasta los repartos, la actividad/capacidad, los productos y las ejecuciones económicas. Los proyectos se guardan en archivos `.valdrio`.
 
-**Aplicación local de escritorio para Windows (WPF/.NET 10)** orientada a proyectos de cálculo y gestión de costes. El archivo de trabajo es `.valdrio`; se conservan estructura, análisis, importaciones, preparación, repartos y ejecuciones según el estado/versión de cada proyecto.
+> **Documentación contrastada con `main@6885eca` (25/10/2026).** Describe las funciones presentes en ese código; no sustituye una aceptación interactiva completa del binario final. El inventario detallado está en [Realidad funcional](docs/revision/REALIDAD_FUNCIONAL_2026-10-25.md). La [matriz manual actual](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-25.md) cubre T18 y ayuda F1; la [matriz del 15/10](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md) se conserva como registro histórico.
 
-> **Estado documental actualizado el 15/10/2026.** Esta portada describe la implementación inspeccionada en `main@8b6c89e47d69d53bb5adad2fe0a2b215b4d68a95`. «Existe en el código» no equivale a «ha sido aceptada interactivamente en esta revisión». Para comportamiento, pruebas y límites, consultar [inventario de la aplicación real](docs/revision/REALIDAD_FUNCIONAL_2026-10-15.md) y [matriz de aceptación Windows](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md).
+## Navegación disponible
 
-## Recorrido disponible en la aplicación
+La aplicación agrupa el recorrido en tres fases. Dentro de «Repartos y cálculo» hay subgrupos para asignación, capacidad y resultados; el acceso a una pantalla no significa que sus datos estén completos.
 
-El menú real consta de **tres fases operativas desplegables** y ocho pasos (más Preferencias). Se avanza cuando se cumplen los requisitos de proyecto/análisis/importación/cierre:
+| Fase | Pantallas y herramientas |
+| --- | --- |
+| **Proyecto y estructura** | Proyecto · Diseñar estructura |
+| **Análisis y datos** | Período y análisis · Importar saldos · Preparar cuentas |
+| **Repartos y cálculo** | Reparto primario · Reparto secundario y cierre · Actividad y capacidades (T14) · Capacidad y servicios auxiliares (T16) · Tarifas de centros (T15) · Productos y servicios (T17/T18) · Flujos y ejecuciones (T12) |
+| **Preferencias** | Idioma · formato regional · zona horaria |
 
-| Fase | Pasos de la interfaz |
-|---|---|
-| **Proyecto y estructura** | **1. Proyecto** · **2. Diseñar estructura** |
-| **Análisis y datos económicos** | **3. Periodo / análisis** · **4. Importar saldos** · **5. Preparar cuentas** |
-| **Repartos y cálculo** | **6. Reparto primario** · **7. Reparto secundario y cierre** · **8. Flujos y ejecuciones** |
-| Fuera del proceso | **Preferencias** (idioma, región, zona horaria y herramientas de desarrollo) |
+### Qué puede hacer el analista
 
-### Qué hace realmente cada etapa
+- Crear, abrir, copiar, restaurar y actualizar proyectos; definir unidades y mantener modelos de centros, nodos y pools mediante borradores y versiones publicadas.
+- Crear análisis por período, escenario y modelo; importar saldos CSV/XLSX con mapeo, revisión y confirmación; preparar cuentas, clasificar destinos y aplicar ajustes reutilizables de forma explícita.
+- Definir claves y reglas de reparto primario y secundario, revisar cobertura, resolver prestaciones recíprocas, calcular y consultar ejecuciones persistidas e históricas.
+- Registrar/importar actividad y capacidad física, estimar capacidad normal, evaluar servicios auxiliares y consultar tarifas de gestión por centro.
+- Mantener el catálogo de productos, materiales y servicios; importar **Referencia, Nombre, Unidad de medida y Coste unitario** desde CSV/TSV; crear composiciones con unidades, lotes, rendimiento y semielaborados; estimar subtotales físicos valorados.
 
-1. **Proyecto:** crear/abrir archivo de proyecto, abrir **copia** del ejemplo, copiar/restaurar/actualizar archivo y gestionar unidades de actividad.
-2. **Diseñar estructura:** centros, nodos, pools y unidades; borradores, validación, publicación y versiones de la estructura.
-3. **Periodo/análisis:** análisis por modelo, fechas, moneda y escenario; selección/reapertura, instantáneas, estados y revisión.
-4. **Importar saldos:** asistente CSV/XLSX, mapeo de cuentas/descripciones e importes (columna o Debe/Haber), interpretación, selección, agrupación, revisión y confirmación.
-5. **Preparar cuentas:** correcciones manuales en tabla, clasificación, partes/destinos, exclusiones, costes directos y reglas de ajustes extracontables **guardables y aplicables expresamente por análisis** (con vista previa, confirmación y reversión según estado).
-6. **Reparto primario:** biblioteca de claves versionadas, reglas por cuenta/prefijo, asignación y cobertura, composición, reparto, resultados explicativos y cierre/reapertura.
-7. **Reparto secundario y cierre:** claves para auxiliares, prestaciones recíprocas, diagnóstico de viabilidad, cálculo y resultados conciliados por principal; circulación bruta no aditiva y cierre/reapertura.
-8. **Flujos y ejecuciones (T12):** crear/publicar una ejecución de costes, consultar histórico vigente/anterior, gráficos por etapas y detalle de flujos y conciliaciones sin recalcular al consultar.
+La reimportación de catálogo actualiza nombre y coste de referencias existentes sin cambiar su identidad, unidad ni tipo; agrega referencias nuevas con el tipo seleccionado. La ayuda de **Productos y servicios** explica el procedimiento y los límites económicos.
 
-El **cierre primario/secundario** no es un cierre integral del período. El cálculo recíproco disponible no significa que existan ABC, TDABC ni selector de métodos. Los campos de «capacidad» que puedan figurar en estructuras/recursos **no implementan por sí mismos** tarifas u ociosidad.
+## Límites que conviene tener presentes
 
-## Estado de desarrollo y límites
+- El coste T18 es una estimación de gestión con precios unitarios de referencia en la moneda predeterminada del proyecto. No es consumo real ni valoración contable de inventario o producción en curso.
+- La falta de precio o de tarifa deja componentes sin valorar y el subtotal puede ser parcial; la aplicación los identifica en lugar de tratarlos como cero.
+- El cierre de los repartos no es un cierre integral del período. El cálculo recíproco no implica que haya métodos ABC/TDABC.
+- El registro de consumos reales y desviaciones de T19 y la valoración contable de T32 no forman parte de estas pantallas.
 
-- **Integradas en el código de `main`:** bases T00–T11 (proyecto, estructura, importación, recursos, claves y repartos), ejecuciones persistidas/historial **T12**, ejemplos de verificación **T13** y editor de ajustes reutilizables. La existencia se ha comprobado sobre archivos de producción, no únicamente fichas de tareas.
-- **Verificación histórica:** constan pruebas y recorridos WPF Windows en [auditoría integral](docs/auditorias/2026-10-14/VALIDACION.md), [ergonomía visual](docs/auditorias/2026-10-14-visual/VALIDACION.md), [T12](docs/tareas/T12.md), [T13](docs/tareas/T13.md) y [reglas](docs/evidencias/2026-10-14-ajustes-reutilizables/INFORME.md). Sus resultados corresponden a **commits/escenarios documentados**, no son un pase nuevo del HEAD.
-- **Posterior al corte original:** T14 (observaciones físicas y capacidad, originadas en [PR #55](https://github.com/JavierRB35/VALDRIO/pull/55)) y reutilización de reglas disponen de implementación revisada localmente; consultar el informe enlazado al inicio para alcance y límites. T15+ (tarifas/absorción, producción y objetos, rentabilidad, escenarios, informes comerciales, presupuestos, ABC/TDABC) sigue fuera de esta entrega.
-- **Pendiente para el futuro manual:** recorrido manual Windows sobre el binario final, mensajes exactos, casos negativos, resultados representativos, accesibilidad y escalado. Véase [matriz con estado por caso](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md).
+## Ayuda en la aplicación
 
-## Ejemplos de comprobación económica
+Las guías completas están disponibles localmente en español e inglés mediante **Ayuda (F1)**. La microayuda de campos aparece al situar el foco o el puntero sobre un control; **Tab conserva su función normal de pasar al siguiente control**. Consulta el [índice y arquitectura de ayuda](docs/help/README.md). Las 16 vistas están registradas en [`help-map.json`](docs/help/help-map.json).
 
-Se incluyen dos proyectos ficticios de aceptación, `Synthetic Projects/Service Company/` y `Synthetic Projects/Industrial Company/`, con resultados de referencia **17.500 EUR** y **36.000 EUR**, respectivamente. Los archivos `.valdrio` originales se conservan para probar reapertura/migración; no se deben modificar. Véase [T13](docs/tareas/T13.md) para expectativas independientes, signos, auxiliares recíprocos y ejecución histórica T12 sobre **copias generadas**.
+## Desarrollo y validación local
 
-## Desarrollo y verificación local
-
-Requisitos de ejecución: **Windows y .NET SDK 10.0.401** según [global.json](global.json); consulta las dependencias de [Valdrio.slnx](Valdrio.slnx). El frontend está en `src/Valdrio.Desktop`, el motor económico en `Application`/`Calculation`, la persistencia en `Infrastructure`, el modelo en `Domain` y las vistas de reporting en `Reporting`.
+Requisitos: Windows y .NET SDK **10.0.401** (véase [`global.json`](global.json)).
 
 ```powershell
 dotnet restore Valdrio.slnx
 dotnet build Valdrio.slnx -c Release --no-restore
 dotnet test tests/Valdrio.Tests/Valdrio.Tests.csproj -c Release --no-build --no-restore
-# Ejecución interactiva (Windows):
 dotnet run --project src/Valdrio.Desktop -c Release
+python scripts/verify_help.py
 ```
 
-La verificación más amplia y los escenarios WPF se describen en [Verify-Windows.ps1](.github/scripts/Verify-Windows.ps1) y [matriz de aceptación](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md). Puede necesitarse un directorio de evidencias nuevo y el árbol limpio; **no ejecutar tests con archivos reales del usuario**.
+No ejecutar pruebas con archivos reales de usuario. Los escenarios WPF ampliados están en [Verify-Windows.ps1](.github/scripts/Verify-Windows.ps1). Las pruebas y evidencias fechadas deben leerse junto con el SHA al que corresponden; no certifican automáticamente un SHA posterior.
 
-### Política GitHub Actions
+### Coste de GitHub Actions
 
-**Objetivo: 0 USD; gasto sin autorización expresa: 0 USD; límite de seguridad absoluto: 20 USD.** El único workflow `windows-ci.yml` usa actualmente `workflow_dispatch` y un runner alojado Windows: no lo lanzar sin autorización. Priorizar PC Windows local o runner Windows self-hosted. Las modificaciones exclusivamente documentales no justifican compilaciones remotas. Esta actualización documental no ha lanzado workflows ni consumido GitHub Actions.
+Objetivo habitual: **0 USD**. El límite de seguridad absoluto es 20 USD y el gasto sin autorización explícita es 0 USD. Los workflows permanecen manuales (`workflow_dispatch`); no los ejecutes sin autorización del propietario. Prioriza validación local o runners Windows self-hosted.
 
-## Documentación por finalidad
+## Documentación del proyecto
 
-- **Realidad funcional observable:** [inventario actual](docs/revision/REALIDAD_FUNCIONAL_2026-10-15.md) y [protocolo de validación del futuro manual](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md).
-- **Estado e historia del proyecto:** [ESTADO_PROYECTO.md](ESTADO_PROYECTO.md); sus capítulos antiguos son registros de fases pasadas, **no** una descripción vigente alternativa.
-- **Instrucciones para agentes/desarrollo:** [AGENTS.md](AGENTS.md) y [usabilidad](docs/directrices/USABILIDAD.md).
-- **Diseño vigente como directriz:** [sistema visual V1](docs/diseno/SISTEMA_VISUAL_VALDRIO_V1.md) y [plan de migración](docs/diseno/PLAN_MIGRACION_FRONTEND.md); el estilo aprobado no garantiza aceptación visual completa.
-- **Decisiones técnicas y trazabilidad:** [ADR](docs/adr), [fichas de tareas](docs/tareas), [evidencias fechadas](docs/evidencias), [auditorías](docs/auditorias).
-- **Visión de producto y contratos de referencia:** [especificación v0.4](specification/v0.4), [directrices T14](docs/directrices/T14_INTEGRACION_Y_HOJA_DE_RUTA.md).
+- [Inventario funcional del código actual](docs/revision/REALIDAD_FUNCIONAL_2026-10-25.md) · [estado e historia](ESTADO_PROYECTO.md).
+- [Ayuda de usuario ES/EN](docs/help/README.md) · [plan de comprobación manual actual](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-25.md).
+- [Directriz de usabilidad](docs/directrices/USABILIDAD.md) · [sistema visual aprobado](docs/diseno/SISTEMA_VISUAL_VALDRIO_V1.md).
+- [Tareas y decisiones](docs/tareas) · [ADR](docs/adr) · [evidencias](docs/evidencias) · [auditorías](docs/auditorias).
+- [Especificación v0.4](specification/v0.4): contratos y hoja de ruta; no debe leerse como descripción de funciones ya integradas.
 
-**Convención:** conservar los históricos de desarrollo como fuentes con fecha y SHA. La documentación de «cómo se usa hoy» debe seguir el inventario y el binario aceptado, no un `README` de T05/T07/T08 ni una maqueta futura.
+Los informes históricos conservan su fecha y SHA como evidencia de esa entrega. Para conocer el comportamiento actual, empieza por el inventario funcional y las guías de pantalla.

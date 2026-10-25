@@ -1,6 +1,7 @@
 # Ayuda contextual: Productos, servicios y costes de referencia
 **ID Vista UI:** `View_Compositions`  
 **Última actualización:** `2026-10-25`
+**Estado:** guía funcional de T17/T18 contrastada con `main@6885eca`; el coste mostrado es una estimación de gestión, no una valoración contable.
 
 ## 1. Para qué sirve
 Esta pantalla define qué componentes físicos necesita un producto o servicio y permite calcular un coste de gestión estimado usando costes unitarios de referencia. El cálculo sirve para analizar una composición o comparar su subtotal de componentes con el coste unitario importado del producto.
@@ -62,8 +63,3 @@ Ejemplo: si la receta requiere 3 kg de material a 4 €/kg y 2 horas de activida
 - [`src/Valdrio.Desktop/ProductCostImport.cs`](../../src/Valdrio.Desktop/ProductCostImport.cs)
 - [`src/Valdrio.Calculation/CompositionCalculator.cs`](../../src/Valdrio.Calculation/CompositionCalculator.cs)
 - [`src/Valdrio.Calculation/CompositionCostEstimator.cs`](../../src/Valdrio.Calculation/CompositionCostEstimator.cs)
-
-### Referencias al código
-- [`src/Valdrio.Desktop/CompositionWindow.xaml`](../../src/Valdrio.Desktop/CompositionWindow.xaml)
-- [`src/Valdrio.Desktop/CompositionEditor.cs`](../../src/Valdrio.Desktop/CompositionEditor.cs)
-- [`src/Valdrio.Calculation/CompositionCalculator.cs`](../../src/Valdrio.Calculation/CompositionCalculator.cs)

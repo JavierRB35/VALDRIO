@@ -1,6 +1,6 @@
 # Arquitectura de ayuda contextual — VALDRIO
 
-**Corte examinado:** `main@211af0dab39b32902a8cd98f4f377c91638e8920` (20/10/2026). **Documentación creada:** 21/10/2026.
+**Corte de implementación y contenido:** `main@6885eca675cce04127b709a7d98cc35aea9ad697` (25/10/2026). **Contrato revisado:** 25/10/2026.
 
 ## Objetivo y alcance
 
@@ -19,15 +19,15 @@ Cada `.md` contiene exactamente un `ID Vista UI` único, fecha y cuatro seccione
 
 La ayuda se redacta sobre controles realmente presentes en XAML y su lógica verificada en ViewModel/servicio. No convertir planes R1–R4 en capacidades actuales. *Pendiente* no es `0`; borrador no es publicado; volumen bruto de auxiliares no es coste adicional; tarifa de gestión no es automáticamente valoración NIC 2.
 
-## Diseño de integración WPF (implementación inicial en rama de desarrollo; aceptación pendiente)
+## Integración WPF que está en `main`
 
-1. Crear `HelpRegistry` con las entradas estables de `help-map.json` y servicio `IContextHelpProvider.Get(viewId, culture)`. El ID depende de la operación lógica, no del nombre físico del panel. En `MainWindow.Guidance.cs` mantener la selección activa para los pasos `0,1,2,4,5,7,8,9,10,6`; la importación `3` tiene contenido propio en su ventana. Para los modales, asociar ID en el controlador de ventana.
-2. Empaquetar el contenido MD versionado **con el ejecutable** (p. ej. recursos embebidos o ficheros `Content` con copia controlada) y mostrar su SHA/versión de publicación cuando proceda. En producción no depender de HTTP/GitHub para leer ayuda, ni acceder al repositorio privado desde cliente.
-3. Añadir acción contextual `Ayuda de esta pantalla` accesible por ratón y teclado junto a cada vista y ventana; mostrar panel WPF con lectura por secciones, tablas legibles, texto seleccionable y cierre que devuelva foco. No sustituir `FieldHelp` ni saturar el formulario con manuales. El título y el ID activo cambian con la navegación, incluidas ventanas integradas.
-4. Renderizar Markdown mediante parser controlado y componentes WPF (p. ej. `FlowDocument`, tablas y enlaces permitidos), sin HTML/script arbitrario ni ejecución de código desde archivos. Mantener scroll, lectores de pantalla, ampliación, alto contraste y estilo VALDRIO.
-5. Internacionalización: estos primeros contenidos son ES; antes de aceptación bilingüe añadir `docs/help/en/` sincronizada y cargar por `UiLanguageTag`, con fallback indicado. La existencia de cadenas UI en inglés no supone que estas ayudas estén traducidas.
+- `ContextHelpCatalog` carga `help-map.json` y resuelve el artículo por ID lógico y cultura. `ContextHelpMarkdown` transforma el subconjunto Markdown utilizado por las fichas a contenido WPF local; el lector no ejecuta HTML/script ni obtiene texto desde Internet.
+- La acción superior **Ayuda (F1)** abre una ventana de lectura no modal. El artículo cambia al navegar entre pantallas y si cambia el idioma mientras la ayuda está abierta. El panel compartido de reparto puede mostrar guías lógicas distintas para primario y secundario; asistentes y modales se resuelven por su propia ventana.
+- Los 16 artículos ES y sus 16 traducciones EN, junto con `help-map.json`, se copian como contenido `help/` junto al ejecutable. Si una traducción no está disponible, el lector identifica el fallback al español; el verificador local exige paridad completa.
+- `FieldHelp` conserva la microayuda de campos: se muestra cuando un control recibe foco de teclado o puntero y ofrece el detalle asociado cuando existe. **Tab no activa la ayuda**: mantiene el recorrido normal entre controles.
+- La guía completa complementa, no sustituye, tooltips, `AutomationProperties.HelpText` ni mensajes de validación.
 
-**Estado actualizado de la fase de implementación:** el PR de integración WPF incorpora lector offline de Markdown, acceso mediante barra superior/F1, mapeo de vistas lógicas y 16 traducciones inglesas. Se preservan los tooltip y la microayuda existente. **Aún no hay compilación, ejecución de pruebas ni validación visual real en Windows sobre ese PR**: los criterios de aceptación final siguen abiertos hasta recibir evidencia local.
+La integración del lector y el contenido está en el código actual. La inspección estática y las pruebas de catálogo no prueban por sí solas accesibilidad de lector de pantalla, enfoque visual en todos los diálogos ni legibilidad a cada DPI. Esos resultados deben registrarse sobre el SHA del binario probado.
 
 ## Trazabilidad y cambios
 
@@ -47,4 +47,4 @@ La ayuda se redacta sobre controles realmente presentes en XAML y su lógica ver
 
 ## Límites de la auditoría documental
 
-Los contenidos fueron extraídos del XAML/VM actuales, `docs/tareas/T14.md`…`T17.md` y la línea base histórica de 15/10/2026 contrastada con el HEAD de 20/10/2026. La lectura del código acredita existencia, no aceptación interactiva universal. La cobertura de pantallas en `main` no incluye componentes creados únicamente en ramas sin fusionar.
+El contenido y el mapeo se actualizaron contra el código de `main@6885eca`, incluidas las guías de composición y costes T17/T18. La lectura del código acredita qué controles y reglas están implementados, no la aceptación interactiva universal. La cobertura de pantallas en `main` no incluye componentes creados únicamente en ramas sin fusionar; una captura o ejecución anterior tampoco certifica un SHA posterior.

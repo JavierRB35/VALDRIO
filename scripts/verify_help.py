@@ -6,6 +6,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 SECTIONS = (
@@ -13,6 +14,20 @@ SECTIONS = (
     "## 2. Guía de campos y entradas (Inputs)",
     "## 3. Interpretación de resultados (Outputs)",
     "## 4. Casos de uso, validaciones y errores frecuentes",
+)
+T18_SECTIONS_ES = (
+    "## 1. Para qué sirve",
+    "## 2. Importar productos y costes unitarios",
+    "## 3. Crear y publicar una composición",
+    "## 4. Casos de uso e interpretación del coste estimado",
+    "## 5. Límites y validaciones",
+)
+T18_SECTIONS_EN = (
+    "## 1. Purpose and financial function",
+    "## 2. Import products and unit costs",
+    "## 3. Build and publish a composition",
+    "## 4. Use cases and cost estimate interpretation",
+    "## 5. Limits and validation",
 )
 
 def run(base=None):
@@ -38,18 +53,29 @@ def run(base=None):
             issues.append("ID distinto en documento: " + path)
         if not re.search(r"\*\*Última actualización:\*\*\s*`\d{4}-\d{2}-\d{2}`", content):
             issues.append("Fecha inválida: " + path)
-        if any(text not in content for text in SECTIONS):
-            issues.append("Faltan los 4 apartados: " + path)
+        expected_sections = T18_SECTIONS_ES if v["file"] == "14-productos-servicios.md" else SECTIONS
+        if any(text not in content for text in expected_sections):
+            issues.append("Faltan apartados requeridos: " + path)
         if content.count("|") < 12 or "[Campo]" in content:
             issues.append("Tabla incompleta o plantilla sin adaptar: " + path)
+        for target in re.findall(r"\[[^\]]+\]\(([^)]+)\)", content):
+            parsed = urlsplit(target)
+            if parsed.scheme or not parsed.path:
+                continue
+            linked_path = (doc.parent / unquote(parsed.path)).resolve()
+            if not linked_path.exists():
+                issues.append("Enlace local roto: " + path + " -> " + target)
         en_doc = ROOT / "docs/help/en" / v["file"]
         if not en_doc.is_file():
             issues.append("English help missing: " + str(en_doc.relative_to(ROOT)))
         else:
             english = en_doc.read_text(encoding="utf-8")
-            if any(header not in english for header in (
+            if not re.search(r"\*\*Last updated:\*\*\s*`\d{4}-\d{2}-\d{2}`", english):
+                issues.append("English date invalid: " + str(en_doc.relative_to(ROOT)))
+            expected_english_sections = T18_SECTIONS_EN if v["file"] == "14-productos-servicios.md" else (
                 "## 1. Purpose and financial function", "## 2. Fields and inputs",
-                "## 3. Results and interpretation", "## 4. Use cases, validation and common errors")):
+                "## 3. Results and interpretation", "## 4. Use cases, validation and common errors")
+            if any(header not in english for header in expected_english_sections):
                 issues.append("English sections missing: " + str(en_doc.relative_to(ROOT)))
             if english.count("|") < 12:
                 issues.append("English table incomplete: " + str(en_doc.relative_to(ROOT)))

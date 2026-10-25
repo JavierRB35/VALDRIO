@@ -1,4 +1,6 @@
 # Contextual help: Import physical activity
+**Last updated:** `2026-10-25`
+
 
 ## 1. Purpose and financial function
 Import normal and actual observations from CSV or XLSX into the selected analysis, with source-node/unit matching, previews and explicit replacement choices. This is separate from accounting-balance import.
