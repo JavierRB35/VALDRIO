@@ -1,7 +1,7 @@
 # Ayuda contextual: Período y análisis
 **ID Vista UI:** `View_Study`  
-**Última actualización:** `2026-10-21`  
-**Estado:** borrador documental contrastado con código de `main@211af0d`; pendiente de prueba interactiva Windows.
+**Última actualización:** `2026-10-25`
+**Estado:** guía funcional mantenida para `main@6885eca` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
 
 ## 1. Objetivo y función financiera
 Crear o seleccionar un análisis ligado a una estructura publicada y a un período. Delimita la moneda, fechas y escenario que controlarán importaciones, recursos, actividad y cálculos.

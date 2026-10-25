@@ -23,7 +23,9 @@ public static class CompositionCalculator
             throw Error("InvalidCatalog");
         foreach (var item in catalog.Items)
             if (!item.Id.IsValid || string.IsNullOrWhiteSpace(item.Code) || string.IsNullOrWhiteSpace(item.Name) ||
-                !Enum.IsDefined(item.Kind) || !units.Any(u => u.Id == item.UnitId))
+                !Enum.IsDefined(item.Kind) || !units.Any(u => u.Id == item.UnitId) ||
+                item.ReferenceUnitCost is < 0 || item.ReferenceUnitCost.HasValue && string.IsNullOrWhiteSpace(item.ReferenceCostSource) ||
+                !item.ReferenceUnitCost.HasValue && item.ReferenceCostSource is not null)
                 throw Error("InvalidItem");
         foreach (var group in catalog.Versions.GroupBy(v => v.ProductId))
         {

@@ -1,4 +1,6 @@
 # Contextual help: Cost flows and calculation runs
+**Last updated:** `2026-10-25`
+
 
 ## 1. Purpose and financial function
 Inspect and compare persisted calculation runs, their diagrams and the provenance of distributed costs without changing the meaning of historical results.

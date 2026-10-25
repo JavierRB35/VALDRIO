@@ -1,7 +1,7 @@
 # Ayuda contextual: Calculadora de capacidad normal
 **ID Vista UI:** `View_NormalCapacityAssistant`  
-**Última actualización:** `2026-10-21`  
-**Estado:** borrador documental contrastado con código de `main@211af0d`; pendiente de prueba interactiva Windows.
+**Última actualización:** `2026-10-25`
+**Estado:** guía funcional mantenida para `main@6885eca` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
 
 ## 1. Objetivo y función financiera
 Proponer una capacidad normal a partir de calendario operativo, histórico comparable o valor declarado. El cálculo es una propuesta revisable: no altera la fila física hasta que se adopta expresamente.

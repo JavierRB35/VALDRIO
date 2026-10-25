@@ -1,4 +1,6 @@
 # Contextual help: Normal-capacity assistant
+**Last updated:** `2026-10-25`
+
 
 ## 1. Purpose and financial function
 Propose a normal-capacity figure from calendar availability, comparable history or an explicit declaration. Adopting a proposal is not the same as saving or confirming the physical observation.

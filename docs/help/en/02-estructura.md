@@ -1,4 +1,6 @@
 # Contextual help: Structure design
+**Last updated:** `2026-10-25`
+
 
 ## 1. Purpose and financial function
 Define and publish the structure of physical centres, analytical nodes and cost pools used by analyses. Publishing a structure is distinct from merely saving a draft.

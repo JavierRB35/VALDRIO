@@ -1,4 +1,6 @@
 # Contextual help: Cost centre rates
+**Last updated:** `2026-10-25`
+
 
 ## 1. Purpose and financial function
 Review normalised management rates for principal cost centres from compatible published cost runs and confirmed physical capacity/activity. These are not automatically inventory valuation rates.

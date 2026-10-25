@@ -1,4 +1,6 @@
 # Contextual help: Period and analysis
+**Last updated:** `2026-10-25`
+
 
 ## 1. Purpose and financial function
 Create or reopen an analysis for a defined accounting period, scenario and published model. This scope governs subsequent imports and calculations.

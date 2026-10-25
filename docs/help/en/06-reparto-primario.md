@@ -1,4 +1,6 @@
 # Contextual help: Primary cost allocation
+**Last updated:** `2026-10-25`
+
 
 ## 1. Purpose and financial function
 Distribute effective resource costs to the analytical cost nodes by published allocation keys, while preserving the fixed and variable behaviour of each item and reconciling the financial base.

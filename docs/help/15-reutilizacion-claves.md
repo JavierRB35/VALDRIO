@@ -1,7 +1,7 @@
 # Ayuda contextual: Reutilizar metodología de reparto
 **ID Vista UI:** `View_AllocationReuse`  
-**Última actualización:** `2026-10-21`  
-**Estado:** borrador documental contrastado con código de `main@211af0d`; pendiente de prueba interactiva Windows.
+**Última actualización:** `2026-10-25`
+**Estado:** guía funcional mantenida para `main@6885eca` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
 
 ## 1. Objetivo y función financiera
 Comparar y adoptar claves/metodologías compatibles de otro análisis para no reconstruir criterios desde cero. Reutiliza reglas seleccionadas, no saldos, actividad, cierres ni cálculos históricos.

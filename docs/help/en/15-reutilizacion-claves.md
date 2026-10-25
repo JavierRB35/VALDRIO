@@ -1,4 +1,6 @@
 # Contextual help: Reuse allocation methodology
+**Last updated:** `2026-10-25`
+
 
 ## 1. Purpose and financial function
 Review compatible saved allocation keys and rules from another analysis, preview conflicts and explicitly adopt selected methodology. This does not transfer balances or historic cost results.

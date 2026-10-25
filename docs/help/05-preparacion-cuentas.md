@@ -1,7 +1,7 @@
 # Ayuda contextual: Preparar cuentas
 **ID Vista UI:** `View_ResourcePreparation`  
-**Última actualización:** `2026-10-21`  
-**Estado:** borrador documental contrastado con código de `main@211af0d`; pendiente de prueba interactiva Windows.
+**Última actualización:** `2026-10-25`
+**Estado:** guía funcional mantenida para `main@6885eca` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
 
 ## 1. Objetivo y función financiera
 Transformar recursos importados en costes analíticos clasificables y repartibles, con correcciones, ajustes extracontables reutilizables, exclusiones y destinos. Permite explicar la conciliación contable-analítica antes de repartir.
