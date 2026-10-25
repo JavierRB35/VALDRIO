@@ -41,7 +41,7 @@ The cost answer separates:
 
 - **Priced component subtotal:** required quantity × reference unit cost for final materials with a price.
 - **Missing reference prices:** lists physical components without a unit cost. The visible subtotal excludes them and may therefore be partial.
-- **Indirect activity not included:** activity quantities appear in the physical result, but this phase does not automatically apply T15 rates or duplicate centre amounts. Activities are excluded from this subtotal.
+- **Indirect activity not included:** activity quantities appear in the physical result, but this screen does not automatically apply T15 rates or duplicate centre amounts. Activities are excluded from this subtotal.
 - **Imported output reference:** imported unit cost for the output multiplied by the entered quantity. This is displayed separately; it is not subtracted from the subtotal or used as manufacturing cost.
 
 Example: a recipe needs 3 kg of material at €4/kg and 2 hours of activity. VALDRIO shows €12 as the priced component subtotal, warns that the 2 hours are not valued, and displays the output's imported unit-cost reference separately if available. Do not interpret €12 as the total cost while prices or activities are missing.

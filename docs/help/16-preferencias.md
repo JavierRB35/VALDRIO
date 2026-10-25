@@ -1,7 +1,7 @@
 # Ayuda contextual: Preferencias y formatos
 **ID Vista UI:** `View_Preferences`  
 **Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `main@6885eca` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
 
 ## 1. Objetivo y función financiera
 Configurar presentación de idioma, números, fechas y zona horaria de la aplicación. Los ajustes de visualización no sustituyen conversiones monetarias de negocio ni modifican el coste económico calculado.

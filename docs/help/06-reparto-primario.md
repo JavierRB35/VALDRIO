@@ -1,7 +1,7 @@
 # Ayuda contextual: Reparto primario
 **ID Vista UI:** `View_PrimaryAllocation`  
 **Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `main@6885eca` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
 
 ## 1. Objetivo y función financiera
 Asignar costes preparados a nodos/centros mediante claves e inductores con cobertura verificable. Permite calcular, justificar y cerrar la primera imputación de costes a la estructura.
@@ -45,3 +45,6 @@ Asignar costes preparados a nodos/centros mediante claves e inductores con cober
 - [`src/Valdrio.Desktop/AllocationWorkspacePanel.xaml`](../../src/Valdrio.Desktop/AllocationWorkspacePanel.xaml)
 - [`src/Valdrio.Desktop/AllocationWorkspaceViewModel.Primary.cs`](../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Primary.cs)
 - [`src/Valdrio.Application/PrimaryAllocation.cs`](../../src/Valdrio.Application/PrimaryAllocation.cs)
+
+### Gráfico de Pareto
+El gráfico ordena todos los nodos que reciben coste en el primario de mayor a menor coste. Cada barra muestra el coste agregado del nodo; la línea representa el porcentaje del coste total acumulado. Puedes consultar la tabla de valores y desplazar horizontalmente el gráfico. Con abonos negativos, el acumulado puede superar el 100 % antes de descender; si el total es cero o negativo, no se calcula porcentaje. Sin resultados se indica que todavía no hay datos.

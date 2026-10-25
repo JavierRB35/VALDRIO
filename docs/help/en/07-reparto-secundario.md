@@ -31,3 +31,6 @@ Redistribute costs of auxiliary nodes into final principal destinations, includi
 - The reciprocal solver does not imply a user-selectable ABC or TDABC method.
 - T16 auxiliary capacity requires its own explicit treatment and verified data.
 - When assigning keys to auxiliary nodes or absolute amounts, Tab and Shift+Tab move across row editors and skip read-only values. Assignment errors are shown in red and existing dialogs are not replaced.
+
+### Pareto chart
+The chart sorts principal nodes at their final cost, without counting internal auxiliary circulation again by descending cost. Bars show each node’s aggregate cost; the line shows cumulative cost as a percentage of the total. An exact-value table and horizontal scrolling are available. Negative credits may make the cumulative percentage exceed 100% before decreasing. A zero or negative total has no percentage; missing results are shown as unavailable.

@@ -36,3 +36,6 @@ Distribute effective resource costs to the analytical cost nodes by published al
 - Historically referenced published keys require dependency checks before deletion.
 - Account descriptions support identification but do not change code identity.
 - While editing an allocation key, Tab and Shift+Tab traverse enabled editors in key lines, weights, classification and coverage, skipping informational columns. Contextual validation errors appear in red; existing modal messages remain available.
+
+### Pareto chart
+The chart sorts all nodes receiving primary costs by descending cost. Bars show each node’s aggregate cost; the line shows cumulative cost as a percentage of the total. An exact-value table and horizontal scrolling are available. Negative credits may make the cumulative percentage exceed 100% before decreasing. A zero or negative total has no percentage; missing results are shown as unavailable.

@@ -1,7 +1,7 @@
 # Ayuda contextual: Capacidad y servicios auxiliares
 **ID Vista UI:** `View_AuxiliaryServices`  
 **Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `main@6885eca` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
 
 ## 1. Objetivo y función financiera
 Definir tratamiento y cantidades de servicios prestados por auxiliares, evaluando capacidad propia y transferencias sin duplicar coste recibido. Permite comprobar cobertura, reciprocidad y efecto terminal al publicar la ejecución.

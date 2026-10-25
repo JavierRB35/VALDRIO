@@ -1,7 +1,7 @@
 # Ayuda contextual: Importación de actividad física
 **ID Vista UI:** `View_PhysicalImport`  
 **Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `main@6885eca` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
 
 ## 1. Objetivo y función financiera
 Preparar y aplicar observaciones físicas de capacidad normal y actividad real desde CSV/XLSX hacia los nodos del estudio activo. Separa lectura/vista previa de aplicación y conserva la validación final de cada observación.

@@ -1,7 +1,7 @@
 # Ayuda contextual: Productos, servicios y costes de referencia
 **ID Vista UI:** `View_Compositions`  
 **Última actualización:** `2026-10-25`
-**Estado:** guía funcional de T17/T18 contrastada con `main@6885eca`; el coste mostrado es una estimación de gestión, no una valoración contable.
+**Estado:** guía funcional de T17/T18 contrastada con `928b263`; el coste mostrado es una estimación de gestión, no una valoración contable.
 
 ## 1. Para qué sirve
 Esta pantalla define qué componentes físicos necesita un producto o servicio y permite calcular un coste de gestión estimado usando costes unitarios de referencia. El cálculo sirve para analizar una composición o comparar su subtotal de componentes con el coste unitario importado del producto.
@@ -43,7 +43,7 @@ La respuesta de coste muestra por separado:
 
 - **Subtotal de componentes con precio:** suma de cantidad requerida × coste unitario de referencia para los materiales finales que tienen precio.
 - **Faltan precios de referencia:** identifica los componentes físicos que no tienen coste unitario. El subtotal visible no los incluye y, por tanto, puede ser parcial.
-- **Actividad indirecta no incluida:** las cantidades de actividad aparecen en el resultado físico, pero esta fase no aplica automáticamente tarifas T15 ni duplica importes de centros. El subtotal no incluye esas actividades.
+- **Actividad indirecta no incluida:** las cantidades de actividad aparecen en el resultado físico, pero esta pantalla no aplica automáticamente tarifas T15 ni duplica importes de centros. El subtotal no incluye esas actividades.
 - **Referencia importada del producto:** coste unitario de referencia del resultado multiplicado por la cantidad de salida. Se presenta como comparación separada; no se resta del subtotal ni se usa como coste de fabricación.
 
 Ejemplo: si la receta requiere 3 kg de material a 4 €/kg y 2 horas de actividad, VALDRIO muestra 12 € como subtotal de componentes, avisa de que las 2 horas de actividad no están valoradas y, si se importó un coste unitario del producto, muestra su referencia aparte. No debe interpretarse el subtotal de 12 € como coste total mientras haya costes o actividades sin valorar.

@@ -1,7 +1,7 @@
 # Ayuda contextual: Actividad y capacidades
 **ID Vista UI:** `View_PhysicalActivity`  
 **Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `main@6885eca` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
 
 ## 1. Objetivo y función financiera
 Registrar observaciones físicas por nodo/pool, análisis y período, manteniendo versiones, fuentes y estados. Permite comparar actividad real con capacidad normal. La pantalla no define por sí sola tarifas económicas.

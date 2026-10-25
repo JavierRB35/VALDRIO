@@ -1,7 +1,7 @@
 # Ayuda contextual: Reparto secundario y cierre
 **ID Vista UI:** `View_SecondaryAllocation`  
 **Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `main@6885eca` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
 
 ## 1. Objetivo y función financiera
 Redistribuir costes de nodos auxiliares hacia nodos principales, incluidos servicios recíprocos, y cerrar el reparto sin duplicar circulación interna. No es un cierre integral del período.
@@ -39,3 +39,6 @@ Redistribuir costes de nodos auxiliares hacia nodos principales, incluidos servi
 - [`src/Valdrio.Desktop/AllocationWorkspacePanel.xaml`](../../src/Valdrio.Desktop/AllocationWorkspacePanel.xaml)
 - [`src/Valdrio.Desktop/AllocationWorkspaceViewModel.Secondary.cs`](../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Secondary.cs)
 - [`src/Valdrio.Application/SecondaryAllocation.cs`](../../src/Valdrio.Application/SecondaryAllocation.cs)
+
+### Gráfico de Pareto
+El gráfico ordena los nodos principales con su coste final, sin volver a sumar la circulación entre auxiliares de mayor a menor coste. Cada barra muestra el coste agregado del nodo; la línea representa el porcentaje del coste total acumulado. Puedes consultar la tabla de valores y desplazar horizontalmente el gráfico. Con abonos negativos, el acumulado puede superar el 100 % antes de descender; si el total es cero o negativo, no se calcula porcentaje. Sin resultados se indica que todavía no hay datos.

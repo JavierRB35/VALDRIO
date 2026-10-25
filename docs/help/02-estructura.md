@@ -1,7 +1,7 @@
 # Ayuda contextual: Diseñar estructura
 **ID Vista UI:** `View_Structure`  
 **Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `main@6885eca` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
 
 ## 1. Objetivo y función financiera
 Definir y versionar centros, nodos de coste, pools y unidades. Esta estructura publicada gobierna los destinos válidos de los repartos y la lectura de costes por centro. Editar un borrador no altera silenciosamente una versión publicada.
