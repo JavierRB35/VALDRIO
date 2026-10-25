@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Valdrio.Desktop;
 
@@ -45,7 +46,8 @@ public static class FieldHelp
         element.DataContextChanged += (_, _) => { if (element.IsLoaded) Bind(); };
         ToolTipService.SetShowOnDisabled(element, true);
         ToolTipService.SetShowDuration(element, 60000);
-        element.GotKeyboardFocus += (_, _) => Show();
+        element.AddHandler(Keyboard.GotKeyboardFocusEvent,
+            new KeyboardFocusChangedEventHandler((_, _) => Show()), handledEventsToo: true);
         element.MouseEnter += (_, _) => Show();
         void Show()
         {

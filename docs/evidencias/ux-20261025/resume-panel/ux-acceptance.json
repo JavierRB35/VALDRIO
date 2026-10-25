@@ -31,6 +31,8 @@
   "import action follows saved analysis",
   "continue action requires a published cost structure",
   "continue action opens the next real task for the saved project",
+  "field focus shows its contextual help immediately",
+  "moving focus to the next field updates its help",
   "edit centre name inside table",
   "table edits enable existing save",
   "table save preserves code and persists name",

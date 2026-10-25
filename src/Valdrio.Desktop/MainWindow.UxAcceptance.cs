@@ -79,6 +79,17 @@ public partial class MainWindow
                 "continue action opens the next real task for the saved project");
             await NavigateWorkflow(0);
         }
+        await NavigateWorkflow(2);
+        var study = vm.Studies!;
+        var firstFocus = StudyPanel.StudyNameBox.Focus();
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+        Check(firstFocus && StudyPanel.StudyNameBox.IsKeyboardFocusWithin && FieldHelpText.Text == study.Guide("Help.Name"),
+            "field focus shows its contextual help immediately");
+        VisualEvidenceCapture.Capture(this, Path.Combine(directory, "field-help-focused.png"));
+        var nextFocus = StudyPanel.StudyCurrencyBox.Focus();
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+        Check(nextFocus && StudyPanel.StudyCurrencyBox.IsKeyboardFocusWithin && FieldHelpText.Text == study.Guide("Help.Currency"),
+            "moving focus to the next field updates its help");
         await NavigateWorkflow(1);
         var model = vm.Models!;
         ModelPanel.ModelSteps.SelectedIndex = 1;

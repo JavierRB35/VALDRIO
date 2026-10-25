@@ -537,7 +537,7 @@ Full: {5}</value></data>
   <data name="Guide.PublishNext" xml:space="preserve"><value>Save, check and finalize structure</value></data>
   <data name="Guide.MasterHelp" xml:space="preserve"><value>Define the physical or organisational centres first. You do not have to decide activity units in advance: create them here if you already know them, or directly inside a node when you need one.</value></data>
   <data name="Guide.NodesHelp" xml:space="preserve"><value>A node is a calculation unit within a centre. Choose its centre, role and activity unit. When you press Save node, VALDRIO immediately saves the draft and the node appears in the table.</value></data>
-  <data name="Guide.HelpHint" xml:space="preserve"><value>Help: hover over a field or select it with Tab to see its explanation here.</value></data>
+  <data name="Guide.HelpHint" xml:space="preserve"><value>Help: a field's explanation appears when it receives focus or the pointer hovers over it.</value></data>
   <data name="Guide.StoredAt" xml:space="preserve"><value>Project file: </value></data>
   <data name="Guide.Help.CompanyName" xml:space="preserve"><value>Name identifying the company. Create file asks for a location; that file holds all company data.</value></data>
   <data name="Guide.Help.Currency" xml:space="preserve"><value>Study functional currency: currency used for results. At company level it is only a suggestion for new studies.</value></data>
