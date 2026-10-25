@@ -37,3 +37,6 @@ Crear, abrir y proteger el archivo de empresa `.valdrio` que conserva el trabajo
 ### Referencias al código
 - [`src/Valdrio.Desktop/CompanyFilePanel.xaml`](../../src/Valdrio.Desktop/CompanyFilePanel.xaml)
 - [`src/Valdrio.Desktop/CompanyFileViewModel.cs`](../../src/Valdrio.Desktop/CompanyFileViewModel.cs)
+
+### Órdenes estimadas y formato de archivo
+Las órdenes estimadas aceptadas se guardan dentro de la empresa en formato 13. Al abrir un archivo anterior, actualiza una copia: el original se conserva. Las copias de seguridad incluyen el historial congelado.

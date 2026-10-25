@@ -113,6 +113,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public IAllocationWorkspace? ActiveAllocations => active?.Allocations;
     public IRunStore? ActiveRuns => active?.Runs;
     public IPhysicalActivityWorkspace? ActivePhysicalActivity => active?.PhysicalActivity;
+    public IEstimateWorkspace? ActiveEstimates => active?.Estimates;
     public ICompositionWorkspace? ActiveCompositions => active?.Compositions;
     public bool CanWrite => active?.Mode == CompanyFileOpenMode.Edit;
     public bool WorkspaceIdle => !busy && WorkspaceBusy?.Invoke() != true;

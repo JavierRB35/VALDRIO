@@ -54,3 +54,6 @@ Example: a recipe needs 3 kg of material at €4/kg and 2 hours of activity. VAL
 - Indirect materials may remain in cost centres. Do not include the same consumption both as a direct material and as indirect cost.
 - Do not infer direct materials from accounting codes 600/601.
 - Published versions cannot be edited in place; create a new version to change components or quantities.
+
+## Complete estimated orders
+To include activity costs and retain an accepted version, open **Products and results → Estimated orders**. Use a published composition and a saved economic run. This screen retains its reference subtotal preview. See the [estimated order guide](16-ordenes-estimadas.md).

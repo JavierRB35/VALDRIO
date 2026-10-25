@@ -85,6 +85,9 @@ public partial class MainWindow
         ResultsMenuGroup.Text = Menu("Results");
         AuxiliaryStep.IsEnabled = vm.Studies!.CanOpenPhysical;
         CompositionStep.Content = new Valdrio.Localization.UiTextCatalog().Get("Composition.Title", vm.Studies.PhysicalUiCulture);
+        EstimateStep.Content = new Valdrio.Localization.UiTextCatalog().Get("Estimate.Title", vm.Studies.PhysicalUiCulture);
+        EstimateStep.IsEnabled = vm.Studies.CanOpenPhysical;
+        EstimateStep.Tag = workspacePages.LastOrDefault() is EstimateWindow ? "Active" : null;
         CompositionStep.IsEnabled = vm.Studies.CanOpenPhysical;
         CompositionStep.Tag = workspacePages.LastOrDefault() is CompositionWindow ? "Active" : null;
         if (workflowStep == 4 && lastResourceStage != vm.Resources?.Stage) { lastHelpKey = null; lastResourceStage = vm.Resources?.Stage ?? -1; }
@@ -264,10 +267,10 @@ public partial class MainWindow
             WorkflowNext.Visibility = Visibility.Collapsed;
             AllocationActionsHost.Visibility = Visibility.Collapsed;
             var active = workspacePages.LastOrDefault(p =>
-                p is PhysicalActivityWindow or PrincipalRatesWindow or AuxiliaryCapacityWindow or CompositionWindow);
+                p is PhysicalActivityWindow or PrincipalRatesWindow or AuxiliaryCapacityWindow or CompositionWindow or EstimateWindow);
             if (active is not null)
             {
-                ShowNavigationPhase(active is CompositionWindow ? 8 : 9);
+                ShowNavigationPhase(active is CompositionWindow or EstimateWindow ? 8 : 9);
                 foreach (var button in buttons) button.Tag = null;
                 PhysicalStep.Tag = active is PhysicalActivityWindow ? "Active" : null;
                 RatesStep.Tag = active is PrincipalRatesWindow ? "Active" : null;
@@ -371,6 +374,17 @@ public partial class MainWindow
         {
             if (!LeaveIntegratedWorkspace()) return;
             new CompositionWindow(studies) { Owner = this }.ShowIntegrated();
+            UpdateWorkflow();
+        }
+    }
+    private async void OpenEstimates(object sender, RoutedEventArgs e)
+    {
+        if (viewModel?.Allocations is { } a && !await a.CanLeaveAsync()) return;
+        if (viewModel?.Resources is { } r && !await r.CanLeaveAsync()) return;
+        if (viewModel?.Company?.WorkspaceIdle != false && viewModel?.Studies is { CanOpenPhysical: true } studies)
+        {
+            if (!LeaveIntegratedWorkspace()) return;
+            new EstimateWindow(studies) { Owner = this }.ShowIntegrated();
             UpdateWorkflow();
         }
     }

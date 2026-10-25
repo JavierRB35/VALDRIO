@@ -28,3 +28,6 @@ Choose the UI language, number and date formatting and display time zone. Presen
 - Do not mistake developer-only tools for production controlling features.
 - Retry failed preference storage rather than assuming it persisted.
 - Use Help (F1) from the header and close the reader with Escape.
+
+### Estimated order presentation
+Order quantities use the configured decimal separator, without grouping separators during entry. History dates explicitly show UTC using the regional format. Language and format changes do not alter frozen values.

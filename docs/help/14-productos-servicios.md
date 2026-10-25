@@ -63,3 +63,6 @@ Ejemplo: si la receta requiere 3 kg de material a 4 €/kg y 2 horas de activida
 - [`src/Valdrio.Desktop/ProductCostImport.cs`](../../src/Valdrio.Desktop/ProductCostImport.cs)
 - [`src/Valdrio.Calculation/CompositionCalculator.cs`](../../src/Valdrio.Calculation/CompositionCalculator.cs)
 - [`src/Valdrio.Calculation/CompositionCostEstimator.cs`](../../src/Valdrio.Calculation/CompositionCostEstimator.cs)
+
+## Órdenes estimadas completas
+Para valorar también la actividad y conservar una versión aceptada, abre **Productos y resultados → Órdenes estimadas**. Usa una composición publicada y un cálculo económico guardado. El subtotal de esta pantalla sigue siendo una consulta de referencia. Consulta la [guía de órdenes estimadas](16-ordenes-estimadas.md).

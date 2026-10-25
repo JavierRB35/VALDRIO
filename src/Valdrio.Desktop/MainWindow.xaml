@@ -150,6 +150,7 @@
       <Expander.Header><TextBlock x:Name="ResultsMenuGroup" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource Brand.White}" Margin="4,7,2,7"/></Expander.Header>
       <StackPanel Margin="0,5,0,3">
        <Button x:Name="CompositionStep" Click="OpenCompositions" Style="{StaticResource NavigationStepButton}"/>
+       <Button x:Name="EstimateStep" Click="OpenEstimates" Style="{StaticResource NavigationStepButton}"/>
        <Button x:Name="CostFlowStep" Click="ChooseCostFlows" Style="{StaticResource NavigationStepButton}"/>
       </StackPanel>
      </Expander>

@@ -1,5 +1,7 @@
 # VALDRIO
 
+> **Ampliación en esta rama:** órdenes estimadas con aceptación inmutable, historial y comparación, sobre el menú y Pareto ya publicados en `main@dd1f6f7`. Abre **Productos y resultados → Órdenes estimadas**. [Guía](docs/help/16-ordenes-estimadas.md) · [Alcance y validación](docs/evidencias/t18-ordenes-20261025.md). Los inventarios anteriores siguen describiendo su corte fechado.
+
 Aplicación de escritorio para Windows (WPF/.NET 10) que guía al analista desde el proyecto y el modelo de costes hasta los repartos, la actividad/capacidad, los productos y las ejecuciones económicas. Los proyectos se guardan en archivos `.valdrio`.
 
 > **Documentación contrastada con `main@6885eca` (25/10/2026).** Describe las funciones presentes en ese código; no sustituye una aceptación interactiva completa del binario final. El inventario detallado está en [Realidad funcional](docs/revision/REALIDAD_FUNCIONAL_2026-10-25.md). La [matriz manual actual](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-25.md) cubre T18 y ayuda F1; la [matriz del 15/10](docs/revision/PLAN_VERIFICACION_MANUAL_2026-10-15.md) se conserva como registro histórico.

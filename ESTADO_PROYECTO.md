@@ -1,3 +1,13 @@
+# Ampliación T18 — rama `feat/t18-frozen-estimates` · 25/10/2026
+
+El menú intuitivo y los Pareto de ambos repartos están fusionados y publicados en **main@dd1f6f7**, con 770 pruebas locales. Sobre esa base, esta rama completa las órdenes estimadas con recetas, precios y tarifas congelados, historial, revisión y comparación. La ampliación usa formato 13 mediante actualización en copia, sin modificar el original; no registra consumos reales T19 ni valoración contable T32.
+
+Ver [alcance T18](docs/tareas/T18.md), [ayuda de órdenes](docs/help/16-ordenes-estimadas.md) y [evidencia de entrega](docs/evidencias/t18-ordenes-20261025.md). La rama candidata no se presenta como fusionada en main. GitHub Actions: no ejecutado.
+
+Los bloques siguientes describen cortes anteriores.
+
+---
+
 # Estado vigente del proyecto — `main@6885eca` · 25/10/2026
 
 El estado de código de referencia es [`6885eca675cce04127b709a7d98cc35aea9ad697`](https://github.com/JavierRB35/VALDRIO/commit/6885eca675cce04127b709a7d98cc35aea9ad697). T17 (composiciones físicas) y T18 (importación de costes de referencia y estimación económica) están integradas en `main`. La reimportación por referencia actualiza nombre y coste sin sustituir identidad, unidad o tipo, y agrega referencias nuevas. La ayuda ES/EN de las 16 vistas se empaqueta en la aplicación.

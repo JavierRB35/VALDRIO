@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Valdrio.Infrastructure.CompanyFiles.Migrations;
 namespace Valdrio.Infrastructure.CompanyFiles;
 
-internal sealed class CompositionDbContext(SqliteConnection connection) : PhysicalDbContext(connection)
+internal class CompositionDbContext(SqliteConnection connection) : PhysicalDbContext(connection)
 {
     public DbSet<CompositionCatalogRow> CompositionCatalogs => Set<CompositionCatalogRow>();
     protected override void OnModelCreating(ModelBuilder model) => V12Model.Configure(model);

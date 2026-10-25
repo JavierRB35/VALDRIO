@@ -187,6 +187,19 @@
         "src/Valdrio.Desktop/FieldHelp.cs"
       ],
       "trigger": "nav:6"
+    },
+    {
+      "viewId": "View_Estimates",
+      "file": "16-ordenes-estimadas.md",
+      "uiSources": [
+        "src/Valdrio.Desktop/EstimateWindow.xaml"
+      ],
+      "codeSources": [
+        "src/Valdrio.Desktop/EstimateEditor.cs",
+        "src/Valdrio.Application/Estimates.cs",
+        "src/Valdrio.Calculation/EstimateCalculator.cs"
+      ],
+      "trigger": "modal:estimate"
     }
   ]
 }

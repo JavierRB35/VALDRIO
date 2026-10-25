@@ -1,0 +1,26 @@
+{
+  "base": "dd1f6f7",
+  "branch": "feat/t18-frozen-estimates",
+  "regression": {
+    "total": "776",
+    "executed": "776",
+    "passed": "776",
+    "failed": "0",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "trx": "cjrui_JAVIYMAR_2026-10-25_19_28_40_net10.0.trx",
+  "wpfChecks": 25,
+  "helpViews": 17,
+  "githubActionsExecuted": false
+}

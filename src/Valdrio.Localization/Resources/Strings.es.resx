@@ -2143,4 +2143,64 @@ Se escribirá en el destino elegido. Revisa ambos archivos antes de continuar. C
   <data name="Composition.ImportedOutputReference" xml:space="preserve"><value>Referencia importada del producto: {0} {1}/{2}; para esta cantidad: {3} {1} ({4} unidades)</value></data>
   <data name="Composition.NoOutputReference" xml:space="preserve"><value>Este producto no tiene un coste unitario importado.</value></data>
   <data name="Composition.ImportReferenceAmbiguous" xml:space="preserve"><value>El catálogo contiene referencias que solo se diferencian en mayúsculas y minúsculas. Resuélvelas antes de importar.</value></data>
+  <data name="Estimate.Title" xml:space="preserve"><value>Órdenes estimadas</value></data>
+  <data name="Estimate.Scope" xml:space="preserve"><value>Estimación de gestión con materiales y actividad. Cada versión aceptada conserva sus recetas, precios y tarifas. Los consumos reales se registrarán en T19.</value></data>
+  <data name="Estimate.Help" xml:space="preserve"><value>Indica la orden, una receta publicada, la cantidad y un cálculo económico guardado. Previsualiza antes de aceptar.</value></data>
+  <data name="Estimate.Code" xml:space="preserve"><value>Referencia de la orden</value></data>
+  <data name="Estimate.Recipe" xml:space="preserve"><value>Receta publicada</value></data>
+  <data name="Estimate.Quantity" xml:space="preserve"><value>Cantidad</value></data>
+  <data name="Estimate.Run" xml:space="preserve"><value>Cálculo económico guardado</value></data>
+  <data name="Estimate.New" xml:space="preserve"><value>Nueva orden</value></data>
+  <data name="Estimate.Preview" xml:space="preserve"><value>Calcular estimación</value></data>
+  <data name="Estimate.Accept" xml:space="preserve"><value>Aceptar y congelar versión</value></data>
+  <data name="Estimate.History" xml:space="preserve"><value>Historial de órdenes</value></data>
+  <data name="Estimate.HistoryHelp" xml:space="preserve"><value>Las versiones aceptadas son inmutables. Para actualizar una orden, selecciona su última versión y crea una revisión.</value></data>
+  <data name="Estimate.Show" xml:space="preserve"><value>Consultar versión congelada</value></data>
+  <data name="Estimate.Revise" xml:space="preserve"><value>Preparar nueva versión</value></data>
+  <data name="Estimate.CompareWith" xml:space="preserve"><value>Comparar con la versión</value></data>
+  <data name="Estimate.Compare" xml:space="preserve"><value>Comparar versiones</value></data>
+  <data name="Estimate.Detail" xml:space="preserve"><value>Desglose de materiales y actividad</value></data>
+  <data name="Estimate.Close" xml:space="preserve"><value>Volver</value></data>
+  <data name="Estimate.Question" xml:space="preserve"><value>Pregunta</value></data>
+  <data name="Estimate.Answer" xml:space="preserve"><value>Respuesta</value></data>
+  <data name="Estimate.Component" xml:space="preserve"><value>Componente / actividad</value></data>
+  <data name="Estimate.Rate" xml:space="preserve"><value>Precio / tarifa</value></data>
+  <data name="Estimate.Rates" xml:space="preserve"><value>Versión de tarifas</value></data>
+  <data name="Estimate.Total" xml:space="preserve"><value>Coste total</value></data>
+  <data name="Estimate.UnitCost" xml:space="preserve"><value>Coste unitario</value></data>
+  <data name="Estimate.Sources" xml:space="preserve"><value>Fuentes congeladas</value></data>
+  <data name="Estimate.Batches" xml:space="preserve"><value>Lotes iniciados</value></data>
+  <data name="Estimate.Pending" xml:space="preserve"><value>Estimación pendiente de cálculo; no equivale a coste cero.</value></data>
+  <data name="Estimate.PreviewState" xml:space="preserve"><value>Previsualización sin aceptar</value></data>
+  <data name="Estimate.Ready" xml:space="preserve"><value>Estimación completa. Al aceptar se conservarán los datos mostrados.</value></data>
+  <data name="Estimate.Saved" xml:space="preserve"><value>Versión aceptada y guardada en el historial.</value></data>
+  <data name="Estimate.Frozen" xml:space="preserve"><value>Consulta de datos congelados; no se han recalculado con los valores actuales.</value></data>
+  <data name="Estimate.NeedRecipe" xml:space="preserve"><value>Publica una composición para el modelo del estudio antes de estimar.</value></data>
+  <data name="Estimate.MissingRun" xml:space="preserve"><value>Selecciona un cálculo económico completado del modelo correspondiente.</value></data>
+  <data name="Estimate.MissingRate" xml:space="preserve"><value>Falta una tarifa completa. Revisa las observaciones de actividad y el cálculo seleccionado; no se puede aceptar como coste cero.</value></data>
+  <data name="Estimate.MissingPrice" xml:space="preserve"><value>Falta el precio de un material. Importa su coste de referencia antes de aceptar; no equivale a cero.</value></data>
+  <data name="Estimate.InvalidInput" xml:space="preserve"><value>Revisa la referencia, receta publicada, unidades y cálculo económico seleccionado.</value></data>
+  <data name="Estimate.CurrencyMismatch" xml:space="preserve"><value>Los precios de referencia y el estudio tienen distintas monedas. Se requiere una valoración explícita en la misma moneda.</value></data>
+  <data name="Estimate.ReadOnly" xml:space="preserve"><value>El estudio debe estar abierto y el archivo debe permitir escritura para aceptar estimaciones.</value></data>
+  <data name="Estimate.Changed" xml:space="preserve"><value>Los datos o la última versión han cambiado. Consulta la última versión y vuelve a calcular antes de aceptar.</value></data>
+  <data name="Estimate.DuplicateOrder" xml:space="preserve"><value>Ya existe esa referencia de orden en el estudio. Selecciona su última versión para revisarla.</value></data>
+  <data name="Estimate.Number" xml:space="preserve"><value>Introduce una cantidad positiva con el separador decimal configurado, sin separadores de miles.</value></data>
+  <data name="Estimate.Overflow" xml:space="preserve"><value>La estimación supera el rango numérico admitido.</value></data>
+  <data name="Estimate.Leave" xml:space="preserve"><value>Hay una orden estimada sin aceptar. ¿Descartar la preparación y continuar? Las versiones aceptadas se conservan.</value></data>
+  <data name="Estimate.RevisionHelp" xml:space="preserve"><value>Preparando una nueva versión de la misma orden. Puedes cambiar receta, cantidad y cálculo; la versión anterior se conserva.</value></data>
+  <data name="Estimate.ChooseTwo" xml:space="preserve"><value>Selecciona dos versiones para comparar.</value></data>
+  <data name="Estimate.SameOrder" xml:space="preserve"><value>Selecciona versiones de la misma orden y moneda.</value></data>
+  <data name="Estimate.Comparison" xml:space="preserve"><value>Comparación explícita</value></data>
+  <data name="Estimate.CompareHelp" xml:space="preserve"><value>La comparación muestra los valores congelados; las diferencias pueden incluir cambios de cantidad, receta, precios o tarifas.</value></data>
+  <data name="Estimate.QCost" xml:space="preserve"><value>¿Cuánto cuesta la orden estimada?</value></data>
+  <data name="Estimate.QUnit" xml:space="preserve"><value>¿Cuál es el coste por unidad?</value></data>
+  <data name="Estimate.QQuantity" xml:space="preserve"><value>¿Qué cantidad y lotes se valoran?</value></data>
+  <data name="Estimate.QSources" xml:space="preserve"><value>¿Qué receta, cálculo y tarifas se usan?</value></data>
+  <data name="Estimate.QMissing" xml:space="preserve"><value>¿Faltan precios o tarifas?</value></data>
+  <data name="Estimate.QVersion" xml:space="preserve"><value>¿Qué versión estoy consultando?</value></data>
+  <data name="Estimate.QReal" xml:space="preserve"><value>¿Incluye consumos reales?</value></data>
+  <data name="Estimate.Complete" xml:space="preserve"><value>Todos los componentes finales tienen valoración explícita. Los semielaborados se desglosan sin duplicar su coste.</value></data>
+  <data name="Estimate.NoActual" xml:space="preserve"><value>No. Es una estimación; no consume recursos ni registra producción real (T19).</value></data>
+<data name="Estimate.Revision" xml:space="preserve"><value>Revisión económica</value></data>
+<data name="Estimate.FrozenRate" xml:space="preserve"><value>Tarifa congelada</value></data>
 </root>

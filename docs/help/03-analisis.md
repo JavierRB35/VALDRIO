@@ -37,3 +37,6 @@ Crear o seleccionar un análisis ligado a una estructura publicada y a un perío
 ### Referencias al código
 - [`src/Valdrio.Desktop/StudyWorkspacePanel.xaml`](../../src/Valdrio.Desktop/StudyWorkspacePanel.xaml)
 - [`src/Valdrio.Desktop/StudyWorkspaceViewModel.cs`](../../src/Valdrio.Desktop/StudyWorkspaceViewModel.cs)
+
+### Órdenes estimadas del análisis
+Con el análisis guardado puedes abrir **Productos y resultados → Órdenes estimadas**. La aceptación requiere un análisis abierto y escritura habilitada. El historial se consulta sin alterar los recursos, los repartos ni la revisión económica del análisis.

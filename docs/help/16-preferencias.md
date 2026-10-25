@@ -34,3 +34,6 @@ Configurar presentación de idioma, números, fechas y zona horaria de la aplica
 - [`src/Valdrio.Desktop/MainWindow.xaml`](../../src/Valdrio.Desktop/MainWindow.xaml)
 - [`src/Valdrio.Desktop/MainWindowViewModel.cs`](../../src/Valdrio.Desktop/MainWindowViewModel.cs)
 - [`src/Valdrio.Desktop/FieldHelp.cs`](../../src/Valdrio.Desktop/FieldHelp.cs)
+
+### Presentación de órdenes estimadas
+Las cantidades de órdenes usan el separador decimal de presentación, sin agrupadores al introducir datos. Las fechas del historial indican UTC explícitamente y usan el formato regional. Cambiar idioma o formato no modifica los valores congelados.

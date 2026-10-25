@@ -9,10 +9,10 @@ public sealed class ContextHelpCatalogTests
         new(Path.Combine(AppContext.BaseDirectory, "help"));
 
     [TestMethod]
-    public void AllSixteenScreenArticles_ArePackagedAndReadable()
+    public void AllSeventeenScreenArticles_ArePackagedAndReadable()
     {
         var catalog = Open();
-        Assert.AreEqual(16, catalog.ViewIds.Count);
+        Assert.AreEqual(17, catalog.ViewIds.Count);
         foreach (var id in catalog.ViewIds)
         {
             var article = catalog.Load(id, "es");
@@ -28,6 +28,7 @@ public sealed class ContextHelpCatalogTests
     {
         Assert.AreEqual("View_PrimaryAllocation", ContextHelpCatalog.ViewFor(5));
         Assert.AreEqual("View_SecondaryAllocation", ContextHelpCatalog.ViewFor(7));
+        Assert.AreEqual("View_Estimates", ContextHelpCatalog.ViewFor(8, "EstimateWindow"));
         Assert.AreEqual("View_AllocationReuse", ContextHelpCatalog.ViewFor(5, "AllocationReuseWindow"));
         Assert.AreEqual("View_NormalCapacityAssistant", ContextHelpCatalog.ViewFor(9, "PhysicalCapacityAssistantWindow"));
         Assert.AreEqual("View_PhysicalImport", ContextHelpCatalog.ViewFor(9, "PhysicalImportWindow"));

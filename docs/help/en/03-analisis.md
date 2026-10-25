@@ -31,3 +31,6 @@ Create or reopen an analysis for a defined accounting period, scenario and publi
 - Closed analyses remain viewable until explicitly reopened.
 - Changing periods does not transfer prior amounts or physical hours automatically.
 - Validation failures when creating or saving an analysis are shown in red in the contextual status; once corrected, normal operation feedback resumes.
+
+### Estimated orders for this analysis
+With a saved analysis, open **Products and results → Estimated orders**. Acceptance requires an open analysis and a writable file. Reading history does not change resources, allocations or the economic revision.

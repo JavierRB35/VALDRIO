@@ -53,6 +53,7 @@ internal sealed class ContextHelpCatalog
         "PhysicalImportWindow" => "View_PhysicalImport",
         "AuxiliaryCapacityWindow" => "View_AuxiliaryServices",
         "PrincipalRatesWindow" => "View_PrincipalRates",
+        "EstimateWindow" => "View_Estimates",
         "CompositionWindow" => "View_Compositions",
         "AllocationReuseWindow" => "View_AllocationReuse",
         _ => workflowStep switch

@@ -249,6 +249,14 @@ public partial class App : System.Windows.Application
                     {
                         try
                         {
+                        if (e.Args.Contains("--estimate-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("Estimate checks require a disposable demo copy.");
+                            await company.OpenPath(requestedPath);
+                            if (company.Snapshot is null) throw new InvalidOperationException(company.Status);
+                            await window.RunEstimateChecks(captureDirectory);
+                            Shutdown(0); return;
+                        }
                         if (e.Args.Contains("--pareto-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("Pareto checks require a disposable demo copy.");

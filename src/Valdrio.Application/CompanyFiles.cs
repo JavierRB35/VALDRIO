@@ -30,6 +30,7 @@ public sealed class CompanyFileSnapshot
 
 public interface ICompanyFileSession : IDisposable
 {
+    IEstimateWorkspace Estimates => throw new NotSupportedException();
     ICompositionWorkspace Compositions => throw new NotSupportedException();
     IRunStore Runs => throw new NotSupportedException();
     IPhysicalActivityWorkspace PhysicalActivity => throw new NotSupportedException();

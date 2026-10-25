@@ -30,3 +30,6 @@ Create, open and protect the company project file (.valdrio). This establishes t
 - Examples are opened as working copies; do not alter reference examples.
 - Incompatible physical units make later activity comparisons invalid.
 - Errors while creating, opening or recovering a project are highlighted in red next to the operation status; informational messages remain neutral. Existing confirmation dialogs are retained.
+
+### Estimated orders and file format
+Accepted estimated orders are stored inside the company file in schema 13. Upgrade older files into a copy, retaining the original. Backups include the frozen order history.

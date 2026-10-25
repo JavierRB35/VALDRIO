@@ -60,7 +60,8 @@ public sealed partial class SqliteCompanyFileService
         foreach (var a in audit)
         {
             Invalid(a.Row.CompanyId != file.Id.ToString() || EntityId.Parse(a.Row.Id).ToString() != a.Row.Id || EntityId.Parse(a.AggregateId).ToString() != a.AggregateId || EntityId.Parse(a.TransactionId).ToString() != a.TransactionId || string.IsNullOrWhiteSpace(a.Row.Actor) || UtcInstant.ParseIso(a.Row.AtUtc).ToCanonicalString() != a.Row.AtUtc || a.Schema != CanonicalSnapshotJson.SchemaVersion, "Audit envelope invalid");
-            Invalid(a.Type is not ("Company" or "CompanyFile" or "PhysicalCenter" or "ModelVersion" or "UnitState" or "Study" or "StudySnapshot" or "ImportBatch" or "ResourceChange" or "ResourceAdjustment" or "AllocationKey" or "AllocationChange" or "PhysicalObservation" or "CompositionCatalog"), "Unknown audit aggregate");
+            Invalid(a.Type is not ("Company" or "CompanyFile" or "PhysicalCenter" or "ModelVersion" or "UnitState" or "Study" or "StudySnapshot" or "ImportBatch" or "ResourceChange" or "ResourceAdjustment" or "AllocationKey" or "AllocationChange" or "PhysicalObservation" or "CompositionCatalog" or "Estimate"), "Unknown audit aggregate");
+            if (a.Type == "Estimate") Invalid(file.SchemaVersion < 13, "Estimate audit scope invalid");
             if (a.Type == "CompositionCatalog")
                 Invalid(file.SchemaVersion < 12 || a.AggregateId != file.Id.ToString(), "Composition audit scope invalid");
             if (a.Type == "Company")
@@ -134,10 +135,10 @@ public sealed partial class SqliteCompanyFileService
             var before = CanonicalSnapshotJson.Deserialize<FormatUpgrade>(a.Row.BeforeJson);
             var after = CanonicalSnapshotJson.Deserialize<FormatUpgrade>(a.Row.AfterJson);
             Invalid(a.AggregateId != file.Id.ToString() || a.Row.Revision != i || a.Row.Operation != "UpgradeFormat" ||
-                before.FromSchema is not (1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9 or 10 or 11) || before.FromSchema != before.ToSchema || after.FromSchema != before.FromSchema ||
+                before.FromSchema is not (1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9 or 10 or 11 or 12) || before.FromSchema != before.ToSchema || after.FromSchema != before.FromSchema ||
                 after.ToSchema != before.FromSchema + 1 || (previousSchema.HasValue && before.FromSchema != previousSchema) ||
-                before.MigrationId != (before.FromSchema switch { 1 => MigrationId, 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, 5 => GroupedImportMigrationId, 6 => ImportLedgerMigrationId, 7 => InternationalImportMigrationId, 8 => ResourceMigrationId, 9 => AllocationMigrationId, 10 => RunMigrationId, _ => PhysicalMigrationId }) ||
-                after.MigrationId != (after.ToSchema switch { 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, 5 => GroupedImportMigrationId, 6 => ImportLedgerMigrationId, 7 => InternationalImportMigrationId, 8 => ResourceMigrationId, 9 => AllocationMigrationId, 10 => RunMigrationId, 11 => PhysicalMigrationId, _ => CompositionMigrationId }), "Format upgrade audit invalid");
+                before.MigrationId != (before.FromSchema switch { 1 => MigrationId, 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, 5 => GroupedImportMigrationId, 6 => ImportLedgerMigrationId, 7 => InternationalImportMigrationId, 8 => ResourceMigrationId, 9 => AllocationMigrationId, 10 => RunMigrationId, 11 => PhysicalMigrationId, _ => CompositionMigrationId }) ||
+                after.MigrationId != (after.ToSchema switch { 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, 5 => GroupedImportMigrationId, 6 => ImportLedgerMigrationId, 7 => InternationalImportMigrationId, 8 => ResourceMigrationId, 9 => AllocationMigrationId, 10 => RunMigrationId, 11 => PhysicalMigrationId, 12 => CompositionMigrationId, _ => EstimateMigrationId }), "Format upgrade audit invalid");
             previousSchema = after.ToSchema;
         }
         Invalid(previousSchema.HasValue && previousSchema.Value != file.SchemaVersion, "Format upgrade history incomplete");

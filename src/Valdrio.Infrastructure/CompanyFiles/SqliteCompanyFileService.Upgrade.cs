@@ -18,7 +18,7 @@ public sealed partial class SqliteCompanyFileService
         var schema = reader.GetInt32(2);
         if (reader.Read())
             throw Error("FILE_FOREIGN_FORMAT", "File.ForeignFormat");
-        if (schema is not (1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9 or 10 or 11 or 12))
+        if (schema is not (1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9 or 10 or 11 or 12 or 13))
             throw Error("FILE_SCHEMA_UNSUPPORTED", "File.SchemaUnsupported");
         return schema;
     }
@@ -75,7 +75,8 @@ public sealed partial class SqliteCompanyFileService
                 using (var allocations = new AllocationDbContext(output)) allocations.Database.Migrate();
                 using (var runs = new RunDbContext(output)) runs.Database.Migrate();
                 using (var physical = new PhysicalDbContext(output)) physical.Database.Migrate();
-                using var db = new CompositionDbContext(output);
+                using (var compositions = new CompositionDbContext(output)) compositions.Database.Migrate();
+                using var db = new EstimateDbContext(output);
                 db.Database.Migrate();
                 onCheckpoint?.Invoke(CompanyWriteCheckpoint.AfterFirstWrite);
                 cancellationToken.ThrowIfCancellationRequested();
@@ -84,8 +85,8 @@ public sealed partial class SqliteCompanyFileService
                 var prior = db.Audit.Where(a => EF.Property<string>(a, "AggregateType") == "CompanyFile").Count();
                 for (var from = before.SchemaVersion; from < SchemaVersion; from++)
                 {
-                    var oldMigration = from switch { 1 => MigrationId, 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, 5 => GroupedImportMigrationId, 6 => ImportLedgerMigrationId, 7 => InternationalImportMigrationId, 8 => ResourceMigrationId, 9 => AllocationMigrationId, 10 => RunMigrationId, _ => PhysicalMigrationId };
-                    var newMigration = from switch { 1 => UpgradeMigrationId, 2 => StudyMigrationId, 3 => ImportMigrationId, 4 => GroupedImportMigrationId, 5 => ImportLedgerMigrationId, 6 => InternationalImportMigrationId, 7 => ResourceMigrationId, 8 => AllocationMigrationId, 9 => RunMigrationId, 10 => PhysicalMigrationId, _ => CompositionMigrationId };
+                    var oldMigration = from switch { 1 => MigrationId, 2 => UpgradeMigrationId, 3 => StudyMigrationId, 4 => ImportMigrationId, 5 => GroupedImportMigrationId, 6 => ImportLedgerMigrationId, 7 => InternationalImportMigrationId, 8 => ResourceMigrationId, 9 => AllocationMigrationId, 10 => RunMigrationId, 11 => PhysicalMigrationId, _ => CompositionMigrationId };
+                    var newMigration = from switch { 1 => UpgradeMigrationId, 2 => StudyMigrationId, 3 => ImportMigrationId, 4 => GroupedImportMigrationId, 5 => ImportLedgerMigrationId, 6 => InternationalImportMigrationId, 7 => ResourceMigrationId, 8 => AllocationMigrationId, 9 => RunMigrationId, 10 => PhysicalMigrationId, 11 => CompositionMigrationId, _ => EstimateMigrationId };
                     AddAudit(db, new() { Id = NewId(), CompanyId = before.Id.ToString(), Revision = prior++, Operation = "UpgradeFormat", Actor = actor,
                         AtUtc = time.GetUtcNow().ToCanonicalString(), BeforeJson = Json(new FormatUpgrade(from, from, oldMigration)),
                         AfterJson = Json(new FormatUpgrade(from, from + 1, newMigration)) }, "CompanyFile", before.Id.ToString(), CanonicalSnapshotJson.SchemaVersion);

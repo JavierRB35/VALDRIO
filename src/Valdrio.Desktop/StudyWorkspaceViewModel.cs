@@ -94,6 +94,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     }
     public string ImportColumnsLabel => Text("ImportMapping.OpenMapping");
     public IPhysicalActivityWorkspace? ActivePhysicalActivity => company.ActivePhysicalActivity;
+    public IEstimateWorkspace? ActiveEstimates => company.ActiveEstimates;
     public ICompositionWorkspace? ActiveCompositions => company.ActiveCompositions;
     public void SetCompositionBusy(bool value) { compositionBusy = value; company.NotifyWorkspaceStateChanged(); }
     public IModelWorkspace? PhysicalModels => company.ActiveModels;
