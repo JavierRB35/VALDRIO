@@ -21,6 +21,8 @@ public sealed partial class AllocationWorkspaceViewModel
     private bool primaryComplete;
     private PrimaryAllocationResult? primaryForOverview;
     private decimal primaryPostedTotal;
+    public System.Globalization.CultureInfo ParetoFormat => Format;
+    public string ParetoMoney(decimal amount) => StudyMoney(amount);
     private string StudyMoney(decimal amount) => workspace is null ? "" :
         DisplayMoney(amount, workspace.Resources.Study.Currency.FunctionalCurrencyCode);
     public string PrimaryResultsTotal => PrimaryResults.Count == 0 ? "" : StudyMoney(primaryPostedTotal);

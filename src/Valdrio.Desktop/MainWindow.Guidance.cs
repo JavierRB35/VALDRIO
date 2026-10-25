@@ -8,13 +8,15 @@ public partial class MainWindow
 {
     private bool changingNavigationPhase;
     private int displayedNavigationPhase = -1;
-    private Expander[] NavigationPhases => [ProjectPhase, AnalysisPhase, AllocationPhase];
+    private Expander[] NavigationPhases => [ProjectPhase, AnalysisPhase, AllocationPhase, CapacityPhase, ResultsPhase];
 
     private static int PhaseForStep(int step) => step switch
     {
         0 or 1 => 0,
         2 or 3 or 4 => 1,
-        5 or 7 or 8 or 9 or 10 => 2,
+        5 or 7 => 2,
+        9 or 10 => 3,
+        8 => 4,
         _ => -1
     };
 
@@ -26,7 +28,7 @@ public partial class MainWindow
         try
         {
             var groups = NavigationPhases;
-            for (var i = 0; i < groups.Length; i++) groups[i].IsExpanded = i == phase;
+            groups[phase].IsExpanded = true;
             displayedNavigationPhase = phase;
         }
         finally { changingNavigationPhase = false; }
@@ -38,9 +40,8 @@ public partial class MainWindow
         changingNavigationPhase = true;
         try
         {
-            foreach (var phase in NavigationPhases)
-                if (!ReferenceEquals(phase, selected)) phase.IsExpanded = false;
-            displayedNavigationPhase = Array.IndexOf(NavigationPhases, selected);
+            // Expanding another phase must not hide the current location.
+            // The active page still controls which phase opens on navigation.
         }
         finally { changingNavigationPhase = false; }
     }
@@ -90,7 +91,6 @@ public partial class MainWindow
         NavigationGroupLabel.Text = vm.Guide("WorkspaceNavigation");
         ProjectPhase.Header = vm.Guide("PhaseProjectStructure");
         AnalysisPhase.Header = vm.Guide("PhaseAnalysisData");
-        AllocationPhase.Header = Menu("Calculation");
         ShowNavigationPhase(workflowStep);
         var keys = new[] { "Company", "Model", "Study", "Import", "Resources", "Allocations", "Settings", "SecondaryAllocations", "CostFlows", "PhysicalActivity", "Rates" };
         Button[] buttons = [CompanyStep, ModelStep, StudyStep, ImportStep, ResourcesStep, AllocationsStep, SettingsStep, SecondaryStep, CostFlowStep, PhysicalStep, RatesStep];
@@ -141,6 +141,7 @@ public partial class MainWindow
         ImportStep.IsEnabled = hasImportDestination;
         ResourcesStep.IsEnabled = hasImports;
         AllocationsStep.IsEnabled = hasImports;
+        AllocationsStep.ToolTip = hasImports ? null : vm.Guide("NeedImportForResourcesShort");
         SecondaryStep.IsEnabled = hasImports && vm.Allocations?.IsPrimaryClosed == true;
         SecondaryStep.ToolTip = SecondaryStep.IsEnabled ? null : vm.Guide("NeedPrimaryClosedForSecondary");
         CostFlowStep.IsEnabled = hasAnalysis;
@@ -266,7 +267,7 @@ public partial class MainWindow
                 p is PhysicalActivityWindow or PrincipalRatesWindow or AuxiliaryCapacityWindow or CompositionWindow);
             if (active is not null)
             {
-                ShowNavigationPhase(9);
+                ShowNavigationPhase(active is CompositionWindow ? 8 : 9);
                 foreach (var button in buttons) button.Tag = null;
                 PhysicalStep.Tag = active is PhysicalActivityWindow ? "Active" : null;
                 RatesStep.Tag = active is PrincipalRatesWindow ? "Active" : null;

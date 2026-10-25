@@ -108,18 +108,11 @@
        </Grid>
       </StackPanel>
      </Expander>
-     <Expander x:Name="AllocationPhase" Foreground="{DynamicResource Brand.White}" FontWeight="Normal" FontSize="12" HeaderTemplate="{StaticResource NavigationPhaseHeader}" Expanded="OnPhaseExpanded" Margin="10,0,10,10">
+     <Expander x:Name="AllocationPhase" Foreground="{DynamicResource Brand.White}" FontWeight="Normal" FontSize="12" Expanded="OnPhaseExpanded" Margin="10,0,10,10">
+      <Expander.Header><TextBlock x:Name="AllocationMenuGroup" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource Brand.White}" Margin="4,7,2,7"/></Expander.Header>
       <StackPanel Margin="0,5,0,3">
-       <TextBlock x:Name="AllocationMenuGroup" Style="{StaticResource NavigationSubgroup}"/>
        <Button x:Name="AllocationsStep" Click="ChooseAllocations" Style="{StaticResource NavigationStepButton}"/>
        <Button x:Name="SecondaryStep" Click="ChooseSecondary" Style="{StaticResource NavigationStepButton}"/>
-       <TextBlock x:Name="CapacityMenuGroup" Style="{StaticResource NavigationSubgroup}"/>
-       <Button x:Name="PhysicalStep" Click="ChoosePhysicalActivity" Style="{StaticResource NavigationStepButton}"/>
-       <Button x:Name="AuxiliaryStep" Click="OpenAuxiliary" Style="{StaticResource NavigationStepButton}"/>
-       <Button x:Name="RatesStep" Click="ChooseRates" Style="{StaticResource NavigationStepButton}"/>
-       <TextBlock x:Name="ResultsMenuGroup" Style="{StaticResource NavigationSubgroup}"/>
-       <Button x:Name="CompositionStep" Click="OpenCompositions" Style="{StaticResource NavigationStepButton}"/>
-       <Button x:Name="CostFlowStep" Click="ChooseCostFlows" Style="{StaticResource NavigationStepButton}"/>
        <!-- Retained names for workflow state; navigation no longer implies numbered steps. -->
        <StackPanel Visibility="Collapsed"><Border x:Name="AllocationsStepMarker" Grid.Column="0" Width="22" Height="22" CornerRadius="11"
                 BorderBrush="{DynamicResource Brand.White}" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -143,6 +136,21 @@
 <Border x:Name="RatesStepMarker" Width="22" Height="22" CornerRadius="11" BorderBrush="{DynamicResource Brand.White}" BorderThickness="1">
          <TextBlock Text="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" Foreground="{DynamicResource Brand.White}"/>
         </Border></StackPanel>
+      </StackPanel>
+     </Expander>
+     <Expander x:Name="CapacityPhase" Foreground="{DynamicResource Brand.White}" FontWeight="Normal" FontSize="12" Expanded="OnPhaseExpanded" Margin="10,0,10,10">
+      <Expander.Header><TextBlock x:Name="CapacityMenuGroup" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource Brand.White}" Margin="4,7,2,7"/></Expander.Header>
+      <StackPanel Margin="0,5,0,3">
+       <Button x:Name="PhysicalStep" Click="ChoosePhysicalActivity" Style="{StaticResource NavigationStepButton}"/>
+       <Button x:Name="AuxiliaryStep" Click="OpenAuxiliary" Style="{StaticResource NavigationStepButton}"/>
+       <Button x:Name="RatesStep" Click="ChooseRates" Style="{StaticResource NavigationStepButton}"/>
+      </StackPanel>
+     </Expander>
+     <Expander x:Name="ResultsPhase" Foreground="{DynamicResource Brand.White}" FontWeight="Normal" FontSize="12" Expanded="OnPhaseExpanded" Margin="10,0,10,10">
+      <Expander.Header><TextBlock x:Name="ResultsMenuGroup" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource Brand.White}" Margin="4,7,2,7"/></Expander.Header>
+      <StackPanel Margin="0,5,0,3">
+       <Button x:Name="CompositionStep" Click="OpenCompositions" Style="{StaticResource NavigationStepButton}"/>
+       <Button x:Name="CostFlowStep" Click="ChooseCostFlows" Style="{StaticResource NavigationStepButton}"/>
       </StackPanel>
      </Expander>
      <Border BorderBrush="{DynamicResource Accent.ActiveGreen}" BorderThickness="0,1,0,0" Margin="16,16,16,8" />

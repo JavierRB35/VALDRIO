@@ -362,6 +362,7 @@
 <Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="120"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
 <TextBlock Grid.Column="2" Text="{Binding PrimaryResultsTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
 
+    <local:ParetoChart x:Name="PrimaryPareto"/>
     <TextBlock Text="{Binding [PrimaryNodeTotalsTitle]}" FontWeight="SemiBold" Margin="0,12,0,6"/>
      <DataGrid x:Name="PrimaryNodeTotalsGrid" ItemsSource="{Binding PrimaryNodeTotals}" IsReadOnly="True"
           AutoGenerateColumns="False" Height="200" CanUserSortColumns="True" Margin="0,12,0,8">
@@ -427,6 +428,7 @@
        </StackPanel>
      </Expander>
 
+     <local:ParetoChart x:Name="SecondaryPareto" Secondary="True"/>
      <TextBlock Text="{Binding [PrincipalCostsTitle]}" FontWeight="SemiBold" Margin="0,8,0,8"/>
      <TextBlock Text="{Binding [PrincipalOriginOverviewHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
      <StackPanel Margin="0,0,0,12">

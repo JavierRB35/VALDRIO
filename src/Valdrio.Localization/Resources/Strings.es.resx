@@ -476,8 +476,8 @@ Completa: {5}</value></data>
   <data name="ImportMapping.CurrencyTotals" xml:space="preserve"><value>Original {0}: positivos {1}; negativos {2}; neto {3}</value></data>
   <data name="ImportMapping.FunctionalTotal" xml:space="preserve"><value>Total funcional: {0} {1}. Ajuste de redondeo de conversión: {2} {1}.</value></data>
   <data name="Guide.Company" xml:space="preserve"><value>Proyecto</value></data>
-  <data name="Guide.Model" xml:space="preserve"><value>Diseñar estructura</value></data>
-  <data name="Guide.Study" xml:space="preserve"><value>Periodo / análisis</value></data>
+  <data name="Guide.Model" xml:space="preserve"><value>Estructura de costes</value></data>
+  <data name="Guide.Study" xml:space="preserve"><value>Análisis y periodo</value></data>
   <data name="Guide.Import" xml:space="preserve"><value>Importar saldos</value></data>
   <data name="Guide.Settings" xml:space="preserve"><value>Preferencias</value></data>
   <data name="Guide.Back" xml:space="preserve"><value>Anterior</value></data>
@@ -1427,7 +1427,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.CompositionClearSelection" xml:space="preserve"><value>Quitar selección</value></data>
   <data name="AllocationUI.CompositionApplyWeights" xml:space="preserve"><value>Guardar comportamiento del coste</value></data>
   <data name="AllocationUI.CompositionWeightsSummary" xml:space="preserve"><value>{0} % fijo / {1} % variable</value></data>
-  <data name="Guide.SecondaryAllocations" xml:space="preserve"><value>Reparto secundario y cierre</value></data>
+  <data name="Guide.SecondaryAllocations" xml:space="preserve"><value>Reparto secundario</value></data>
   <data name="AllocationUI.CompositionVariableWeight" xml:space="preserve"><value>Componente variable (%)</value></data>
   <data name="AllocationUI.CompositionWeightsInvalid" xml:space="preserve"><value>Para un coste mixto, introduce un porcentaje variable mayor que 0 y menor que 100. La parte fija será el resto. Para todo fijo o todo variable, cambia el comportamiento.</value></data>
   <data name="Resources.EditStudyNodes" xml:space="preserve"><value>Nodos del análisis actualizados</value></data>
@@ -1491,8 +1491,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="ActivityUnit.setup" xml:space="preserve"><value>Preparación</value></data>
   <data name="ActivityUnit.pallet" xml:space="preserve"><value>Palé</value></data>
   <data name="ActivityUnit.cycle" xml:space="preserve"><value>Ciclo</value></data>
-  <data name="Guide.PhaseProjectStructure" xml:space="preserve"><value>Proyecto y estructura</value></data>
-  <data name="Guide.PhaseAnalysisData" xml:space="preserve"><value>Análisis y datos económicos</value></data>
+  <data name="Guide.PhaseProjectStructure" xml:space="preserve"><value>Proyecto</value></data>
+  <data name="Guide.PhaseAnalysisData" xml:space="preserve"><value>Datos del análisis</value></data>
   <data name="Guide.PhaseAllocations" xml:space="preserve"><value>Repartos y cálculo</value></data>
   <data name="Guide.ShowContext" xml:space="preserve"><value>Detalles</value></data>
   <data name="Guide.HideContext" xml:space="preserve"><value>Ocultar detalles</value></data>
@@ -2030,9 +2030,9 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
   <data name="Composition.Saving" xml:space="preserve"><value>Guardando y comprobando el archivo…</value></data>
   <data name="Composition.NoBatches" xml:space="preserve"><value>Esta versión no utiliza componentes por lote. Revisa el detalle de los semielaborados, si los hay.</value></data>
   <data name="Menu.Calculation" xml:space="preserve"><value>Cálculo de costes</value></data>
-  <data name="Menu.Allocations" xml:space="preserve"><value>REPARTOS</value></data>
-  <data name="Menu.Capacity" xml:space="preserve"><value>CAPACIDAD Y TARIFAS</value></data>
-  <data name="Menu.Results" xml:space="preserve"><value>COMPOSICIONES Y RESULTADOS</value></data>
+  <data name="Menu.Allocations" xml:space="preserve"><value>Repartos de costes</value></data>
+  <data name="Menu.Capacity" xml:space="preserve"><value>Actividad y tarifas</value></data>
+  <data name="Menu.Results" xml:space="preserve"><value>Productos y resultados</value></data>
   <data name="Menu.Auxiliary" xml:space="preserve"><value>Servicios auxiliares</value></data>
   <data name="Menu.CostFlows" xml:space="preserve"><value>Resultados y trazabilidad</value></data>
   <data name="Menu.AuxiliaryHelp" xml:space="preserve"><value>Capacidad de auxiliares y servicios prestados a otros centros.</value></data>
@@ -2112,4 +2112,15 @@ Se escribirá en el destino elegido. Revisa ambos archivos antes de continuar. C
   <data name="Guide.ResumeReviewBlockedHelp" xml:space="preserve"><value>Cuando guardes el periodo e importes saldos, podrás revisar aquí las cuentas y sus ajustes.</value></data>
   <data name="Guide.TaskOpenImport" xml:space="preserve"><value>Abrir importación</value></data>
   <data name="Guide.ResumeChooseAnalysis" xml:space="preserve"><value>Elegir o crear periodo</value></data>
+  <data name="AllocationUI.ParetoPrimaryTitle" xml:space="preserve"><value>Pareto · reparto primario</value></data>
+  <data name="AllocationUI.ParetoSecondaryTitle" xml:space="preserve"><value>Pareto · reparto secundario</value></data>
+  <data name="AllocationUI.ParetoPrimaryHelp" xml:space="preserve"><value>Coste asignado a cada nexo (nodo), de mayor a menor. Vista previa de los datos actuales; consulta arriba el estado del reparto.</value></data>
+  <data name="AllocationUI.ParetoSecondaryHelp" xml:space="preserve"><value>Coste final por nexo principal: primario más lo recibido de auxiliares. Las transferencias internas no se suman de nuevo.</value></data>
+  <data name="AllocationUI.ParetoLegend" xml:space="preserve"><value>Barras verdes: coste por nexo (eje izquierdo). Línea amarilla: porcentaje acumulado del total (eje derecho).</value></data>
+  <data name="AllocationUI.ParetoEmpty" xml:space="preserve"><value>Sin resultados disponibles. Completa o calcula este reparto para ver el gráfico.</value></data>
+  <data name="AllocationUI.ParetoCumulative" xml:space="preserve"><value>Acumulado</value></data>
+  <data name="AllocationUI.ParetoNoPercentage" xml:space="preserve"><value>El total es cero o negativo: se muestran los costes, sin porcentaje acumulado.</value></data>
+  <data name="AllocationUI.ParetoCredits" xml:space="preserve"><value>Hay costes negativos: el porcentaje sobre el total neto puede superar el 100 % y descender al incorporar los abonos.</value></data>
+  <data name="AllocationUI.ParetoNode" xml:space="preserve"><value>Nexo</value></data>
+  <data name="AllocationUI.ParetoDetails" xml:space="preserve"><value>Ver importes y porcentajes</value></data>
 </root>
