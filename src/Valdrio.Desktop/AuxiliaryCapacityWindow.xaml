@@ -24,12 +24,14 @@
    <Border Style="{StaticResource Card}" Margin="0,12,0,0"><StackPanel>
     <TextBlock Text="{Binding SelectedRow.Name}" FontSize="18" FontWeight="SemiBold"/>
     <TextBlock Text="{Binding [ServicesHelp]}" TextWrapping="Wrap" Margin="0,8"/>
+    <TextBlock Text="{Binding GroupCoverage}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,4,0,8" AutomationProperties.LiveSetting="Polite"/>
     <DataGrid x:Name="ServicesTable" ItemsSource="{Binding SelectedRow.Services}" AutoGenerateColumns="False" CanUserAddRows="False" MaxHeight="240">
      <DataGrid.Columns><DataGridTextColumn x:Name="GroupColumn" Binding="{Binding GroupLabel}" IsReadOnly="True" Width="*"/>
       <DataGridTextColumn x:Name="DestinationColumn" Binding="{Binding Name}" IsReadOnly="True" Width="2*"/>
       <DataGridTemplateColumn x:Name="QuantityColumn" Width="*"><DataGridTemplateColumn.CellTemplate><DataTemplate>
        <TextBox Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding DataContext.CanEdit, RelativeSource={RelativeSource AncestorType=DataGrid}}" AutomationProperties.Name="{Binding Name}"/>
       </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+      <DataGridTextColumn x:Name="PreparationColumn" Binding="{Binding PreparationState}" IsReadOnly="True" Width="2*" ElementStyle="{StaticResource AuxCell}"/>
      </DataGrid.Columns>
     </DataGrid>
     <Expander Header="{Binding [Import]}" Margin="0,8"><TextBlock Text="{Binding [ImportHelp]}" TextWrapping="Wrap"/></Expander>
@@ -40,6 +42,7 @@
    </DataGrid></Border>
   </StackPanel></ScrollViewer>
   <StackPanel Grid.Row="2" Margin="0,12,0,0"><TextBlock Text="{Binding Feedback}" TextWrapping="Wrap" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite"/>
+   <TextBlock Text="{Binding NextStep}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,0,0,8"/>
    <WrapPanel>
     <Button Content="{Binding [Save]}" Click="Save" IsEnabled="{Binding CanSave}" Style="{StaticResource Button.Primary}" Margin="0,0,8,6"/>
     <Button Content="{Binding [Validate]}" Click="Validate" Margin="0,0,8,6"/>

@@ -22,7 +22,7 @@ Import normal and actual observations from CSV or XLSX into the selected analysi
 | :--- | :--- | :--- |
 | Source preview | Node, unit, normal, actual and existing data | Shows what would change. |
 | Import diagnostics | Matching and business rules | Expose errors before applying. |
-| Imported observations | Applied selected rows | Remain governed by T14 state and version rules. |
+| Imported observations | Applied selected rows | Remain governed by Activity and capacities state and version rules. |
 
 ## 4. Use cases, validation and common errors
 - Accounting balances are imported through a different screen.

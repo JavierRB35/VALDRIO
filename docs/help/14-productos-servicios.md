@@ -4,7 +4,7 @@
 **Estado:** borrador documental contrastado con código de `main@211af0d`; pendiente de prueba interactiva Windows.
 
 ## 1. Objetivo y función financiera
-Construir catálogo físico de productos/servicios y versiones de composición con cantidades de materiales, semielaborados y actividad. Permite estimar necesidades físicas para una unidad, lote u orden de simulación; T17 no asigna precios ni calcula costes monetarios.
+Construir catálogo físico de productos/servicios y versiones de composición con cantidades de materiales, semielaborados y actividad. Permite estimar necesidades físicas para una unidad, lote u orden de simulación; Esta vista no asigna precios ni calcula costes monetarios.
 
 ## 2. Guía de campos y entradas (Inputs)
 | Campo / parámetro | Tipo / unidad | Requerido | Descripción e impacto en el cálculo |
@@ -27,10 +27,10 @@ Construir catálogo físico de productos/servicios y versiones de composición c
 | Estado de versión | Borrador/publicada + número | Permite auditar la hipótesis aplicable. |
 | Necesidades físicas | Cantidad tras conversión, rendimiento y discreción | Sirve para preparar consumos/órdenes futuros, no para valorarlos monetariamente. |
 | Preguntas de analista | Lotes, dependencias, mermas, versiones | Señalan datos faltantes y cambios. |
-| Resumen expandido | Componentes finales sin doble cómputo del semielaborado | Permite revisar dependencias antes de calcular costes T18. |
+| Resumen expandido | Componentes finales sin doble cómputo del semielaborado | Permite revisar dependencias físicas. La valoración monetaria no está disponible en esta vista. |
 
 ## 4. Casos de uso, validaciones y errores frecuentes
-- T17 no contiene precios, tasas, importes ni consumos reales T19.
+- Esta vista no contiene precios, tarifas, importes ni registros de consumo real.
 - No mezclar unidades de dimensiones distintas ni factores implícitos.
 - Las referencias a semielaborados han de apuntar a versiones publicadas; se impiden ciclos.
 - Una receta publicada no se edita en sitio: crear nueva versión.

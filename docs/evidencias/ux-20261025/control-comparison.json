@@ -1,0 +1,140 @@
+[
+  {
+    "file": "src/Valdrio.Desktop/AllocationWorkspacePanel.xaml",
+    "attribute": "Command",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/AllocationWorkspacePanel.xaml",
+    "attribute": "Click",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/AuxiliaryCapacityWindow.xaml",
+    "attribute": "Command",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/AuxiliaryCapacityWindow.xaml",
+    "attribute": "Click",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/CostFlowPanel.xaml",
+    "attribute": "Command",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/CostFlowPanel.xaml",
+    "attribute": "Click",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/ImportColumnMappingWindow.xaml",
+    "attribute": "Command",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/ImportColumnMappingWindow.xaml",
+    "attribute": "Click",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/MainWindow.xaml",
+    "attribute": "Command",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/MainWindow.xaml",
+    "attribute": "Click",
+    "removed": [],
+    "added": [
+      "ReadFieldHelp"
+    ]
+  },
+  {
+    "file": "src/Valdrio.Desktop/ModelWorkspacePanel.xaml",
+    "attribute": "Command",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/ModelWorkspacePanel.xaml",
+    "attribute": "Click",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/PhysicalActivityWindow.xaml",
+    "attribute": "Command",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/PhysicalActivityWindow.xaml",
+    "attribute": "Click",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/PhysicalImportWindow.xaml",
+    "attribute": "Command",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/PhysicalImportWindow.xaml",
+    "attribute": "Click",
+    "removed": [],
+    "added": [
+      "SaveTemplate"
+    ]
+  },
+  {
+    "file": "src/Valdrio.Desktop/PrincipalRatesWindow.xaml",
+    "attribute": "Command",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/PrincipalRatesWindow.xaml",
+    "attribute": "Click",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/ResourceWorkspacePanel.xaml",
+    "attribute": "Command",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/ResourceWorkspacePanel.xaml",
+    "attribute": "Click",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/StudyWorkspacePanel.xaml",
+    "attribute": "Command",
+    "removed": [],
+    "added": []
+  },
+  {
+    "file": "src/Valdrio.Desktop/StudyWorkspacePanel.xaml",
+    "attribute": "Click",
+    "removed": [],
+    "added": [
+      "OpenResults"
+    ]
+  }
+]

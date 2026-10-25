@@ -41,10 +41,18 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
         if (Editor.Busy) return false;
         if (!Commit()) return false;
         if (!Editor.Dirty) return true;
-        var answer=LeaveDecision?.Invoke() ?? MessageBox.Show(WorkspaceHost ?? (Window)this,Editor["Leave"],Editor["Title"],MessageBoxButton.YesNoCancel,MessageBoxImage.Question);
+        var answer = LeaveDecision?.Invoke() ?? ResolvePending();
         if(answer==MessageBoxResult.Cancel) return false;
         if(answer==MessageBoxResult.Yes) return Editor.Save(false);
         Editor.Reload(); return true;
+    }
+    private MessageBoxResult ResolvePending()
+    {
+        var dialog = new PendingChangesWindow(Editor["Title"], Editor["Leave"], Editor.ActionLabel("SaveContinue"),
+            Editor.ActionLabel("Discard"), Editor.ActionLabel("KeepEditing")) { Owner = WorkspaceHost ?? (Window)this };
+        dialog.ShowDialog();
+        return dialog.Choice switch { PendingEditChoice.Save => MessageBoxResult.Yes,
+            PendingEditChoice.Discard => MessageBoxResult.No, _ => MessageBoxResult.Cancel };
     }
     private void CatalogBeginningEdit(object? sender,DataGridBeginningEditEventArgs e)
     { if(e.Row.Item is CompositionItemRow { Persisted:true } && e.Column.DisplayIndex!=4) e.Cancel=true; }
@@ -58,7 +66,7 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
         finally { surface.IsEnabled = true; }
     }
     private async void Save(object sender,RoutedEventArgs e) { if(Commit()) await SavePage(false); }
-    private async void Publish(object sender,RoutedEventArgs e) { if(Commit() && MessageBox.Show(WorkspaceHost ?? (Window)this,Editor["PublishHelp"],Editor["Title"],MessageBoxButton.OKCancel)==MessageBoxResult.OK) await SavePage(true); }
+    private async void Publish(object sender,RoutedEventArgs e) { if(Commit() && new EconomicConfirmationWindow(Editor["Publish"], Editor.State + "\n\n" + Editor["PublishHelp"], Editor["Publish"], Editor.ActionLabel("KeepEditing")) { Owner = WorkspaceHost ?? (Window)this }.ShowDialog()==true) await SavePage(true); }
     private void Open(object sender,RoutedEventArgs e) { var product=Editor.Product; var version=Editor.Version; if(Resolve()) { Editor.Product=product; Editor.Version=version; Editor.Open(); Columns(); } }
     private void NewVersion(object sender,RoutedEventArgs e) { var product=Editor.Product; if(Resolve()) { Editor.Product=product; Editor.NewVersion(); Columns(); } }
     private void AddLine(object sender,RoutedEventArgs e) => Editor.AddLine();

@@ -26,6 +26,7 @@ public sealed partial class AuxiliaryServiceEdit : ObservableObject
     public required string Code { get; init; }
     public required string Name { get; init; }
     [ObservableProperty] private string quantity = "0";
+    [ObservableProperty] private string preparationState = "";
 }
 public sealed partial class AuxiliaryCapacityEditor : ObservableObject
 {
@@ -39,11 +40,18 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
     [ObservableProperty] private string feedback = "";
     [ObservableProperty] private bool dirty;
     public string this[string key] => texts.Get("Aux." + key, host.PhysicalUiCulture);
-    public string Context => workspace is null ? "" : workspace.Resources.Study.Name + " · " + workspace.Resources.Study.PeriodStart + " — " + workspace.Resources.Study.PeriodEnd;
+    public string Context => workspace is null ? "" : host.PhysicalCompany!.Name + " · " + workspace.Resources.Study.Name + " · " + host.ContextSummary;
     public bool CanEdit => host.PhysicalWritable && workspace?.Configuration.SecondaryClosed == false;
     public bool CanReopen => host.PhysicalWritable && workspace?.Configuration.SecondaryClosed == true;
     public bool CanSave => CanEdit && Dirty;
+    public string GroupCoverage => SelectedRow is not { } row ? "" : string.Join(Environment.NewLine,
+        row.Services.GroupBy(s => s.Group).Select(group =>
+        {
+            try { return group.First().GroupLabel + ": " + Qty(group.Sum(s => Parse(s.Quantity))) + " / " + row.Real + " " + row.Unit; }
+            catch (Exception error) when (error is DomainRuleException or OverflowException) { return group.First().GroupLabel + ": " + this["Invalid"]; }
+        }));
     public bool CanCalculate => host.PhysicalWritable && workspace is not null && Rows.Count > 0;
+    public string NextStep => Dirty ? this["Save"] : run is null ? this["Calculate"] : this["ReviewResults"];
     public bool CanExport => run is not null && !Dirty;
     public string Summary => run?.Output?.Secondary is { } s
         ? string.Format(host.PhysicalFormatCulture,this["Coverage"],workspace!.Configuration.AuxiliaryCapacity?.Rows.Count(r=>r.Mode==AuxiliaryCapacityMode.OwnerOnceCapacity) ?? 0,Rows.Count) + " · " + this["PrincipalTotal"] + ": " + Money(s.Facts.Where(f => !f.IsCapacityVariance).Sum(f => f.PostedAmount.Amount)) + " · " +
@@ -80,7 +88,15 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
                 {
                     var line = new AuxiliaryServiceEdit { Group = group, GroupLabel = group == "all" ? this["AllComponents"] : group, Destination = destination.Id, Code = destination.Code, Name = destination.Code + " · " + workspace.Resources.Model.PhysicalCenters.Single(c => c.Id == destination.PhysicalCenterId).Name,
                         Quantity = Qty(saved?.ServiceSets.SingleOrDefault(s => s.ComponentRoutingGroup == group)?.Services.SingleOrDefault(s => s.DestinationNodeId == destination.Id)?.Quantity ?? 0) };
-                    line.PropertyChanged += (_, _) => MarkDirty(); row.Services.Add(line);
+                    line.PreparationState = saved?.ServiceSets.SingleOrDefault(s => s.ComponentRoutingGroup == group)?.Services.Any(s => s.DestinationNodeId == destination.Id) == true
+                        ? this["SavedQuantity"] : this["InitialQuantity"];
+                    line.PropertyChanged += (_, e) =>
+                    {
+                        if (e.PropertyName != nameof(AuxiliaryServiceEdit.Quantity)) return;
+                        line.PreparationState = this["EditedQuantity"];
+                        MarkDirty();
+                    };
+                    row.Services.Add(line);
                 }
                 row.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(row.Mode)) MarkDirty(); }; Rows.Add(row);
             }
@@ -94,9 +110,9 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
         catch (Exception ex) when (ex is DomainRuleException or CompanyFileException or InvalidOperationException) { ShowError(ex); }
         Notify();
     }
-    private void Notify() { foreach (var name in new[] { nameof(Context), nameof(CanEdit), nameof(CanReopen), nameof(CanSave), nameof(CanCalculate), nameof(CanExport), nameof(Summary) }) OnPropertyChanged(name); }
-    private void MarkDirty() { Dirty = true; run = null; Feedback = this["Unsaved"]; RefreshAnswers(); Notify(); }
-    partial void OnSelectedRowChanged(AuxiliaryCenterEdit? value) => RefreshAnswers();
+    private void Notify() { foreach (var name in new[] { nameof(Context), nameof(CanEdit), nameof(CanReopen), nameof(CanSave), nameof(CanCalculate), nameof(CanExport), nameof(Summary), nameof(NextStep) }) OnPropertyChanged(name); }
+    private void MarkDirty() { Dirty = true; run = null; Feedback = this["Unsaved"]; RefreshAnswers(); Notify(); OnPropertyChanged(nameof(GroupCoverage)); }
+    partial void OnSelectedRowChanged(AuxiliaryCenterEdit? value) { RefreshAnswers(); OnPropertyChanged(nameof(GroupCoverage)); }
     private AuxiliaryCapacityPlan Plan()
     {
         return new(Rows.Select(row => row.Value with { Mode = row.Mode!.Value,

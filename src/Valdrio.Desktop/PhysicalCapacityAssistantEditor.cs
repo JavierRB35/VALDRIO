@@ -318,6 +318,7 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
             if (item.Theoretical.HasValue) row.TheoreticalText = item.Theoretical.Value.ToString(culture);
             if (item.Practical.HasValue) row.PracticalText = item.Practical.Value.ToString(culture);
             Adopted = true;
+            host.Feedback = host.Label("Activity.ProposalAdopted") + " · " + row.Node;
             Feedback = "";
         }
         catch (FormatException e) { Feedback = e.Message; }

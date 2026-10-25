@@ -131,6 +131,7 @@
           <TextBlock Text="{Binding CenterFormTitle}" Style="{StaticResource SectionTitle}"/>
           <TextBlock Text="{Binding CenterRequiredHelp}" Style="{StaticResource FieldHint}"/>
 
+<StackPanel Visibility="{Binding NewCenterFormVisibility}">
           <TextBlock Text="{Binding CenterCodeLabel}"/>
           <TextBox x:Name="CenterCodeBox" Text="{Binding CenterCode,UpdateSourceTrigger=PropertyChanged}" TabIndex="25" FlowDirection="LeftToRight" AutomationProperties.Name="{Binding CenterCodeLabel}" local:FieldHelp.Key="CenterCode"/>
           <TextBlock Text="{Binding CenterCodeValidation}" Style="{StaticResource InlineStatus}" AutomationProperties.LiveSetting="Assertive" Margin="0,2,0,6"/>
@@ -138,6 +139,7 @@
           <TextBlock Text="{Binding CenterNameLabel}"/>
           <TextBox x:Name="CenterNameBox" Text="{Binding CenterName,UpdateSourceTrigger=PropertyChanged}" TabIndex="26" AutomationProperties.Name="{Binding CenterNameLabel}" local:FieldHelp.Key="CenterName"/>
 
+</StackPanel>
           <WrapPanel Margin="0,6,0,0">
            <Button x:Name="SaveCenterButton" Content="{Binding CenterPrimaryActionLabel}" Command="{Binding SaveCenterFormCommand}" TabIndex="27" FontWeight="SemiBold" Style="{StaticResource Button.Primary}"/>
            <Button x:Name="CreateCenterButton" Visibility="{Binding NewCenterVisibility}" Content="{Binding NewCenterLabel}" Command="{Binding NewCenterCommand}" TabIndex="28"/>
@@ -152,13 +154,23 @@
 
         <StackPanel Grid.Row="1" Grid.Column="2">
          <TextBlock Text="{Binding CenterListTitle}" Style="{StaticResource SectionTitle}"/>
-         <TextBlock Text="{Binding CenterListHelp}" Style="{StaticResource SectionHelp}"/>
+         <TextBlock Text="{Binding CenterListHelp}" Style="{StaticResource SectionHelp}"/><TextBlock Text="{Binding TableEditHelp}" Style="{StaticResource SectionHelp}"/>
          <ComboBox x:Name="MasterBox" ItemsSource="{Binding Centers}" SelectedItem="{Binding Master}" Visibility="Collapsed"/>
-         <DataGrid x:Name="CenterGrid" ItemsSource="{Binding Centers}" SelectedItem="{Binding Master}" IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" MinHeight="170" MaxHeight="320" HeadersVisibility="Column" local:FieldHelp.Key="Master">
+         <DataGrid x:Name="CenterGrid" ItemsSource="{Binding Centers}" SelectedItem="{Binding Master}" IsReadOnly="{Binding CentersReadOnly}" BeginningEdit="BeginStructureCellEdit" CellEditEnding="EndStructureCellEdit" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" MinHeight="170" MaxHeight="320" HeadersVisibility="Column" local:FieldHelp.Key="Master">
           <DataGrid.Columns>
-           <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding Value.Code}" Width="140"/>
-           <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding Value.Name}" Width="*"/>
-           <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding StatusLabel}" Width="120"/>
+           <DataGridTemplateColumn Width="140" SortMemberPath="Value.Code">
+ <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource CellText}">
+ <Setter Property="Text" Value="{Binding Value.Code}"/><Style.Triggers><DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True"><Setter Property="Text" Value="{Binding DataContext.CenterCode, RelativeSource={RelativeSource AncestorType=DataGrid}}"/></DataTrigger></Style.Triggers>
+ </Style></TextBlock.Style></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate>
+ <DataGridTemplateColumn.CellEditingTemplate><DataTemplate><TextBox Text="{Binding DataContext.CenterCode, RelativeSource={RelativeSource AncestorType=DataGrid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="True" MinWidth="40"/></DataTemplate></DataGridTemplateColumn.CellEditingTemplate>
+</DataGridTemplateColumn>
+           <DataGridTemplateColumn Width="*" SortMemberPath="Value.Name">
+ <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource CellText}">
+ <Setter Property="Text" Value="{Binding Value.Name}"/><Style.Triggers><DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True"><Setter Property="Text" Value="{Binding DataContext.CenterName, RelativeSource={RelativeSource AncestorType=DataGrid}}"/></DataTrigger></Style.Triggers>
+ </Style></TextBlock.Style></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate>
+ <DataGridTemplateColumn.CellEditingTemplate><DataTemplate><TextBox Text="{Binding DataContext.CenterName, RelativeSource={RelativeSource AncestorType=DataGrid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="True" MinWidth="40"/></DataTemplate></DataGridTemplateColumn.CellEditingTemplate>
+</DataGridTemplateColumn>
+           <DataGridTextColumn ElementStyle="{StaticResource CellText}" IsReadOnly="True" Binding="{Binding StatusLabel}" Width="120"/>
           </DataGrid.Columns>
          </DataGrid>
         </StackPanel>
@@ -201,17 +213,47 @@
       <TextBlock Text="{Binding NodeClassificationHelp}" Style="{StaticResource SectionHelp}"/>
 
       <TextBlock Text="{Binding NodeListTitle}" Style="{StaticResource SectionTitle}"/>
-      <TextBlock Text="{Binding NodeListHelp}" Style="{StaticResource SectionHelp}"/>
+      <TextBlock Text="{Binding NodeListHelp}" Style="{StaticResource SectionHelp}"/><TextBlock Text="{Binding TableEditHelp}" Style="{StaticResource SectionHelp}"/>
 
       <ComboBox x:Name="NodeBox" ItemsSource="{Binding Nodes}" SelectedItem="{Binding SelectedNode}" Visibility="Collapsed"/>
-      <DataGrid x:Name="NodeSummary" ItemsSource="{Binding Nodes}" SelectedItem="{Binding SelectedNode}" IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" MinHeight="180" MaxHeight="330" IsEnabled="{Binding CanSelectNode}" local:FieldHelp.Key="SelectedNode">
+      <DataGrid x:Name="NodeSummary" ItemsSource="{Binding Nodes}" SelectedItem="{Binding SelectedNode}" IsReadOnly="{Binding NodesReadOnly}" BeginningEdit="BeginStructureCellEdit" CellEditEnding="EndStructureCellEdit" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" MinHeight="180" MaxHeight="330" IsEnabled="{Binding CanSelectNode}" local:FieldHelp.Key="SelectedNode">
        <DataGrid.Columns>
-        <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding CenterLabel}" Width="220"/>
-        <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding Node.Code}" Width="110"/>
-        <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding RoleLabel}" Width="115"/>
-        <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding UnitLabel}" Width="90"/>
-        <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding PoolLabel}" Width="*"/>
-        <DataGridTextColumn ElementStyle="{StaticResource CellText}" Binding="{Binding FunctionsLabel}" Width="160"/>
+        <DataGridTemplateColumn Width="220" SortMemberPath="CenterLabel">
+ <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource CellText}">
+ <Setter Property="Text" Value="{Binding CenterLabel}"/><Style.Triggers><DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True"><Setter Property="Text" Value="{Binding DataContext.Physical.Label, RelativeSource={RelativeSource AncestorType=DataGrid}}"/></DataTrigger></Style.Triggers>
+ </Style></TextBlock.Style></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate>
+ <DataGridTemplateColumn.CellEditingTemplate><DataTemplate><ComboBox ItemsSource="{Binding DataContext.Centers, RelativeSource={RelativeSource AncestorType=DataGrid}}" SelectedItem="{Binding DataContext.Physical, RelativeSource={RelativeSource AncestorType=DataGrid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Label" IsEnabled="True" MinWidth="60"/></DataTemplate></DataGridTemplateColumn.CellEditingTemplate>
+</DataGridTemplateColumn>
+        <DataGridTemplateColumn Width="110" SortMemberPath="Node.Code">
+ <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource CellText}">
+ <Setter Property="Text" Value="{Binding Node.Code}"/><Style.Triggers><DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True"><Setter Property="Text" Value="{Binding DataContext.NodeCode, RelativeSource={RelativeSource AncestorType=DataGrid}}"/></DataTrigger></Style.Triggers>
+ </Style></TextBlock.Style></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate>
+ <DataGridTemplateColumn.CellEditingTemplate><DataTemplate><TextBox Text="{Binding DataContext.NodeCode, RelativeSource={RelativeSource AncestorType=DataGrid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="True" MinWidth="40"/></DataTemplate></DataGridTemplateColumn.CellEditingTemplate>
+</DataGridTemplateColumn>
+        <DataGridTemplateColumn Width="115" SortMemberPath="RoleLabel">
+ <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource CellText}">
+ <Setter Property="Text" Value="{Binding RoleLabel}"/><Style.Triggers><DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True"><Setter Property="Text" Value="{Binding DataContext.Role.Label, RelativeSource={RelativeSource AncestorType=DataGrid}}"/></DataTrigger></Style.Triggers>
+ </Style></TextBlock.Style></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate>
+ <DataGridTemplateColumn.CellEditingTemplate><DataTemplate><ComboBox ItemsSource="{Binding DataContext.Roles, RelativeSource={RelativeSource AncestorType=DataGrid}}" SelectedItem="{Binding DataContext.Role, RelativeSource={RelativeSource AncestorType=DataGrid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Label" IsEnabled="True" MinWidth="60"/></DataTemplate></DataGridTemplateColumn.CellEditingTemplate>
+</DataGridTemplateColumn>
+        <DataGridTemplateColumn Width="90" SortMemberPath="UnitLabel">
+ <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource CellText}">
+ <Setter Property="Text" Value="{Binding UnitLabel}"/><Style.Triggers><DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True"><Setter Property="Text" Value="{Binding DataContext.DriverUnit.Label, RelativeSource={RelativeSource AncestorType=DataGrid}}"/></DataTrigger></Style.Triggers>
+ </Style></TextBlock.Style></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate>
+ <DataGridTemplateColumn.CellEditingTemplate><DataTemplate><ComboBox ItemsSource="{Binding DataContext.Units, RelativeSource={RelativeSource AncestorType=DataGrid}}" SelectedItem="{Binding DataContext.DriverUnit, RelativeSource={RelativeSource AncestorType=DataGrid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Label" IsEnabled="True" MinWidth="60"/></DataTemplate></DataGridTemplateColumn.CellEditingTemplate>
+</DataGridTemplateColumn>
+        <DataGridTemplateColumn Width="*" SortMemberPath="PoolLabel">
+ <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource CellText}">
+ <Setter Property="Text" Value="{Binding PoolLabel}"/><Style.Triggers><DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True"><Setter Property="Text" Value="{Binding DataContext.PoolDescription, RelativeSource={RelativeSource AncestorType=DataGrid}}"/></DataTrigger></Style.Triggers>
+ </Style></TextBlock.Style></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate>
+ <DataGridTemplateColumn.CellEditingTemplate><DataTemplate><TextBox Text="{Binding DataContext.PoolDescription, RelativeSource={RelativeSource AncestorType=DataGrid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="True" MinWidth="40"/></DataTemplate></DataGridTemplateColumn.CellEditingTemplate>
+</DataGridTemplateColumn>
+        <DataGridTemplateColumn Width="160" SortMemberPath="FunctionsLabel">
+ <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource CellText}">
+ <Setter Property="Text" Value="{Binding FunctionsLabel}"/><Style.Triggers><DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True"><Setter Property="Text" Value="{Binding DataContext.FunctionTags, RelativeSource={RelativeSource AncestorType=DataGrid}}"/></DataTrigger></Style.Triggers>
+ </Style></TextBlock.Style></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate>
+ <DataGridTemplateColumn.CellEditingTemplate><DataTemplate><TextBox Text="{Binding DataContext.FunctionTags, RelativeSource={RelativeSource AncestorType=DataGrid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="True" MinWidth="40"/></DataTemplate></DataGridTemplateColumn.CellEditingTemplate>
+</DataGridTemplateColumn>
        </DataGrid.Columns>
       </DataGrid>
 
@@ -220,6 +262,7 @@
         <TextBlock Text="{Binding NodeSectionHelp}" Style="{StaticResource SectionHelp}"/>
         <TextBlock Text="{Binding NodeRequiredHelp}" Style="{StaticResource FieldHint}"/>
 
+<StackPanel Visibility="{Binding NewNodeFormVisibility}">
         <Grid>
          <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*"/>
@@ -227,10 +270,10 @@
           <ColumnDefinition Width="*"/>
          </Grid.ColumnDefinitions>
          <StackPanel>
+          <TextBlock Text="{Binding NodeCodeLabel}"/>
+          <TextBox x:Name="NodeCodeBox" Text="{Binding NodeCode,UpdateSourceTrigger=PropertyChanged}" TabIndex="39" FlowDirection="LeftToRight" AutomationProperties.Name="{Binding NodeCodeLabel}" local:FieldHelp.Key="NodeCode"/>
           <TextBlock Text="{Binding PoolLabel}"/>
           <TextBox x:Name="PoolBox" Text="{Binding PoolDescription,UpdateSourceTrigger=PropertyChanged}" TabIndex="40" AutomationProperties.Name="{Binding PoolLabel}" local:FieldHelp.Key="PoolDescription"/>
-          <TextBlock Text="{Binding NodeCodeLabel}"/>
-          <TextBox x:Name="NodeCodeBox" Text="{Binding NodeCode,UpdateSourceTrigger=PropertyChanged}" TabIndex="41" FlowDirection="LeftToRight" AutomationProperties.Name="{Binding NodeCodeLabel}" local:FieldHelp.Key="NodeCode"/>
          </StackPanel>
          <StackPanel Grid.Column="1">
           <TextBlock Text="{Binding PhysicalLabel}"/>
@@ -256,6 +299,7 @@
 
         </Grid>
 
+</StackPanel>
         <TextBlock Text="{Binding PoolHelp}" Style="{StaticResource FieldHint}"/>
 
         <Expander x:Name="NodeUnitCreator" Header="{Binding CreateUnitHereLabel}" Margin="0,4,0,8">
@@ -265,7 +309,7 @@
          </StackPanel>
         </Expander>
 
-        <Expander Header="{Binding OptionalNodeDataLabel}" Margin="0,6,0,4">
+        <Expander Visibility="{Binding NewNodeFormVisibility}" Header="{Binding OptionalNodeDataLabel}" Margin="0,6,0,4">
          <StackPanel>
           <TextBlock Text="{Binding FunctionHelp}" Style="{StaticResource SectionHelp}"/>
           <TextBlock Text="{Binding FunctionLabel}"/>

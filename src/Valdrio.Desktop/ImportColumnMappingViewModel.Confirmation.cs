@@ -134,12 +134,15 @@ public sealed partial class ImportColumnMappingViewModel
     }
     public string Target => targetStudy is null ? this["NoStudy"] : string.Format(Ui, this["Target"],
         targetStudy.Name, targetStudy.PeriodStart, targetStudy.PeriodEnd, targetStudy.Currency.FunctionalCurrencyCode, targetStudy.Revision);
+    public string OperationSummary => targetStudy is null ? this["NoStudy"] :
+        (ReplaceBatch ? string.Format(Ui, this["ReplaceSummary"], Replacement?.Label ?? "—", FileName, targetStudy.Name)
+        : string.Format(Ui, this["AddSummary"], FileName, targetStudy.Name)) + " · " + AmountBasis;
     public string ConfirmationSummary
     {
         get
         {
             if (confirmedImport is { } batch) return string.Format(Ui, this["ConfirmedSummary"], batch.Id,
-                batch.Resources.Count, batch.ConfirmedStudy.Revision);
+                batch.Resources.Count, batch.ConfirmedStudy.Revision) + " · " + batch.ConfirmedStudy.Name;
             if (preparedImport is not { } prepared) return "";
             var r = prepared.Reconciliation; var culture = CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
             return string.Format(Ui, this["Totals"], r.ReadRows, r.SelectedRows, r.IgnoredRows, r.InvalidRows,

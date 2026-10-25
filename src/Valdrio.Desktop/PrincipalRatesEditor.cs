@@ -26,7 +26,9 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
     public string this[string key] => texts.Get("Rates." + key, host.PhysicalUiCulture);
     public string Context => host.PhysicalCompany?.Name + " · " + Report?.Study.Name + " · " +
         Report?.Study.PeriodStart.Value.ToString("d", host.PhysicalFormatCulture) + " – " +
-        Report?.Study.PeriodEnd.Value.ToString("d", host.PhysicalFormatCulture);
+        Report?.Study.PeriodEnd.Value.ToString("d", host.PhysicalFormatCulture) + " · " + host.ContextSummary;
+    public string SelectedSummary => SelectedRow is not { } row ? "" : string.Format(host.PhysicalFormatCulture, this["SelectedSummary"],
+        row.Rate, row.Cost, Quantity(row.Value.Observation?.NormalQuantity), Quantity(row.Value.Observation?.RealQuantity), row.Unit);
     public string Provenance => Report is null ? "" : this["Version"] + ": " + Report.Version + "\n" +
         this["EconomicRun"] + ": " + Report.EconomicRunId + "\n" + this["Policy"] + "\n" +
         this["PhysicalVersion"] + ": " + SelectedRow?.Value.Observation?.Version + "\n" +
@@ -65,7 +67,7 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
         }
         catch (Exception ex) when (ex is DomainRuleException or CompanyFileException or InvalidOperationException)
         { Feedback = this["LoadFailed"]; }
-        OnPropertyChanged(nameof(Context)); OnPropertyChanged(nameof(Provenance)); OnPropertyChanged(nameof(CanExport));
+        OnPropertyChanged(nameof(Context)); OnPropertyChanged(nameof(Provenance)); OnPropertyChanged(nameof(SelectedSummary)); OnPropertyChanged(nameof(CanExport));
     }
     partial void OnAttentionOnlyChanged(bool value) => Filter();
     private void Filter()
@@ -76,7 +78,7 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
     }
     partial void OnSelectedRowChanged(PrincipalRateDisplay? value)
     {
-        Answers.Clear(); Details.Clear(); OnPropertyChanged(nameof(Provenance));
+        Answers.Clear(); Details.Clear(); OnPropertyChanged(nameof(Provenance)); OnPropertyChanged(nameof(SelectedSummary));
         if (value is null) return;
         var row = value.Value; var result = row.Result;
         var reason = row.Diagnostics.Count > 0 ? value.Status : result?.CombinedRate is null ? this["UndefinedRate"] : this["AssignmentLater"];

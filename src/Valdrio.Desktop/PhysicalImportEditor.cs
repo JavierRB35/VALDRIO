@@ -43,12 +43,26 @@ public sealed partial class PhysicalImportEditor : ObservableObject
         ui = host.LanguageCulture;
     }
 
+    public string CreateTemplate()
+    {
+        static string Csv(string value) => "\"" + value.Replace("\"", "\"\"") + "\"";
+        var rows = host.Structure.Nodes.Where(n => n.IsActive).Select(n =>
+        {
+            var pool = host.Structure.Pools.Single(p => p.NodeId == n.Id);
+            var unit = host.Units.Single(u => u.Id == pool.DriverUnitId);
+            return string.Join(";", new[] { n.Code, unit.Code, host.Study.PeriodStart.ToString(),
+                host.Study.PeriodEnd.ToString(), "", "", "", "" }.Select(Csv));
+        });
+        return "node;unit;period_start;period_end;normal;real;normal_source;real_source\n" + string.Join("\n", rows) + "\n";
+    }
+
     public ObservableCollection<PhysicalImportCandidate> Lines { get; } = [];
     public ObservableCollection<string> Sheets { get; } = [];
     public bool CanWrite => !host.IsReadOnly;
     public bool CanApply => CanWrite && !Busy && Lines.Any(l => l.Replace);
     public string Title => Text("Activity.Import.Title");
     public string Help => Text("Activity.Import.Help");
+    public string TemplateLabel => Text("Activity.Import.Template");
     public string BrowseLabel => Text("Activity.Import.Browse");
     public string PreviewLabel => Text("Activity.Preview");
     public string ApplyLabel => Text("Activity.Import.Apply");

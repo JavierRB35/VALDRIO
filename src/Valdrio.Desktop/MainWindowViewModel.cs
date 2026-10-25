@@ -12,6 +12,8 @@ namespace Valdrio.Desktop;
 
 public sealed partial class MainWindowViewModel : ObservableObject
 {
+    public string TechnicalHelp => Text("UX.TechnicalHelp");
+    public string GuideReadFull => Text("UX.ReadFull");
     private const string ExpectedKind = "valdrio-development-smoke-v1";
 
     private readonly UiTextCatalog texts;
@@ -549,7 +551,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             nameof(SelectedTimeZoneId),
             nameof(AppTitle),
             nameof(WindowTitle),
-            nameof(DevelopmentToolsTitle),
+            nameof(DevelopmentToolsTitle), nameof(GuideReadFull), nameof(TechnicalHelp),
             nameof(SpecificationVersion),
             nameof(HeaderSubtitle),
             nameof(PreferencesTitle),

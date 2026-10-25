@@ -1,0 +1,33 @@
+Stable byte-for-byte source copy
+AURORA original unchanged after copy upgrade
+Save keeps file and page protected while UI remains responsive
+Catalogue saves: Guardado correctamente.
+120 units: 264 kg and 6 setup units
+Publication saves: Guardado correctamente.
+Published version is read-only
+Editing invalidates previous answers
+Second draft saves
+Invalid save blocks leaving
+Cancel retains draft and page
+Explicit discard reloads saved data
+Published v1 unchanged by v2 edit
+Service catalogue item saves
+Service: 4 interventions require 2 per order + 2 variable activity units
+Service version publishes
+Integrated menu active es
+Questions from persisted version es
+Component selector contains saved material es
+Answers reachable at scale 1,25 es
+Answers reachable at scale 1,5 es
+Answers reachable at scale 2 es
+Reject foreign decimal separator es
+Integrated back es
+Integrated menu active en
+Questions from persisted version en
+Component selector contains saved material en
+Answers reachable at scale 1,25 en
+Answers reachable at scale 1,5 en
+Answers reachable at scale 2 en
+Reject foreign decimal separator en
+Integrated back en
+Original preserved after all UI checks

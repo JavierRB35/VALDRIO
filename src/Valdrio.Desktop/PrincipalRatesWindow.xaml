@@ -10,6 +10,7 @@
    <TextBlock Text="{Binding [Title]}" FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource Brand.DeepGreen}"/>
    <TextBlock Text="{Binding Context}" Margin="0,8,0,4" TextWrapping="Wrap"/>
    <TextBlock Text="{Binding [Policy]}" TextWrapping="Wrap"/>
+   <TextBlock Text="{Binding [ScopeHelp]}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,8,0,0"/>
   </StackPanel>
   <ScrollViewer x:Name="RatesScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto">
    <StackPanel>
@@ -32,6 +33,7 @@
     <Border Style="{StaticResource Card}" Margin="0,12,0,0">
      <StackPanel>
       <TextBlock Text="{Binding SelectedRow.Name}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource Brand.DeepGreen}" Margin="0,0,0,8"/>
+      <TextBlock Text="{Binding SelectedSummary}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,0,0,12"/>
       <DataGrid x:Name="AnswersTable" ItemsSource="{Binding Answers}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
        HeadersVisibility="Column" RowHeaderWidth="0" AutomationProperties.Name="{Binding [Answers]}">
        <DataGrid.Columns>

@@ -143,6 +143,10 @@ public partial class App : System.Windows.Application
             companyDialogs, currencyCatalog, texts, preferences, formatter);
         if (captureDirectory is null)
         {
+            company.ConfirmFileOperation = (title, source, destination) =>
+                new EconomicConfirmationWindow(title,
+                    string.Format(texts.Get("UX.FileOperation", CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)), source, destination),
+                    title, texts.Get("UX.KeepEditing", CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag))).ShowDialog() == true;
             company.OpenFailure = message =>
             {
                 var legacy = company.DiagnosticCode == "FILE_UPGRADE_REQUIRED";
@@ -160,7 +164,7 @@ public partial class App : System.Windows.Application
                 MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Warning);
             };
         }
-        var modelDialogs = captureDirectory is null ? (IModelEditorDialogs)new ModelEditorDialogs() : new QueuedModelEditorDialogs();
+        var modelDialogs = captureDirectory is null ? (IModelEditorDialogs)new ModelEditorDialogs(() => CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)) : new QueuedModelEditorDialogs();
         models = new ModelWorkspaceViewModel(company, texts, preferences, modelDialogs, formatter);
         var importDialogs = captureDirectory is null ? (IImportSourceDialogs)new ImportSourceDialogs() : new QueuedImportSourceDialogs();
         importColumns = new ImportColumnMappingViewModel(new ImportSourceSessionFactory(), importDialogs, texts, preferences, currencyCatalog);
@@ -245,6 +249,11 @@ public partial class App : System.Windows.Application
                     {
                         try
                         {
+                        if (e.Args.Contains("--ux-acceptance", StringComparer.Ordinal))
+                        {
+                            await window.RunUxAcceptance(captureDirectory, (QueuedCompanyFileDialogs)companyDialogs, (QueuedImportSourceDialogs)importDialogs);
+                            Shutdown(0); return;
+                        }
                         if (e.Args.Contains("--composition-view-checks-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("Composition view checks require a prepared copy.");

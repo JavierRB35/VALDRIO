@@ -9,7 +9,7 @@ Definir tratamiento y cantidades de servicios prestados por auxiliares, evaluand
 ## 2. Guía de campos y entradas (Inputs)
 | Campo / parámetro | Tipo / unidad | Requerido | Descripción e impacto en el cálculo |
 | :--- | :--- | :--- | :--- |
-| Centro auxiliar, unidad, normal y real | Tabla y magnitudes T14 | Lectura | Las horas se consultan desde observaciones físicas, no se duplican aquí. |
+| Centro auxiliar, unidad, normal y real | Magnitudes de Actividad y capacidades | Lectura | Las horas se consultan desde observaciones físicas, no se duplican aquí. |
 | Tratamiento de auxiliar | Selector | Sí, si se evalúa | Distingue propietario de capacidad, ThroughFlow y pendiente. |
 | Grupo de servicios | Tabla | Según centro | Diferencia servicios o rutas del auxiliar. |
 | Destino de servicio | Tabla | Según grupo | Identifica otro auxiliar o principal receptor. |
@@ -31,8 +31,8 @@ Definir tratamiento y cantidades de servicios prestados por auxiliares, evaluand
 - Tratamiento pendiente bloquea cálculo: nunca se cambia automáticamente a ThroughFlow.
 - Actividad realizada sin servicio asignado no es sinónimo de ociosidad.
 - No sumar circulación bruta de auxiliares como coste de empresa.
-- Modificar datos T14 empleados puede invalidar ejecuciones y exigir reevaluación.
-- El CSV de servicios no soporta XLSX en esta vista; la importación física T14 sí dispone de ambos formatos.
+- Modificar los datos empleados de Actividad y capacidades puede invalidar ejecuciones y exigir reevaluación.
+- El CSV de servicios no soporta XLSX en esta vista; la importación de Actividad y capacidades sí dispone de ambos formatos.
 
 ### Referencias al código
 - [`src/Valdrio.Desktop/AuxiliaryCapacityWindow.xaml`](../../src/Valdrio.Desktop/AuxiliaryCapacityWindow.xaml)

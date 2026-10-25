@@ -117,6 +117,11 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public bool DescriptionReadOnly => IsPublished || !company.CanWrite;
     public bool InputsEnabled => Ready;
     public bool HasError => diagnostic is not null;
+    public string TableEditHelp => Text("Model.TableEditHelp");
+    public bool CentersReadOnly => !CanEditMasters;
+    public bool NodesReadOnly => !CanEdit;
+    public string NewCenterFormVisibility => Master is null ? "Visible" : "Collapsed";
+    public string NewNodeFormVisibility => SelectedNode is null ? "Visible" : "Collapsed";
     public bool IsEditingCenter => Master is not null;
     public bool CanSelectNode => !busy;
     public ModelVersionSnapshot? Current { get; private set; }
@@ -186,6 +191,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         set
         {
             SetProperty(ref unitMaster, value);
+            OnPropertyChanged(nameof(ToggleUnitLabel));
             RefreshCommands();
         }
     }
@@ -509,7 +515,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string ApplyLabel => Text("Model.ApplyNode");
     public string NewNodeLabel => Text("Model.NewNode");
     public string RemoveLabel => Text("Model.RemoveNode");
-    public string ToggleUnitLabel => Text("Model.ToggleUnit");
+    public string ToggleUnitLabel => Text(UnitMaster?.Value.IsActive == false ? "Model.ActivateUnit" : "Model.DeactivateUnit");
     public string CancelLabel => Text("CompanyCancel");
     public string RefreshLabel => Text("Model.Refresh");
 
@@ -642,6 +648,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         RefreshCommands();
         OnPropertyChanged(nameof(CanEdit));
         OnPropertyChanged(nameof(CanEditMasters));
+        OnPropertyChanged(nameof(CentersReadOnly)); OnPropertyChanged(nameof(NodesReadOnly));
         OnPropertyChanged(nameof(DescriptionReadOnly));
         OnPropertyChanged(nameof(InputsEnabled));
     }

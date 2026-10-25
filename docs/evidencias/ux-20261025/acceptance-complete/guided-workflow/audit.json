@@ -1,0 +1,32 @@
+{
+  "Status": "passed",
+  "PassedChecks": [
+    "primary action creates the company and advances to structure",
+    "primary action creates the draft and advances to masters",
+    "missing centre keeps its form visible with a remedy",
+    "saving a centre clears the form and adds it to the persistent table",
+    "the user can continue to nodes with the standard activity units already available",
+    "inline custom unit save stays disabled until the required unit code is entered",
+    "a unit created inside the node is saved and selected automatically",
+    "global back returns to the previous model step",
+    "auxiliary-only structure remains at nodes and explains the principal requirement",
+    "pending centre is revealed before offering its explicit save action",
+    "centre save persists the edit, clears the form and resumes the model steps",
+    "publication has one named primary action",
+    "publication automatically opens the study step",
+    "changing workspace steps clears help from fields that are no longer visible",
+    "back through file and columns preserves record choices",
+    "explicit validation of unchanged columns preserves the selection",
+    "manual decimal and thousands separators are visible by default",
+    "wizard fields are locked during preparation and enabled afterwards",
+    "single approval belongs to the final review and guards saving",
+    "approval enables saving while retaining reviewed totals",
+    "back and forward leaves unchanged approval and prepared totals intact",
+    "changing import steps clears help from the previous form",
+    "saved import can be inspected by going back without a navigation trap",
+    "editing a saved review removes stale saved status and requires preparation again",
+    "reopened project exposes analyst task choices instead of forcing a linear restart",
+    "project hub points directly to account preparation when the current analysis already has imports",
+    "continue-current task resumes at account preparation without revisiting completed screens"
+  ]
+}

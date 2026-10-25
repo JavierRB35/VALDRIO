@@ -104,7 +104,7 @@
   <data name="CompanyOpen" xml:space="preserve"><value>Open existing project…</value></data>
   <data name="CompanyClose" xml:space="preserve"><value>Close project</value></data>
   <data name="CompanyBackup" xml:space="preserve"><value>Create backup…</value></data>
-  <data name="CompanyRestore" xml:space="preserve"><value>Restore a backup…</value></data>
+  <data name="CompanyRestore" xml:space="preserve"><value>Restore backup to a file…</value></data>
   <data name="CompanyCancel" xml:space="preserve"><value>Cancel operation</value></data>
   <data name="CompanyUnitLabel" xml:space="preserve"><value>Unit code</value></data>
   <data name="CompanyDimensionLabel" xml:space="preserve"><value>Activity unit description</value></data>
@@ -143,7 +143,7 @@ File: {8}</value></data>
   <data name="File.InputInvalid" xml:space="preserve"><value>Review the entered name, currency and unit. No change was confirmed.</value></data>
   <data name="CompanyUpgradeNoticeTitle" xml:space="preserve"><value>This project needs an upgrade</value></data>
   <data name="CompanyOpenFailureTitle" xml:space="preserve"><value>Unable to open project</value></data>
-  <data name="CompanyUpgrade" xml:space="preserve"><value>Open and upgrade an older file into a new copy</value></data>
+  <data name="CompanyUpgrade" xml:space="preserve"><value>Upgrade file format in a new copy</value></data>
   <data name="File.UpgradeRequired" xml:space="preserve"><value>This project uses an older file format. Upgrade it now and save it as a new copy? The original file will not be changed.</value></data>
   <data name="File.UpgradeNotRequired" xml:space="preserve"><value>The file is already current; no upgrade was performed.</value></data>
   <data name="File.MigrationLocked" xml:space="preserve"><value>The source contains an active or stale migration lock. Keep it and inspect its origin before recovery.</value></data>
@@ -151,13 +151,13 @@ File: {8}</value></data>
   <data name="Model.PolicyNotImplemented" xml:space="preserve"><value>Economic policies cannot be accepted in this structural editor.</value></data>
   <data name="Model.CenterInvalid" xml:space="preserve"><value>Center code and name are required; revision must be valid.</value></data>
   <data name="Model.NodeInvalid" xml:space="preserve"><value>The node needs a code and a valid role. If functions are provided, each must contain text and must not be repeated.</value></data>
-  <data name="Model.PoolInvalid" xml:space="preserve"><value>The pool needs a valid unit, classification and pending capacity policy.</value></data>
+  <data name="Model.PoolInvalid" xml:space="preserve"><value>The cost group needs a valid unit, classification and pending capacity policy.</value></data>
   <data name="Model.StructureInvalid" xml:space="preserve"><value>The cost-structure identity, description or policy reference is incomplete.</value></data>
   <data name="Model.ScopeInvalid" xml:space="preserve"><value>The reference belongs to another company or cost-structure version.</value></data>
-  <data name="Model.Duplicate" xml:space="preserve"><value>A code, identifier or pool for this node already exists in this scope.</value></data>
+  <data name="Model.Duplicate" xml:space="preserve"><value>A code, identifier or cost group for this node already exists in this scope.</value></data>
   <data name="Model.PrincipalRequired" xml:space="preserve"><value>Add at least one active Principal node before finalizing the structure.</value></data>
   <data name="Model.CenterUnavailable" xml:space="preserve"><value>The physical center is missing, belongs elsewhere or is inactive.</value></data>
-  <data name="Model.PoolRequired" xml:space="preserve"><value>Each active node needs exactly one homogeneous pool.</value></data>
+  <data name="Model.PoolRequired" xml:space="preserve"><value>Each active node needs exactly one homogeneous cost group.</value></data>
   <data name="Model.DriverUnavailable" xml:space="preserve"><value>The activity unit is missing, belongs elsewhere or is inactive.</value></data>
   <data name="Model.SnapshotInvalid" xml:space="preserve"><value>The frozen structure does not contain its required definitions.</value></data>
   <data name="Model.RevisionChanged" xml:space="preserve"><value>The data changed since it was read. Reload before saving.</value></data>
@@ -195,7 +195,7 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Clone" xml:space="preserve"><value>Create new editable version</value></data>
   <data name="Model.Discard" xml:space="preserve"><value>Discard unsaved changes</value></data>
   <data name="Model.Nodes" xml:space="preserve"><value>Calculation nodes</value></data>
-  <data name="Model.NodeCode" xml:space="preserve"><value>Node code</value></data>
+  <data name="Model.NodeCode" xml:space="preserve"><value>Calculation unit code</value></data>
   <data name="Model.NodeDescription" xml:space="preserve"><value>Node description</value></data>
   <data name="ImportMapping.AdvancedOptions" xml:space="preserve"><value>Advanced options: replacement and comparisons</value></data>
   <data name="Model.Physical" xml:space="preserve"><value>Physical center</value></data>
@@ -220,7 +220,7 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Completed" xml:space="preserve"><value>Operation completed.</value></data>
   <data name="Model.ValidStructure" xml:space="preserve"><value>Structure valid. Economic readiness is still pending.</value></data>
   <data name="Model.PendingTitle" xml:space="preserve"><value>Unsaved cost-structure changes</value></data>
-  <data name="Model.PendingBody" xml:space="preserve"><value>There are pending centre, node or structure changes. Yes = Save; No = Discard; Cancel = stay here.</value></data>
+  <data name="Model.PendingBody" xml:space="preserve"><value>There are pending centre, node or structure changes. Save and continue stores valid changes; discard restores saved data; keep editing retains the draft.</value></data>
   <data name="Study.NameRequired" xml:space="preserve"><value>Enter a name for the analysis.</value></data>
   <data name="Study.PeriodInvalid" xml:space="preserve"><value>The period start must not be after its end.</value></data>
   <data name="Study.PurposeUnsupported" xml:space="preserve"><value>This edition supports management costing. Inventory valuation needs its own policy.</value></data>
@@ -251,8 +251,8 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Study.Save" xml:space="preserve"><value>Save analysis changes</value></data>
   <data name="Study.Load" xml:space="preserve"><value>Open analysis</value></data>
   <data name="Study.Refresh" xml:space="preserve"><value>Refresh list</value></data>
-  <data name="Study.Capture" xml:space="preserve"><value>Create technical checkpoint</value></data>
-  <data name="Study.Close" xml:space="preserve"><value>Close analysis</value></data>
+  <data name="Study.Capture" xml:space="preserve"><value>Create input checkpoint (advanced)</value></data>
+  <data name="Study.Close" xml:space="preserve"><value>Close analysis for editing</value></data>
   <data name="Study.Reopen" xml:space="preserve"><value>Reopen analysis</value></data>
   <data name="Study.Snapshots" xml:space="preserve"><value>Captured snapshots</value></data>
   <data name="Study.Open" xml:space="preserve"><value>Open</value></data>
@@ -265,7 +265,7 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Study.NoSnapshot" xml:space="preserve"><value>No input snapshot selected.</value></data>
   <data name="Study.Working" xml:space="preserve"><value>Working…</value></data>
   <data name="Study.Completed" xml:space="preserve"><value>Operation completed.</value></data>
-  <data name="Study.RunHistoryEmpty" xml:space="preserve"><value>Executions: none. Cost calculation is delivered in a later phase.</value></data>
+  <data name="Study.RunHistoryEmpty" xml:space="preserve"><value>View saved calculations in Results and traceability. This history contains input data, not the list of calculations.</value></data>
   <data name="Study.Details" xml:space="preserve"><value>{0} · {1}–{2} · {3} · {4} · {8}</value></data>
   <data name="Study.SnapshotDetails" xml:space="preserve"><value>Snapshot {0} · input revision {1} · {2}
 Captured {3}
@@ -276,7 +276,7 @@ Full: {5}</value></data>
   <data name="Study.ContextCaptured" xml:space="preserve"><value>Context captured; preparation remains pending.</value></data>
   <data name="Study.PrepareFirst" xml:space="preserve"><value>Save the analysis and capture its data to see preparation diagnostics.</value></data>
   <data name="Study.PendingTitle" xml:space="preserve"><value>Unsaved analysis changes</value></data>
-  <data name="Study.PendingBody" xml:space="preserve"><value>Save the changes before continuing? Yes saves, No discards, Cancel keeps editing.</value></data>
+  <data name="Study.PendingBody" xml:space="preserve"><value>There are analysis changes. Save and continue, discard changes or keep editing.</value></data>
   <data name="Study.DatesRequired" xml:space="preserve"><value>Select both period dates from the calendar.</value></data>
   <data name="Import.AmbiguousFormat" xml:space="preserve"><value>I cannot interpret these numbers safely. Review separators and negative-number format under Number format.</value></data>
   <data name="Import.InvalidAmount" xml:space="preserve"><value>This amount cannot be interpreted with the selected format. Check the original value and number separators.</value></data>
@@ -376,7 +376,7 @@ Full: {5}</value></data>
   <data name="ImportMapping.PreparedReady" xml:space="preserve"><value>Preview prepared. Review the amounts and approve their meaning before saving.</value></data>
   <data name="ImportMapping.Totals" xml:space="preserve"><value>Read {0} · selected {1} · ignored {2} · invalid {3}. Positive {4} · negative {5} · net {6} {7}.</value></data>
   <data name="ImportMapping.Confirmed" xml:space="preserve"><value>Data imported and saved successfully.</value></data>
-  <data name="ImportMapping.ConfirmedSummary" xml:space="preserve"><value>Import saved · {1} resources added.</value></data>
+  <data name="ImportMapping.ConfirmedSummary" xml:space="preserve"><value>Import saved · {1} accounts incorporated. Continue to Prepare accounts.</value></data>
   <data name="ImportMapping.CommittedRefreshPending" xml:space="preserve"><value>The data is saved, but the screen could not refresh. Close this window and refresh the analysis; do not import the file again.</value></data>
   <data name="ImportMapping.NoImports" xml:space="preserve"><value>This analysis has no saved imports yet.</value></data>
   <data name="ImportMapping.ImportHistory" xml:space="preserve"><value>{1} · {2} resources · total {3} {4}</value></data>
@@ -392,7 +392,7 @@ Full: {5}</value></data>
   <data name="Import.AmountOverflow" xml:space="preserve"><value>Debit minus credit exceeds the supported decimal range. Correct the source amounts.</value></data>
   <data name="CompanyActiveLabel" xml:space="preserve"><value>Open project</value></data>
   <data name="CompanyTechnicalDetails" xml:space="preserve"><value>Technical details (support)</value></data>
-  <data name="DevelopmentToolsTitle" xml:space="preserve"><value>Technical tools (support)</value></data>
+  <data name="DevelopmentToolsTitle" xml:space="preserve"><value>Diagnostics and technical examples (advanced)</value></data>
   <data name="ImportMapping.AmountMode" xml:space="preserve"><value>What do these amounts represent?</value></data>
   <data name="ImportMapping.ApproveClosing" xml:space="preserve"><value>I approve using the full closing balance shown as the study amount.</value></data>
   <data name="ImportMapping.ApproveClosingDebitCredit" xml:space="preserve"><value>I approve using the full closing balance, calculated as Debit minus Credit, as the study amount.</value></data>
@@ -426,7 +426,7 @@ Full: {5}</value></data>
   <data name="ImportMapping.SelectionReconciliation" xml:space="preserve"><value>Included: {0} records → {2} codes. Excluded: {1} records. Included positive: {3}; included negative: {4}; included net: {5}; excluded net: {6}.</value></data>
   <data name="ImportMapping.SelectionPreviewTitle" xml:space="preserve"><value>Selected records result</value></data>
   <data name="ImportMapping.FiscalEnd" xml:space="preserve"><value>Shared fiscal year end</value></data>
-  <data name="ImportMapping.ComparisonHelp" xml:space="preserve"><value>To obtain a cumulative difference you need two comparable closings with the same fiscal year, scope, currency and sign convention. Enter the earlier closing and keep the current one as the analysis period end.</value></data>
+  <data name="ImportMapping.ComparisonHelp" xml:space="preserve"><value>Difference between cumulative balances: for example, 12,000 − 9,000 = 3,000 for the interval. Compare closing balances with the same year, scope, currency and sign convention. Enter the previous closing date; the current date ends the analysis period.</value></data>
   <data name="ImportMapping.ClearComparison" xml:space="preserve"><value>Clear earlier cumulative source</value></data>
   <data name="Import.ComparisonInvalid" xml:space="preserve"><value>The two cumulative balances are not comparable. Check fiscal year, scope, currency, signs, and that the earlier closing is the day before the analysis starts.</value></data>
   <data name="ImportMapping.ApproveComparison" xml:space="preserve"><value>I approve the differences shown between current and earlier cumulative amounts for the same accounting scope.</value></data>
@@ -475,10 +475,10 @@ Full: {5}</value></data>
   <data name="ImportMapping.RoundingAdjustment" xml:space="preserve"><value>Conversion rounding adjustment</value></data>
   <data name="ImportMapping.CurrencyTotals" xml:space="preserve"><value>Original {0}: positive {1}; negative {2}; net {3}</value></data>
   <data name="ImportMapping.FunctionalTotal" xml:space="preserve"><value>Functional total: {0} {1}. Conversion rounding adjustment: {2} {1}.</value></data>
-  <data name="Guide.Company" xml:space="preserve"><value>1. Project</value></data>
-  <data name="Guide.Model" xml:space="preserve"><value>2. Design structure</value></data>
-  <data name="Guide.Study" xml:space="preserve"><value>3. Period / analysis</value></data>
-  <data name="Guide.Import" xml:space="preserve"><value>4. Import balances</value></data>
+  <data name="Guide.Company" xml:space="preserve"><value>Project</value></data>
+  <data name="Guide.Model" xml:space="preserve"><value>Design structure</value></data>
+  <data name="Guide.Study" xml:space="preserve"><value>Period / analysis</value></data>
+  <data name="Guide.Import" xml:space="preserve"><value>Import balances</value></data>
   <data name="Guide.Settings" xml:space="preserve"><value>Preferences</value></data>
   <data name="Guide.Back" xml:space="preserve"><value>Back</value></data>
   <data name="Guide.Next" xml:space="preserve"><value>Continue</value></data>
@@ -542,7 +542,7 @@ Full: {5}</value></data>
   <data name="Guide.Help.CompanyName" xml:space="preserve"><value>Name identifying the company. Create file asks for a location; that file holds all company data.</value></data>
   <data name="Guide.Help.Currency" xml:space="preserve"><value>Study functional currency: currency used for results. At company level it is only a suggestion for new studies.</value></data>
   <data name="Guide.Help.UnitCode" xml:space="preserve"><value>Unique identifier for this unit, for example HOURS. This is not an account number.</value></data>
-  <data name="Guide.Help.UnitDimension" xml:space="preserve"><value>Describe what is measured, for example time or batch. Units with different dimensions are not treated as equivalent.</value></data>
+  <data name="Guide.Help.UnitDimension" xml:space="preserve"><value>Measured dimension. Use time for time, count for quantity or batch for batches; retain the dimension code of units that need to be compatible. Different dimensions are not equivalent.</value></data>
   <data name="Guide.Help.UnitSymbol" xml:space="preserve"><value>Visible unit symbol, for example h for hours.</value></data>
   <data name="Guide.Help.UnitScale" xml:space="preserve"><value>Number of decimal places allowed for quantities in this unit, from 0 to 12.</value></data>
   <data name="Guide.Help.UnitDiscrete" xml:space="preserve"><value>Select if this quantity is counted in indivisible whole units.</value></data>
@@ -557,8 +557,8 @@ Full: {5}</value></data>
   <data name="Guide.Help.Role" xml:space="preserve"><value>Principal or Auxiliary according to the model methodology. Independent of functions and cost classification. At least one active Principal is required.</value></data>
   <data name="Guide.Help.FunctionTags" xml:space="preserve"><value>Optional comma-separated tags describing node functions. They do not assign calculation rules.</value></data>
   <data name="Guide.Help.DriverUnit" xml:space="preserve"><value>Unit used to measure node activity, for example hours. It is required; if it is missing, create it right here without leaving the node.</value></data>
-  <data name="Guide.Help.Layer" xml:space="preserve"><value>Cost classification for this pool. It does not yet establish a calculation policy and is not inferred from the account.</value></data>
-  <data name="Guide.Help.PoolDescription" xml:space="preserve"><value>Optional description of the cost pool associated with this node.</value></data>
+  <data name="Guide.Help.Layer" xml:space="preserve"><value>Cost classification for this cost group. It does not yet establish a calculation policy and is not inferred from the account.</value></data>
+  <data name="Guide.Help.PoolDescription" xml:space="preserve"><value>Optional description of the cost cost group associated with this node.</value></data>
   <data name="Guide.Help.UnitMaster" xml:space="preserve"><value>Select the unit to activate or deactivate. This does not create a new unit.</value></data>
   <data name="Guide.Help.Name" xml:space="preserve"><value>Name identifying this analysis when reopening the company.</value></data>
   <data name="Guide.Help.PeriodStart" xml:space="preserve"><value>First day included in the study period. Select it in the calendar.</value></data>
@@ -632,7 +632,7 @@ Full: {5}</value></data>
 <data name="Resource.ReversalInvalid" xml:space="preserve"><value>The reversal must cancel one existing adjustment in the same resource exactly once.</value></data>
 <data name="Resource.RouteConflict" xml:space="preserve"><value>Choose exactly one route for each resource part.</value></data>
 <data name="Resource.DirectMismatch" xml:space="preserve"><value>Direct assignments must sum exactly to the part amount and identify their objects.</value></data>
-<data name="Resource.PoolRequired" xml:space="preserve"><value>Select the destination pool for this part.</value></data>
+<data name="Resource.PoolRequired" xml:space="preserve"><value>Select the destination cost group for this part.</value></data>
 <data name="Resource.ExclusionReasonRequired" xml:space="preserve"><value>Enter a reason for excluding this part.</value></data>
 <data name="Resource.AdjustmentReasonRequired" xml:space="preserve"><value>Enter the adjustment type and reason.</value></data>
 <data name="Resource.ConversionInvalid" xml:space="preserve"><value>The stored conversion does not match the original amount and its selected exchange rate.</value></data>
@@ -640,7 +640,7 @@ Full: {5}</value></data>
 <data name="Resource.BehaviorContextRequired" xml:space="preserve"><value>Fixed and variable behavior require a driver, horizon and activity range.</value></data>
 <data name="Resource.BehaviorHorizonInvalid" xml:space="preserve"><value>The behavior horizon must end on or after its start.</value></data>
 <data name="Resource.BehaviorRangeInvalid" xml:space="preserve"><value>Activity quantities must be nonnegative and the range must be ordered.</value></data>
-<data name="Resource.CapacityOwnerInvalid" xml:space="preserve"><value>Capacity assessment requires one owner pool and node matching the part route; other treatments cannot carry an owner.</value></data>
+<data name="Resource.CapacityOwnerInvalid" xml:space="preserve"><value>Capacity assessment requires one owner cost group and node matching the part route; other treatments cannot carry an owner.</value></data>
 <data name="Resource.ActivityUnitMismatch" xml:space="preserve"><value>The activity quantity does not use its declared unit.</value></data>
 <data name="Resource.BehaviorUnclassified" xml:space="preserve"><value>Part {0} is not classified as fixed or variable.</value></data>
 <data name="Resource.BehaviorMixedPending" xml:space="preserve"><value>Part {0} is mixed and must be split before definitive absorption.</value></data>
@@ -668,12 +668,12 @@ Full: {5}</value></data>
   <data name="Resources.ReviewStep" xml:space="preserve"><value>Check destinations</value></data>
   <data name="Resources.ReviewHelp" xml:space="preserve"><value>Check that the effective amount is fully explained by assignments, exclusions, and pending parts. The difference must be zero before saving.</value></data>
   <data name="Resources.Coverage" xml:space="preserve"><value>Converted original: {0} · Adjustments: {1} · Effective: {2}
-Direct: {3} · Pools: {4} · Excluded: {5} · Pending: {6}
+Direct: {3} · cost groups: {4} · Excluded: {5} · Pending: {6}
 Difference to distribute: {7}</value></data>
   <data name="Resources.Code" xml:space="preserve"><value>Account / code</value></data>
   <data name="Resources.Originals" xml:space="preserve"><value>Original (by currency)</value></data>
   <data name="Resources.Converted" xml:space="preserve"><value>Converted import</value></data>
-  <data name="Resources.Adjustments" xml:space="preserve"><value>Corrections</value></data>
+  <data name="Resources.Adjustments" xml:space="preserve"><value>Total manual correction</value></data>
   <data name="Resources.EffectiveBasis" xml:space="preserve"><value>Effective amount (allocation basis)</value></data>
   <data name="Resources.EffectiveBasisHelp" xml:space="preserve"><value>Allocations use this amount: converted import + manual corrections + rule adjustments. The original balance remains available for reference.</value></data>
   <data name="Resources.Effective" xml:space="preserve"><value>Effective amount</value></data>
@@ -715,7 +715,7 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.ObjectName" xml:space="preserve"><value>Object name</value></data>
   <data name="Resources.ObjectKind" xml:space="preserve"><value>Object kind</value></data>
   <data name="Resources.SaveObject" xml:space="preserve"><value>Save cost object</value></data>
-  <data name="Resources.Pool" xml:space="preserve"><value>Receiving pool in published model</value></data>
+  <data name="Resources.Pool" xml:space="preserve"><value>Receiving cost group in published model</value></data>
   <data name="Resources.ExclusionReason" xml:space="preserve"><value>Required exclusion reason</value></data>
   <data name="Resources.ContextHelp" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
   <data name="Resources.ActivityUnit" xml:space="preserve"><value>Activity unit explaining behavior</value></data>
@@ -724,7 +724,7 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.Minimum" xml:space="preserve"><value>Minimum activity in range</value></data>
   <data name="Resources.Maximum" xml:space="preserve"><value>Maximum activity in range</value></data>
   <data name="Resources.CapacityTitle" xml:space="preserve"><value>Capacity: advanced options</value></data>
-  <data name="Resources.CapacityHelp" xml:space="preserve"><value>Only Assess at pool declares a capacity owner: the selected pool, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Resources.CapacityHelp" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
   <data name="Resources.Capacity" xml:space="preserve"><value>Capacity treatment</value></data>
   <data name="Resources.Theoretical" xml:space="preserve"><value>Theoretical capacity (optional)</value></data>
   <data name="Resources.Practical" xml:space="preserve"><value>Practical capacity (optional)</value></data>
@@ -732,7 +732,7 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.Actual" xml:space="preserve"><value>Actual activity (optional)</value></data>
   <data name="Resources.ApplyPart" xml:space="preserve"><value>Apply part to draft</value></data>
   <data name="Resources.ChangeReason" xml:space="preserve"><value>Reason for the changes to be saved</value></data>
-  <data name="Resources.Refresh" xml:space="preserve"><value>Refresh saved resources</value></data>
+  <data name="Resources.Refresh" xml:space="preserve"><value>Reload saved data</value></data>
   <data name="Resources.Advanced" xml:space="preserve"><value>History and advanced operations</value></data>
   <data name="Resources.History" xml:space="preserve"><value>Saved change history</value></data>
   <data name="Resources.HistoryRow" xml:space="preserve"><value>Revision {0} · {1} · {2} · {3} · {4}</value></data>
@@ -771,10 +771,10 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.Cancelled" xml:space="preserve"><value>Operation cancelled. Draft changes are retained.</value></data>
   <data name="Resources.DraftDiscarded" xml:space="preserve"><value>Draft discarded. Saved data is displayed.</value></data>
   <data name="Resources.PendingTitle" xml:space="preserve"><value>Unsaved resource preparation</value></data>
-  <data name="Resources.PendingBody" xml:space="preserve"><value>There are unsaved changes. Yes applies valid forms and saves the account; No discards the draft; Cancel continues editing. Missing data or a reason will show an error and retain your edits. Revaluation has its own confirmation button.</value></data>
+  <data name="Resources.PendingBody" xml:space="preserve"><value>Save applies valid forms and stores the account. Discard removes the draft. Missing data or a reason keeps the edit and displays the error. Revaluation has its own confirmation button.</value></data>
   <data name="Resources.Pending" xml:space="preserve"><value>Pending decision</value></data>
   <data name="Resources.DirectObject" xml:space="preserve"><value>Direct assignment to object</value></data>
-  <data name="Resources.AllocationPool" xml:space="preserve"><value>Send to a pool</value></data>
+  <data name="Resources.AllocationPool" xml:space="preserve"><value>Send to a cost group</value></data>
   <data name="Resources.Excluded" xml:space="preserve"><value>Exclude with reason</value></data>
   <data name="Resources.Unclassified" xml:space="preserve"><value>Unclassified</value></data>
   <data name="Resources.Fixed" xml:space="preserve"><value>Fixed in stated context</value></data>
@@ -784,7 +784,7 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.Commercial" xml:space="preserve"><value>Commercial</value></data>
   <data name="Resources.Structure" xml:space="preserve"><value>Structure</value></data>
   <data name="Resources.None" xml:space="preserve"><value>No capacity treatment declared</value></data>
-  <data name="Resources.AssessAtPool" xml:space="preserve"><value>Assess capacity at pool</value></data>
+  <data name="Resources.AssessAtPool" xml:space="preserve"><value>Assess capacity at cost group</value></data>
   <data name="Resources.PeriodCost" xml:space="preserve"><value>Period cost</value></data>
   <data name="Resources.Product" xml:space="preserve"><value>Product</value></data>
   <data name="Resources.Service" xml:space="preserve"><value>Service</value></data>
@@ -800,7 +800,7 @@ Difference to distribute: {7}</value></data>
   <data name="Resource.SourceChanged" xml:space="preserve"><value>The import would change accounts with saved adjustments or parts. Go to Resources, review history and use Reset preparation with a reason before changing the source.</value></data>
   <data name="Resource.ObjectInvalid" xml:space="preserve"><value>Enter an object code and name, a valid kind and a code unique within this study.</value></data>
   <data name="Resource.ObjectScope" xml:space="preserve"><value>Select a cost object saved in this study. You can create it in the direct assignment options.</value></data>
-  <data name="Resource.PoolScope" xml:space="preserve"><value>Select a pool belonging to an active node in this study’s published model.</value></data>
+  <data name="Resource.PoolScope" xml:space="preserve"><value>Select a cost group belonging to an active node in this study’s published model.</value></data>
   <data name="Resource.UnitScope" xml:space="preserve"><value>Select an activity unit from the published model.</value></data>
   <data name="Resource.CommandInvalid" xml:space="preserve"><value>Complete the reason for the change and review the required fields before saving.</value></data>
   <data name="Resource.NotFound" xml:space="preserve"><value>The account is no longer among the current resources. Refresh the list and select it again.</value></data>
@@ -813,23 +813,23 @@ Difference to distribute: {7}</value></data>
   <data name="Resource.NumberRequired" xml:space="preserve"><value>Enter a valid number using the regional format captured when the form started. An empty field is not converted to zero.</value></data>
   <data name="Resource.DateRequired" xml:space="preserve"><value>Select a valid date in the calendar.</value></data>
   <data name="Resource.RevalueUnbalanced" xml:space="preserve"><value>The account still has a difference after revaluation. Adjust its parts or explicitly leave the difference pending.</value></data>
-  <data name="Guide.Resources" xml:space="preserve"><value>5. Prepare accounts</value></data>
+  <data name="Guide.Resources" xml:space="preserve"><value>Prepare accounts</value></data>
   <data name="Guide.ContinueResources" xml:space="preserve"><value>Continue: prepare accounts</value></data>
   <data name="Guide.AnotherImport" xml:space="preserve"><value>Import another file / correct a previous import</value></data>
   <data name="Resources.LayerHelp" xml:space="preserve"><value>State whether this part belongs to production, commercial or structure. This is independent of fixed or variable behavior and its destination. You may leave it unclassified.</value></data>
-  <data name="Resources.PoolHelp" xml:space="preserve"><value>A pool groups costs for later distribution. Choose one from your published model; its node’s principal or auxiliary role does not determine cost behavior.</value></data>
+  <data name="Resources.PoolHelp" xml:space="preserve"><value>A cost group groups costs for later distribution. Choose one from your published model; its node’s principal or auxiliary role does not determine cost behavior.</value></data>
   <data name="Resources.ExclusionHelp" xml:space="preserve"><value>Explain why this amount is outside the study. Exclusion retains the amount and its source for review.</value></data>
   <data name="Guide.Help.Resource.Rows" xml:space="preserve"><value>Edit the total correction directly. Enter, Tab or leaving the cell saves it; Escape cancels the cell edit.</value></data>
   <data name="Guide.Help.Resource.RemovePart" xml:space="preserve"><value>Remove selected part</value></data>
-  <data name="Guide.Help.Resource.Normal" xml:space="preserve"><value>Only Assess at pool declares a capacity owner: the selected pool, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Guide.Help.Resource.Normal" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
   <data name="Guide.Help.Resource.CancelOperation" xml:space="preserve"><value>Cancel running operation</value></data>
-  <data name="Guide.Help.Resource.Capacity" xml:space="preserve"><value>Only Assess at pool declares a capacity owner: the selected pool, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Guide.Help.Resource.Capacity" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
   <data name="Guide.Help.Resource.EditPart" xml:space="preserve"><value>Edit selected part</value></data>
   <data name="Guide.Help.Resource.Discard" xml:space="preserve"><value>Discard unsaved changes</value></data>
   <data name="Guide.Help.Resource.PendingRemainder" xml:space="preserve"><value>Add difference as pending</value></data>
   <data name="Guide.Help.Resource.Refresh" xml:space="preserve"><value>Refresh saved resources</value></data>
   <data name="Guide.Help.Resource.ObjectKind" xml:space="preserve"><value>An object is what you want to measure costs for: a product, service, order or another destination. Its code identifies it within this study. Save it and select it as the part’s destination.</value></data>
-  <data name="Guide.Help.Resource.Pool" xml:space="preserve"><value>Each option identifies the physical centre, node, role, pool description, activity unit and functions from the published structure. Select the destination that actually receives this cost; no allocation is inferred.</value></data>
+  <data name="Guide.Help.Resource.Pool" xml:space="preserve"><value>Each option identifies the physical centre, node, role, cost group description, activity unit and functions from the published structure. Select the destination that actually receives this cost; no allocation is inferred.</value></data>
   <data name="Guide.Help.Resource.Object" xml:space="preserve"><value>An object is what you want to measure costs for: a product, service, order or another destination. Its code identifies it within this study. Save it and select it as the part’s destination.</value></data>
   <data name="Guide.Help.Resource.Maximum" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
   <data name="Guide.Help.Resource.SaveRevalue" xml:space="preserve"><value>Save complete revaluation</value></data>
@@ -843,8 +843,8 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.Help.Resource.Route" xml:space="preserve"><value>Choose a part and press Edit part, or create a new one. Each part has one route. The sum must equal this account’s effective amount exactly. You can explicitly leave amounts pending.</value></data>
   <data name="Guide.Help.Resource.HorizonEnd" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
   <data name="Guide.Help.Resource.ApplyPart" xml:space="preserve"><value>Apply part to draft</value></data>
-  <data name="Guide.Help.Resource.Theoretical" xml:space="preserve"><value>Only Assess at pool declares a capacity owner: the selected pool, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
-  <data name="Guide.Help.Resource.Practical" xml:space="preserve"><value>Only Assess at pool declares a capacity owner: the selected pool, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Guide.Help.Resource.Theoretical" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Guide.Help.Resource.Practical" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
   <data name="Guide.Help.Resource.Behavior" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
   <data name="Guide.Help.Resource.ActivityUnit" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
   <data name="Guide.Help.Resource.ObjectName" xml:space="preserve"><value>An object is what you want to measure costs for: a product, service, order or another destination. Its code identifies it within this study. Save it and select it as the part’s destination.</value></data>
@@ -857,7 +857,7 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.Help.Resource.RateDate" xml:space="preserve"><value>Business date to which this rate applies. It does not change with the time zone.</value></data>
   <data name="Guide.Help.Resource.Adjustments" xml:space="preserve"><value>An adjustment increases or decreases the imported amount while preserving the Excel or CSV data. Enter a signed amount, currency, type and reason. If no adjustments are needed, continue to distribution.</value></data>
   <data name="Guide.Help.Resource.ResetReason" xml:space="preserve"><value>Reset leaves every account pending and removes its adjustments and routes from the current preparation. History and earlier snapshots are retained. Use this when replacing imports you have already prepared.</value></data>
-  <data name="Guide.Help.Resource.Actual" xml:space="preserve"><value>Only Assess at pool declares a capacity owner: the selected pool, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Guide.Help.Resource.Actual" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
   <data name="Guide.Help.Resource.AddAdjustment" xml:space="preserve"><value>Add adjustment to draft</value></data>
   <data name="Guide.Help.Resource.NewPart" xml:space="preserve"><value>Clear form / new part</value></data>
   <data name="Guide.Help.Resource.ClearForm" xml:space="preserve"><value>Clear this form</value></data>
@@ -891,7 +891,7 @@ Difference to distribute: {7}</value></data>
   <data name="Model.CenterCreated" xml:space="preserve"><value>Centre saved successfully. The form is ready for the next centre.</value></data>
   <data name="Model.CenterSaved" xml:space="preserve"><value>Centre changes saved successfully.</value></data>
   <data name="Model.CenterStateChanged" xml:space="preserve"><value>Centre status updated successfully.</value></data>
-  <data name="Model.NodeSectionHelp" xml:space="preserve"><value>Each node belongs to a centre and represents a calculation unit. Enter the essential data first; less common data is grouped separately.</value></data>
+  <data name="Model.NodeSectionHelp" xml:space="preserve"><value>A calculation unit (node) belongs to a centre. Example: Workshop centre, Cutting node, activity hours, cost group Cutting costs. A centre may contain several nodes.</value></data>
   <data name="Model.NodeListTitle" xml:space="preserve"><value>Structure nodes</value></data>
   <data name="Model.NodeListHelp" xml:space="preserve"><value>The table shows every node already saved in this draft. Select a row to edit or delete it. While the form has pending changes, save them or press New node before selecting another row.</value></data>
   <data name="Model.NodeFormNew" xml:space="preserve"><value>Add node</value></data>
@@ -900,7 +900,7 @@ Difference to distribute: {7}</value></data>
   <data name="Model.NodeSaveEdit" xml:space="preserve"><value>Save changes</value></data>
   <data name="Model.NodeSaved" xml:space="preserve"><value>Node saved successfully. The form is ready for the next node.</value></data>
   <data name="Model.NodeRemoved" xml:space="preserve"><value>Node removed from the draft and changes saved successfully.</value></data>
-  <data name="Model.NodePersistenceHelp" xml:space="preserve"><value>Saving a node immediately updates the in-progress cost structure in the file. You do not need a second save to preserve that node.</value></data>
+  <data name="Model.NodePersistenceHelp" xml:space="preserve"><value>Scope: reusable structure. Saving a node immediately stores that record in the draft. Finalizing fixes the structure for use. Adapted analysis nodes belong only to that analysis.</value></data>
   <data name="Model.OptionalNodeData" xml:space="preserve"><value>Additional data</value></data>
   <data name="Model.FunctionHelp" xml:space="preserve"><value>Functions are optional and describe what the node is used for. If you add several, separate them with commas and do not repeat names, for example: production, maintenance.</value></data>
   <data name="Model.ColumnCode" xml:space="preserve"><value>Code</value></data>
@@ -910,7 +910,7 @@ Difference to distribute: {7}</value></data>
   <data name="Model.ColumnRole" xml:space="preserve"><value>Role</value></data>
   <data name="Model.ColumnUnit" xml:space="preserve"><value>Unit</value></data>
   <data name="Model.ColumnLayer" xml:space="preserve"><value>Layer</value></data>
-  <data name="Model.ColumnPool" xml:space="preserve"><value>Pool description</value></data>
+  <data name="Model.ColumnPool" xml:space="preserve"><value>Cost group</value></data>
   <data name="Model.ColumnFunctions" xml:space="preserve"><value>Functions</value></data>
   <data name="Model.RoleHelp" xml:space="preserve"><value>Principal: receives costs as an allocation destination. Auxiliary: provides services to other nodes.</value></data>
   <data name="Model.UnitHelp" xml:space="preserve"><value>Choose how this node's activity is measured, for example hours, batches or items.</value></data>
@@ -942,7 +942,7 @@ Difference to distribute: {7}</value></data>
   <data name="ImportMapping.SourceCurrencyHelp" xml:space="preserve"><value>The analysis currency is suggested. Change it only when the file amounts use another currency.</value></data>
   <data name="ImportMapping.ApprovalReferenceHelp" xml:space="preserve"><value>You may record a checked account and amount. Without a note, VALDRIO records approval with the source file, selected meaning and period.</value></data>
   <data name="ImportMapping.ReviewStepTitle" xml:space="preserve"><value>Check before saving</value></data>
-  <data name="ImportMapping.ReviewStepHelp" xml:space="preserve"><value>Check totals and accounts, approve their meaning and save. Then continue to Prepare and adjust accounts (T07), where you can add adjustments with reasons and classify parts while preserving originals.</value></data>
+  <data name="ImportMapping.ReviewStepHelp" xml:space="preserve"><value>Review selected totals, destination and meaning; approve and incorporate the data. Then go to Prepare accounts to review corrections and reasoned adjustments while preserving the original.</value></data>
   <data name="ImportMapping.FriendlyValidSummary" xml:space="preserve"><value>{0} rows read · everything looks correct</value></data>
   <data name="ImportMapping.FriendlyInvalidSummary" xml:space="preserve"><value>{0} rows read · {1} need correction</value></data>
   <data name="ImportMapping.FriendlyIssueLine" xml:space="preserve"><value>Row {0}: {1}</value></data>
@@ -1006,25 +1006,25 @@ Difference to distribute: {7}</value></data>
 <data name="Guide.ApproveReview" xml:space="preserve"><value>Review totals and approve their meaning before saving.</value></data>
 <data name="Guide.SaveReady" xml:space="preserve"><value>Review approved. Save the import to continue to account adjustments.</value></data>
   <data name="Guide.Help.RefreshModel" xml:space="preserve"><value>Reads saved data again. Does not save or discard pending form changes.</value></data>
-  <data name="Guide.Help.Resource.Corrections" xml:space="preserve"><value>Enter the total correction in the analysis currency. No save button is needed. Original amounts and earlier corrections remain in history.</value></data>
+  <data name="Guide.Help.Resource.Corrections" xml:space="preserve"><value>Enter the total manual correction, not the final amount or an increment. It is saved when cell editing finishes. Rule adjustments are shown separately.</value></data>
   <data name="Resources.CorrectionHelp" xml:space="preserve"><value>Corrections are in {0}. Click the cell: its full value is selected, including zero. Type to replace it. Enter, Tab or leaving the cell saves; Escape cancels.</value></data>
   <data name="Resources.CorrectionNotSaved" xml:space="preserve"><value>The correction was not saved. The table still shows the previous saved amount. Correct the value and try again.</value></data>
   <data name="Resources.CorrectionSaved" xml:space="preserve"><value>Correction saved in the displayed analysis and project file. Effective amount and pending allocation updated.</value></data>
   <data name="Resources.CorrectionUnchanged" xml:space="preserve"><value>The correction already has this value. No additional adjustment was saved.</value></data>
   <data name="Resources.CorrectionDraftBlocked" xml:space="preserve"><value>Destinations have unsaved changes. Use Close destinations and return to Corrections, then choose save or discard. Finish or cancel any revaluation.</value></data>
-  <data name="Resources.InitialPendingHelp" xml:space="preserve"><value>The initial part represents the effective account amount, not a new cost. Keys can allocate it directly to nodes without a prior pool selection. Split it only when different treatments are needed.</value></data>
+  <data name="Resources.InitialPendingHelp" xml:space="preserve"><value>The initial part represents the effective account amount, not a new cost. Keys can allocate it directly to nodes without a prior cost group selection. Split it only when different treatments are needed.</value></data>
   <data name="Resources.BackToCorrectionsButton" xml:space="preserve"><value>Close account details</value></data>
   <data name="Resources.BackToCorrections" xml:space="preserve"><value>Details closed. Saved amounts are retained.</value></data>
-  <data name="Resources.PoolWithoutDescription" xml:space="preserve"><value>No pool description</value></data>
+  <data name="Resources.PoolWithoutDescription" xml:space="preserve"><value>No cost group description</value></data>
   <data name="Resources.PoolChoice" xml:space="preserve"><value>Centre {0} | Node {1} ({2}) | {3} | Activity unit {4} | Functions: {5}</value></data>
   <data name="Guide.Help.Resource.BackToCorrections" xml:space="preserve"><value>Close account details. If there are changes, choose save, discard or cancel; previously saved amounts are retained.</value></data>
   <data name="Guide.WorkspaceNavigation" xml:space="preserve"><value>WORKSPACE</value></data>
   
   <data name="ImportMapping.DescriptionColumn" xml:space="preserve"><value>Account name / description (optional)</value></data>
   <data name="ImportMapping.NoDescriptionColumn" xml:space="preserve"><value>No description column</value></data>
-  <data name="ImportMapping.DescriptionMissing" xml:space="preserve"><value>No description</value></data>
+  <data name="ImportMapping.DescriptionMissing" xml:space="preserve"><value>No description in the source file</value></data>
   <data name="Guide.Help.DescriptionColumn" xml:space="preserve"><value>Select the column containing the account name. Names do not change account identity or group amounts. Select no column if the source has no description.</value></data>
-  <data name="Resource.DescriptionMissing" xml:space="preserve"><value>No description</value></data>
+  <data name="Resource.DescriptionMissing" xml:space="preserve"><value>No description in the source file</value></data>
   <data name="Resource.DescriptionConflict" xml:space="preserve"><value>Conflicting descriptions</value></data>
 <data name="Allocation.Invalid" xml:space="preserve"><value>Check the key name, destinations and unit. A destination cannot occur twice.</value></data>
   <data name="Allocation.ScopeInvalid" xml:space="preserve"><value>The key and its destinations must belong to this study’s published model.</value></data>
@@ -1051,8 +1051,8 @@ Difference to distribute: {7}</value></data>
   <data name="Allocation.HistoryInvalid" xml:space="preserve"><value>The allocation history does not match the saved data. Check the project file.</value></data>
   <data name="Allocation.NumberInvalid" xml:space="preserve"><value>Enter a valid number using the decimal separator shown in the editor.</value></data>
   <data name="Allocation.InputInvalid" xml:space="preserve"><value>Nothing was saved. Check the fields and try again; if the file is unavailable, open it again.</value></data>
-  <data name="Guide.Allocations" xml:space="preserve"><value>6. Primary allocation</value></data>
-  <data name="Guide.ContinueAllocations" xml:space="preserve"><value>Continue to keys and rules</value></data>
+  <data name="Guide.Allocations" xml:space="preserve"><value>Primary allocation</value></data>
+  <data name="Guide.ContinueAllocations" xml:space="preserve"><value>Go to Primary allocation</value></data>
   <data name="Guide.Help.AllocationInput" xml:space="preserve"><value>Save a key with its destinations and assign it to accounts. Save rule stores it; Apply rule updates the allocation.</value></data>
   <data name="AllocationUI.Ready" xml:space="preserve"><value>Choose a key or create one. Save its destinations and assign it to accounts.</value></data>
   <data name="AllocationUI.Help" xml:space="preserve"><value>Save a key with its destinations. Then assign it directly to accounts or apply a rule.</value></data>
@@ -1145,13 +1145,13 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.SaveAbsolute" xml:space="preserve"><value>Save amount allocation</value></data>
   <data name="AllocationUI.Names" xml:space="preserve"><value>Clarify account names</value></data>
   <data name="AllocationUI.NameConflict" xml:space="preserve"><value>Conflicting description</value></data>
-  <data name="AllocationUI.NoDescription" xml:space="preserve"><value>No description</value></data>
+  <data name="AllocationUI.NoDescription" xml:space="preserve"><value>No description in the source file</value></data>
   <data name="AllocationUI.Row" xml:space="preserve"><value>row</value></data>
   <data name="AllocationUI.NamesHelp" xml:space="preserve"><value>Only needed when an account was imported with different names. Choose the visible name; its code, amount and allocation do not change. The source of each description is shown below.</value></data>
   <data name="AllocationUI.ChooseName" xml:space="preserve"><value>Use this description</value></data>
   <data name="AllocationUI.VisibleName" xml:space="preserve"><value>Display description</value></data>
   <data name="AllocationUI.Provenance" xml:space="preserve"><value>Descriptions and provenance</value></data>
-  <data name="Resources.DescriptionMissing" xml:space="preserve"><value>No description</value></data>
+  <data name="Resources.DescriptionMissing" xml:space="preserve"><value>No description in the source file</value></data>
   <data name="Resources.DescriptionConflict" xml:space="preserve"><value>Conflicting descriptions</value></data>
 <data name="Allocation.PartChanged" xml:space="preserve"><value>A saved assignment refers to a part that changed or disappeared. Clear obsolete assignments in Manual part assignment.</value></data>
   <data name="AllocationUI.ClearObsolete" xml:space="preserve"><value>Clear assignments and names no longer present in the source</value></data>
@@ -1205,7 +1205,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.KeyDeleted" xml:space="preserve"><value>Key deleted.</value></data>
   <data name="Allocation.KeyDeleted" xml:space="preserve"><value>This key has been deleted. Reload project keys.</value></data>
   <data name="Allocation.KeyDeleteUsed" xml:space="preserve"><value>This key is referenced by rules, assignments or history and cannot be deleted.</value></data>
-  <data name="AllocationUI.ClosePrimary" xml:space="preserve"><value>Close primary allocation</value></data>
+  <data name="AllocationUI.ClosePrimary" xml:space="preserve"><value>Close primary allocation for editing</value></data>
   <data name="AllocationUI.ReopenPrimary" xml:space="preserve"><value>Reopen primary allocation</value></data>
   <data name="AllocationUI.PrimaryOpenState" xml:space="preserve"><value>Primary allocation is open. Complete the assignments before closing it.</value></data>
   <data name="AllocationUI.PrimaryClosedState" xml:space="preserve"><value>Primary allocation is closed. Corrections and assignments are locked until reopened.</value></data>
@@ -1263,9 +1263,9 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.SecondaryTotals" xml:space="preserve"><value>{0} contributions · {1} principal nodes · {2}</value></data>
   <data name="AllocationUI.SecondaryCalculationReady" xml:space="preserve"><value>Calculation finished. Review results and close the secondary phase to lock the primary.</value></data>
   <data name="AllocationUI.SecondaryInvalid" xml:space="preserve"><value>The calculation cannot be completed. Review the input and the allocation rules.</value></data>
-  <data name="AllocationUI.SecondaryGross" xml:space="preserve"><value>Gross auxiliary circulation (informative, not added to final costs)</value></data>
+  <data name="AllocationUI.SecondaryGross" xml:space="preserve"><value>Internal auxiliary transfers: do not add to final cost</value></data>
   <data name="AllocationUI.CalculateSecondary" xml:space="preserve"><value>Perform calculation</value></data>
-  <data name="AllocationUI.CloseSecondary" xml:space="preserve"><value>Close secondary allocation</value></data>
+  <data name="AllocationUI.CloseSecondary" xml:space="preserve"><value>Close secondary allocation for editing</value></data>
   <data name="AllocationUI.SecondaryRepairHelp" xml:space="preserve"><value>The current rules cannot produce a valid result. You can remove the selected secondary assignment and replace it with another key. If the published key is already referenced, create a new version rather than overwriting or deleting its history.</value></data>
   <data name="AllocationUI.SecondaryRepairAction" xml:space="preserve"><value>Repair secondary key or assignment</value></data>
   <data name="AllocationUI.SecondaryRepairVersionHelp" xml:space="preserve"><value>Creates an editable new version of a published key. Referenced versions are retained for traceability.</value></data>
@@ -1291,7 +1291,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.DeleteHasVersions" xml:space="preserve"><value>This key has later versions and is retained as their ancestor.</value></data>
   <data name="AllocationUI.DeleteReady" xml:space="preserve"><value>This key has no historical references or dependent versions and can be deleted.</value></data>
   <data name="AllocationUI.PrimaryAccountOverviewTitle" xml:space="preserve"><value>Primary allocation by account (select a row to inspect destinations)</value></data>
-  <data name="AllocationUI.PrimaryAccountOverviewHelp" xml:space="preserve"><value>Allocatable base means resource parts destined to allocation pools, not all accounting expenditure. Direct-to-object amounts, exclusions and pending balances are reported separately. Details retain the actual key, criterion, units and posted primary share.</value></data>
+  <data name="AllocationUI.PrimaryAccountOverviewHelp" xml:space="preserve"><value>Allocatable base means resource parts destined to allocation cost groups, not all accounting expenditure. Direct-to-object amounts, exclusions and pending balances are reported separately. Details retain the actual key, criterion, units and posted primary share.</value></data>
   <data name="AllocationUI.PrimaryKpiEffectiveLabel" xml:space="preserve"><value>Effective resources</value></data>
   <data name="AllocationUI.PrimaryKpiRepartibleLabel" xml:space="preserve"><value>Allocatable base</value></data>
   <data name="AllocationUI.PrimaryKpiAssignedLabel" xml:space="preserve"><value>Allocated to nodes</value></data>
@@ -1328,7 +1328,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.SecondaryFlowStageFinal" xml:space="preserve"><value>3. Transfers from auxiliary nodes to principal nodes</value></data>
   <data name="AllocationUI.SecondaryFlowNoRoutesStage" xml:space="preserve"><value>No transfers at this stage.</value></data>
   <data name="AllocationUI.SecondaryFlowTotalsTitle" xml:space="preserve"><value>4. Reconciled final principal-node costs (primary + secondary)</value></data>
-  <data name="AllocationUI.SecondaryFlowInitialAux" xml:space="preserve"><value>Into auxiliary pool</value></data>
+  <data name="AllocationUI.SecondaryFlowInitialAux" xml:space="preserve"><value>Into auxiliary cost group</value></data>
   <data name="AllocationUI.SecondaryFlowInitialPrincipal" xml:space="preserve"><value>Principal primary cost</value></data>
   <data name="AllocationUI.SecondaryFlowCompleteNotice" xml:space="preserve"><value>Complete view of {0} links. Total cost of final principal nodes: {1}. Internal circulation is shown separately and must NOT be added again. Arrow amounts are gross projections from published coefficients; final economic amounts are verified in the tables.</value></data>
   <data name="AllocationUI.SecondaryFlowUnavailable" xml:space="preserve"><value>The complete reciprocal network cannot be rendered safely from saved keys. The underlying economic results are unchanged.</value></data>
@@ -1385,12 +1385,12 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.SecondaryCancelled" xml:space="preserve"><value>Secondary calculation cancelled. Previous published results and saved rules remain unchanged.</value></data>
   <data name="AllocationUI.SecondaryResultStale" xml:space="preserve"><value>The study changed during calculation. The result was discarded. Review assignments and calculate again.</value></data>
   <data name="AllocationUI.SecondaryObsoleteMappingsBlock" xml:space="preserve"><value>There are obsolete source-to-group assignments. Clear or correct them before calculating secondary costs.</value></data>
-  <data name="Model.NodeEditorPublishedHelp" xml:space="preserve"><value>This model has been published and cannot be edited. To change the Principal/Auxiliary role or the cost-pool description, create an editable version. The published version will remain unchanged.</value></data>
+  <data name="Model.NodeEditorPublishedHelp" xml:space="preserve"><value>This model has been published and cannot be edited. To change the Principal/Auxiliary role or the cost-cost group description, create an editable version. The published version will remain unchanged.</value></data>
   <data name="Model.NodeEditorMissingModelHelp" xml:space="preserve"><value>No model is selected. First create or load a draft structure in Models, then return here to define its nodes.</value></data>
   <data name="Model.NodeClassificationHelp" xml:space="preserve"><value>The node defines its principal or auxiliary role. Fixed and variable account composition is configured in step 6, Primary allocation keys and rules.</value></data>
   <data name="Resources.AssumedFixed" xml:space="preserve"><value>Fixed by default (unreviewed)</value></data>
   <data name="Resource.BehaviorAssumedFixed" xml:space="preserve"><value>Part {0} is fixed by default, not verified; review is required before definitive absorption.</value></data>
-  <data name="AllocationUI.CompositionTitle" xml:space="preserve"><value>Cost composition and behavior</value></data>
+  <data name="AllocationUI.CompositionTitle" xml:space="preserve"><value>Cost behaviour</value></data>
   <data name="AllocationUI.CompositionHelp" xml:space="preserve"><value>Edit behavior in the row. For Mixed, enter only the variable percentage; fixed is calculated as 100 minus variable. Save changes before continuing. Split accounts are reviewed in their detail.</value></data>
   <data name="AllocationUI.CompositionSummary" xml:space="preserve"><value>Parts: {0} · Default fixed: {1} · Other: {2} · Mixed pending: {3}</value></data>
   <data name="AllocationUI.CompositionSelected" xml:space="preserve"><value>Selected accounts: {0}</value></data>
@@ -1400,7 +1400,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.CompositionReview" xml:space="preserve"><value>Status</value></data>
   <data name="AllocationUI.CompositionSplit" xml:space="preserve"><value>Multiple components</value></data>
   <data name="AllocationUI.CompositionDetail" xml:space="preserve"><value>Edit in account details</value></data>
-  <data name="AllocationUI.CompositionFixedDefault" xml:space="preserve"><value>Fixed by default</value></data>
+  <data name="AllocationUI.CompositionFixedDefault" xml:space="preserve"><value>Fixed by default: awaiting review</value></data>
   <data name="AllocationUI.CompositionFixedReviewed" xml:space="preserve"><value>Reviewed fixed</value></data>
   <data name="AllocationUI.CompositionVariable" xml:space="preserve"><value>Variable</value></data>
   <data name="AllocationUI.CompositionMixed" xml:space="preserve"><value>Mixed pending split</value></data>
@@ -1425,18 +1425,18 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.CompositionOnlyExceptions" xml:space="preserve"><value>Only classified or mixed</value></data>
   <data name="AllocationUI.CompositionSelectVisible" xml:space="preserve"><value>Select all visible</value></data>
   <data name="AllocationUI.CompositionClearSelection" xml:space="preserve"><value>Clear selection</value></data>
-  <data name="AllocationUI.CompositionApplyWeights" xml:space="preserve"><value>Save composition</value></data>
+  <data name="AllocationUI.CompositionApplyWeights" xml:space="preserve"><value>Save cost behaviour</value></data>
   <data name="AllocationUI.CompositionWeightsSummary" xml:space="preserve"><value>{0}% fixed / {1}% variable</value></data>
-  <data name="Guide.SecondaryAllocations" xml:space="preserve"><value>7. Secondary allocation and closing</value></data>
+  <data name="Guide.SecondaryAllocations" xml:space="preserve"><value>Secondary allocation and closing</value></data>
   <data name="AllocationUI.CompositionVariableWeight" xml:space="preserve"><value>Variable component (%)</value></data>
-  <data name="AllocationUI.CompositionWeightsInvalid" xml:space="preserve"><value>For Mixed, both percentages must be greater than 0 and add up to 100. For 100/0 or 0/100 choose Fixed or Variable.</value></data>
+  <data name="AllocationUI.CompositionWeightsInvalid" xml:space="preserve"><value>For a mixed cost, enter a variable percentage greater than 0 and less than 100. The fixed share is the remainder. For entirely fixed or variable costs, change the behaviour.</value></data>
   <data name="Resources.EditStudyNodes" xml:space="preserve"><value>Analysis nodes updated</value></data>
   <data name="Guide.ContinueSecondary" xml:space="preserve"><value>Continue to secondary allocation</value></data>
   <data name="Model.StudyNodesSaved" xml:space="preserve"><value>Nodes saved for this analysis. You can edit them until primary allocation is closed.</value></data>
   <data name="Resources.Mixed" xml:space="preserve"><value>Mixed with percentages</value></data>
   <data name="AllocationUI.CompositionAdvanced" xml:space="preserve"><value>Activity context and earlier classification</value></data>
   <data name="Model.StudyNodeIdentity" xml:space="preserve"><value>You can edit existing nodes in this analysis. Create a new structure version to add or remove nodes.</value></data>
-  <data name="AllocationUI.CompositionWeightsHelp" xml:space="preserve"><value>Each account starts as 100% fixed. Choose 100% variable or fixed and variable percentages totaling 100%. Amounts and destinations are preserved.</value></data>
+  <data name="AllocationUI.CompositionWeightsHelp" xml:space="preserve"><value>Fixed is the initial assumption, not a reviewed classification. For Mixed, edit only the variable percentage: 1,000 with 30% variable means 300 variable and 700 fixed. This does not change destinations or allocation shares.</value></data>
   <data name="AllocationUI.SecondaryBehaviorMixed" xml:space="preserve"><value>Mixed</value></data>
   <data name="Resources.ClassifyBatch" xml:space="preserve"><value>Cost composition updated</value></data>
   <data name="AllocationUI.CompositionFixedWeight" xml:space="preserve"><value>Fixed component (%)</value></data>
@@ -1500,7 +1500,7 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.CompactTablesHelp" xml:space="preserve"><value>Show more rows without changing values or text size. Applies to this session, including import windows. Clear to use comfortable spacing.</value></data>
   <data name="Guide.OpenExample" xml:space="preserve"><value>Load an example…</value></data>
   <data name="Guide.ExampleHelp" xml:space="preserve"><value>Explore a fictional service company with accounts, credits and allocations. Choose where to save your own copy; the original stays unchanged.</value></data>
-  <data name="Guide.ImportStart" xml:space="preserve"><value>Import accounting data</value></data>
+  <data name="Guide.ImportStart" xml:space="preserve"><value>Prepare a project to import accounting data</value></data>
   <data name="Guide.ImportStartHelp" xml:space="preserve"><value>First enter your project name and currency below. Continue through the cost structure and analysis period, then choose your CSV or Excel file. Each step explains what is required.</value></data>
   <data name="Guide.NavigationMenu" xml:space="preserve"><value>Menu</value></data>
   <data name="Guide.HideNavigation" xml:space="preserve"><value>Hide navigation to give your data more room</value></data>
@@ -1541,7 +1541,7 @@ Difference to distribute: {7}</value></data>
   <data name="Adjustment.ActiveReset" xml:space="preserve"><value>Undo active substitutions before resetting preparation.</value></data>
 <data name="Adjustment.Duplicate" xml:space="preserve"><value>Duplicate card</value></data>
 <data name="Adjustment.UseUndo" xml:space="preserve"><value>Use Undo application on the card to reverse the complete substitution.</value></data>
-<data name="Adjustment.ManualTotal" xml:space="preserve"><value>Manual corrections</value></data>
+<data name="Adjustment.ManualTotal" xml:space="preserve"><value>Total manual correction</value></data>
 <data name="Resources.AdjustmentRule" xml:space="preserve"><value>Reusable adjustment</value></data>
 <data name="Adjustment.AccountsAndCosts" xml:space="preserve"><value>Accounts and analytical costs</value></data>
 <data name="Adjustment.ManualHelp" xml:space="preserve"><value>Manual corrections and rule adjustments are shown separately. Editing a manual correction does not change the applied rule. Effective cost is converted imports plus both adjustments.</value></data>
@@ -1560,7 +1560,7 @@ Difference to distribute: {7}</value></data>
   <data name="Run.PrimaryStage" xml:space="preserve"><value>2 · Primary allocation</value></data>
   <data name="Run.SecondaryStage" xml:space="preserve"><value>3 · Auxiliary circulation</value></data>
   <data name="Run.FinalStage" xml:space="preserve"><value>4 · Final costs and variances</value></data>
-  <data name="Run.Calculate" xml:space="preserve"><value>Calculate and save execution</value></data>
+  <data name="Run.Calculate" xml:space="preserve"><value>Calculate and save results</value></data>
   <data name="Run.Cancel" xml:space="preserve"><value>Cancel</value></data>
   <data name="Run.Refresh" xml:space="preserve"><value>Reload saved executions</value></data>
   <data name="Run.Execution" xml:space="preserve"><value>Execution history</value></data>
@@ -1575,7 +1575,7 @@ Difference to distribute: {7}</value></data>
   <data name="Run.ClearSelection" xml:space="preserve"><value>Show all details</value></data>
   <data name="Run.Details" xml:space="preserve"><value>Verifiable detail</value></data>
   <data name="Run.Reconciliation" xml:space="preserve"><value>Source reconciliation</value></data>
-  <data name="Run.ReconcileHelp" xml:space="preserve"><value>Effective = direct to products or orders + excluded + pending + principal cost + auxiliary capacity variance. The difference must be zero; gross auxiliary transfers are not added.</value></data>
+  <data name="Run.ReconcileHelp" xml:space="preserve"><value>Effective = direct to products or orders + excluded + pending + principal cost + auxiliary capacity variance. Zero difference means reconciled, not fully assigned or capacity evaluated. Internal transfers are not added to final cost.</value></data>
   <data name="Run.Stage" xml:space="preserve"><value>Stage</value></data>
   <data name="Run.Resource" xml:space="preserve"><value>Resource / account</value></data>
   <data name="Run.Source" xml:space="preserve"><value>Source centre / account</value></data>
@@ -1612,7 +1612,7 @@ Difference to distribute: {7}</value></data>
   <data name="Run.InputRequired" xml:space="preserve"><value>Configure primary allocation keys and rules before creating an execution.</value></data>
   <data name="Run.Incomplete" xml:space="preserve"><value>Primary allocation is incomplete. Review pending resources and missing assignments; no final costs were published.</value></data>
   <data name="Run.Overflow" xml:space="preserve"><value>A calculation exceeded the supported numeric range. No final costs were published.</value></data>
-  <data name="Guide.CostFlows" xml:space="preserve"><value>8. Cost flows and executions</value></data>
+  <data name="Guide.CostFlows" xml:space="preserve"><value>Results and traceability</value></data>
   <data name="Run.Available" xml:space="preserve"><value>{0} + {1} received = {2}</value></data>
   <data name="Run.PanGraph" xml:space="preserve"><value>Move diagram horizontally</value></data>
   <data name="Activity.EvidenceRequired" xml:space="preserve"><value>Complete the normal-capacity and actual-activity sources in the selected row’s sources, quality and justification section. Example: approved schedule or work logs for the period.</value></data>
@@ -1649,8 +1649,8 @@ Difference to distribute: {7}</value></data>
   <data name="Activity.Exception" xml:space="preserve"><value>Exception explanation</value></data>
   <data name="Activity.ZeroReason" xml:space="preserve"><value>Zero normal explanation</value></data>
   <data name="Activity.Correction" xml:space="preserve"><value>Correction reason</value></data>
-  <data name="Activity.SaveDraft" xml:space="preserve"><value>Save draft</value></data>
-  <data name="Activity.Confirm" xml:space="preserve"><value>Confirm row</value></data>
+  <data name="Activity.SaveDraft" xml:space="preserve"><value>Save row draft</value></data>
+  <data name="Activity.Confirm" xml:space="preserve"><value>Confirm row data</value></data>
   <data name="Activity.Annul" xml:space="preserve"><value>Annul row</value></data>
   <data name="Activity.Cancel" xml:space="preserve"><value>Close</value></data>
   <data name="Activity.Pending" xml:space="preserve"><value>Pending physical data</value></data>
@@ -1670,7 +1670,7 @@ Difference to distribute: {7}</value></data>
   <data name="Activity.Study" xml:space="preserve"><value>Study</value></data>
   <data name="Activity.Period" xml:space="preserve"><value>Period</value></data>
   <data name="Activity.UnsavedTitle" xml:space="preserve"><value>Unsaved physical observations</value></data>
-  <data name="Activity.UnsavedBody" xml:space="preserve"><value>There are unsaved activity changes. Discard them and switch studies or close? Choose No to stay and save your work.</value></data>
+  <data name="Activity.UnsavedBody" xml:space="preserve"><value>Some rows have unsaved changes. Return to save each pending row or discard changes to leave. Saving one row does not save the others.</value></data>
   <data name="Activity.OtherRowsPending" xml:space="preserve"><value>Other rows have unsaved changes. Save or review each row before reloading this table.</value></data>
   <data name="Activity.SwitchFailed" xml:space="preserve"><value>The study could not be opened. Your saved records have not been modified.</value></data>
   <data name="Activity.Method.Calendar" xml:space="preserve"><value>Operating calendar</value></data>
@@ -1691,8 +1691,8 @@ Difference to distribute: {7}</value></data>
   <data name="Activity.Advanced" xml:space="preserve"><value>Additional capacities (optional)</value></data>
   <data name="Activity.Theoretical" xml:space="preserve"><value>Theoretical capacity</value></data>
   <data name="Activity.Practical" xml:space="preserve"><value>Practical capacity</value></data>
-  <data name="Activity.Import.Title" xml:space="preserve"><value>Import physical hours — CSV / XLSX</value></data>
-  <data name="Activity.Import.Help" xml:space="preserve"><value>Preview source rows and choose which rows to replace. No figures will be summed automatically; imported data remain drafts until confirmed.</value></data>
+  <data name="Activity.Import.Title" xml:space="preserve"><value>Import activity and capacity — CSV / XLSX</value></data>
+  <data name="Activity.Import.Help" xml:space="preserve"><value>Headers: node, unit, period_start, period_end and normal or real. node is the calculation unit code; unit must match its unit. Dates: YYYY-MM-DD. Review rows and select replacements. Import saves drafts; confirm each observation afterwards.</value></data>
   <data name="Activity.Import.Browse" xml:space="preserve"><value>Choose file</value></data>
   <data name="Activity.Import.Sheet" xml:space="preserve"><value>Worksheet</value></data>
   <data name="Activity.Import.Delimiter" xml:space="preserve"><value>Separator</value></data>
@@ -1703,25 +1703,25 @@ Difference to distribute: {7}</value></data>
   <data name="Activity.Import.Version" xml:space="preserve"><value>Version</value></data>
   <data name="Activity.Import.NoExisting" xml:space="preserve"><value>No data</value></data>
   <data name="Activity.Import.Partial" xml:space="preserve"><value>The row's period differs from the study period; review manually.</value></data>
-  <data name="Activity.Import.Duplicate" xml:space="preserve"><value>Multiple rows refer to this pool/period; choose only one.</value></data>
+  <data name="Activity.Import.Duplicate" xml:space="preserve"><value>Multiple rows refer to this cost group/period; choose only one.</value></data>
   <data name="Activity.Import.Invalid" xml:space="preserve"><value>The file could not be read as an applicable physical-data source.</value></data>
   <data name="Activity.Import.Summary" xml:space="preserve"><value>{0} source rows; {1} eligible for replacement.</value></data>
   <data name="Activity.Import.Applied" xml:space="preserve"><value>{0} physical rows were saved as drafts.</value></data>
   <data name="Activity.ImportHeader" xml:space="preserve"><value>Missing or duplicated column headers. Required: node, unit, period_start, period_end and normal or real.</value></data>
   <data name="Activity.ImportNumber" xml:space="preserve"><value>Invalid physical quantity in an imported row.</value></data>
   <data name="Activity.ImportNode" xml:space="preserve"><value>Unknown centre in the analysis model.</value></data>
-  <data name="Activity.ImportUnit" xml:space="preserve"><value>Unit does not match this pool.</value></data>
+  <data name="Activity.ImportUnit" xml:space="preserve"><value>Unit does not match this cost group.</value></data>
   <data name="Activity.ImportPeriod" xml:space="preserve"><value>Invalid date range in physical source.</value></data>
   <data name="Activity.ImportEmpty" xml:space="preserve"><value>Both physical quantities are missing.</value></data>
   <data name="Activity.ImportSource" xml:space="preserve"><value>Source provenance exceeds permitted length.</value></data>
   <data name="Activity.ImportInvalid" xml:space="preserve"><value>Review source rows and replace choices.</value></data>
-  <data name="Activity.ImportDuplicate" xml:space="preserve"><value>Cannot import multiple replacement rows for one pool.</value></data>
+  <data name="Activity.ImportDuplicate" xml:space="preserve"><value>Cannot import multiple replacement rows for one cost group.</value></data>
   <data name="Activity.History.Reviewed" xml:space="preserve"><value>Reviewed</value></data>
   <data name="Activity.Import.Open" xml:space="preserve"><value>Import physical CSV/XLSX</value></data>
   <data name="Reuse.Title" xml:space="preserve"><value>Reuse rules from another analysis</value></data>
   <data name="Reuse.Help" xml:space="preserve"><value>Choose a source analysis, review the proposal and select rules to adopt. Your existing assignments are retained. Balances, hours, adjustments, absolute allocations and closures are not copied. Adopted rules automatically resolve accounts in the current analysis.</value></data>
   <data name="Reuse.Source" xml:space="preserve"><value>Source analysis</value></data>
-  <data name="Reuse.Adopt" xml:space="preserve"><value>Adopt selected rules</value></data>
+  <data name="Reuse.Adopt" xml:space="preserve"><value>Adopt and apply selected rules</value></data>
   <data name="Reuse.Replace" xml:space="preserve"><value>I authorize replacing current rules that conflict with the selected rules</value></data>
   <data name="Reuse.Selector" xml:space="preserve"><value>Account, prefix or auxiliary</value></data>
   <data name="Reuse.Key" xml:space="preserve"><value>Allocation key</value></data>
@@ -1748,7 +1748,7 @@ Difference to distribute: {7}</value></data>
   <data name="Activity.Assistant.StoppagesHelp" xml:space="preserve"><value>VALDRIO multiplies by days, shifts and resources as selected. Example: 0.5 h per shift × 2 shifts × 20 days × 3 machines = 60 h. Enter 0 for no downtime. Do not repeat breaks already excluded from shift hours.</value></data>
   <data name="Activity.Assistant.FactorHelp" xml:space="preserve"><value>Out of every 100 available hours, how many represent usual activity. Enter 90 for 90%. Justify your reference below.</value></data>
   <data name="Activity.CalendarUnit" xml:space="preserve"><value>This calendar calculates hours. For other units use comparable history or a justified declared value.</value></data>
-  <data name="Activity.SelectionHelp" xml:space="preserve"><value>Edit normal and actual activity in the table. Save and confirm affect the selected row only. Complete its sources and quality to confirm. Changes in other rows are retained.</value></data>
+  <data name="Activity.SelectionHelp" xml:space="preserve"><value>Edit normal capacity and actual activity in the table. Utilization = actual ÷ normal; missing is not zero. Save and confirm affect only the selected row. Complete its sources and quality before confirmation; other rows retain their pending changes.</value></data>
   <data name="Activity.EvidenceDetails" xml:space="preserve"><value>Sources, quality and justification for the selected row</value></data>
   <data name="Activity.RowSaved" xml:space="preserve"><value>Row saved</value></data>
   <data name="Activity.UnsavedRow" xml:space="preserve"><value>Unsaved changes</value></data>
@@ -1772,7 +1772,7 @@ Difference to distribute: {7}</value></data>
   <data name="Run.BalancePrecision" xml:space="preserve"><value>Visual summary to two decimals. Detail and reconciliation retain posted precision. These columns describe stages: do not add them together.</value></data>
   <data name="Run.ShowAllFlowLabels" xml:space="preserve"><value>Show all amounts on connections</value></data>
   <data name="Guide.PhysicalChooseStudy" xml:space="preserve"><value>Select or save analysis</value></data>
-  <data name="Guide.PhysicalActivityHelp" xml:space="preserve"><value>Record normal capacity and actual activity for principal and auxiliary centres. Includes a calculator and physical data import. View costs in Flows and runs.</value></data>
+  <data name="Guide.PhysicalActivityHelp" xml:space="preserve"><value>Record normal capacity and actual activity for principal and auxiliary centres. Includes a calculator and physical data import. View costs in Results and traceability.</value></data>
   <data name="Guide.PhysicalActivityReady" xml:space="preserve"><value>View or edit physical data for the selected analysis.</value></data>
   <data name="Guide.PhysicalActivity" xml:space="preserve"><value>Activity and capacity</value></data>
   <data name="Guide.PhysicalActivityNeedsStudy" xml:space="preserve"><value>Select and save an analysis to open its activity and capacity data.</value></data>
@@ -1811,7 +1811,7 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Rates.Refresh" xml:space="preserve"><value>Refresh rates</value></data>
   <data name="Rates.EditActivity" xml:space="preserve"><value>View activity and capacity</value></data>
   <data name="Rates.ViewCosts" xml:space="preserve"><value>View cost origin</value></data>
-  <data name="Rates.Export" xml:space="preserve"><value>Export version</value></data>
+  <data name="Rates.Export" xml:space="preserve"><value>Export rate data (JSON)</value></data>
   <data name="Rates.Close" xml:space="preserve"><value>Close</value></data>
   <data name="Rates.Exported" xml:space="preserve"><value>Version exported with provenance and physical data.</value></data>
   <data name="Rates.ExportFailed" xml:space="preserve"><value>Could not save the file. Check the location and permissions.</value></data>
@@ -1822,7 +1822,7 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Rates.Unavailable" xml:space="preserve"><value>Unavailable</value></data>
   <data name="Rates.Calculated" xml:space="preserve"><value>Calculated</value></data>
   <data name="Rates.NoCenters" xml:space="preserve"><value>There are no active principal centres in this analysis.</value></data>
-  <data name="Rates.AssignmentLater" xml:space="preserve"><value>Product or order consumption data is unavailable. It will be recorded in T19 · Actual consumption.</value></data>
+  <data name="Rates.AssignmentLater" xml:space="preserve"><value>Actual consumption by product or order is unavailable in this version. Applied cost cannot be determined; this does not mean zero.</value></data>
   <data name="Rates.UnknownAssignment" xml:space="preserve"><value>Cannot be determined: activity assigned to products or orders is unknown.</value></data>
   <data name="Rates.LoadFailed" xml:space="preserve"><value>Rates could not be loaded. Check the selected analysis and refresh.</value></data>
   <data name="Rates.NotApplicable" xml:space="preserve"><value>Not applicable</value></data>
@@ -1861,10 +1861,10 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Guide.RatesHelp" xml:space="preserve"><value>View rates and answers for the selected centre. Costs and hours come from the saved analysis.</value></data>
 <data name="Rates.Source" xml:space="preserve"><value>Source account</value></data>
 <data name="Rates.UndefinedRate" xml:space="preserve"><value>No unit rate is defined for this base. Review components and activity.</value></data>
-<data name="Rates.ZeroNormal" xml:space="preserve"><value>Normal activity is zero and own fixed costs exist. Review the capacity reference in T14.</value></data>
+<data name="Rates.ZeroNormal" xml:space="preserve"><value>Normal activity is zero and own fixed costs exist. Review the capacity reference in Activity and capacities.</value></data>
 <data name="Rates.NoCapacityAssessment" xml:space="preserve"><value>There is no own fixed cost subject to capacity assessment. This does not establish that idle capacity is absent.</value></data>
 <data name="Rates.SelectCenter" xml:space="preserve"><value>Select a centre to view its answers.</value></data>
-<data name="Rates.NoIssues" xml:space="preserve"><value>There are no issues preventing rate calculation. Order consumption will be added in T19.</value></data>
+<data name="Rates.NoIssues" xml:space="preserve"><value>There are no issues preventing rate calculation. Actual consumption by order is unavailable in this version.</value></data>
   <data name="Aux.Title" xml:space="preserve"><value>Auxiliary capacity and services</value></data>
   <data name="Aux.Center" xml:space="preserve"><value>Auxiliary centre</value></data>
   <data name="Aux.Unit" xml:space="preserve"><value>Unit</value></data>
@@ -1879,9 +1879,9 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Aux.Pending" xml:space="preserve"><value>Pending assessment</value></data>
   <data name="Aux.ThroughFlow" xml:space="preserve"><value>Allocate without capacity assessment</value></data>
   <data name="Aux.OwnerOnceCapacity" xml:space="preserve"><value>Assess own capacity</value></data>
-  <data name="Aux.Help" xml:space="preserve"><value>Select an auxiliary. Normal capacity and actual activity come from T14. Treatment determines whether its own capacity is assessed. Not assessed does not mean no idle capacity.</value></data>
+  <data name="Aux.Help" xml:space="preserve"><value>Select an auxiliary calculation unit. Normal and actual quantities come from Activity and capacities. Choose pending, allocate without evaluation or evaluate own capacity. No evaluation does not mean zero idle capacity.</value></data>
   <data name="Aux.ServicesHelp" xml:space="preserve"><value>Enter actual service quantities by destination in the auxiliary unit (for example, 10 hours). Each routing group must cover actual activity. Hours with no destination are not idle capacity. Groups match components configured in Secondary; do not add groups together.</value></data>
-  <data name="Aux.ImportHelp" xml:space="preserve"><value>UTF-8 CSV separated by semicolons. Exact header: Center;Group;Destination;Quantity. Use centre codes, the displayed group and your regional decimal separator, without thousands separators. Example: MAINT;all;PROD;10. Imports quantities for review; does not change treatment or save automatically.</value></data>
+  <data name="Aux.ImportHelp" xml:space="preserve"><value>UTF-8 semicolon CSV: Center;Group;Destination;Quantity. Center and Destination are calculation unit (node) codes, not centre codes. Use the displayed group (all = all components) and regional decimal separator, without thousands separators. Example: MAINT;all;CUT;10, only if those nodes exist. Imports for review without saving or changing the treatment.</value></data>
   <data name="Aux.PrincipalTotal" xml:space="preserve"><value>Cost at principals</value></data>
   <data name="Aux.Variance" xml:space="preserve"><value>Auxiliary capacity variance</value></data>
   <data name="Aux.Difference" xml:space="preserve"><value>Reconciliation difference</value></data>
@@ -1908,38 +1908,38 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Aux.QBalance" xml:space="preserve"><value>Does the auxiliary cost reconcile?</value></data>
   <data name="Aux.CirculationHelp" xml:space="preserve"><value>Own + received = transferred + variance. Reciprocal exchanges are circulation, not additional company cost.</value></data>
   <data name="Aux.Overactivity" xml:space="preserve"><value>Overactivity: negative variance, not realised savings.</value></data>
-  <data name="Aux.ZeroNormal" xml:space="preserve"><value>Own fixed cost cannot be assessed with zero normal capacity. Review T14.</value></data>
+  <data name="Aux.ZeroNormal" xml:space="preserve"><value>Normal capacity is zero. Review the value and its justification in Activity and capacities before evaluating own fixed cost.</value></data>
   <data name="Aux.Invalid" xml:space="preserve"><value>Review centres, units and quantities. Enter non-negative numbers without thousands separators.</value></data>
   <data name="Aux.CoverageMismatch" xml:space="preserve"><value>Services do not cover the auxiliary actual activity. Complete destinations; work without a destination is not idle capacity.</value></data>
   <data name="Aux.ZeroRealReceived" xml:space="preserve"><value>An auxiliary with no activity receives services with no effective exit. Review activity and destinations.</value></data>
   <data name="Aux.ZeroRealCost" xml:space="preserve"><value>Consumed costs exist with zero activity. Review costs and activity; a service rate cannot be calculated.</value></data>
   <data name="Aux.PrimaryIncomplete" xml:space="preserve"><value>Complete primary allocations.</value></data>
   <data name="Aux.OwnerInvalid" xml:space="preserve"><value>The cost capacity owner does not match the auxiliary. Review its classification in Resources.</value></data>
-  <data name="Aux.Stale" xml:space="preserve"><value>T14 activity has changed. Refresh this screen, review services and save before recalculating.</value></data>
+  <data name="Aux.Stale" xml:space="preserve"><value>Activity has changed. Refresh this page, review services and save before recalculating.</value></data>
   <data name="Aux.Save" xml:space="preserve"><value>Save draft</value></data>
-  <data name="Aux.Validate" xml:space="preserve"><value>Validate</value></data>
-  <data name="Aux.Calculate" xml:space="preserve"><value>Calculate</value></data>
+  <data name="Aux.Validate" xml:space="preserve"><value>Check without saving results</value></data>
+  <data name="Aux.Calculate" xml:space="preserve"><value>Calculate and save results</value></data>
   <data name="Aux.Import" xml:space="preserve"><value>Import CSV services</value></data>
   <data name="Aux.Activity" xml:space="preserve"><value>Activity and capacity</value></data>
   <data name="Aux.Rates" xml:space="preserve"><value>Principal rates</value></data>
   <data name="Aux.Reopen" xml:space="preserve"><value>Reopen secondary</value></data>
-  <data name="Aux.Refresh" xml:space="preserve"><value>Refresh</value></data>
-  <data name="Aux.Export" xml:space="preserve"><value>Export run</value></data>
-  <data name="Aux.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Aux.Refresh" xml:space="preserve"><value>Reload saved data</value></data>
+  <data name="Aux.Export" xml:space="preserve"><value>Export execution data (JSON)</value></data>
+  <data name="Aux.Close" xml:space="preserve"><value>Back</value></data>
   <data name="Aux.Discard" xml:space="preserve"><value>There are unsaved changes. Discard them?</value></data>
   <data name="Aux.Exported" xml:space="preserve"><value>Run exported with its inputs and results.</value></data>
 <data name="Aux.MeasuredServices" xml:space="preserve"><value>Measured services</value></data>
 <data name="Aux.AllComponents" xml:space="preserve"><value>All components</value></data>
 <data name="Aux.Coverage" xml:space="preserve"><value>{0} of {1} auxiliaries assessed</value></data>
-<data name="Aux.PendingHelp" xml:space="preserve"><value>Assessment pending: confirm capacity and activity in T14 and complete services. The system will not automatically switch to allocation without assessment.</value></data>
+<data name="Aux.PendingHelp" xml:space="preserve"><value>Evaluation pending: confirm capacity and activity in Activity and capacities and complete services. The treatment will not automatically change to allocation without evaluation.</value></data>
 <data name="Aux.ClassificationRequired" xml:space="preserve"><value>Classify auxiliary costs as fixed, variable or mixed with a defined proportion before assessing capacity. Review Resources and Primary.</value></data>
 <data name="Aux.FlowVariance" xml:space="preserve"><value>Of primary cost, {0} is retained as auxiliary capacity variance and does not circulate in services. See Auxiliary capacity and services for details.</value></data>
 <data name="Run.Zoom" xml:space="preserve"><value>Graph zoom</value></data><data name="Run.ExpandGraph" xml:space="preserve"><value>Expand analysis area</value></data><data name="Run.Duration" xml:space="preserve"><value>Elapsed execution time: {0:N2} s</value></data><data name="Run.DurationUnavailable" xml:space="preserve"><value>Execution duration unavailable</value></data>  <data name="Composition.Title" xml:space="preserve"><value>Products and services</value></data>
-  <data name="Composition.Scope" xml:space="preserve"><value>Composition and physical requirements. Economic valuation belongs to T18; actual consumption to T19.</value></data>
+  <data name="Composition.Scope" xml:space="preserve"><value>Physical composition and planned requirements. This page calculates quantities; monetary valuation and actual consumption are not available here.</value></data>
   <data name="Composition.Catalog" xml:space="preserve"><value>Catalogue</value></data>
-  <data name="Composition.CatalogHelp" xml:space="preserve"><value>Create materials, products, services and semi-finished items. Save the catalogue before composing. Saved identities are preserved; items may be deactivated. Create units in Project.</value></data>
+  <data name="Composition.CatalogHelp" xml:space="preserve"><value>Create materials, products, services and semi-finished items. Save the catalog before composing. Saved identities are retained; you can deactivate them. Create units in Design structure → Centres → Unit catalog, or while configuring a node.</value></data>
   <data name="Composition.AddItem" xml:space="preserve"><value>Add item</value></data>
-  <data name="Composition.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Composition.Save" xml:space="preserve"><value>Save catalog and pending changes</value></data>
   <data name="Composition.Recipe" xml:space="preserve"><value>Composition</value></data>
   <data name="Composition.Product" xml:space="preserve"><value>Product</value></data>
   <data name="Composition.Service" xml:space="preserve"><value>Service</value></data>
@@ -1951,13 +1951,13 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Composition.NewVersion" xml:space="preserve"><value>New version</value></data>
   <data name="Composition.BatchSize" xml:space="preserve"><value>Batch size</value></data>
   <data name="Composition.Note" xml:space="preserve"><value>Version note</value></data>
-  <data name="Composition.LineHelp" xml:space="preserve"><value>Quantity per unit, started batch or order. Factor: target units per entered unit. Extra input adds a percentage; yield is the percentage of useful input. Record direct materials here; node activity represents its indirect costs.</value></data>
+  <data name="Composition.LineHelp" xml:space="preserve"><value>Quantity per unit, started batch or order. Factor = component units per input unit. 10% extra input on 10 requires 11; 80% yield for 10 useful units requires 12.5 before conversion and rounding. Enter direct materials here; activity represents indirect costs.</value></data>
   <data name="Composition.AddLine" xml:space="preserve"><value>Add component</value></data>
   <data name="Composition.RemoveLine" xml:space="preserve"><value>Remove component</value></data>
-  <data name="Composition.SaveDraft" xml:space="preserve"><value>Save draft</value></data>
+  <data name="Composition.SaveDraft" xml:space="preserve"><value>Save composition draft and catalog</value></data>
   <data name="Composition.Publish" xml:space="preserve"><value>Publish version</value></data>
   <data name="Composition.OutputQuantity" xml:space="preserve"><value>Output quantity</value></data>
-  <data name="Composition.Preview" xml:space="preserve"><value>Calculate requirements</value></data>
+  <data name="Composition.Preview" xml:space="preserve"><value>Calculate physical requirements</value></data>
   <data name="Composition.Detail" xml:space="preserve"><value>View quantity details</value></data>
   <data name="Composition.Close" xml:space="preserve"><value>Back</value></data>
   <data name="Composition.Reload" xml:space="preserve"><value>Reload</value></data>
@@ -1968,7 +1968,7 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Composition.Active" xml:space="preserve"><value>Active</value></data>
   <data name="Composition.Component" xml:space="preserve"><value>Component</value></data>
   <data name="Composition.Quantity" xml:space="preserve"><value>Quantity</value></data>
-  <data name="Composition.Factor" xml:space="preserve"><value>Factor</value></data>
+  <data name="Composition.Factor" xml:space="preserve"><value>Conversion to component unit</value></data>
   <data name="Composition.Basis" xml:space="preserve"><value>Basis</value></data>
   <data name="Composition.Loss" xml:space="preserve"><value>Loss / yield</value></data>
   <data name="Composition.Percent" xml:space="preserve"><value>Percentage</value></data>
@@ -1993,14 +1993,14 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Composition.QCost" xml:space="preserve"><value>How much does this output cost?</value></data>
   <data name="Composition.QActual" xml:space="preserve"><value>How much was actually consumed?</value></data>
   <data name="Composition.PreviewPending" xml:space="preserve"><value>Calculate using the current composition and quantity.</value></data>
-  <data name="Composition.T18" xml:space="preserve"><value>Pending T18: prices, rates and valuation policies. Quantities are not amounts and do not establish IAS 2 compliant valuation.</value></data>
-  <data name="Composition.T19" xml:space="preserve"><value>Pending T19: actual consumption. This screen calculates planned requirements.</value></data>
+  <data name="Composition.T18" xml:space="preserve"><value>Monetary valuation is not available on this page.</value></data>
+  <data name="Composition.T19" xml:space="preserve"><value>Actual consumption by product or order is not available in this version.</value></data>
   <data name="Composition.StartedHelp" xml:space="preserve"><value>An incomplete batch consumes the full setup of a started batch.</value></data>
   <data name="Composition.Unsaved" xml:space="preserve"><value>Unsaved changes</value></data>
   <data name="Composition.ExistingDraft" xml:space="preserve"><value>This product already has a draft. Open it before creating another version.</value></data>
   <data name="Composition.Saved" xml:space="preserve"><value>Saved successfully.</value></data>
   <data name="Composition.PreviewReady" xml:space="preserve"><value>Requirements calculated. Semi-finished items are expanded; the summary totals only final components.</value></data>
-  <data name="Composition.Leave" xml:space="preserve"><value>There are unsaved changes. Save them? Yes: save; No: discard; Cancel: keep editing.</value></data>
+  <data name="Composition.Leave" xml:space="preserve"><value>There are unsaved catalog or composition changes. Choose save and continue, discard changes or keep editing.</value></data>
   <data name="Composition.PublishHelp" xml:space="preserve"><value>A published version cannot be modified. Create another version to change it.</value></data>
   <data name="Composition.InvalidCatalog" xml:space="preserve"><value>The catalogue contains duplicate or invalid data.</value></data>
   <data name="Composition.InvalidItem" xml:space="preserve"><value>Complete the code, name, type and unit for each item.</value></data>
@@ -2038,4 +2038,56 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Menu.AuxiliaryHelp" xml:space="preserve"><value>Auxiliary capacity and services provided to other centres.</value></data>
   <data name="Menu.CompositionHelp" xml:space="preserve"><value>Materials, composition versions and quantities required for products and services.</value></data>
   <data name="Menu.NeedStudy" xml:space="preserve"><value>Select a saved analysis and resolve pending changes to open this screen.</value></data>
+  <data name="UX.SaveContinue" xml:space="preserve"><value>Save and continue</value></data>
+  <data name="UX.Discard" xml:space="preserve"><value>Discard changes</value></data>
+  <data name="UX.KeepEditing" xml:space="preserve"><value>Keep editing</value></data>
+  <data name="UX.DiscardLeave" xml:space="preserve"><value>Discard and leave</value></data>
+  <data name="UX.ReturnRows" xml:space="preserve"><value>Return to save rows</value></data>
+  <data name="UX.ReadFull" xml:space="preserve"><value>Read full explanation</value></data>
+  <data name="UX.Context" xml:space="preserve"><value>{0} · {1} · {2} · {3}</value></data>
+  <data name="Activity.PendingCount" xml:space="preserve"><value>Other rows with unsaved changes: {0}</value></data>
+  <data name="Model.ActivateUnit" xml:space="preserve"><value>Activate unit</value></data>
+  <data name="Model.DeactivateUnit" xml:space="preserve"><value>Deactivate unit</value></data>
+  <data name="AllocationUI.SaveAvailableKey" xml:space="preserve"><value>Save available key</value></data>
+  <data name="AllocationUI.SaveIncompleteKey" xml:space="preserve"><value>Save incomplete draft</value></data>
+  <data name="Run.ConsultSaved" xml:space="preserve"><value>View saved calculation · selecting does not recalculate</value></data>
+  <data name="Run.CurrentInputs" xml:space="preserve"><value>Obtain a result using current inputs</value></data>
+<data name="Activity.HistoryVersion" xml:space="preserve"><value>Version</value></data>
+<data name="Activity.HistoryDate" xml:space="preserve"><value>Recorded date (UTC)</value></data>
+<data name="Activity.HistoryReason" xml:space="preserve"><value>Reason</value></data>
+<data name="Resources.ManualSaveHelp" xml:space="preserve"><value>Total manual correction: saved when each cell edit finishes. It is not an increment or the final amount. Effective = converted + manual correction + rule adjustments.</value></data>
+<data name="Model.StructureScope" xml:space="preserve"><value>Reusable structure: changes to this draft are not analysis adaptations.</value></data>
+<data name="AllocationUI.WeightMeaning" xml:space="preserve"><value>Weights are relative quantities, not percentages: 30/70 out of 100 means 30/70%, but 30/30 means 50/50%. Check the key criterion, unit and total.</value></data>
+<data name="AllocationUI.BaseScope" xml:space="preserve"><value>The allocation base contains only parts routed to calculation units. Direct, excluded and pending amounts on other routes are checked in Results and traceability.</value></data>
+<data name="Rates.ScopeHelp" xml:space="preserve"><value>Management rate per unit, not a selling price. Reconciliation is partial: it does not establish consumption by product or order. Each component retains its own base; missing does not mean zero.</value></data>
+<data name="ImportMapping.ReplaceSummary" xml:space="preserve"><value>Replace {0} with {1} in {2}. The previous import retains its history.</value></data>
+<data name="ImportMapping.AddSummary" xml:space="preserve"><value>Add {0} to analysis {1}</value></data>
+<data name="UX.TechnicalHelp" xml:space="preserve"><value>These examples do not change analysis costs, currency or exchange rates.</value></data>
+<data name="Study.Results" xml:space="preserve"><value>View Results and traceability</value></data>
+<data name="Aux.InitialQuantity" xml:space="preserve"><value>Initial: no saved record</value></data>
+<data name="Aux.SavedQuantity" xml:space="preserve"><value>Saved quantity</value></data>
+<data name="Aux.EditedQuantity" xml:space="preserve"><value>Unsaved change</value></data>
+<data name="Aux.Preparation" xml:space="preserve"><value>Preparation state</value></data>
+<data name="Activity.Import.Template" xml:space="preserve"><value>Save CSV template</value></data>
+<data name="Activity.Import.TemplateSaved" xml:space="preserve"><value>Template saved with analysis codes and period. Fill in quantities and sources before importing; empty fields are not zero.</value></data>
+<data name="Activity.Import.TemplateFailed" xml:space="preserve"><value>Could not save the template. Check the location and its permissions.</value></data>
+<data name="Activity.Import.DiscardReview" xml:space="preserve"><value>Rows are selected for import. Discard closes this review without incorporating those drafts.</value></data>
+<data name="Rates.SelectedSummary" xml:space="preserve"><value>Rate: {0} · Cost: {1} · Normal: {2} · Actual: {3} · {4}</value></data>
+<data name="Model.TableEditHelp" xml:space="preserve"><value>Edit the selected record in the table and save its changes. For a new record, choose New. Escape cancels the cell; switching records resolves pending changes.</value></data>
+<data name="UX.FileOperation" xml:space="preserve"><value>Source: {0}
+Destination: {1}
+
+The selected destination will be written. Review both files before continuing. Cancelling this confirmation does not execute the operation.</value></data>
+<data name="Activity.ProposalAdopted" xml:space="preserve"><value>Proposal copied to row, not saved</value></data>
+<data name="AllocationUI.CloseReview" xml:space="preserve"><value>Review closure scope</value></data>
+  <data name="Preference.es" xml:space="preserve"><value>Spanish</value></data>
+  <data name="Preference.en" xml:space="preserve"><value>English</value></data>
+  <data name="Preference.es-ES" xml:space="preserve"><value>Spain — 1.234,56 · 31/12/2026</value></data>
+  <data name="Preference.en-US" xml:space="preserve"><value>United States — 1,234.56 · 12/31/2026</value></data>
+  <data name="Preference.en-GB" xml:space="preserve"><value>United Kingdom — 1,234.56 · 31/12/2026</value></data>
+  <data name="Preference.de-DE" xml:space="preserve"><value>Germany — 1.234,56 · 31.12.2026</value></data>
+  <data name="Preference.Europe.Madrid" xml:space="preserve"><value>Madrid (local time)</value></data>
+  <data name="Preference.UTC" xml:space="preserve"><value>Universal time (UTC)</value></data>
+  <data name="Preference.America.Los_Angeles" xml:space="preserve"><value>Los Angeles (local time)</value></data>
+<data name="Aux.ReviewResults" xml:space="preserve"><value>Saved results: review answers and reconciliation</value></data>
 </root>

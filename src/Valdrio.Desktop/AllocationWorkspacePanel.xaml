@@ -74,7 +74,7 @@
          </DataTrigger></Style.Triggers>
         </Style></TextBox.Style>
        </TextBox></StackPanel>
-      <StackPanel Grid.Column="1" Margin="0,0,8,0" IsEnabled="{Binding CanEditComposition}"><TextBlock Text="{Binding [Criterion]}"/><ComboBox x:Name="ModeBox" ItemsSource="{Binding Modes}" SelectedValue="{Binding Mode}" AutomationProperties.Name="{Binding [Criterion]}"/>
+      <StackPanel Grid.Column="1" Margin="0,0,8,0" IsEnabled="{Binding CanEditComposition}"><TextBlock Text="{Binding [Criterion]}"/><ComboBox x:Name="ModeBox" ItemsSource="{Binding Modes}" SelectedValue="{Binding Mode}" AutomationProperties.Name="{Binding [Criterion]}"/><TextBlock Text="{Binding [WeightMeaning]}" TextWrapping="Wrap" Margin="0,6,0,0"/>
        <StackPanel Visibility="{Binding IsDriver, Converter={StaticResource Visible}}"><TextBlock Text="{Binding [Unit]}"/><ComboBox ItemsSource="{Binding Units}" SelectedValue="{Binding Unit}" AutomationProperties.Name="{Binding [Unit]}" x:Name="UnitBox"/></StackPanel>
       </StackPanel>
 
@@ -96,14 +96,15 @@
         <Setter Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
        </DataTrigger></Style.Triggers></Style></TextBlock.Style>
      </TextBlock>
-           <Button Grid.Row="5" Style="{StaticResource Button.Primary}" Content="{Binding [SaveKey]}" Command="{Binding SaveKeyCommand}" x:Name="SaveKeyButton" HorizontalAlignment="Right" Margin="0,8,0,0"/>
+           <Button Grid.Row="5" Style="{StaticResource Button.Primary}" Content="{Binding SaveKeyLabel}" Command="{Binding SaveKeyCommand}" x:Name="SaveKeyButton" HorizontalAlignment="Right" Margin="0,8,0,0"/>
      </Grid></Expander>
    </Border>
 </local:AdaptiveColumnsPanel>
     <Border Style="{StaticResource Card}" Margin="0,0,0,16">
    <Expander x:Name="CompositionSection" Header="{Binding [CompositionTitle]}" IsExpanded="True">
     <StackPanel Margin="0,8,0,0">
-     <TextBlock Text="{Binding [CompositionHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+     <TextBlock Text="{Binding [BaseScope]}" TextWrapping="Wrap" Margin="0,4,0,8"/>
+<TextBlock Text="{Binding [CompositionHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
      <TextBlock Text="{Binding CompositionSummary}" FontWeight="SemiBold" Margin="0,0,0,8"/>
      <WrapPanel Margin="0,0,0,8">
       <StackPanel MinWidth="260" Margin="0,0,12,4">
@@ -390,7 +391,7 @@
       <Button Content="{Binding [SecondaryRepairAction]}" Click="NavigateToSecondaryRepair"
               HorizontalAlignment="Left" Style="{StaticResource Button.Primary}"/>
      </StackPanel>
-   <Expander x:Name="ReciprocalSection" Header="{Binding [ReciprocalTitle]}" IsExpanded="True">
+   <Expander x:Name="ReciprocalSection" Header="{Binding [ReciprocalTitle]}" IsExpanded="{Binding ReciprocalHasError, Mode=OneWay}">
     <StackPanel Margin="0,8,0,0">
      <TextBlock Text="{Binding [ReciprocalHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
      <TextBlock Text="{Binding ReciprocalSummary}" Margin="0,8,0,8" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}"><Style.Triggers><DataTrigger Binding="{Binding ReciprocalHasError}" Value="True"><Setter Property="Foreground" Value="{DynamicResource Brand.Red}"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
@@ -408,7 +409,7 @@
     </StackPanel>
    </Expander>
 
-     <Expander x:Name="AuxiliarySettlementSection" Header="{Binding [AuxiliarySettlementTitle]}" IsExpanded="True" Margin="0,8,0,14">
+     <Expander x:Name="AuxiliarySettlementSection" Header="{Binding [AuxiliarySettlementTitle]}" IsExpanded="False" Margin="0,8,0,14">
        <StackPanel Margin="0,8,0,0">
          <TextBlock Text="{Binding AuxiliarySettlementHelp}" TextWrapping="Wrap" Margin="0,0,0,8"/>
          <DataGrid x:Name="AuxiliarySettlementGrid" ItemsSource="{Binding AuxiliarySettlements}" IsReadOnly="True"
@@ -493,7 +494,7 @@
        </DockPanel>
       </StackPanel>
      </StackPanel>
-     <Expander x:Name="PrincipalCostFlowSection" Header="{Binding [PrincipalFlowTitle]}" IsExpanded="True" Margin="0,0,0,12">
+     <Expander x:Name="PrincipalCostFlowSection" Header="{Binding [PrincipalFlowTitle]}" IsExpanded="False" Margin="0,0,0,12">
       <StackPanel Margin="0,8,0,0">
        <TextBlock Text="{Binding [PrincipalFlowHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
        <!-- Viewbox scales the full diagram to the available panel width without
@@ -522,7 +523,7 @@
      <Button x:Name="ShowSecondarySourceButton" Content="{Binding [ShowSource]}" Click="ShowSecondarySource" HorizontalAlignment="Left">
       <Button.Style><Style TargetType="Button" BasedOn="{StaticResource Button.Secondary}"><Style.Triggers><DataTrigger Binding="{Binding SelectedSecondaryResultRow}" Value="{x:Null}"><Setter Property="IsEnabled" Value="False"/></DataTrigger></Style.Triggers></Style></Button.Style>
      </Button>
-     <Expander x:Name="SecondaryExplanationSection" Header="{Binding [SecondaryExplanationTitle]}" IsExpanded="True" Margin="0,8,0,0">
+     <Expander x:Name="SecondaryExplanationSection" Header="{Binding [SecondaryExplanationTitle]}" IsExpanded="False" Margin="0,8,0,0">
       <StackPanel>
 
        <TextBlock Text="{Binding SecondaryExplanation}" MinHeight="72" TextWrapping="Wrap" Margin="8"/>
@@ -571,7 +572,7 @@
       <Button x:Name="CalculateSecondaryButton" Content="{Binding [CalculateSecondary]}" Command="{Binding CalculateSecondaryCommand}"/>
       <Button x:Name="CancelSecondaryButton" Content="{Binding [SecondaryCancel]}" Command="{Binding CancelSecondaryCommand}"/>
      </WrapPanel>
-     <WrapPanel x:Name="PrimaryPhaseBar"><Button x:Name="TogglePrimaryButton" Content="{Binding PrimaryToggleLabel}" Command="{Binding TogglePrimaryCommand}" Style="{StaticResource Button.Primary}"/></WrapPanel>
+     <WrapPanel x:Name="PrimaryPhaseBar"><Expander Header="{Binding [CloseReview]}"><StackPanel MaxWidth="480"><TextBlock Text="{Binding PrimarySummary}" TextWrapping="Wrap"/><TextBlock Text="{Binding CoverageSummary}" TextWrapping="Wrap"/><TextBlock Text="{Binding CompositionSummary}" TextWrapping="Wrap"/><TextBlock Text="{Binding [BaseScope]}" TextWrapping="Wrap"/><TextBlock Text="{Binding [CompositionCloseHelp]}" TextWrapping="Wrap"/></StackPanel></Expander><Button x:Name="TogglePrimaryButton" Content="{Binding PrimaryToggleLabel}" Command="{Binding TogglePrimaryCommand}" Style="{StaticResource Button.Primary}"/></WrapPanel>
      <WrapPanel x:Name="SecondaryPhaseBar"><Button x:Name="ToggleSecondaryButton" Content="{Binding SecondaryToggleLabel}" Command="{Binding ToggleSecondaryCommand}" Style="{StaticResource Button.Primary}"/></WrapPanel>
     </WrapPanel>
    </StackPanel>

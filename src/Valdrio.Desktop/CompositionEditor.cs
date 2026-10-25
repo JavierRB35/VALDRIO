@@ -64,8 +64,9 @@ public sealed partial class CompositionEditor : ObservableObject
     public bool Writable => host.PhysicalWritable;
     public bool Editable => Writable && current?.State == CompositionState.Draft && current.ProductId == Product && current.Id == Version;
     public bool LinesReadOnly => !Editable;
-    public string Context => host.PhysicalCompany!.Name + " · " + host.CurrentModelDescription;
-    public string State => current is null ? this["ChooseRecipe"] : catalog.Items.Single(i => i.Id == current.ProductId).Name + " · " + this[current.State.ToString()] + " · v" + current.Number;
+    public string Context => host.PhysicalCompany!.Name + " · " + host.Current!.Name + " · " + host.ContextSummary;
+    public string ActionLabel(string key) => texts.Get("UX." + key, host.PhysicalUiCulture);
+    public string State => current is null ? this["ChooseRecipe"] : catalog.Items.Single(i => i.Id == current.ProductId).Name + " · " + this[current.State.ToString()] + " · v" + current.Number + (Dirty ? " · " + this["Unsaved"] : "");
     public string this[string key] => texts.Get("Composition." + key, host.PhysicalUiCulture);
     public CompositionEditor(StudyWorkspaceViewModel host) { this.host = host; Reload(); }
     partial void OnProductChanged(EntityId value) { OnPropertyChanged(nameof(Versions)); Version = Versions.LastOrDefault()?.Value ?? default; SelectionChanged(); }
@@ -82,7 +83,7 @@ public sealed partial class CompositionEditor : ObservableObject
             throw CompositionCalculator.Error("Number");
         return result;
     }
-    private void Changed() { if (loading) return; Dirty = true; OnPropertyChanged(nameof(Dirty)); Invalidate(); }
+    private void Changed() { if (loading) return; Dirty = true; OnPropertyChanged(nameof(Dirty)); OnPropertyChanged(nameof(State)); Invalidate(); }
     private void Invalidate()
     {
         Results.Clear(); Answers.Clear();

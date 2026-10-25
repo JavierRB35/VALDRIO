@@ -26,7 +26,7 @@ Proponer una capacidad normal a partir de calendario operativo, histórico compa
 ## 3. Interpretación de resultados (Outputs)
 | Métrica / resultado | Fórmula u origen | Significado / decisión asociada |
 | :--- | :--- | :--- |
-| Propuesta de capacidad normal | Fórmula según método | Referencia física pendiente de validación final en T14. |
+| Propuesta de capacidad normal | Fórmula según método | Referencia física pendiente de validación final en Actividad y capacidades. |
 | Capacidad teórica y práctica | Cálculo auxiliar de calendario, si procede | Explica diferencias físicas sin revalorar costes. |
 | Pasos del cálculo y alertas | Operaciones y fuentes | Permite auditar el razonamiento de la propuesta. |
 

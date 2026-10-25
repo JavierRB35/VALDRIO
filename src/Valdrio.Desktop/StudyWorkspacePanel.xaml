@@ -93,6 +93,7 @@
      <Button x:Name="DiscardStudyButton" Content="{Binding DiscardLabel}" Command="{Binding DiscardCommand}" TabIndex="74"/>
      <Button Content="{Binding CancelLabel}" Command="{Binding CancelCommand}" TabIndex="75"/>
      <TextBlock Text="{Binding RunHistory}" FontWeight="SemiBold"/>
+     <Button Content="{Binding ResultsLabel}" Click="OpenResults" HorizontalAlignment="Left"/>
      <TextBlock x:Name="SnapshotHeader" Text="{Binding SnapshotLabel}" FontWeight="SemiBold"/>
      <ComboBox x:Name="SnapshotBox" ItemsSource="{Binding Snapshots}" SelectedItem="{Binding SnapshotChoice}" IsEnabled="{Binding Ready}" TabIndex="76" AutomationProperties.Name="{Binding SnapshotLabel}" local:FieldHelp.Key="SnapshotChoice"/>
      <TextBlock Text="{Binding SnapshotDetails}" FlowDirection="LeftToRight"/>

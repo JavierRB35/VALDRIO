@@ -1,0 +1,2203 @@
+{
+  "AllocationReuseWindow.xaml": [
+    {
+      "Click": "Preview",
+      "IsEnabled": "{Binding CanPreview}"
+    },
+    {
+      "ItemsSource": "{Binding Sources}",
+      "SelectedItem": "{Binding Source}",
+      "AutomationProperties.Name": "{Binding SourceLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "Table",
+      "ItemsSource": "{Binding Items}"
+    },
+    {
+      "IsEnabled": "{Binding CanSelect}",
+      "AutomationProperties.Name": "{Binding Selector}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SelectorColumn",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "KeyColumn",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StatusColumn",
+      "IsReadOnly": "True"
+    },
+    {
+      "Click": "Adopt",
+      "IsEnabled": "{Binding CanAdopt}"
+    },
+    {
+      "Click": "Cancel"
+    }
+  ],
+  "AllocationWorkspacePanel.xaml": [
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "WorkspaceBody"
+    },
+    {
+      "IsEnabled": "{Binding CanReuse}",
+      "Click": "ReuseMethodology"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ActionStatus"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "KeyWorkspaceLayout"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "LibrarySection"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "KeyGrid",
+      "ItemsSource": "{Binding Keys}",
+      "SelectedItem": "{Binding SelectedKey}",
+      "IsReadOnly": "True"
+    },
+    {
+      "Command": "{Binding NewKeyCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NewKeyButton",
+      "Click": "FocusNewKey"
+    },
+    {
+      "Command": "{Binding NewVersionCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NewVersionButton"
+    },
+    {
+      "Command": "{Binding DeleteKeyCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DeleteKeyButton"
+    },
+    {
+      "Command": "{Binding RefreshCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RefreshButton"
+    },
+    {
+      "Command": "{Binding LoadKeyCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "LoadKeyButton"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DefinitionSection"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "KeyNameBox",
+      "AutomationProperties.Name": "{Binding [Name]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ModeBox",
+      "ItemsSource": "{Binding Modes}",
+      "AutomationProperties.Name": "{Binding [Criterion]}"
+    },
+    {
+      "ItemsSource": "{Binding Units}",
+      "AutomationProperties.Name": "{Binding [Unit]}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "UnitBox"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "LinesGrid",
+      "ItemsSource": "{Binding Lines}",
+      "IsReadOnly": "True"
+    },
+    {
+      "IsEnabled": "{Binding DataContext.CanEditComposition, RelativeSource={RelativeSource AncestorType=DataGrid}}",
+      "AutomationProperties.Name": "{Binding Label}"
+    },
+    {
+      "AutomationProperties.Name": "{Binding Label}"
+    },
+    {
+      "Command": "{Binding SaveKeyCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SaveKeyButton"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CompositionSection"
+    },
+    {
+      "AutomationProperties.Name": "{Binding [CompositionSearch]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CompositionGrid",
+      "ItemsSource": "{Binding CompositionView}",
+      "IsReadOnly": "True"
+    },
+    {
+      "ItemsSource": "{Binding DataContext.CompositionChoices, RelativeSource={RelativeSource AncestorType=DataGrid}}",
+      "AutomationProperties.Name": "{Binding Account}"
+    },
+    {
+      "IsReadOnly": "True",
+      "AutomationProperties.Name": "{Binding DataContext[CompositionFixedWeight], RelativeSource={RelativeSource AncestorType=DataGrid}}"
+    },
+    {
+      "AutomationProperties.Name": "{Binding DataContext[CompositionVariableWeight], RelativeSource={RelativeSource AncestorType=DataGrid}}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SaveCompositionRowsButton",
+      "Command": "{Binding SaveCompositionRowsCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RulesSection"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RuleTabs"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrimaryGrid",
+      "ItemsSource": "{Binding PrimaryRules}",
+      "SelectedItem": "{Binding SelectedRule}",
+      "IsReadOnly": "True"
+    },
+    {
+      "Command": "{Binding LoadRuleCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "LoadRuleButton"
+    },
+    {
+      "Command": "{Binding NewRuleCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NewRuleButton"
+    },
+    {
+      "Command": "{Binding RemoveRuleCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RemoveRuleButton"
+    },
+    {
+      "ItemsSource": "{Binding Selectors}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SelectorKindBox"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RuleAccountBox",
+      "ItemsSource": "{Binding Accounts}",
+      "AutomationProperties.Name": "{Binding [Account]}"
+    },
+    {
+      "AutomationProperties.Name": "{Binding [Prefix]}"
+    },
+    {
+      "ItemsSource": "{Binding PublishedPrimary}",
+      "AutomationProperties.Name": "{Binding [PublishedKey]}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RuleKeyBox"
+    },
+    {
+      "Command": "{Binding SaveRuleCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SaveRuleButton"
+    },
+    {
+      "Command": "{Binding ApplyRuleCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ApplyRuleButton"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryNodeAssignmentsGrid",
+      "ItemsSource": "{Binding SecondaryNodeAssignments}",
+      "IsReadOnly": "True"
+    },
+    {
+      "ItemsSource": "{Binding DataContext.PublishedSecondary, RelativeSource={RelativeSource AncestorType=DataGrid}}",
+      "IsEnabled": "{Binding DataContext.CanShowSecondaryEditor, RelativeSource={RelativeSource AncestorType=DataGrid}}",
+      "AutomationProperties.Name": "{Binding Source}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryRulesGrid",
+      "ItemsSource": "{Binding SecondaryRules}",
+      "SelectedItem": "{Binding SelectedSecondary}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "LoadSecondaryButton",
+      "Command": "{Binding LoadSecondaryCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NewSecondaryButton",
+      "Command": "{Binding NewSecondaryCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RemoveSecondaryButton",
+      "Command": "{Binding RemoveSecondaryCommand}"
+    },
+    {
+      "ItemsSource": "{Binding Auxiliaries}",
+      "AutomationProperties.Name": "{Binding [Auxiliary]}"
+    },
+    {
+      "ItemsSource": "{Binding PublishedSecondary}",
+      "AutomationProperties.Name": "{Binding [PublishedKey]}"
+    },
+    {
+      "AutomationProperties.Name": "{Binding [ReciprocalGroup]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SaveSecondaryButton",
+      "Command": "{Binding SaveSecondaryCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "FillMissingSecondaryButton",
+      "Command": "{Binding AssignSecondaryKeyToMissingCommand}"
+    },
+    {
+      "Command": "{Binding ClearObsoleteSecondaryGroupsCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryGroupAssignmentsGrid",
+      "ItemsSource": "{Binding SecondaryGroupAssignments}",
+      "IsReadOnly": "True"
+    },
+    {
+      "ItemsSource": "{Binding Parts}",
+      "AutomationProperties.Name": "{Binding [SecondarySourcePart]}"
+    },
+    {
+      "ItemsSource": "{Binding SecondaryGroupChoices}",
+      "AutomationProperties.Name": "{Binding [SecondarySelectedGroup]}"
+    },
+    {
+      "Command": "{Binding SaveSecondaryGroupCommand}"
+    },
+    {
+      "Command": "{Binding ClearObsoleteCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartBox",
+      "ItemsSource": "{Binding Parts}",
+      "AutomationProperties.Name": "{Binding [Part]}"
+    },
+    {
+      "ItemsSource": "{Binding PublishedPrimary}",
+      "IsEnabled": "{Binding CanEdit}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartKeyBox"
+    },
+    {
+      "Command": "{Binding AssignCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AssignButton"
+    },
+    {
+      "Command": "{Binding AutomaticCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AutomaticButton"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AbsoluteGrid",
+      "ItemsSource": "{Binding AbsoluteLines}",
+      "IsEnabled": "{Binding CanEdit}"
+    },
+    {
+      "AutomationProperties.Name": "{Binding Label}"
+    },
+    {
+      "AutomationProperties.Name": "{Binding Label}"
+    },
+    {
+      "Command": "{Binding SaveAbsoluteCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SaveAbsoluteButton"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NameAccountBox",
+      "ItemsSource": "{Binding Accounts}",
+      "AutomationProperties.Name": "{Binding [Account]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DescriptionBox",
+      "ItemsSource": "{Binding DescriptionOptions}",
+      "SelectedItem": "{Binding ChosenDescription}",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [VisibleName]}"
+    },
+    {
+      "Command": "{Binding ChooseDescriptionCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ChooseDescriptionButton"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AccountsSection"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CoverageGrid",
+      "ItemsSource": "{Binding Coverage}",
+      "IsReadOnly": "True"
+    },
+    {
+      "ItemsSource": "{Binding DataContext.PublishedPrimary, RelativeSource={RelativeSource AncestorType=DataGrid}}",
+      "IsEnabled": "{Binding DataContext.CanShowCoverageEditor, RelativeSource={RelativeSource AncestorType=DataGrid}}",
+      "AutomationProperties.Name": "{Binding Source}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "BatchKeyBox",
+      "ItemsSource": "{Binding PublishedPrimary}",
+      "AutomationProperties.Name": "{Binding [BulkAssignKey]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "BatchApplyButton",
+      "Click": "ApplyBatchToSelectedRows",
+      "IsEnabled": "False"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "BatchPreviewText"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ResultsSection"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrimaryAccountGrid",
+      "ItemsSource": "{Binding PrimaryAccounts}",
+      "SelectedItem": "{Binding SelectedPrimaryAccount, Mode=TwoWay}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrimaryFlowSection"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrimaryFlowCanvas"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrimaryResultsGrid",
+      "ItemsSource": "{Binding PrimaryResults}",
+      "IsReadOnly": "True",
+      "AutomationProperties.Name": "{Binding [PrimaryTitle]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrimaryNodeTotalsGrid",
+      "ItemsSource": "{Binding PrimaryNodeTotals}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryResultsSection"
+    },
+    {
+      "Click": "NavigateToSecondaryRepair"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ReciprocalSection"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ReciprocalGrid",
+      "ItemsSource": "{Binding ReciprocalChecks}",
+      "IsReadOnly": "True",
+      "AutomationProperties.Name": "{Binding [ReciprocalTitle]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AuxiliarySettlementSection"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AuxiliarySettlementGrid",
+      "ItemsSource": "{Binding AuxiliarySettlements}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrincipalCostsGrid",
+      "ItemsSource": "{Binding PrincipalCosts}",
+      "SelectedItem": "{Binding SelectedPrincipalCostRow, Mode=TwoWay}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrincipalOriginGrid",
+      "ItemsSource": "{Binding PrincipalOriginRows}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrincipalCostFlowSection"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrincipalFlowViewport"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrincipalFlowCanvas"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryResultsGrid",
+      "ItemsSource": "{Binding SecondaryResults}",
+      "SelectedItem": "{Binding SelectedSecondaryResultRow, Mode=TwoWay}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ShowSecondarySourceButton",
+      "Click": "ShowSecondarySource"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryExplanationSection"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryExplanationGrid",
+      "ItemsSource": "{Binding SecondaryExplanationDetails}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "BackToContributionsButton",
+      "Click": "BackToContributions"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryCirculationGrid",
+      "ItemsSource": "{Binding SecondaryCirculation}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "BottomActions"
+    },
+    {
+      "ElementName": "PrimaryFooterState"
+    },
+    {
+      "ElementName": "SecondaryFooterState"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrimaryFooterState"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryFooterState"
+    },
+    {
+      "Command": "{Binding DiscardCommand}",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DiscardButton"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryCalculationActions"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CalculateSecondaryButton",
+      "Command": "{Binding CalculateSecondaryCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CancelSecondaryButton",
+      "Command": "{Binding CancelSecondaryCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrimaryPhaseBar"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "TogglePrimaryButton",
+      "Command": "{Binding TogglePrimaryCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryPhaseBar"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ToggleSecondaryButton",
+      "Command": "{Binding ToggleSecondaryCommand}"
+    }
+  ],
+  "App.xaml": [],
+  "AuxiliaryCapacityWindow.xaml": [
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AuxScroll"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CentersTable",
+      "ItemsSource": "{Binding Rows}",
+      "SelectedItem": "{Binding SelectedRow}",
+      "IsReadOnly": "False"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CenterColumn",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "UnitColumn",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NormalColumn",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RealColumn",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ModeColumn"
+    },
+    {
+      "ItemsSource": "{Binding Choices}",
+      "SelectedItem": "{Binding Mode, UpdateSourceTrigger=PropertyChanged}",
+      "IsEnabled": "{Binding DataContext.CanEdit, RelativeSource={RelativeSource AncestorType=DataGrid}}",
+      "AutomationProperties.Name": "{Binding Name}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ServicesTable",
+      "ItemsSource": "{Binding SelectedRow.Services}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "GroupColumn",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DestinationColumn",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "QuantityColumn"
+    },
+    {
+      "IsEnabled": "{Binding DataContext.CanEdit, RelativeSource={RelativeSource AncestorType=DataGrid}}",
+      "AutomationProperties.Name": "{Binding Name}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AnswersTable",
+      "ItemsSource": "{Binding Answers}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "QuestionColumn"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AnswerColumn"
+    },
+    {
+      "Click": "Save",
+      "IsEnabled": "{Binding CanSave}"
+    },
+    {
+      "Click": "Validate"
+    },
+    {
+      "Click": "Calculate",
+      "IsEnabled": "{Binding CanCalculate}"
+    },
+    {
+      "Click": "Import",
+      "IsEnabled": "{Binding CanEdit}"
+    },
+    {
+      "Click": "Activity"
+    },
+    {
+      "Click": "Rates"
+    },
+    {
+      "Click": "Reopen",
+      "IsEnabled": "{Binding CanReopen}"
+    },
+    {
+      "Click": "Refresh"
+    },
+    {
+      "Click": "Export",
+      "IsEnabled": "{Binding CanExport}"
+    },
+    {
+      "Click": "CloseWindow"
+    }
+  ],
+  "CompanyFilePanel.xaml": [
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ExampleButton",
+      "Command": "{Binding OpenExampleCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ImportStartButton",
+      "Click": "StartImportSetup"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "OpenButton",
+      "Command": "{Binding OpenCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NameBox",
+      "AutomationProperties.Name": "{Binding NameLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CurrencyBox",
+      "ItemsSource": "{Binding CurrencyOptions}",
+      "SelectedItem": "{Binding Currency,UpdateSourceTrigger=PropertyChanged}",
+      "AutomationProperties.Name": "{Binding CurrencyLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CreateButton",
+      "Command": "{Binding CreateCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ActiveCompanyNameText"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NewProjectButton",
+      "Command": "{Binding NewProjectCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "UpgradeSuggestionButton",
+      "Command": "{Binding UpgradeCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CloseButton",
+      "Command": "{Binding CloseCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "BackupButton",
+      "Command": "{Binding BackupCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RestoreButton",
+      "Command": "{Binding RestoreCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "UpgradeButton",
+      "Command": "{Binding UpgradeCommand}",
+      "AutomationProperties.Name": "{Binding UpgradeLabel}"
+    },
+    {
+      "Command": "{Binding CancelCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "UnitCreationPanel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "InstallDefaultUnitsButton",
+      "Command": "{Binding AddDefaultUnitsCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "UnitCodeBox",
+      "AutomationProperties.Name": "{Binding UnitLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DimensionBox",
+      "AutomationProperties.Name": "{Binding DimensionLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SymbolBox",
+      "AutomationProperties.Name": "{Binding SymbolLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ScaleBox",
+      "ItemsSource": "{Binding ScaleOptions}",
+      "SelectedItem": "{Binding UnitScale}",
+      "AutomationProperties.Name": "{Binding ScaleLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DiscreteBox"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AddUnitButton",
+      "Command": "{Binding AddUnitCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "UnitActionStatus"
+    }
+  ],
+  "CompositionWindow.xaml": [
+    {
+      "Click": "AddItem",
+      "IsEnabled": "{Binding Writable}"
+    },
+    {
+      "Click": "RemoveItem",
+      "IsEnabled": "{Binding Writable}"
+    },
+    {
+      "Click": "Save",
+      "IsEnabled": "{Binding Writable}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CatalogGrid",
+      "ItemsSource": "{Binding Items}"
+    },
+    {
+      "Click": "Open"
+    },
+    {
+      "Click": "NewVersion",
+      "IsEnabled": "{Binding Writable}"
+    },
+    {
+      "Click": "AddLine"
+    },
+    {
+      "Click": "RemoveLine"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "LinesGrid",
+      "ItemsSource": "{Binding Lines}",
+      "IsReadOnly": "{Binding LinesReadOnly}"
+    },
+    {
+      "Click": "Save",
+      "IsEnabled": "{Binding Editable}"
+    },
+    {
+      "Click": "Publish",
+      "IsEnabled": "{Binding Editable}"
+    },
+    {
+      "Click": "Preview"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AnswersGrid",
+      "ItemsSource": "{Binding Answers}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ResultsGrid",
+      "ItemsSource": "{Binding Results}",
+      "IsReadOnly": "True"
+    },
+    {
+      "Click": "ClosePage"
+    },
+    {
+      "Click": "Reload"
+    }
+  ],
+  "CostFlowPanel.xaml": [
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ExecutionCard"
+    },
+    {
+      "Command": "{Binding CalculateCommand}"
+    },
+    {
+      "Command": "{Binding CancelCommand}"
+    },
+    {
+      "Command": "{Binding RefreshCommand}"
+    },
+    {
+      "ItemsSource": "{Binding Runs}",
+      "SelectedItem": "{Binding SelectedRun}",
+      "AutomationProperties.Name": "{Binding [Execution]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "TotalsPanel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ExpandedAnalysis",
+      "Click": "ToggleAnalysis"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "FlowZoom",
+      "AutomationProperties.Name": "{Binding [Zoom]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AnalysisTabs"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrimaryGraphViewport"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrimaryGraphCanvas"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryGraphViewport"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryGraphCanvas"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CenterBalanceGrid",
+      "ItemsSource": "{Binding CenterBalances}",
+      "IsReadOnly": "True",
+      "AutomationProperties.Name": "{Binding [CenterBalances]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NodeBalanceGrid",
+      "ItemsSource": "{Binding NodeBalances}",
+      "SelectedItem": "{Binding SelectedBalance}",
+      "IsReadOnly": "True",
+      "AutomationProperties.Name": "{Binding [NodeBalances]}"
+    },
+    {
+      "Command": "{Binding ClearSelectionCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DetailsGrid",
+      "ItemsSource": "{Binding Rows}",
+      "SelectedItem": "{Binding SelectedRow}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ReconciliationGrid",
+      "ItemsSource": "{Binding Reconciliation}",
+      "IsReadOnly": "True"
+    }
+  ],
+  "ImportColumnMappingWindow.xaml": [
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ImportStepHelp"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ImportFieldHelp"
+    },
+    {
+      "Click": "PreviousImportStep",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ImportBack"
+    },
+    {
+      "Click": "NextImportStep",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ImportNext"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ConfirmImportButton",
+      "Command": "{Binding ConfirmCommand}"
+    },
+    {
+      "Command": "{Binding CancelCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CloseMappingButton",
+      "Click": "CloseMapping",
+      "IsEnabled": "{Binding IsIdle}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ImportSteps",
+      "IsEnabled": "{Binding IsIdle}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ImportTab0"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "OpenSourceButton",
+      "Command": "{Binding OpenCommand}",
+      "AutomationProperties.Name": "{Binding [Open]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "WorksheetBox",
+      "ItemsSource": "{Binding Worksheets}",
+      "SelectedItem": "{Binding Worksheet}",
+      "AutomationProperties.Name": "{Binding [Worksheet]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AmountModeBox",
+      "ItemsSource": "{Binding AmountModes}",
+      "AutomationProperties.Name": "{Binding [AmountMode]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "HeaderRowBox",
+      "AutomationProperties.Name": "{Binding [HeaderRow]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "FirstDataRowBox",
+      "AutomationProperties.Name": "{Binding [FirstDataRow]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DelimiterBox",
+      "ItemsSource": "{Binding Delimiters}",
+      "AutomationProperties.Name": "{Binding [Delimiter]}"
+    },
+    {
+      "ItemsSource": "{Binding Encodings}",
+      "SelectedItem": "{Binding Encoding}",
+      "AutomationProperties.Name": "{Binding [Encoding]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ImportAdvancedOptions",
+      "IsEnabled": "{Binding HasFile}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ReplaceBatchBox"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ReplacementBox",
+      "ItemsSource": "{Binding ExistingBatches}",
+      "SelectedItem": "{Binding Replacement}",
+      "IsEnabled": "{Binding ReplaceBatch}",
+      "AutomationProperties.Name": "{Binding [ReplaceBatch]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ComparisonPanel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "FiscalStartPicker"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "FiscalEndPicker"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PreviousEndPicker"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ComparisonScopeBox"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "FreezeComparisonButton",
+      "Command": "{Binding FreezeComparisonCommand}"
+    },
+    {
+      "Command": "{Binding ClearComparisonCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ReadSourceButton",
+      "Command": "{Binding ReadCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ImportTab1",
+      "IsEnabled": "{Binding HasColumns}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AmountLayoutBox",
+      "ItemsSource": "{Binding AmountLayouts}",
+      "AutomationProperties.Name": "{Binding [AmountLayout]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AccountColumnBox",
+      "ItemsSource": "{Binding Columns}",
+      "AutomationProperties.Name": "{Binding [AccountColumn]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DescriptionColumnBox",
+      "ItemsSource": "{Binding DescriptionColumns}",
+      "AutomationProperties.Name": "{Binding [DescriptionColumn]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AmountColumnBox",
+      "ItemsSource": "{Binding Columns}",
+      "AutomationProperties.Name": "{Binding [AmountColumn]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DebitColumnBox",
+      "ItemsSource": "{Binding Columns}",
+      "AutomationProperties.Name": "{Binding [DebitColumn]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CreditColumnBox",
+      "ItemsSource": "{Binding Columns}",
+      "AutomationProperties.Name": "{Binding [CreditColumn]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NumberFormatPanel",
+      "IsEnabled": "{Binding HasColumns}"
+    },
+    {
+      "ItemsSource": "{Binding DecimalSeparators}",
+      "SelectedItem": "{Binding DecimalSeparator}",
+      "AutomationProperties.Name": "{Binding [Decimal]}"
+    },
+    {
+      "ItemsSource": "{Binding GroupSeparators}",
+      "AutomationProperties.Name": "{Binding [Grouping]}"
+    },
+    {
+      "ItemsSource": "{Binding NegativeSyntaxes}",
+      "AutomationProperties.Name": "{Binding [Negative]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NumericAccountsBox"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ValidateMappingButton",
+      "Command": "{Binding ValidateCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PreviewGrid",
+      "ItemsSource": "{Binding Preview}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ImportTab2",
+      "IsEnabled": "{Binding IsReady}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SelectAllRecordsButton",
+      "Command": "{Binding SelectAllRecordsCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DeselectAllRecordsButton",
+      "Command": "{Binding DeselectAllRecordsCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AccountSelectionGrid",
+      "ItemsSource": "{Binding AccountChoices}",
+      "AutomationProperties.Name": "{Binding [SelectAccounts]}"
+    },
+    {
+      "AutomationProperties.Name": "{Binding Account}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SelectionReconciliationText"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SelectionPreviewGrid",
+      "ItemsSource": "{Binding SelectionPreview}",
+      "IsReadOnly": "True",
+      "AutomationProperties.Name": "{Binding [SelectionPreviewTitle]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ImportTab3",
+      "IsEnabled": "{Binding CanOpenReview}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ConversionPreviewPanel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ConversionGrid",
+      "ItemsSource": "{Binding ConversionRows}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ConfirmationSummaryText"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ComparisonGrid",
+      "ItemsSource": "{Binding ComparisonRows}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "GroupedPreviewGrid",
+      "ItemsSource": "{Binding PreparedGroups}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ApprovalReferenceBox",
+      "AutomationProperties.Name": "{Binding [ApprovalReference]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ApproveInterpretationBox"
+    }
+  ],
+  "MainWindow.xaml": [
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ShellLayout"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SidebarColumn"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "Sidebar"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NavigationGroupLabel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ProjectPhase"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CompanyStepMarker"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CompanyStep",
+      "Click": "ChooseCompany"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ModelStepMarker"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ModelStep",
+      "Click": "ChooseModel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AnalysisPhase"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StudyStepMarker"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StudyStep",
+      "Click": "ChooseStudy"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ImportStepMarker"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ImportStep",
+      "Click": "ChooseImport"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ResourcesStepMarker"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ResourcesStep",
+      "Click": "ChooseResources"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AllocationPhase"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AllocationMenuGroup"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AllocationsStep",
+      "Click": "ChooseAllocations"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryStep",
+      "Click": "ChooseSecondary"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CapacityMenuGroup"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PhysicalStep",
+      "Click": "ChoosePhysicalActivity"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AuxiliaryStep",
+      "Click": "OpenAuxiliary"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RatesStep",
+      "Click": "ChooseRates"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ResultsMenuGroup"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CompositionStep",
+      "Click": "OpenCompositions"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CostFlowStep",
+      "Click": "ChooseCostFlows"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AllocationsStepMarker"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryStepMarker"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CostFlowStepMarker"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PhysicalStepMarker"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RatesStepMarker"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SettingsStep",
+      "Click": "ChooseSettings"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NavigationToggle",
+      "Click": "ToggleNavigation"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ProjectContextText"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ContextDetailsButton",
+      "Click": "ToggleContextDetails"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CompactTables"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ContextHelpButton",
+      "Click": "OpenContextHelp"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ContextDetails"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SaveLocation"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "GlobalActivityBar",
+      "AutomationProperties.Name": "{Binding Company.WorkingLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ActionFooter"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AllocationActionsHost"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "FieldHelpText"
+    },
+    {
+      "Click": "PreviousStep",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "WorkflowBack"
+    },
+    {
+      "Click": "ContinueWorkflow",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "WorkflowNext"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RootScrollViewer"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "MainContent"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "WorkflowTitle"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "WorkflowRequirement"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ProjectTaskPanel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ProjectTaskTitle"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ProjectTaskHelp"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "TaskStructureButton",
+      "Click": "ChooseProjectStructure"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "TaskAnalysisButton",
+      "Click": "ChooseProjectAnalysis"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "TaskContinueButton",
+      "Click": "ContinueProjectWork"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CompanyPanel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ModelPanel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StudyPanel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ResourcePanel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AllocationPanel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SecondaryPanel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CostFlowsPanel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PhysicalHome"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PhysicalHelp"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "OpenPhysicalButton",
+      "Click": "OpenPhysicalFromMenu",
+      "IsEnabled": "{Binding Studies.CanOpenPhysical}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PhysicalStudyButton",
+      "Click": "ChooseStudy"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RatesHome"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RatesHelp"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "OpenRatesButton",
+      "Click": "OpenRatesFromMenu",
+      "IsEnabled": "{Binding Studies.CanOpenPhysical}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DistributionDetails"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "BackToAllocationKeysButton",
+      "Click": "BackToAllocationKeys"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DistributionResourcePanel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SaveDistributionButton",
+      "Click": "SaveDistributionDetails",
+      "IsEnabled": "{Binding Resources.CanEdit}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PreferencesPanel"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "UiLanguageSelector",
+      "ItemsSource": "{Binding UiLanguageOptions}",
+      "SelectedItem": "{Binding SelectedUiLanguageTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}",
+      "AutomationProperties.Name": "{Binding LabelUiLanguage}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "FormatCultureSelector",
+      "ItemsSource": "{Binding FormatCultureOptions}",
+      "SelectedItem": "{Binding SelectedFormatCultureTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}",
+      "AutomationProperties.Name": "{Binding LabelFormatCulture}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "TimeZoneSelector",
+      "ItemsSource": "{Binding TimeZoneOptions}",
+      "SelectedItem": "{Binding SelectedTimeZoneId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}",
+      "AutomationProperties.Name": "{Binding LabelTimeZone}"
+    },
+    {
+      "Command": "{Binding RetrySavePreferencesCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DevelopmentTools"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "FxQuoteBox",
+      "AutomationProperties.Name": "{Binding LabelFxQuote}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "FxRateDateBox",
+      "AutomationProperties.Name": "{Binding LabelFxRateDate}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "FxRateSourceBox",
+      "AutomationProperties.Name": "{Binding LabelFxRateSource}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ApplyFxRateButton",
+      "Command": "{Binding ApplyFxRateCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "T02RoundingGroup"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PendingEditBox",
+      "AutomationProperties.Name": "{Binding LabelPendingValue}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StartEditButton",
+      "Command": "{Binding StartEditCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CommitEditButton",
+      "Command": "{Binding CommitEditCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ImportHome"
+    },
+    {
+      "Click": "OpenAnotherImport"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "WorkspaceContent"
+    }
+  ],
+  "ModelWorkspacePanel.xaml": [
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ModelSteps"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ModelTab0"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "LoadModelButton",
+      "Command": "{Binding LoadCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ModelBox",
+      "ItemsSource": "{Binding Models}",
+      "SelectedItem": "{Binding ModelChoice}",
+      "AutomationProperties.Name": "{Binding ModelLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DescriptionBox",
+      "IsReadOnly": "{Binding DescriptionReadOnly}",
+      "AutomationProperties.Name": "{Binding DescriptionLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NewDraftButton",
+      "Command": "{Binding NewDraftCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CloneModelButton",
+      "Command": "{Binding CloneCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RefreshModelButton",
+      "Command": "{Binding RefreshCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ModelTab1"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "MastersHelp"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CenterCodeBox",
+      "AutomationProperties.Name": "{Binding CenterCodeLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CenterNameBox",
+      "AutomationProperties.Name": "{Binding CenterNameLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SaveCenterButton",
+      "Command": "{Binding SaveCenterFormCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CreateCenterButton",
+      "Command": "{Binding NewCenterCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ToggleCenterButton",
+      "Command": "{Binding ToggleCenterCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "MasterBox",
+      "ItemsSource": "{Binding Centers}",
+      "SelectedItem": "{Binding Master}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CenterGrid",
+      "ItemsSource": "{Binding Centers}",
+      "SelectedItem": "{Binding Master}",
+      "IsReadOnly": "True"
+    },
+    {
+      "ItemsSource": "{Binding Units}",
+      "SelectedItem": "{Binding UnitMaster}",
+      "AutomationProperties.Name": "{Binding UnitLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ToggleUnitButton",
+      "Command": "{Binding ToggleUnitCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "UnitsCreationHost"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ModelTab2"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NodesHelp"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "GoToModelSetupButton",
+      "Click": "OpenModelSetup"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CloneToEditNodesButton",
+      "Command": "{Binding CloneCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NodeBox",
+      "ItemsSource": "{Binding Nodes}",
+      "SelectedItem": "{Binding SelectedNode}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NodeSummary",
+      "ItemsSource": "{Binding Nodes}",
+      "SelectedItem": "{Binding SelectedNode}",
+      "IsReadOnly": "True",
+      "IsEnabled": "{Binding CanSelectNode}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NodeEditor",
+      "IsEnabled": "{Binding CanEdit}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PoolBox",
+      "AutomationProperties.Name": "{Binding PoolLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NodeCodeBox",
+      "AutomationProperties.Name": "{Binding NodeCodeLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PhysicalBox",
+      "ItemsSource": "{Binding Centers}",
+      "SelectedItem": "{Binding Physical}",
+      "AutomationProperties.Name": "{Binding PhysicalLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RoleBox",
+      "ItemsSource": "{Binding Roles}",
+      "SelectedItem": "{Binding Role}",
+      "AutomationProperties.Name": "{Binding RoleLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "UnitBox",
+      "ItemsSource": "{Binding Units}",
+      "SelectedItem": "{Binding DriverUnit}",
+      "AutomationProperties.Name": "{Binding UnitLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NodeUnitCreator"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NodeUnitsCreationHost"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "FunctionBox",
+      "AutomationProperties.Name": "{Binding FunctionLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ApplyNodeButton",
+      "Command": "{Binding SaveNodeCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NewNodeButton",
+      "Command": "{Binding NewNodeCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RemoveNodeButton",
+      "Command": "{Binding DeleteNodeCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ModelTab3"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SaveModelButton",
+      "Command": "{Binding SaveCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ValidateModelButton",
+      "Command": "{Binding ValidateCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PublishModelButton",
+      "Command": "{Binding PublishCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StructureReviewTree",
+      "ItemsSource": "{Binding ReviewTree}",
+      "AutomationProperties.Name": "{Binding ReviewTreeLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DiscardModelButton",
+      "Command": "{Binding DiscardCommand}"
+    },
+    {
+      "Command": "{Binding CancelCommand}"
+    }
+  ],
+  "PhysicalActivityWindow.xaml": [
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StudySelector",
+      "ItemsSource": "{Binding StudyChoices}",
+      "AutomationProperties.Name": "{Binding StudyLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ActivityTable",
+      "ItemsSource": "{Binding Rows}",
+      "SelectedItem": "{Binding SelectedRow, Mode=TwoWay}",
+      "IsReadOnly": "{Binding IsReadOnly}",
+      "AutomationProperties.Name": "{Binding Title}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NodeColumn",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "UnitColumn",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NormalColumn"
+    },
+    {
+      "AutomationProperties.Name": "{Binding DataContext.CalculatorLabel,RelativeSource={RelativeSource AncestorType=DataGrid}}",
+      "IsEnabled": "{Binding DataContext.IsWritable,RelativeSource={RelativeSource AncestorType=DataGrid}}",
+      "Click": "AssistNormal"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RealColumn"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "UtilizationColumn",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CostColumn",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StatusColumn",
+      "IsReadOnly": "True"
+    },
+    {
+      "Click": "OpenPhysicalImport",
+      "IsEnabled": "{Binding IsWritable}"
+    },
+    {
+      "Click": "SaveDraft",
+      "IsEnabled": "{Binding CanSaveDraft}"
+    },
+    {
+      "Click": "Confirm",
+      "IsEnabled": "{Binding CanConfirm}"
+    },
+    {
+      "Click": "Annul",
+      "IsEnabled": "{Binding IsWritable}"
+    },
+    {
+      "Click": "History"
+    },
+    {
+      "Click": "CloseWindow"
+    }
+  ],
+  "PhysicalCapacityAssistantWindow.xaml": [
+    {
+      "Click": "Preview"
+    },
+    {
+      "Click": "Adopt",
+      "IsEnabled": "{Binding CanAdopt}"
+    },
+    {
+      "Click": "Cancel"
+    },
+    {
+      "ItemsSource": "{Binding Methods}",
+      "AutomationProperties.Name": "{Binding Title}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "FieldsScroll"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DaysInput",
+      "AutomationProperties.Name": "{Binding DaysLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ShiftsPerDayInput",
+      "AutomationProperties.Name": "{Binding ShiftsLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "HoursPerShiftInput",
+      "AutomationProperties.Name": "{Binding HoursLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "EquivalentResourcesInput",
+      "AutomationProperties.Name": "{Binding ResourcesLabel}"
+    },
+    {
+      "ItemsSource": "{Binding StoppageOptions}",
+      "AutomationProperties.Name": "{Binding StoppageBasisLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StoppagesInput",
+      "AutomationProperties.Name": "{Binding StoppagesLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NormalFactorInput",
+      "AutomationProperties.Name": "{Binding FactorLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "FactorReasonInput",
+      "AutomationProperties.Name": "{Binding FactorReasonLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DeclaredQuantityInput",
+      "AutomationProperties.Name": "{Binding NormalLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DeclaredSourceInput",
+      "AutomationProperties.Name": "{Binding SourceLabel}"
+    }
+  ],
+  "PhysicalImportWindow.xaml": [
+    {
+      "Click": "Browse"
+    },
+    {
+      "Click": "Preview"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PreviewTable",
+      "ItemsSource": "{Binding Lines}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ChoiceColumn"
+    },
+    {
+      "IsReadOnly": "True",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NodeColumn"
+    },
+    {
+      "IsReadOnly": "True",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "UnitColumn"
+    },
+    {
+      "IsReadOnly": "True",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NormalColumn"
+    },
+    {
+      "IsReadOnly": "True",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RealColumn"
+    },
+    {
+      "IsReadOnly": "True",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ExistingColumn"
+    },
+    {
+      "IsReadOnly": "True",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "WarningColumn"
+    },
+    {
+      "Click": "Apply",
+      "IsEnabled": "{Binding CanApply}"
+    },
+    {
+      "Click": "CloseWindow"
+    }
+  ],
+  "PrincipalRatesWindow.xaml": [
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RatesScroll"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CentersTable",
+      "ItemsSource": "{Binding Rows}",
+      "SelectedItem": "{Binding SelectedRow}",
+      "IsReadOnly": "True",
+      "AutomationProperties.Name": "{Binding [Centers]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CenterColumn"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "UnitColumn"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CostColumn"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RateColumn"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StatusColumn"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AnswersTable",
+      "ItemsSource": "{Binding Answers}",
+      "IsReadOnly": "True",
+      "AutomationProperties.Name": "{Binding [Answers]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "QuestionColumn"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AnswerColumn"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DetailTable",
+      "ItemsSource": "{Binding Details}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SourceColumn"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ComponentColumn"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "BehaviorColumn"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AmountColumn"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "BaseColumn"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ComponentRateColumn"
+    },
+    {
+      "Click": "Refresh"
+    },
+    {
+      "Click": "EditActivity"
+    },
+    {
+      "Click": "ViewCosts"
+    },
+    {
+      "Click": "Export",
+      "IsEnabled": "{Binding CanExport}"
+    },
+    {
+      "Click": "CloseWindow"
+    }
+  ],
+  "ResourceWorkspacePanel.xaml": [
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "Root"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ActionStatus"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AcknowledgeCultureButton",
+      "Command": "{Binding AcknowledgeCultureCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ReusableAdjustmentsSection"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AddAdjustmentRuleButton",
+      "Command": "{Binding AddRuleCommand}"
+    },
+    {
+      "AutomationProperties.Name": "{Binding [Name]}"
+    },
+    {
+      "AutomationProperties.Name": "{Binding [Pattern]}"
+    },
+    {
+      "AutomationProperties.Name": "{Binding [Code]}"
+    },
+    {
+      "ItemsSource": "{Binding Modes}",
+      "AutomationProperties.Name": "{Binding [Operation]}"
+    },
+    {
+      "AutomationProperties.Name": "{Binding [Value]}"
+    },
+    {
+      "AutomationProperties.Name": "{Binding [Reason]}"
+    },
+    {
+      "Command": "{Binding SaveCommand}"
+    },
+    {
+      "Command": "{Binding ApplyCommand}"
+    },
+    {
+      "Command": "{Binding UndoCommand}"
+    },
+    {
+      "Command": "{Binding DuplicateCommand}"
+    },
+    {
+      "Command": "{Binding DeleteCommand}"
+    },
+    {
+      "Command": "{Binding ConfirmCommand}"
+    },
+    {
+      "Command": "{Binding CancelCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ResourceGrid",
+      "ItemsSource": "{Binding Rows}",
+      "SelectedItem": "{Binding ResourceChoice}",
+      "IsEnabled": "{Binding CanNavigate}",
+      "IsReadOnly": "False"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CorrectionsColumn"
+    },
+    {
+      "AutomationProperties.Name": "{Binding DataContext[Adjustments], RelativeSource={RelativeSource AncestorType=UserControl}}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RuleAdjustmentsColumn",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "OpenSelectedResourceButton",
+      "Command": "{Binding OpenSelectedResourceCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RefreshButton",
+      "Command": "{Binding RefreshCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StartRevalueButton",
+      "Command": "{Binding StartRevalueCommand}"
+    },
+    {
+      "AutomationProperties.Name": "{Binding DataContext[Quote], RelativeSource={RelativeSource AncestorType=UserControl}}"
+    },
+    {
+      "AutomationProperties.Name": "{Binding DataContext[RateDate], RelativeSource={RelativeSource AncestorType=UserControl}}"
+    },
+    {
+      "AutomationProperties.Name": "{Binding DataContext[RateSource], RelativeSource={RelativeSource AncestorType=UserControl}}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PrepareRevalueButton",
+      "Command": "{Binding PrepareRevalueCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RevalueReasonBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [ChangeReason]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CommitRevalueButton",
+      "Command": "{Binding CommitRevalueCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CancelRevalueButton",
+      "Command": "{Binding CancelRevalueCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ResetReasonBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [ResetReason]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ResetButton",
+      "Command": "{Binding ResetCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "BackToCorrectionsButton",
+      "Command": "{Binding CloseDestinationsCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartGrid",
+      "ItemsSource": "{Binding Parts}",
+      "SelectedItem": "{Binding PartChoice}",
+      "IsEnabled": "{Binding CanNavigate}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "LoadPartButton",
+      "Command": "{Binding LoadPartCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RemovePartButton",
+      "Command": "{Binding RemovePartCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ClearPartButton",
+      "Command": "{Binding ClearPartCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AddPendingButton",
+      "Command": "{Binding AddPendingCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_AmountBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [PartAmount]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_RouteBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [Route]}",
+      "ItemsSource": "{Binding Routes}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_ObjectIdBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [Object]}",
+      "ItemsSource": "{Binding Objects}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ObjectForm_CodeBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [ObjectCode]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ObjectForm_NameBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [ObjectName]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ObjectKindBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [ObjectKind]}",
+      "ItemsSource": "{Binding ObjectKinds}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PutObjectButton",
+      "Command": "{Binding PutObjectCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ClearObjectButton",
+      "Command": "{Binding ClearObjectCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_PoolIdBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [Pool]}",
+      "ItemsSource": "{Binding Pools}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_ExclusionBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [ExclusionReason]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_BehaviorBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [Behavior]}",
+      "ItemsSource": "{Binding Behaviors}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_LayerBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [Layer]}",
+      "ItemsSource": "{Binding Layers}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_UnitIdBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [ActivityUnit]}",
+      "ItemsSource": "{Binding Units}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_StartBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [HorizonStart]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_EndBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [HorizonEnd]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_MinimumBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [Minimum]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_MaximumBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [Maximum]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_CapacityBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [Capacity]}",
+      "ItemsSource": "{Binding Capacities}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_TheoreticalBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [Theoretical]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_PracticalBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [Practical]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_NormalBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [Normal]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PartForm_ActualBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [Actual]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ApplyPartButton",
+      "Command": "{Binding ApplyPartCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ReviewGrid",
+      "ItemsSource": "{Binding Parts}",
+      "SelectedItem": "{Binding PartChoice}",
+      "IsEnabled": "{Binding CanNavigate}",
+      "IsReadOnly": "True"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ReasonBox",
+      "IsEnabled": "{Binding CanEdit}",
+      "AutomationProperties.Name": "{Binding [ChangeReason]}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DiscardButton",
+      "Command": "{Binding DiscardCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CancelButton",
+      "Command": "{Binding CancelCommand}"
+    }
+  ],
+  "SecondaryWorkspacePanel.xaml": [
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "Workspace"
+    }
+  ],
+  "StudyWorkspacePanel.xaml": [
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "RefreshStudyButton",
+      "Command": "{Binding RefreshCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "LoadStudyButton",
+      "Command": "{Binding LoadCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StudyBox",
+      "ItemsSource": "{Binding Studies}",
+      "SelectedItem": "{Binding StudyChoice}",
+      "IsEnabled": "{Binding HasStudies}",
+      "AutomationProperties.Name": "{Binding Title}"
+    },
+    {
+      "Click": "GoToModels"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "AnalysisForm",
+      "IsEnabled": "{Binding CanEdit}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StudyNameBox",
+      "AutomationProperties.Name": "{Binding NameLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StudyModelBox",
+      "ItemsSource": "{Binding PublishedModels}",
+      "IsEnabled": "{Binding HasPublishedModels}",
+      "SelectedItem": "{Binding ModelChoice}",
+      "AutomationProperties.Name": "{Binding ModelLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StartPicker",
+      "AutomationProperties.Name": "{Binding StartLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "EndPicker",
+      "AutomationProperties.Name": "{Binding EndLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "StudyCurrencyBox",
+      "ItemsSource": "{Binding CurrencyOptions}",
+      "SelectedItem": "{Binding Currency}",
+      "AutomationProperties.Name": "{Binding CurrencyLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ScenarioBox",
+      "ItemsSource": "{Binding Scenarios}",
+      "SelectedItem": "{Binding Scenario}",
+      "AutomationProperties.Name": "{Binding ScenarioLabel}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CreateStudyButton",
+      "Command": "{Binding CreateCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SaveStudyButton",
+      "Command": "{Binding SaveCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "NewStudyButton",
+      "Command": "{Binding NewCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "PhysicalActivityButton",
+      "IsEnabled": "{Binding CanOpenPhysical}",
+      "Click": "OpenPhysicalActivity"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ActionStatus"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ImportHistoryText"
+    },
+    {
+      "Click": "OpenImportColumns",
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "InspectFileButton"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "CaptureStudyButton",
+      "Command": "{Binding CaptureCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "ToggleStudyButton",
+      "Command": "{Binding ToggleStateCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "DiscardStudyButton",
+      "Command": "{Binding DiscardCommand}"
+    },
+    {
+      "Command": "{Binding CancelCommand}"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SnapshotHeader"
+    },
+    {
+      "{http://schemas.microsoft.com/winfx/2006/xaml}Name": "SnapshotBox",
+      "ItemsSource": "{Binding Snapshots}",
+      "SelectedItem": "{Binding SnapshotChoice}",
+      "IsEnabled": "{Binding Ready}",
+      "AutomationProperties.Name": "{Binding SnapshotLabel}"
+    }
+  ]
+}

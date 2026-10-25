@@ -8,8 +8,10 @@ public partial class PhysicalImportWindow : IntegratedWorkspaceWindow
 {
     private readonly PhysicalImportEditor editor;
     private bool applied;
+    private readonly PhysicalActivityEditor activityHost;
     public PhysicalImportWindow(PhysicalActivityEditor host)
     {
+        activityHost = host;
         InitializeComponent();
         editor = new PhysicalImportEditor(host);
         DataContext = editor;
@@ -24,12 +26,24 @@ public partial class PhysicalImportWindow : IntegratedWorkspaceWindow
         {
             if (editor.Busy) { args.Cancel = true; return; }
             if (WorkspaceHost is not null && !applied && editor.Lines.Any(line => line.Replace) &&
-                MessageBox.Show(WorkspaceHost, host.UnsavedBody, host.UnsavedTitle,
-                    MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+                new EconomicConfirmationWindow(host.UnsavedTitle, host.Label("Activity.Import.DiscardReview"),
+                    host.Label("UX.DiscardLeave"), host.Label("UX.KeepEditing")) { Owner = WorkspaceHost }.ShowDialog() != true)
                 args.Cancel = true;
         };
     }
 
+    private void SaveTemplate(object sender, RoutedEventArgs e)
+    {
+        var picker = new SaveFileDialog { Filter = "CSV|*.csv", FileName = "VALDRIO-actividad-plantilla.csv" };
+        if (picker.ShowDialog(WorkspaceHost ?? (Window)this) != true) return;
+        try
+        {
+            System.IO.File.WriteAllText(picker.FileName, editor.CreateTemplate(), new System.Text.UTF8Encoding(true));
+            editor.Feedback = activityHost.Label("Activity.Import.TemplateSaved");
+        }
+        catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException)
+        { editor.Feedback = activityHost.Label("Activity.Import.TemplateFailed"); }
+    }
     private async void Browse(object sender, RoutedEventArgs e)
     {
         var picker = new OpenFileDialog { Filter = "Physical data (*.csv;*.xlsx)|*.csv;*.xlsx",

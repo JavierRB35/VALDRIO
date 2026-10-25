@@ -42,8 +42,7 @@ public partial class PhysicalActivityWindow : IntegratedWorkspaceWindow
         if (choice.Value.Id == editor.Study.Id) return;
         CommitTableEdit();
         if (editor.HasPendingEdits &&
-            MessageBox.Show(WorkspaceHost ?? (Window)this, editor.UnsavedBody, editor.UnsavedTitle,
-                MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+            !ConfirmDiscard())
         {
             SetStudyChoice();
             return;
@@ -74,10 +73,12 @@ public partial class PhysicalActivityWindow : IntegratedWorkspaceWindow
     {
         CommitTableEdit();
         if (editor.HasPendingEdits &&
-            MessageBox.Show(WorkspaceHost ?? (Window)this, editor.UnsavedBody, editor.UnsavedTitle,
-                MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+            !ConfirmDiscard())
             e.Cancel = true;
     }
+
+    private bool ConfirmDiscard() => new EconomicConfirmationWindow(editor.UnsavedTitle, editor.UnsavedBody,
+        editor.Label("UX.DiscardLeave"), editor.Label("UX.ReturnRows")) { Owner = WorkspaceHost ?? (Window)this }.ShowDialog() == true;
 
     private void CommitTableEdit()
     {
@@ -121,6 +122,6 @@ public partial class PhysicalActivityWindow : IntegratedWorkspaceWindow
         editor.Annul();
     }
     private void History(object sender, RoutedEventArgs e) =>
-        MessageBox.Show(WorkspaceHost ?? (Window)this, editor.History(), editor.HistoryLabel, MessageBoxButton.OK, MessageBoxImage.Information);
+        new PhysicalHistoryPage(editor) { Owner = WorkspaceHost ?? (Window)this }.ShowIntegrated();
     private void CloseWindow(object sender, RoutedEventArgs e) => Close();
 }

@@ -9,6 +9,8 @@ namespace Valdrio.Desktop;
 
 public sealed record PhysicalQualityOption(PhysicalEvidenceQuality Value, string Label);
 public sealed record PhysicalStudyChoice(StudyDefinition Value, string Label);
+public sealed record PhysicalHistoryDisplay(long Version, string Recorded, string Normal, string Real,
+    string Unit, string State, string Reason);
 
 internal sealed record PhysicalRowInputs(
     string Normal, string Real, string Theoretical, string Practical,
@@ -97,6 +99,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     public StudyDefinition Study => study;
     public string ProjectName => company.Name;
     public string StudyName => study.Name;
+    public string AnalysisContext => study.Currency.FunctionalCurrencyCode + " · " + Label("Study." + study.State);
     public string StudyPeriod => study.PeriodStart.Value.ToString("d", formatCulture) +
         " – " + study.PeriodEnd.Value.ToString("d", formatCulture);
     public bool HasPendingEdits => Rows.Any(r => r.HasChanges);
@@ -158,8 +161,10 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     public string SelectedContext => SelectedRow?.Node ?? "";
     partial void OnSelectedRowChanged(PhysicalActivityRow? value)
     {
-        OnPropertyChanged(nameof(CanSaveDraft)); OnPropertyChanged(nameof(CanConfirm));
+        OnPropertyChanged(nameof(PendingRowsSummary)); OnPropertyChanged(nameof(CanSaveDraft)); OnPropertyChanged(nameof(CanConfirm));
         OnPropertyChanged(nameof(SelectedContext));
+        OnPropertyChanged(nameof(SaveDraftLabel)); OnPropertyChanged(nameof(ConfirmLabel));
+        OnPropertyChanged(nameof(PendingRowsSummary));
     }
     public string ProjectLabel => Label("Activity.Project");
     public string StudyLabel => Label("Activity.Study");
@@ -220,7 +225,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     {
         OnPropertyChanged(nameof(ProjectName));
         OnPropertyChanged(nameof(StudyName));
-        OnPropertyChanged(nameof(StudyPeriod));
+        OnPropertyChanged(nameof(StudyPeriod)); OnPropertyChanged(nameof(AnalysisContext));
         OnPropertyChanged(nameof(CurrentStudyChoice));
         OnPropertyChanged(nameof(IsReadOnly));
         OnPropertyChanged(nameof(IsWritable));
@@ -232,8 +237,9 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     public string ExceptionLabel => Label("Activity.Exception");
     public string ZeroReasonLabel => Label("Activity.ZeroReason");
     public string CorrectionLabel => Label("Activity.Correction");
-    public string SaveDraftLabel => Label("Activity.SaveDraft");
-    public string ConfirmLabel => Label("Activity.Confirm");
+    public string SaveDraftLabel => Label("Activity.SaveDraft") + " · " + SelectedContext;
+    public string ConfirmLabel => Label("Activity.Confirm") + " · " + SelectedContext;
+    public string PendingRowsSummary => string.Format(formatCulture, Label("Activity.PendingCount"), Rows.Count(r => r != SelectedRow && r.HasChanges));
     public string AnnulLabel => Label("Activity.Annul");
     public string CloseLabel => Label("Activity.Cancel");
     public string NormalLabel => Label("Activity.Normal");
@@ -299,7 +305,8 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
             Rows.Add(row);
             row.PropertyChanged += (_, e) =>
             {
-                if (e.PropertyName == nameof(PhysicalActivityRow.HasChanges)) OnPropertyChanged(nameof(CanSaveDraft));
+                if (e.PropertyName == nameof(PhysicalActivityRow.HasChanges))
+                { OnPropertyChanged(nameof(PendingRowsSummary)); OnPropertyChanged(nameof(CanSaveDraft)); }
                 if (row.IsLoading || e.PropertyName is nameof(PhysicalActivityRow.HasChanges) or
                     nameof(PhysicalActivityRow.Status) or nameof(PhysicalActivityRow.Utilization)) return;
                 row.Status = row.HasChanges ? Label("Activity.UnsavedRow") : row.SavedStatus;
@@ -374,7 +381,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     {
         row.ReadFrom(saved, formatCulture, Label("Activity.Pending"), Label("Activity.UtilizationUndefined"),
             Label("Activity.AnnulledRow"), Label("Activity.State.Draft"), Label("Activity.State.Confirmed"));
-        OnPropertyChanged(nameof(CanSaveDraft));
+        OnPropertyChanged(nameof(PendingRowsSummary)); OnPropertyChanged(nameof(CanSaveDraft));
         Feedback = Label("Activity.RowSaved") + " · " + row.Node;
     }
 
@@ -386,5 +393,15 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
             string.Format(formatCulture, "v{0} · {1} · {2}: {3} / {4} · {5}",
                 v.Version, v.RecordedAtUtc, Label("Activity.State." + v.State), v.NormalQuantity?.ToString(formatCulture) ?? "—",
                 v.RealQuantity?.ToString(formatCulture) ?? "—", v.CorrectionReason ?? v.ExceptionReason ?? "—")));
+    }
+
+    public IReadOnlyList<PhysicalHistoryDisplay> HistoryRows()
+    {
+        if (SelectedRow is not { } row) return [];
+        return activity.ReadHistory(study.CompanyId, study.Id, row.PoolId).Select(v => new PhysicalHistoryDisplay(
+            v.Version, v.RecordedAtUtc.ToString(), v.NormalQuantity?.ToString(formatCulture) ?? "—",
+            v.RealQuantity?.ToString(formatCulture) ?? "—", row.Unit, Label("Activity.State." + v.State),
+            string.Join(" · ", new[] { v.CorrectionReason, v.ExceptionReason, v.NormalZeroReason }
+                .Where(reason => !string.IsNullOrWhiteSpace(reason))))).ToArray();
     }
 }

@@ -105,6 +105,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public Func<Task>? AfterChangeAsync { get; set; }
     // A recoverable file-open error is surfaced visibly without failing the UI dispatcher.
     public Action<string>? OpenFailure { get; set; }
+    public Func<string, string, string, bool>? ConfirmFileOperation { get; set; }
     public IModelWorkspace? ActiveModels => active?.Models;
     public IStudyWorkspace? ActiveStudies => active?.Studies;
     public IImportWorkspace? ActiveImports => active?.Imports;
@@ -411,6 +412,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     private async Task Backup()
     {
         var path = dialogs.SelectBackupDestination(); if (path is null) return;
+        if (ConfirmFileOperation?.Invoke(Text("CompanyBackup"), ActivePath ?? "", path) == false) return;
         await Run(token => Task.Run(() => active!.Backup(path, token)));
     }
     private async Task Restore()
@@ -418,6 +420,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
         if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
         var source = dialogs.SelectBackupSource(); if (source is null) return;
         var target = dialogs.SelectRestoreDestination(); if (target is null) return;
+        if (ConfirmFileOperation?.Invoke(Text("CompanyRestore"), source, target) == false) return;
         await Run(async token => await ReplaceAsync(await Task.Run(() => files.Restore(source, target, token))));
     }
     private async Task Upgrade()
@@ -425,6 +428,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
         if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
         var source = upgradeSourcePath ?? dialogs.SelectFile(); if (source is null) return;
         var target = dialogs.SelectNewFile(); if (target is null) return;
+        if (ConfirmFileOperation?.Invoke(Text("CompanyUpgrade"), source, target) == false) return;
         await Run(async token => await ReplaceAsync(await Task.Run(() => files.Upgrade(source, target, "local-user", token))));
         if (diagnostic is null) upgradeSourcePath = null;
     }

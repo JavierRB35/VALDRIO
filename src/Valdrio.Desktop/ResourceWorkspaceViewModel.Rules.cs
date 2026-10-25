@@ -10,6 +10,7 @@ namespace Valdrio.Desktop;
 
 public sealed partial class ResourceWorkspaceViewModel
 {
+    public bool HasPendingRuleEdits => RuleCards.Any(c => c.IsDirty);
     public string RuleTotalLabel => RuleText("RuleTotal");
     public string ResourceListTitle => HasRuleAdjustments ? RuleText("AccountsAndCosts") : this["ListTitle"];
     public string ResourceListHelp => HasRuleAdjustments ? RuleText("ManualHelp") : this["ListHelp"];
@@ -51,7 +52,7 @@ public sealed partial class ResourceWorkspaceViewModel
             Code = source.Code, Value = source.Value, Mode = source.Mode, Reason = source.Reason };
         RuleCards.Add(copy); RuleEdited();
     }
-    internal void RuleEdited() { OnPropertyChanged(nameof(IsDirty)); RefreshCommands(); }
+    internal void RuleEdited() { OnPropertyChanged(nameof(HasPendingRuleEdits)); OnPropertyChanged(nameof(IsDirty)); RefreshCommands(); }
     private void RebuildRuleCards()
     {
         var drafts = RuleCards.Where(c => c.IsDirty).ToArray();

@@ -199,7 +199,8 @@ public partial class MainWindow
             : vm.Models?.Current?.Structure.Description ?? "—";
         var analysisName = vm.Studies?.Current?.Name ?? "—";
         ProjectContextText.Text = hasProject
-            ? string.Format(vm.Guide("Context"), projectName, structureName, analysisName)
+            ? string.Format(vm.Guide("Context"), projectName, structureName, analysisName) +
+                (vm.Studies?.ContextSummary is { Length: > 0 } context ? " · " + context : "")
             : "";
 
         ProjectTaskPanel.Visibility = workflowStep == 0 && hasProject ? Visibility.Visible : Visibility.Collapsed;

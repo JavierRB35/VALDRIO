@@ -25,7 +25,7 @@ Preparar y aplicar observaciones físicas de capacidad normal y actividad real d
 | :--- | :--- | :--- |
 | Vista previa de registros | Nodo, unidad, normal, real, existentes y alerta | Permite comparar origen con datos guardados. |
 | Diagnósticos de importación | Compatibilidad de filas y reglas | Señalan problemas antes de escribir. |
-| Observaciones importadas | Filas aplicadas | Quedan sujetas a estado/versionado y comprobación T14. |
+| Observaciones importadas | Filas aplicadas | Quedan sujetas a estado/versionado y comprobación en Actividad y capacidades. |
 
 ## 4. Casos de uso, validaciones y errores frecuentes
 - El archivo de actividad no sustituye la importación contable de saldos.

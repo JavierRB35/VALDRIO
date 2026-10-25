@@ -5,6 +5,30 @@ namespace Valdrio.Desktop;
 
 public partial class ModelWorkspacePanel : UserControl
 {
+    private Action? restoreStructureCell;
+    private void BeginStructureCellEdit(object? sender, DataGridBeginningEditEventArgs e)
+    {
+        if (DataContext is not ModelWorkspaceViewModel vm) { e.Cancel = true; return; }
+        if (sender == CenterGrid)
+        {
+            if (!vm.CanEditMasters || !Equals(vm.Master, e.Row.Item)) { e.Cancel = true; return; }
+            var code = vm.CenterCode; var name = vm.CenterName;
+            restoreStructureCell = () => { vm.CenterCode = code; vm.CenterName = name; };
+        }
+        else
+        {
+            if (!vm.CanEdit || !Equals(vm.SelectedNode, e.Row.Item)) { e.Cancel = true; return; }
+            var code = vm.NodeCode; var description = vm.PoolDescription; var functions = vm.FunctionTags;
+            var center = vm.Physical; var role = vm.Role; var unit = vm.DriverUnit;
+            restoreStructureCell = () => { vm.NodeCode = code; vm.PoolDescription = description;
+                vm.FunctionTags = functions; vm.Physical = center; vm.Role = role; vm.DriverUnit = unit; };
+        }
+    }
+    private void EndStructureCellEdit(object? sender, DataGridCellEditEndingEventArgs e)
+    {
+        if (e.EditAction == DataGridEditAction.Cancel) restoreStructureCell?.Invoke();
+        restoreStructureCell = null;
+    }
     private ModelWorkspaceViewModel? tableViewModel;
 
     public ModelWorkspacePanel()

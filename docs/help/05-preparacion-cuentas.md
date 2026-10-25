@@ -21,7 +21,7 @@ Transformar recursos importados en costes analíticos clasificables y repartible
 | Ruta/destino | Selector | Por parte | Selecciona pool, objeto directo, pendiente o exclusión conforme a la clasificación. |
 | Objeto: código, nombre, tipo | Texto/selector | Si destino directo | Identifica destino al margen del reparto por pools. |
 | Pool, conducta, capa | Selectores | Según destino | Clasifican coste por destino y naturaleza fija/variable. |
-| Unidad, horizonte y magnitudes físicas avanzadas | Cantidad/fecha | Según clasificación | Metadatos avanzados de recurso: no equivalen por sí mismos a una observación física confirmada en T14. |
+| Unidad, horizonte y magnitudes físicas avanzadas | Cantidad/fecha | Según clasificación | Metadatos avanzados de recurso: no equivalen por sí mismos a una observación física confirmada en Actividad y capacidades. |
 | Revaluación: tipo, fecha, fuente, motivo | Tipo de cambio/fecha/texto | Solo revaluación | Controla conversión/revisión monetaria con trazabilidad. |
 | Guardar/confirmar/aplicar/deshacer | Acciones | Según operación | Una regla guardada no se aplica sola y una vista previa no altera el análisis. |
 

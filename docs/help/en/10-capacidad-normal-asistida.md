@@ -23,7 +23,7 @@ Propose a normal-capacity figure from calendar availability, comparable history 
 ## 3. Results and interpretation
 | Result | Formula or source | Interpretation / decision |
 | :--- | :--- | :--- |
-| Normal-capacity proposal | Formula for selected method | Candidate reference pending T14 validation. |
+| Normal-capacity proposal | Formula for selected method | Candidate reference pending Activity and capacities validation. |
 | Theoretical and practical capacity | Calendar intermediate values | Explain the derivation without changing cost amounts. |
 | Calculation steps and warnings | Inputs, operations and sources | Support review before adoption. |
 

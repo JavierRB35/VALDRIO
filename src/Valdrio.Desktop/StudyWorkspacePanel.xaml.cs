@@ -7,6 +7,11 @@ namespace Valdrio.Desktop;
 
 public partial class StudyWorkspacePanel : UserControl
 {
+    private async void OpenResults(object sender, RoutedEventArgs e)
+    {
+        if (Window.GetWindow(this) is MainWindow main && DataContext is StudyWorkspaceViewModel vm && await vm.CanLeaveAsync())
+            await main.NavigateWorkflow(8);
+    }
     public StudyWorkspacePanel()
     {
         InitializeComponent();

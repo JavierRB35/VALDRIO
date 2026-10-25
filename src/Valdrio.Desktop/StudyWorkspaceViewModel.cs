@@ -176,7 +176,12 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public string DiscardLabel => Text("Model.Discard");
     public string CancelLabel => Text("CompanyCancel");
     public string SnapshotLabel => Text("Study.Snapshots");
+    public string ContextSummary => Current is null ? "" :
+        formatter.FormatDate(Current.PeriodStart.Value, Format, DateDisplayPreset.Short) + " – " +
+        formatter.FormatDate(Current.PeriodEnd.Value, Format, DateDisplayPreset.Short) + " · " +
+        Current.Currency.FunctionalCurrencyCode + " · " + StateText(Current.State);
     public string RunHistory => Text("Study.RunHistoryEmpty");
+    public string ResultsLabel => Text("Study.Results");
     public string ImportedAmounts
     {
         get

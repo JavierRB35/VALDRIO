@@ -1,0 +1,20 @@
+# Bulky disposable data and intermediate visual captures remain local.
+local-scripts/
+*.png
+*.log
+*.trx
+*.valdrio*
+before-baseline/
+after-current/
+acceptance-final/
+acceptance-release/
+auxiliary-release/
+fixtures/
+!acceptance-complete/accounts-es-1280.png
+!acceptance-complete/accounts-en-1280.png
+!acceptance-complete/preferences.png
+!acceptance-complete/nodes-table.png
+!acceptance-complete/activity-integrated.png
+!rates-release/rates-es.png
+!composition-release/composition-es.png
+!auxiliary-current/aux-es.png

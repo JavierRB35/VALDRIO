@@ -54,6 +54,7 @@
    <TextBlock TextWrapping="Wrap" Margin="0,4,0,6" AutomationProperties.LiveSetting="Polite" x:Name="ImportStepHelp"/>
   </StackPanel>
   <StackPanel DockPanel.Dock="Bottom">
+   <TextBlock Text="{Binding OperationSummary}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,4,0,8"/>
    <TextBlock Text="{Binding UserStatus}" AutomationProperties.LiveSetting="Polite">
     <TextBlock.Style>
      <Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">

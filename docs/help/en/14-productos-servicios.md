@@ -1,7 +1,7 @@
 # Contextual help: Products, services and compositions
 
 ## 1. Purpose and financial function
-Define and publish physical bills of materials or service compositions, including nested semi-finished items. T17 computes physical needs; it does not value them with prices or record actual consumption.
+Define and publish physical bills of materials or service compositions, including nested semi-finished items. This view computes physical needs; it does not value them with prices or record actual consumption.
 
 ## 2. Fields and inputs
 | Field / parameter | Type / unit | Required | Purpose and cost impact |
@@ -24,10 +24,10 @@ Define and publish physical bills of materials or service compositions, includin
 | Recipe version state | Draft or published revision | Shows which assumptions apply. |
 | Physical needs | Converted quantities adjusted for yield and discrete units | Plan future requirements, not monetary valuation. |
 | Analyst questions | Batches, dependencies, losses and versions | Expose missing or changing assumptions. |
-| Expanded composition | Final components without duplicating semi-finished intermediates | Review requirements prior to future T18 costing. |
+| Expanded composition | Final components without duplicating semi-finished intermediates | Review physical requirements. Monetary valuation is unavailable in this view. |
 
 ## 4. Use cases, validation and common errors
-- T17 does not include prices, monetary rates or T19 actual consumption.
+- This view does not include prices, monetary rates or actual consumption records.
 - Never silently convert unrelated measurement dimensions.
 - Semi-finished dependencies must reference published versions and not form cycles.
 - Published recipes require a new version for changes.

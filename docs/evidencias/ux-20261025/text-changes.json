@@ -1,0 +1,258 @@
+{
+  "changed": {
+    "Study.RunHistoryEmpty": [
+      "Consulta los cálculos guardados en Resultados y trazabilidad. Este historial conserva datos de entrada; no enumera los cálculos.",
+      "View saved calculations in Results and traceability. This history contains input data, not the list of calculations."
+    ],
+    "Study.Capture": [
+      "Crear punto de control de datos (avanzado)",
+      "Create input checkpoint (advanced)"
+    ],
+    "Study.Close": [
+      "Cerrar análisis para edición",
+      "Close analysis for editing"
+    ],
+    "Guide.ContinueAllocations": [
+      "Ir a Reparto primario",
+      "Go to Primary allocation"
+    ],
+    "Guide.ImportStart": [
+      "Preparar un proyecto para importar contabilidad",
+      "Prepare a project to import accounting data"
+    ],
+    "CompanyRestore": [
+      "Restaurar copia en un archivo…",
+      "Restore backup to a file…"
+    ],
+    "CompanyUpgrade": [
+      "Actualizar formato del archivo en una copia nueva",
+      "Upgrade file format in a new copy"
+    ],
+    "Model.ColumnPool": [
+      "Grupo de costes",
+      "Cost group"
+    ],
+    "Model.NodeCode": [
+      "Código de la unidad de cálculo",
+      "Calculation unit code"
+    ],
+    "Model.NodePersistenceHelp": [
+      "Ámbito: estructura reutilizable. Guardar un nodo conserva inmediatamente ese registro en el borrador. Finalizar fija la estructura para utilizarla. Los nodos adaptados de un análisis pertenecen solo a ese análisis.",
+      "Scope: reusable structure. Saving a node immediately stores that record in the draft. Finalizing fixes the structure for use. Adapted analysis nodes belong only to that analysis."
+    ],
+    "Guide.Help.UnitDimension": [
+      "Magnitud que mide. Usa time para tiempo, quantity para cantidad o batch para lotes; conserva el código de magnitud de las unidades con las que deba ser compatible. Magnitudes distintas no son equivalentes.",
+      "Measured dimension. Use time for time, quantity for quantity or batch for batches; retain the dimension code of units that need to be compatible. Different dimensions are not equivalent."
+    ],
+    "Resource.DescriptionMissing": [
+      "Sin descripción en el archivo de origen",
+      "No description in the source file"
+    ],
+    "ImportMapping.ComparisonHelp": [
+      "Diferencia entre acumulados: por ejemplo, 12.000 − 9.000 = 3.000 del intervalo. Compara cierres del mismo ejercicio, ámbito, moneda y criterio de signos. Indica el cierre anterior; el actual es el final del periodo del análisis.",
+      "Difference between cumulative balances: for example, 12,000 − 9,000 = 3,000 for the interval. Compare closing balances with the same year, scope, currency and sign convention. Enter the previous closing date; the current date ends the analysis period."
+    ],
+    "ImportMapping.ReviewStepHelp": [
+      "Revisa los totales seleccionados, el destino y el significado; aprueba e incorpora los datos. Después ve a Preparar cuentas para revisar correcciones y ajustes con motivo, conservando el original.",
+      "Review selected totals, destination and meaning; approve and incorporate the data. Then go to Prepare accounts to review corrections and reasoned adjustments while preserving the original."
+    ],
+    "ImportMapping.ConfirmedSummary": [
+      "Importación guardada · {1} cuentas incorporadas. Continúa a Preparar cuentas.",
+      "Import saved · {1} accounts incorporated. Continue to Prepare accounts."
+    ],
+    "AllocationUI.CompositionTitle": [
+      "Comportamiento del coste",
+      "Cost behaviour"
+    ],
+    "AllocationUI.CompositionFixedDefault": [
+      "Fijo por defecto: pendiente de revisión",
+      "Fixed by default: awaiting review"
+    ],
+    "AllocationUI.CompositionApplyWeights": [
+      "Guardar comportamiento del coste",
+      "Save cost behaviour"
+    ],
+    "AllocationUI.CompositionWeightsInvalid": [
+      "Para un coste mixto, introduce un porcentaje variable mayor que 0 y menor que 100. La parte fija será el resto. Para todo fijo o todo variable, cambia el comportamiento.",
+      "For a mixed cost, enter a variable percentage greater than 0 and less than 100. The fixed share is the remainder. For entirely fixed or variable costs, change the behaviour."
+    ],
+    "AllocationUI.CompositionWeightsHelp": [
+      "Fijo es la hipótesis inicial, no una clasificación revisada. En Mixto solo editas el porcentaje variable: 1.000 con 30 % variable equivale a 300 variable y 700 fijo. No cambia los destinos ni sus porcentajes de reparto.",
+      "Fixed is the initial assumption, not a reviewed classification. For Mixed, edit only the variable percentage: 1,000 with 30% variable means 300 variable and 700 fixed. This does not change destinations or allocation shares."
+    ],
+    "AllocationUI.SecondaryGross": [
+      "Transferencias internas de auxiliares: no sumar al coste final",
+      "Internal auxiliary transfers: do not add to final cost"
+    ],
+    "Reuse.Adopt": [
+      "Adoptar y aplicar reglas seleccionadas",
+      "Adopt and apply selected rules"
+    ],
+    "Activity.SaveDraft": [
+      "Guardar borrador de la fila",
+      "Save row draft"
+    ],
+    "Activity.Confirm": [
+      "Confirmar datos de la fila",
+      "Confirm row data"
+    ],
+    "Activity.Import.Title": [
+      "Importar actividad y capacidad — CSV / XLSX",
+      "Import activity and capacity — CSV / XLSX"
+    ],
+    "Activity.Import.Help": [
+      "Cabeceras: node, unit, period_start, period_end y normal o real. node es el código de la unidad de cálculo; unit debe coincidir con su unidad. Fechas: AAAA-MM-DD. Revisa las filas y selecciona cuáles sustituir. La importación guarda borradores; cada observación se confirma después.",
+      "Headers: node, unit, period_start, period_end and normal or real. node is the calculation unit code; unit must match its unit. Dates: YYYY-MM-DD. Review rows and select replacements. Import saves drafts; confirm each observation afterwards."
+    ],
+    "Activity.SelectionHelp": [
+      "Edita capacidad normal y actividad real en la tabla. Utilización = real ÷ normal; sin dato no es cero. Guardar y confirmar afectan solo a la fila seleccionada. Completa sus fuentes y calidad antes de confirmar; las otras filas conservan sus cambios pendientes.",
+      "Edit normal capacity and actual activity in the table. Utilization = actual ÷ normal; missing is not zero. Save and confirm affect only the selected row. Complete its sources and quality before confirmation; other rows retain their pending changes."
+    ],
+    "Aux.Help": [
+      "Selecciona una unidad de cálculo auxiliar. Normal y real proceden de Actividad y capacidades. Elige entre pendiente, repartir sin evaluar o evaluar capacidad propia. Sin evaluación no significa ociosidad cero.",
+      "Select an auxiliary calculation unit. Normal and actual quantities come from Activity and capacities. Choose pending, allocate without evaluation or evaluate own capacity. No evaluation does not mean zero idle capacity."
+    ],
+    "Aux.ImportHelp": [
+      "CSV UTF-8 con punto y coma: Center;Group;Destination;Quantity. Center y Destination son códigos de unidades de cálculo (nodos), no códigos de centro. Usa el grupo mostrado (all = todos los componentes) y el separador decimal regional, sin miles. Ejemplo: MANT;all;CORTE;10, solo si esos nodos existen. Importa para revisión sin guardar ni cambiar el tratamiento.",
+      "UTF-8 semicolon CSV: Center;Group;Destination;Quantity. Center and Destination are calculation unit (node) codes, not centre codes. Use the displayed group (all = all components) and regional decimal separator, without thousands separators. Example: MAINT;all;CUT;10, only if those nodes exist. Imports for review without saving or changing the treatment."
+    ],
+    "Aux.ZeroNormal": [
+      "La capacidad normal es cero. Revisa el dato y su justificación en Actividad y capacidades antes de evaluar el coste fijo propio.",
+      "Normal capacity is zero. Review the value and its justification in Activity and capacities before evaluating own fixed cost."
+    ],
+    "Aux.Stale": [
+      "La actividad ha cambiado. Actualiza esta pantalla, revisa los servicios y guarda antes de recalcular.",
+      "Activity has changed. Refresh this page, review services and save before recalculating."
+    ],
+    "Aux.PendingHelp": [
+      "Evaluación pendiente: confirma capacidad y actividad en Actividad y capacidades y completa los servicios. No se cambiará automáticamente a reparto sin evaluación.",
+      "Evaluation pending: confirm capacity and activity in Activity and capacities and complete services. The treatment will not automatically change to allocation without evaluation."
+    ],
+    "Aux.Validate": [
+      "Comprobar sin guardar resultados",
+      "Check without saving results"
+    ],
+    "Aux.Calculate": [
+      "Calcular y guardar resultados",
+      "Calculate and save results"
+    ],
+    "Aux.Export": [
+      "Exportar datos de ejecución (JSON)",
+      "Export execution data (JSON)"
+    ],
+    "Aux.Refresh": [
+      "Volver a leer datos guardados",
+      "Reload saved data"
+    ],
+    "Aux.Close": [
+      "Volver",
+      "Back"
+    ],
+    "Rates.Export": [
+      "Exportar datos de tarifas (JSON)",
+      "Export rate data (JSON)"
+    ],
+    "Rates.AssignmentLater": [
+      "El consumo real por producto u orden no está disponible en esta versión. No puede determinarse el coste aplicado; no equivale a cero.",
+      "Actual consumption by product or order is unavailable in this version. Applied cost cannot be determined; this does not mean zero."
+    ],
+    "Composition.Scope": [
+      "Composición física y necesidades previstas. Esta pantalla calcula cantidades; la valoración monetaria y el consumo real no están disponibles aquí.",
+      "Physical composition and planned requirements. This page calculates quantities; monetary valuation and actual consumption are not available here."
+    ],
+    "Composition.CatalogHelp": [
+      "Crea materiales, productos, servicios y semielaborados. Guarda el catálogo antes de componer. Las identidades guardadas se conservan; puedes desactivarlas. Crea unidades en Diseñar estructura → Centros → Catálogo de unidades, o al configurar un nodo.",
+      "Create materials, products, services and semi-finished items. Save the catalog before composing. Saved identities are retained; you can deactivate them. Create units in Design structure → Centres → Unit catalog, or while configuring a node."
+    ],
+    "Composition.Save": [
+      "Guardar catálogo y cambios pendientes",
+      "Save catalog and pending changes"
+    ],
+    "Composition.SaveDraft": [
+      "Guardar borrador de composición y catálogo",
+      "Save composition draft and catalog"
+    ],
+    "Composition.Preview": [
+      "Calcular necesidades físicas",
+      "Calculate physical requirements"
+    ],
+    "Composition.Factor": [
+      "Conversión a unidad del componente",
+      "Conversion to component unit"
+    ],
+    "Composition.LineHelp": [
+      "Cantidad por unidad, lote iniciado u orden. Factor = unidades del componente por unidad introducida. Exceso 10 % sobre 10 requiere 11; rendimiento 80 % para 10 útiles requiere 12,5 antes de conversión y redondeo. Los materiales directos se registran aquí; la actividad representa costes indirectos.",
+      "Quantity per unit, started batch or order. Factor = component units per input unit. 10% extra input on 10 requires 11; 80% yield for 10 useful units requires 12.5 before conversion and rounding. Enter direct materials here; activity represents indirect costs."
+    ],
+    "Composition.Leave": [
+      "Hay cambios sin guardar en el catálogo o la composición. Elige guardar y continuar, descartar los cambios o seguir editando.",
+      "There are unsaved catalog or composition changes. Choose save and continue, discard changes or keep editing."
+    ],
+    "Run.Calculate": [
+      "Calcular y guardar resultados",
+      "Calculate and save results"
+    ],
+    "Run.ReconcileHelp": [
+      "Efectivo = directo a productos u órdenes + excluido + pendiente + coste en principales + variación de capacidad auxiliar. Diferencia cero significa conciliación, no ausencia de pendientes ni capacidad evaluada. Las transferencias internas no se suman al coste final.",
+      "Effective = direct to products or orders + excluded + pending + principal cost + auxiliary capacity variance. Zero difference means reconciled, not fully assigned or capacity evaluated. Internal transfers are not added to final cost."
+    ]
+  },
+  "added": {
+    "UX.SaveContinue": [
+      "Guardar y continuar",
+      "Save and continue"
+    ],
+    "UX.Discard": [
+      "Descartar cambios",
+      "Discard changes"
+    ],
+    "UX.KeepEditing": [
+      "Seguir editando",
+      "Keep editing"
+    ],
+    "UX.DiscardLeave": [
+      "Descartar y salir",
+      "Discard and leave"
+    ],
+    "UX.ReturnRows": [
+      "Volver a guardar las filas",
+      "Return to save rows"
+    ],
+    "UX.ReadFull": [
+      "Leer explicación completa",
+      "Read full explanation"
+    ],
+    "UX.Context": [
+      "{0} · {1} · {2} · {3}",
+      "{0} · {1} · {2} · {3}"
+    ],
+    "Activity.PendingCount": [
+      "Otras filas con cambios sin guardar: {0}",
+      "Other rows with unsaved changes: {0}"
+    ],
+    "Model.ActivateUnit": [
+      "Activar unidad",
+      "Activate unit"
+    ],
+    "Model.DeactivateUnit": [
+      "Desactivar unidad",
+      "Deactivate unit"
+    ],
+    "AllocationUI.SaveAvailableKey": [
+      "Guardar clave disponible",
+      "Save available key"
+    ],
+    "AllocationUI.SaveIncompleteKey": [
+      "Guardar borrador incompleto",
+      "Save incomplete draft"
+    ],
+    "Run.ConsultSaved": [
+      "Consultar cálculo guardado · seleccionar no recalcula",
+      "View saved calculation · selecting does not recalculate"
+    ],
+    "Run.CurrentInputs": [
+      "Obtener resultado con las entradas actuales",
+      "Obtain a result using current inputs"
+    ]
+  }
+}

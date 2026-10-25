@@ -17,6 +17,7 @@
    <TextBlock Text="{Binding Help}" TextWrapping="Wrap" Margin="0,8,0,12"/>
   </StackPanel>
   <WrapPanel Grid.Row="1" Margin="0,0,0,10">
+   <Button Content="{Binding TemplateLabel}" Click="SaveTemplate" Margin="0,0,8,0"/>
    <Button Content="{Binding BrowseLabel}" Click="Browse" Margin="0,0,8,0"/>
    <TextBlock Text="{Binding Path}" MaxWidth="280" TextTrimming="CharacterEllipsis"
               VerticalAlignment="Center" Margin="0,0,12,0"/>

@@ -24,6 +24,18 @@ public partial class MainWindow
 
     private void OpenContextHelp(object sender, RoutedEventArgs e) => ShowContextHelp();
 
+    private void ReadFieldHelp(object sender, RoutedEventArgs e)
+    {
+        var previous = Keyboard.FocusedElement;
+        var language = System.Globalization.CultureInfo.GetCultureInfo(viewModel?.SelectedUiLanguageTag ?? "es");
+        var texts = new Valdrio.Localization.UiTextCatalog();
+        var window = new EconomicConfirmationWindow(texts.Get("UX.ReadFull", language), FieldHelpText.Text,
+            texts.Get("UX.KeepEditing", language), texts.Get("UX.KeepEditing", language));
+        window.AcceptButton.Visibility = Visibility.Collapsed;
+        window.ShowDialog();
+        if (previous is not null) Keyboard.Focus(previous);
+    }
+
     private void ShowContextHelp()
     {
         helpPreviousFocus = Keyboard.FocusedElement;

@@ -18,7 +18,7 @@ Review imported account balances, apply explicit extra-accounting adjustments, r
 | Destination | Selector | By part | Select pool, direct object, pending or exclusion. |
 | Direct-object identity | Code, name and type | If direct | Identifies a destination outside pools. |
 | Pool, behaviour and layer | Selectors | By destination | Classify fixed/variable cost and its assignment. |
-| Advanced unit, horizon and physical measures | Units and dates | When relevant | Do not equal a confirmed T14 physical observation. |
+| Advanced unit, horizon and physical measures | Units and dates | When relevant | Do not equal a confirmed Activity and capacities physical observation. |
 | FX revaluation details | Rate, date, source and reason | On revaluation | Preserve monetary traceability. |
 | Save, preview, apply and undo | Actions | By operation | A saved rule is not applied automatically. |
 

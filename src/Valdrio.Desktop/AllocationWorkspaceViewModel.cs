@@ -196,6 +196,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public string Requirement => this[workspace is null ? "NeedStudy" : !company.CanWrite ? "ReadOnly" : workspace.Resources.Study.State == StudyState.Closed ? "Closed" : "Help"];
     public bool HasStatusError => diagnostic is not null;
     public string Status => diagnostic is null ? this[statusKey] : new DomainDiagnosticFormatter(texts).Format(diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message;
+    public string SaveKeyLabel => this[MissingKeyInput(true) is null ? "SaveAvailableKey" : "SaveIncompleteKey"];
     public string KeyState => this[IsKeyUsed ? "UsedKeyHelp" : keyDirty ? "Unsaved" : "DraftHelp"];
     public string Currency => workspace?.Resources.Study.Currency.FunctionalCurrencyCode.ToString() ?? "";
     public string NumberFormatHelp => string.Format(Format, this["NumberFormat"], numbers.CapturedCulture.Name, numbers.CapturedCulture.NumberFormat.NumberDecimalSeparator);
@@ -300,7 +301,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private void RuleEdited() { if (loading) return; ruleDirty = true; RefreshEditor(); }
     private void RefreshEditor()
     {
-        foreach (var property in new[] { nameof(CanReuse), nameof(IsDirty), nameof(HasUnappliedRule), nameof(KeyState), nameof(KeyDeleteHelp), nameof(CanDeleteSelectedKey), nameof(CanEditConfiguration),
+        foreach (var property in new[] { nameof(CanReuse), nameof(IsDirty), nameof(HasUnappliedRule), nameof(KeyState), nameof(SaveKeyLabel), nameof(KeyDeleteHelp), nameof(CanDeleteSelectedKey), nameof(CanEditConfiguration),
             nameof(CanAssignCoverage), nameof(CanShowCoverageEditor), nameof(CanEditClassification), nameof(CanEditKey), nameof(CanEditComposition), nameof(CanEditWeights), nameof(IsPercentage), nameof(IsDriver), nameof(IsSecondary),
             nameof(IsExact), nameof(IsPrefix), nameof(KeyNameMissing), nameof(KeyValidationHasError), nameof(Total), nameof(PrimaryAbsoluteTotal), nameof(Validation) }) OnPropertyChanged(property);
         Commands();

@@ -12,10 +12,13 @@ public partial class AuxiliaryCapacityWindow : IntegratedWorkspaceWindow
         CenterColumn.Header = Editor["Center"]; UnitColumn.Header = Editor["Unit"]; NormalColumn.Header = Editor["Normal"];
         RealColumn.Header = Editor["Real"]; ModeColumn.Header = Editor["Mode"]; GroupColumn.Header = Editor["Group"];
         DestinationColumn.Header = Editor["Destination"]; QuantityColumn.Header = Editor["Quantity"];
+        PreparationColumn.Header = Editor["Preparation"];
         QuestionColumn.Header = Editor["Question"]; AnswerColumn.Header = Editor["Answer"];
         Closing += (_, e) => { if (!CanDiscard()) e.Cancel = true; };
     }
-    private bool CanDiscard() => !Editor.Dirty || MessageBox.Show(WorkspaceHost ?? (Window)this, Editor["Discard"], Editor["Title"], MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+    private bool CanDiscard() => !Editor.Dirty || new EconomicConfirmationWindow(Editor["Title"], Editor["Discard"],
+        new Valdrio.Localization.UiTextCatalog().Get("UX.Discard", host.PhysicalUiCulture),
+        new Valdrio.Localization.UiTextCatalog().Get("UX.KeepEditing", host.PhysicalUiCulture)) { Owner = WorkspaceHost ?? (Window)this }.ShowDialog() == true;
     private void Save(object sender, RoutedEventArgs e) => Editor.Save();
     private void Validate(object sender, RoutedEventArgs e) => Editor.Validate();
     private void Calculate(object sender, RoutedEventArgs e) => Editor.Calculate();
@@ -33,7 +36,7 @@ public partial class AuxiliaryCapacityWindow : IntegratedWorkspaceWindow
     {
         if (Editor.Dirty) { Editor.Feedback = Editor["SaveFirst"]; return; }
         Editor.Reload(); var json = Editor.Export(); if (json is null) return;
-        var d = new SaveFileDialog { Filter = "JSON|*.json", FileName = "VALDRIO-T16.json" }; if (d.ShowDialog(WorkspaceHost ?? (Window)this) != true) return;
+        var d = new SaveFileDialog { Filter = "JSON|*.json", FileName = "VALDRIO-servicios-auxiliares.json" }; if (d.ShowDialog(WorkspaceHost ?? (Window)this) != true) return;
         try { File.WriteAllText(d.FileName, json); Editor.Feedback = Editor["Exported"]; } catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { Editor.Feedback = Editor["Failed"]; }
     }
 }

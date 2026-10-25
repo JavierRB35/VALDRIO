@@ -18,7 +18,7 @@ internal sealed class EconomicConfirmationWindow : Window
         var heading = new TextBlock { Text = title, FontSize = 20, FontWeight = FontWeights.SemiBold,
             TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 16) };
         DockPanel.SetDock(heading, Dock.Top); layout.Children.Add(heading);
-        var actions = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right,
+        var actions = new WrapPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right,
             Margin = new Thickness(0, 16, 0, 0) };
         AcceptButton = new Button { Content = accept, MinWidth = 110 };
         AcceptButton.SetResourceReference(StyleProperty, "Button.Primary");

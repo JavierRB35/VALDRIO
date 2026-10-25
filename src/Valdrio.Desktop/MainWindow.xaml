@@ -1,5 +1,7 @@
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:Valdrio.Desktop" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Valdrio.Desktop.MainWindow" Style="{StaticResource {x:Type Window}}" Title="{Binding WindowTitle}" Height="860" Width="1280" MinHeight="620" MinWidth="760" WindowStartupLocation="CenterScreen">
  <Window.Resources>
+  <local:PreferenceLabelConverter x:Key="PreferenceLabel"/>
+  <DataTemplate x:Key="PreferenceName"><TextBlock><TextBlock.Text><MultiBinding Converter="{StaticResource PreferenceLabel}"><Binding/><Binding Path="DataContext.SelectedUiLanguageTag" RelativeSource="{RelativeSource AncestorType=ComboBox}"/></MultiBinding></TextBlock.Text></TextBlock></DataTemplate>
   <BooleanToVisibilityConverter x:Key="BooleanVisibility" />
   <!-- Local styling: navigation is a quiet hierarchy, not a series of primary actions. -->
   <DataTemplate x:Key="NavigationPhaseHeader">
@@ -152,13 +154,13 @@
    <Border DockPanel.Dock="Top" Background="{DynamicResource Brand.White}" BorderBrush="{DynamicResource Border.Soft}" BorderThickness="0,0,0,1" Padding="16,8">
     <Grid>
      <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
      <Button x:Name="NavigationToggle" Click="ToggleNavigation" MinHeight="28" Padding="8,4" Margin="0,0,12,0"/>
-     <TextBlock Grid.Column="1" x:Name="ProjectContextText" FontWeight="SemiBold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0,0,12,0" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+     <TextBlock Grid.Row="1" Grid.ColumnSpan="5" x:Name="ProjectContextText" FontWeight="SemiBold" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,12,0" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
      <Button Grid.Column="2" x:Name="ContextDetailsButton" Click="ToggleContextDetails" MinHeight="28" Padding="8,4" Margin="0,0,12,0"/>
      <CheckBox Grid.Column="3" x:Name="CompactTables" VerticalAlignment="Center" Margin="0" Checked="ChangeTableDensity" Unchecked="ChangeTableDensity"/>
      <Button Grid.Column="4" x:Name="ContextHelpButton" Click="OpenContextHelp" MinHeight="28" Padding="8,4" Margin="10,0,0,0" Content="Ayuda (F1)"/>
-     <Border Grid.Row="1" Grid.ColumnSpan="5" x:Name="ContextDetails" Visibility="Collapsed" Background="{DynamicResource Surface.Subtle}" Padding="12" Margin="0,8,0,0">
+     <Border Grid.Row="2" Grid.ColumnSpan="5" x:Name="ContextDetails" Visibility="Collapsed" Background="{DynamicResource Surface.Subtle}" Padding="12" Margin="0,8,0,0">
       <StackPanel>
        <TextBlock Text="{Binding Text, ElementName=ProjectContextText}" FontWeight="SemiBold"/>
        <TextBlock x:Name="SaveLocation" Margin="0,4,0,0" FontSize="12"/>
@@ -179,6 +181,7 @@
    <ContentControl x:Name="AllocationActionsHost" Visibility="Collapsed"/>
    <TextBlock TextWrapping="Wrap" Height="48" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" AutomationProperties.LiveSetting="Polite" x:Name="FieldHelpText" />
    <WrapPanel>
+    <Button x:Name="ReadFieldHelpButton" Click="ReadFieldHelp" Content="{Binding GuideReadFull}" Margin="0,4,8,0"/>
     <Button Click="PreviousStep" Padding="14,7" Margin="0,4,8,0" ContentTemplate="{StaticResource Button.WrappedText}" MaxWidth="{Binding ActualWidth, ElementName=ActionFooter}" x:Name="WorkflowBack" />
     <Button Style="{StaticResource Button.Primary}" Click="ContinueWorkflow" Padding="14,7" Margin="0,4,8,0" ContentTemplate="{StaticResource Button.WrappedText}" MaxWidth="{Binding ActualWidth, ElementName=ActionFooter}" x:Name="WorkflowNext" />
    </WrapPanel>
@@ -271,17 +274,18 @@
        <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
       <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelUiLanguage}" TextWrapping="Wrap" />
-      <ComboBox local:FieldHelp.Key="SelectedUiLanguageTag" x:Name="UiLanguageSelector" Grid.Row="0" Grid.Column="1" MinWidth="200" ItemsSource="{Binding UiLanguageOptions}" SelectedItem="{Binding SelectedUiLanguageTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TabIndex="0" AutomationProperties.Name="{Binding LabelUiLanguage}" />
+      <ComboBox local:FieldHelp.Key="SelectedUiLanguageTag" x:Name="UiLanguageSelector" ItemTemplate="{StaticResource PreferenceName}" Grid.Row="0" Grid.Column="1" MinWidth="200" ItemsSource="{Binding UiLanguageOptions}" SelectedItem="{Binding SelectedUiLanguageTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TabIndex="0" AutomationProperties.Name="{Binding LabelUiLanguage}" />
       <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelFormatCulture}" TextWrapping="Wrap" />
-      <ComboBox local:FieldHelp.Key="SelectedFormatCultureTag" x:Name="FormatCultureSelector" Grid.Row="2" Grid.Column="1" MinWidth="200" ItemsSource="{Binding FormatCultureOptions}" SelectedItem="{Binding SelectedFormatCultureTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TabIndex="1" AutomationProperties.Name="{Binding LabelFormatCulture}" />
+      <ComboBox local:FieldHelp.Key="SelectedFormatCultureTag" x:Name="FormatCultureSelector" ItemTemplate="{StaticResource PreferenceName}" Grid.Row="2" Grid.Column="1" MinWidth="200" ItemsSource="{Binding FormatCultureOptions}" SelectedItem="{Binding SelectedFormatCultureTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TabIndex="1" AutomationProperties.Name="{Binding LabelFormatCulture}" />
       <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,4,16,0" Text="{Binding LabelTimeZone}" TextWrapping="Wrap" />
-      <ComboBox local:FieldHelp.Key="SelectedTimeZoneId" x:Name="TimeZoneSelector" Grid.Row="4" Grid.Column="1" MinWidth="280" ItemsSource="{Binding TimeZoneOptions}" SelectedItem="{Binding SelectedTimeZoneId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TabIndex="2" AutomationProperties.Name="{Binding LabelTimeZone}" />
+      <ComboBox local:FieldHelp.Key="SelectedTimeZoneId" x:Name="TimeZoneSelector" ItemTemplate="{StaticResource PreferenceName}" Grid.Row="4" Grid.Column="1" MinWidth="280" ItemsSource="{Binding TimeZoneOptions}" SelectedItem="{Binding SelectedTimeZoneId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TabIndex="2" AutomationProperties.Name="{Binding LabelTimeZone}" />
       <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Visibility="{Binding ShowPreferencesSaveWarning, Converter={StaticResource BooleanVisibility}}">
        <TextBlock Text="{Binding PreferencesSaveWarning}" Foreground="{DynamicResource Brand.Red}" AutomationProperties.LiveSetting="Polite" />
        <Button Content="{Binding RetrySavePreferencesLabel}" Command="{Binding RetrySavePreferencesCommand}" HorizontalAlignment="Left" Margin="0,8,0,0" />
       </StackPanel>
      </Grid>
     </GroupBox>
+    <TextBlock Grid.Row="11" Visibility="{Binding Visibility, ElementName=PreferencesPanel}" Text="{Binding TechnicalHelp}" TextWrapping="Wrap" Margin="0,8"/>
     <Expander x:Name="DevelopmentTools" Grid.Row="12" Header="{Binding DevelopmentToolsTitle}" TabIndex="100">
      <Grid Margin="0,12,0,0">
       <Grid.RowDefinitions>
@@ -330,6 +334,7 @@
       </GroupBox>
       <GroupBox Grid.Row="2" Header="{Binding FxEditorTitle}" Padding="16">
        <StackPanel>
+
         <Grid>
          <Grid.ColumnDefinitions>
           <ColumnDefinition Width="220" />

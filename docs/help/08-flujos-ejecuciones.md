@@ -1,4 +1,4 @@
-# Ayuda contextual: Flujos y ejecuciones
+# Ayuda contextual: Resultados y trazabilidad
 **ID Vista UI:** `View_CostRuns`  
 **Última actualización:** `2026-10-21`  
 **Estado:** borrador documental contrastado con código de `main@211af0d`; pendiente de prueba interactiva Windows.

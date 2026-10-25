@@ -4,7 +4,7 @@
 **Estado:** borrador documental contrastado con código de `main@211af0d`; pendiente de prueba interactiva Windows.
 
 ## 1. Objetivo y función financiera
-Interpretar tarifas y variaciones de capacidad por centro principal, usando costes de una ejecución económica compatible y actividad T14 confirmada, de acuerdo con la política normalizada T15. La vista es de análisis, no editor de horas.
+Interpretar tarifas y variaciones de capacidad por centro principal, usando costes de una ejecución económica compatible y datos confirmados en Actividad y capacidades, de acuerdo con la política normalizada vigente. La vista es de análisis, no editor de horas.
 
 ## 2. Guía de campos y entradas (Inputs)
 | Campo / parámetro | Tipo / unidad | Requerido | Descripción e impacto en el cálculo |
@@ -23,12 +23,12 @@ Interpretar tarifas y variaciones de capacidad por centro principal, usando cost
 | Base y tarifa por componente | Actividad normal o real según política | Distingue denominadores económicos. |
 | Variación de capacidad | Diferencia normalizado entre actividad normal y real | Muestra infra/sobreactividad sin llamarla ahorro realizado. |
 | Tabla pregunta/respuesta | Siete preguntas de gestión | Explica costes aplicados, pendientes y conciliación solo con datos disponibles. |
-| Proveniencia | RunId T12 + versiones físicas T14 | Conserva rastreabilidad y comparabilidad. |
+| Proveniencia | Ejecución económica y versiones de Actividad y capacidades | Conserva rastreabilidad y comparabilidad. |
 
 ## 4. Casos de uso, validaciones y errores frecuentes
 - Sin ejecución T12 vigente/compatible o capacidad confirmada no se debe mostrar tarifa ficticia.
 - No comparar tarifas de centros con unidad/perímetro no comparables.
-- El coste de actividades realizado no equivale a coste aplicado a órdenes si falta T19.
+- El coste de actividades realizado no equivale a coste aplicado a órdenes si falta consumo real (no disponible en esta versión).
 - La capacidad no utilizada no equivale a horas realizadas sin asignación.
 - La tarifa normalizada de gestión no certifica por sí sola valoración de existencias según NIC 2.
 
