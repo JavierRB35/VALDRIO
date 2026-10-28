@@ -14,12 +14,12 @@ public sealed class ParetoSeriesTests
         Assert.AreEqual("B", input[0].Label);
     }
     [TestMethod]
-    public void CreditsRemainSignedAndPercentageUsesNetTotal()
+    public void CreditsRemainSignedAndPercentageUsesPositiveTotal()
     {
         var points = ParetoSeries.Build([new("Credit", -20), new("Cost", 120)]);
-        Assert.AreEqual(120m, points[0].CumulativePercent);
+        Assert.AreEqual(100m, points[0].CumulativePercent);
         Assert.AreEqual(-20m, points[1].Amount);
-        Assert.AreEqual(100m, points[1].CumulativePercent);
+        Assert.IsNull(points[1].CumulativePercent);
     }
     [TestMethod]
     public void EmptyZeroAndNegativeTotalsDoNotInventPercentages()

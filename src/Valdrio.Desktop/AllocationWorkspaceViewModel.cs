@@ -94,6 +94,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         TogglePrimaryCommand = new AsyncRelayCommand(TogglePrimaryAsync, () => CanManagePrimary && !IsSecondaryClosed && !IsDirty && (IsPrimaryClosed || primaryComplete));
         SaveDraftCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(false), () => CanEditKey && MissingKeyInput(false) is null);
         PublishCommand = new AsyncRelayCommand(async () => await SaveKeyAsync(true), () => CanEditKey && MissingKeyInput(true) is null);
+        GenerateDirectKeysCommand = new AsyncRelayCommand(GenerateDirectKeysAsync, () => CanEdit && !IsDirty && !IsSecondary);
         RefreshCommand = new AsyncRelayCommand(async () => { if (await CanLeaveAsync()) await EnterAsync(true); }, () => !busy);
         CalculateSecondaryCommand = new AsyncRelayCommand(CalculateSecondaryAsync, () => CanCalculateSecondary);
         CancelSecondaryCommand = new RelayCommand(CancelSecondary,
@@ -202,6 +203,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public string NumberFormatHelp => string.Format(Format, this["NumberFormat"], numbers.CapturedCulture.Name, numbers.CapturedCulture.NumberFormat.NumberDecimalSeparator);
     private int coveredCount;
     public string CoverageSummary => workspace is null ? "" : string.Format(Format, this["CoverageSummary"], coveredCount, Coverage.Count);
+    public string CriterionHelp => this[IsPercentage ? "PercentageMeaning" : "WeightMeaning"];
     public string Total
     {
         get
@@ -303,7 +305,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     {
         foreach (var property in new[] { nameof(CanReuse), nameof(IsDirty), nameof(HasUnappliedRule), nameof(KeyState), nameof(SaveKeyLabel), nameof(KeyDeleteHelp), nameof(CanDeleteSelectedKey), nameof(CanEditConfiguration),
             nameof(CanAssignCoverage), nameof(CanShowCoverageEditor), nameof(CanEditClassification), nameof(CanEditKey), nameof(CanEditComposition), nameof(CanEditWeights), nameof(IsPercentage), nameof(IsDriver), nameof(IsSecondary),
-            nameof(IsExact), nameof(IsPrefix), nameof(KeyNameMissing), nameof(KeyValidationHasError), nameof(Total), nameof(PrimaryAbsoluteTotal), nameof(Validation) }) OnPropertyChanged(property);
+            nameof(CriterionHelp), nameof(IsExact), nameof(IsPrefix), nameof(KeyNameMissing), nameof(KeyValidationHasError), nameof(Total), nameof(PrimaryAbsoluteTotal), nameof(Validation) }) OnPropertyChanged(property);
         Commands();
     }
     private void LineChanged(object? sender, PropertyChangedEventArgs e)
@@ -587,6 +589,38 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         finally { busy = false; company.NotifyWorkspaceStateChanged(); Refresh(); }
     }
     public IAsyncRelayCommand DeleteKeyCommand { get; }
+    public IAsyncRelayCommand GenerateDirectKeysCommand { get; }
+    public string GenerationSummary { get; private set; } = "";
+    private async Task GenerateDirectKeysAsync()
+    {
+        if (workspace is null || IsDirty || !CanEdit) return;
+        await Run(async () =>
+        {
+            var created = 0; var existing = 0; var omitted = new List<string>();
+            var port = company.ActiveAllocations!;
+            // Resolve equivalence by destination, not name; preserve historical keys.
+            foreach (var node in workspace.Resources.Model.Structure.Nodes)
+            {
+                if (!node.IsActive) { omitted.Add(NodeLabel(node) + " · " + this["Inactive"]); continue; }
+                var pool = workspace.Resources.Model.Structure.Pools.SingleOrDefault(p => p.NodeId == node.Id);
+                if (pool is null) { omitted.Add(NodeLabel(node)); continue; }
+                if (workspace.Keys.Any(k => k.Stage == AllocationStage.Primary && k.Status == ModelStatus.Published &&
+                    k.Lines.Count == 1 && k.Lines[0].DestinationNodeId == node.Id && k.Lines[0].Value > 0))
+                { existing++; continue; }
+                var study = workspace.Resources.Study;
+                var command = new SaveAllocationKey(study.CompanyId, workspace.Resources.Model.Structure.Id,
+                    new(Guid.NewGuid()), null, -1, this["DirectNode"] + " · " + NodeLabel(node), AllocationStage.Primary,
+                    AllocationKeyMode.Percentage, null, SelfAllocationPolicy.Forbidden, [new(node.Id, 100m)], true,
+                    new(Guid.NewGuid()), "local-user") { ValidationStudyId = study.Id, ValidationStudyRevision = study.Revision };
+                await Task.Run(() => port.SaveAllocationKey(command));
+                workspace = await Task.Run(() => port.ReadAllocations(study.CompanyId, study.Id));
+                created++;
+            }
+            GenerationSummary = string.Format(Format, this["DirectGenerated"], created, existing, omitted.Count) +
+                (omitted.Count == 0 ? "" : Environment.NewLine + string.Join(Environment.NewLine, omitted));
+            Rebuild();
+        });
+    }
     public IAsyncRelayCommand TogglePrimaryCommand { get; }
     public IAsyncRelayCommand NewKeyCommand { get; }
     public IAsyncRelayCommand LoadKeyCommand { get; }
@@ -619,7 +653,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public IRelayCommand DiscardCommand { get; }
     private void Commands()
     {
-        foreach (var command in new IRelayCommand?[] { SaveCompositionRowsCommand, DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
+        foreach (var command in new IRelayCommand?[] { GenerateDirectKeysCommand, SaveCompositionRowsCommand, DeleteKeyCommand, TogglePrimaryCommand, NewKeyCommand, LoadKeyCommand, NewVersionCommand, SaveDraftCommand, PublishCommand, SaveKeyCommand, ApplyRuleCommand, RefreshCommand,
             SaveRuleCommand, RemoveRuleCommand, LoadRuleCommand, NewRuleCommand, SaveSecondaryCommand, LoadSecondaryCommand, NewSecondaryCommand,
             RemoveSecondaryCommand, ClearObsoleteCommand, AssignCommand, AutomaticCommand, SaveAbsoluteCommand, ChooseDescriptionCommand, DiscardCommand, CalculateSecondaryCommand, CancelSecondaryCommand, ExplainSecondaryCommand, ToggleSecondaryCommand,
             SaveSecondaryGroupCommand, ClearObsoleteSecondaryGroupsCommand, AssignSecondaryKeyToMissingCommand,

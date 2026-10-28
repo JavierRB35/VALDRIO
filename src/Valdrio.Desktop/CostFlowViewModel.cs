@@ -7,13 +7,14 @@ using Valdrio.Domain;
 using Valdrio.Localization;
 namespace Valdrio.Desktop;
 
+public sealed record ReportConcentrationRow(string Node, string Role, decimal Amount, string Share, string Cumulative, string Behavior, string GraphId);
 public sealed record FlowRow(string Stage, string Resource, string Source, string Destination, string Rule,
     string Assigned, string Received, string Terminal, string Detail, string SourceId, string DestinationId);
 public sealed record FlowNode(string Id, int Stage, string Label, string Amount, string? DisplayAmount = null);
 public sealed record FlowArrow(string SourceId, string DestinationId, string Label, FlowRow? Row, bool Internal = false, string? DisplayLabel = null);
 public sealed record RunChoice(CalculationRun Run, string Label);
 public sealed record RunBalanceRow(string Label, string Role, string Primary, string SecondaryNet, string Final,
-    decimal PrimaryValue, decimal SecondaryNetValue, decimal FinalValue, string? GraphId, string Exact);
+    decimal PrimaryValue, decimal SecondaryNetValue, decimal FinalValue, string? GraphId, string Exact, string Received = "", string Ceded = "", string Adjustment = "", string Growth = "");
 public sealed partial class CostFlowViewModel : ObservableObject
 {
     private readonly CompanyFileViewModel company;
@@ -21,6 +22,44 @@ public sealed partial class CostFlowViewModel : ObservableObject
     private readonly UiTextCatalog texts;
     private readonly PresentationPreferencesService preferences;
     private RunHistory? history;
+    private AllocationWorkspaceSnapshot? liveWorkspace;
+    [ObservableProperty] private bool useCurrentPrimary = true;
+    partial void OnUseCurrentPrimaryChanged(bool value) { if (value) SecondaryPhase = false; Present(); OnPropertyChanged(nameof(ReportContext)); }
+    public string ExecutiveSummary { get; private set; } = "";
+    public ObservableCollection<ReportConcentrationRow> Concentration { get; } = [];
+    private readonly Dictionary<string, string[]> reportMembers = [];
+    [ObservableProperty] private bool groupByCenter;
+    partial void OnGroupByCenterChanged(bool value) => Present();
+    [ObservableProperty] private bool secondaryPhase;
+    partial void OnSecondaryPhaseChanged(bool value) { if (value) UseCurrentPrimary = false; Present(); }
+    [ObservableProperty] private string reportFilter = "";
+    partial void OnReportFilterChanged(string value) => Present();
+    [ObservableProperty] private decimal concentrationThreshold = 80m;
+    partial void OnConcentrationThresholdChanged(decimal value) => Present();
+    public string ConcentrationThresholdHelp => this["ThresholdHelp"];
+    public string PhaseLabel => this[SecondaryPhase ? "SecondaryReportPhase" : "PrimaryReportPhase"];
+    public string DisplayReportAmount(decimal value) => value.ToString("N2", Format);
+    public CultureInfo NumericCulture => Format;
+    public string ReportTitle => this["ReportTitle"];
+    public IEnumerable<string[]> ExportRows()
+    {
+        yield return [ReportTitle]; yield return [ReportContext]; yield return [CurrentState];
+        yield return [PhaseLabel, this["Filter"], ReportFilter]; yield return [ExecutiveSummary];
+        yield return [this["Node"], this["Role"], this["Assigned"], this["Participation"], this["Cumulative"], this["Behavior"]];
+        foreach (var row in Concentration) yield return [row.Node, row.Role, DisplayReportAmount(row.Amount), row.Share, row.Cumulative, row.Behavior];
+        yield return [this["GlobalScope"]];
+        yield return [this["CenterBalances"]];
+        yield return [this["Node"], this["PrimaryBalance"], this["Received"], this["Ceded"], this["Adjustments"], this["SecondaryNet"], this["FinalBalance"], this["Growth"]];
+        foreach (var row in CenterBalances) yield return [row.Label, row.Primary, row.Received, row.Ceded, row.Adjustment, row.SecondaryNet, row.Final, row.Growth];
+        yield return [this["Reconciliation"], this["ReconcileHelp"]];
+        yield return [this["Resource"], this["Effective"], this["Direct"], this["Excluded"], this["Pending"], this["FinalBalance"], this["Difference"]];
+        foreach (var row in Reconciliation) yield return [row.Resource, row.Source, row.Destination, row.Rule, row.Assigned, row.Received, row.Terminal];
+        yield return [this["Details"]];
+        yield return [this["Stage"], this["Resource"], this["Source"], this["Destination"], this["Rule"], this["Assigned"], this["Details"]];
+        foreach (var row in allRows.Where(r => r.Stage == this[SecondaryPhase ? "FinalStage" : "PrimaryStage"]))
+            yield return [row.Stage, row.Resource, row.Source, row.Destination, row.Rule, row.Assigned, row.Detail];
+    }
+
     private CancellationTokenSource? cancellation;
     private readonly List<FlowRow> allRows = [];
     public CostFlowViewModel(CompanyFileViewModel company, StudyWorkspaceViewModel studies, UiTextCatalog texts, PresentationPreferencesService preferences)
@@ -67,14 +106,32 @@ public sealed partial class CostFlowViewModel : ObservableObject
     public IAsyncRelayCommand RefreshCommand { get; }
     public IRelayCommand CancelCommand { get; }
     public IRelayCommand ClearSelectionCommand { get; }
-    public bool HasError => SelectedRun?.Run.Status == CalculationRunStatus.Failed;
+    public string ReportContext
+    {
+        get
+        {
+            var study = (UseCurrentPrimary ? studies.Current : (SelectedRun?.Run.Snapshot.Input as AllocationStudySnapshotInput)?.Allocations.Resources.Study) ?? studies.Current;
+            if (study is null) return company.Snapshot?.Name ?? "";
+            var scenario = texts.Get("Study." + study.ScenarioKind, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag));
+            return (company.Snapshot?.Name ?? "") + " · " + study.Name + " · " + study.PeriodStart.Value.ToString("d", Format) + " – " + study.PeriodEnd.Value.ToString("d", Format) +
+                " · " + scenario + " · " + study.Currency.FunctionalCurrencyCode + " · " + this["Revision"] + " " + study.Revision + " · " + PhaseLabel +
+                (UseCurrentPrimary ? "" : " · " + SelectedRun?.Label);
+        }
+    }
+
+    private static string RunState(CalculationRun run) => run.Status == CalculationRunStatus.Failed && run.Output is { } output && !output.Diagnostics.Any(d => d.Code is "RUN_OVERFLOW" or "RUN_INPUT_REQUIRED") ? "Partial" : run.Status.ToString();
+    public bool HasError => !UseCurrentPrimary && SelectedRun?.Run is { Status: CalculationRunStatus.Failed } run &&
+        (run.Output is null || run.Output.Diagnostics.Any(d => d.Code is "RUN_OVERFLOW" or "RUN_INPUT_REQUIRED"));
     public string ExecutionDuration => SelectedRun?.Run is { CompletedAtUtc: { } completed } run
         ? string.Format(Format, this["Duration"], (completed.Value - run.StartedAtUtc.Value).TotalSeconds)
         : this["DurationUnavailable"];
     partial void OnSelectedRunChanged(RunChoice? value)
     {
+        UseCurrentPrimary = false;
         Present();
+        if (value is not null) Status = CurrentState;
         OnPropertyChanged(nameof(ExecutionDuration));
+        OnPropertyChanged(nameof(ReportContext));
     }
     partial void OnSelectedRowChanged(FlowRow? value) { if (value is not null) Selection = value.Detail; }
     public async Task EnterAsync()
@@ -85,20 +142,23 @@ public sealed partial class CostFlowViewModel : ObservableObject
             if (company.ActiveRuns is { } store && studies.Current is { } study)
                 history = await Task.Run(() => store.ReadRuns(study.CompanyId, study.Id));
             else history = null;
+            liveWorkspace = company.ActiveAllocations is { } allocations && studies.Current is { } selected ? await Task.Run(() => allocations.ReadAllocations(selected.CompanyId, selected.Id)) : null;
             RebuildChoices(); Status = Runs.Count == 0 ? this["NoRuns"] : this["ReadOnlyResults"];
         }
         catch (Exception ex) when (ex is CompanyFileException or DomainRuleException or InvalidOperationException)
-        { Status = this["LoadFailed"]; history = null; RebuildChoices(); }
+        { Status = this["LoadFailed"]; history = null; liveWorkspace = null; RebuildChoices(); }
         Commands();
     }
     private void RebuildChoices()
     {
+        var preview = UseCurrentPrimary;
         var id = SelectedRun?.Run.Id;
         Runs.Clear();
         if (history is not null)
             foreach (var run in history.Runs.Reverse())
-                Runs.Add(new(run, $"{run.StartedAtUtc.Value.ToString("u", Format)} · {this[run.Status.ToString()]} · {this["Revision"]} {run.Snapshot.InputRevision}"));
+                Runs.Add(new(run, $"{TimeZoneInfo.ConvertTime(run.StartedAtUtc.Value, TimeZoneInfo.FindSystemTimeZoneById(preferences.Current.DisplayTimeZoneId)).ToString("g", Format) + " " + preferences.Current.DisplayTimeZoneId} · {this[RunState(run)]} · {this["Revision"]} {run.Snapshot.InputRevision}"));
         SelectedRun = Runs.FirstOrDefault(r => r.Run.Id == id) ?? Runs.FirstOrDefault();
+        UseCurrentPrimary = preview;
         Present(); OnPropertyChanged(string.Empty);
     }
     private void Commands() { company.NotifyWorkspaceStateChanged(); CalculateCommand.NotifyCanExecuteChanged(); RefreshCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged(); }
@@ -119,6 +179,7 @@ public sealed partial class CostFlowViewModel : ObservableObject
                 history = latest;
                 RebuildChoices();
                 SelectedRun = Runs.First(r => r.Run.Id == previous.Id);
+                UseCurrentPrimary = false;
                 Status = this["NoChanges"];
                 return;
             }
@@ -127,7 +188,7 @@ public sealed partial class CostFlowViewModel : ObservableObject
             var output = await Task.Run(() => CalculationRunService.Calculate(run, token));
             Status = this["Publishing"];
             var published = await Task.Run(() => store.PublishRun(run.Id, output, token));
-            Status = this[published.Status.ToString()];
+            Status = this[RunState(published)];
         }
         catch (OperationCanceledException)
         {
@@ -143,7 +204,11 @@ public sealed partial class CostFlowViewModel : ObservableObject
         finally { cancellation.Dispose(); cancellation = null; Commands(); }
         var operationStatus = Status;
         await EnterAsync();
-        if (run is not null) SelectedRun = Runs.FirstOrDefault(r => r.Run.Id == run.Id);
+        if (run is not null)
+        {
+            SelectedRun = Runs.FirstOrDefault(r => r.Run.Id == run.Id);
+            UseCurrentPrimary = false;
+        }
         if (SelectedRun?.Run.Status != CalculationRunStatus.Completed) Status = operationStatus;
     }
     // Trace upstream and downstream of the chosen node or transfer, including
@@ -180,11 +245,22 @@ public sealed partial class CostFlowViewModel : ObservableObject
     }
     public void SelectNode(string? id)
     {
+        if (id is not null && reportMembers.TryGetValue(id, out var members))
+        {
+            Rows.Clear();
+            foreach (var row in allRows.Where(r => members.Contains(r.SourceId) || members.Contains(r.DestinationId))) Rows.Add(row);
+            highlightedNodes.Clear(); highlightedArrows.Clear(); foreach (var member in members) highlightedNodes.Add(member);
+            Selection = Concentration.FirstOrDefault(r => r.GraphId == id)?.Node ?? id;
+            GraphChanged?.Invoke(this, EventArgs.Empty); return;
+        }
         if (SelectedBalance?.GraphId != id) SelectedBalance = null;
         SelectedRow = null;
         Rows.Clear();
         foreach (var row in allRows.Where(r => id is null || r.SourceId == id || r.DestinationId == id)) Rows.Add(row);
         Selection = id is null ? this["SelectHint"] : Nodes.FirstOrDefault(n => n.Id == id)?.Label ?? this["SelectHint"];
+        if (id?.StartsWith("0:", StringComparison.Ordinal) == true)
+            Selection += Environment.NewLine + this["SelectedContributions"] + Environment.NewLine + string.Join(Environment.NewLine,
+                allRows.Where(r => r.SourceId == id && r.Stage == this["PrimaryStage"]).Select(r => r.Destination + ": " + r.Assigned));
         HighlightRoute(id);
     }
     public void SelectArrow(FlowArrow arrow)
@@ -201,33 +277,56 @@ public sealed partial class CostFlowViewModel : ObservableObject
     }
     private void Present()
     {
+        Concentration.Clear(); reportMembers.Clear(); ExecutiveSummary = "";
         Nodes.Clear(); Arrows.Clear(); Rows.Clear(); Reconciliation.Clear(); allRows.Clear();
         SelectedBalance = null; CenterBalances.Clear(); NodeBalances.Clear();
         EffectiveTotal = FinalTotal = ReconciliationState = "—";
         highlightedNodes.Clear(); highlightedArrows.Clear();
         Summary = Diagnostics = CurrentState = ""; Selection = this["SelectHint"];
         OnPropertyChanged(nameof(HasError));
-        if (SelectedRun?.Run is not { } run) { GraphChanged?.Invoke(this, EventArgs.Empty); return; }
-        CurrentState = this[history?.CurrentRunId == run.Id ? "Current" : "Historical"];
-        if (run.Snapshot.Input is not AllocationStudySnapshotInput input) return;
-        var w = input.Allocations; var model = w.Resources.Model;
+        var run = UseCurrentPrimary ? null : SelectedRun?.Run;
+        var w = UseCurrentPrimary ? liveWorkspace : (run?.Snapshot.Input as AllocationStudySnapshotInput)?.Allocations;
+        if (w is null)
+        {
+            CurrentState = this["Partial"];
+            ExecutiveSummary = this[SecondaryPhase ? "SecondaryPending" : "NoRuns"];
+            GraphChanged?.Invoke(this, EventArgs.Empty); OnPropertyChanged(string.Empty); return;
+        }
+        CurrentState = UseCurrentPrimary ? this["CurrentPrimary"] : run?.Status == CalculationRunStatus.Completed ? this[history?.CurrentRunId == run.Id ? "Current" : "Historical"] :
+            (run?.Snapshot.InputRevision != studies.Current?.Revision ? this["Historical"] + " · " : "") + this["Partial"];
+        var model = w.Resources.Model;
         var centers = model.PhysicalCenters.ToDictionary(c => c.Id);
         var nodes = model.Structure.Nodes.ToDictionary(n => n.Id);
-        string Node(EntityId id) { var n = nodes[id]; var c = centers[n.PhysicalCenterId]; return $"{c.Code} · {c.Name} / {n.Code} · {this[n.Role.ToString()]}"; }
+        string Node(EntityId id) { var n = nodes[id]; var c = centers[n.PhysicalCenterId]; return $"{c.Code} · {c.Name} / {model.Structure.Pools.FirstOrDefault(p => p.NodeId == id)?.Description} · {n.Code} · {this[n.Role.ToString()]}"; }
         string Account(EntityId id) { var o = w.Resources.Origins.Single(o => o.Id == id); var description = w.Configuration.Descriptions.FirstOrDefault(d => d.Account == o.Code)?.Description ?? string.Join(" / ", o.Descriptions); return o.Code + " — " + description; }
+        string Origin(EntityId id)
+        {
+            var origin = w.Resources.Origins.Single(o => o.Id == id);
+            var ledger = w.Resources.Ledger.Entries.SingleOrDefault(r => r.Id == id);
+            return string.Join(Environment.NewLine, origin.Rows.Select(r =>
+                this["ImportedSource"] + ": " + r.FileName + " · " + this["Record"] + " " + r.RecordNumber + " · " +
+                r.Conversion.OriginalMoney.Amount.ToString(Format) + " " + r.Conversion.OriginalMoney.Currency + " → " + Amount(r.Conversion.ConvertedOriginalMoney.Amount))) +
+                Environment.NewLine + string.Join(Environment.NewLine, (ledger?.Adjustments ?? []).Select(a =>
+                    this["Adjustments"] + ": " + Amount(a.Conversion.ConvertedOriginalMoney.Amount) + " · " + a.Type + " · " + a.Reason));
+        }
         string Key(EntityId? id) => id is null ? "—" : w.Keys.FirstOrDefault(k => k.Id == id)?.Name ?? id.ToString()!;
-        string Amount(decimal value) => value.ToString("0.############################", Format) + " " + input.StudyContext.Currency.FunctionalCurrencyCode;
+        string Amount(decimal value) => value.ToString("0.############################", Format) + " " + w.Resources.Study.Currency.FunctionalCurrencyCode;
         // Compact graph-only numbers; persisted audit and detail remain exact.
-        string GraphAmount(decimal value) => value.ToString("N2", Format) + " " + input.StudyContext.Currency.FunctionalCurrencyCode;
+        string GraphAmount(decimal value) => value.ToString("N2", Format) + " " + w.Resources.Study.Currency.FunctionalCurrencyCode;
         string GraphPercent(decimal share) => (share * 100m).ToString("N2", Format) + " %";
         string nodeId(int stage, EntityId id) => stage + ":" + id;
-        var output = run.Output;
+        var output = run?.Output;
         if (output?.Diagnostics is { } diagnosticList)
             Diagnostics = string.Join(Environment.NewLine, diagnosticList.Select(d => new DomainDiagnosticFormatter(texts).Format(d,
                 CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message));
         foreach(var n in nodes.Values) Diagnostics=Diagnostics.Replace(n.Id.ToString(),Node(n.Id),StringComparison.Ordinal);
-        if (run.Status == CalculationRunStatus.Started) Diagnostics = this["Interrupted"];
-        var primary = output?.Primary;
+        if (run?.Status == CalculationRunStatus.Started) Diagnostics = this["Interrupted"];
+        PrimaryAllocationResult? primary = output?.Primary;
+        if (UseCurrentPrimary)
+        {
+            try { primary = PrimaryAllocationService.Calculate(w); }
+            catch (DomainRuleException ex) { Diagnostics = new DomainDiagnosticFormatter(texts).Format(ex.Diagnostic, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), Format).Message; }
+        }
         if (primary is not null)
         {
             foreach (var r in primary.Resources)
@@ -245,7 +344,7 @@ public sealed partial class CostFlowViewModel : ObservableObject
             {
                 var row = new FlowRow(this["PrimaryStage"],Account(fact.ResourceId),Account(fact.ResourceId),Node(fact.NodeId),Key(fact.KeyVersionId),
                     Amount(fact.PostedAmount.Amount),Amount(fact.PostedAmount.Amount),"—",
-                    $"{Key(fact.KeyVersionId)} · {(fact.Share * 100m).ToString("0.########",Format)} % · {Amount(fact.PostedAmount.Amount)}",
+                    $"{Key(fact.KeyVersionId)} · {(fact.Share * 100m).ToString("0.########",Format)} % · {Amount(fact.PostedAmount.Amount)}" + Environment.NewLine + Origin(fact.ResourceId),
                     nodeId(0,fact.ResourceId),nodeId(1,fact.NodeId));
                 allRows.Add(row); Arrows.Add(new(row.SourceId,row.DestinationId,row.Assigned + " · " + (fact.Share*100m).ToString("0.####",Format)+" %",row,DisplayLabel:GraphAmount(fact.PostedAmount.Amount)+" · "+GraphPercent(fact.Share)));
             }
@@ -289,28 +388,85 @@ public sealed partial class CostFlowViewModel : ObservableObject
                     string.Join("; ",links.SelectMany(l=>(l.SecondaryKeyVersionIds ?? []).Append(l.PrimaryKeyVersionId ?? default)).Where(id=>id.IsValid).Select(id=>Key(id)).Distinct()),
                     Amount(fact.PostedAmount.Amount),Amount(fact.PostedAmount.Amount),Node(fact.TerminalNodeId),
                     string.Join(Environment.NewLine,links.Select(l=>Node(l.PrimaryNodeId)+" → "+Node(l.TerminalNodeId)+" · "+Amount(l.RawContribution)))+Environment.NewLine+
-                    this["Adjustments"]+": "+Amount(fact.NumericAdjustment+fact.RoundingAdjustment),nodeId(0,fact.ResourceId),nodeId(3,fact.TerminalNodeId)));
+                    this["Adjustments"]+": "+Amount(fact.NumericAdjustment+fact.RoundingAdjustment)+Environment.NewLine+Origin(fact.ResourceId),nodeId(0,fact.ResourceId),nodeId(3,fact.TerminalNodeId)));
             }
             Summary=string.Format(Format,this["Summary"],Amount(secondary.ResourceBridges.Sum(r=>r.Effective.Amount)),Amount(secondary.Facts.Sum(f=>f.PostedAmount.Amount)),Amount(secondary.ResourceBridges.Sum(r=>r.Difference.Amount)));
-            if (run.Status == CalculationRunStatus.Completed)
+            if (run?.Status == CalculationRunStatus.Completed)
             {
                 EffectiveTotal = GraphAmount(secondary.ResourceBridges.Sum(r => r.Effective.Amount));
                 FinalTotal = GraphAmount(secondary.Facts.Sum(f => f.PostedAmount.Amount));
                 ReconciliationState = this[secondary.ResourceBridges.All(r => r.Difference.Amount == 0m) ? "Balanced" : "Unbalanced"];
                 var balances = Valdrio.Reporting.RunCostBalanceProjector.Build(run);
-                RunBalanceRow Balance(string label, string role, decimal p, decimal s, decimal f, string? id) =>
-                    new(label, role, GraphAmount(p), GraphAmount(s), GraphAmount(f), p, s, f, id,
+                RunBalanceRow Balance(string label, string role, decimal p, decimal s, decimal f, string? id, EntityId[] members)
+                {
+                    var received = output.Transfers.Where(t => members.Contains(t.DestinationNodeId) && !members.Contains(t.SourceNodeId)).Sum(t => t.Amount);
+                    var ceded = output.Transfers.Where(t => members.Contains(t.SourceNodeId) && !members.Contains(t.DestinationNodeId)).Sum(t => t.Amount);
+                    var adjustment = f - p - received + ceded;
+                    return new(label, role, GraphAmount(p), GraphAmount(s), GraphAmount(f), p, s, f, id,
                         this["PrimaryBalance"] + ": " + Amount(p) + Environment.NewLine +
-                        this["SecondaryNet"] + ": " + Amount(s) + Environment.NewLine + this["FinalBalance"] + ": " + Amount(f));
+                        this["Received"] + ": " + Amount(received) + Environment.NewLine + this["Ceded"] + ": " + Amount(ceded) + Environment.NewLine +
+                        this["Adjustments"] + ": " + Amount(adjustment) + Environment.NewLine + this["FinalBalance"] + ": " + Amount(f),
+                        GraphAmount(received), GraphAmount(ceded), GraphAmount(adjustment), p == 0 ? this["UndefinedGrowth"] : GraphPercent(s / p));
+                }
                 foreach (var balance in balances.OrderBy(b => Node(b.NodeId), StringComparer.CurrentCulture))
                     NodeBalances.Add(Balance(Node(balance.NodeId), this[balance.Role.ToString()], balance.Primary,
-                        balance.SecondaryNet, balance.Final, nodeId(balance.Role == NodeRole.Principal ? 3 : 1, balance.NodeId)));
+                        balance.SecondaryNet, balance.Final, nodeId(balance.Role == NodeRole.Principal ? 3 : 1, balance.NodeId), [balance.NodeId]));
                 foreach (var group in balances.GroupBy(b => b.CenterId).OrderBy(g => centers[g.Key].Code, StringComparer.CurrentCulture))
                     CenterBalances.Add(Balance(centers[group.Key].Code + " · " + centers[group.Key].Name, "",
-                        group.Sum(b => b.Primary), group.Sum(b => b.SecondaryNet), group.Sum(b => b.Final), null));
+                        group.Sum(b => b.Primary), group.Sum(b => b.SecondaryNet), group.Sum(b => b.Final), null, group.Select(b => b.NodeId).ToArray()));
             }
         }
+        if (primary is not null)
+        {
+            var pending = primary.Resources.Where(r => r.Pending.Amount != 0 || primary.Parts.Any(p => p.ResourceId == r.ResourceId && !p.Covered)).ToArray();
+            var assigned = primary.Facts.Sum(f => f.PostedAmount.Amount);
+            var effective = primary.Resources.Sum(r => r.Effective.Amount);
+            EffectiveTotal = GraphAmount(effective);
+            var positive = pending.Sum(r => Math.Max(0, r.Pending.Amount));
+            var credits = pending.Sum(r => Math.Min(0, r.Pending.Amount));
+            ExecutiveSummary = string.Format(Format, this["Executive"], GraphAmount(effective), GraphAmount(assigned), pending.Length,
+                GraphAmount(positive), GraphAmount(credits), GraphAmount(positive + credits), GraphAmount(positive - credits),
+                GraphAmount(primary.Resources.Sum(r => r.Excluded.Amount)), GraphAmount(primary.Resources.Sum(r => r.Direct.Amount)));
+            if (pending.Length > 0)
+                Diagnostics = this["Incomplete"] + Environment.NewLine + string.Join(Environment.NewLine, pending.Select(r => Account(r.ResourceId) + " · " + Amount(r.Pending.Amount) + " · " + this["ResolvePrimary"]));
+            if (UseCurrentPrimary)
+            {
+                CurrentState += " · " + this[primary.IsComplete ? "PrimaryComplete" : "Partial"];
+                ReconciliationState = this[primary.Resources.All(r => r.Difference.Amount == 0) ? "Balanced" : "Unbalanced"];
+                FinalTotal = this["SecondaryPending"];
+            }
+            var auxiliaryCount = nodes.Values.Count(n => n.IsActive && n.Role == NodeRole.Auxiliary);
+            var evaluated = w.Configuration.AuxiliaryCapacity?.Rows.Count(r => r.Mode == AuxiliaryCapacityMode.OwnerOnceCapacity) ?? 0;
+            ExecutiveSummary += Environment.NewLine + string.Format(Format, this["CapacityCoverage"], evaluated, auxiliaryCount);
+            var costs = SecondaryPhase
+                ? (output?.Secondary?.Facts.Where(f => !f.IsCapacityVariance).GroupBy(f => f.TerminalNodeId).Select(g => (Id: g.Key, Amount: g.Sum(f => f.PostedAmount.Amount))) ?? []).ToArray()
+                : primary.Facts.GroupBy(f => f.NodeId).Select(g => (Id: g.Key, Amount: g.Sum(f => f.PostedAmount.Amount))).ToArray();
+            var groups = costs.GroupBy(c => GroupByCenter ? nodes[c.Id].PhysicalCenterId : c.Id).Select(g => new
+            {
+                Id = g.Key, Amount = g.Sum(c => c.Amount), Members = g.Select(c => c.Id).ToArray(),
+                Label = GroupByCenter ? centers[g.Key].Name + " · " + centers[g.Key].Code : Node(g.Key),
+                Role = string.Join(" / ", g.Select(c => this[nodes[c.Id].Role.ToString()]).Distinct())
+            });
+            var filtered = groups.Where(c => string.IsNullOrWhiteSpace(ReportFilter) || c.Label.Contains(ReportFilter, StringComparison.CurrentCultureIgnoreCase) || c.Role.Contains(ReportFilter, StringComparison.CurrentCultureIgnoreCase)).OrderByDescending(c => c.Amount).ToArray();
+            var positiveTotal = filtered.Where(c => c.Amount > 0).Sum(c => c.Amount);
+            var net = filtered.Sum(c => c.Amount); decimal cumulative = 0;
+            foreach (var c in filtered)
+            {
+                cumulative += Math.Max(0, c.Amount);
+                var behaviorFacts = SecondaryPhase
+                    ? (output?.Secondary?.Facts.Where(f => !f.IsCapacityVariance && c.Members.Contains(f.TerminalNodeId)).Select(f => (f.Behavior, Amount: f.PostedAmount.Amount)) ?? [])
+                    : primary.Facts.Where(f => c.Members.Contains(f.NodeId)).Select(f => (f.Behavior, Amount: f.PostedAmount.Amount));
+                var behavior = string.Join(" · ", behaviorFacts.GroupBy(f => f.Behavior).Select(g => texts.Get("AllocationUI.SecondaryBehavior" + g.Key, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)) + ": " + GraphAmount(g.Sum(f => f.Amount))));
+                var graphId = GroupByCenter ? "center:" + c.Id : nodeId(SecondaryPhase ? 3 : 1, c.Id);
+                if (GroupByCenter) reportMembers[graphId] = c.Members.Select(id => nodeId(SecondaryPhase ? 3 : 1, id)).ToArray();
+                Concentration.Add(new(c.Label, c.Role, c.Amount,
+                    c.Amount > 0 && net > 0 ? GraphPercent(c.Amount / positiveTotal) : "—",
+                    c.Amount > 0 && net > 0 ? GraphPercent(cumulative / positiveTotal) : "—", behavior, graphId));
+            }
+            ExecutiveSummary += Environment.NewLine + this["FilteredNet"] + ": " + GraphAmount(net) + " · " + this["PositiveBase"] + ": " + GraphAmount(positiveTotal) + " · " + this["Credits"] + ": " + GraphAmount(filtered.Where(c => c.Amount < 0).Sum(c => c.Amount));
+        }
         foreach(var row in allRows) Rows.Add(row);
+        OnPropertyChanged(nameof(ExecutiveSummary)); OnPropertyChanged(nameof(ReportContext)); OnPropertyChanged(nameof(PhaseLabel));
         OnPropertyChanged(nameof(HasError)); GraphChanged?.Invoke(this,EventArgs.Empty);
     }
 }

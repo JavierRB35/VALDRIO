@@ -8,6 +8,12 @@ using System.Windows.Threading;
 namespace Valdrio.Desktop;
 public partial class ResourceWorkspacePanel : UserControl
 {
+    private async void PreparationTabChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.OriginalSource == PreparationTabs && PreparationTabs.SelectedItem == ClassificationTab && Window.GetWindow(this) is MainWindow main)
+            await main.RefreshClassification();
+    }
+    private async void ReviewClassification(object sender, RoutedEventArgs e) { if (Window.GetWindow(this) is MainWindow main) await main.NavigateWorkflow(5); }
     public static readonly DependencyProperty ShowDistributionToolsProperty = DependencyProperty.Register(
         nameof(ShowDistributionTools), typeof(bool), typeof(ResourceWorkspacePanel), new PropertyMetadata(true));
     public bool ShowDistributionTools

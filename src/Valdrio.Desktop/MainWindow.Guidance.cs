@@ -14,9 +14,9 @@ public partial class MainWindow
     {
         0 or 1 => 0,
         2 or 3 or 4 => 1,
-        5 or 7 => 2,
+        5 or 7 or 8 => 2,
         9 or 10 => 3,
-        8 => 4,
+        11 => 4,
         _ => -1
     };
 
@@ -168,6 +168,7 @@ public partial class MainWindow
         ResourcePanel.Visibility = workflowStep == 4 ? Visibility.Visible : Visibility.Collapsed;
         AllocationPanel.Visibility = workflowStep == 5 ? Visibility.Visible : Visibility.Collapsed;
         SecondaryPanel.Visibility = workflowStep == 7 ? Visibility.Visible : Visibility.Collapsed;
+        ReportStatusBanner.Visibility = workflowStep == 8 && workspacePages.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         CostFlowsPanel.Visibility = workflowStep == 8 ? Visibility.Visible : Visibility.Collapsed;
         RatesHome.Visibility = workflowStep == 10 ? Visibility.Visible : Visibility.Collapsed;
         PhysicalHome.Visibility = workflowStep == 9 ? Visibility.Visible : Visibility.Collapsed;
@@ -270,7 +271,7 @@ public partial class MainWindow
                 p is PhysicalActivityWindow or PrincipalRatesWindow or AuxiliaryCapacityWindow or CompositionWindow or EstimateWindow);
             if (active is not null)
             {
-                ShowNavigationPhase(active is CompositionWindow or EstimateWindow ? 8 : 9);
+                ShowNavigationPhase(active is CompositionWindow or EstimateWindow ? 11 : 9);
                 foreach (var button in buttons) button.Tag = null;
                 PhysicalStep.Tag = active is PhysicalActivityWindow ? "Active" : null;
                 RatesStep.Tag = active is PrincipalRatesWindow ? "Active" : null;
@@ -287,12 +288,11 @@ public partial class MainWindow
         if (step == 3 && vm.Studies?.HasImportDestination != true) step = 2;
         if (step is 4 or 5 or 7 or 8 && vm.Studies?.Current is null) step = 2;
         if (step is 4 or 5 or 7 && vm.Studies?.HasConfirmedImports != true) step = 3;
-        if (step == 7 && vm.Allocations?.IsPrimaryClosed != true) step = 5;
         if (vm.Company?.WorkspaceIdle == false) return;
         if (!LeaveIntegratedWorkspace()) return;
         if (workflowStep == 4 && step != 4 && vm.Resources is { } oldResources && !await oldResources.CanLeaveAsync())
         { ResourcePanel.ActionStatus.BringIntoView(); return; }
-        if ((workflowStep is 5 or 7) && step != workflowStep && vm.Allocations is { } oldAllocations && !await oldAllocations.CanLeaveAsync())
+        if ((workflowStep is 4 or 5 or 7) && step != workflowStep && vm.Allocations is { } oldAllocations && !await oldAllocations.CanLeaveAsync())
         { AllocationPanel.ActionStatus.BringIntoView(); return; }
         if ((workflowStep is 5 or 7) && step != workflowStep && vm.Resources is { } distribution && !await distribution.CanLeaveAsync())
         { DistributionResourcePanel.ActionStatus.BringIntoView(); return; }
@@ -300,7 +300,9 @@ public partial class MainWindow
             await detail.CloseDestinationsAsync();
         if (workflowStep == 1 && step != 1 && vm.Models is { } modelEditor && !await modelEditor.CanLeaveAsync()) return;
         if (step is 9 or 10 && vm.Studies is { IsDirty: true } studyEditor && !await studyEditor.CanLeaveAsync()) return;
-        var enteringAllocation = step is 5 or 7 && vm.Allocations?.IsDirty != true;
+        if (step is 4 or 5 or 7 or 8 && vm.Studies?.IsDirty != true && vm.Studies?.RefreshCommand.CanExecute(null) == true)
+            await vm.Studies.RefreshCommand.ExecuteAsync(null);
+        if (step == 7 && vm.Allocations is { } fresh) { await fresh.EnterAsync(); if (!fresh.IsPrimaryClosed) step = 5; }
         lastHelpKey = null;
         workflowStep = step;
         if (step == 1 && vm.Models is { } nodes) await nodes.LoadStudyNodesAsync();
@@ -311,25 +313,11 @@ public partial class MainWindow
         { if (vm.Resources is { } source) await source.EnterAsync(); await allocations.EnterAsync(); allocations.SecondaryWorkspaceActive = step == 7; }
         if (step == 8 && vm.CostFlows is { } flows) await flows.EnterAsync();
         UpdateWorkflow(); RootScrollViewer.ScrollToTop();
-        if (enteringAllocation && vm.Allocations is { } opened)
-        {
-            // Once a phase is closed, the saved financial result is the user's
-            // first destination. Its key editor remains available by scrolling up.
-            if (step == 5 && opened.IsPrimaryClosed)
-            {
-                AllocationPanel.ResultsSection.IsExpanded = true;
-                AllocationPanel.RestoreClosedKeyDetails();
-                ScrollToElement(AllocationPanel.ResultsSection);
-            }
-            else if (step == 7 && opened.IsSecondaryClosed)
-            {
-                SecondaryPanel.Workspace.SecondaryResultsSection.IsExpanded = true;
-                SecondaryPanel.Workspace.RestoreClosedKeyDetails();
-                ScrollToElement(SecondaryPanel.Workspace.SecondaryResultsSection);
-            }
-            else if (step == 5) AllocationPanel.FocusKeyLibrary();
-            else SecondaryPanel.Workspace.FocusKeyLibrary();
-        }
+    }
+    internal async Task RefreshClassification()
+    {
+        if (DataContext is MainWindowViewModel vm && vm.Allocations is { } allocations && !allocations.IsDirty)
+        { await allocations.EnterAsync(); allocations.SecondaryWorkspaceActive = false; }
     }
     private async void ChooseCompany(object sender, RoutedEventArgs e) => await NavigateWorkflow(0);
     private async void ChooseModel(object sender, RoutedEventArgs e) => await NavigateWorkflow(1);
@@ -387,6 +375,12 @@ public partial class MainWindow
             new EstimateWindow(studies) { Owner = this }.ShowIntegrated();
             UpdateWorkflow();
         }
+    }
+    internal void OpenAuxiliaryFromAllocation() => OpenAuxiliary(this, new RoutedEventArgs());
+    internal async Task OpenAllocationReport(bool secondary)
+    {
+        await NavigateWorkflow(8);
+        if (viewModel?.CostFlows is { } report) { report.UseCurrentPrimary = !secondary; report.SecondaryPhase = secondary; }
     }
     private async void OpenAuxiliary(object sender, RoutedEventArgs e)
     {

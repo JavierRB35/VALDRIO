@@ -26,7 +26,7 @@ public sealed partial class ModelWorkspaceViewModel
     public bool CanWriteInGuide => company.CanWrite;
     public string NextRequirement => Guide(company.Snapshot is null ? "NeedCompany" :
         !company.CanWrite ? "ReadOnly" : IsBusy || !company.WorkspaceIdle ? "Working" :
-        MasterEdited ? "PendingCenter" : Current is null ? "NeedDraft" :
+        MasterEdited ? "PendingCenter" : Current is null ? Models.Any(m => m.Value.Status == ModelStatus.Published) ? "SelectPublished" : "NeedDraft" :
         IsPublished ? "ModelComplete" : !HasActiveCenter ? "NeedCenter" : !HasActiveUnit ? "NeedUnit" :
         nodeFormEdited && string.IsNullOrWhiteSpace(NodeCode) ? "NeedNodeCode" :
         nodeFormEdited && Physical is null ? "NeedNodeCenter" :

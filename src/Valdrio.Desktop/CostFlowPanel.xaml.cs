@@ -34,6 +34,71 @@ public partial class CostFlowPanel : UserControl
         };
     }
 
+    private void ExportCsv(object sender, RoutedEventArgs e)
+    {
+        if (vm is null) return;
+        var dialog = new Microsoft.Win32.SaveFileDialog { Filter = "CSV (*.csv)|*.csv", FileName = "VALDRIO-reparto.csv" };
+        if (dialog.ShowDialog(Window.GetWindow(this)) != true) return;
+        var lines = BuildCsv(vm);
+        try { System.IO.File.WriteAllLines(dialog.FileName, lines, new System.Text.UTF8Encoding(true)); }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) { MessageBox.Show(Window.GetWindow(this), ex.Message, vm.ReportTitle); }
+    }
+    private void PrintPdf(object sender, RoutedEventArgs e)
+    {
+        if (vm is null) return;
+        var dialog = new PrintDialog();
+        if (dialog.ShowDialog() != true) return;
+        try { dialog.PrintDocument(BuildPrintableReport(vm, dialog.PrintableAreaWidth, dialog.PrintableAreaHeight).DocumentPaginator, vm.ReportTitle); }
+        catch (Exception ex) when (ex is System.Printing.PrintSystemException or System.IO.IOException)
+        { MessageBox.Show(Window.GetWindow(this), ex.Message, vm.ReportTitle); }
+    }
+    internal static string[] BuildCsv(CostFlowViewModel report)
+    {
+        string Cell(string s) => "\"" + ((s.Length > 0 && "=+-@".Contains(s[0]) && !decimal.TryParse(s, System.Globalization.NumberStyles.Number, report.NumericCulture, out _)) ? "'" + s : s).Replace("\"", "\"\"") + "\"";
+        return report.ExportRows().Select(row => string.Join(";", row.Select(Cell))).ToArray();
+    }
+    internal static System.Windows.Documents.FixedDocument BuildPrintableReport(CostFlowViewModel vm, double width, double height)
+    {
+        var document = new System.Windows.Documents.FixedDocument();
+        if (width < 300 || height < 300) throw new ArgumentOutOfRangeException(nameof(width));
+        // Measure every paragraph; never clip a fixed-height row containing long names or provenance.
+        var paragraphs = vm.ExportRows().SelectMany(row => string.Join(" · ", row).Split('\n')).ToArray();
+        var cursor = 0; var number = 1;
+        while (cursor < paragraphs.Length)
+        {
+            var page = new System.Windows.Documents.FixedPage { Width = width, Height = height };
+            var content = new StackPanel { Width = Math.Max(100, width - 56), Margin = new Thickness(28) };
+            var header = new TextBlock { Text = vm.ReportTitle + "\n" + vm.ReportContext + "\n" + vm.CurrentState + "\n" + vm.PhaseLabel + " · " + vm.ReportFilter,
+                TextWrapping = TextWrapping.Wrap, FontWeight = FontWeights.Bold, FontSize = 11, Margin = new Thickness(0, 0, 0, 16) };
+            header.Measure(new Size(content.Width, double.PositiveInfinity));
+            content.Children.Add(header); var used = header.DesiredSize.Height;
+            var limit = height - 96;
+            while (cursor < paragraphs.Length)
+            {
+                var paragraph = new TextBlock { Text = paragraphs[cursor], TextWrapping = TextWrapping.Wrap, FontSize = 10, Margin = new Thickness(0, 0, 0, 8) };
+                paragraph.Measure(new Size(content.Width, double.PositiveInfinity));
+                if (used + paragraph.DesiredSize.Height > limit && content.Children.Count > 1) break;
+                // Very long trace paragraphs continue on the next page with the context repeated.
+                if (used + paragraph.DesiredSize.Height > limit && paragraphs[cursor].Length > 80)
+                {
+                    var length = Math.Max(40, (int)(paragraphs[cursor].Length * (limit - used) / paragraph.DesiredSize.Height / 2));
+                    paragraph.Text = paragraphs[cursor][..length];
+                    paragraphs[cursor] = paragraphs[cursor][length..];
+                    content.Children.Add(paragraph); break;
+                }
+                content.Children.Add(paragraph); used += paragraph.DesiredSize.Height; cursor++;
+            }
+            content.Children.Add(new TextBlock { Text = (number++).ToString(), Margin = new Thickness(0, 12, 0, 0) });
+            page.Children.Add(content);
+            var pageContent = new System.Windows.Documents.PageContent();
+            ((System.Windows.Markup.IAddChild)pageContent).AddChild(page); document.Pages.Add(pageContent);
+        }
+        return document;
+    }
+    private void SelectConcentration(object sender, SelectionChangedEventArgs e)
+    {
+        if (ConcentrationGrid.SelectedItem is ReportConcentrationRow row) { vm?.SelectNode(row.GraphId); AnalysisTabs.SelectedIndex = 4; }
+    }
     private void Changed(object? sender, EventArgs e) => Draw();
     private void ToggleAnalysis(object sender, RoutedEventArgs e)
     {
@@ -50,8 +115,42 @@ public partial class CostFlowPanel : UserControl
             Draw();
     }
 
+    private void DrawConcentration()
+    {
+        ConcentrationCanvas.Children.Clear();
+        if (vm is null) return;
+        var rows = vm.Concentration.ToArray();
+        ConcentrationCanvas.Width = Math.Max(600, rows.Length * 120 + 80);
+        if (rows.Length == 0) return;
+        var high = Math.Max(0, rows.Max(r => r.Amount)); var low = Math.Min(0, rows.Min(r => r.Amount)); if (high == low) return;
+        double Y(decimal value) => 20 + (double)((high - value) / (high - low)) * 135;
+        var positive = rows.Where(r => r.Amount > 0).Sum(r => r.Amount);
+        var net = rows.Sum(r => r.Amount); decimal cumulative = 0;
+        var curve = new Polyline { Stroke = ThemeBrush("Brand.Yellow"), StrokeThickness = 3, IsHitTestVisible = false };
+        for (var i = 0; i < rows.Length; i++)
+        {
+            var row = rows[i]; var x = 40 + i * 120;
+            var h = Math.Abs(Y(row.Amount) - Y(0));
+            var bar = new Border { Width = 64, Height = Math.Max(1, h), Background = ThemeBrush(row.Amount < 0 ? "Brand.Red" : "Accent.ActiveGreen"), ToolTip = row.Node + " · " + row.Amount.ToString("N2"), Focusable = true };
+            Canvas.SetLeft(bar, x); Canvas.SetTop(bar, Math.Min(Y(row.Amount), Y(0))); ConcentrationCanvas.Children.Add(bar);
+            bar.MouseLeftButtonDown += (_, _) => vm.SelectNode(row.GraphId);
+            bar.KeyDown += (_, e) => { if (e.Key is Key.Enter or Key.Space) vm.SelectNode(row.GraphId); };
+            System.Windows.Automation.AutomationProperties.SetName(bar, bar.ToolTip.ToString());
+            var label = new TextBlock { Text = row.Node, Width = 112, TextWrapping = TextWrapping.Wrap, MaxHeight = 58, ToolTip = row.Node, FontSize = 10 };
+            Canvas.SetLeft(label, x - 20); Canvas.SetTop(label, 185); ConcentrationCanvas.Children.Add(label);
+            cumulative += Math.Max(0, row.Amount);
+            if (positive > 0 && net > 0 && row.Amount > 0) curve.Points.Add(new Point(x + 32, 155 - (double)(cumulative / positive) * 130));
+        }
+        ConcentrationCanvas.Children.Add(curve);
+        if (vm.ConcentrationThreshold is >= 0 and <= 100 && net > 0)
+        {
+            var y = 155 - (double)vm.ConcentrationThreshold / 100 * 130;
+            ConcentrationCanvas.Children.Add(new Line { X1 = 20, X2 = ConcentrationCanvas.Width - 20, Y1 = y, Y2 = y, Stroke = ThemeBrush("Text.Secondary"), StrokeDashArray = new DoubleCollection { 3, 3 } });
+        }
+    }
     private void Draw()
     {
+        DrawConcentration();
         PrimaryGraphCanvas.Children.Clear();
         SecondaryGraphCanvas.Children.Clear();
         if (vm is null) return;
@@ -68,6 +167,18 @@ public partial class CostFlowPanel : UserControl
         for (var i = 0; i < headers.Length; i++) CenterBalanceGrid.Columns[i].Header = vm[headers[i]];
         headers = ["Node", "Role", "PrimaryBalance", "SecondaryNet", "FinalBalance"];
         for (var i = 0; i < headers.Length; i++) NodeBalanceGrid.Columns[i].Header = vm[headers[i]];
+
+        foreach (var grid in new[] { CenterBalanceGrid, NodeBalanceGrid })
+        {
+            var offset = grid == CenterBalanceGrid ? 4 : 5;
+            string[] fields = ["Received", "Ceded", "Adjustment", "Growth"];
+            string[] labels = ["Received", "Ceded", "Adjustments", "Growth"];
+            if (grid.Columns.Count == offset)
+                foreach (var field in fields) grid.Columns.Add(new DataGridTextColumn { Binding = new System.Windows.Data.Binding(field), Width = 160 });
+            for (int i=0;i<labels.Length;i++) grid.Columns[offset+i].Header=vm[labels[i]];
+        }
+        var reportHeaders = new[] { "Node", "Role", "Assigned", "Participation", "Cumulative", "Behavior" };
+        for (var i = 0; i < reportHeaders.Length; i++) ConcentrationGrid.Columns[i].Header = vm[reportHeaders[i]];
 
         Render(PrimaryGraphCanvas, PrimaryGraphViewport, [0, 1], primary: true);
         Render(SecondaryGraphCanvas, SecondaryGraphViewport,

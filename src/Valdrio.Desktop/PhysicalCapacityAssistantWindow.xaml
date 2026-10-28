@@ -22,10 +22,11 @@
               Foreground="{DynamicResource Accent.ActiveGreen}" TextWrapping="Wrap"/>
     </StackPanel>
    </Border>
+   <TextBlock Text="{Binding Host.Feedback}" TextWrapping="Wrap" Margin="0,4"/>
    <TextBlock Text="{Binding Feedback}" TextWrapping="Wrap"
               Foreground="{DynamicResource Brand.Red}" AutomationProperties.LiveSetting="Polite"/>
    <WrapPanel Margin="0,10,0,0">
-    <Button Content="{Binding PreviewLabel}" Click="Preview" Margin="0,0,8,0"/>
+    <Button DataContext="{Binding Host}" Content="{Binding SaveDraftLabel}" Click="SaveActivityDraft" IsEnabled="{Binding CanSaveDraft}" Margin="0,0,8,0"/><Button DataContext="{Binding Host}" Content="{Binding ConfirmLabel}" Click="ConfirmActivity" IsEnabled="{Binding CanConfirm}" Margin="0,0,8,0"/>
     <Button Content="{Binding AdoptLabel}" Click="Adopt" IsEnabled="{Binding CanAdopt}" Style="{StaticResource Button.Primary}" Margin="0,0,8,0"/>
     <Button Content="{Binding CancelLabel}" IsCancel="True" Click="Cancel"/>
    </WrapPanel>
@@ -98,14 +99,55 @@
      </ItemsControl>
     </StackPanel>
     <StackPanel Visibility="{Binding DeclaredVisible,Converter={StaticResource Visibility}}">
-     <TextBlock Text="{Binding NormalLabel}"/>
+     <TextBlock Text="{Binding DeclaredQuantityLabel}"/>
      <TextBox x:Name="DeclaredQuantityInput" Text="{Binding DeclaredQuantity,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,12" AutomationProperties.Name="{Binding NormalLabel}"/>
-     <TextBlock Text="{Binding SourceLabel}"/>
-     <TextBox x:Name="DeclaredSourceInput" Text="{Binding DeclaredSource,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,12" AutomationProperties.Name="{Binding SourceLabel}"/>
-     <TextBlock Text="{Binding FactorReasonLabel}"/>
-     <TextBox Text="{Binding DeclaredDescription,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-              TextWrapping="Wrap" AcceptsReturn="True" MinHeight="75"/>
     </StackPanel>
+   <StackPanel DataContext="{Binding Host}" IsEnabled="{Binding IsWritable}">
+    <TextBlock Text="{Binding SelectedContext}" FontWeight="SemiBold" Margin="0,0,0,8"/>
+    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
+    <StackPanel><TextBlock Text="{Binding NormalLabel}"/><TextBox Text="{Binding SelectedRow.NormalText,UpdateSourceTrigger=PropertyChanged}"/></StackPanel>
+    <StackPanel Grid.Column="1" Margin="12,0,0,0"><TextBlock Text="{Binding RealLabel}"/><TextBox Text="{Binding SelectedRow.RealText,UpdateSourceTrigger=PropertyChanged}"/></StackPanel></Grid>
+    <TextBlock Text="{Binding SelectedRow.Utilization}" FontWeight="SemiBold"/>
+    <TextBlock Text="{Binding SourceLabel}" FontWeight="SemiBold" Margin="0,0,0,4"/>
+    <Grid>
+     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+     <StackPanel Grid.Column="0" Margin="0,0,12,0">
+      <TextBlock Text="{Binding NormalLabel}"/>
+      <TextBox x:Name="DeclaredSourceInput" Text="{Binding SelectedRow.NormalSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+               ToolTip="{Binding SourceLabel}"/>
+      <ComboBox ItemsSource="{Binding QualityOptions}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                SelectedValue="{Binding SelectedRow.NormalQuality, Mode=TwoWay}" Margin="0,5,0,4"/>
+      <TextBox Text="{Binding SelectedRow.NormalDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+               TextWrapping="Wrap" MinHeight="42" AcceptsReturn="True"/>
+      <TextBlock Text="{Binding ZeroReasonLabel}"/>
+      <TextBox Text="{Binding SelectedRow.NormalZeroReason, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+   </StackPanel>
+     <StackPanel Grid.Column="1">
+      <TextBlock Text="{Binding RealLabel}"/>
+      <TextBox Text="{Binding SelectedRow.RealSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+               ToolTip="{Binding SourceLabel}"/>
+      <ComboBox ItemsSource="{Binding QualityOptions}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                SelectedValue="{Binding SelectedRow.RealQuality, Mode=TwoWay}" Margin="0,5,0,4"/>
+      <TextBox Text="{Binding SelectedRow.RealDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+               TextWrapping="Wrap" MinHeight="42" AcceptsReturn="True"/>
+      <TextBlock Text="{Binding ExceptionLabel}"/>
+      <TextBox Text="{Binding SelectedRow.ExceptionReason, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+     </StackPanel>
+    </Grid>
+    <Expander Header="{Binding AdvancedCapacityLabel}">
+      <WrapPanel>
+       <StackPanel Margin="0,6,16,6"><TextBlock Text="{Binding TheoreticalLabel}"/>
+        <TextBox Width="180" Text="{Binding SelectedRow.TheoreticalText,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/></StackPanel>
+       <StackPanel Margin="0,6,16,6"><TextBlock Text="{Binding PracticalLabel}"/>
+        <TextBox Width="180" Text="{Binding SelectedRow.PracticalText,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/></StackPanel>
+      </WrapPanel>
+     </Expander>
+    <TextBlock Text="{Binding CorrectionLabel}" Margin="0,8,0,2"/>
+    <TextBox Text="{Binding SelectedRow.CorrectionReason, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+             MaxLength="4000"/>
+   </StackPanel>
+
+
    </StackPanel>
    </Border>
   </ScrollViewer>

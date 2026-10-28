@@ -37,8 +37,9 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
     [ObservableProperty] private string normalFactor = "";
     [ObservableProperty] private string factorReason = "";
     [ObservableProperty] private string declaredQuantity = "";
-    [ObservableProperty] private string declaredSource = "";
-    [ObservableProperty] private string declaredDescription = "";
+    // The integrated editor has one source and description for the normal value.
+    public string DeclaredSource { get => row.NormalSource; set { row.NormalSource = value; OnPropertyChanged(); } }
+    public string DeclaredDescription { get => row.NormalDescription; set { row.NormalDescription = value; OnPropertyChanged(); } }
     [ObservableProperty] private string proposed = "";
     [ObservableProperty] private string feedback = "";
     [ObservableProperty] private string calculationSteps = "";
@@ -116,7 +117,9 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
     public bool CalendarVisible => Method == PhysicalCapacityMethod.Calendar;
     public bool HistoryVisible => Method == PhysicalCapacityMethod.Historical;
     public bool DeclaredVisible => Method == PhysicalCapacityMethod.Declared;
-    public string Title => L("Activity.Method");
+    public PhysicalActivityEditor Host => host;
+    public string Title => L("Activity.EditActivityCapacity");
+    public string DeclaredQuantityLabel => L("Activity.Assistant.ProposedQuantity");
     public string NormalLabel => L("Activity.Normal");
     public string CalendarLabel => L("Activity.Method.Calendar");
     public string HistoryLabel => L("Activity.Method.Historical");
@@ -127,6 +130,7 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
     public string ResourcesLabel => L("Activity.Calendar.Resources");
     public string StoppagesLabel => L("Activity.Calendar.Stoppages");
     public string FactorLabel => L("Activity.Calendar.Factor");
+    public string DescriptionLabel => L("Activity.Assistant.OptionalDescription");
     public string FactorReasonLabel => L("Activity.Calendar.FactorReason");
     public string HistoryHelp => L("Activity.History.Help");
     public string ReviewLabel => L("Activity.History.Exceptional");
@@ -275,8 +279,6 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
             }
             case PhysicalCapacityMethod.Declared:
             {
-                if (string.IsNullOrWhiteSpace(DeclaredSource) || string.IsNullOrWhiteSpace(DeclaredDescription))
-                    throw PhysicalActivityRules.Error("ACT_EVIDENCE_REQUIRED", "Activity.EvidenceRequired");
                 return (Number(DeclaredQuantity), null, null,
                     new(PhysicalEvidenceQuality.Declared, DeclaredSource.Trim(), DeclaredDescription.Trim()));
             }

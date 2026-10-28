@@ -65,6 +65,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         SaveCenterFormCommand = new AsyncRelayCommand(SaveCenterForm, () => Ready && company.CanWrite &&
             !string.IsNullOrWhiteSpace(CenterCode) && !string.IsNullOrWhiteSpace(CenterName) &&
             (Master is null || MasterEdited) && !DuplicateCenterCode);
+        DeleteCenterCommand = new AsyncRelayCommand(DeleteCenter, () => Ready && company.CanWrite && Master is not null && !MasterEdited);
         ToggleCenterCommand = new AsyncRelayCommand(ToggleCenter, () => Ready && company.CanWrite && Master is not null && !MasterEdited);
         ToggleUnitCommand = new AsyncRelayCommand(ToggleUnit, () => Ready && company.CanWrite && UnitMaster is not null);
         NewDraftCommand = new AsyncRelayCommand(NewDraft, () => Ready && company.CanWrite);
@@ -401,6 +402,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public IAsyncRelayCommand SaveCenterCommand { get; }
     public IAsyncRelayCommand NewCenterCommand { get; }
     public IAsyncRelayCommand SaveCenterFormCommand { get; }
+    public IAsyncRelayCommand DeleteCenterCommand { get; }
+    public string DeleteCenterLabel => Text("Model.DeleteCenter");
     public IAsyncRelayCommand ToggleCenterCommand { get; }
     public IAsyncRelayCommand ToggleUnitCommand { get; }
     public IAsyncRelayCommand NewDraftCommand { get; }
@@ -527,7 +530,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             SaveCenterCommand,
             NewCenterCommand,
             SaveCenterFormCommand,
-            ToggleCenterCommand,
+            DeleteCenterCommand, ToggleCenterCommand,
             ToggleUnitCommand,
             NewDraftCommand,
             LoadCommand,
@@ -621,7 +624,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             return new NodeOption(
                 n,
                 p,
-                n.Code + " · " + roleName + " · " + functions + " · " + unitName,
+                (p?.Description ?? n.Code) + " · " + n.Code + " · " + centerName + " · " + roleName + " · " + functions + " · " + unitName,
                 centerName,
                 roleName,
                 unitName,
@@ -924,6 +927,17 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     }
 
     private async Task SaveCenter() => await ChangeCenter(Master!.Value.IsActive, "Model.CenterSaved");
+    private async Task DeleteCenter()
+    {
+        if (Master is not { } selected) return;
+        if (!dialogs.ConfirmEconomicChange(DeleteCenterLabel, selected.Label + "\n" + Text("Model.DeleteCenterConfirm"), DeleteCenterLabel, Text("Model.Cancel"))) return;
+        await Run(async token =>
+        {
+            await Task.Run(() => company.ActiveModels!.DeleteCenter(new(selected.Value.CompanyId, selected.Value.Id, selected.Value.Revision, "local-user"), token));
+            ClearCenterFormCore();
+            await Reload(token);
+        });
+    }
     private async Task ToggleCenter() => await ChangeCenter(!Master!.Value.IsActive, "Model.CenterStateChanged");
 
     private async Task SaveCenterForm()

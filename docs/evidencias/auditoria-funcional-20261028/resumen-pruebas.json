@@ -1,0 +1,71 @@
+{
+  "base": "a654e46",
+  "github_actions_executed": false,
+  "github_actions_cost_usd": 0,
+  "build": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "tests": [
+    {
+      "report": "functional-audit-merge.trx",
+      "total": "781",
+      "executed": "781",
+      "passed": "781",
+      "failed": "0",
+      "error": "0",
+      "timeout": "0",
+      "aborted": "0",
+      "inconclusive": "0",
+      "passedButRunAborted": "0",
+      "notRunnable": "0",
+      "notExecuted": "0",
+      "disconnected": "0",
+      "warning": "0",
+      "completed": "0",
+      "inProgress": "0",
+      "pending": "0"
+    },
+    {
+      "report": "functional-audit-last.trx",
+      "total": "18",
+      "executed": "18",
+      "passed": "18",
+      "failed": "0",
+      "error": "0",
+      "timeout": "0",
+      "aborted": "0",
+      "inconclusive": "0",
+      "passedButRunAborted": "0",
+      "notRunnable": "0",
+      "notExecuted": "0",
+      "disconnected": "0",
+      "warning": "0",
+      "completed": "0",
+      "inProgress": "0",
+      "pending": "0"
+    }
+  ],
+  "native": [
+    {
+      "report": "verified.json",
+      "passed": 34
+    },
+    {
+      "report": "capacity-final.json",
+      "passed": 26
+    },
+    {
+      "report": "estimates-final.json",
+      "passed": 25
+    },
+    {
+      "report": "allocation3-t08-allocations.json",
+      "passed": 37
+    },
+    {
+      "report": "cost-flow.json",
+      "passed": 74
+    }
+  ]
+}

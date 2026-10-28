@@ -1,0 +1,66 @@
+<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Valdrio.Desktop" x:Class="Valdrio.Desktop.ClassificationReviewPanel">
+ <UserControl.Resources>
+  <local:DistinctStatusVisibilityConverter x:Key="DistinctStatusVisibility"/>
+  <local:KeyWorkspaceHeightConverter x:Key="KeyWorkspaceHeight"/>
+  <Style x:Key="NumberHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}"><Setter Property="HorizontalContentAlignment" Value="Right"/><Setter Property="Padding" Value="12,8"/></Style>
+  <BooleanToVisibilityConverter x:Key="Visible"/>
+  <Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}"><Setter Property="TextWrapping" Value="Wrap"/></Style>
+  <Style x:Key="ContributionNumber" TargetType="TextBlock" BasedOn="{StaticResource Text.TableNumber}"><Setter Property="ToolTip" Value="{Binding TechnicalDetail}"/></Style>
+  <Style x:Key="PrimaryBehavior" TargetType="TextBlock" BasedOn="{StaticResource Text.TableText}"><Setter Property="ToolTip" Value="{Binding AppliedRule}"/></Style>
+  <Style x:Key="ViabilityText" TargetType="TextBlock" BasedOn="{StaticResource Text.TableText}"><Setter Property="ToolTip" Value="{Binding TechnicalDetail}"/><Style.Triggers><DataTrigger Binding="{Binding HasError}" Value="True"><Setter Property="Foreground" Value="{DynamicResource Brand.Red}"/></DataTrigger></Style.Triggers></Style>
+  <Style x:Key="KeyStateCell" TargetType="TextBlock" BasedOn="{StaticResource Text.TableText}">
+   <Setter Property="TextWrapping" Value="NoWrap"/>
+   <Style.Triggers><DataTrigger Binding="{Binding IsInvalid}" Value="True">
+     <Setter Property="Foreground" Value="{DynamicResource Brand.Red}"/>
+     <Setter Property="Background" Value="{DynamicResource Status.ErrorBg}"/>
+   </DataTrigger></Style.Triggers>
+  </Style>
+  <Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}"><EventSetter Event="GotKeyboardFocus" Handler="SelectNumber"/></Style>
+  <Style TargetType="ComboBox" BasedOn="{StaticResource Input.Combo}"><Setter Property="DisplayMemberPath" Value="Label"/><Setter Property="SelectedValuePath" Value="Value"/></Style>
+ </UserControl.Resources>
+   <Expander x:Name="CompositionSection" Header="{Binding [CompositionTitle]}" IsExpanded="True">
+    <StackPanel Margin="0,8,0,0">
+     <TextBlock Text="{Binding [BaseScope]}" TextWrapping="Wrap" Margin="0,4,0,8"/>
+<TextBlock Text="{Binding [CompositionHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+     <TextBlock Text="{Binding CompositionSummary}" FontWeight="SemiBold" Margin="0,0,0,8"/>
+     <WrapPanel Margin="0,0,0,8">
+      <StackPanel MinWidth="260" Margin="0,0,12,4">
+       <TextBlock Text="{Binding [CompositionSearch]}"/>
+       <TextBox Text="{Binding CompositionSearch, UpdateSourceTrigger=PropertyChanged}"
+                AutomationProperties.Name="{Binding [CompositionSearch]}"/>
+      </StackPanel>
+      <CheckBox Content="{Binding [CompositionOnlyExceptions]}" IsChecked="{Binding CompositionOnlyExceptions, Mode=TwoWay}"
+                VerticalAlignment="Bottom" Margin="0,0,0,10"/>
+     </WrapPanel>
+     <DataGrid x:Name="CompositionGrid" local:EditableGridTabNavigation.Enabled="True" ItemsSource="{Binding CompositionView}" AutoGenerateColumns="False" IsReadOnly="True" Height="240" MinRowHeight="{DynamicResource Table.MinRowHeight}">
+      <DataGrid.Columns>
+       <DataGridTextColumn Binding="{Binding Account}" ElementStyle="{StaticResource Text.TableText}" Width="3*" MinWidth="200"/>
+       <DataGridTextColumn Binding="{Binding Amount}" HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Width="125"/>
+       <DataGridTemplateColumn Width="150"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+        <ComboBox ItemsSource="{Binding DataContext.CompositionChoices, RelativeSource={RelativeSource AncestorType=DataGrid}}" SelectedValue="{Binding Choice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding Account}">
+         <ComboBox.Style><Style TargetType="ComboBox" BasedOn="{StaticResource Input.Combo}"><Setter Property="DisplayMemberPath" Value="Label"/><Setter Property="SelectedValuePath" Value="Value"/>
+          <Style.Triggers><DataTrigger Binding="{Binding CanBulk}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger><DataTrigger Binding="{Binding DataContext.CanEditClassification, RelativeSource={RelativeSource AncestorType=DataGrid}}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger></Style.Triggers>
+         </Style></ComboBox.Style>
+        </ComboBox>
+       </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+       <DataGridTemplateColumn Width="110"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+        <TextBox IsReadOnly="True" Text="{Binding FixedPercentage, Mode=OneWay}" Visibility="{Binding IsMixed, Converter={StaticResource Visible}}" AutomationProperties.Name="{Binding DataContext[CompositionFixedWeight], RelativeSource={RelativeSource AncestorType=DataGrid}}" TextAlignment="Right">
+         <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}"><Style.Triggers><DataTrigger Binding="{Binding CanBulk}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger><DataTrigger Binding="{Binding DataContext.CanEditClassification, RelativeSource={RelativeSource AncestorType=DataGrid}}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger></Style.Triggers></Style></TextBox.Style>
+        </TextBox>
+       </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+       <DataGridTemplateColumn Width="110"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+        <TextBox Text="{Binding VariablePercentage, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsMixed, Converter={StaticResource Visible}}" AutomationProperties.Name="{Binding DataContext[CompositionVariableWeight], RelativeSource={RelativeSource AncestorType=DataGrid}}" TextAlignment="Right">
+         <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}"><Style.Triggers><DataTrigger Binding="{Binding CanBulk}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger><DataTrigger Binding="{Binding DataContext.CanEditClassification, RelativeSource={RelativeSource AncestorType=DataGrid}}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger></Style.Triggers></Style></TextBox.Style>
+        </TextBox>
+       </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+       <DataGridTextColumn Binding="{Binding Review}" ElementStyle="{StaticResource Text.TableText}" Width="2*" MinWidth="130"/>
+      </DataGrid.Columns>
+     </DataGrid>
+<Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="3*"/><ColumnDefinition Width="125"/><ColumnDefinition Width="150"/><ColumnDefinition Width="110"/><ColumnDefinition Width="110"/><ColumnDefinition Width="2*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
+<TextBlock Grid.Column="1" Text="{Binding PrimaryCompositionTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
+
+     <Button x:Name="SaveCompositionRowsButton" Content="{Binding [SaveCompositionRows]}" Command="{Binding SaveCompositionRowsCommand}" Style="{StaticResource Button.Primary}" HorizontalAlignment="Right" Margin="0,8,0,0"/>
+     <TextBlock Text="{Binding [CompositionCloseHelp]}" TextWrapping="Wrap" Margin="0,12,0,0"/>
+    </StackPanel>
+   </Expander>
+</UserControl>

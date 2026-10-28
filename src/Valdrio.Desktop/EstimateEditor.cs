@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Valdrio.Application;
+using Valdrio.Calculation;
 using Valdrio.Domain;
 using Valdrio.Localization;
 namespace Valdrio.Desktop;
@@ -87,6 +88,19 @@ public sealed partial class EstimateEditor : ObservableObject
         if (!decimal.TryParse(Quantity.Trim(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
             host.PhysicalFormatCulture, out var quantity) || quantity <= 0) throw Valdrio.Calculation.EstimateCalculator.Error("Number");
         var request = new EstimateRequest(host.PhysicalCompany!.Id, host.Current!.Id, orderId, Code.Trim(), Recipe, Run, quantity, previousId);
+        var catalog = await Task.Run(() => host.ActiveCompositions!.ReadCompositions());
+        var pools = host.PhysicalModels!.ReadModels().Where(m => m.Status == ModelStatus.Published)
+            .SelectMany(m => m.Structure.Pools.Select(p => new CompositionPool(p.Id, m.Structure.Id,
+                m.Structure.Nodes.Single(n => n.Id == p.NodeId).Code + " · " + p.Description, p.DriverUnitId,
+                m.Structure.Nodes.Single(n => n.Id == p.NodeId).IsActive))).ToArray();
+        var physical = Valdrio.Calculation.CompositionCalculator.Preview(catalog, Recipe, quantity, host.PhysicalCompany.Units, pools);
+        foreach (var line in physical.Lines.Where(l => !l.Expanded))
+        {
+            var unit = host.PhysicalCompany.Units.Single(u => u.Id == line.UnitId).Symbol;
+            Details.Add(new(line.Name + " · " + line.Path, Q(line.RequiredQuantity) + " " + unit, "—", "—", this["PhysicalOnly"]));
+        }
+        Answers.Add(new(this["QQuantity"], Q(physical.OutputQuantity) + " · " + this["Batches"] + ": " + Q(physical.StartedBatches)));
+        Summary = this["PhysicalOnly"];
         var result = await Task.Run(() => host.ActiveEstimates!.PreviewEstimate(request));
         preview = result; Display(result, this["PreviewState"]); Feedback = this["Ready"]; OnPropertyChanged(nameof(CanAccept));
     });
@@ -125,7 +139,7 @@ public sealed partial class EstimateEditor : ObservableObject
         return product.Name+" · v"+recipe.Number+" · "+value.Input.Rates.Study.Name+" · "+this["Revision"]+" "+value.Input.Rates.Study.Revision
             +" · "+this["Rates"]+": "+string.Join("; ",value.Input.Rates.Rows.Where(x=>x.Observation is not null).Select(x=>x.Name+" v"+x.Observation!.Version));
     }
-    private string Stamp(UtcInstant? value) => value is null ? "—" : DateTimeOffset.Parse(value.Value.ToCanonicalString(), CultureInfo.InvariantCulture).ToString("g", host.PhysicalFormatCulture) + " UTC";
+    private string Stamp(UtcInstant? value) => value is null ? "—" : TimeZoneInfo.ConvertTime(DateTimeOffset.Parse(value.Value.ToCanonicalString(), CultureInfo.InvariantCulture), TimeZoneInfo.FindSystemTimeZoneById(host.PhysicalTimeZoneId)).ToString("g", host.PhysicalFormatCulture) + " " + host.PhysicalTimeZoneId;
     private string Q(decimal value) => value.ToString("0.############", host.PhysicalFormatCulture);
     private string Money(EstimatePreview value) => Q(value.Cost.Total) + " " + value.Input.Rates.Study.Currency.FunctionalCurrencyCode;
     private void Display(EstimatePreview value, string state)
@@ -151,7 +165,7 @@ public sealed partial class EstimateEditor : ObservableObject
     {
         if(Busy)return; Busy=true;host.SetCompositionBusy(true);
         try { await action(); }
-        catch(DomainRuleException ex){Feedback=texts.Get(ex.Diagnostic.MessageKey,host.PhysicalUiCulture);}
+        catch(DomainRuleException ex){Feedback=new DomainDiagnosticFormatter(texts).Format(ex.Diagnostic,host.PhysicalUiCulture,host.PhysicalFormatCulture).Message; foreach(var unit in host.PhysicalCompany!.Units) Feedback=Feedback.Replace(unit.Id.ToString(),unit.Symbol,StringComparison.Ordinal);}
         catch(CompanyFileException ex){Feedback=texts.Get(ex.Diagnostic.MessageKey,host.PhysicalUiCulture);}
         finally {Busy=false;host.SetCompositionBusy(false);}
     }

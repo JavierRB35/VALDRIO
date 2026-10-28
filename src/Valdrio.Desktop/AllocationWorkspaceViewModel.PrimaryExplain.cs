@@ -14,7 +14,7 @@ public sealed record PrimaryAccountResult(
     EntityId ResourceId, string Account, string Repartible,
     string Auxiliary, string Principal, string Assigned, string Pending,
     decimal PresentedBase, decimal PresentedAssigned, decimal PresentedPending,
-    decimal AllocationPercent, IReadOnlyList<PrimaryDestinationDetail> Destinations);
+    decimal AllocationPercent, IReadOnlyList<PrimaryDestinationDetail> Destinations, string AllocationLabel = "");
 
 public sealed partial class AllocationWorkspaceViewModel
 {
@@ -110,7 +110,9 @@ public sealed partial class AllocationWorkspaceViewModel
                 DisplayMoney(baseShown, currency), DisplayMoney(aux, currency),
                 DisplayMoney(main, currency), DisplayMoney(assigned, currency),
                 DisplayMoney(pending, currency), baseShown, assigned, pending,
-                Math.Clamp(ratio, 0m, 100m), details));
+                Math.Clamp(ratio, 0m, 100m), details, baseShown == 0m
+                    ? this[primary.Parts.Where(p => p.ResourceId == id).All(p => p.Covered) ? "ZeroAssigned" : "ZeroPending"]
+                    : ratio.ToString("0.#", Format) + " %"));
         }
         PrimaryKpiEffective = StudyMoney(primary.Resources.Sum(r => r.Effective.Amount));
         PrimaryKpiRepartible = StudyMoney(PrimaryAccounts.Sum(row => row.PresentedBase));

@@ -10,12 +10,13 @@ public static class ParetoSeries
     {
         var ordered = costs.OrderByDescending(x => x.Amount)
             .ThenBy(x => x.Label, StringComparer.Ordinal).ToArray();
-        var total = ordered.Sum(x => x.Amount);
+        var total = ordered.Where(x => x.Amount > 0).Sum(x => x.Amount);
+        var net = ordered.Sum(x => x.Amount);
         decimal cumulative = 0;
         return ordered.Select(x =>
         {
-            cumulative += x.Amount;
-            return new ParetoPoint(x.Label, x.Amount, total > 0 ? cumulative / total * 100m : null);
+            if (x.Amount > 0) cumulative += x.Amount;
+            return new ParetoPoint(x.Label, x.Amount, total > 0 && net > 0 && x.Amount > 0 ? cumulative / total * 100m : null);
         }).ToArray();
     }
 }

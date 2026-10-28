@@ -49,30 +49,32 @@ public partial class MainWindow
         }
         var w = company.ActiveResources!.ReadResources(study.CompanyId, study.Id);
         var principal = w.Model.Structure.Nodes.First(n => n.Role == NodeRole.Principal);
-        var auxiliary = w.Model.Structure.Nodes.Single(n => n.Role == NodeRole.Auxiliary);
+        var auxiliary = w.Model.Structure.Nodes.First(n => n.Role == NodeRole.Auxiliary);
         var part = w.Resources.Single().Parts.Single();
         Check(part.Routing == ResourceRoutingKind.Pending && part.PoolId is null, "imported account needs no prior pool or classification");
         await NavigateWorkflow(4); await AdvanceWorkflow(); await Idle();
         Check(workflowStep == 5 && panel.IsVisible && vm.CanEdit, "T07 continues to the real allocation editor");
         Check(vm.Accounts.Single().Label.Contains(vm["NameConflict"], StringComparison.Ordinal), "conflicting descriptions are visible with their account code");
+        var existingKeyCount = vm.Keys.Count;
+        await Click(panel.NewKeyButton);
         Text(panel.KeyNameBox, "Clave sin uso para eliminar");
         vm.Lines.First().Included = true; vm.Lines.First().Value = "100";
-        await Click(panel.SaveKeyButton); vm.SelectedKey = vm.Keys.Single();
-        await Click(panel.DeleteKeyButton); Check(vm.Keys.Count == 0, "unused key is deleted through the visible action");
+        await Click(panel.SaveKeyButton); vm.SelectedKey = vm.Keys.Single(k => k.Value.Name == "Clave sin uso para eliminar");
+        await Click(panel.DeleteKeyButton); Check(vm.Keys.Count == existingKeyCount, "unused key is deleted through the visible action");
         Text(panel.KeyNameBox, "Consumos de oficina");
         var line = vm.Lines.Single(l => l.Id == principal.Id); line.Included = true; line.Value = "80";
         await Idle(); Check(panel.SaveKeyButton.IsEnabled && !vm.PublishCommand.CanExecute(null) && vm.Validation.Contains("100"),
             "80 percent can be saved as a draft but cannot be published; the editor explains that 100 percent is required");
-        Check(vm.Keys.Count == 0 && vm.CanEditKey, "incomplete percentages preserve editing");
+        Check(vm.Keys.Count == existingKeyCount && vm.CanEditKey, "incomplete percentages preserve editing");
         VisualEvidenceCapture.Capture(this, Path.Combine(output, "key-incomplete.png"));
         line.Value = "100";
-        await Click(panel.SaveKeyButton); var primaryKey = vm.Keys.Single().Value;
+        await Click(panel.SaveKeyButton); var primaryKey = vm.Keys.Single(k => k.Value.Name == "Consumos de oficina").Value;
         Check(primaryKey.Status == ModelStatus.Published && panel.KeyNameBox.IsEnabled && vm.CanEditComposition, "unused saved key remains fully editable");
         Check(vm.Validation == vm["Complete"], "saved key has a meaningful validation result");
         await Click(panel.NewKeyButton); Text(panel.KeyNameBox, "Otra distribución"); Select(panel.ModeBox, AllocationKeyMode.EqualShares);
         vm.Lines.Single(l => l.Id == auxiliary.Id).Included = true; await Click(panel.SaveKeyButton);
         var otherKey = vm.Keys.Single(k => k.Value.Name == "Otra distribución").Value.Id;
-        panel.RuleTabs.SelectedIndex = 0; await Idle(); Select(panel.RuleAccountBox, "6005"); Select(panel.RuleKeyBox, primaryKey.Id);
+        panel.ShowAssignments(); await Idle(); Select(panel.RuleAccountBox, "6005"); Select(panel.RuleKeyBox, primaryKey.Id);
         await Click(panel.SaveRuleButton); Check(vm.PrimaryRules.Count == 1 && vm.PrimaryResults.Count == 0, "save rule persists without applying");
         await Click(panel.ApplyRuleButton);
         // Validate the economic ledger, not a hard-coded display string.
@@ -90,13 +92,13 @@ public partial class MainWindow
             $"(facts={vm.PrimaryResults.Count}, nodes={vm.PrimaryNodeTotals.Count}, accounts={vm.PrimaryAccounts.Count}; " +
             $"shown={string.Join("; ", vm.PrimaryResults.Select(row => row.Amount))}; " +
             $"ledger={string.Join("; ", vm.PrimaryNodeTotals.Select(row => row.NumericAmount))})");
-        panel.RuleTabs.SelectedIndex = 2; await Idle(); Select(panel.NameAccountBox, "6005");
+        panel.ShowAssignments(); await Idle(); Select(panel.NameAccountBox, "6005");
         panel.DescriptionBox.SetCurrentValue(ComboBox.SelectedItemProperty, "Papelería"); panel.DescriptionBox.GetBindingExpression(ComboBox.SelectedItemProperty)!.UpdateSource();
         await Click(panel.ChooseDescriptionButton); Check(vm.Accounts.Single().Label == "6005 — Papelería", "chosen description replaces the conflict label without changing the account code");
         Check(!vm.IsDirty, "description save leaves no pending form: " + vm.KeyState + " / rule=" + vm.HasUnappliedRule);
         await NavigateWorkflow(4); Check(main.Resources!.Rows.Single().DisplayName == "6005 — Papelería", "chosen name is also visible in T07");
         await NavigateWorkflow(5); await Idle();
-        panel.RuleTabs.SelectedIndex = 1; await Idle(); Select(panel.PartBox, part.Id); Select(panel.PartKeyBox, primaryKey.Id);
+        panel.ShowAssignments(); await Idle(); Select(panel.PartBox, part.Id); Select(panel.PartKeyBox, primaryKey.Id);
         await Click(panel.AssignButton);
         Check(company.ActiveAllocations!.ReadAllocations(study.CompanyId, study.Id).Configuration.ExplicitAssignments.Single().PartId == part.Id, "manual part override persists");
         await Click(panel.AutomaticButton);
@@ -124,7 +126,7 @@ public partial class MainWindow
         var current = studies.Current!; var snapshot = company.ActiveStudies!.Capture(new(current.CompanyId,current.Id,current.Revision,new(Guid.NewGuid()),"native-test"));
         Check(snapshot.Input is AllocationStudySnapshotInput a && a.AppliedKeys.Count == 1, "snapshot freezes actual primary key");
         vm.SelectedKey = vm.Keys.Single(k => k.Value.Id == primaryKey.Id);
-        GuidedUi.Reveal(panel.KeyGrid); panel.KeyGrid.ScrollIntoView(vm.SelectedKey); await Idle();
+        panel.ShowKeys(); GuidedUi.Reveal(panel.KeyGrid); panel.KeyGrid.ScrollIntoView(vm.SelectedKey); await Idle();
         var keyRow = (DataGridRow)panel.KeyGrid.ItemContainerGenerator.ContainerFromItem(vm.SelectedKey);
         panel.KeyGrid.RaiseEvent(new System.Windows.Input.MouseButtonEventArgs(System.Windows.Input.Mouse.PrimaryDevice, 0, System.Windows.Input.MouseButton.Left)
             { RoutedEvent = Control.MouseDoubleClickEvent, Source = keyRow });
@@ -136,8 +138,8 @@ public partial class MainWindow
         foreach (var language in new[] { "es", "en" })
         {
             main.ApplyPresentationPreset(language, language == "es" ? "es-ES" : "en-US", "UTC", false, false); await Idle();
-            panel.RuleTabs.SelectedIndex = 0; ResetScrollForCapture(); VisualEvidenceCapture.Capture(this, Path.Combine(output, language + "-keys.png"));
-            ScrollToElement(panel.RuleTabs); VisualEvidenceCapture.Capture(this, Path.Combine(output, language + "-rules.png"));
+            panel.ShowAssignments(); ResetScrollForCapture(); VisualEvidenceCapture.Capture(this, Path.Combine(output, language + "-keys.png"));
+            ScrollToElement(panel.RulesSection); VisualEvidenceCapture.Capture(this, Path.Combine(output, language + "-rules.png"));
             Check(panel.KeyGrid.Columns[0].Header!.ToString() == vm["Name"] && vm.Accounts.Single().Label == "6005 — Papelería", language + " labels localize while account identity stays unchanged");
         }
         main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", true, true); await Idle(); ResetScrollForCapture();

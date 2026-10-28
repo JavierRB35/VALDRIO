@@ -52,10 +52,10 @@
        <DataGridTextColumn ElementStyle="{StaticResource KeyStateCell}" Binding="{Binding State}" Width="120" MinWidth="120"/>
       </DataGrid.Columns>
      </DataGrid>
-     <WrapPanel Grid.Row="2"><Button Content="{Binding [NewKey]}" Command="{Binding NewKeyCommand}" x:Name="NewKeyButton" Click="FocusNewKey"/><Button Content="{Binding [NewVersion]}" Command="{Binding NewVersionCommand}" x:Name="NewVersionButton" ToolTip="{Binding [SecondaryRepairVersionHelp]}"/><Button Content="{Binding [DeleteKey]}" Command="{Binding DeleteKeyCommand}" x:Name="DeleteKeyButton" ToolTip="{Binding KeyDeleteHelp}"/><Button Content="{Binding [Refresh]}" Command="{Binding RefreshCommand}" x:Name="RefreshButton"/><Button Content="{Binding [OpenKey]}" Command="{Binding LoadKeyCommand}" x:Name="LoadKeyButton"/></WrapPanel>
+     <WrapPanel Grid.Row="2"><Button Content="{Binding [GenerateDirect]}" Command="{Binding GenerateDirectKeysCommand}"/><Button Content="{Binding [NewKey]}" Command="{Binding NewKeyCommand}" x:Name="NewKeyButton" Click="FocusNewKey"/><Button Content="{Binding [NewVersion]}" Command="{Binding NewVersionCommand}" x:Name="NewVersionButton" ToolTip="{Binding [SecondaryRepairVersionHelp]}"/><Button Content="{Binding [DeleteKey]}" Command="{Binding DeleteKeyCommand}" x:Name="DeleteKeyButton" ToolTip="{Binding KeyDeleteHelp}"/><Button Content="{Binding [Refresh]}" Command="{Binding RefreshCommand}" x:Name="RefreshButton"/><Button Content="{Binding [OpenKey]}" Command="{Binding LoadKeyCommand}" x:Name="LoadKeyButton"/></WrapPanel>
      <StackPanel Grid.Row="3" Margin="0,12,0,0">
       <TextBlock Text="{Binding KeyState}" TextWrapping="Wrap"/>
-      <TextBlock Text="{Binding KeyDeleteHelp}" TextWrapping="Wrap" Margin="0,4,0,0" AutomationProperties.LiveSetting="Polite"/>
+      <TextBlock Text="{Binding GenerationSummary}" TextWrapping="Wrap"/><TextBlock Text="{Binding KeyDeleteHelp}" TextWrapping="Wrap" Margin="0,4,0,0" AutomationProperties.LiveSetting="Polite"/>
      </StackPanel>
     </Grid></Expander>
    </Border>
@@ -74,7 +74,7 @@
          </DataTrigger></Style.Triggers>
         </Style></TextBox.Style>
        </TextBox></StackPanel>
-      <StackPanel Grid.Column="1" Margin="0,0,8,0" IsEnabled="{Binding CanEditComposition}"><TextBlock Text="{Binding [Criterion]}"/><ComboBox x:Name="ModeBox" ItemsSource="{Binding Modes}" SelectedValue="{Binding Mode}" AutomationProperties.Name="{Binding [Criterion]}"/><TextBlock Text="{Binding [WeightMeaning]}" TextWrapping="Wrap" Margin="0,6,0,0"/>
+      <StackPanel Grid.Column="1" Margin="0,0,8,0" IsEnabled="{Binding CanEditComposition}"><TextBlock Text="{Binding [Criterion]}"/><ComboBox x:Name="ModeBox" ItemsSource="{Binding Modes}" SelectedValue="{Binding Mode}" AutomationProperties.Name="{Binding [Criterion]}"/><TextBlock Text="{Binding CriterionHelp}" TextWrapping="Wrap" Margin="0,6,0,0"/>
        <StackPanel Visibility="{Binding IsDriver, Converter={StaticResource Visible}}"><TextBlock Text="{Binding [Unit]}"/><ComboBox ItemsSource="{Binding Units}" SelectedValue="{Binding Unit}" AutomationProperties.Name="{Binding [Unit]}" x:Name="UnitBox"/></StackPanel>
       </StackPanel>
 
@@ -147,8 +147,8 @@
     </StackPanel>
    </Expander>
   </Border>
-<Expander x:Name="RulesSection" Header="{Binding [RulesAndAssignments]}" IsExpanded="False" Margin="0,0,0,16"><TabControl x:Name="RuleTabs" SelectionChanged="RuleTabChanged" Margin="0,0,0,16">
-   <TabItem Header="{Binding [Rules]}" IsEnabled="{Binding CanEditConfiguration}">
+<Expander x:Name="RulesSection" Header="{Binding [RulesAndAssignments]}" IsExpanded="False" Margin="0,0,0,16"><StackPanel Margin="0,0,0,16">
+   <Expander x:Name="PrimaryRulesSection" IsExpanded="True" Header="{Binding [Rules]}" IsEnabled="{Binding CanEditConfiguration}">
     <StackPanel Margin="16">
      <TextBlock Text="{Binding [RuleHelp]}" Margin="0,0,0,12"/>
      <DataGrid x:Name="PrimaryGrid" ItemsSource="{Binding PrimaryRules}" SelectedItem="{Binding SelectedRule}" AutoGenerateColumns="False" IsReadOnly="True" Height="150"><DataGrid.Columns><DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Account}" Width="2*"/><DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Key}" Width="*"/><DataGridTextColumn Binding="{Binding State}" Width="150" ElementStyle="{StaticResource Text.TableText}"/></DataGrid.Columns></DataGrid>
@@ -160,8 +160,8 @@
      </WrapPanel>
      <WrapPanel><Button Content="{Binding [SaveRule]}" Command="{Binding SaveRuleCommand}" x:Name="SaveRuleButton"/><Button Style="{StaticResource Button.Primary}" Content="{Binding [ApplyRule]}" Command="{Binding ApplyRuleCommand}" x:Name="ApplyRuleButton"/></WrapPanel>
     </StackPanel>
-   </TabItem>
-       <TabItem Header="{Binding [SecondaryRules]}">
+   </Expander>
+       <Expander x:Name="SecondaryRulesSection" IsExpanded="True" Header="{Binding [SecondaryRules]}">
      <StackPanel Margin="16">
       <TextBlock Text="{Binding [SecondaryRouteHelp]}" TextWrapping="Wrap" Margin="0,0,0,12"/>
       <TextBlock Text="{Binding [SecondaryNodeAssignmentsTitle]}" FontWeight="SemiBold" Margin="0,8,0,3"/>
@@ -230,8 +230,8 @@
        </StackPanel>
       </Expander>
      </StackPanel>
-    </TabItem>
-    <TabItem Header="{Binding [Exceptions]}" IsEnabled="{Binding CanEditConfiguration}">
+    </Expander>
+    <Expander x:Name="ExceptionsSection" IsExpanded="True" Header="{Binding [Exceptions]}" IsEnabled="{Binding CanEditConfiguration}">
     <StackPanel Margin="16">
      <Button Content="{Binding [ClearObsolete]}" Command="{Binding ClearObsoleteCommand}" Visibility="{Binding HasObsolete, Converter={StaticResource Visible}}" HorizontalAlignment="Left" Margin="0,0,0,8"/>
      <TextBlock Text="{Binding [ExceptionsHelp]}" Margin="0,0,0,12"/>
@@ -246,11 +246,11 @@
  </Grid>
       <Button Content="{Binding [SaveAbsolute]}" Command="{Binding SaveAbsoluteCommand}" HorizontalAlignment="Left" Margin="0,8,0,0" x:Name="SaveAbsoluteButton"/></StackPanel></Expander>
     </StackPanel>
-   </TabItem>
-   <TabItem Header="{Binding [Names]}" IsEnabled="{Binding CanEditConfiguration}">
+   </Expander>
+   <Expander x:Name="NamesSection" IsExpanded="True" Header="{Binding [Names]}" IsEnabled="{Binding CanEditConfiguration}">
     <StackPanel Margin="16"><TextBlock Text="{Binding [NamesHelp]}" Margin="0,0,0,12"/><TextBlock Text="{Binding [Account]}"/><ComboBox x:Name="NameAccountBox" ItemsSource="{Binding Accounts}" SelectedValue="{Binding Account}" AutomationProperties.Name="{Binding [Account]}"/><TextBlock Text="{Binding [VisibleName]}" Margin="0,8,0,0"/><ComboBox x:Name="DescriptionBox" ItemsSource="{Binding DescriptionOptions}" SelectedItem="{Binding ChosenDescription}" DisplayMemberPath="" SelectedValuePath="" IsEnabled="{Binding CanEdit}" AutomationProperties.Name="{Binding [VisibleName]}"/><Button Content="{Binding [ChooseName]}" Command="{Binding ChooseDescriptionCommand}" HorizontalAlignment="Left" Margin="0,8,0,12" x:Name="ChooseDescriptionButton"/><TextBlock Text="{Binding [Provenance]}" FontWeight="SemiBold"/><TextBlock Text="{Binding DescriptionProvenance}"/></StackPanel>
-   </TabItem>
-  </TabControl></Expander>
+   </Expander>
+  </StackPanel></Expander>
 <Border Style="{StaticResource Card}" Margin="0,0,0,16">
    <Expander x:Name="AccountsSection" Header="{Binding [Coverage]}" IsExpanded="True"><StackPanel Margin="0,8,0,0"><TextBlock Text="{Binding CoverageSummary}" Margin="0,0,0,8"/>
     <TextBlock Text="{Binding [BulkAssignHelp]}" TextWrapping="Wrap" Margin="0,0,0,6"/>
@@ -299,7 +299,7 @@
          <DataGridTemplateColumn.CellTemplate><DataTemplate>
            <StackPanel Margin="4,2">
              <ProgressBar Height="9" Minimum="0" Maximum="100" Value="{Binding AllocationPercent}"/>
-             <TextBlock Text="{Binding AllocationPercent, StringFormat={}{0:0.#}%}" TextAlignment="Right" FontSize="11"/>
+             <TextBlock Text="{Binding AllocationLabel}" TextAlignment="Right" FontSize="11"/>
            </StackPanel>
          </DataTemplate></DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
@@ -566,6 +566,7 @@
     <TextBlock Text="{Binding Status}" TextWrapping="Wrap" MaxHeight="36" TextTrimming="CharacterEllipsis" ToolTip="{Binding Status}" AutomationProperties.LiveSetting="Polite" Margin="0,0,0,4">
      <TextBlock.Visibility><MultiBinding Converter="{StaticResource DistinctStatusVisibility}"><Binding Path="Status"/><Binding Path="Text" ElementName="PrimaryFooterState"/><Binding Path="Text" ElementName="SecondaryFooterState"/></MultiBinding></TextBlock.Visibility>
     </TextBlock>
+    <Button Content="{Binding [ReopenSecondaryFirst]}" Click="OpenSecondaryDependency" Visibility="{Binding IsSecondaryClosed,Converter={StaticResource Visible}}" HorizontalAlignment="Left"/>
     <TextBlock x:Name="PrimaryFooterState" Text="{Binding PrimaryState}" TextWrapping="Wrap" Margin="0,0,0,6"/>
     <TextBlock x:Name="SecondaryFooterState" Text="{Binding SecondaryState}" TextWrapping="Wrap" Margin="0,0,0,6"/>
     <WrapPanel HorizontalAlignment="Right">

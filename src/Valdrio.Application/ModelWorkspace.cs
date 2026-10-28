@@ -32,6 +32,7 @@ public sealed record ModelVersionSnapshot(ModelStructure Structure, ModelStatus 
 }
 
 public sealed record CreatePhysicalCenter(EntityId CompanyId, string Code, string Name, string Actor);
+public sealed record DeletePhysicalCenter(EntityId CompanyId, EntityId Id, long ExpectedRevision, string Actor);
 public sealed record ChangePhysicalCenter(EntityId CompanyId, EntityId Id, long ExpectedRevision, string Code, string Name, bool IsActive, string Actor);
 public sealed record ChangeDriverUnitState(EntityId CompanyId, UnitId Id, long ExpectedRevision, bool IsActive, string Actor);
 public sealed record CreateModelDraft(EntityId CompanyId, string Description, string Actor);
@@ -53,6 +54,7 @@ public interface IModelWorkspace
     IReadOnlyList<ModelVersionSnapshot> ReadModels(CancellationToken token = default);
     PhysicalCenter CreateCenter(CreatePhysicalCenter command, CancellationToken token = default);
     PhysicalCenter ChangeCenter(ChangePhysicalCenter command, CancellationToken token = default);
+    void DeleteCenter(DeletePhysicalCenter command, CancellationToken token = default) => throw new NotSupportedException();
     DriverUnitState ChangeUnitState(ChangeDriverUnitState command, CancellationToken token = default);
     ModelVersionSnapshot CreateDraft(CreateModelDraft command, CancellationToken token = default);
     ModelVersionSnapshot SaveDraft(SaveModelDraft command, CancellationToken token = default);

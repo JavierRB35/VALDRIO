@@ -148,6 +148,7 @@
 
           <Separator Margin="0,8,0,6"/>
           <TextBlock Text="{Binding CenterStateHelp}" Style="{StaticResource SectionHelp}"/>
+          <Button Content="{Binding DeleteCenterLabel}" Command="{Binding DeleteCenterCommand}" HorizontalAlignment="Left"/>
           <Button x:Name="ToggleCenterButton" Content="{Binding CenterStateActionLabel}" Command="{Binding ToggleCenterCommand}" HorizontalAlignment="Left" TabIndex="29"/>
          </StackPanel>
         </Border>

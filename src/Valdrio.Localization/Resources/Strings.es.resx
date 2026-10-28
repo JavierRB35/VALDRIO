@@ -677,7 +677,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.EffectiveBasis" xml:space="preserve"><value>Importe efectivo (base de reparto)</value></data>
   <data name="Resources.EffectiveBasisHelp" xml:space="preserve"><value>Los repartos utilizan esta cifra, calculada como importado convertido + correcciones manuales + ajustes por reglas. El saldo original se conserva como referencia.</value></data>
   <data name="Resources.Effective" xml:space="preserve"><value>Importe efectivo</value></data>
-  <data name="Resources.PendingAmount" xml:space="preserve"><value>Pendiente de asignar</value></data>
+  <data name="Resources.PendingAmount" xml:space="preserve"><value>Pendiente de destino en preparación (antes de aplicar claves)</value></data>
   <data name="Resources.Difference" xml:space="preserve"><value>Diferencia</value></data>
   <data name="Resources.Amount" xml:space="preserve"><value>Importe funcional</value></data>
   <data name="Resources.PartAmount" xml:space="preserve"><value>Importe de la parte (moneda del estudio)</value></data>
@@ -1413,7 +1413,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.CompositionUnit" xml:space="preserve"><value>Unidad de actividad</value></data>
   <data name="AllocationUI.CompositionMinimum" xml:space="preserve"><value>Actividad mínima</value></data>
   <data name="AllocationUI.CompositionMaximum" xml:space="preserve"><value>Actividad máxima</value></data>
-  <data name="AllocationUI.CompositionCloseHelp" xml:space="preserve"><value>Los cambios quedan guardados. El cierre del reparto primario bloquea la composición y los nodos del análisis; reabrirlo permite corregirlos.</value></data>
+  <data name="AllocationUI.CompositionCloseHelp" xml:space="preserve"><value>Cerrar el primario protege su preparación. No valida las hipótesis sin revisar ni garantiza tarifas: estas requieren clasificación y datos físicos confirmados.</value></data>
   <data name="AllocationUI.CompositionContextRequired" xml:space="preserve"><value>Indique unidad y rango de actividad válidos antes de marcar fijos revisados o variables.</value></data>
   <data name="AllocationUI.CompositionSaved" xml:space="preserve"><value>Clasificación guardada. Puede volver a modificar las mismas cuentas.</value></data>
   <data name="AllocationUI.CompositionUnchanged" xml:space="preserve"><value>Las cuentas ya tienen esta clasificación.</value></data>
@@ -1589,8 +1589,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Run.Excluded" xml:space="preserve"><value>Excluido</value></data>
   <data name="Run.Pending" xml:space="preserve"><value>Pendiente</value></data>
   <data name="Run.Difference" xml:space="preserve"><value>Diferencia</value></data>
-  <data name="Run.NoRuns" xml:space="preserve"><value>No hay ejecuciones guardadas. Calcula para crear la primera. Los cierres T11 anteriores permanecen en el paso 7; no se convierten automáticamente en ejecuciones.</value></data>
-  <data name="Run.ReadOnlyResults" xml:space="preserve"><value>Se muestran resultados persistidos. Seleccionar una ejecución no la calcula ni la modifica.</value></data>
+  <data name="Run.NoRuns" xml:space="preserve"><value>No hay ejecuciones guardadas. Puedes consultar el primario actual sin guardar o calcular un resultado completo.</value></data>
+  <data name="Run.ReadOnlyResults" xml:space="preserve"><value>Se muestran resultados guardados. Seleccionar una ejecución no la calcula ni la modifica.</value></data>
   <data name="Run.LoadFailed" xml:space="preserve"><value>No se ha podido completar la operación. Recarga las ejecuciones guardadas para comprobar su estado.</value></data>
   <data name="Run.Started" xml:space="preserve"><value>Iniciada</value></data>
   <data name="Run.Completed" xml:space="preserve"><value>Completada</value></data>
@@ -1602,7 +1602,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Run.Publishing" xml:space="preserve"><value>Guardando ejecución y explicación…</value></data>
   <data name="Run.SelectHint" xml:space="preserve"><value>Selecciona un nodo o una flecha para consultar su detalle debajo. Con el teclado, usa Tab e Intro.</value></data>
   <data name="Run.Current" xml:space="preserve"><value>Ejecución completada vigente para esta revisión del estudio.</value></data>
-  <data name="Run.Historical" xml:space="preserve"><value>Ejecución histórica o no completada; no es el resultado vigente del estudio.</value></data>
+  <data name="Run.Historical" xml:space="preserve"><value>Resultado histórico; datos posteriores sin recalcular o versión anterior seleccionada</value></data>
   <data name="Run.Principal" xml:space="preserve"><value>Principal</value></data>
   <data name="Run.Auxiliary" xml:space="preserve"><value>Auxiliar</value></data>
   <data name="Run.AllResources" xml:space="preserve"><value>Todos los recursos del grupo de reparto</value></data>
@@ -1640,7 +1640,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Activity.ZeroException" xml:space="preserve"><value>Se ha registrado actividad real pese a existir capacidad normal cero.</value></data>
   <data name="Activity.Title" xml:space="preserve"><value>Actividad y capacidades</value></data>
   <data name="Activity.Open" xml:space="preserve"><value>Actividad y capacidades</value></data>
-  <data name="Activity.Help" xml:space="preserve"><value>Introduce capacidad normal y actividad real del período. Confirma solo tras comprobar sus fuentes.</value></data>
+  <data name="Activity.Help" xml:space="preserve"><value>Selecciona un nodo y abre Editar actividad y capacidad. La tabla resume los datos guardados o pendientes; las cifras y fuentes se modifican en un único editor.</value></data>
   <data name="Activity.Normal" xml:space="preserve"><value>Capacidad normal</value></data>
   <data name="Activity.Real" xml:space="preserve"><value>Actividad real</value></data>
   <data name="Activity.Utilization" xml:space="preserve"><value>Utilización</value></data>
@@ -1752,9 +1752,9 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Activity.EvidenceDetails" xml:space="preserve"><value>Fuentes, calidad y justificación de la fila seleccionada</value></data>
   <data name="Activity.RowSaved" xml:space="preserve"><value>Fila guardada</value></data>
   <data name="Activity.UnsavedRow" xml:space="preserve"><value>Cambios sin guardar</value></data>
-  <data name="Activity.Calculator" xml:space="preserve"><value>Calculadora</value></data>
+  <data name="Activity.Calculator" xml:space="preserve"><value>Editar actividad y capacidad</value></data>
   <data name="Reuse.NoDescription" xml:space="preserve"><value>Sin descripción de origen</value></data>
-  <data name="Run.GraphTraceHelp" xml:space="preserve"><value>Selecciona un nodo o una conexión para seguir su recorrido. Las conexiones se pueden recorrer con Tab y seleccionar con Intro o Espacio. Activa todos los importes para ver sus etiquetas; el detalle conserva los valores exactos.</value></data>
+  <data name="Run.GraphTraceHelp" xml:space="preserve"><value>Selecciona un origen o conexión para consultar sus aportaciones en Detalle. Los importes de los nodos son totales globales, no la aportación del origen seleccionado. Tab y Enter permiten recorrer las conexiones.</value></data>
   <data name="Run.ReportTitle" xml:space="preserve"><value>Resultado del reparto de costes</value></data>
   <data name="Run.CenterBalances" xml:space="preserve"><value>Coste acumulado por centro</value></data>
   <data name="Run.NodeBalances" xml:space="preserve"><value>Desglose por nodo y trazabilidad</value></data>
@@ -1767,7 +1767,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Run.Balanced" xml:space="preserve"><value>Sin diferencias</value></data>
   <data name="Run.Unbalanced" xml:space="preserve"><value>Revisar diferencias</value></data>
   <data name="Run.BalanceEmpty" xml:space="preserve"><value>No hay un resultado completo publicado para esta ejecución. Consulta su estado y los diagnósticos.</value></data>
-  <data name="Run.BalanceHelp" xml:space="preserve"><value>Primario + secundario neto = coste final. El neto representa lo recibido menos lo cedido, incluidos los ajustes del resultado publicado; no es la circulación bruta. Los centros agrupan sus nodos sin duplicar costes.</value></data>
+  <data name="Run.BalanceHelp" xml:space="preserve"><value>Primario + recibido − cedido + ajustes = coste final. El secundario neto es final − primario. Las transferencias entre nodos del mismo centro se compensan al agruparlo. La circulación bruta no se suma al coste final.</value></data>
   <data name="Run.BalanceTraceHelp" xml:space="preserve"><value>Selecciona un centro para consultar sus asignaciones y recorrido. Un auxiliar puede retener su variación de capacidad; solo sus servicios aplicados llegan a los principales.</value></data>
   <data name="Run.BalancePrecision" xml:space="preserve"><value>Resumen visual a dos decimales. El detalle y la conciliación conservan la precisión del importe publicado. Estas columnas describen etapas: no deben sumarse entre sí.</value></data>
   <data name="Run.ShowAllFlowLabels" xml:space="preserve"><value>Mostrar todos los importes sobre las conexiones</value></data>
@@ -2032,9 +2032,9 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
   <data name="Menu.Calculation" xml:space="preserve"><value>Cálculo de costes</value></data>
   <data name="Menu.Allocations" xml:space="preserve"><value>Repartos de costes</value></data>
   <data name="Menu.Capacity" xml:space="preserve"><value>Actividad y tarifas</value></data>
-  <data name="Menu.Results" xml:space="preserve"><value>Productos y resultados</value></data>
+  <data name="Menu.Results" xml:space="preserve"><value>Productos y presupuestos</value></data>
   <data name="Menu.Auxiliary" xml:space="preserve"><value>Servicios auxiliares</value></data>
-  <data name="Menu.CostFlows" xml:space="preserve"><value>Resultados y trazabilidad</value></data>
+  <data name="Menu.CostFlows" xml:space="preserve"><value>Resultados y trazabilidad del reparto</value></data>
   <data name="Menu.AuxiliaryHelp" xml:space="preserve"><value>Capacidad de auxiliares y servicios prestados a otros centros.</value></data>
   <data name="Menu.CompositionHelp" xml:space="preserve"><value>Materiales, versiones de composición y cantidades necesarias para productos y servicios.</value></data>
   <data name="Menu.NeedStudy" xml:space="preserve"><value>Selecciona un análisis guardado y resuelve los cambios pendientes para abrir esta pantalla.</value></data>
@@ -2073,7 +2073,7 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
 <data name="Activity.Import.TemplateFailed" xml:space="preserve"><value>No se pudo guardar la plantilla. Revisa la ubicación y sus permisos.</value></data>
 <data name="Activity.Import.DiscardReview" xml:space="preserve"><value>Hay filas seleccionadas para importar. Descartar cierra esta revisión sin incorporar esos borradores.</value></data>
 <data name="Rates.SelectedSummary" xml:space="preserve"><value>Tarifa: {0} · Coste: {1} · Normal: {2} · Real: {3} · {4}</value></data>
-<data name="Model.TableEditHelp" xml:space="preserve"><value>Edita el registro seleccionado en la tabla y guarda sus cambios. Para un alta, pulsa Nuevo. Escape cancela la celda; cambiar de registro resuelve los cambios pendientes.</value></data>
+<data name="Model.TableEditHelp" xml:space="preserve"><value>Haz clic en la celda para editar; guarda los cambios. Una estructura publicada requiere crear una versión editable.</value></data>
 <data name="UX.FileOperation" xml:space="preserve"><value>Origen: {0}
 Destino: {1}
 
@@ -2120,7 +2120,6 @@ Se escribirá en el destino elegido. Revisa ambos archivos antes de continuar. C
   <data name="AllocationUI.ParetoEmpty" xml:space="preserve"><value>Sin resultados disponibles. Completa o calcula este reparto para ver el gráfico.</value></data>
   <data name="AllocationUI.ParetoCumulative" xml:space="preserve"><value>Acumulado</value></data>
   <data name="AllocationUI.ParetoNoPercentage" xml:space="preserve"><value>El total es cero o negativo: se muestran los costes, sin porcentaje acumulado.</value></data>
-  <data name="AllocationUI.ParetoCredits" xml:space="preserve"><value>Hay costes negativos: el porcentaje sobre el total neto puede superar el 100 % y descender al incorporar los abonos.</value></data>
   <data name="AllocationUI.ParetoNode" xml:space="preserve"><value>Nexo</value></data>
   <data name="AllocationUI.ParetoDetails" xml:space="preserve"><value>Ver importes y porcentajes</value></data>
   <data name="Composition.ImportProducts" xml:space="preserve"><value>Importar productos y costes unitarios</value></data>
@@ -2144,7 +2143,7 @@ Se escribirá en el destino elegido. Revisa ambos archivos antes de continuar. C
   <data name="Composition.NoOutputReference" xml:space="preserve"><value>Este producto no tiene un coste unitario importado.</value></data>
   <data name="Composition.ImportReferenceAmbiguous" xml:space="preserve"><value>El catálogo contiene referencias que solo se diferencian en mayúsculas y minúsculas. Resuélvelas antes de importar.</value></data>
   <data name="Estimate.Title" xml:space="preserve"><value>Órdenes estimadas</value></data>
-  <data name="Estimate.Scope" xml:space="preserve"><value>Estimación de gestión con materiales y actividad. Cada versión aceptada conserva sus recetas, precios y tarifas. Los consumos reales se registrarán en T19.</value></data>
+  <data name="Estimate.Scope" xml:space="preserve"><value>Estimación de gestión con materiales y actividad. Cada versión aceptada conserva sus recetas, precios y tarifas. Los consumos reales se registrarán en .</value></data>
   <data name="Estimate.Help" xml:space="preserve"><value>Indica la orden, una receta publicada, la cantidad y un cálculo económico guardado. Previsualiza antes de aceptar.</value></data>
   <data name="Estimate.Code" xml:space="preserve"><value>Referencia de la orden</value></data>
   <data name="Estimate.Recipe" xml:space="preserve"><value>Receta publicada</value></data>
@@ -2200,7 +2199,72 @@ Se escribirá en el destino elegido. Revisa ambos archivos antes de continuar. C
   <data name="Estimate.QVersion" xml:space="preserve"><value>¿Qué versión estoy consultando?</value></data>
   <data name="Estimate.QReal" xml:space="preserve"><value>¿Incluye consumos reales?</value></data>
   <data name="Estimate.Complete" xml:space="preserve"><value>Todos los componentes finales tienen valoración explícita. Los semielaborados se desglosan sin duplicar su coste.</value></data>
-  <data name="Estimate.NoActual" xml:space="preserve"><value>No. Es una estimación; no consume recursos ni registra producción real (T19).</value></data>
+  <data name="Estimate.NoActual" xml:space="preserve"><value>No. Es una estimación; no consume recursos ni registra producción real ().</value></data>
 <data name="Estimate.Revision" xml:space="preserve"><value>Revisión económica</value></data>
 <data name="Estimate.FrozenRate" xml:space="preserve"><value>Tarifa congelada</value></data>
+  <data name="Activity.Assistant.OptionalDescription" xml:space="preserve"><value>Descripción de la fuente o explicación del método empleado (opcional)</value></data>
+  <data name="AllocationUI.PercentageMeaning" xml:space="preserve"><value>Introduce porcentajes: la suma debe ser 100 %. 30 + 30 suma 60 % y deja 40 % por completar; no se normaliza. Un borrador incompleto no puede asignarse.</value></data>
+  <data name="Run.Partial" xml:space="preserve"><value>Resultado parcial o incompleto; no contiene costes finales válidos</value></data>
+  <data name="AllocationUI.GenerateDirect" xml:space="preserve"><value>Generar claves directas a nodos</value></data>
+  <data name="AllocationUI.DirectNode" xml:space="preserve"><value>Directo a nodo</value></data>
+  <data name="AllocationUI.Inactive" xml:space="preserve"><value>Nodo inactivo</value></data>
+  <data name="AllocationUI.DirectGenerated" xml:space="preserve"><value>Creadas: {0}; existentes equivalentes: {1}; omitidas: {2}. No se han asignado a cuentas.</value></data>
+  <data name="AllocationUI.ParetoCredits" xml:space="preserve"><value>La concentración se calcula sobre costes positivos; los abonos se muestran con su signo y no entran en el acumulado. Positivos + abonos = neto.</value></data>
+  <data name="Run.CurrentPrimary" xml:space="preserve"><value>Primario actual · consulta calculada sin guardar</value></data>
+  <data name="Run.PrimaryComplete" xml:space="preserve"><value>Primario completo; no certifica tarifas</value></data>
+  <data name="Run.SecondaryPending" xml:space="preserve"><value>Secundario no consultado</value></data>
+  <data name="Run.Executive" xml:space="preserve"><value>Efectivos: {0} · Asignado a nodos: {1}
+Pendientes de asignar: {2} cuentas · positivos {3} · abonos {4} · neto {5} · absoluto {6}
+Excluido: {7} · Directo a productos/órdenes: {8}</value></data>
+  <data name="Run.ResolvePrimary" xml:space="preserve"><value>Revisar en Reparto primario → Asignar cuentas</value></data>
+  <data name="Run.CapacityCoverage" xml:space="preserve"><value>Capacidad: {0} de {1} auxiliares evaluados. Sin evaluar no significa inactividad cero.</value></data>
+  <data name="Run.FilteredNet" xml:space="preserve"><value>Neto de la selección</value></data>
+  <data name="Run.PositiveBase" xml:space="preserve"><value>Base positiva del Pareto</value></data>
+  <data name="Run.Credits" xml:space="preserve"><value>Abonos separados</value></data>
+  <data name="Run.SummaryTab" xml:space="preserve"><value>Resumen y concentración</value></data>
+  <data name="Run.Filter" xml:space="preserve"><value>Filtrar nodo, centro o papel</value></data>
+  <data name="Run.UseSecondary" xml:space="preserve"><value>Consultar concentración secundaria</value></data>
+  <data name="Run.Participation" xml:space="preserve"><value>Participación positiva</value></data>
+  <data name="Run.Cumulative" xml:space="preserve"><value>Acumulado positivo</value></data>
+  <data name="Run.Behavior" xml:space="preserve"><value>Comportamiento del coste</value></data>
+  <data name="Activity.EditActivityCapacity" xml:space="preserve"><value>Editar actividad y capacidad</value></data>
+  <data name="Model.DeleteCenter" xml:space="preserve"><value>Eliminar centro</value></data>
+  <data name="Model.DeleteCenterConfirm" xml:space="preserve"><value>Se eliminará únicamente si no tiene nodos ni referencias históricas. Si está utilizado, puedes desactivarlo conservando sus vínculos.</value></data>
+  <data name="Model.CenterReferenced" xml:space="preserve"><value>El centro tiene nodos o referencias históricas: {0}. Conserva sus vínculos; utiliza Desactivar si ya no debe emplearse.</value></data>
+  <data name="Guide.SelectPublished" xml:space="preserve"><value>Hay estructuras finalizadas disponibles. Selecciona y abre una para consultarla o crea una versión editable para modificarla.</value></data>
+  <data name="ImportMapping.Impact" xml:space="preserve"><value>Base importada actual: {0:N2} · sustituida: {1:N2} · nueva: {2:N2} · resultante: {3:N2} {4}. Los ajustes se concilian por separado. Los repartos afectados requieren revisión; los informes previos quedan históricos.</value></data>
+  <data name="Run.ExportCsv" xml:space="preserve"><value>Exportar informe CSV</value></data>
+  <data name="Run.PrintPdf" xml:space="preserve"><value>Informe para imprimir / PDF</value></data>
+  <data name="AllocationUI.AssignTask" xml:space="preserve"><value>Asignar cuentas / nodos</value></data>
+  <data name="AllocationUI.KeysTask" xml:space="preserve"><value>Claves de reparto</value></data>
+  <data name="AllocationUI.CheckTask" xml:space="preserve"><value>Comprobar y cerrar</value></data>
+  <data name="AllocationUI.CapacityServices" xml:space="preserve"><value>Capacidad y servicios</value></data>
+  <data name="AllocationUI.CapacityDependencies" xml:space="preserve"><value>Revisa el tratamiento antes de calcular: repartir sin evaluar capacidad no demuestra inactividad cero. Si el método evalúa capacidad, completa las observaciones y servicios de los auxiliares en el editor compartido.</value></data>
+  <data name="AllocationUI.ViewPhaseReport" xml:space="preserve"><value>Ver resultados de esta fase</value></data>
+  <data name="AllocationUI.ReopenSecondaryFirst" xml:space="preserve"><value>Para modificar el primario, reabre antes el secundario →</value></data>
+  <data name="Estimate.MissingRateDetail" xml:space="preserve"><value>Coste incompleto: {0} necesita {1} {2}, pero falta una tarifa completa. Revisa ese nodo en Actividad y tarifas. La necesidad física se conserva; no se puede aceptar un coste cero.</value></data>
+  <data name="Estimate.MissingPriceDetail" xml:space="preserve"><value>Coste incompleto: {0} necesita {1} {2}, pero falta su precio. Revisa el material en Productos y servicios.</value></data>
+  <data name="Resources.ReviewClassification" xml:space="preserve"><value>Revisar clasificación fijo/variable y destino →</value></data>
+  <data name="Run.SelectedContributions" xml:space="preserve"><value>Aportaciones de este origen (los nodos del gráfico conservan su total global):</value></data>
+  <data name="Run.ThresholdHelp" xml:space="preserve"><value>Umbral de concentración (%) entre 0 y 100. Referencia inicial 80 %; no implica una regla económica 80/20. Abonos fuera de la curva; base: costes positivos de la selección.</value></data>
+  <data name="Run.GroupByCenter" xml:space="preserve"><value>Agrupar por centro físico</value></data>
+  <data name="Run.ExecutionOptions" xml:space="preserve"><value>Calcular o consultar una ejecución guardada</value></data>
+  <data name="Resources.AmountsTask" xml:space="preserve"><value>Importes y correcciones</value></data>
+  <data name="Resources.ClassificationTask" xml:space="preserve"><value>Clasificación y destino</value></data>
+  <data name="Resources.ChecksTask" xml:space="preserve"><value>Comprobaciones</value></data>
+  <data name="Run.Ceded" xml:space="preserve"><value>Cedido</value></data>
+  <data name="Run.Growth" xml:space="preserve"><value>Incremento sobre primario</value></data>
+  <data name="Run.UndefinedGrowth" xml:space="preserve"><value>No definido: primario cero</value></data>
+  <data name="Estimate.PhysicalOnly" xml:space="preserve"><value>Necesidades físicas calculadas; valoración económica incompleta. No se puede aceptar todavía.</value></data>
+  <data name="Run.ImportedSource" xml:space="preserve"><value>Archivo de origen</value></data>
+  <data name="Run.Record" xml:space="preserve"><value>Registro</value></data>
+  <data name="Run.GlobalScope" xml:space="preserve"><value>Conciliación y puentes del estudio completo; el filtro anterior se aplica a la concentración.</value></data>
+  <data name="Activity.Assistant.ProposedQuantity" xml:space="preserve"><value>Propuesta de capacidad normal para adoptar</value></data>
+  <data name="AllocationUI.MethodScope" xml:space="preserve"><value>Método y alcance</value></data>
+  <data name="AllocationUI.MethodScopeHelp" xml:space="preserve"><value>El reparto secundario distribuye los costes de los nodos auxiliares mediante sus claves; los servicios recíprocos se resuelven conjuntamente. Antes de calcular, elige en Capacidad y servicios si cada auxiliar reparte sin evaluar capacidad o evalúa capacidad normal y actividad. Sin evaluar no significa variación cero. Si eliges evaluar, completa y confirma los datos físicos compartidos, guarda el tratamiento y después calcula.</value></data>
+  <data name="Run.PrimaryReportPhase" xml:space="preserve"><value>Reparto primario</value></data>
+  <data name="Run.SecondaryReportPhase" xml:space="preserve"><value>Reparto secundario · costes finales</value></data>
+  <data name="AllocationUI.ZeroAssigned" xml:space="preserve"><value>Sin importe; asignación definida</value></data>
+  <data name="AllocationUI.ZeroPending" xml:space="preserve"><value>Sin importe; asignación pendiente</value></data>
+  <data name="ImportMapping.AmountModePrompt" xml:space="preserve"><value>Elige qué representan los importes…</value></data>
 </root>
