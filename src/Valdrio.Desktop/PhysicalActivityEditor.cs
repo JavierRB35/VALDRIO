@@ -42,6 +42,7 @@ public sealed partial class PhysicalActivityRow : ObservableObject
     [ObservableProperty] private string utilization = "";
     public required string Cost { get; init; }
     public long Version { get; set; }
+    public PhysicalObservationState? SavedState { get; private set; }
     private PhysicalRowInputs? savedInputs;
     public string SavedStatus { get; private set; } = "";
     public bool IsLoading { get; private set; }
@@ -49,6 +50,23 @@ public sealed partial class PhysicalActivityRow : ObservableObject
         NormalText, RealText, TheoreticalText, PracticalText,
         NormalSource, RealSource, NormalDescription, RealDescription,
         NormalQuality, RealQuality, NormalZeroReason, ExceptionReason, CorrectionReason);
+    public void UpdateProvenance(bool normal, string manual)
+    {
+        if (normal)
+        {
+            var reverted = savedInputs is not null && NormalText == savedInputs.Normal;
+            NormalQuality = reverted ? savedInputs!.NormalQuality : PhysicalEvidenceQuality.Declared;
+            NormalSource = reverted ? savedInputs!.NormalSource : manual;
+            if (reverted) NormalDescription = savedInputs!.NormalDescription;
+            else if (NormalDescription.StartsWith("calendar:", StringComparison.Ordinal)) NormalDescription = "";
+        }
+        else
+        {
+            var reverted = savedInputs is not null && RealText == savedInputs.Real;
+            RealQuality = reverted ? savedInputs!.RealQuality : PhysicalEvidenceQuality.Declared;
+            RealSource = reverted ? savedInputs!.RealSource : manual;
+        }
+    }
     public bool HasChanges => savedInputs is not null && !Equals(savedInputs, Inputs());
     protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
     {
@@ -60,6 +78,7 @@ public sealed partial class PhysicalActivityRow : ObservableObject
     {
         IsLoading = true;
         Version = data?.Version ?? 0;
+        SavedState = data?.State;
         var available = data?.State != PhysicalObservationState.Annulled;
         NormalText = available ? data?.NormalQuantity?.ToString(culture) ?? "" : "";
         TheoreticalText = available ? data?.TheoreticalQuantity?.ToString(culture) ?? "" : "";
@@ -118,6 +137,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     // Published structures are immutable. Keep the exact snapshot used to build
     // the rows; property access from bindings/calculators must never perform I/O.
     public ModelStructure Structure { get; private set; } = null!;
+    public IReadOnlyList<PhysicalObservation> References { get; private set; } = [];
     private readonly UiTextCatalog texts;
     [ObservableProperty] private PhysicalActivityRow? selectedRow;
     [ObservableProperty] private string feedback = "";
@@ -196,6 +216,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         // navigation must still restore the user's original values and selection.
         var original = study;
         var originalStructure = Structure;
+        var originalReferences = References;
         var previousReadOnly = IsReadOnly;
         var originalRows = Rows.ToArray();
         var originalSelection = SelectedRow;
@@ -210,6 +231,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         {
             study = original;
             Structure = originalStructure;
+            References = originalReferences;
             IsReadOnly = previousReadOnly;
             Rows.Clear();
             foreach (var row in originalRows) Rows.Add(row);
@@ -269,13 +291,15 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     private PhysicalEvidence? Evidence(decimal? value, PhysicalEvidenceQuality quality,
         string source, string description) =>
         value is null && string.IsNullOrWhiteSpace(source) && string.IsNullOrWhiteSpace(description) ? null :
-            new(quality, source?.Trim() ?? "", description?.Trim() ?? "");
+            new(string.IsNullOrWhiteSpace(source) ? PhysicalEvidenceQuality.Declared : quality,
+                string.IsNullOrWhiteSpace(source) ? Label("Activity.Guided.Manual") : source.Trim(), description?.Trim() ?? "");
 
     public void Reload()
     {
         var selectedId = SelectedRow?.PoolId;
         var model = models.ReadModels().Single(m =>
             m.Structure.Id == study.SelectedModelVersionId && m.Status == ModelStatus.Published);
+        References = activity.ReadReferences(study.CompanyId, study.Id);
         var latest = activity.ReadCurrent(study.CompanyId, study.Id).ToDictionary(x => x.PoolId);
         var publishedRun = runs?.ReadRuns(study.CompanyId, study.Id);
         var currentRunId = publishedRun?.CurrentRunId;
@@ -309,6 +333,12 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
                 { OnPropertyChanged(nameof(PendingRowsSummary)); OnPropertyChanged(nameof(CanSaveDraft)); }
                 if (row.IsLoading || e.PropertyName is nameof(PhysicalActivityRow.HasChanges) or
                     nameof(PhysicalActivityRow.Status) or nameof(PhysicalActivityRow.Utilization)) return;
+                if (e.PropertyName == nameof(PhysicalActivityRow.NormalText))
+                {
+                    row.UpdateProvenance(true, Label("Activity.Guided.Manual"));
+                }
+                if (e.PropertyName == nameof(PhysicalActivityRow.RealText))
+                    row.UpdateProvenance(false, Label("Activity.Guided.Manual"));
                 row.Status = row.HasChanges ? Label("Activity.UnsavedRow") : row.SavedStatus;
                 try
                 {

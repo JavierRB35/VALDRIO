@@ -106,25 +106,22 @@ public static class PhysicalActivityRules
             throw Error("ACT_EVIDENCE_REQUIRED", "Activity.EvidenceRequired");
         input.NormalEvidence.EnsureValid();
         input.RealEvidence.EnsureValid();
-        if (input.NormalQuantity == 0m && string.IsNullOrWhiteSpace(input.NormalZeroReason))
-            throw Error("ACT_ZERO_NORMAL_REASON", "Activity.ZeroNormalReason");
-        if ((input.NormalQuantity == 0m && input.RealQuantity > 0m ||
-             input.NormalQuantity > 0m && input.RealQuantity > input.NormalQuantity) &&
-            string.IsNullOrWhiteSpace(input.ExceptionReason))
-            throw Error("ACT_EXCEPTION_REASON", "Activity.ExceptionReason");
+
     }
 
     public static void EnsureCorrectionReason(PhysicalObservation? latest, string? reason)
     {
-        if (latest?.State == PhysicalObservationState.Confirmed && string.IsNullOrWhiteSpace(reason))
-            throw Error("ACT_CORRECTION_REASON", "Activity.CorrectionReason");
+        // Corrections are versioned with actor, timestamp and before/after values.
+        // A narrative is optional; retain the storage length contract.
+        if (reason?.Length > 4000)
+            throw Error("ACT_INPUT_INVALID", "Activity.InputInvalid");
     }
 }
 
 // Pure physical planning: no costs, T12 solver, locale-sensitive parsing or hidden defaults.
 public sealed record PhysicalCalendarInput(
     int OperatingDays, decimal ShiftsPerDay, decimal HoursPerShift, decimal EquivalentResources,
-    decimal PlannedStoppageHours, decimal NormalFactor, string FactorJustification);
+    decimal PlannedStoppageHours, decimal NormalFactor, string? FactorJustification);
 public sealed record PhysicalCalendarProposal(decimal Theoretical, decimal Practical, decimal Normal);
 public sealed record PhysicalHistoryPeriod(BusinessDate Start, BusinessDate End, decimal RealQuantity,
     bool Include, string? ExclusionReason);
@@ -137,7 +134,7 @@ public static class PhysicalNormalCalculator
         if (input.OperatingDays < 0 || input.ShiftsPerDay <= 0 || input.HoursPerShift <= 0 ||
             input.EquivalentResources <= 0 || input.PlannedStoppageHours < 0 ||
             input.HoursPerShift > 24 || input.ShiftsPerDay > 24 / input.HoursPerShift ||
-            input.NormalFactor is < 0 or > 1 || string.IsNullOrWhiteSpace(input.FactorJustification))
+            input.NormalFactor is < 0 or > 1 || input.FactorJustification?.Length > 4000)
             throw PhysicalActivityRules.Error("ACT_CALENDAR_INVALID", "Activity.CalendarInvalid");
         var theoretical = checked(input.OperatingDays * input.ShiftsPerDay * input.HoursPerShift * input.EquivalentResources);
         if (input.PlannedStoppageHours > theoretical)
@@ -152,8 +149,7 @@ public static class PhysicalNormalCalculator
     {
         ArgumentNullException.ThrowIfNull(periods);
         if (periods.Count == 0 || periods.Any(p => p.RealQuantity < 0 ||
-            p.Start.Value > p.End.Value ||
-            (!p.Include && string.IsNullOrWhiteSpace(p.ExclusionReason))))
+            p.Start.Value > p.End.Value))
             throw PhysicalActivityRules.Error("ACT_HISTORY_INVALID", "Activity.HistoryInvalid");
         var included = periods.Where(p => p.Include).ToArray();
         if (included.Length == 0 || included.Select(p => p.End.Value.DayNumber - p.Start.Value.DayNumber + 1).Distinct().Count() != 1)

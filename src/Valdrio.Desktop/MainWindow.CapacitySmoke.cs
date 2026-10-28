@@ -27,9 +27,16 @@ public partial class MainWindow
             window.Show();
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
             var editor = (PhysicalCapacityAssistantEditor)window.DataContext;
+            Check(!editor.ReviewExpanded && !editor.DetailsExpanded, "secondary fields initially hidden " + language);
+            VisualEvidenceCapture.Capture(window, Path.Combine(directory, "primary-" + language + ".png"));
+            editor.ReviewExpanded = true;
+            editor.Method = PhysicalCapacityMethod.Calendar;
+            editor.UseProposal = true;
+            window.UpdateLayout();
             void Enter(string name, string value)
             {
                 var box = (TextBox)window.FindName(name);
+                box.BringIntoView(); window.UpdateLayout();
                 Check(box.Focus(), "keyboard focus " + name + " " + language);
                 box.Text = value;
                 box.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
@@ -37,7 +44,7 @@ public partial class MainWindow
             Enter("DaysInput", "20"); Enter("ShiftsPerDayInput", "2");
             Enter("HoursPerShiftInput", "8"); Enter("EquivalentResourcesInput", "3");
             Enter("StoppagesInput", language == "es" ? "0,5" : "0.5");
-            Enter("NormalFactorInput", "90"); Enter("FactorReasonInput", "Approved schedule / calendario aprobado");
+            Enter("NormalFactorInput", "90");
             Check(editor.CanAdopt && editor.Proposed.StartsWith("810"), "live WPF calculation " + language);
             Check(!host.HasPendingEdits, "preview does not mutate row " + language);
             window.UpdateLayout();
@@ -50,8 +57,14 @@ public partial class MainWindow
             window.Width = 680; window.Height = 720;
             window.UpdateLayout();
             VisualEvidenceCapture.Capture(window, Path.Combine(directory, "calculator-narrow-" + language + ".png"));
-            editor.Adopt();
-            Check(decimal.Parse(host.SelectedRow!.NormalText, host.NumericCulture) == 810m, "apply updates actual row " + language);
+            editor.ReviewExpanded = false;
+            ((ScrollViewer)window.FindName("FieldsScroll")).ScrollToTop();
+            Enter("RealInput", "800");
+            editor.Save(true);
+            Check(decimal.Parse(host.SelectedRow!.NormalText, host.NumericCulture) == 810m, "single save uses proposal " + language);
+            Check(!host.SelectedRow.HasChanges, "saved without narratives " + language);
+            window.UpdateLayout();
+            VisualEvidenceCapture.Capture(window, Path.Combine(directory, "confirmed-" + language + ".png"));
             window.Close();
         }
         File.WriteAllText(Path.Combine(directory, "checks.json"), JsonSerializer.Serialize(checks));

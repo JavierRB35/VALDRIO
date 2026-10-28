@@ -45,6 +45,110 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
     [ObservableProperty] private string calculationSteps = "";
     [ObservableProperty] private bool canAdopt;
     private bool initialized;
+    [ObservableProperty] private bool reviewExpanded;
+    [ObservableProperty] private bool detailsExpanded;
+    [ObservableProperty] private bool useProposal;
+    private decimal? proposedNumber;
+    public string NormalValue
+    {
+        get => UseProposal && proposedNumber.HasValue ? proposedNumber.Value.ToString(culture) : row.NormalText;
+        set { UseProposal = false; row.NormalText = value; DeclaredQuantity = value; NotifyGuided(); }
+    }
+    public string RealValue { get => row.RealText; set { row.RealText = value; NotifyGuided(); } }
+    public string QuantityUnit => host.Units.Single(u => u.Id == host.Structure.Pools.Single(p => p.Id == row.PoolId).DriverUnitId).Symbol;
+    public string NormalFieldLabel => L("Activity.Guided.Normal") + " (" + QuantityUnit + ")";
+    public string RealFieldLabel => L("Activity.Guided.Real") + " (" + QuantityUnit + ")";
+    public string NormalHelp => L("Activity.Guided.NormalHelp");
+    public string RealHelp => L("Activity.Guided.RealHelp");
+    public string ReviewLabelText => L("Activity.Guided.Review");
+    public string DetailsLabel => L("Activity.Guided.Details");
+    public string MethodLabel => L("Activity.Guided.Method");
+    public string MethodHelp => L("Activity.Guided.MethodHelp");
+    public string UseProposalLabel => L("Activity.Guided.UseProposal");
+    public string NormalSourceLabel => L("Activity.Guided.NormalSource");
+    public string RealSourceLabel => L("Activity.Guided.RealSource");
+    public string SourceHelp => L("Activity.Guided.SourceHelp");
+    public string NormalNotesLabel => L("Activity.Guided.NormalNotes");
+    public string RealNotesLabel => L("Activity.Guided.RealNotes");
+    public string NotesLabel => L("Activity.Guided.Notes");
+    public string NotesHelp => L("Activity.Guided.NotesHelp");
+    public string ProvenanceSummary => UseProposal ? L("Activity.Guided.Proposed") :
+        string.IsNullOrWhiteSpace(row.NormalSource) ? L("Activity.Guided.Manual") : row.NormalSource;
+    public string RealProvenance => string.IsNullOrWhiteSpace(row.RealText) ? L("Activity.Guided.NoRecords") :
+        string.IsNullOrWhiteSpace(row.RealSource) ? L("Activity.Guided.Manual") : row.RealSource;
+    public string InferenceSummary { get; private set; } = "";
+    public bool ShowZeroNote => ParseOptional(NormalValue) == 0;
+    public bool ShowExceptionNote => ParseOptional(NormalValue) is { } normal && ParseOptional(RealValue) > normal;
+    public bool ShowCorrectionNote => row.Version > 0 && row.HasChanges;
+    public string ReviewWarning => ShowExceptionNote ? L("Activity.Guided.AboveNormal") : ShowZeroNote ? L("Activity.UtilizationUndefined") : "";
+    public string UtilizationSummary
+    {
+        get
+        {
+            try { return PhysicalActivityRules.Utilization(ParseOptional(NormalValue), ParseOptional(RealValue)) is { } percent
+                ? host.UtilizationLabel + ": " + percent.ToString("0.##", culture) + " %" : ""; }
+            catch (OverflowException) { return L("Activity.InputInvalid"); }
+        }
+    }
+    public string Readiness => row.SavedState == PhysicalObservationState.Confirmed && !row.HasChanges && !UseProposal
+        ? L("Activity.Guided.Confirmed") : NormalError.Length > 0 ? NormalError : RealError.Length > 0 ? RealError :
+        L(string.IsNullOrWhiteSpace(NormalValue) ? "Activity.Guided.MissingNormal" :
+          string.IsNullOrWhiteSpace(RealValue) ? "Activity.Guided.MissingReal" : "Activity.Guided.Ready");
+    private decimal? ParseOptional(string text) => decimal.TryParse(text, NumberStyles.AllowDecimalPoint |
+        NumberStyles.AllowLeadingSign, culture, out var n) ? n : null;
+    private string InputError(string text) => string.IsNullOrWhiteSpace(text) ? "" :
+        ParseOptional(text) is not { } n ? L("Activity.InputInvalid") : n < 0 ? L("Activity.NegativeQuantity") : "";
+    private string CalendarError(string value, string label, decimal minimum, decimal maximum)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return "";
+        try { Input(value, label, minimum, maximum); return ""; }
+        catch (FormatException e) { return e.Message; }
+    }
+    public string DaysError => CalendarError(OperatingDays, DaysLabel, 0, host.Study.PeriodEnd.Value.DayNumber - host.Study.PeriodStart.Value.DayNumber + 1);
+    public string ShiftsError => CalendarError(ShiftsPerDay, ShiftsLabel, 0, 24);
+    public string HoursError => CalendarError(HoursPerShift, HoursLabel, 0, 24);
+    public string ResourcesError => InputError(EquivalentResources);
+    public string StoppagesError => InputError(Stoppages);
+    public string FactorError => CalendarError(NormalFactor, FactorLabel, 0, 100);
+    public string NormalError => InputError(NormalValue);
+    public string RealError => InputError(RealValue);
+    public bool CanSave => host.IsWritable && (row.HasChanges || HasPendingProposal || UseProposal);
+    public bool CanConfirm => (row.SavedState != PhysicalObservationState.Confirmed || row.HasChanges || UseProposal) && host.IsWritable && !string.IsNullOrWhiteSpace(NormalValue) &&
+        !string.IsNullOrWhiteSpace(RealValue) && NormalError.Length == 0 && RealError.Length == 0 &&
+        (!UseProposal || CanAdopt);
+    public string SaveLabel => L("Activity.Guided.Save");
+    public string ConfirmLabel => L("Activity.Guided.Confirm");
+    public string HistoryText => host.History();
+    public string NormalNotes
+    {
+        get => row.NormalQuality != PhysicalEvidenceQuality.Calculated ? row.NormalDescription :
+            row.NormalDescription.Split("\nNote: ", 2).ElementAtOrDefault(1) ?? "";
+        set => row.NormalDescription = row.NormalQuality != PhysicalEvidenceQuality.Calculated ? value :
+            row.NormalDescription.Split("\nNote: ", 2)[0] + (string.IsNullOrEmpty(value) ? "" : "\nNote: " + value);
+    }
+    public string NormalKind => string.IsNullOrWhiteSpace(NormalValue) ? L("Activity.Guided.MissingNormal") : host.Label("Activity.Quality." + (UseProposal ? PhysicalEvidenceQuality.Calculated : row.NormalQuality));
+    public string RealKind => string.IsNullOrWhiteSpace(RealValue) ? L("Activity.Guided.NoRecords") : host.Label("Activity.Quality." + row.RealQuality);
+
+    private void NotifyGuided()
+    {
+        foreach (var property in new[] { nameof(NormalValue), nameof(RealValue), nameof(NormalError), nameof(RealError),
+            nameof(DaysError), nameof(ShiftsError), nameof(HoursError), nameof(ResourcesError), nameof(StoppagesError), nameof(FactorError), nameof(Readiness), nameof(ShowZeroNote), nameof(ShowExceptionNote), nameof(ShowCorrectionNote),
+            nameof(CanSave), nameof(CanConfirm), nameof(ReviewWarning), nameof(UtilizationSummary), nameof(NormalKind), nameof(RealKind), nameof(ProvenanceSummary), nameof(RealProvenance) }) OnPropertyChanged(property);
+    }
+    partial void OnUseProposalChanged(bool value) { if (initialized) NotifyGuided(); }
+    public void Save(bool confirm)
+    {
+        if (!host.IsWritable) return;
+        if (UseProposal)
+        {
+            if (!CanAdopt && confirm) { ReviewExpanded = true; return; }
+            if (CanAdopt) { Adopted = false; Adopt(); if (!Adopted) return; }
+        }
+        var version = row.Version;
+        host.Save(confirm);
+        if (row.Version > version) { HasPendingProposal = false; UseProposal = false; OnPropertyChanged(nameof(HistoryText)); }
+        NotifyGuided();
+    }
 
     public PhysicalCapacityAssistantEditor(PhysicalActivityEditor host)
     {
@@ -60,20 +164,45 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
         if (!CalendarSupported || row.NormalQuality == PhysicalEvidenceQuality.Declared)
             Method = PhysicalCapacityMethod.Declared;
         RestoreCalendar();
+        var pool = host.Structure.Pools.Single(p => p.Id == row.PoolId);
+        suggestions = PhysicalActivityInference.Suggest(new(host.Study.CompanyId, host.Study.SelectedModelVersionId,
+            row.NodeId, row.PoolId, pool.DriverUnitId, host.Study.PeriodStart, host.Study.PeriodEnd), host.References);
+        if (string.IsNullOrWhiteSpace(OperatingDays) && CalendarSupported && suggestions.CalendarReference is { } previous)
+        {
+            var defaults = PhysicalActivityInference.ReadCalendar(previous.NormalEvidence?.Description)!;
+            ShiftsPerDay = defaults.Shifts?.ToString(culture) ?? "";
+            HoursPerShift = defaults.Hours?.ToString(culture) ?? "";
+            EquivalentResources = defaults.Resources?.ToString(culture) ?? "";
+            NormalFactor = (defaults.Factor * 100)?.ToString(culture) ?? "";
+            // Period totals/days cannot be copied across calendars. Rates may be proposed.
+            if (Enum.TryParse<PhysicalStoppageBasis>(defaults.StopsBasis, out var basis) &&
+                basis is PhysicalStoppageBasis.PerResourceShift or PhysicalStoppageBasis.PerResourceDay)
+            { StoppageBasis = basis; Stoppages = defaults.StopsEntered?.ToString(culture) ?? ""; }
+            InferenceSummary = L("Activity.Guided.Recovered") + " " + previous.PeriodStart + " – " + previous.PeriodEnd;
+        }
+        if (row.NormalQuality == PhysicalEvidenceQuality.Calculated && row.NormalDescription.Contains(":real=", StringComparison.Ordinal))
+            Method = PhysicalCapacityMethod.Historical;
+        if (string.IsNullOrWhiteSpace(row.NormalText) && suggestions.ComparableHistory.Count > 0 && string.IsNullOrWhiteSpace(OperatingDays))
+            Method = PhysicalCapacityMethod.Historical;
+        UseProposal = string.IsNullOrWhiteSpace(row.NormalText) && Method != PhysicalCapacityMethod.Declared;
         initialized = true;
         Preview();
+        row.PropertyChanged += RowChanged;
     }
 
+    private void RowChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs args) => NotifyGuided();
+    public void Detach() => row.PropertyChanged -= RowChanged;
+
+    private PhysicalActivitySuggestions suggestions = new(null, []);
     private bool historyLoaded;
     private void LoadHistory()
     {
         if (historyLoaded) return;
-        foreach (var observation in host.Activity.ReadReferences(host.Study.CompanyId, host.Study.Id)
-            .Where(o => o.PoolId == row.PoolId && o.RealQuantity is not null))
+        foreach (var observation in suggestions.ComparableHistory)
         {
             Historical.Add(new()
             {
-                Observation = observation,
+                Observation = observation, Include = true, Reviewed = true,
                 Label = string.Format(culture, "{0} – {1} · {2} {3} · {4}",
                     observation.PeriodStart, observation.PeriodEnd,
                     observation.RealQuantity, row.Unit, observation.RealEvidence?.Source ?? "")
@@ -103,7 +232,7 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
             return unit.Dimension == "time" && unit.Symbol == "h";
         }
     }
-    public string Context => row.Node + " · " + row.Unit + " · " + host.StudyPeriod;
+    public string Context => row.Node + " · " + QuantityUnit + " · " + host.StudyPeriod;
     public string ExistingCost => host.CostLabel + ": " + row.Cost;
     public string ProposalHelp => L("Activity.Assistant.Help");
     public string CalendarHelp => L("Activity.Assistant.CalendarHelp");
@@ -116,6 +245,7 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
     public string ResultLabel => L("Activity.Assistant.Result");
     public bool CalendarVisible => Method == PhysicalCapacityMethod.Calendar;
     public bool HistoryVisible => Method == PhysicalCapacityMethod.Historical;
+    public bool ManualAuxiliaryVisible => !CalendarVisible;
     public bool DeclaredVisible => Method == PhysicalCapacityMethod.Declared;
     public PhysicalActivityEditor Host => host;
     public string Title => L("Activity.EditActivityCapacity");
@@ -172,10 +302,12 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
     partial void OnMethodChanged(PhysicalCapacityMethod value)
     {
         if (value == PhysicalCapacityMethod.Historical) LoadHistory();
+        if (value == PhysicalCapacityMethod.Declared) UseProposal = false;
         Proposed = "";
         OnPropertyChanged(nameof(CalendarVisible));
         OnPropertyChanged(nameof(HistoryVisible));
         OnPropertyChanged(nameof(DeclaredVisible));
+        OnPropertyChanged(nameof(ManualAuxiliaryVisible));
     }
 
     protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
@@ -236,11 +368,9 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
                 if (stops > theoretical)
                     throw new FormatException(string.Format(culture, L("Activity.Stoppages.Exceeds"), stops, theoretical));
                 var factor = Input(NormalFactor, FactorLabel, 0, 100) / 100m;
-                if (string.IsNullOrWhiteSpace(FactorReason))
-                    throw new FormatException(L("Activity.Assistant.ReasonRequired"));
                 var parameters = new PhysicalCalendarInput((int)days,
                     shifts, hours, resources, stops, factor, FactorReason);
-                var result = PhysicalNormalCalculator.Calendar(parameters);
+                var result = PhysicalActivityInference.CalendarSegments([new(host.Study.PeriodStart, host.Study.PeriodEnd, parameters)]);
                 CalculationSteps = string.Format(culture, L("Activity.Stoppages.Calculation"), enteredStops,
                     StoppageOptions.Single(o => o.Value == StoppageBasis).Label, multiplier, stops) + Environment.NewLine +
                     string.Format(culture, L("Activity.Assistant.Calculation"),
@@ -260,8 +390,7 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
             case PhysicalCapacityMethod.Historical:
             {
                 var chosen = Historical.ToArray();
-                if (chosen.Length == 0 || chosen.Any(p => !p.Reviewed ||
-                    ((!p.Include || p.Exceptional) && string.IsNullOrWhiteSpace(p.ReviewReason))))
+                if (chosen.Length == 0)
                     throw PhysicalActivityRules.Error("ACT_HISTORY_INVALID", "Activity.HistoryInvalid");
                 var periods = chosen.Select(p => new PhysicalHistoryPeriod(
                     p.Observation.PeriodStart, p.Observation.PeriodEnd, p.Observation.RealQuantity!.Value,
@@ -280,7 +409,7 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
             case PhysicalCapacityMethod.Declared:
             {
                 return (Number(DeclaredQuantity), null, null,
-                    new(PhysicalEvidenceQuality.Declared, DeclaredSource.Trim(), DeclaredDescription.Trim()));
+                    new(PhysicalEvidenceQuality.Declared, string.IsNullOrWhiteSpace(DeclaredSource) ? L("Activity.Guided.Manual") : DeclaredSource.Trim(), DeclaredDescription.Trim()));
             }
             default:
                 throw PhysicalActivityRules.Error("ACT_INPUT_INVALID", "Activity.InputInvalid");
@@ -290,18 +419,21 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
     public void Preview()
     {
         CanAdopt = false;
+        proposedNumber = null;
         CalculationSteps = "";
         try
         {
             var item = Calculate();
             if (item.Normal < 0) throw PhysicalActivityRules.Error("ACT_NEGATIVE_QUANTITY", "Activity.NegativeQuantity");
-            Proposed = item.Normal.ToString(culture) + " " + row.Unit;
+            proposedNumber = item.Normal;
+            Proposed = item.Normal.ToString(culture) + " " + QuantityUnit;
             Feedback = "";
             CanAdopt = host.IsWritable;
         }
         catch (FormatException e) { Proposed = ""; Feedback = e.Message; }
         catch (DomainRuleException e) { Proposed = ""; Feedback = L(e.Diagnostic.MessageKey); }
         catch (OverflowException) { Proposed = ""; Feedback = L("Activity.CalendarInvalid"); }
+        NotifyGuided();
     }
 
     public void Adopt()
@@ -313,13 +445,15 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
             if (item.Normal < 0) throw PhysicalActivityRules.Error("ACT_NEGATIVE_QUANTITY", "Activity.NegativeQuantity");
             if (item.Evidence.Source.Length > 500 || item.Evidence.Description.Length > 4000)
                 throw PhysicalActivityRules.Error("ACT_EVIDENCE_TOO_LONG", "Activity.EvidenceTooLong");
+            var note = row.NormalDescription.Split("\nNote: ", 2).ElementAtOrDefault(1);
             row.NormalText = item.Normal.ToString(culture);
             row.NormalSource = item.Evidence.Source;
-            row.NormalDescription = item.Evidence.Description;
+            row.NormalDescription = item.Evidence.Description + (string.IsNullOrEmpty(note) ? "" : "\nNote: " + note);
             row.NormalQuality = item.Evidence.Quality;
             if (item.Theoretical.HasValue) row.TheoreticalText = item.Theoretical.Value.ToString(culture);
             if (item.Practical.HasValue) row.PracticalText = item.Practical.Value.ToString(culture);
             Adopted = true;
+            HasPendingProposal = false;
             host.Feedback = host.Label("Activity.ProposalAdopted") + " · " + row.Node;
             Feedback = "";
         }

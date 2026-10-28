@@ -12,10 +12,10 @@ Record normal capacity and actual activity for each analytical node, study and p
 | Node and measurement unit | Read-only context | Yes | Show what activity is measured and in which unit. |
 | Normal capacity | Quantity per period | On confirmation | Reference denominator for utilisation and management rates. |
 | Actual activity | Quantity per period | On confirmation | Measured activity for that exact period. |
-| Normal and actual sources | Text | On confirmation | Identify verifiable provenance of both measurements. |
-| Quality and description | Choice and text | Quality on confirmation; description optional | Distinguish recorded, declared or calculated values; describe the source further when useful. |
-| Reason for zero normal capacity | Text | If normal equals zero | Explain a verified zero instead of missing data. |
-| Exceptional activity reason | Text | If activity exceeds normal or exceptional | Explain physical anomalies without clipping values. |
+| Normal and actual sources | Automatic / optional text | No | Generated provenance; manual entry when no other source exists. |
+| Data type and notes | Read-only and text | Optional notes | Distinguish recorded, declared or calculated values; describe the source further when useful. |
+| Note about zero capacity | Secondary text | Optional, shown when normal equals zero | Explain a verified zero instead of missing data. |
+| Note about the difference | Secondary text | Optional, shown if actual exceeds normal | Explain physical anomalies without clipping values. |
 | Theoretical and practical measures | Advanced quantities | Optional | Supporting physical context, not confirmed normal/actual values. |
 | Save draft, confirm and annul | Actions | By state | Preserve distinct observation versions. |
 | Normal-capacity assistant and import | Actions | Optional | Propose/import values, still subject to explicit confirmation. |
@@ -31,12 +31,12 @@ Record normal capacity and actual activity for each analytical node, study and p
 ## 4. Use cases, validation and common errors
 - A missing observation is not a measured zero.
 - Normal capacity of zero makes utilisation undefined, even if actual activity is positive.
-- Utilisation above 100% may be valid if justified; never truncate it.
+- Utilisation above 100% may be valid; notes are optional and values are never truncated.
 - Resolve unsaved edits before switching studies.
 - Closed studies permit consultation but not editing.
 
 ### Where to edit
-The overview table is read-only. Open **Edit activity and capacity** for the selected node: it shares normal, actual and source values with this screen. Explicitly save a draft or confirm; adopting a normal-capacity proposal does not confirm the observation.
+The overview table is read-only. Open **Edit activity and capacity** for the selected node: it shares normal, actual and source values with this screen. Explicitly save a draft or confirm; the selected proposal is included in the same save operation.
 
 ## Recommended workflow
 1. Select the node, unit and period for actual activity and normal capacity observations.

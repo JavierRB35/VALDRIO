@@ -71,8 +71,6 @@ public sealed partial class T14PhysicalActivityTests
             Assert.AreEqual(610m / 700m * 100m, first.UtilizationPercent);
             Assert.AreEqual(study.Revision, file.Studies.ReadStudies().Single().Revision);
 
-            Assert.AreEqual("ACT_CORRECTION_REASON", Assert.ThrowsExactly<DomainRuleException>(
-                () => file.PhysicalActivity.Save(Save(study, node, pool, 1, 700, 625))).Diagnostic.Code);
             var second = file.PhysicalActivity.Save(Save(study, node, pool, 1, 700, 625, reason: "Parte omitido"));
             Assert.AreEqual(2L, second.Version);
             Assert.AreEqual("Parte omitido", second.CorrectionReason);
@@ -101,9 +99,6 @@ public sealed partial class T14PhysicalActivityTests
         {
             var draft = file.PhysicalActivity.Save(Save(study, node, pool, 0, 0, null, PhysicalObservationState.Draft));
             Assert.IsNull(draft.RealQuantity);
-            Assert.AreEqual("ACT_ZERO_NORMAL_REASON", Assert.ThrowsExactly<DomainRuleException>(
-                () => file.PhysicalActivity.Save(Save(study, node, pool, 1, 0, 20,
-                    PhysicalObservationState.Confirmed, exception: "Intervencion imprevista"))).Diagnostic.Code);
             var special = file.PhysicalActivity.Save(Save(study, node, pool, 1, 0, 20,
                 zero: "Cierre previsto", exception: "Intervencion imprevista"));
             Assert.IsNull(special.UtilizationPercent);

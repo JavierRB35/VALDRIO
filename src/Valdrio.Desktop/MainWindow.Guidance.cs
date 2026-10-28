@@ -261,7 +261,8 @@ public partial class MainWindow
             (workflowStep is not (1 or 2) || vm.Company?.CanWrite == true) &&
             (workflowStep != 4 || vm.Resources?.CanAdvance == true) &&
             (workflowStep != 5 || vm.Allocations?.IsPrimaryClosed == true);
-        FieldHelpText.Text = vm.Guide(lastHelpKey is null ? "HelpHint" : "Help." + lastHelpKey);
+        FieldHelpText.Text = lastHelpKey is null && workspacePages.LastOrDefault()?.DataContext is PhysicalCapacityAssistantEditor capacity
+            ? capacity.RealHelp : vm.Guide(lastHelpKey is null ? "HelpHint" : "Help." + lastHelpKey);
         if (workspacePages.Count > 0)
         {
             WorkflowBack.IsEnabled = vm.Company?.WorkspaceIdle != false;

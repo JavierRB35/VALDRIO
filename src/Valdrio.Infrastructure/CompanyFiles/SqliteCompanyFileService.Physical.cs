@@ -86,9 +86,7 @@ public sealed partial class SqliteCompanyFileService
                     observation.NormalZeroReason, observation.ExceptionReason,
                     observation.CorrectionReason, observation.Actor);
                 PhysicalActivityRules.Validate(source, file.PrecisionPolicy);
-                Invalid(prior is not null && prior.State == PhysicalObservationState.Confirmed &&
-                    string.IsNullOrWhiteSpace(observation.CorrectionReason),
-                    "Confirmed physical version lacks a correction reason");
+                // Optional narratives do not weaken the immutable version/audit checks above.
                 prior = observation;
             }
         }
@@ -186,6 +184,12 @@ public sealed partial class SqliteCompanyFileService
             SavePhysicalObservation command)
         {
             Scope(command.CompanyId, file);
+            // Missing provenance is recorded as manual input, never as measured evidence.
+            PhysicalEvidence? Source(decimal? value, PhysicalEvidence? evidence) => value is null ? evidence :
+                string.IsNullOrWhiteSpace(evidence?.Source)
+                    ? new(PhysicalEvidenceQuality.Declared, "Manual entry", evidence?.Description ?? "") : evidence;
+            command = command with { NormalEvidence = Source(command.NormalQuantity, command.NormalEvidence),
+                RealEvidence = Source(command.RealQuantity, command.RealEvidence) };
             PhysicalActivityRules.Validate(command, file.PrecisionPolicy);
             var study = Study(RequiredStudy(db, file.Id, command.StudyId));
             if (study.State != StudyState.Open)

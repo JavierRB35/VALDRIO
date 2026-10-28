@@ -1646,9 +1646,9 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Activity.Utilization" xml:space="preserve"><value>Utilización</value></data>
   <data name="Activity.Source" xml:space="preserve"><value>Fuente</value></data>
   <data name="Activity.Quality" xml:space="preserve"><value>Calidad</value></data>
-  <data name="Activity.Exception" xml:space="preserve"><value>Explicación de excepción</value></data>
-  <data name="Activity.ZeroReason" xml:space="preserve"><value>Motivo de normal cero</value></data>
-  <data name="Activity.Correction" xml:space="preserve"><value>Motivo de corrección</value></data>
+  <data name="Activity.Exception" xml:space="preserve"><value>Nota sobre la diferencia (opcional)</value></data>
+  <data name="Activity.ZeroReason" xml:space="preserve"><value>Nota sobre capacidad cero (opcional)</value></data>
+  <data name="Activity.Correction" xml:space="preserve"><value>Nota del cambio (opcional)</value></data>
   <data name="Activity.SaveDraft" xml:space="preserve"><value>Guardar borrador de la fila</value></data>
   <data name="Activity.Confirm" xml:space="preserve"><value>Confirmar datos de la fila</value></data>
   <data name="Activity.Annul" xml:space="preserve"><value>Anular fila</value></data>
@@ -1676,14 +1676,14 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Activity.Method.Calendar" xml:space="preserve"><value>Calendario operativo</value></data>
   <data name="Activity.Method.Historical" xml:space="preserve"><value>Actividad histórica representativa</value></data>
   <data name="Activity.Method.Declared" xml:space="preserve"><value>Capacidad normal declarada</value></data>
-  <data name="Activity.Calendar.Days" xml:space="preserve"><value>Días operativos del período</value></data>
-  <data name="Activity.Calendar.Shifts" xml:space="preserve"><value>Turnos por día</value></data>
-  <data name="Activity.Calendar.Hours" xml:space="preserve"><value>Horas por turno</value></data>
-  <data name="Activity.Calendar.Resources" xml:space="preserve"><value>Máquinas o personas equivalentes por turno</value></data>
-  <data name="Activity.Calendar.Stoppages" xml:space="preserve"><value>Paradas habituales (horas)</value></data>
-  <data name="Activity.Calendar.Factor" xml:space="preserve"><value>Actividad habitual sobre las horas disponibles (%)</value></data>
-  <data name="Activity.Calendar.FactorReason" xml:space="preserve"><value>Fuente o explicación del método empleado</value></data>
-  <data name="Activity.History.Help" xml:space="preserve"><value>Selecciona períodos históricos comparables. Las anomalías excluidas requieren explicación; ninguna se descarta automáticamente.</value></data>
+  <data name="Activity.Calendar.Days" xml:space="preserve"><value>Días de funcionamiento</value></data>
+  <data name="Activity.Calendar.Shifts" xml:space="preserve"><value>Turnos diarios</value></data>
+  <data name="Activity.Calendar.Hours" xml:space="preserve"><value>Horas de cada turno</value></data>
+  <data name="Activity.Calendar.Resources" xml:space="preserve"><value>Recursos simultáneos equivalentes</value></data>
+  <data name="Activity.Calendar.Stoppages" xml:space="preserve"><value>Tiempo no disponible (h)</value></data>
+  <data name="Activity.Calendar.Factor" xml:space="preserve"><value>Nivel habitual de actividad (%)</value></data>
+  <data name="Activity.Calendar.FactorReason" xml:space="preserve"><value>Nota sobre el nivel habitual (opcional)</value></data>
+  <data name="Activity.History.Help" xml:space="preserve"><value>Se proponen períodos confirmados del mismo nodo, unidad, modelo y duración, sin duplicar períodos. Revisa la selección; las notas son opcionales.</value></data>
   <data name="Activity.History.Exceptional" xml:space="preserve"><value>Marcar anomalía o explicar exclusión</value></data>
   <data name="Activity.History.Include" xml:space="preserve"><value>Incluir</value></data>
   <data name="Activity.Preview" xml:space="preserve"><value>Previsualizar</value></data>
@@ -1739,14 +1739,14 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Reuse.Status.Key" xml:space="preserve"><value>Clave no válida o no publicada: revisa sus destinos</value></data>
   <data name="Reuse.Status.Driver" xml:space="preserve"><value>Mediciones de otro período: introduce los valores actuales en una nueva clave</value></data>
   <data name="Reuse.Status.Group" xml:space="preserve"><value>Grupo específico: revisa las partidas del nuevo análisis antes de asignarlo</value></data>
-  <data name="Activity.Assistant.Help" xml:space="preserve"><value>Calcula una propuesta de capacidad normal. Aplicarla actualiza solo esta fila; después debes guardarla. La actividad real se introduce por separado.</value></data>
+  <data name="Activity.Assistant.Help" xml:space="preserve"><value>Revisa la capacidad normal y completa la actividad real del período. Guarda un borrador o confirma los dos valores.</value></data>
   <data name="Activity.Assistant.CalendarHelp" xml:space="preserve"><value>Introduce el horario habitual de este período. Las paradas y la capacidad se calculan automáticamente al cambiar los datos.</value></data>
   <data name="Activity.Assistant.DaysHelp" xml:space="preserve"><value>Días operativos dentro de las fechas del análisis, descontando festivos y cierres. Ejemplo: 22.</value></data>
   <data name="Activity.Assistant.ShiftsHelp" xml:space="preserve"><value>Turnos por día según el horario real previsto. Ejemplo: 2 turnos.</value></data>
   <data name="Activity.Assistant.HoursHelp" xml:space="preserve"><value>Horas de cada turno. Usa la jornada documentada; no se presuponen ocho horas.</value></data>
   <data name="Activity.Assistant.ResourcesHelp" xml:space="preserve"><value>Equipos o personas que trabajan a la vez en cada turno. Dos personas a media jornada = 1 equivalente. No sumes otra vez los de otros turnos.</value></data>
   <data name="Activity.Assistant.StoppagesHelp" xml:space="preserve"><value>VALDRIO multiplica por días, turnos y recursos según la opción elegida. Ejemplo: 0,5 h por turno × 2 turnos × 20 días × 3 máquinas = 60 h. Escribe 0 si no hay paradas. No repitas descansos ya excluidos del turno.</value></data>
-  <data name="Activity.Assistant.FactorHelp" xml:space="preserve"><value>De cada 100 horas disponibles, cuántas representan la actividad habitual. Escribe 90 para el 90 %. Justifica tu referencia abajo.</value></data>
+  <data name="Activity.Assistant.FactorHelp" xml:space="preserve"><value>Porcentaje de la capacidad disponible que representa la actividad habitual. No es la actividad real de este período.</value></data>
   <data name="Activity.CalendarUnit" xml:space="preserve"><value>Este calendario calcula horas. Para otra unidad utiliza un histórico comparable o una cifra declarada y justificada.</value></data>
   <data name="Activity.SelectionHelp" xml:space="preserve"><value>Edita capacidad normal y actividad real en la tabla. Utilización = real ÷ normal; sin dato no es cero. Guardar y confirmar afectan solo a la fila seleccionada. Completa sus fuentes y calidad antes de confirmar; las otras filas conservan sus cambios pendientes.</value></data>
   <data name="Activity.EvidenceDetails" xml:space="preserve"><value>Fuentes, calidad y justificación de la fila seleccionada</value></data>
@@ -1786,7 +1786,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Activity.Assistant.Calculation" xml:space="preserve"><value>Calendario: {0} días × {1} turnos/día × {2} h/turno × {3} recursos = {4} h
 Disponibles: {4} − {5} h de paradas totales = {6} h
 Capacidad normal: {6} h × {7} % = {8} h</value></data>
-  <data name="Activity.Stoppages.Basis" xml:space="preserve"><value>Cómo introduces las paradas</value></data>
+  <data name="Activity.Stoppages.Basis" xml:space="preserve"><value>Cómo están expresadas las paradas</value></data>
   <data name="Activity.Stoppages.PerResourceShift" xml:space="preserve"><value>Por turno y por máquina/persona</value></data>
   <data name="Activity.Stoppages.PerResourceDay" xml:space="preserve"><value>Por día y por máquina/persona</value></data>
   <data name="Activity.Stoppages.PerResourcePeriod" xml:space="preserve"><value>Por período y por máquina/persona</value></data>
@@ -2267,4 +2267,31 @@ Excluido: {7} · Directo a productos/órdenes: {8}</value></data>
   <data name="AllocationUI.ZeroAssigned" xml:space="preserve"><value>Sin importe; asignación definida</value></data>
   <data name="AllocationUI.ZeroPending" xml:space="preserve"><value>Sin importe; asignación pendiente</value></data>
   <data name="ImportMapping.AmountModePrompt" xml:space="preserve"><value>Elige qué representan los importes…</value></data>
+  <data name="Activity.Guided.Manual" xml:space="preserve"><value>Entrada manual</value></data>
+  <data name="Activity.Guided.Normal" xml:space="preserve"><value>Capacidad normal del período</value></data>
+  <data name="Activity.Guided.Real" xml:space="preserve"><value>Actividad real del período</value></data>
+  <data name="Activity.Guided.NormalHelp" xml:space="preserve"><value>Actividad habitual de referencia. Revisa la propuesta o introduce otro valor; editarlo selecciona entrada manual.</value></data>
+  <data name="Activity.Guided.RealHelp" xml:space="preserve"><value>Total realmente realizado. Déjalo pendiente si no lo conoces; escribe 0 solo si no hubo actividad.</value></data>
+  <data name="Activity.Guided.Review" xml:space="preserve"><value>Revisar cálculo</value></data>
+  <data name="Activity.Guided.Details" xml:space="preserve"><value>Origen, notas e historial</value></data>
+  <data name="Activity.Guided.Method" xml:space="preserve"><value>Cómo obtener la capacidad normal</value></data>
+  <data name="Activity.Guided.MethodHelp" xml:space="preserve"><value>Elige calendario, períodos anteriores comparables o entrada manual. La propuesta no sustituye un valor existente sin seleccionarla.</value></data>
+  <data name="Activity.Guided.UseProposal" xml:space="preserve"><value>Usar esta propuesta al guardar</value></data>
+  <data name="Activity.Guided.NormalSource" xml:space="preserve"><value>Origen de la capacidad normal</value></data>
+  <data name="Activity.Guided.RealSource" xml:space="preserve"><value>Origen de la actividad real</value></data>
+  <data name="Activity.Guided.SourceHelp" xml:space="preserve"><value>VALDRIO conserva la procedencia. Puedes añadir una referencia; no es obligatorio.</value></data>
+  <data name="Activity.Guided.Notes" xml:space="preserve"><value>Notas adicionales (opcionales)</value></data>
+  <data name="Activity.Guided.NotesHelp" xml:space="preserve"><value>Añade contexto solo si resulta útil. No es necesario para guardar ni confirmar.</value></data>
+  <data name="Activity.Guided.Proposed" xml:space="preserve"><value>Propuesta sin confirmar · se guardará al confirmar o guardar borrador</value></data>
+  <data name="Activity.Guided.NoRecords" xml:space="preserve"><value>Sin actividad real registrada para este período</value></data>
+  <data name="Activity.Guided.Recovered" xml:space="preserve"><value>Parámetros propuestos del período anterior; revisa días y paradas del período actual:</value></data>
+  <data name="Activity.Guided.MissingNormal" xml:space="preserve"><value>Falta la capacidad normal. Puedes guardar un borrador.</value></data>
+  <data name="Activity.Guided.MissingReal" xml:space="preserve"><value>Falta la actividad real. Puedes guardar y completarla después.</value></data>
+  <data name="Activity.Guided.Ready" xml:space="preserve"><value>Datos listos para confirmar. Las notas son opcionales.</value></data>
+  <data name="Activity.Guided.Save" xml:space="preserve"><value>Guardar borrador</value></data>
+  <data name="Activity.Guided.Confirm" xml:space="preserve"><value>Confirmar datos</value></data>
+<data name="Activity.Guided.Confirmed" xml:space="preserve"><value>Datos confirmados. Cualquier modificación se guardará como una nueva versión.</value></data>
+<data name="Activity.Guided.NormalNotes" xml:space="preserve"><value>Nota sobre la capacidad normal (opcional)</value></data>
+<data name="Activity.Guided.RealNotes" xml:space="preserve"><value>Nota sobre la actividad real (opcional)</value></data>
+<data name="Activity.Guided.AboveNormal" xml:space="preserve"><value>La actividad real supera la referencia habitual. Revisa las cifras; puedes añadir una nota opcional.</value></data>
 </root>

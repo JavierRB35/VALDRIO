@@ -1,52 +1,53 @@
-# Ayuda contextual: Calculadora de capacidad normal
-**ID Vista UI:** `View_NormalCapacityAssistant`  
+# Ayuda contextual: Editar actividad y capacidad
+**ID Vista UI:** `View_NormalCapacityAssistant`
 **Última actualización:** `2026-10-28`
-**Estado:** guía revisada sobre `2599188` y la auditoría contextual de 28/10/2026. Las evidencias de validación se registran por separado.
 
 ## 1. Objetivo y función financiera
-Proponer una capacidad normal a partir de calendario operativo, histórico comparable o valor declarado. El cálculo es una propuesta revisable: no altera la fila física hasta que se adopta expresamente.
+Revisar la capacidad normal de referencia y registrar la actividad real del nodo y período seleccionados. Son magnitudes independientes: la actividad real nunca se calcula a partir de turnos ni se copia de otro mes. La propuesta no modifica costes ni ejecuciones publicadas.
 
 ## 2. Guía de campos y entradas (Inputs)
 | Campo / parámetro | Tipo / unidad | Requerido | Descripción e impacto en el cálculo |
 | :--- | :--- | :--- | :--- |
-| Método | Calendario/histórico/declarado | Sí | Elige fuente y procedimiento de la estimación. |
-| Días operativos | Días enteros del período | Si calendario | Jornadas del intervalo, no días supuestos de otro mes. |
-| Turnos por día | Número | Si calendario | Frecuencia operativa del equipo. |
-| Horas por turno | Horas | Si calendario | Duración efectiva de cada turno. |
-| Recursos equivalentes | Número de equipos/personas | Si calendario | Escala de medios homogéneos. |
-| Paradas y base de descuento | Horas o criterio elegido | Si calendario | Reduce capacidad calculada según criterio explícito; no puede exceder la base. |
-| Factor de normalización | Porcentaje | Si calendario | Convierte disponibilidad en actividad normal esperada. |
-| Motivo del factor | Texto | Si factor no trivial | Justifica el criterio de capacidad normal. |
-| Registros históricos | Períodos comparables | Si histórico | Fuentes posibles de referencia; no introducir automáticamente meses ajenos. |
-| Incluir/excluir y revisión de anomalía | Selector/justificación | Si histórico | Excluye valores atípicos solo tras revisión explícita. |
-| Capacidad declarada | Cantidad en unidad del nodo | Si declarada | Referencia propuesta por responsable con evidencia. |
-| Fuente y descripción declarada | Texto | Fuente al confirmar; descripción opcional | Identifican origen y criterio de la cifra; una propuesta numérica puede adoptarse antes de completar su fuente. |
-| Vista previa / adoptar / cancelar | Acciones | Según estado | Solo adoptar transfiere la propuesta a la observación; la fila aún debe guardarse o confirmarse. |
+| Capacidad normal del período | Cantidad en la unidad indicada | Para confirmar | Referencia habitual. Puede mostrarse una propuesta sin confirmar. Editarla selecciona entrada manual. |
+| Actividad real del período | Cantidad en la misma unidad | Para confirmar | Total realizado. Vacío significa pendiente; 0 significa ausencia de actividad. |
+| Revisar cálculo | Panel desplegable | Opcional | Abre parámetros y propuesta, sin guardar automáticamente. |
+| Cómo obtener la capacidad normal | Calendario / histórico / manual | Para calcular una propuesta | Selecciona el procedimiento. La entrada manual usa el mismo campo principal. |
+| Días de funcionamiento | Días del período | Si calendario | No se copian días de otro mes. Completar si no existe calendario fiable. |
+| Turnos diarios | Turnos diarios | Si calendario | Recuperables del último calendario compatible; revisar su vigencia. |
+| Horas de cada turno | Horas | Si calendario | Duración efectiva. No descontar dos veces los descansos. |
+| Recursos simultáneos equivalentes | Equipos/personas equivalentes | Si calendario | Recursos simultáneos homogéneos; no sumar equipos y personas que representen la misma capacidad. |
+| Tiempo no disponible (h) / Cómo están expresadas las paradas | Horas y frecuencia | Si calendario | La frecuencia convierte el dato en horas totales. No copiar totales de otro período. |
+| Nivel habitual de actividad (%) | Porcentaje | Si calendario | Convierte capacidad disponible en normal. No representa actividad real. |
+| Nota sobre el nivel habitual (opcional) | Texto en panel secundario | No | Contexto adicional, nunca condición para calcular. |
+| Períodos históricos / incluir / excepcional | Selección | Si histórico | Se proponen períodos confirmados del mismo modelo, nodo, unidad y duración; sin futuros, solapamientos o duplicados. Revisar selección. Notas opcionales. |
+| Usar esta propuesta al guardar | Casilla | Para sustituir el valor con una propuesta | Guarda el resultado calculado junto con su origen en la siguiente operación de guardado. No sustituye silenciosamente cifras existentes. |
+| Origen de la capacidad normal | Texto en Origen, notas e historial | No | Generado por el método o identificado como entrada manual. |
+| Origen de la actividad real | Texto en Origen, notas e historial | No | Conserva importación/registro existente; una modificación manual queda identificada como tal. |
+| Notas adicionales (opcionales) | Texto | No | Aclaraciones de normal y real; no repetir fórmulas ni procedencias. |
+| Nota sobre capacidad cero (opcional) | Texto condicional | No | Visible dentro del detalle cuando normal = 0. |
+| Nota sobre la diferencia (opcional) | Texto condicional | No | Visible si real supera normal; revisar cifras sin justificación obligatoria. |
+| Nota del cambio (opcional) | Texto condicional | No | Visible al modificar una versión existente. Usuario, fecha y versiones se registran automáticamente. |
 
 ## 3. Interpretación de resultados (Outputs)
 | Métrica / resultado | Fórmula u origen | Significado / decisión asociada |
 | :--- | :--- | :--- |
-| Propuesta de capacidad normal | Fórmula según método | Referencia física pendiente de validación final en Actividad y capacidades. |
-| Capacidad teórica y práctica | Cálculo auxiliar de calendario, si procede | Explica diferencias físicas sin revalorar costes. |
-| Pasos del cálculo y alertas | Operaciones y fuentes | Permite auditar el razonamiento de la propuesta. |
+| Qué falta para confirmar | Validación de las dos cantidades | Identifica ausencia o valor inválido. Permite guardar un borrador incompleto. |
+| Capacidad de calendario | Días × turnos × horas × recursos | Base antes de paradas. No se vuelve a introducir. |
+| Capacidad disponible | Calendario − paradas totales | Base después de paradas. |
+| Capacidad normal propuesta | Disponible × factor, o media de períodos seleccionados | Resultado con su precisión completa, separado de la confirmación. |
+| Origen y tipo de dato | Evidencia guardada / método | Manual no equivale a respaldado por registros. |
+| Historial | Versiones inmutables | Consulta cambios y notas; no altera períodos anteriores. |
 
 ## 4. Casos de uso, validaciones y errores frecuentes
-- No extrapolar horarios ni históricos sin compatibilidad de unidad y período.
-- No utilizar históricos no comparables o anomalías sin revisión.
-- No deducir actividad real a partir de capacidad normal.
-- Cerrar sin adoptar no transfiere la propuesta; revisa aparte las ediciones realizadas en la observación compartida.
-- Una propuesta adoptada todavía debe guardarse/confirmarse en Actividad y capacidades.
-
-### Referencias al código
-- [`src/Valdrio.Desktop/PhysicalCapacityAssistantWindow.xaml`](../../src/Valdrio.Desktop/PhysicalCapacityAssistantWindow.xaml)
-- [`src/Valdrio.Desktop/PhysicalCapacityAssistantEditor.cs`](../../src/Valdrio.Desktop/PhysicalCapacityAssistantEditor.cs)
-
-### Propuesta y observación compartida
-**Editar actividad y capacidad** reúne la calculadora y los datos del nodo seleccionado. Normal, real y sus fuentes son los mismos de Actividad y capacidades. Puedes guardar borrador o confirmar desde este editor.
-
-**Adoptar** copia la propuesta al valor normal compartido; sigue siendo necesario guardar o confirmar. La descripción complementaria de la fuente es opcional; conserva la fuente y la calidad requeridas para confirmar. Cerrar la calculadora no deshace un guardado ni una adopción ya realizada.
+- Ejemplo: 22 días × 1 turno × 8 h × 3 recursos = 528 h. Paradas de 1 h por turno y recurso = 66 h. Disponible 462 h; al 90 % normal = 415,8 h. El campo y la propuesta conservan esa precisión.
+- Guardar borrador admite actividad desconocida. Confirmar requiere ambas cantidades válidas, pero ninguna nota obligatoria.
+- No se inventan calendarios, festivos, turnos ni registros reales. Si falta información fiable, el sistema deja el dato pendiente.
+- Cambiar parámetros recalcula la propuesta. Para reemplazar una cifra existente, seleccionar Usar esta propuesta al guardar. Editar el campo numérico principal vuelve a entrada manual.
+- Las paradas no pueden superar el calendario, ni los turnos superar 24 horas al día. Las cantidades no pueden ser negativas.
+- Cero normal permite una actividad excepcional; no se calcula un porcentaje dividiendo por cero. Real superior a normal no se recorta.
+- Una versión cerrada no admite cambios. Los conflictos de versión deben resolverse recargando; no se sobrescribe trabajo concurrente.
 
 ## Recorrido recomendado
-1. Selecciona la base disponible para proponer la capacidad normal: calendario, histórico comparable o valor declarado.
-2. Revisa el cálculo y sus hipótesis; distingue siempre una propuesta de una observación ya confirmada.
-3. Adopta la propuesta si es adecuada; completa la fuente y confirma la observación compartida desde el editor o desde Actividad y capacidades.
+1. Revisa centro, período y las dos cantidades; completa únicamente lo pendiente.
+2. Si necesitas una propuesta, abre Revisar cálculo y revisa parámetros o períodos. Selecciona su uso antes de guardar.
+3. Guarda un borrador o confirma los datos. Consulta Origen, notas e historial solo si necesitas más detalle.
