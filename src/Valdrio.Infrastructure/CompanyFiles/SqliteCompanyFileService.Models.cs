@@ -157,6 +157,23 @@ public sealed partial class SqliteCompanyFileService
             Audit(db, file, "PhysicalCenter", after.Id, after.Revision, "ChangeCenter", command.Actor, before, after);
             return after;
         });
+        public void DeleteCenter(DeletePhysicalCenter command, CancellationToken token = default) => Workspace(true, token, (db, file) =>
+        {
+            Scope(command.CompanyId, file);
+            var id = command.Id.ToString();
+            var row = db.Centers.SingleOrDefault(x => x.Id == id) ?? throw ModelRules.Error("MODEL_CENTER_UNAVAILABLE", "Model.CenterUnavailable", command.Id);
+            var before = Center(row);
+            Revision(command.ExpectedRevision, before.Revision, command.Id);
+            var dependencies = db.Nodes.Where(n => n.PhysicalCenterId == id).Select(n => n.Code).ToArray();
+            // Audited draft structures can reference nodes no longer in the current draft.
+            var historical = db.Audit.Any(a => (a.BeforeJson.Contains("PhysicalCenterId") && a.BeforeJson.Contains(id)) || (a.AfterJson.Contains("PhysicalCenterId") && a.AfterJson.Contains(id)));
+            if (dependencies.Length > 0 || historical)
+                throw new DomainRuleException(new("MODEL_CENTER_REFERENCED", "Model.CenterReferenced", [new("dependencies", DiagnosticArgumentType.Text, string.Join(", ", dependencies.DefaultIfEmpty(before.Code)))]));
+            db.Centers.Remove(row);
+            FirstWrite(db);
+            Audit<object>(db, file, "PhysicalCenter", before.Id, checked(before.Revision + 1), "DeleteCenter", command.Actor, before, new { Deleted = true });
+            return true;
+        });
         public DriverUnitState ChangeUnitState(ChangeDriverUnitState command, CancellationToken token = default) => Workspace(true, token, (db, file) =>
         {
             Scope(command.CompanyId, file);

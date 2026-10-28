@@ -677,7 +677,7 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.EffectiveBasis" xml:space="preserve"><value>Effective amount (allocation basis)</value></data>
   <data name="Resources.EffectiveBasisHelp" xml:space="preserve"><value>Allocations use this amount: converted import + manual corrections + rule adjustments. The original balance remains available for reference.</value></data>
   <data name="Resources.Effective" xml:space="preserve"><value>Effective amount</value></data>
-  <data name="Resources.PendingAmount" xml:space="preserve"><value>Pending assignment</value></data>
+  <data name="Resources.PendingAmount" xml:space="preserve"><value>Pending preparation destination (before allocation keys)</value></data>
   <data name="Resources.Difference" xml:space="preserve"><value>Difference</value></data>
   <data name="Resources.Amount" xml:space="preserve"><value>Functional amount</value></data>
   <data name="Resources.PartAmount" xml:space="preserve"><value>Part amount (study currency)</value></data>
@@ -1413,7 +1413,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.CompositionUnit" xml:space="preserve"><value>Activity unit</value></data>
   <data name="AllocationUI.CompositionMinimum" xml:space="preserve"><value>Minimum activity</value></data>
   <data name="AllocationUI.CompositionMaximum" xml:space="preserve"><value>Maximum activity</value></data>
-  <data name="AllocationUI.CompositionCloseHelp" xml:space="preserve"><value>Changes are saved. Closing primary allocation locks account composition and analysis nodes; reopen it to make corrections.</value></data>
+  <data name="AllocationUI.CompositionCloseHelp" xml:space="preserve"><value>Closing primary protects its preparation. It does not validate unreviewed assumptions or guarantee rates, which require classification and confirmed physical inputs.</value></data>
   <data name="AllocationUI.CompositionContextRequired" xml:space="preserve"><value>Supply valid activity unit and range before marking reviewed fixed or variable.</value></data>
   <data name="AllocationUI.CompositionSaved" xml:space="preserve"><value>Classification saved. The same accounts can be changed again.</value></data>
   <data name="AllocationUI.CompositionUnchanged" xml:space="preserve"><value>Accounts already have this classification.</value></data>
@@ -1589,8 +1589,8 @@ Difference to distribute: {7}</value></data>
   <data name="Run.Excluded" xml:space="preserve"><value>Excluded</value></data>
   <data name="Run.Pending" xml:space="preserve"><value>Pending</value></data>
   <data name="Run.Difference" xml:space="preserve"><value>Difference</value></data>
-  <data name="Run.NoRuns" xml:space="preserve"><value>No saved executions. Calculate to create the first one. Previous T11 closures remain in step 7; they are not converted into executions automatically.</value></data>
-  <data name="Run.ReadOnlyResults" xml:space="preserve"><value>Showing persisted results. Selecting an execution does not calculate or change it.</value></data>
+  <data name="Run.NoRuns" xml:space="preserve"><value>No saved runs. View the current primary allocation without saving, or calculate a complete result.</value></data>
+  <data name="Run.ReadOnlyResults" xml:space="preserve"><value>Showing saved results. Selecting an execution does not calculate or change it.</value></data>
   <data name="Run.LoadFailed" xml:space="preserve"><value>The operation could not be completed. Reload saved executions to verify their status.</value></data>
   <data name="Run.Started" xml:space="preserve"><value>Started</value></data>
   <data name="Run.Completed" xml:space="preserve"><value>Completed</value></data>
@@ -1602,7 +1602,7 @@ Difference to distribute: {7}</value></data>
   <data name="Run.Publishing" xml:space="preserve"><value>Saving execution and explanation…</value></data>
   <data name="Run.SelectHint" xml:space="preserve"><value>Select a node or arrow to inspect its detail below. Use Tab and Enter with the keyboard.</value></data>
   <data name="Run.Current" xml:space="preserve"><value>Current completed execution for this study revision.</value></data>
-  <data name="Run.Historical" xml:space="preserve"><value>Historical or unfinished execution; it is not the current result of the study.</value></data>
+  <data name="Run.Historical" xml:space="preserve"><value>Historical result; later inputs not recalculated or an earlier version selected</value></data>
   <data name="Run.Principal" xml:space="preserve"><value>Principal</value></data>
   <data name="Run.Auxiliary" xml:space="preserve"><value>Auxiliary</value></data>
   <data name="Run.AllResources" xml:space="preserve"><value>All resources in the routing group</value></data>
@@ -1640,7 +1640,7 @@ Difference to distribute: {7}</value></data>
   <data name="Activity.ZeroException" xml:space="preserve"><value>Actual work was recorded despite zero normal capacity.</value></data>
   <data name="Activity.Title" xml:space="preserve"><value>Activity and capacities</value></data>
   <data name="Activity.Open" xml:space="preserve"><value>Activity and capacities</value></data>
-  <data name="Activity.Help" xml:space="preserve"><value>Enter normal capacity and actual activity for the study period. Confirm only after checking their sources.</value></data>
+  <data name="Activity.Help" xml:space="preserve"><value>Select a node and open Edit activity and capacity. The table summarizes saved or pending data; quantities and sources are changed in one editor.</value></data>
   <data name="Activity.Normal" xml:space="preserve"><value>Normal capacity</value></data>
   <data name="Activity.Real" xml:space="preserve"><value>Actual activity</value></data>
   <data name="Activity.Utilization" xml:space="preserve"><value>Utilization</value></data>
@@ -1752,9 +1752,9 @@ Difference to distribute: {7}</value></data>
   <data name="Activity.EvidenceDetails" xml:space="preserve"><value>Sources, quality and justification for the selected row</value></data>
   <data name="Activity.RowSaved" xml:space="preserve"><value>Row saved</value></data>
   <data name="Activity.UnsavedRow" xml:space="preserve"><value>Unsaved changes</value></data>
-  <data name="Activity.Calculator" xml:space="preserve"><value>Calculator</value></data>
+  <data name="Activity.Calculator" xml:space="preserve"><value>Edit activity and capacity</value></data>
   <data name="Reuse.NoDescription" xml:space="preserve"><value>No source description</value></data>
-  <data name="Run.GraphTraceHelp" xml:space="preserve"><value>Select a node or connection to follow its path. Use Tab to reach connections and Enter or Space to select. Enable all amounts to show their labels; the detail retains exact values.</value></data>
+  <data name="Run.GraphTraceHelp" xml:space="preserve"><value>Select an origin or link to inspect its contributions in Details. Node amounts are global totals, not the selected origin contribution. Use Tab and Enter to navigate links.</value></data>
   <data name="Run.ReportTitle" xml:space="preserve"><value>Cost allocation results</value></data>
   <data name="Run.CenterBalances" xml:space="preserve"><value>Accumulated cost by centre</value></data>
   <data name="Run.NodeBalances" xml:space="preserve"><value>Node breakdown and traceability</value></data>
@@ -1767,7 +1767,7 @@ Difference to distribute: {7}</value></data>
   <data name="Run.Balanced" xml:space="preserve"><value>No differences</value></data>
   <data name="Run.Unbalanced" xml:space="preserve"><value>Review differences</value></data>
   <data name="Run.BalanceEmpty" xml:space="preserve"><value>There is no complete published result for this run. Review its status and diagnostics.</value></data>
-  <data name="Run.BalanceHelp" xml:space="preserve"><value>Primary + net secondary = final cost. Net means received less transferred, including published result adjustments; it is not gross circulation. Centres aggregate their nodes without double counting.</value></data>
+  <data name="Run.BalanceHelp" xml:space="preserve"><value>Primary + received − transferred out + adjustments = final cost. Net secondary is final − primary. Transfers between nodes in the same center cancel when grouped. Gross circulation is not added to final cost.</value></data>
   <data name="Run.BalanceTraceHelp" xml:space="preserve"><value>Select a centre to inspect its allocations and path. An auxiliary may retain its capacity variance; only applied services reach principals.</value></data>
   <data name="Run.BalancePrecision" xml:space="preserve"><value>Visual summary to two decimals. Detail and reconciliation retain posted precision. These columns describe stages: do not add them together.</value></data>
   <data name="Run.ShowAllFlowLabels" xml:space="preserve"><value>Show all amounts on connections</value></data>
@@ -2032,9 +2032,9 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Menu.Calculation" xml:space="preserve"><value>Cost calculation</value></data>
   <data name="Menu.Allocations" xml:space="preserve"><value>Cost allocations</value></data>
   <data name="Menu.Capacity" xml:space="preserve"><value>Activity and rates</value></data>
-  <data name="Menu.Results" xml:space="preserve"><value>Products and results</value></data>
+  <data name="Menu.Results" xml:space="preserve"><value>Products and estimates</value></data>
   <data name="Menu.Auxiliary" xml:space="preserve"><value>Auxiliary services</value></data>
-  <data name="Menu.CostFlows" xml:space="preserve"><value>Results and traceability</value></data>
+  <data name="Menu.CostFlows" xml:space="preserve"><value>Allocation results and traceability</value></data>
   <data name="Menu.AuxiliaryHelp" xml:space="preserve"><value>Auxiliary capacity and services provided to other centres.</value></data>
   <data name="Menu.CompositionHelp" xml:space="preserve"><value>Materials, composition versions and quantities required for products and services.</value></data>
   <data name="Menu.NeedStudy" xml:space="preserve"><value>Select a saved analysis and resolve pending changes to open this screen.</value></data>
@@ -2073,7 +2073,7 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
 <data name="Activity.Import.TemplateFailed" xml:space="preserve"><value>Could not save the template. Check the location and its permissions.</value></data>
 <data name="Activity.Import.DiscardReview" xml:space="preserve"><value>Rows are selected for import. Discard closes this review without incorporating those drafts.</value></data>
 <data name="Rates.SelectedSummary" xml:space="preserve"><value>Rate: {0} · Cost: {1} · Normal: {2} · Actual: {3} · {4}</value></data>
-<data name="Model.TableEditHelp" xml:space="preserve"><value>Edit the selected record in the table and save its changes. For a new record, choose New. Escape cancels the cell; switching records resolves pending changes.</value></data>
+<data name="Model.TableEditHelp" xml:space="preserve"><value>Click a cell to edit, then save. A published structure requires an editable version.</value></data>
 <data name="UX.FileOperation" xml:space="preserve"><value>Source: {0}
 Destination: {1}
 
@@ -2120,7 +2120,6 @@ The selected destination will be written. Review both files before continuing. C
   <data name="AllocationUI.ParetoEmpty" xml:space="preserve"><value>No results available. Complete or calculate this allocation to view the chart.</value></data>
   <data name="AllocationUI.ParetoCumulative" xml:space="preserve"><value>Cumulative</value></data>
   <data name="AllocationUI.ParetoNoPercentage" xml:space="preserve"><value>The total is zero or negative: costs are shown without a cumulative percentage.</value></data>
-  <data name="AllocationUI.ParetoCredits" xml:space="preserve"><value>Negative costs are present: the percentage of the net total may exceed 100% and decrease as credits are included.</value></data>
   <data name="AllocationUI.ParetoNode" xml:space="preserve"><value>Node</value></data>
   <data name="AllocationUI.ParetoDetails" xml:space="preserve"><value>View amounts and percentages</value></data>
   <data name="Composition.ImportProducts" xml:space="preserve"><value>Import products and unit costs</value></data>
@@ -2144,7 +2143,7 @@ The selected destination will be written. Review both files before continuing. C
   <data name="Composition.NoOutputReference" xml:space="preserve"><value>No imported unit cost for this output.</value></data>
   <data name="Composition.ImportReferenceAmbiguous" xml:space="preserve"><value>The catalogue contains references that differ only by letter case. Resolve them before importing.</value></data>
   <data name="Estimate.Title" xml:space="preserve"><value>Estimated orders</value></data>
-  <data name="Estimate.Scope" xml:space="preserve"><value>Management estimate with materials and activity. Each accepted version retains its recipes, prices and rates. Actual consumption belongs to T19.</value></data>
+  <data name="Estimate.Scope" xml:space="preserve"><value>Management estimate with materials and activity. Each accepted version retains its recipes, prices and rates. Actual consumption belongs to .</value></data>
   <data name="Estimate.Help" xml:space="preserve"><value>Enter an order, a published recipe, quantity and a saved economic run. Preview before accepting.</value></data>
   <data name="Estimate.Code" xml:space="preserve"><value>Order reference</value></data>
   <data name="Estimate.Recipe" xml:space="preserve"><value>Published recipe</value></data>
@@ -2200,7 +2199,72 @@ The selected destination will be written. Review both files before continuing. C
   <data name="Estimate.QVersion" xml:space="preserve"><value>Which version am I viewing?</value></data>
   <data name="Estimate.QReal" xml:space="preserve"><value>Does this include actual consumption?</value></data>
   <data name="Estimate.Complete" xml:space="preserve"><value>All final components have explicit valuations. Semi-finished items are expanded without duplicate costing.</value></data>
-  <data name="Estimate.NoActual" xml:space="preserve"><value>No. This is an estimate; it does not consume resources or record actual production (T19).</value></data>
+  <data name="Estimate.NoActual" xml:space="preserve"><value>No. This is an estimate; it does not consume resources or record actual production ().</value></data>
 <data name="Estimate.Revision" xml:space="preserve"><value>Economic revision</value></data>
 <data name="Estimate.FrozenRate" xml:space="preserve"><value>Frozen rate</value></data>
+  <data name="Activity.Assistant.OptionalDescription" xml:space="preserve"><value>Source description or explanation of the method (optional)</value></data>
+  <data name="AllocationUI.PercentageMeaning" xml:space="preserve"><value>Enter percentages: the sum must be 100%. 30 + 30 totals 60%, leaving 40% to complete; it is not normalized. An incomplete draft cannot be assigned.</value></data>
+  <data name="Run.Partial" xml:space="preserve"><value>Partial or incomplete result; no valid final costs</value></data>
+  <data name="AllocationUI.GenerateDirect" xml:space="preserve"><value>Generate direct-to-node keys</value></data>
+  <data name="AllocationUI.DirectNode" xml:space="preserve"><value>Direct to node</value></data>
+  <data name="AllocationUI.Inactive" xml:space="preserve"><value>Inactive node</value></data>
+  <data name="AllocationUI.DirectGenerated" xml:space="preserve"><value>Created: {0}; existing equivalents: {1}; omitted: {2}. No accounts were assigned.</value></data>
+  <data name="AllocationUI.ParetoCredits" xml:space="preserve"><value>Concentration uses positive costs; signed credits remain visible outside the cumulative curve. Positives + credits = net.</value></data>
+  <data name="Run.CurrentPrimary" xml:space="preserve"><value>Current primary · unsaved calculated view</value></data>
+  <data name="Run.PrimaryComplete" xml:space="preserve"><value>Primary complete; does not certify rates</value></data>
+  <data name="Run.SecondaryPending" xml:space="preserve"><value>Secondary not consulted</value></data>
+  <data name="Run.Executive" xml:space="preserve"><value>Effective: {0} · Allocated to nodes: {1}
+Pending allocation: {2} accounts · positive {3} · credits {4} · net {5} · absolute {6}
+Excluded: {7} · Direct to products/orders: {8}</value></data>
+  <data name="Run.ResolvePrimary" xml:space="preserve"><value>Review in Primary allocation → Assign accounts</value></data>
+  <data name="Run.CapacityCoverage" xml:space="preserve"><value>Capacity: {0} of {1} auxiliary nodes evaluated. Unevaluated does not mean zero inactivity.</value></data>
+  <data name="Run.FilteredNet" xml:space="preserve"><value>Selection net</value></data>
+  <data name="Run.PositiveBase" xml:space="preserve"><value>Pareto positive base</value></data>
+  <data name="Run.Credits" xml:space="preserve"><value>Separate credits</value></data>
+  <data name="Run.SummaryTab" xml:space="preserve"><value>Summary and concentration</value></data>
+  <data name="Run.Filter" xml:space="preserve"><value>Filter node, center or role</value></data>
+  <data name="Run.UseSecondary" xml:space="preserve"><value>View secondary concentration</value></data>
+  <data name="Run.Participation" xml:space="preserve"><value>Positive share</value></data>
+  <data name="Run.Cumulative" xml:space="preserve"><value>Positive cumulative</value></data>
+  <data name="Run.Behavior" xml:space="preserve"><value>Cost behavior</value></data>
+  <data name="Activity.EditActivityCapacity" xml:space="preserve"><value>Edit activity and capacity</value></data>
+  <data name="Model.DeleteCenter" xml:space="preserve"><value>Delete center</value></data>
+  <data name="Model.DeleteCenterConfirm" xml:space="preserve"><value>It will only be deleted if there are no nodes or historical references. Used centers can be deactivated while preserving their links.</value></data>
+  <data name="Model.CenterReferenced" xml:space="preserve"><value>The center has nodes or historical references: {0}. Preserve the links; use Deactivate if it is no longer needed.</value></data>
+  <data name="Guide.SelectPublished" xml:space="preserve"><value>Completed structures are available. Select and open one to inspect it, or create an editable version to make changes.</value></data>
+  <data name="ImportMapping.Impact" xml:space="preserve"><value>Current imported base: {0:N2} · replaced: {1:N2} · incoming: {2:N2} · resulting: {3:N2} {4}. Adjustments reconcile separately. Affected allocations require review; previous reports remain historical.</value></data>
+  <data name="Run.ExportCsv" xml:space="preserve"><value>Export report as CSV</value></data>
+  <data name="Run.PrintPdf" xml:space="preserve"><value>Print / PDF report</value></data>
+  <data name="AllocationUI.AssignTask" xml:space="preserve"><value>Assign accounts / nodes</value></data>
+  <data name="AllocationUI.KeysTask" xml:space="preserve"><value>Allocation keys</value></data>
+  <data name="AllocationUI.CheckTask" xml:space="preserve"><value>Check and close</value></data>
+  <data name="AllocationUI.CapacityServices" xml:space="preserve"><value>Capacity and services</value></data>
+  <data name="AllocationUI.CapacityDependencies" xml:space="preserve"><value>Review the treatment before calculating: distributing without capacity evaluation does not prove zero inactivity. If the method evaluates capacity, complete auxiliary observations and services in the shared editor.</value></data>
+  <data name="AllocationUI.ViewPhaseReport" xml:space="preserve"><value>View results for this phase</value></data>
+  <data name="AllocationUI.ReopenSecondaryFirst" xml:space="preserve"><value>To change primary, reopen secondary first →</value></data>
+  <data name="Estimate.MissingRateDetail" xml:space="preserve"><value>Incomplete cost: {0} requires {1} {2}, but a complete rate is missing. Review this node in Activity and rates. The physical requirement is preserved; zero cost cannot be accepted.</value></data>
+  <data name="Estimate.MissingPriceDetail" xml:space="preserve"><value>Incomplete cost: {0} requires {1} {2}, but its price is missing. Review the material in Products and services.</value></data>
+  <data name="Resources.ReviewClassification" xml:space="preserve"><value>Review fixed/variable classification and destination →</value></data>
+  <data name="Run.SelectedContributions" xml:space="preserve"><value>Contributions from this origin (graph nodes retain their global totals):</value></data>
+  <data name="Run.ThresholdHelp" xml:space="preserve"><value>Concentration threshold (%) from 0 to 100. Initial reference 80%; it does not imply an economic 80/20 rule. Credits stay outside the curve; base: selected positive costs.</value></data>
+  <data name="Run.GroupByCenter" xml:space="preserve"><value>Group by physical center</value></data>
+  <data name="Run.ExecutionOptions" xml:space="preserve"><value>Calculate or view a saved run</value></data>
+  <data name="Resources.AmountsTask" xml:space="preserve"><value>Amounts and corrections</value></data>
+  <data name="Resources.ClassificationTask" xml:space="preserve"><value>Classification and destination</value></data>
+  <data name="Resources.ChecksTask" xml:space="preserve"><value>Checks</value></data>
+  <data name="Run.Ceded" xml:space="preserve"><value>Transferred out</value></data>
+  <data name="Run.Growth" xml:space="preserve"><value>Increase over primary</value></data>
+  <data name="Run.UndefinedGrowth" xml:space="preserve"><value>Undefined: zero primary cost</value></data>
+  <data name="Estimate.PhysicalOnly" xml:space="preserve"><value>Physical requirements calculated; economic valuation is incomplete. Acceptance is not available yet.</value></data>
+  <data name="Run.ImportedSource" xml:space="preserve"><value>Source file</value></data>
+  <data name="Run.Record" xml:space="preserve"><value>Record</value></data>
+  <data name="Run.GlobalScope" xml:space="preserve"><value>Reconciliation and bridges cover the entire study; the filter above applies to concentration.</value></data>
+  <data name="Activity.Assistant.ProposedQuantity" xml:space="preserve"><value>Normal capacity proposal to adopt</value></data>
+  <data name="AllocationUI.MethodScope" xml:space="preserve"><value>Method and scope</value></data>
+  <data name="AllocationUI.MethodScopeHelp" xml:space="preserve"><value>Secondary allocation distributes auxiliary node costs using their keys; reciprocal services are solved together. Before calculating, choose in Capacity and services whether each auxiliary allocates without capacity assessment or assesses normal capacity and activity. Not assessed does not mean zero variance. To assess capacity, complete and confirm the shared physical data, save the treatment, then calculate.</value></data>
+  <data name="Run.PrimaryReportPhase" xml:space="preserve"><value>Primary allocation</value></data>
+  <data name="Run.SecondaryReportPhase" xml:space="preserve"><value>Secondary allocation · final costs</value></data>
+  <data name="AllocationUI.ZeroAssigned" xml:space="preserve"><value>No amount; allocation defined</value></data>
+  <data name="AllocationUI.ZeroPending" xml:space="preserve"><value>No amount; allocation pending</value></data>
+  <data name="ImportMapping.AmountModePrompt" xml:space="preserve"><value>Choose what the amounts represent…</value></data>
 </root>

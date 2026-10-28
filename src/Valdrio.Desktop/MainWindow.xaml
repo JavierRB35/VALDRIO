@@ -113,6 +113,7 @@
       <StackPanel Margin="0,5,0,3">
        <Button x:Name="AllocationsStep" Click="ChooseAllocations" Style="{StaticResource NavigationStepButton}"/>
        <Button x:Name="SecondaryStep" Click="ChooseSecondary" Style="{StaticResource NavigationStepButton}"/>
+       <Button x:Name="CostFlowStep" Click="ChooseCostFlows" Style="{StaticResource NavigationStepButton}"/>
        <!-- Retained names for workflow state; navigation no longer implies numbered steps. -->
        <StackPanel Visibility="Collapsed"><Border x:Name="AllocationsStepMarker" Grid.Column="0" Width="22" Height="22" CornerRadius="11"
                 BorderBrush="{DynamicResource Brand.White}" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -151,7 +152,6 @@
       <StackPanel Margin="0,5,0,3">
        <Button x:Name="CompositionStep" Click="OpenCompositions" Style="{StaticResource NavigationStepButton}"/>
        <Button x:Name="EstimateStep" Click="OpenEstimates" Style="{StaticResource NavigationStepButton}"/>
-       <Button x:Name="CostFlowStep" Click="ChooseCostFlows" Style="{StaticResource NavigationStepButton}"/>
       </StackPanel>
      </Expander>
      <Border BorderBrush="{DynamicResource Accent.ActiveGreen}" BorderThickness="0,1,0,0" Margin="16,16,16,8" />
@@ -186,6 +186,7 @@
                 Foreground="{DynamicResource Accent.ActiveGreen}"
                 Visibility="{Binding Company.IsProcessing, Converter={StaticResource BooleanVisibility}}"
                 AutomationProperties.Name="{Binding Company.WorkingLabel}"/>
+  <Border x:Name="ReportStatusBanner" DockPanel.Dock="Top" Visibility="Collapsed" Background="{DynamicResource Status.WarningBg}" Padding="12,6"><StackPanel><TextBlock Text="{Binding CostFlows.ReportContext}" TextWrapping="Wrap"/><TextBlock Text="{Binding CostFlows.CurrentState}" TextWrapping="Wrap" FontWeight="SemiBold"/></StackPanel></Border>
   <StackPanel x:Name="ActionFooter" Margin="{StaticResource Space.Page}" DockPanel.Dock="Bottom">
    <ContentControl x:Name="AllocationActionsHost" Visibility="Collapsed"/>
    <TextBlock TextWrapping="Wrap" Height="48" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" AutomationProperties.LiveSetting="Polite" x:Name="FieldHelpText" />

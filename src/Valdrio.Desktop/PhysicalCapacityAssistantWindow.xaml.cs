@@ -25,11 +25,13 @@ public partial class PhysicalCapacityAssistantWindow : IntegratedWorkspaceWindow
             first.Focus();
         };
     }
+    private void SaveActivityDraft(object sender, RoutedEventArgs e) => editor.Host.Save(false);
+    private void ConfirmActivity(object sender, RoutedEventArgs e) => editor.Host.Save(true);
     private void Preview(object sender, RoutedEventArgs e) => editor.Preview();
     private void Adopt(object sender, RoutedEventArgs e)
     {
         editor.Adopt();
-        if (editor.Adopted) DialogResult = true;
+        // Adoption updates the shared row; saving/confirming remains explicit here.
     }
     private void Cancel(object sender, RoutedEventArgs e) => DialogResult = false;
 }

@@ -22,6 +22,7 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
     [ObservableProperty] private bool attentionOnly;
     [ObservableProperty] private string feedback = "";
     private PrincipalRateDisplay[] allRows = [];
+    private CalculationRun? sourceRun;
     public PrincipalRatesEditor(StudyWorkspaceViewModel host) { this.host = host; Reload(); }
     public string this[string key] => texts.Get("Rates." + key, host.PhysicalUiCulture);
     public string Context => host.PhysicalCompany?.Name + " · " + Report?.Study.Name + " · " +
@@ -38,7 +39,7 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
     private string Money(decimal? value)
     {
         var digits = Report!.Study.Currency.CurrencyMetadataSnapshot.MinorUnitDigits;
-        var format = "#,0" + (digits > 0 ? "." + new string('0', digits) + new string('#', Math.Max(0, 8-digits)) : ".########");
+        var format = "N" + digits;
         return value.HasValue ? value.Value.ToString(format, host.PhysicalFormatCulture) + " " + Report.Study.Currency.FunctionalCurrencyCode : this["Unavailable"];
     }
     private string Rate(decimal? value, string unit) => value.HasValue ?
@@ -54,12 +55,13 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
             var model = host.PhysicalModels!.ReadModels().Single(m => m.Structure.Id == study.SelectedModelVersionId).Publication!;
             Report = PrincipalRateReportService.Read(study, model, host.PhysicalRuns?.ReadRuns(study.CompanyId, study.Id),
                 host.ActivePhysicalActivity!.ReadCurrent(study.CompanyId, study.Id));
+            sourceRun = host.PhysicalRuns?.ReadRuns(study.CompanyId, study.Id).Runs.SingleOrDefault(r => r.Id == Report.EconomicRunId);
             allRows = Report.Rows.Select(row =>
             {
                 var definition = host.PhysicalCompany!.Units.Single(u => u.Id == row.UnitId);
                 var unit = DefaultActivityUnitCatalog.IsPreset(definition) ? texts.Get("ActivityUnit." + definition.Code, host.PhysicalUiCulture) : definition.Code;
                 return new PrincipalRateDisplay(row, row.Name, unit, definition.Symbol, Money(row.Cost), Rate(row.Result?.CombinedRate, definition.Symbol),
-                    row.Diagnostics.Count == 0 ? this["Calculated"] : string.Join(" ", row.Diagnostics.Select(k => texts.Get(k, host.PhysicalUiCulture))));
+                    row.Diagnostics.Count == 0 ? this["Calculated"] : row.Name + ": " + string.Join(" ", row.Diagnostics.Select(k => texts.Get(k, host.PhysicalUiCulture))) + BlockingAccounts(row));
             }).ToArray();
             Filter(); SelectedRow = Rows.FirstOrDefault(r => r.Value.PoolId == selected) ?? Rows.FirstOrDefault();
             Feedback = allRows.Length == 0 ? this["NoCenters"] : this["SelectCenter"];
@@ -70,6 +72,17 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
         OnPropertyChanged(nameof(Context)); OnPropertyChanged(nameof(Provenance)); OnPropertyChanged(nameof(SelectedSummary)); OnPropertyChanged(nameof(CanExport));
     }
     partial void OnAttentionOnlyChanged(bool value) => Filter();
+    private string BlockingAccounts(PrincipalRateRow row)
+    {
+        if (sourceRun?.Snapshot.Input is not AllocationStudySnapshotInput input || sourceRun.Output?.Secondary is not { } secondary) return "";
+        var parts = input.Allocations.Resources.Resources.SelectMany(r => r.Parts).ToDictionary(p => p.Id);
+        var accounts = secondary.Facts.Where(f => f.TerminalNodeId == row.NodeId &&
+            (f.Behavior is ResourceBehavior.Unclassified or ResourceBehavior.MixedPending or ResourceBehavior.Mixed ||
+             f.CapacityTreatment == ResourceCapacityTreatment.AssessAtPool && !f.CapacityNotEvaluated && f.AssessmentId is null &&
+             parts.TryGetValue(f.PartId, out var part) && (part.Classification.CapacityOwner?.NodeId != row.NodeId || part.Classification.CapacityOwner?.PoolId != row.PoolId)))
+            .Select(f => f.Account).Distinct().ToArray();
+        return accounts.Length == 0 ? "" : " · " + string.Join(", ", accounts);
+    }
     private void Filter()
     {
         var id = SelectedRow?.Value.PoolId;

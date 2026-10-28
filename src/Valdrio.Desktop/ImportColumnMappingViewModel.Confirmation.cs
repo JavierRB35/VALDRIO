@@ -28,9 +28,11 @@ public sealed partial class ImportColumnMappingViewModel
         new ImportComparisonPreview(r.Code, r.Earlier.Amount.ToString(CultureInfo.GetCultureInfo(DateLanguageTag)),
             r.Current.Amount.ToString(CultureInfo.GetCultureInfo(DateLanguageTag)), r.Difference.Amount.ToString(CultureInfo.GetCultureInfo(DateLanguageTag)),
             string.Join(", ", r.EarlierRecords), DescriptionForCode(r.Code))).ToArray() ?? [];
+    private IReadOnlyList<ImportedBatch> existingBatches = [];
     public IReadOnlyList<ImportBatchOption> ExistingBatches { get; private set; } = [];
     public void SetExistingBatches(IReadOnlyList<ImportedBatch> batches)
     {
+        existingBatches = batches;
         ExistingBatches = ImportConfirmationRules.ActiveBatches(batches).Select(b => new ImportBatchOption(b.Id,
             b.Prepared.Source.FileName + " · " + b.ConfirmedAtUtc + " · " + b.Id)).ToArray();
         replacement = null; replaceBatch = false; InvalidatePreparation(true); Refresh();
@@ -137,6 +139,18 @@ public sealed partial class ImportColumnMappingViewModel
     public string OperationSummary => targetStudy is null ? this["NoStudy"] :
         (ReplaceBatch ? string.Format(Ui, this["ReplaceSummary"], Replacement?.Label ?? "—", FileName, targetStudy.Name)
         : string.Format(Ui, this["AddSummary"], FileName, targetStudy.Name)) + " · " + AmountBasis;
+    public string ImportImpact
+    {
+        get
+        {
+            if (preparedImport is not { } prepared) return "";
+            var active = ImportConfirmationRules.ActiveBatches(existingBatches);
+            var current = active.SelectMany(b => b.Resources).Sum(r => r.Functional.Amount);
+            var replaced = ReplaceBatch && Replacement is { } replacement ? active.Where(b => b.Id == replacement.Id).SelectMany(b => b.Resources).Sum(r => r.Functional.Amount) : 0m;
+            var added = prepared.ConversionBridge?.FunctionalTotal ?? prepared.Reconciliation.NetAmount;
+            return string.Format(CultureInfo.GetCultureInfo(DateLanguageTag), this["Impact"], current, replaced, added, current - replaced + added, targetStudy?.Currency.FunctionalCurrencyCode ?? prepared.Reconciliation.Currency);
+        }
+    }
     public string ConfirmationSummary
     {
         get

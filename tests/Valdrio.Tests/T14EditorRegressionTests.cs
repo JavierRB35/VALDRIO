@@ -133,7 +133,7 @@ public sealed partial class T14PhysicalActivityTests
     }
 
     [TestMethod]
-    public void T14_AssistantRejectsOverlongCalendarAndUnjustifiedDeclaration()
+    public void T14_AssistantRejectsOverlongCalendarAndAllowsDeclaredProposalWithoutNarrative()
     {
         var (file, study, _, _) = Fixture();
         using (file)
@@ -154,10 +154,11 @@ public sealed partial class T14PhysicalActivityTests
             Assert.AreEqual("176", editor.SelectedRow.NormalText);
             Assert.AreEqual("", editor.SelectedRow.RealText);
             var declared = new PhysicalCapacityAssistantEditor(editor)
-            { Method = PhysicalCapacityMethod.Declared, DeclaredQuantity = "200", DeclaredSource = "Responsable" };
+            { Method = PhysicalCapacityMethod.Declared, DeclaredQuantity = "200", DeclaredSource = "Responsable", DeclaredDescription = "" };
             declared.Adopt();
-            Assert.IsFalse(declared.Adopted);
-            Assert.AreEqual("176", editor.SelectedRow.NormalText);
+            Assert.IsTrue(declared.Adopted);
+            Assert.AreEqual("200", editor.SelectedRow.NormalText);
+            Assert.AreEqual("", editor.SelectedRow.NormalDescription);
             Assert.ThrowsExactly<DomainRuleException>(() => PhysicalNormalCalculator.Calendar(new(22, 4, 8, 1, 0, 1, "Registro")));
         }
     }

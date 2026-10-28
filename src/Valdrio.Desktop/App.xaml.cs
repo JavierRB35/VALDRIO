@@ -249,6 +249,13 @@ public partial class App : System.Windows.Application
                     {
                         try
                         {
+                        if (e.Args.Contains("--functional-audit-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("Functional audit requires a disposable example.");
+                            await company.OpenPath(requestedPath);
+                            await window.RunFunctionalAuditChecks(captureDirectory);
+                            Shutdown(0); return;
+                        }
                         if (e.Args.Contains("--estimate-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("Estimate checks require a disposable demo copy.");

@@ -23,7 +23,9 @@
   <Style TargetType="TextBox" BasedOn="{StaticResource Input.Text}"><Setter Property="MinHeight" Value="26"/></Style>
   <Style TargetType="ComboBox" BasedOn="{StaticResource Input.Combo}"><Setter Property="MinHeight" Value="28"/></Style>
  </UserControl.Resources>
- <StackPanel>
+ <TabControl x:Name="PreparationTabs" SelectionChanged="PreparationTabChanged">
+ <TabItem Header="{Binding [AmountsTask]}"><StackPanel>
+<Button Content="{Binding [ReviewClassification]}" Click="ReviewClassification" HorizontalAlignment="Left" Margin="0,4"/>
 <TextBlock Text="{Binding [Introduction]}" Margin="0,4,0,5"/>
  <TextBlock Text="{Binding [ManualSaveHelp]}" Margin="0,4,0,8"/>
  <TextBlock Text="{Binding CurrentAccount}" FontSize="20" FontWeight="SemiBold"/>
@@ -219,4 +221,13 @@
  </StackPanel><TextBlock Text="{Binding Warnings}" Margin="0,8,0,8"/>
  <TextBlock Text="{Binding SaveDestination}" FontWeight="SemiBold"/>
  </StackPanel></Border><WrapPanel><Button x:Name="DiscardButton" Content="{Binding [Discard]}" Command="{Binding DiscardCommand}" local:FieldHelp.Key="Resource.Discard" Margin="0,4,8,6" Padding="10,6"/><Button x:Name="CancelButton" Content="{Binding [CancelOperation]}" Command="{Binding CancelCommand}" local:FieldHelp.Key="Resource.CancelOperation" Margin="0,4,8,6" Padding="10,6"/></WrapPanel>
- </StackPanel></StackPanel></UserControl>
+ </StackPanel></StackPanel></TabItem>
+ <TabItem x:Name="ClassificationTab" Header="{Binding [ClassificationTask]}"><StackPanel Margin="12">
+ <local:ClassificationReviewPanel DataContext="{Binding DataContext.Allocations, RelativeSource={RelativeSource AncestorType=Window}}"/>
+ <Button Content="{Binding [ReviewClassification]}" Click="ReviewClassification" HorizontalAlignment="Left"/>
+ </StackPanel></TabItem>
+ <TabItem Header="{Binding [ChecksTask]}"><StackPanel Margin="12">
+ <TextBlock Text="{Binding ProgressSummary}" TextWrapping="Wrap"/><TextBlock Text="{Binding CoverageText}" TextWrapping="Wrap" Margin="0,8"/>
+ <TextBlock Text="{Binding Warnings}" TextWrapping="Wrap"/><TextBlock Text="{Binding Requirement}" TextWrapping="Wrap" Margin="0,8"/>
+ </StackPanel></TabItem>
+ </TabControl></UserControl>

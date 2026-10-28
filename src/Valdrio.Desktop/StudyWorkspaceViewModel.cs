@@ -105,6 +105,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public bool PhysicalCompanyWritable => company.CanWrite;
     public CultureInfo PhysicalUiCulture => Ui;
     public CultureInfo PhysicalFormatCulture => Format;
+    public string PhysicalTimeZoneId => preferences.Current.DisplayTimeZoneId;
     public string PhysicalOpenLabel => Text("Activity.Open");
     public bool CanOpenPhysical => Current is not null && !IsDirty && Ready &&
         company.ActivePhysicalActivity is not null && company.ActiveModels is not null;
@@ -327,6 +328,15 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public Func<Task<bool>>? BeforeChangeAsync { get; set; }
     public bool HasConfirmedImports => importValues.Count > 0;
     public int ConfirmedImportCount => importValues.Count;
+    // Auxiliary editors commit synchronously; publish their confirmed revision immediately.
+    // Preserve any pending context form instead of silently discarding it.
+    public void AcceptExternalReceipt(StudyDefinition confirmed)
+    {
+        if (Current?.Id != confirmed.Id) return;
+        studyValues = UpsertStudy(studyValues, confirmed);
+        if (!dirty) ApplyConfirmedStudy(confirmed);
+        else { Current = confirmed; Refresh(); }
+    }
     public Task ApplyResourceReceiptAsync(StudyDefinition confirmed) => ApplyConfirmedThenReload(confirmed, ApplyConfirmedStudy);
     public async Task<bool> CanLeaveAsync()
     {

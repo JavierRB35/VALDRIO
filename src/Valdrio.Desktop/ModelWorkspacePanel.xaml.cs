@@ -5,6 +5,22 @@ namespace Valdrio.Desktop;
 
 public partial class ModelWorkspacePanel : UserControl
 {
+    private static void SelectEditorText(object? sender, DataGridPreparingCellForEditEventArgs e)
+    {
+        e.EditingElement.MoveFocus(new(System.Windows.Input.FocusNavigationDirection.First));
+        if (System.Windows.Input.Keyboard.FocusedElement is TextBox text) text.SelectAll();
+    }
+    private void EditCellOnClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (sender is not DataGrid grid || grid.IsReadOnly) return;
+        var element = e.OriginalSource as System.Windows.DependencyObject;
+        while (element is not null && element is not DataGridCell)
+            element = System.Windows.Media.VisualTreeHelper.GetParent(element);
+        if (element is not DataGridCell cell || cell.IsReadOnly || cell.IsEditing) return;
+        grid.SelectedItem = cell.DataContext;
+        grid.CurrentCell = new DataGridCellInfo(cell);
+        cell.Focus(); grid.BeginEdit();
+    }
     private Action? restoreStructureCell;
     private void BeginStructureCellEdit(object? sender, DataGridBeginningEditEventArgs e)
     {
@@ -34,6 +50,13 @@ public partial class ModelWorkspacePanel : UserControl
     public ModelWorkspacePanel()
     {
         InitializeComponent();
+        CenterGrid.PreviewMouseLeftButtonDown += EditCellOnClick;
+        NodeSummary.PreviewMouseLeftButtonDown += EditCellOnClick;
+        NodeSummary.Columns[4].DisplayIndex = 0;
+        NodeSummary.Columns[4].Width = new DataGridLength(2, DataGridLengthUnitType.Star);
+        NodeSummary.Columns[4].MinWidth = 220;
+        CenterGrid.PreparingCellForEdit += SelectEditorText;
+        NodeSummary.PreparingCellForEdit += SelectEditorText;
         InitializeGuidance();
         DataContextChanged += (_, _) => BindTableHeaders();
         Loaded += (_, _) => BindTableHeaders();

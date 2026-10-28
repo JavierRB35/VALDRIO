@@ -1,0 +1,73 @@
+﻿"Resultado del reparto de costes"
+"Northstar Professional Services Ltd. · September 2026 - Service operations · 1/9/2026 – 30/9/2026 · Real · EUR · Revisión 7 · Reparto secundario · costes finales · 28/10/2026 10:26 Europe/Madrid · Completada · Revisión 7"
+"Resultado histórico; datos posteriores sin recalcular o versión anterior seleccionada"
+"Reparto secundario · costes finales";"Filtrar nodo, centro o papel";"DELIVERY"
+"Efectivos: 17.500,00 EUR · Asignado a nodos: 17.500,00 EUR
+Pendientes de asignar: 0 cuentas · positivos 0,00 EUR · abonos 0,00 EUR · neto 0,00 EUR · absoluto 0,00 EUR
+Excluido: 0,00 EUR · Directo a productos/órdenes: 0,00 EUR
+Capacidad: 0 de 2 auxiliares evaluados. Sin evaluar no significa inactividad cero.
+Neto de la selección: 11.478,57 EUR · Base positiva del Pareto: 11.478,57 EUR · Abonos separados: 0,00 EUR"
+"Centro / nodo";"Función";"Importe asignado";"Participación positiva";"Acumulado positivo";"Comportamiento del coste"
+"SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal";"Principal";"11.478,57";"100,00 %";"100,00 %";"Fijo: 8.074,29 EUR · Variable: 2.725,71 EUR · Sin clasificar: 678,57 EUR"
+"Conciliación y puentes del estudio completo; el filtro anterior se aplica a la concentración."
+"Coste acumulado por centro"
+"Centro / nodo";"Recibido del primario";"Importe recibido";"Cedido";"Ajustes numéricos y de redondeo";"Secundario neto (+/−)";"Coste final en centros";"Incremento sobre primario"
+"SRV-ADM · Administration";"4.200,00 EUR";"291,43 EUR";"4.491,43 EUR";"0,00 EUR";"'-4.200,00 EUR";"0,00 EUR";"'-100,00 %"
+"SRV-CS · Customer Experience";"3.900,00 EUR";"2.121,43 EUR";"0,00 EUR";"0,00 EUR";"2.121,43 EUR";"6.021,43 EUR";"54,40 %"
+"SRV-DEL · Delivery Office";"8.650,00 EUR";"2.828,57 EUR";"0,00 EUR";"0,00 EUR";"2.828,57 EUR";"11.478,57 EUR";"32,70 %"
+"SRV-IT · Information Technology";"750,00 EUR";"561,43 EUR";"1.311,43 EUR";"0,00 EUR";"'-750,00 EUR";"0,00 EUR";"'-100,00 %"
+"Conciliación del origen";"Efectivo = directo a productos u órdenes + excluido + pendiente + coste en principales + variación de capacidad auxiliar. Diferencia cero significa conciliación, no ausencia de pendientes ni capacidad evaluada. Las transferencias internas no se suman al coste final."
+"Recurso / cuenta";"Coste efectivo";"Directo a objetos";"Excluido";"Pendiente";"Coste final en centros";"Diferencia"
+"629099 — Zero-value control row";"0 EUR";"0 EUR";"0 EUR";"0 EUR";"0 EUR";"0 EUR"
+"629002 — Travel and field visits";"1500 EUR";"0 EUR";"0 EUR";"0 EUR";"1500 EUR";"0 EUR"
+"640001 — Delivery salaries";"12000 EUR";"0 EUR";"0 EUR";"0 EUR";"12000 EUR";"0 EUR"
+"621001 — Office rent";"3000 EUR";"0 EUR";"0 EUR";"0 EUR";"3000 EUR";"0 EUR"
+"708001 — Customer credit note";"'-500 EUR";"0 EUR";"0 EUR";"0 EUR";"'-500 EUR";"0 EUR"
+"629001 — Cloud subscriptions";"1500 EUR";"0 EUR";"0 EUR";"0 EUR";"1500 EUR";"0 EUR"
+"Detalle comprobable"
+"Etapa";"Recurso / cuenta";"Centro / cuenta de origen";"Centro de destino";"Clave / regla aplicada";"Importe asignado";"Detalle comprobable"
+"4 · Costes finales y variaciones";"629002 — Travel and field visits";"SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal";"SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal";"Primary 629002";"1500 EUR";"SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal → SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal · 1500 EUR
+Ajustes numéricos y de redondeo: 0 EUR
+Archivo de origen: accounts.csv · Registro 5 · 1500,00 EUR → 1500 EUR
+"
+"4 · Costes finales y variaciones";"640001 — Delivery salaries";"SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal; SRV-ADM · Administration / ADMIN cost pool · ADMIN · Auxiliar";"SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal";"Primary 640001; Secondary ADMIN; Secondary IT";"2040 EUR";"SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal → SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal · 1680 EUR
+SRV-ADM · Administration / ADMIN cost pool · ADMIN · Auxiliar → SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal · 360,00000000000000000000000002 EUR
+Ajustes numéricos y de redondeo: 0 EUR
+Archivo de origen: accounts.csv · Registro 2 · 12000,00 EUR → 12000 EUR
+"
+"4 · Costes finales y variaciones";"640001 — Delivery salaries";"SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal; SRV-ADM · Administration / ADMIN cost pool · ADMIN · Auxiliar";"SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal";"Primary 640001; Secondary ADMIN; Secondary IT";"874,28571429 EUR";"SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal → SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal · 720 EUR
+SRV-ADM · Administration / ADMIN cost pool · ADMIN · Auxiliar → SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal · 154,2857142857142857142857143 EUR
+Ajustes numéricos y de redondeo: 0,0000000042857142857142857 EUR
+Archivo de origen: accounts.csv · Registro 2 · 12000,00 EUR → 12000 EUR
+"
+"4 · Costes finales y variaciones";"640001 — Delivery salaries";"SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal; SRV-ADM · Administration / ADMIN cost pool · ADMIN · Auxiliar";"SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal";"Primary 640001; Secondary ADMIN; Secondary IT";"6360 EUR";"SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal → SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal · 5880 EUR
+SRV-ADM · Administration / ADMIN cost pool · ADMIN · Auxiliar → SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal · 480,00000000000000000000000006 EUR
+Ajustes numéricos y de redondeo: -0,0000000000000000000000001 EUR
+Archivo de origen: accounts.csv · Registro 2 · 12000,00 EUR → 12000 EUR
+"
+"4 · Costes finales y variaciones";"640001 — Delivery salaries";"SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal; SRV-ADM · Administration / ADMIN cost pool · ADMIN · Auxiliar";"SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal";"Primary 640001; Secondary ADMIN; Secondary IT";"2725,71428571 EUR";"SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal → SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal · 2520 EUR
+SRV-ADM · Administration / ADMIN cost pool · ADMIN · Auxiliar → SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal · 205,71428571428571428571428574 EUR
+Ajustes numéricos y de redondeo: -0,0000000042857142857142857 EUR
+Archivo de origen: accounts.csv · Registro 2 · 12000,00 EUR → 12000 EUR
+"
+"4 · Costes finales y variaciones";"621001 — Office rent";"SRV-ADM · Administration / ADMIN cost pool · ADMIN · Auxiliar";"SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal";"Secondary ADMIN; Secondary IT; Primary 621001";"1285,71428571 EUR";"SRV-ADM · Administration / ADMIN cost pool · ADMIN · Auxiliar → SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal · 1285,7142857142857142857142858 EUR
+Ajustes numéricos y de redondeo: -0,0000000042857142857142858 EUR
+Archivo de origen: accounts.csv · Registro 3 · 3000,00 EUR → 3000 EUR
+"
+"4 · Costes finales y variaciones";"621001 — Office rent";"SRV-ADM · Administration / ADMIN cost pool · ADMIN · Auxiliar";"SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal";"Secondary ADMIN; Secondary IT; Primary 621001";"1714,28571429 EUR";"SRV-ADM · Administration / ADMIN cost pool · ADMIN · Auxiliar → SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal · 1714,2857142857142857142857145 EUR
+Ajustes numéricos y de redondeo: 0,0000000042857142857142855 EUR
+Archivo de origen: accounts.csv · Registro 3 · 3000,00 EUR → 3000 EUR
+"
+"4 · Costes finales y variaciones";"708001 — Customer credit note";"SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal";"SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal";"Primary 708001";"'-500 EUR";"SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal → SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal · -500 EUR
+Ajustes numéricos y de redondeo: 0 EUR
+Archivo de origen: accounts.csv · Registro 6 · -500,00 EUR → -500 EUR
+"
+"4 · Costes finales y variaciones";"629001 — Cloud subscriptions";"SRV-IT · Information Technology / IT cost pool · IT · Auxiliar";"SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal";"Secondary ADMIN; Secondary IT; Primary 629001";"321,42857143 EUR";"SRV-IT · Information Technology / IT cost pool · IT · Auxiliar → SRV-CS · Customer Experience / CUSTOMER_SUCCESS cost pool · CUSTOMER_SUCCESS · Principal · 321,42857142857142857142857145 EUR
+Ajustes numéricos y de redondeo: 0,00000000142857142857142855 EUR
+Archivo de origen: accounts.csv · Registro 4 · 1500,00 EUR → 1500 EUR
+"
+"4 · Costes finales y variaciones";"629001 — Cloud subscriptions";"SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal; SRV-IT · Information Technology / IT cost pool · IT · Auxiliar";"SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal";"Primary 629001; Secondary ADMIN; Secondary IT";"1178,57142857 EUR";"SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal → SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal · 750 EUR
+SRV-IT · Information Technology / IT cost pool · IT · Auxiliar → SRV-DEL · Delivery Office / DELIVERY cost pool · DELIVERY · Principal · 428,57142857142857142857142862 EUR
+Ajustes numéricos y de redondeo: -0,0000000014285714285714286 EUR
+Archivo de origen: accounts.csv · Registro 4 · 1500,00 EUR → 1500 EUR
+"

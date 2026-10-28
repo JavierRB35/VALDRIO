@@ -19,7 +19,8 @@ public static class EstimateCalculator
             var rows = quantities.Lines.Where(x => !x.Expanded).Select(q =>
             {
                 var price = prices.SingleOrDefault(p => p.TargetId == q.TargetId && p.Activity == q.Activity);
-                if (price?.UnitCost is null) throw Error(q.Activity ? "MissingRate" : "MissingPrice");
+                if (price?.UnitCost is null) throw new DomainRuleException(new(q.Activity ? "ESTIMATE_MISSINGRATE" : "ESTIMATE_MISSINGPRICE", q.Activity ? "Estimate.MissingRateDetail" : "Estimate.MissingPriceDetail",
+                    [new("component", DiagnosticArgumentType.Text, q.Name), new("quantity", DiagnosticArgumentType.Decimal, q.RequiredQuantity.ToString(System.Globalization.CultureInfo.InvariantCulture)), new("unit", DiagnosticArgumentType.UnitCode, q.UnitId.ToString())]));
                 if (price.UnitId != q.UnitId || q.RequiredQuantity < 0 || string.IsNullOrWhiteSpace(price.Source)) throw Error("InvalidInput");
                 var raw = checked(q.RequiredQuantity * price.UnitCost.Value);
                 precision.ValidateMagnitude(raw, q.Name);

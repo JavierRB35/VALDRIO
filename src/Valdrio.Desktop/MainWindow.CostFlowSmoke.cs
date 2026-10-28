@@ -17,7 +17,7 @@ public partial class MainWindow
         foreach(var language in new[]{"es","en"})
         {
             main.ApplyPresentationPreset(language,language=="es"?"es-ES":"en-US","UTC",false,false);
-            Width=1600;Height=1000;await NavigateWorkflow(8);await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);UpdateLayout();
+            Width=1600;Height=1000;await NavigateWorkflow(8);flows.UseCurrentPrimary = false;await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);UpdateLayout();
             Check(flows.Nodes.Select(n=>n.Stage).Distinct().Count()==4,"four stages "+language);
             Check(flows.Arrows.Count(a=>a.Row?.Stage==flows["SecondaryStage"])==4,"four secondary arrows "+language);
             Check(flows.Arrows.Count(a=>a.Internal)==2,"reciprocal arrows "+language);
@@ -69,7 +69,7 @@ public partial class MainWindow
                 (CostFlowsPanel.PrimaryGraphCanvas,"primary"),
                 (CostFlowsPanel.SecondaryGraphCanvas,"secondary") })
             {
-                CostFlowsPanel.AnalysisTabs.SelectedIndex = label == "primary" ? 0 : 1; UpdateLayout();
+                CostFlowsPanel.AnalysisTabs.SelectedIndex = label == "primary" ? 1 : 2; UpdateLayout();
                 Check(graph.Children.OfType<Button>().Any(),"graph has selectable nodes "+label+" "+language);
                 var parent=(ScrollViewer)graph.Parent;
                 Check(graph.Width<=Math.Max(550,parent.ActualWidth+40),"diagram fits viewport when possible "+label+" "+language);
@@ -80,10 +80,10 @@ public partial class MainWindow
                 holder.Content=null;holder.Close();parent.Content=graph;
             }
             Width=960;await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);UpdateLayout();
-            CostFlowsPanel.AnalysisTabs.SelectedIndex = 3; UpdateLayout();
+            CostFlowsPanel.AnalysisTabs.SelectedIndex = 4; UpdateLayout();
             Check(CostFlowsPanel.DetailsGrid.IsVisible,"narrow details accessible "+language);
             VisualEvidenceCapture.Capture(this,Path.Combine(directory,language+"-narrow.png"));
-            CostFlowsPanel.AnalysisTabs.SelectedIndex = 0; UpdateLayout();
+            CostFlowsPanel.AnalysisTabs.SelectedIndex = 1; UpdateLayout();
             var first=CostFlowsPanel.PrimaryGraphCanvas.Children.OfType<Button>().First();
             Check(first.Focus()&&first.IsKeyboardFocusWithin,"graph keyboard focus "+language);
             flows.ShowAllFlowLabels=true;
@@ -100,9 +100,9 @@ public partial class MainWindow
             {
                 CostFlowsPanel.LayoutTransform=new System.Windows.Media.ScaleTransform(scale,scale);
                 await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);UpdateLayout();
-                CostFlowsPanel.AnalysisTabs.SelectedIndex = 2; UpdateLayout();
-                Check(CostFlowsPanel.CenterBalanceGrid.IsVisible, "scaled balances accessible " + scale);
                 CostFlowsPanel.AnalysisTabs.SelectedIndex = 3; UpdateLayout();
+                Check(CostFlowsPanel.CenterBalanceGrid.IsVisible, "scaled balances accessible " + scale);
+                CostFlowsPanel.AnalysisTabs.SelectedIndex = 4; UpdateLayout();
                 Check(CostFlowsPanel.DetailsGrid.IsVisible,
                     "scaled layout remains accessible "+scale+" "+language);
             }
@@ -119,7 +119,7 @@ public partial class MainWindow
         foreach(var language in new[]{"es","en"})
         {
             main.ApplyPresentationPreset(language,language=="es"?"es-ES":"en-US","UTC",false,false);
-            Width=1600;Height=1000;await NavigateWorkflow(8);await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);UpdateLayout();
+            Width=1600;Height=1000;await NavigateWorkflow(8);flows.UseCurrentPrimary = false;await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);UpdateLayout();
             Check(flows.Nodes.Select(n=>n.Stage).Distinct().Count()==4,"four stages "+language);
             Check(flows.Arrows.Count(a=>a.Row?.Stage==flows["SecondaryStage"])>=4,"reciprocal and principal transfers "+language);
             Check(flows.Arrows.Count(a=>a.Internal)>=2,"reciprocal internal arrows "+language);
@@ -170,7 +170,7 @@ public partial class MainWindow
                 (CostFlowsPanel.PrimaryGraphCanvas,"primary"),
                 (CostFlowsPanel.SecondaryGraphCanvas,"secondary") })
             {
-                CostFlowsPanel.AnalysisTabs.SelectedIndex = label == "primary" ? 0 : 1; UpdateLayout();
+                CostFlowsPanel.AnalysisTabs.SelectedIndex = label == "primary" ? 1 : 2; UpdateLayout();
                 Check(graph.Children.OfType<Button>().Any(),"graph has selectable nodes "+label+" "+language);
                 var parent=(ScrollViewer)graph.Parent;
                 Check(graph.Width<=Math.Max(550,parent.ActualWidth+40),"diagram fits viewport when possible "+label+" "+language);
@@ -181,10 +181,10 @@ public partial class MainWindow
                 holder.Content=null;holder.Close();parent.Content=graph;
             }
             Width=960;await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);UpdateLayout();
-            CostFlowsPanel.AnalysisTabs.SelectedIndex = 3; UpdateLayout();
+            CostFlowsPanel.AnalysisTabs.SelectedIndex = 4; UpdateLayout();
             Check(CostFlowsPanel.DetailsGrid.IsVisible,"narrow details accessible "+language);
             VisualEvidenceCapture.Capture(this,Path.Combine(directory,language+"-narrow.png"));
-            CostFlowsPanel.AnalysisTabs.SelectedIndex = 0; UpdateLayout();
+            CostFlowsPanel.AnalysisTabs.SelectedIndex = 1; UpdateLayout();
             var first=CostFlowsPanel.PrimaryGraphCanvas.Children.OfType<Button>().First();
             Check(first.Focus()&&first.IsKeyboardFocusWithin,"graph keyboard focus "+language);
         }

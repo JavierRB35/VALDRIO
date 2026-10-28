@@ -120,7 +120,28 @@ public sealed partial class SqliteCompanyFileService
             Invalid(previous != Json(model), "Model audit/current state mismatch");
         }
 
-        Invalid(audit.Any(a => a.Type == "PhysicalCenter" && !centers.Any(c => c.Id.ToString() == a.AggregateId) || a.Type == "UnitState" && !units.Any(u => u.Definition.Id.ToString() == a.AggregateId) || a.Type == "ModelVersion" && !models.Any(m => m.Structure.Id.ToString() == a.AggregateId)), "Orphan aggregate audit");
+        var deletedCenterIds = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var group in audit.Where(a => a.Type == "PhysicalCenter" && !centers.Any(c => c.Id.ToString() == a.AggregateId)).GroupBy(a => a.AggregateId))
+        {
+            var rows = group.OrderBy(a => a.Row.Revision).ToArray();
+            Invalid(rows.Length < 2 || rows[^1].Row.Operation != "DeleteCenter", "Missing center without deletion");
+            string previous = "null";
+            for (var i = 0; i < rows.Length - 1; i++)
+            {
+                var row = rows[i].Row;
+                var after = CanonicalSnapshotJson.Deserialize<PhysicalCenter>(row.AfterJson); after.EnsureValid();
+                Invalid(row.Revision != i || after.Revision != i || after.Id.ToString() != group.Key || after.CompanyId != file.Id ||
+                    row.Operation != (i == 0 ? "CreateCenter" : "ChangeCenter") || row.BeforeJson != previous, "Deleted center audit chain invalid");
+                previous = Json(after);
+            }
+            var deletion = rows[^1].Row;
+            Invalid(deletion.Revision != rows.Length - 1 || deletion.BeforeJson != previous || deletion.AfterJson != Json(new { Deleted = true }), "Invalid center deletion");
+            Invalid(models.Any(m => m.Structure.Nodes.Any(n => n.PhysicalCenterId.ToString() == group.Key)) ||
+                audit.Any(a => a.Type == "ModelVersion" && (a.Row.BeforeJson.Contains(group.Key, StringComparison.Ordinal) || a.Row.AfterJson.Contains(group.Key, StringComparison.Ordinal))), "Deleted center has historical dependencies");
+            deletedCenterIds.Add(group.Key);
+        }
+
+        Invalid(audit.Any(a => a.Type == "PhysicalCenter" && !centers.Any(c => c.Id.ToString() == a.AggregateId) && !deletedCenterIds.Contains(a.AggregateId) || a.Type == "UnitState" && !units.Any(u => u.Definition.Id.ToString() == a.AggregateId) || a.Type == "ModelVersion" && !models.Any(m => m.Structure.Id.ToString() == a.AggregateId)), "Orphan aggregate audit");
         Invalid(file.SchemaVersion < 3 && audit.Any(a => a.Type is "Study" or "StudySnapshot"), "Study audit in old schema");
         var upgrades = audit.Where(a => a.Type == "CompanyFile").OrderBy(a => a.Row.Revision).ToArray();
         Invalid(file.SchemaVersion < 4 && audit.Any(a => a.Type == "ImportBatch"), "Import audit in old schema");

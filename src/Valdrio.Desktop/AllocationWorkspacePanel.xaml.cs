@@ -14,6 +14,7 @@ public partial class AllocationWorkspacePanel : UserControl
     public AllocationWorkspacePanel()
     {
         InitializeComponent();
+        BuildTaskTabs();
         ConfigurePage(false);
         DataContextChanged += (_, e) =>
         {
@@ -38,7 +39,50 @@ public partial class AllocationWorkspacePanel : UserControl
             RedrawPrimaryFlow();
         };
     }
+    private readonly TabControl taskTabs = new();
+    private readonly TabItem assignTask = new(), keyTask = new(), checkTask = new(), capacityTask = new(), methodTask = new();
+    private void BuildTaskTabs()
+    {
+        var assignments = new StackPanel(); var keys = new StackPanel(); var checks = new StackPanel();
+        void Move(System.Windows.UIElement element, Panel destination)
+        { WorkspaceBody.Children.Remove(element); destination.Children.Add(element); }
+        Move(KeyWorkspaceLayout, keys);
+        Move((System.Windows.UIElement)AccountsSection.Parent, assignments);
+        Move((System.Windows.UIElement)CompositionSection.Parent, assignments);
+        Move(RulesSection, assignments);
+        Move((System.Windows.UIElement)ResultsSection.Parent, checks);
+        Move((System.Windows.UIElement)SecondaryResultsSection.Parent, checks);
+        assignTask.Content = assignments; keyTask.Content = keys; checkTask.Content = checks;
+        var capacity = new StackPanel();
+        var openCapacity = new Button { HorizontalAlignment = HorizontalAlignment.Left };
+        openCapacity.SetBinding(ContentControl.ContentProperty, new System.Windows.Data.Binding("[CapacityServices]"));
+        openCapacity.Click += (_, e) => { if (Window.GetWindow(this) is MainWindow main) main.OpenAuxiliaryFromAllocation(); };
+        var explanation = new TextBlock { TextWrapping = TextWrapping.Wrap };
+        explanation.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding("[CapacityDependencies]"));
+        capacity.Children.Add(explanation); capacity.Children.Add(openCapacity); capacityTask.Content = capacity;
+        var method = new StackPanel();
+        var methodHelp = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(12) };
+        methodHelp.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding("[MethodScopeHelp]"));
+        var chooseCapacity = new Button { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(12) };
+        chooseCapacity.SetBinding(ContentControl.ContentProperty, new System.Windows.Data.Binding("[CapacityServices]"));
+        chooseCapacity.Click += (_, _) => { if (Window.GetWindow(this) is MainWindow main) main.OpenAuxiliaryFromAllocation(); };
+        method.Children.Add(methodHelp); method.Children.Add(chooseCapacity); methodTask.Content = method;
+        methodTask.SetBinding(HeaderedContentControl.HeaderProperty, new System.Windows.Data.Binding("[MethodScope]"));
+        taskTabs.Items.Add(assignTask); taskTabs.Items.Add(keyTask); taskTabs.Items.Add(capacityTask); taskTabs.Items.Add(checkTask);
+        WorkspaceBody.Children.Insert(2, taskTabs);
+        var report = new Button { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 8, 0, 8) };
+        report.SetBinding(ContentControl.ContentProperty, new System.Windows.Data.Binding("[ViewPhaseReport]"));
+        report.Click += async (_, _) => { if (Window.GetWindow(this) is MainWindow main) await main.OpenAllocationReport(secondaryOnly); };
+        WorkspaceBody.Children.Insert(2, report);
+        assignTask.SetBinding(HeaderedContentControl.HeaderProperty, new System.Windows.Data.Binding("[AssignTask]"));
+        keyTask.SetBinding(HeaderedContentControl.HeaderProperty, new System.Windows.Data.Binding("[KeysTask]"));
+        checkTask.SetBinding(HeaderedContentControl.HeaderProperty, new System.Windows.Data.Binding("[CheckTask]"));
+        capacityTask.SetBinding(HeaderedContentControl.HeaderProperty, new System.Windows.Data.Binding("[CapacityServices]"));
+    }
     public bool SecondaryOnly { set => ConfigurePage(value); }
+    internal void ShowAssignments() => taskTabs.SelectedItem = assignTask;
+    internal void ShowKeys() => taskTabs.SelectedItem = keyTask;
+    private async void OpenSecondaryDependency(object sender, RoutedEventArgs e) { if (Window.GetWindow(this) is MainWindow main) await main.NavigateWorkflow(7); }
     private async void ReuseMethodology(object sender, RoutedEventArgs e)
     {
         try
@@ -72,6 +116,13 @@ public partial class AllocationWorkspacePanel : UserControl
     private void ConfigurePage(bool secondary)
     {
         secondaryOnly = secondary;
+        var selected = taskTabs.SelectedItem;
+        taskTabs.Items.Clear();
+        if (secondary) { taskTabs.Items.Add(methodTask); taskTabs.Items.Add(keyTask); taskTabs.Items.Add(assignTask); taskTabs.Items.Add(capacityTask); }
+        else { taskTabs.Items.Add(assignTask); taskTabs.Items.Add(keyTask); }
+        taskTabs.Items.Add(checkTask);
+        taskTabs.SelectedItem = selected is not null && taskTabs.Items.Contains(selected) ? selected : taskTabs.Items[0];
+        capacityTask.Visibility = secondary ? Visibility.Visible : Visibility.Collapsed;
         RedrawPrincipalCostFlow();
         RedrawPrimaryFlow();
         // Each page has its own visual tree; shared controls retain the same commands and validation.
@@ -84,9 +135,8 @@ public partial class AllocationWorkspacePanel : UserControl
         SecondaryPhaseBar.Visibility = secondary ? Visibility.Visible : Visibility.Collapsed;
         PrimaryPhaseBar.Visibility = PrimaryFooterState.Visibility = secondary ? Visibility.Collapsed : Visibility.Visible;
         SecondaryCalculationActions.Visibility = SecondaryFooterState.Visibility = SecondaryPhaseBar.Visibility;
-        for (var i = 0; i < RuleTabs.Items.Count; i++)
-            ((TabItem)RuleTabs.Items[i]).Visibility = (i == 1) == secondary ? Visibility.Visible : Visibility.Collapsed;
-        RuleTabs.SelectedIndex = secondary ? 1 : 0;
+        PrimaryRulesSection.Visibility = ExceptionsSection.Visibility = NamesSection.Visibility = secondary ? Visibility.Collapsed : Visibility.Visible;
+        SecondaryRulesSection.Visibility = secondary ? Visibility.Visible : Visibility.Collapsed;
         RulesSection.IsExpanded = true;
     }
     internal FrameworkElement FooterActions()
@@ -127,7 +177,8 @@ public partial class AllocationWorkspacePanel : UserControl
         LibrarySection.IsExpanded = true;
         DefinitionSection.IsExpanded = true;
         RulesSection.IsExpanded = true;
-        RuleTabs.SelectedIndex = 1;
+        taskTabs.SelectedItem = assignTask;
+        SecondaryRulesSection.IsExpanded = true;
         if (vm.SelectedSecondary is null) vm.SelectedSecondary = vm.SecondaryRules.FirstOrDefault();
         vm.SelectSecondaryRepairKey();
         if (vm.LoadKeyCommand.CanExecute(null))
@@ -155,6 +206,7 @@ public partial class AllocationWorkspacePanel : UserControl
     }
     private void RevealResults(Expander section)
     {
+        taskTabs.SelectedItem = checkTask;
         section.IsExpanded = true;
         Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
         {
@@ -186,6 +238,7 @@ public partial class AllocationWorkspacePanel : UserControl
     }
     internal void FocusKeyLibrary()
     {
+        taskTabs.SelectedItem = keyTask;
         // Only when entering a phase. Preserve editor focus during saving/rebuilding.
         LibrarySection.IsExpanded = true;
         Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(async () =>
@@ -366,18 +419,6 @@ public partial class AllocationWorkspacePanel : UserControl
         CoverageAssignmentTask = viewModel.AssignCoverageAsync(row.Id, key);
         await CoverageAssignmentTask;
         box.GetBindingExpression(ComboBox.SelectedValueProperty)?.UpdateTarget();
-    }
-    private bool restoringTab;
-    private int previousTab;
-    private void RuleTabChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (e.OriginalSource != RuleTabs || restoringTab) return;
-        if (viewModel?.HasUnappliedRule == true)
-        {
-            restoringTab = true; RuleTabs.SelectedIndex = previousTab; restoringTab = false;
-            viewModel.ExplainPendingRule(); return;
-        }
-        previousTab = RuleTabs.SelectedIndex;
     }
     private void SelectNumber(object sender, KeyboardFocusChangedEventArgs e) { if (sender is TextBox box) box.SelectAll(); }
 }

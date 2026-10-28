@@ -136,7 +136,8 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
             var current = host.ActivePhysicalActivity!.ReadCurrent(study.CompanyId, study.Id);
             if (Rows.Any(r => r.Value.Observation is not null && !current.Any(o => o.Id == r.Value.Observation.Id && o.Version == r.Value.Observation.Version)))
                 throw AuxiliaryCapacityRules.Error("AUX_PHYSICAL_STALE", "Stale");
-            host.AuxiliaryAllocations!.ChangeAllocations(new(study.CompanyId, study.Id, study.Revision, new(Guid.NewGuid()), "local-user", workspace.Configuration.WithAuxiliaryCapacity(plan)));
+            var receipt = host.AuxiliaryAllocations!.ChangeAllocations(new(study.CompanyId, study.Id, study.Revision, new(Guid.NewGuid()), "local-user", workspace.Configuration.WithAuxiliaryCapacity(plan)));
+            host.AcceptExternalReceipt(receipt.ConfirmedStudy);
             Reload(); Feedback = this["Saved"];
         }
         catch (Exception ex) when (ex is DomainRuleException or CompanyFileException or InvalidOperationException) { ShowError(ex); }
@@ -144,7 +145,7 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
     public void Reopen()
     {
         if (!CanReopen || workspace is null) return;
-        try { var s = workspace.Resources.Study; host.AuxiliaryAllocations!.ChangeAllocations(new(s.CompanyId, s.Id, s.Revision, new(Guid.NewGuid()), "local-user", workspace.Configuration.WithSecondaryClosed(false))); Reload(); }
+        try { var s = workspace.Resources.Study; var receipt = host.AuxiliaryAllocations!.ChangeAllocations(new(s.CompanyId, s.Id, s.Revision, new(Guid.NewGuid()), "local-user", workspace.Configuration.WithSecondaryClosed(false))); host.AcceptExternalReceipt(receipt.ConfirmedStudy); Reload(); }
         catch (Exception ex) when (ex is DomainRuleException or CompanyFileException or InvalidOperationException) { ShowError(ex); }
     }
     public void Validate()

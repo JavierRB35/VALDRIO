@@ -54,6 +54,7 @@
    <TextBlock TextWrapping="Wrap" Margin="0,4,0,6" AutomationProperties.LiveSetting="Polite" x:Name="ImportStepHelp"/>
   </StackPanel>
   <StackPanel DockPanel.Dock="Bottom">
+   <TextBlock Text="{Binding ImportImpact}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,8"/>
    <TextBlock Text="{Binding OperationSummary}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,4,0,8"/>
    <TextBlock Text="{Binding UserStatus}" AutomationProperties.LiveSetting="Polite">
     <TextBlock.Style>
@@ -95,7 +96,14 @@
 
       <StackPanel IsEnabled="{Binding HasFile}">
        <TextBlock Text="{Binding [AmountMode]}" FontWeight="SemiBold" Margin="0,10,0,0"/>
+       <Grid HorizontalAlignment="Left">
        <ComboBox x:Name="AmountModeBox" ItemsSource="{Binding AmountModes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding AmountMeaningSelection,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding [AmountMode]}" local:FieldHelp.Key="AmountMode" SelectionChanged="AmountMeaningChanged" MinWidth="300" HorizontalAlignment="Left"/>
+        <TextBlock Text="{Binding [AmountModePrompt]}" IsHitTestVisible="False" VerticalAlignment="Center" Margin="12,0,32,0">
+         <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/>
+          <Style.Triggers><DataTrigger Binding="{Binding SelectedIndex,ElementName=AmountModeBox}" Value="-1"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
+         </Style></TextBlock.Style>
+        </TextBlock>
+       </Grid>
        <TextBlock Text="{Binding InterpretationPrompt}" TextWrapping="Wrap" Margin="0,8,0,0" Style="{StaticResource StepHelp}"/>
       </StackPanel>
 
