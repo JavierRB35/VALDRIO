@@ -18,7 +18,7 @@ public sealed class T19OrderComparisonTests
         {
             var quantity = new CompositionQuantity(name, Id(), Id(), i > 1,
                 unit, 1m, quantities[i], quantities[i], quantities[i], quantities[i], name);
-            return new EstimatedCostLine(quantity, 10m, "reference", costs[i], costs[i]);
+            return new EstimatedCostLine(quantity, costs[i] / quantities[i], "reference", costs[i], costs[i]);
         }).ToArray();
         return (new EstimatedCost(100m, 1m, lines, 700m, 7m), unit);
     }
