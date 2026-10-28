@@ -1,5 +1,5 @@
 # Contextual help: Structure design
-**Last updated:** `2026-10-25`
+**Last updated:** `2026-10-28`
 
 
 ## 1. Purpose and financial function
@@ -30,6 +30,14 @@ Define and publish the structure of physical centres, analytical nodes and cost 
 - Do not edit a published version as if it were a draft; create a new version or copy where required.
 - Incorrect auxiliary roles affect secondary allocation.
 - Resolve pending edits before leaving the screen.
+
+### Centre, node and allocation role
+A centre identifies a physical or organisational area. A node is an analytical cost destination within it; a centre may contain several nodes. The pool groups the node's costs and activity unit.
+
+Choose **Principal** for a final secondary-allocation destination and **Auxiliary** for a node whose service costs are redistributed to other nodes. Role does not determine fixed or variable behaviour. Choose a comparable activity unit, such as hours; selecting it neither records quantities nor creates an allocation key.
+
+### Deleting a centre
+Deletion requires confirmation and is allowed only without nodes or historical references. Deactivate a used centre to retain its links.
 
 ## Recommended workflow
 1. Create the required centres and nodes, assigning compatible pools and physical units.

@@ -1,7 +1,7 @@
 # Ayuda contextual: Preparar cuentas
 **ID Vista UI:** `View_ResourcePreparation`  
-**Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Última actualización:** `2026-10-28`
+**Estado:** guía revisada sobre `2599188` y la auditoría contextual de 28/10/2026. Las evidencias de validación se registran por separado.
 
 ## 1. Objetivo y función financiera
 Transformar recursos importados en costes analíticos clasificables y repartibles, con correcciones, ajustes extracontables reutilizables, exclusiones y destinos. Permite explicar la conciliación contable-analítica antes de repartir.
@@ -47,6 +47,9 @@ Transformar recursos importados en costes analíticos clasificables y repartible
 - [`src/Valdrio.Desktop/ResourceWorkspaceViewModel.cs`](../../src/Valdrio.Desktop/ResourceWorkspaceViewModel.cs)
 - [`src/Valdrio.Desktop/ResourceWorkspaceViewModel.Rules.cs`](../../src/Valdrio.Desktop/ResourceWorkspaceViewModel.Rules.cs)
 - [`src/Valdrio.Application/ReusableAdjustments.cs`](../../src/Valdrio.Application/ReusableAdjustments.cs)
+
+### Revisar clasificación y destino
+La pestaña **Clasificación y destino** permite revisar fijo/variable/mixto en la tabla compartida con el primario. En Mixto se introduce solo el porcentaje variable; el fijo es su complemento hasta 100 %. Guarda la composición antes de calcular. No confundas esta división por comportamiento con las proporciones de reparto a nodos.
 
 ## Recorrido recomendado
 1. Revisa las cuentas procedentes de los lotes confirmados, sus descripciones y los saldos de partida.

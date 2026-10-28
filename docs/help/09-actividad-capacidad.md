@@ -1,7 +1,7 @@
 # Ayuda contextual: Actividad y capacidades
 **ID Vista UI:** `View_PhysicalActivity`  
-**Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Última actualización:** `2026-10-28`
+**Estado:** guía revisada sobre `2599188` y la auditoría contextual de 28/10/2026. Las evidencias de validación se registran por separado.
 
 ## 1. Objetivo y función financiera
 Registrar observaciones físicas por nodo/pool, análisis y período, manteniendo versiones, fuentes y estados. Permite comparar actividad real con capacidad normal. La pantalla no define por sí sola tarifas económicas.
@@ -14,7 +14,7 @@ Registrar observaciones físicas por nodo/pool, análisis y período, manteniend
 | Capacidad normal | Cantidad por período | Según confirmación | Denominador de utilización, revisado con fuente y calidad. |
 | Actividad real | Cantidad por período | Según confirmación | Medición del período; no debe inferirse de la normal. |
 | Fuente de normal/real | Texto | Sí, para confirmar | Origen verificable de cada magnitud. |
-| Calidad y descripción | Selector/texto | Sí, para confirmar | Diferencian medido, declarado y calculado con justificación. |
+| Calidad y descripción | Selector/texto | Calidad para confirmar; descripción opcional | Diferencian registrado, declarado y calculado; la descripción amplía la fuente cuando sea útil. |
 | Motivo de normal cero | Texto | Si normal = 0 | Identifica por qué la capacidad normal es realmente cero. |
 | Motivo de excepcionalidad | Texto | Si actividad > normal u otras condiciones | Documenta una situación física atípica sin corregir cantidades automáticamente. |
 | Teórica, práctica y motivo de corrección | Cantidades y texto avanzado | Opcional | Aportan contexto físico adicional distinto de normal y real. |
@@ -40,6 +40,9 @@ Registrar observaciones físicas por nodo/pool, análisis y período, manteniend
 - [`src/Valdrio.Desktop/PhysicalActivityWindow.xaml`](../../src/Valdrio.Desktop/PhysicalActivityWindow.xaml)
 - [`src/Valdrio.Desktop/PhysicalActivityEditor.cs`](../../src/Valdrio.Desktop/PhysicalActivityEditor.cs)
 - [`src/Valdrio.Application/PhysicalActivity.cs`](../../src/Valdrio.Application/PhysicalActivity.cs)
+
+### Dónde editar
+La tabla general es de consulta. Abre **Editar actividad y capacidad** para el nodo seleccionado: comparte normal, real y fuentes con esta pantalla. Guarda borrador o confirma explícitamente; adoptar una propuesta de normal no confirma la observación.
 
 ## Recorrido recomendado
 1. Selecciona nodo, unidad y período para registrar la actividad real y la capacidad normal que correspondan.

@@ -1,7 +1,7 @@
 # Ayuda contextual: Diseñar estructura
 **ID Vista UI:** `View_Structure`  
-**Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Última actualización:** `2026-10-28`
+**Estado:** guía revisada sobre `2599188` y la auditoría contextual de 28/10/2026. Las evidencias de validación se registran por separado.
 
 ## 1. Objetivo y función financiera
 Definir y versionar centros, nodos de coste, pools y unidades. Esta estructura publicada gobierna los destinos válidos de los repartos y la lectura de costes por centro. Editar un borrador no altera silenciosamente una versión publicada.
@@ -33,9 +33,17 @@ Definir y versionar centros, nodos de coste, pools y unidades. Esta estructura p
 - Un rol auxiliar mal asignado cambia las exigencias del reparto secundario.
 - Antes de abandonar la vista, resolver los cambios pendientes.
 
+### Centro, nodo y función en el reparto
+El centro identifica el área física u organizativa. El nodo es el destino analítico de sus costes; un centro puede contener varios nodos. El pool agrupa los costes y la unidad de actividad de ese nodo.
+
+Elige **Principal** para un destino final del reparto secundario y **Auxiliar** para un nodo cuyos costes se redistribuyen por servicios a otros nodos. El rol no decide si un coste es fijo o variable. La unidad debe medir la actividad de forma comparable (por ejemplo, horas); elegirla no registra cantidades ni crea una clave de reparto.
+
 ### Referencias al código
 - [`src/Valdrio.Desktop/ModelWorkspacePanel.xaml`](../../src/Valdrio.Desktop/ModelWorkspacePanel.xaml)
 - [`src/Valdrio.Desktop/ModelWorkspaceViewModel.cs`](../../src/Valdrio.Desktop/ModelWorkspaceViewModel.cs)
+
+### Eliminar un centro
+Solo se elimina tras confirmación si no tiene nodos ni referencias históricas. Si está utilizado, desactívalo para conservar sus vínculos.
 
 ## Recorrido recomendado
 1. Crea los centros y nodos necesarios y asigna los pools y unidades físicas compatibles.

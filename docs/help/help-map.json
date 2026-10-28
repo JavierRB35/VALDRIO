@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "referenceCommit": "928b26353f83af49d88829d10b1497c71d1409b3",
-  "updated": "2026-10-25",
+  "referenceCommit": "2599188774ecd389888881af3dbf4307badb5709",
+  "updated": "2026-10-28",
   "language": "es",
   "views": [
     {
@@ -53,7 +53,8 @@
       "viewId": "View_ResourcePreparation",
       "file": "05-preparacion-cuentas.md",
       "uiSources": [
-        "src/Valdrio.Desktop/ResourceWorkspacePanel.xaml"
+        "src/Valdrio.Desktop/ResourceWorkspacePanel.xaml",
+        "src/Valdrio.Desktop/ClassificationReviewPanel.xaml"
       ],
       "codeSources": [
         "src/Valdrio.Desktop/ResourceWorkspaceViewModel.cs",

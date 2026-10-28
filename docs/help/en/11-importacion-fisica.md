@@ -1,5 +1,5 @@
 # Contextual help: Import physical activity
-**Last updated:** `2026-10-25`
+**Last updated:** `2026-10-28`
 
 
 ## 1. Purpose and financial function
@@ -33,7 +33,12 @@ Import normal and actual observations from CSV or XLSX into the selected analysi
 - Preview is not saving or confirming every observation.
 - Respect protected revisions when replacing or annulling.
 
+### Template and effect of Apply
+Use headers `node;unit;period_start;period_end;normal;real;normal_source;real_source`. Node and unit are existing codes; dates use `yyyy-MM-dd` and must match the full analysis period. Text quantities use the regional decimal separator without thousands separators. Supply at least normal or actual quantity; blank is not zero.
+
+**Apply saves drafts**, not confirmed observations. When only normal or actual is supplied, the other previous quantity is retained if available. Review selected rows and then confirm in Activity and capacities. Do not select two rows for the same node; they are not automatically summed.
+
 ## Recommended workflow
-1. Prepare the CSV/XLSX and map node, unit, period and physical quantity fields.
+1. Generate the template and fill its node, unit, period and quantity columns; this assistant has no manual column-mapping selector.
 2. Review the preview and fix incompatible or incomplete rows; preview alone does not apply the import.
 3. Apply valid rows and confirm the observations; inspect their values and sources in Activity and capacity.

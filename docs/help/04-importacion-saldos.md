@@ -1,7 +1,7 @@
 # Ayuda contextual: Importar saldos
 **ID Vista UI:** `View_ImportBalances`  
-**Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Última actualización:** `2026-10-28`
+**Estado:** guía revisada sobre `2599188` y la auditoría contextual de 28/10/2026. Las evidencias de validación se registran por separado.
 
 ## 1. Objetivo y función financiera
 Leer CSV/XLSX, interpretar saldos de cuentas, seleccionar registros, agruparlos por código y confirmar el lote que se convertirá en recurso de partida de la contabilidad analítica. La vista previa nunca equivale a confirmación.
@@ -23,7 +23,7 @@ Leer CSV/XLSX, interpretar saldos de cuentas, seleccionar registros, agruparlos 
 | Sintaxis negativa | Selector | Según origen | Interpreta valores negativos de modo explícito. |
 | Permitir cuentas numéricas | Booleano | Según origen | Habilita interpretación del identificador cuando el archivo representa cuentas numéricas. |
 | Selección de registros | Casillas/tabla | Sí | Incluye o excluye filas antes de agrupar. |
-| Moneda y conversión | Datos del origen | Según importación internacional | Muestra equivalencias y diferencias de conversión cuando procede. |
+| Moneda del análisis | Solo lectura | Siempre | Los importes deben estar ya expresados en esta moneda. Esta importación no convierte divisas. |
 | Referencia de aprobación | Texto | Según confirmación | Conserva evidencia de la interpretación escogida. |
 | Aprobar interpretación | Booleano | Sí, para confirmar | Acredita revisión previa a escribir datos en el estudio. |
 
@@ -32,7 +32,7 @@ Leer CSV/XLSX, interpretar saldos de cuentas, seleccionar registros, agruparlos 
 | :--- | :--- | :--- |
 | Vista previa | Fila/cuenta/descripción/importe/diagnóstico | Detecta errores de lectura, registros y signos. |
 | Agrupación de cuentas | Código, descripción, filas e importe agregado | Comprueba la base que se preparará en Recursos. |
-| Reconciliación y comparación | Importes, diferencias y ajustes de conversión | Permite verificar la lectura económica antes de confirmar. |
+| Reconciliación y comparación | Importes y diferencias según la base de saldos elegida | Permite verificar la lectura económica antes de confirmar. |
 | Importación confirmada | Lote persistido en análisis | Habilita preparación de cuentas; solo existe tras acción explícita. |
 
 ## 4. Casos de uso, validaciones y errores frecuentes
@@ -41,6 +41,11 @@ Leer CSV/XLSX, interpretar saldos de cuentas, seleccionar registros, agruparlos 
 - Revisar cuentas con idéntico código y descripción conflictiva; nunca inventar nombre.
 - No confundir previsualización, validación y confirmación definitiva.
 - La sustitución de un lote existente requiere revisar el alcance de los registros afectados.
+
+### Moneda y signos antes de confirmar
+Si el origen usa otra moneda, convierte los importes fuera de VALDRIO antes de importarlos. El programa no puede verificar la divisa real de un archivo que no la identifica. Los lotes internacionales históricos conservan sus conversiones para consulta; no habilitan conversiones en una importación nueva.
+
+Con columnas Debe/Haber se calcula **Debe menos Haber**. Los abonos negativos reducen el coste: no cambies su signo para que el resultado parezca positivo. Un saldo acumulado solo se convierte en movimiento por diferencia con un cierre anterior preparado y comparable.
 
 ### Referencias al código
 - [`src/Valdrio.Desktop/ImportColumnMappingWindow.xaml`](../../src/Valdrio.Desktop/ImportColumnMappingWindow.xaml)

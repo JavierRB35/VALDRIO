@@ -1,5 +1,5 @@
 # Contextual help: Auxiliary capacity and services
-**Last updated:** `2026-10-25`
+**Last updated:** `2026-10-28`
 
 
 ## 1. Purpose and financial function
@@ -33,7 +33,14 @@ Evaluate measured auxiliary services and the treatment of auxiliary capacity, di
 - Changing the related Activity and capacities observation can invalidate existing runs.
 - This services import accepts CSV, while Activity and capacities physical observations also allow XLSX.
 
+### Choosing the treatment
+**Distribute without assessment** keeps published secondary keys. It does not calculate the auxiliary's own idle capacity; no assessment is not zero variance.
+
+**Assess own capacity** requires confirmed normal and actual activity. Each service group must total actual activity; its quantities determine destination shares and replace key weights for that assessed auxiliary. Do not add groups together as additional hours.
+
+Capacity is assessed once at the owner of the fixed cost subject to assessment. Costs received from other auxiliaries pass through without another capacity assessment. Correct normal or actual values in Activity and capacities; this screen records services to destinations.
+
 ## Recommended workflow
-1. Select auxiliary services and enter quantities provided and relevant capacity in consistent units.
+1. Select the auxiliary and its treatment; review confirmed capacity and enter services to destinations in the auxiliary's unit.
 2. Check transfers and reciprocal flows can reach principal centres without counting received costs twice.
 3. Review diagnostics and economic-run results before using auxiliary services in rates or product analysis.

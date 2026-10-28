@@ -1,5 +1,5 @@
 # Contextual help: Project
-**Last updated:** `2026-10-25`
+**Last updated:** `2026-10-28`
 
 
 ## 1. Purpose and financial function
@@ -13,7 +13,7 @@ Create, open and protect the company project file (.valdrio). This establishes t
 | Project file | .valdrio file path | According to operation | Selects the local project file; backup and recovery use separate files. |
 | Activity unit code | Text identifier | On unit creation | Identifies physical measurement drivers and observations. |
 | Unit dimension | Choice | On unit creation | Defines compatible measurement quantities. |
-| Unit symbol and scale | Text and scale | As applicable | Used when displaying capacity, activity and rate quantities. |
+| Unit symbol and scale | Text and scale | As applicable | Symbol identifies the unit; scale is the allowed number of decimal places (0–12), not a unit conversion factor. |
 | Discrete unit | Yes/no | As applicable | Identifies quantities treated as whole items. |
 | Open, copy, recover and upgrade | Actions | According to operation | Handle files and upgrades without overwriting the original. |
 

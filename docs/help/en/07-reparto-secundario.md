@@ -1,5 +1,5 @@
 # Contextual help: Secondary allocation and closing
-**Last updated:** `2026-10-25`
+**Last updated:** `2026-10-28`
 
 
 ## 1. Purpose and financial function
@@ -33,7 +33,14 @@ Redistribute costs of auxiliary nodes into final principal destinations, includi
 - When assigning keys to auxiliary nodes or absolute amounts, Tab and Shift+Tab move across row editors and skip read-only values. Assignment errors are shown in red and existing dialogs are not replaced.
 
 ### Pareto chart
-The chart sorts principal nodes at their final cost, without counting internal auxiliary circulation again by descending cost. Bars show each node’s aggregate cost; the line shows cumulative cost as a percentage of the total. An exact-value table and horizontal scrolling are available. Negative credits may make the cumulative percentage exceed 100% before decreasing. A zero or negative total has no percentage; missing results are shown as unavailable.
+The chart sorts principal nodes at their final cost, without counting internal auxiliary circulation again by descending cost. Bars show each node’s aggregate cost; the line shows cumulative cost as a percentage of positive costs. An exact-value table and horizontal scrolling are available. Credits keep their sign and are excluded from the cumulative curve. Positive costs plus credits reconcile to net cost. A zero or negative net total has no percentage; missing results are shown as unavailable.
+
+### What reciprocal allocation solves
+An auxiliary may receive services from another auxiliary and provide services back. VALDRIO solves these relationships together: each auxiliary redistributes its initial cost plus received services. Do not repeat allocations manually or add internal flows to final cost again.
+
+For example, an auxiliary with initial cost 100, 20% self-service and 80% to a principal redistributes gross cost 125: 25 returns to itself and 100 reaches the principal. Final cost remains 100. A 100% self-loop without an exit is not viable. Every auxiliary chain needs a path to principals; validation also checks numerical stability.
+
+When auxiliary capacity is assessed, some cost may remain as capacity variance. Check this split in reconciliation before comparing initial cost with final principal costs.
 
 ## Recommended workflow
 1. Check auxiliary nodes carrying costs and define service transfer keys towards principal nodes; self-allocation is allowed.

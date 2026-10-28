@@ -1,7 +1,7 @@
 # Ayuda contextual: Reparto primario
 **ID Vista UI:** `View_PrimaryAllocation`  
-**Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Última actualización:** `2026-10-28`
+**Estado:** guía revisada sobre `2599188` y la auditoría contextual de 28/10/2026. Las evidencias de validación se registran por separado.
 
 ## 1. Objetivo y función financiera
 Asignar costes preparados a nodos/centros mediante claves e inductores con cobertura verificable. Permite calcular, justificar y cerrar la primera imputación de costes a la estructura.
@@ -41,13 +41,25 @@ Asignar costes preparados a nodos/centros mediante claves e inductores con cober
 
 - Para editar una clave, Tab y Mayús+Tab recorren los controles editables habilitados de líneas, pesos, clasificación y cobertura; se omiten las columnas informativas. Los diagnósticos contextuales aparecen en rojo; los avisos modales siguen existiendo.
 
+### Elegir criterio y resolver coincidencias
+- **Porcentajes:** los destinos incluidos deben sumar exactamente 100 %.
+- **Unidades de inductor:** introduce cantidades no negativas de una misma magnitud; la suma debe ser positiva. Cada destino recibe su cantidad dividida por el total: 30 y 30 horas reparten 50 % y 50 %, no 30 % y 30 %.
+- **Partes iguales:** cada destino incluido recibe la misma proporción.
+
+Elige un inductor que represente el consumo o beneficio del recurso; la aplicación comprueba los pesos, pero no acredita que el criterio económico sea adecuado. Las cantidades de una clave no sustituyen las observaciones de actividad y capacidad.
+
+Una asignación individual de clave prevalece sobre reglas automáticas. Entre reglas, prevalece cuenta exacta, después el prefijo más largo y después la mayor prioridad; un empate sin resolver produce diagnóstico. La composición fijo/variable divide el importe por comportamiento, no cambia el porcentaje destinado a cada nodo.
+
 ### Referencias al código
 - [`src/Valdrio.Desktop/AllocationWorkspacePanel.xaml`](../../src/Valdrio.Desktop/AllocationWorkspacePanel.xaml)
 - [`src/Valdrio.Desktop/AllocationWorkspaceViewModel.Primary.cs`](../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Primary.cs)
 - [`src/Valdrio.Application/PrimaryAllocation.cs`](../../src/Valdrio.Application/PrimaryAllocation.cs)
 
 ### Gráfico de Pareto
-El gráfico ordena todos los nodos que reciben coste en el primario de mayor a menor coste. Cada barra muestra el coste agregado del nodo; la línea representa el porcentaje del coste total acumulado. Puedes consultar la tabla de valores y desplazar horizontalmente el gráfico. Con abonos negativos, el acumulado puede superar el 100 % antes de descender; si el total es cero o negativo, no se calcula porcentaje. Sin resultados se indica que todavía no hay datos.
+El gráfico ordena todos los nodos que reciben coste en el primario de mayor a menor coste. Cada barra muestra el coste agregado del nodo; la línea representa el porcentaje acumulado sobre la suma de costes positivos. Puedes consultar la tabla de valores y desplazar horizontalmente el gráfico. Los abonos se muestran con su signo y quedan fuera del acumulado. Positivos más abonos concilian con el neto; si el neto es cero o negativo, no se calcula porcentaje. Sin resultados se indica que todavía no hay datos.
+
+### Claves directas
+**Generar claves directas a nodos** prepara claves de un único destino. Informa de las creadas, equivalentes existentes y omitidas; no las asigna automáticamente a cuentas. Revisa el destino y asigna la clave que corresponda.
 
 ## Recorrido recomendado
 1. Crea o selecciona las claves de reparto y verifica el criterio y los destinos de cada cuenta o recurso.

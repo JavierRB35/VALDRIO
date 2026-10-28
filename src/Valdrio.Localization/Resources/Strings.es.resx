@@ -554,7 +554,7 @@ Completa: {5}</value></data>
   <data name="Guide.Help.SelectedNode" xml:space="preserve"><value>Selecciona un nodo ya añadido para editarlo. Para otro nodo usa Limpiar formulario / nuevo nodo.</value></data>
   <data name="Guide.Help.NodeCode" xml:space="preserve"><value>Código único del nodo dentro de esta estructura. Un centro puede contener varios nodos.</value></data>
   <data name="Guide.Help.Physical" xml:space="preserve"><value>Centro al que pertenece el nodo. Si no existe, créalo en el paso Centros.</value></data>
-  <data name="Guide.Help.Role" xml:space="preserve"><value>Principal o Auxiliar según la metodología del modelo. Es independiente de las funciones y de la clasificación del coste. Se exige al menos un Principal activo.</value></data>
+  <data name="Guide.Help.Role" xml:space="preserve"><value>Principal: destino final del reparto secundario. Auxiliar: redistribuye costes por servicios a otros nodos. El rol no determina si el coste es fijo o variable; debe existir al menos un Principal activo.</value></data>
   <data name="Guide.Help.FunctionTags" xml:space="preserve"><value>Etiquetas opcionales para describir las funciones del nodo, separadas por comas. No asignan reglas de cálculo.</value></data>
   <data name="Guide.Help.DriverUnit" xml:space="preserve"><value>Unidad en la que se medirá la actividad del nodo, por ejemplo horas. Es obligatoria; si no existe, créala aquí mismo sin salir del nodo.</value></data>
   <data name="Guide.Help.Layer" xml:space="preserve"><value>Clasificación del coste para este grupo de costes. No establece todavía una política de cálculo. No se deduce de la cuenta.</value></data>
@@ -585,7 +585,7 @@ Completa: {5}</value></data>
   <data name="Guide.Help.AmountMode" xml:space="preserve"><value>Periodo: movimientos entre las fechas. Saldo íntegro: incorpora el saldo completo al cierre. Acumulados: resta un cierre anterior preparado explícitamente.</value></data>
   <data name="Guide.Help.SourceCurrency" xml:space="preserve"><value>Código de moneda de los importes del archivo, por ejemplo EUR. No se deduce del símbolo o de la región.</value></data>
   <data name="Guide.Help.ApprovalReference" xml:space="preserve"><value>Nota opcional sobre una cuenta y su importe comprobado. Si queda vacía, se conserva una referencia interna de la aprobación.</value></data>
-  <data name="Guide.Help.InterpretationApproved" xml:space="preserve"><value>Aprueba el significado y la convención de signos de los importes que ves en esta revisión. Cambiar modalidad, moneda, filas, tipos o formato exige una nueva revisión.</value></data>
+  <data name="Guide.Help.InterpretationApproved" xml:space="preserve"><value>Aprueba el significado y los signos de los importes revisados en la moneda del análisis. Cambiar modalidad, filas o formato exige una nueva revisión.</value></data>
   <data name="Guide.Help.International" xml:space="preserve"><value>Opciones para moneda por fila, fecha de documento y conversiones. Los tipos se introducen explícitamente y se conservan con la importación.</value></data>
   <data name="Guide.Help.CurrencyFromColumn" xml:space="preserve"><value>Activa si cada fila indica su propia moneda y elige la columna correspondiente.</value></data>
   <data name="Guide.Help.CurrencyColumn" xml:space="preserve"><value>Columna con códigos de moneda como EUR o USD.</value></data>
@@ -724,7 +724,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.Minimum" xml:space="preserve"><value>Actividad mínima del rango</value></data>
   <data name="Resources.Maximum" xml:space="preserve"><value>Actividad máxima del rango</value></data>
   <data name="Resources.CapacityTitle" xml:space="preserve"><value>Capacidad: opciones avanzadas</value></data>
-  <data name="Resources.CapacityHelp" xml:space="preserve"><value>Solo el tratamiento Evaluar en el grupo de costes declara un propietario de capacidad: el grupo de costes elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. La política de cálculo se define en una fase posterior.</value></data>
+  <data name="Resources.CapacityHelp" xml:space="preserve"><value>Solo el tratamiento Evaluar en el grupo de costes declara un propietario de capacidad: el grupo de costes elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. Para evaluar capacidad y tarifas, registra y confirma las observaciones del nodo en Actividad y capacidades; estos campos del recurso no las sustituyen.</value></data>
   <data name="Resources.Capacity" xml:space="preserve"><value>Tratamiento de capacidad</value></data>
   <data name="Resources.Theoretical" xml:space="preserve"><value>Capacidad teórica (opcional)</value></data>
   <data name="Resources.Practical" xml:space="preserve"><value>Capacidad práctica (opcional)</value></data>
@@ -821,9 +821,9 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Resources.ExclusionHelp" xml:space="preserve"><value>Explica por qué este importe queda fuera del estudio. La exclusión conserva el importe y su origen para poder revisarla.</value></data>
   <data name="Guide.Help.Resource.Rows" xml:space="preserve"><value>Edita la corrección total directamente. Intro, Tab o salir de la celda la guarda; Escape cancela la edición de la celda.</value></data>
   <data name="Guide.Help.Resource.RemovePart" xml:space="preserve"><value>Quitar parte seleccionada</value></data>
-  <data name="Guide.Help.Resource.Normal" xml:space="preserve"><value>Solo el tratamiento Evaluar en el grupo de costes declara un propietario de capacidad: el grupo de costes elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. La política de cálculo se define en una fase posterior.</value></data>
+  <data name="Guide.Help.Resource.Normal" xml:space="preserve"><value>Solo el tratamiento Evaluar en el grupo de costes declara un propietario de capacidad: el grupo de costes elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. Para evaluar capacidad y tarifas, registra y confirma las observaciones del nodo en Actividad y capacidades; estos campos del recurso no las sustituyen.</value></data>
   <data name="Guide.Help.Resource.CancelOperation" xml:space="preserve"><value>Cancelar operación en curso</value></data>
-  <data name="Guide.Help.Resource.Capacity" xml:space="preserve"><value>Solo el tratamiento Evaluar en el grupo de costes declara un propietario de capacidad: el grupo de costes elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. La política de cálculo se define en una fase posterior.</value></data>
+  <data name="Guide.Help.Resource.Capacity" xml:space="preserve"><value>Solo el tratamiento Evaluar en el grupo de costes declara un propietario de capacidad: el grupo de costes elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. Para evaluar capacidad y tarifas, registra y confirma las observaciones del nodo en Actividad y capacidades; estos campos del recurso no las sustituyen.</value></data>
   <data name="Guide.Help.Resource.EditPart" xml:space="preserve"><value>Editar parte seleccionada</value></data>
   <data name="Guide.Help.Resource.Discard" xml:space="preserve"><value>Descartar cambios sin guardar</value></data>
   <data name="Guide.Help.Resource.PendingRemainder" xml:space="preserve"><value>Añadir la diferencia como pendiente</value></data>
@@ -843,8 +843,8 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.Help.Resource.Route" xml:space="preserve"><value>Elige una parte y pulsa Editar parte, o crea una nueva. Cada parte tiene un solo destino. La suma debe coincidir exactamente con el efectivo de esta cuenta. Puedes dejar explícitamente importes pendientes.</value></data>
   <data name="Guide.Help.Resource.HorizonEnd" xml:space="preserve"><value>Fijo y variable se definen respecto a una actividad, un intervalo de fechas y un rango. Estos datos explican el criterio; no se deducen del centro ni de la cuenta.</value></data>
   <data name="Guide.Help.Resource.ApplyPart" xml:space="preserve"><value>Aplicar parte al borrador</value></data>
-  <data name="Guide.Help.Resource.Theoretical" xml:space="preserve"><value>Solo el tratamiento Evaluar en el grupo de costes declara un propietario de capacidad: el grupo de costes elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. La política de cálculo se define en una fase posterior.</value></data>
-  <data name="Guide.Help.Resource.Practical" xml:space="preserve"><value>Solo el tratamiento Evaluar en el grupo de costes declara un propietario de capacidad: el grupo de costes elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. La política de cálculo se define en una fase posterior.</value></data>
+  <data name="Guide.Help.Resource.Theoretical" xml:space="preserve"><value>Solo el tratamiento Evaluar en el grupo de costes declara un propietario de capacidad: el grupo de costes elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. Para evaluar capacidad y tarifas, registra y confirma las observaciones del nodo en Actividad y capacidades; estos campos del recurso no las sustituyen.</value></data>
+  <data name="Guide.Help.Resource.Practical" xml:space="preserve"><value>Solo el tratamiento Evaluar en el grupo de costes declara un propietario de capacidad: el grupo de costes elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. Para evaluar capacidad y tarifas, registra y confirma las observaciones del nodo en Actividad y capacidades; estos campos del recurso no las sustituyen.</value></data>
   <data name="Guide.Help.Resource.Behavior" xml:space="preserve"><value>Fijo y variable se definen respecto a una actividad, un intervalo de fechas y un rango. Estos datos explican el criterio; no se deducen del centro ni de la cuenta.</value></data>
   <data name="Guide.Help.Resource.ActivityUnit" xml:space="preserve"><value>Fijo y variable se definen respecto a una actividad, un intervalo de fechas y un rango. Estos datos explican el criterio; no se deducen del centro ni de la cuenta.</value></data>
   <data name="Guide.Help.Resource.ObjectName" xml:space="preserve"><value>Un objeto es aquello cuyo coste quieres conocer: un producto, servicio, orden u otro destino. Su código lo identifica dentro de este estudio. Guárdalo y selecciónalo como destino de la parte.</value></data>
@@ -857,7 +857,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Guide.Help.Resource.RateDate" xml:space="preserve"><value>Fecha de negocio a la que corresponde este tipo de cambio. No cambia con la zona horaria.</value></data>
   <data name="Guide.Help.Resource.Adjustments" xml:space="preserve"><value>Un ajuste aumenta o reduce el importe importado sin alterar el Excel o CSV. Indica un importe con signo, su moneda, tipo y motivo. Si no necesitas ajustes, continúa al reparto.</value></data>
   <data name="Guide.Help.Resource.ResetReason" xml:space="preserve"><value>Reiniciar deja todas las cuentas pendientes y retira de la preparación actual sus ajustes y repartos. Conserva el historial y las instantáneas anteriores. Úsalo si necesitas sustituir importaciones que ya has preparado.</value></data>
-  <data name="Guide.Help.Resource.Actual" xml:space="preserve"><value>Solo el tratamiento Evaluar en el grupo de costes declara un propietario de capacidad: el grupo de costes elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. La política de cálculo se define en una fase posterior.</value></data>
+  <data name="Guide.Help.Resource.Actual" xml:space="preserve"><value>Solo el tratamiento Evaluar en el grupo de costes declara un propietario de capacidad: el grupo de costes elegido, su nodo y su unidad. Las observaciones vacías significan dato no disponible; cero es un valor conocido. Para evaluar capacidad y tarifas, registra y confirma las observaciones del nodo en Actividad y capacidades; estos campos del recurso no las sustituyen.</value></data>
   <data name="Guide.Help.Resource.AddAdjustment" xml:space="preserve"><value>Añadir ajuste al borrador</value></data>
   <data name="Guide.Help.Resource.NewPart" xml:space="preserve"><value>Limpiar formulario / nueva parte</value></data>
   <data name="Guide.Help.Resource.ClearForm" xml:space="preserve"><value>Limpiar este formulario</value></data>
@@ -2057,7 +2057,7 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
 <data name="Activity.HistoryReason" xml:space="preserve"><value>Motivo</value></data>
 <data name="Resources.ManualSaveHelp" xml:space="preserve"><value>Corrección manual total: se guarda al terminar de editar cada celda. No es un incremento ni el importe final. Efectivo = convertido + corrección manual + ajustes de reglas.</value></data>
 <data name="Model.StructureScope" xml:space="preserve"><value>Estructura reutilizable: los cambios de este borrador no son adaptaciones del análisis.</value></data>
-<data name="AllocationUI.WeightMeaning" xml:space="preserve"><value>Los pesos son magnitudes relativas, no porcentajes: 30/70 de 100 equivale a 30/70 %, pero 30/30 equivale a 50/50 %. Revisa el criterio, la unidad y el total de la clave.</value></data>
+<data name="AllocationUI.WeightMeaning" xml:space="preserve"><value>Porcentajes: deben sumar 100 %. Unidades de inductor: son pesos relativos (30 y 30 reparten 50 % a cada destino), con total positivo. Partes iguales: misma proporción por destino incluido. Revisa criterio y unidad.</value></data>
 <data name="AllocationUI.BaseScope" xml:space="preserve"><value>La base repartible contiene solo partes destinadas a unidades de cálculo. Directos, excluidos y pendientes de otras rutas se comprueban en Resultados y trazabilidad.</value></data>
 <data name="Rates.ScopeHelp" xml:space="preserve"><value>Tarifa de gestión por unidad, no precio de venta. La conciliación es parcial: no acredita consumo por producto u orden. Cada componente conserva su base; sin dato no equivale a cero.</value></data>
 <data name="ImportMapping.ReplaceSummary" xml:space="preserve"><value>Sustituir {0} por {1} en {2}. La importación anterior conserva su historial.</value></data>
@@ -2143,7 +2143,7 @@ Se escribirá en el destino elegido. Revisa ambos archivos antes de continuar. C
   <data name="Composition.NoOutputReference" xml:space="preserve"><value>Este producto no tiene un coste unitario importado.</value></data>
   <data name="Composition.ImportReferenceAmbiguous" xml:space="preserve"><value>El catálogo contiene referencias que solo se diferencian en mayúsculas y minúsculas. Resuélvelas antes de importar.</value></data>
   <data name="Estimate.Title" xml:space="preserve"><value>Órdenes estimadas</value></data>
-  <data name="Estimate.Scope" xml:space="preserve"><value>Estimación de gestión con materiales y actividad. Cada versión aceptada conserva sus recetas, precios y tarifas. Los consumos reales se registrarán en .</value></data>
+  <data name="Estimate.Scope" xml:space="preserve"><value>Estimación de gestión con materiales y actividad. Cada versión aceptada conserva sus recetas, precios y tarifas. No registra consumos reales.</value></data>
   <data name="Estimate.Help" xml:space="preserve"><value>Indica la orden, una receta publicada, la cantidad y un cálculo económico guardado. Previsualiza antes de aceptar.</value></data>
   <data name="Estimate.Code" xml:space="preserve"><value>Referencia de la orden</value></data>
   <data name="Estimate.Recipe" xml:space="preserve"><value>Receta publicada</value></data>
@@ -2199,7 +2199,7 @@ Se escribirá en el destino elegido. Revisa ambos archivos antes de continuar. C
   <data name="Estimate.QVersion" xml:space="preserve"><value>¿Qué versión estoy consultando?</value></data>
   <data name="Estimate.QReal" xml:space="preserve"><value>¿Incluye consumos reales?</value></data>
   <data name="Estimate.Complete" xml:space="preserve"><value>Todos los componentes finales tienen valoración explícita. Los semielaborados se desglosan sin duplicar su coste.</value></data>
-  <data name="Estimate.NoActual" xml:space="preserve"><value>No. Es una estimación; no consume recursos ni registra producción real ().</value></data>
+  <data name="Estimate.NoActual" xml:space="preserve"><value>No. Es una estimación; no consume recursos ni registra producción real.</value></data>
 <data name="Estimate.Revision" xml:space="preserve"><value>Revisión económica</value></data>
 <data name="Estimate.FrozenRate" xml:space="preserve"><value>Tarifa congelada</value></data>
   <data name="Activity.Assistant.OptionalDescription" xml:space="preserve"><value>Descripción de la fuente o explicación del método empleado (opcional)</value></data>

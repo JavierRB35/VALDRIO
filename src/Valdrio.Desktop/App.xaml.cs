@@ -249,6 +249,20 @@ public partial class App : System.Windows.Application
                     {
                         try
                         {
+                        if (e.Args.Contains("--context-help-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("Help checks require a disposable example.");
+                            await company.OpenPath(requestedPath);
+                            if (company.UpgradeSuggested)
+                            {
+                                Directory.CreateDirectory(captureDirectory);
+                                ((QueuedCompanyFileDialogs)companyDialogs).Paths.Enqueue(
+                                    Path.Combine(captureDirectory, "upgraded-" + Guid.NewGuid().ToString("N") + ".valdrio"));
+                                await company.UpgradeCommand.ExecuteAsync(null);
+                            }
+                            await window.RunContextHelpChecks(captureDirectory);
+                            Shutdown(0); return;
+                        }
                         if (e.Args.Contains("--functional-audit-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("Functional audit requires a disposable example.");

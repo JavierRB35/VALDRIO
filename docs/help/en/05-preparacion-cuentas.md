@@ -1,5 +1,5 @@
 # Contextual help: Prepare accounts and resources
-**Last updated:** `2026-10-25`
+**Last updated:** `2026-10-28`
 
 
 ## 1. Purpose and financial function
@@ -38,6 +38,9 @@ Review imported account balances, apply explicit extra-accounting adjustments, r
 - Previewing or saving a rule does not apply it to the study.
 - Outstanding and excluded amounts must not be silently redistributed.
 - Resource-preparation diagnostics use red text, unlike informational messages. Economic confirmation dialogs are unchanged. Read-only fields are skipped by Tab without hiding their content.
+
+### Reviewing classification and destination
+The **Classification and destination** tab reviews fixed/variable/mixed behaviour in the table shared with primary allocation. For Mixed, enter only the variable percentage; fixed is its complement to 100%. Save composition before calculating. This behaviour split is separate from allocation shares to nodes.
 
 ## Recommended workflow
 1. Review accounts from confirmed batches, their descriptions and opening balances.

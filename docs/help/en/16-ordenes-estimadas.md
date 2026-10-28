@@ -1,6 +1,6 @@
 # Context help: Estimated orders
 **UI View ID:** `View_Estimates`  
-**Last updated:** `2026-10-25`
+**Last updated:** `2026-10-28`
 
 ## 1. Purpose and financial function
 Value an order using a published composition, material reference prices and activity rates from a saved economic run. Each accepted version retains its inputs. Open **Products and results → Estimated orders**.
@@ -39,6 +39,9 @@ Rates retain their full precision before amount rounding. Semi-finished items ar
 - Preview uses the chosen economic run and current activity observations, retaining their identities in the accepted version.
 - Older files upgrade to schema 13 in a copy, preserving the original.
 - Actual consumption and variances belong to T19; accounting valuation belongs to T32.
+
+### When valuation is missing
+The view may retain physical requirements when a price or rate is missing. The diagnostic identifies the component to complete. Physical quantities with incomplete valuation cannot be accepted and do not turn missing cost into zero.
 
 ## Recommended workflow
 1. Prepare a published recipe, material prices and saved economic run with the required activity rates.

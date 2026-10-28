@@ -1,7 +1,7 @@
 # Ayuda contextual: Reparto secundario y cierre
 **ID Vista UI:** `View_SecondaryAllocation`  
-**Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Última actualización:** `2026-10-28`
+**Estado:** guía revisada sobre `2599188` y la auditoría contextual de 28/10/2026. Las evidencias de validación se registran por separado.
 
 ## 1. Objetivo y función financiera
 Redistribuir costes de nodos auxiliares hacia nodos principales, incluidos servicios recíprocos, y cerrar el reparto sin duplicar circulación interna. No es un cierre integral del período.
@@ -34,6 +34,13 @@ Redistribuir costes de nodos auxiliares hacia nodos principales, incluidos servi
 
 - Al asignar claves a nodos auxiliares o importes absolutos, Tab y Mayús+Tab recorren los controles editables de las filas y omiten datos de solo lectura. Los errores de asignación se distinguen en rojo y no se sustituyen los diálogos existentes.
 
+### Qué resuelve la reciprocidad
+Un auxiliar puede recibir servicios de otro auxiliar y devolverle servicios. VALDRIO resuelve esas relaciones conjuntamente: el importe que redistribuye cada auxiliar incluye su coste de partida y lo recibido. No hay que repetir repartos manuales ni sumar de nuevo los flujos internos al coste final.
+
+Por ejemplo, un auxiliar con 100 de coste inicial que se presta a sí mismo el 20 % y entrega el 80 % a un principal redistribuye 125 en bruto: 25 vuelven al auxiliar y 100 llegan al principal. El coste final sigue siendo 100. Si se asigna el 100 % a sí mismo sin salida, el circuito no es viable. Toda cadena auxiliar debe disponer de salida hacia principales; la validación también comprueba estabilidad numérica.
+
+Cuando se evalúa capacidad auxiliar, parte del coste puede quedar como variación de capacidad. Revisa esa separación en la conciliación antes de comparar coste inicial y coste final de los principales.
+
 ### Referencias al código
 - [`src/Valdrio.Desktop/SecondaryWorkspacePanel.xaml`](../../src/Valdrio.Desktop/SecondaryWorkspacePanel.xaml)
 - [`src/Valdrio.Desktop/AllocationWorkspacePanel.xaml`](../../src/Valdrio.Desktop/AllocationWorkspacePanel.xaml)
@@ -41,7 +48,7 @@ Redistribuir costes de nodos auxiliares hacia nodos principales, incluidos servi
 - [`src/Valdrio.Application/SecondaryAllocation.cs`](../../src/Valdrio.Application/SecondaryAllocation.cs)
 
 ### Gráfico de Pareto
-El gráfico ordena los nodos principales con su coste final, sin volver a sumar la circulación entre auxiliares de mayor a menor coste. Cada barra muestra el coste agregado del nodo; la línea representa el porcentaje del coste total acumulado. Puedes consultar la tabla de valores y desplazar horizontalmente el gráfico. Con abonos negativos, el acumulado puede superar el 100 % antes de descender; si el total es cero o negativo, no se calcula porcentaje. Sin resultados se indica que todavía no hay datos.
+El gráfico ordena los nodos principales con su coste final, sin volver a sumar la circulación entre auxiliares de mayor a menor coste. Cada barra muestra el coste agregado del nodo; la línea representa el porcentaje acumulado sobre la suma de costes positivos. Puedes consultar la tabla de valores y desplazar horizontalmente el gráfico. Los abonos se muestran con su signo y quedan fuera del acumulado. Positivos más abonos concilian con el neto; si el neto es cero o negativo, no se calcula porcentaje. Sin resultados se indica que todavía no hay datos.
 
 ## Recorrido recomendado
 1. Comprueba los nodos auxiliares con coste y define las claves que transfieren servicios a los nodos principales; la autoprestación está permitida.

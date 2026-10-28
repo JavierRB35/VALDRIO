@@ -28,6 +28,6 @@ Review compatible saved allocation keys and rules from another analysis, preview
 - Cancel must leave the destination unchanged.
 
 ## Recommended workflow
-1. Choose source and target analyses and verify their structures and allocation keys are compatible.
+1. From the current target analysis, choose the source analysis and verify their structures and allocation keys are compatible.
 2. Compare available rules, explicitly select the ones to reuse and review destinations and percentages.
 3. Apply and verify the imported keys in the relevant allocation screen; balances and historical closings are not copied.

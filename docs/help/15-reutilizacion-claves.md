@@ -34,6 +34,6 @@ Comparar y adoptar claves/metodologías compatibles de otro análisis para no re
 - [`src/Valdrio.Application/AllocationReuse.cs`](../../src/Valdrio.Application/AllocationReuse.cs)
 
 ## Recorrido recomendado
-1. Elige el análisis de origen y el análisis de destino y comprueba que las estructuras y las claves sean compatibles.
+1. Desde el análisis de destino actual, elige el análisis de origen y comprueba que las estructuras y las claves sean compatibles.
 2. Compara las reglas disponibles, selecciona explícitamente las que quieras incorporar y revisa destinos y porcentajes.
 3. Aplica la selección y comprueba las claves incorporadas en el reparto correspondiente; no se trasladan saldos ni cierres históricos.

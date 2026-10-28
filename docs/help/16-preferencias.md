@@ -1,7 +1,7 @@
 # Ayuda contextual: Preferencias y formatos
 **ID Vista UI:** `View_Preferences`  
-**Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Última actualización:** `2026-10-28`
+**Estado:** guía revisada sobre `2599188` y la auditoría contextual de 28/10/2026. Las evidencias de validación se registran por separado.
 
 ## 1. Objetivo y función financiera
 Configurar presentación de idioma, números, fechas y zona horaria de la aplicación. Los ajustes de visualización no sustituyen conversiones monetarias de negocio ni modifican el coste económico calculado.
@@ -36,7 +36,7 @@ Configurar presentación de idioma, números, fechas y zona horaria de la aplica
 - [`src/Valdrio.Desktop/FieldHelp.cs`](../../src/Valdrio.Desktop/FieldHelp.cs)
 
 ### Presentación de órdenes estimadas
-Las cantidades de órdenes usan el separador decimal de presentación, sin agrupadores al introducir datos. Las fechas del historial indican UTC explícitamente y usan el formato regional. Cambiar idioma o formato no modifica los valores congelados.
+Las cantidades de órdenes usan el separador decimal de presentación, sin agrupadores al introducir datos. Las fechas del historial usan la zona horaria seleccionada, la indican explícitamente y respetan el formato regional. Cambiar idioma o formato no modifica los valores congelados.
 
 ## Recorrido recomendado
 1. Selecciona idioma y formatos regionales para leer fechas, importes y cantidades; verifica los ejemplos mostrados.

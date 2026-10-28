@@ -1,5 +1,5 @@
 # Contextual help: Preferences and presentation formats
-**Last updated:** `2026-10-25`
+**Last updated:** `2026-10-28`
 
 
 ## 1. Purpose and financial function
@@ -30,7 +30,7 @@ Choose the UI language, number and date formatting and display time zone. Presen
 - Use Help (F1) from the header and close the reader with Escape.
 
 ### Estimated order presentation
-Order quantities use the configured decimal separator, without grouping separators during entry. History dates explicitly show UTC using the regional format. Language and format changes do not alter frozen values.
+Order quantities use the configured decimal separator, without grouping separators during entry. History dates use and identify the selected display time zone and regional format. Language and format changes do not alter frozen values.
 
 ## Recommended workflow
 1. Choose language and regional formats for dates, amounts and quantities, checking the displayed examples.

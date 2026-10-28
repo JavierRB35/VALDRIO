@@ -1,5 +1,5 @@
 # Contextual help: Primary cost allocation
-**Last updated:** `2026-10-25`
+**Last updated:** `2026-10-28`
 
 
 ## 1. Purpose and financial function
@@ -38,7 +38,19 @@ Distribute effective resource costs to the analytical cost nodes by published al
 - While editing an allocation key, Tab and Shift+Tab traverse enabled editors in key lines, weights, classification and coverage, skipping informational columns. Contextual validation errors appear in red; existing modal messages remain available.
 
 ### Pareto chart
-The chart sorts all nodes receiving primary costs by descending cost. Bars show each node’s aggregate cost; the line shows cumulative cost as a percentage of the total. An exact-value table and horizontal scrolling are available. Negative credits may make the cumulative percentage exceed 100% before decreasing. A zero or negative total has no percentage; missing results are shown as unavailable.
+The chart sorts all nodes receiving primary costs by descending cost. Bars show each node’s aggregate cost; the line shows cumulative cost as a percentage of positive costs. An exact-value table and horizontal scrolling are available. Credits keep their sign and are excluded from the cumulative curve. Positive costs plus credits reconcile to net cost. A zero or negative net total has no percentage; missing results are shown as unavailable.
+
+### Choosing weights and resolving matching rules
+- **Percentages:** included destinations must total exactly 100%.
+- **Driver units:** enter non-negative quantities of one measurement; their total must be positive. Each destination receives its quantity divided by the total: 30 and 30 hours mean 50% each, not 30% each.
+- **Equal shares:** each included destination receives the same proportion.
+
+Choose a driver that represents resource consumption or benefit. The application validates weights, not their economic suitability. Key quantities do not replace activity and capacity observations.
+
+An explicit individual key overrides automatic rules. Among rules, exact account wins, then longest prefix, then highest priority; unresolved ties produce a diagnostic. Fixed/variable composition splits the amount by behaviour, not the allocation percentage assigned to each node.
+
+### Direct keys
+**Generate direct node keys** prepares single-destination keys. It reports created keys, existing equivalents and skipped nodes; it does not automatically assign accounts. Review the destination and assign the appropriate key.
 
 ## Recommended workflow
 1. Create or select allocation keys and verify each account or resource's driver and destinations.

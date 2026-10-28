@@ -1,7 +1,7 @@
 # Ayuda contextual: Capacidad y servicios auxiliares
 **ID Vista UI:** `View_AuxiliaryServices`  
-**Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Última actualización:** `2026-10-28`
+**Estado:** guía revisada sobre `2599188` y la auditoría contextual de 28/10/2026. Las evidencias de validación se registran por separado.
 
 ## 1. Objetivo y función financiera
 Definir tratamiento y cantidades de servicios prestados por auxiliares, evaluando capacidad propia y transferencias sin duplicar coste recibido. Permite comprobar cobertura, reciprocidad y efecto terminal al publicar la ejecución.
@@ -34,12 +34,19 @@ Definir tratamiento y cantidades de servicios prestados por auxiliares, evaluand
 - Modificar los datos empleados de Actividad y capacidades puede invalidar ejecuciones y exigir reevaluación.
 - El CSV de servicios no soporta XLSX en esta vista; la importación de Actividad y capacidades sí dispone de ambos formatos.
 
+### Elegir el tratamiento
+**Repartir sin evaluar** conserva las claves secundarias publicadas. No calcula la ociosidad propia del auxiliar: ausencia de evaluación no equivale a variación cero.
+
+**Evaluar capacidad propia** exige normal y real confirmadas. Cada grupo de servicios debe sumar la actividad real; sus cantidades determinan las proporciones de destino y sustituyen los pesos de la clave para ese auxiliar evaluado. No sumes grupos entre sí como si fueran horas adicionales.
+
+La capacidad se evalúa una sola vez en el propietario del coste fijo que corresponde evaluar. El coste recibido de otros auxiliares se transmite sin volver a evaluar su capacidad. Para corregir normal o real, vuelve a Actividad y capacidades; aquí se registran los servicios a destinos.
+
 ### Referencias al código
 - [`src/Valdrio.Desktop/AuxiliaryCapacityWindow.xaml`](../../src/Valdrio.Desktop/AuxiliaryCapacityWindow.xaml)
 - [`src/Valdrio.Desktop/AuxiliaryCapacityEditor.cs`](../../src/Valdrio.Desktop/AuxiliaryCapacityEditor.cs)
 - [`src/Valdrio.Application/SecondaryAllocation.cs`](../../src/Valdrio.Application/SecondaryAllocation.cs)
 
 ## Recorrido recomendado
-1. Selecciona los auxiliares y registra las cantidades de servicio prestado y la capacidad relevante con unidades coherentes.
+1. Selecciona el auxiliar y su tratamiento; consulta la capacidad confirmada y registra los servicios a destinos en la unidad del auxiliar.
 2. Comprueba que las transferencias y reciprocidades permiten llegar a centros principales sin contar dos veces costes recibidos.
 3. Revisa diagnósticos y resultados de la ejecución antes de utilizar los servicios auxiliares para análisis de tarifas o productos.

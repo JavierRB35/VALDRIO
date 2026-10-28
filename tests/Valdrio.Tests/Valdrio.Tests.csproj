@@ -20,6 +20,7 @@
     <PackageReference Include="MSTest.TestFramework" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <Compile Include="../../src/Valdrio.Desktop/ContextHelpCatalog.cs" Link="Desktop/ContextHelpCatalog.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/ContextHelpWindow.cs" Link="Desktop/ContextHelpWindow.cs" />
     <Compile Include="../../src/Valdrio.Desktop/EditableGridTabOrder.cs" Link="Desktop/EditableGridTabOrder.cs" />
     <Content Include="../../docs/help/help-map.json" Link="help/help-map.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../../docs/help/*.md" Link="help/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

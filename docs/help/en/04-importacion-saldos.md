@@ -1,5 +1,5 @@
 # Contextual help: Import accounting balances
-**Last updated:** `2026-10-25`
+**Last updated:** `2026-10-28`
 
 
 ## 1. Purpose and financial function
@@ -21,7 +21,7 @@ Read source accounting balances from CSV or XLSX, interpret codes, descriptions 
 | Decimal, thousands and negative syntax | Parsing options | Per source | Parse the source representation explicitly. |
 | Numeric account permission | Toggle | Per source | Enables numeric-coded accounts where appropriate. |
 | Selected rows | Table checkboxes | Yes | Include or exclude rows before grouping. |
-| Currency and conversion details | Currency data | Cross-currency imports | Record converted values and adjustments where applicable. |
+| Analysis currency | Read-only | Always | Amounts must already use this currency. This import does not convert currencies. |
 | Approval reference and confirmation | Text and action | Before confirmation | Provide evidence that interpretation was reviewed. |
 
 ## 3. Results and interpretation
@@ -29,14 +29,19 @@ Read source accounting balances from CSV or XLSX, interpret codes, descriptions 
 | :--- | :--- | :--- |
 | Row preview | Source row, account, description and amount | Detects parsing, sign and mapping errors. |
 | Grouped preview | Source rows aggregated by account | Verifies the financial base entering Resource preparation. |
-| Comparison and reconciliation | Amount differences and FX rounding | Supports an explicit approval decision. |
+| Comparison and reconciliation | Amounts and differences for the selected balance basis | Supports an explicit approval decision. |
 | Confirmed import | Saved lot in current analysis | Only then can the imported balances feed later stages. |
 
 ## 4. Use cases, validation and common errors
 - A preview never means the import has been confirmed.
 - Do not drop leading zeros from account identifiers.
-- Inspect descriptions, signs, missing or inconsistent columns and conversion provenance.
+- Inspect descriptions, signs, missing or inconsistent columns and source provenance.
 - Replacing an imported lot is not automatic; review the exact selection and approval.
+
+### Currency and signs before confirmation
+If the source uses another currency, convert amounts outside VALDRIO before importing. The application cannot verify the actual currency of a file that does not identify it. Historical international batches retain their conversions for consultation; they do not enable conversion in a new import.
+
+With debit/credit columns the result is **debit minus credit**. Negative credits reduce cost; do not reverse their sign merely to obtain a positive result. Cumulative balances become period movements only through comparison with an explicitly prepared, comparable earlier closing balance.
 
 ## Recommended workflow
 1. Choose a CSV or XLSX file and explicitly map columns, dates, delimiters and numeric separators.

@@ -554,7 +554,7 @@ Full: {5}</value></data>
   <data name="Guide.Help.SelectedNode" xml:space="preserve"><value>Select an added node to edit it. For another node use Clear form / new node.</value></data>
   <data name="Guide.Help.NodeCode" xml:space="preserve"><value>Unique node code within this cost structure. A centre may contain several nodes.</value></data>
   <data name="Guide.Help.Physical" xml:space="preserve"><value>Centre to which this node belongs. Create it in the Centres step if missing.</value></data>
-  <data name="Guide.Help.Role" xml:space="preserve"><value>Principal or Auxiliary according to the model methodology. Independent of functions and cost classification. At least one active Principal is required.</value></data>
+  <data name="Guide.Help.Role" xml:space="preserve"><value>Principal: final secondary-allocation destination. Auxiliary: redistributes service costs to other nodes. Role does not determine fixed or variable behaviour; at least one active Principal is required.</value></data>
   <data name="Guide.Help.FunctionTags" xml:space="preserve"><value>Optional comma-separated tags describing node functions. They do not assign calculation rules.</value></data>
   <data name="Guide.Help.DriverUnit" xml:space="preserve"><value>Unit used to measure node activity, for example hours. It is required; if it is missing, create it right here without leaving the node.</value></data>
   <data name="Guide.Help.Layer" xml:space="preserve"><value>Cost classification for this cost group. It does not yet establish a calculation policy and is not inferred from the account.</value></data>
@@ -585,7 +585,7 @@ Full: {5}</value></data>
   <data name="Guide.Help.AmountMode" xml:space="preserve"><value>Period: movements between dates. Full balance: incorporates the entire closing balance. Cumulative: subtracts an explicitly prepared earlier closing.</value></data>
   <data name="Guide.Help.SourceCurrency" xml:space="preserve"><value>Currency code for source amounts, for example EUR. Not inferred from symbol or region.</value></data>
   <data name="Guide.Help.ApprovalReference" xml:space="preserve"><value>Optional note about a checked account and amount. If left empty, an internal approval reference is retained.</value></data>
-  <data name="Guide.Help.InterpretationApproved" xml:space="preserve"><value>Approve the meaning and sign convention of the amounts shown in this review. Changing mode, currency, rows, rates or format requires a new review.</value></data>
+  <data name="Guide.Help.InterpretationApproved" xml:space="preserve"><value>Approve the meaning and signs of reviewed amounts in the analysis currency. Changing amount basis, rows or format requires a new review.</value></data>
   <data name="Guide.Help.International" xml:space="preserve"><value>Options for currency per row, document dates and conversion. Rates are entered explicitly and preserved with the import.</value></data>
   <data name="Guide.Help.CurrencyFromColumn" xml:space="preserve"><value>Enable if each row supplies its own currency, then choose the column.</value></data>
   <data name="Guide.Help.CurrencyColumn" xml:space="preserve"><value>Column containing currency codes such as EUR or USD.</value></data>
@@ -724,7 +724,7 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.Minimum" xml:space="preserve"><value>Minimum activity in range</value></data>
   <data name="Resources.Maximum" xml:space="preserve"><value>Maximum activity in range</value></data>
   <data name="Resources.CapacityTitle" xml:space="preserve"><value>Capacity: advanced options</value></data>
-  <data name="Resources.CapacityHelp" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Resources.CapacityHelp" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. For capacity assessment and rates, record and confirm node observations in Activity and capacities; these resource fields do not replace them.</value></data>
   <data name="Resources.Capacity" xml:space="preserve"><value>Capacity treatment</value></data>
   <data name="Resources.Theoretical" xml:space="preserve"><value>Theoretical capacity (optional)</value></data>
   <data name="Resources.Practical" xml:space="preserve"><value>Practical capacity (optional)</value></data>
@@ -821,9 +821,9 @@ Difference to distribute: {7}</value></data>
   <data name="Resources.ExclusionHelp" xml:space="preserve"><value>Explain why this amount is outside the study. Exclusion retains the amount and its source for review.</value></data>
   <data name="Guide.Help.Resource.Rows" xml:space="preserve"><value>Edit the total correction directly. Enter, Tab or leaving the cell saves it; Escape cancels the cell edit.</value></data>
   <data name="Guide.Help.Resource.RemovePart" xml:space="preserve"><value>Remove selected part</value></data>
-  <data name="Guide.Help.Resource.Normal" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Guide.Help.Resource.Normal" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. For capacity assessment and rates, record and confirm node observations in Activity and capacities; these resource fields do not replace them.</value></data>
   <data name="Guide.Help.Resource.CancelOperation" xml:space="preserve"><value>Cancel running operation</value></data>
-  <data name="Guide.Help.Resource.Capacity" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Guide.Help.Resource.Capacity" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. For capacity assessment and rates, record and confirm node observations in Activity and capacities; these resource fields do not replace them.</value></data>
   <data name="Guide.Help.Resource.EditPart" xml:space="preserve"><value>Edit selected part</value></data>
   <data name="Guide.Help.Resource.Discard" xml:space="preserve"><value>Discard unsaved changes</value></data>
   <data name="Guide.Help.Resource.PendingRemainder" xml:space="preserve"><value>Add difference as pending</value></data>
@@ -843,8 +843,8 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.Help.Resource.Route" xml:space="preserve"><value>Choose a part and press Edit part, or create a new one. Each part has one route. The sum must equal this account’s effective amount exactly. You can explicitly leave amounts pending.</value></data>
   <data name="Guide.Help.Resource.HorizonEnd" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
   <data name="Guide.Help.Resource.ApplyPart" xml:space="preserve"><value>Apply part to draft</value></data>
-  <data name="Guide.Help.Resource.Theoretical" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
-  <data name="Guide.Help.Resource.Practical" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Guide.Help.Resource.Theoretical" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. For capacity assessment and rates, record and confirm node observations in Activity and capacities; these resource fields do not replace them.</value></data>
+  <data name="Guide.Help.Resource.Practical" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. For capacity assessment and rates, record and confirm node observations in Activity and capacities; these resource fields do not replace them.</value></data>
   <data name="Guide.Help.Resource.Behavior" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
   <data name="Guide.Help.Resource.ActivityUnit" xml:space="preserve"><value>Fixed and variable are defined relative to an activity, a date interval and a range. These values explain the criterion; they are not inferred from the center or account.</value></data>
   <data name="Guide.Help.Resource.ObjectName" xml:space="preserve"><value>An object is what you want to measure costs for: a product, service, order or another destination. Its code identifies it within this study. Save it and select it as the part’s destination.</value></data>
@@ -857,7 +857,7 @@ Difference to distribute: {7}</value></data>
   <data name="Guide.Help.Resource.RateDate" xml:space="preserve"><value>Business date to which this rate applies. It does not change with the time zone.</value></data>
   <data name="Guide.Help.Resource.Adjustments" xml:space="preserve"><value>An adjustment increases or decreases the imported amount while preserving the Excel or CSV data. Enter a signed amount, currency, type and reason. If no adjustments are needed, continue to distribution.</value></data>
   <data name="Guide.Help.Resource.ResetReason" xml:space="preserve"><value>Reset leaves every account pending and removes its adjustments and routes from the current preparation. History and earlier snapshots are retained. Use this when replacing imports you have already prepared.</value></data>
-  <data name="Guide.Help.Resource.Actual" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. The calculation policy is defined in a later phase.</value></data>
+  <data name="Guide.Help.Resource.Actual" xml:space="preserve"><value>Only Assess at cost group declares a capacity owner: the selected cost group, its node and unit. Empty observations mean unavailable data; zero is a known value. For capacity assessment and rates, record and confirm node observations in Activity and capacities; these resource fields do not replace them.</value></data>
   <data name="Guide.Help.Resource.AddAdjustment" xml:space="preserve"><value>Add adjustment to draft</value></data>
   <data name="Guide.Help.Resource.NewPart" xml:space="preserve"><value>Clear form / new part</value></data>
   <data name="Guide.Help.Resource.ClearForm" xml:space="preserve"><value>Clear this form</value></data>
@@ -2057,7 +2057,7 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
 <data name="Activity.HistoryReason" xml:space="preserve"><value>Reason</value></data>
 <data name="Resources.ManualSaveHelp" xml:space="preserve"><value>Total manual correction: saved when each cell edit finishes. It is not an increment or the final amount. Effective = converted + manual correction + rule adjustments.</value></data>
 <data name="Model.StructureScope" xml:space="preserve"><value>Reusable structure: changes to this draft are not analysis adaptations.</value></data>
-<data name="AllocationUI.WeightMeaning" xml:space="preserve"><value>Weights are relative quantities, not percentages: 30/70 out of 100 means 30/70%, but 30/30 means 50/50%. Check the key criterion, unit and total.</value></data>
+<data name="AllocationUI.WeightMeaning" xml:space="preserve"><value>Percentages must total 100%. Driver quantities are relative weights (30 and 30 allocate 50% each), with a positive total. Equal shares gives the same proportion to each included destination. Check mode and unit.</value></data>
 <data name="AllocationUI.BaseScope" xml:space="preserve"><value>The allocation base contains only parts routed to calculation units. Direct, excluded and pending amounts on other routes are checked in Results and traceability.</value></data>
 <data name="Rates.ScopeHelp" xml:space="preserve"><value>Management rate per unit, not a selling price. Reconciliation is partial: it does not establish consumption by product or order. Each component retains its own base; missing does not mean zero.</value></data>
 <data name="ImportMapping.ReplaceSummary" xml:space="preserve"><value>Replace {0} with {1} in {2}. The previous import retains its history.</value></data>
@@ -2143,7 +2143,7 @@ The selected destination will be written. Review both files before continuing. C
   <data name="Composition.NoOutputReference" xml:space="preserve"><value>No imported unit cost for this output.</value></data>
   <data name="Composition.ImportReferenceAmbiguous" xml:space="preserve"><value>The catalogue contains references that differ only by letter case. Resolve them before importing.</value></data>
   <data name="Estimate.Title" xml:space="preserve"><value>Estimated orders</value></data>
-  <data name="Estimate.Scope" xml:space="preserve"><value>Management estimate with materials and activity. Each accepted version retains its recipes, prices and rates. Actual consumption belongs to .</value></data>
+  <data name="Estimate.Scope" xml:space="preserve"><value>Management estimate with materials and activity. Each accepted version retains its recipes, prices and rates. It does not record actual consumption.</value></data>
   <data name="Estimate.Help" xml:space="preserve"><value>Enter an order, a published recipe, quantity and a saved economic run. Preview before accepting.</value></data>
   <data name="Estimate.Code" xml:space="preserve"><value>Order reference</value></data>
   <data name="Estimate.Recipe" xml:space="preserve"><value>Published recipe</value></data>
@@ -2199,7 +2199,7 @@ The selected destination will be written. Review both files before continuing. C
   <data name="Estimate.QVersion" xml:space="preserve"><value>Which version am I viewing?</value></data>
   <data name="Estimate.QReal" xml:space="preserve"><value>Does this include actual consumption?</value></data>
   <data name="Estimate.Complete" xml:space="preserve"><value>All final components have explicit valuations. Semi-finished items are expanded without duplicate costing.</value></data>
-  <data name="Estimate.NoActual" xml:space="preserve"><value>No. This is an estimate; it does not consume resources or record actual production ().</value></data>
+  <data name="Estimate.NoActual" xml:space="preserve"><value>No. This is an estimate; it does not consume resources or record actual production.</value></data>
 <data name="Estimate.Revision" xml:space="preserve"><value>Economic revision</value></data>
 <data name="Estimate.FrozenRate" xml:space="preserve"><value>Frozen rate</value></data>
   <data name="Activity.Assistant.OptionalDescription" xml:space="preserve"><value>Source description or explanation of the method (optional)</value></data>

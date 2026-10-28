@@ -1,5 +1,5 @@
 # Contextual help: Cost flows and calculation runs
-**Last updated:** `2026-10-25`
+**Last updated:** `2026-10-28`
 
 
 ## 1. Purpose and financial function
@@ -28,6 +28,13 @@ Inspect and compare persisted calculation runs, their diagrams and the provenanc
 - Graphic scale does not change monetary totals.
 - Gross reciprocal movement is not a fresh cost.
 - A calculation view is not evidence that a later production-consumption stage is available.
+
+### Current preview, concentration and reports
+**Current primary** is an unsaved calculated view; it can show pending allocations and does not certify final costs or rates. Selecting a saved run shows its historical data and state rather than substituting the current primary view.
+
+The filter and **Group by physical centre** affect concentration. The curve uses only positive costs in the selection; credits remain signed and separate. The threshold (0–100%, initially 80%) is a visual reference, not an economic 80/20 rule. Reconciliation and bridges cover the whole analysis, not the filtered selection.
+
+**Export CSV report** saves report data. **Print / PDF report** opens the print dialog; choose a PDF printer if a file is needed. Check phase, run and filter in the report header before sharing.
 
 ## Recommended workflow
 1. Complete allocations and save an economic run before browsing historical results.

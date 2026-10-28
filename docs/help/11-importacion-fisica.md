@@ -1,7 +1,7 @@
 # Ayuda contextual: Importación de actividad física
 **ID Vista UI:** `View_PhysicalImport`  
-**Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Última actualización:** `2026-10-28`
+**Estado:** guía revisada sobre `2599188` y la auditoría contextual de 28/10/2026. Las evidencias de validación se registran por separado.
 
 ## 1. Objetivo y función financiera
 Preparar y aplicar observaciones físicas de capacidad normal y actividad real desde CSV/XLSX hacia los nodos del estudio activo. Separa lectura/vista previa de aplicación y conserva la validación final de cada observación.
@@ -34,12 +34,17 @@ Preparar y aplicar observaciones físicas de capacidad normal y actividad real d
 - Vista previa no significa guardado ni confirmación de todas las observaciones.
 - Anular/reemplazar exige respetar historial y estados protegidos.
 
+### Plantilla y efecto de aplicar
+Usa las cabeceras `node;unit;period_start;period_end;normal;real;normal_source;real_source`. Nodo y unidad son códigos existentes; las fechas usan `yyyy-MM-dd` y deben coincidir con el período completo del análisis. En texto, usa el decimal regional sin separador de miles. Debe existir al menos una cantidad normal o real; vacío no significa cero.
+
+**Aplicar guarda borradores**, no confirma observaciones. Si solo aportas normal o real, se conserva la otra magnitud previa cuando existe. Revisa las filas seleccionadas y confirma después en Actividad y capacidades. No selecciones dos filas del mismo nodo; no se suman automáticamente.
+
 ### Referencias al código
 - [`src/Valdrio.Desktop/PhysicalImportWindow.xaml`](../../src/Valdrio.Desktop/PhysicalImportWindow.xaml)
 - [`src/Valdrio.Desktop/PhysicalImportEditor.cs`](../../src/Valdrio.Desktop/PhysicalImportEditor.cs)
 - [`src/Valdrio.Application/PhysicalImport.cs`](../../src/Valdrio.Application/PhysicalImport.cs)
 
 ## Recorrido recomendado
-1. Prepara el CSV/XLSX y asigna campos de nodo, unidad, período y magnitud física.
+1. Genera la plantilla y completa sus cabeceras de nodo, unidad, período y magnitud física; no hay un selector manual de columnas en este asistente.
 2. Revisa la vista previa y corrige incompatibilidades o filas incompletas sin asumir que el archivo ya se ha aplicado.
 3. Aplica las filas válidas y confirma las observaciones; comprueba después su presencia y fuente en Actividad y capacidades.

@@ -1,7 +1,7 @@
 # Ayuda contextual: Proyecto
 **ID Vista UI:** `View_Project`  
-**Última actualización:** `2026-10-25`
-**Estado:** guía funcional mantenida para `928b263` (25/10/2026). Describe el código de esta pantalla; las pruebas visuales interactivas se registran por separado y solo aplican al SHA indicado en cada evidencia.
+**Última actualización:** `2026-10-28`
+**Estado:** guía revisada sobre `2599188` y la auditoría contextual de 28/10/2026. Las evidencias de validación se registran por separado.
 
 ## 1. Objetivo y función financiera
 Crear, abrir y proteger el archivo de empresa `.valdrio` que conserva el trabajo analítico. Permite elegir el proyecto y sus unidades antes de definir estructuras, períodos y repartos. No calcula costes por sí solo.
@@ -15,7 +15,7 @@ Crear, abrir y proteger el archivo de empresa `.valdrio` que conserva el trabajo
 | Unidad de actividad: código | Código de texto | Sí, al crear una unidad | Identificador estable para inductores y observaciones físicas. |
 | Dimensión de unidad | Selector | Sí, al crear una unidad | Determina la familia física de magnitudes compatibles. |
 | Símbolo de unidad | Texto | Según unidad | Aparece en tablas de actividad, capacidad y tarifas. |
-| Escala de unidad | Selector | Según unidad | Representación de la unidad para cantidades; verificar equivalencia antes de comparar. |
+| Escala de unidad | Selector | Según unidad | Número de decimales admitidos (0–12); no es un factor de conversión entre unidades. |
 | Unidad discreta | Booleano | Según unidad | Identifica cantidades que se tratan como elementos enteros. |
 | Acciones abrir/cerrar/copia/restaurar/actualizar | Botones | Según operación | Gestionan el archivo. La actualización de formatos antiguos se realiza sobre copia, no sobre el original. |
 

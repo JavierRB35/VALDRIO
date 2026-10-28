@@ -1,5 +1,5 @@
 # Contextual help: Activity and capacity
-**Last updated:** `2026-10-25`
+**Last updated:** `2026-10-28`
 
 
 ## 1. Purpose and financial function
@@ -13,7 +13,7 @@ Record normal capacity and actual activity for each analytical node, study and p
 | Normal capacity | Quantity per period | On confirmation | Reference denominator for utilisation and management rates. |
 | Actual activity | Quantity per period | On confirmation | Measured activity for that exact period. |
 | Normal and actual sources | Text | On confirmation | Identify verifiable provenance of both measurements. |
-| Quality and description | Choice and text | On confirmation | Distinguish measured, declared or calculated values. |
+| Quality and description | Choice and text | Quality on confirmation; description optional | Distinguish recorded, declared or calculated values; describe the source further when useful. |
 | Reason for zero normal capacity | Text | If normal equals zero | Explain a verified zero instead of missing data. |
 | Exceptional activity reason | Text | If activity exceeds normal or exceptional | Explain physical anomalies without clipping values. |
 | Theoretical and practical measures | Advanced quantities | Optional | Supporting physical context, not confirmed normal/actual values. |
@@ -34,6 +34,9 @@ Record normal capacity and actual activity for each analytical node, study and p
 - Utilisation above 100% may be valid if justified; never truncate it.
 - Resolve unsaved edits before switching studies.
 - Closed studies permit consultation but not editing.
+
+### Where to edit
+The overview table is read-only. Open **Edit activity and capacity** for the selected node: it shares normal, actual and source values with this screen. Explicitly save a draft or confirm; adopting a normal-capacity proposal does not confirm the observation.
 
 ## Recommended workflow
 1. Select the node, unit and period for actual activity and normal capacity observations.

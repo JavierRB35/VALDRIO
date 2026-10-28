@@ -108,18 +108,20 @@ internal static class ContextHelpMarkdown
         for (var i = 0; i < lines.Length; i++)
         {
             var line = lines[i].Trim();
-            if (line.StartsWith("### Referencias al código", StringComparison.OrdinalIgnoreCase))
+            if (line.StartsWith("### Referencias al código", StringComparison.OrdinalIgnoreCase) ||
+                line.StartsWith("### Code references", StringComparison.OrdinalIgnoreCase))
             {
                 skippingTechnicalReferences = true;
                 continue; // Hide implementation paths, not the business sections that follow.
             }
             if (skippingTechnicalReferences)
             {
-                if (!Regex.IsMatch(line, @"^#{1,3} ")) continue;
+                if (!Regex.IsMatch(line, @"^#{1,4} ")) continue;
                 skippingTechnicalReferences = false;
             }
             if (line.Length == 0 || line.StartsWith("**ID Vista UI:**", StringComparison.Ordinal) ||
                 line.StartsWith("**Última actualización:**", StringComparison.Ordinal) ||
+                line.StartsWith("**Last updated:**", StringComparison.Ordinal) ||
                 line.StartsWith("**Estado:**", StringComparison.Ordinal))
                 continue;
             if (line.StartsWith('|'))
