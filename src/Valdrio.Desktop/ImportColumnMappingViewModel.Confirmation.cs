@@ -199,10 +199,13 @@ public sealed partial class ImportColumnMappingViewModel
         preparedImport = null; confirmedImport = null;
         await Run(async token =>
         {
+            if (amountMode is not ("period" or "closing-full" or "cumulative"))
+            { diagnostic = new("IMP_PROFILE_INVALID", "Import.InvalidProfile", []); return; }
+            if (international && !ConversionInputValid()) return;
             var selected = validation!; var study = targetStudy!; CurrencyCode? currency = international && currencyFromColumn ? null : international ? new CurrencyCode(sourceCurrency) : study.Currency.FunctionalCurrencyCode;
             var approved = interpretationApproved;
-            if (amountMode == "cumulative" && comparison is null) throw ImportRules.Error("IMP_COMPARISON_INVALID", "Import.ComparisonInvalid");
-            if (replaceBatch && replacement is null) throw ImportRules.Error("IMP_REPLACEMENT_INVALID", "Import.ReplacementInvalid");
+            if (amountMode == "cumulative" && comparison is null) { diagnostic = new("IMP_COMPARISON_INVALID", "Import.ComparisonInvalid", []); return; }
+            if (replaceBatch && replacement is null) { diagnostic = new("IMP_REPLACEMENT_INVALID", "Import.ReplacementInvalid", []); return; }
             var profile = new SourceParseProfileVersion(international ? SourceParseProfileVersion.InternationalSchema : amountMode == "cumulative" ? SourceParseProfileVersion.ComparisonSchema : SourceParseProfileVersion.GroupingSchema, new(Guid.NewGuid()), 1,
                 selected.Source.FileName, selected.Settings.SourceKind, selected.Settings.WorksheetName,
                 selected.Settings.HeaderRow, selected.Settings.FirstDataRow, selected.Columns, selected.Settings.Csv,

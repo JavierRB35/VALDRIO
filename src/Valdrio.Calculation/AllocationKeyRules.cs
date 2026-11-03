@@ -56,6 +56,13 @@ public static class AllocationKeyRules
     public static AllocationKeyVersion ResolvePrimary(string account, EntityId? explicitKey,
         IReadOnlyList<PrimaryRule> rules, IReadOnlyList<AllocationKeyVersion> keys, ModelStructure model)
     {
+        var result = ResolvePrimaryResult(account, explicitKey, rules, keys, model);
+        return result.Key ?? throw new DomainRuleException(result.Diagnostic!);
+    }
+
+    public static (AllocationKeyVersion? Key, DomainDiagnostic? Diagnostic) ResolvePrimaryResult(string account, EntityId? explicitKey,
+        IReadOnlyList<PrimaryRule> rules, IReadOnlyList<AllocationKeyVersion> keys, ModelStructure model)
+    {
         EntityId selected;
         if (explicitKey is { } manual) selected = manual;
         else
@@ -63,7 +70,7 @@ public static class AllocationKeyRules
             var candidates = rules.Where(r => r.IsActive && r.CompanyId == model.CompanyId && r.ModelVersionId == model.Id &&
                 (r.SelectorKind == AccountSelectorKind.Exact ? StringComparer.Ordinal.Equals(account, r.SelectorValue) :
                     r.SelectorKind == AccountSelectorKind.Prefix && account.StartsWith(r.SelectorValue, StringComparison.Ordinal))).ToArray();
-            if (candidates.Length == 0) throw AllocationDiagnostics.Error("KEY_RULE_MISSING", "Allocation.RuleMissing");
+            if (candidates.Length == 0) return (null, AllocationDiagnostics.Error("KEY_RULE_MISSING", "Allocation.RuleMissing").Diagnostic);
             var bestKind = candidates.Any(r => r.SelectorKind == AccountSelectorKind.Exact) ? AccountSelectorKind.Exact : AccountSelectorKind.Prefix;
             candidates = candidates.Where(r => r.SelectorKind == bestKind).ToArray();
             if (bestKind == AccountSelectorKind.Prefix)
@@ -73,29 +80,37 @@ public static class AllocationKeyRules
             }
             var priority = candidates.Max(r => r.Priority);
             candidates = candidates.Where(r => r.Priority == priority).ToArray();
-            if (candidates.Length != 1) throw AllocationDiagnostics.Error("KEY_RULE_AMBIGUOUS", "Allocation.RuleAmbiguous");
+            if (candidates.Length != 1) return (null, AllocationDiagnostics.Error("KEY_RULE_AMBIGUOUS", "Allocation.RuleAmbiguous").Diagnostic);
             selected = candidates[0].KeyVersionId;
         }
-        return RequiredKey(selected, AllocationStage.Primary, keys, model);
+        return RequiredKeyResult(selected, AllocationStage.Primary, keys, model);
     }
 
     public static AllocationKeyVersion ResolveSecondary(EntityId sourceNode, string componentGroup,
         IReadOnlyList<SecondaryRule> rules, IReadOnlyList<AllocationKeyVersion> keys, ModelStructure model)
     {
+        var result = ResolveSecondaryResult(sourceNode, componentGroup, rules, keys, model);
+        return result.Key ?? throw new DomainRuleException(result.Diagnostic!);
+    }
+
+    public static (AllocationKeyVersion? Key, DomainDiagnostic? Diagnostic) ResolveSecondaryResult(EntityId sourceNode, string componentGroup,
+        IReadOnlyList<SecondaryRule> rules, IReadOnlyList<AllocationKeyVersion> keys, ModelStructure model)
+    {
         if (!model.Nodes.Any(n => n.Id == sourceNode && n.IsActive && n.Role == NodeRole.Auxiliary))
-            throw AllocationDiagnostics.Error("KEY_AUXILIARY_INVALID", "Allocation.AuxiliaryInvalid", sourceNode);
+            return (null, AllocationDiagnostics.Error("KEY_AUXILIARY_INVALID", "Allocation.AuxiliaryInvalid", sourceNode).Diagnostic);
         var matched = rules.Where(r => r.IsActive && r.CompanyId == model.CompanyId && r.ModelVersionId == model.Id &&
             r.AuxiliaryNodeId == sourceNode && StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, componentGroup)).ToArray();
-        if (matched.Length == 0) throw AllocationDiagnostics.Error("KEY_RULE_MISSING", "Allocation.RuleMissing", sourceNode);
-        if (matched.Length != 1) throw AllocationDiagnostics.Error("KEY_RULE_AMBIGUOUS", "Allocation.RuleAmbiguous", sourceNode);
-        var key = RequiredKey(matched[0].KeyVersionId, AllocationStage.Secondary, keys, model);
+        if (matched.Length == 0) return (null, AllocationDiagnostics.Error("KEY_RULE_MISSING", "Allocation.RuleMissing", sourceNode).Diagnostic);
+        if (matched.Length != 1) return (null, AllocationDiagnostics.Error("KEY_RULE_AMBIGUOUS", "Allocation.RuleAmbiguous", sourceNode).Diagnostic);
+        var result = RequiredKeyResult(matched[0].KeyVersionId, AllocationStage.Secondary, keys, model);
+        if (result.Key is not { } key) return result;
         if (key.Mode == AllocationKeyMode.DriverUnits && model.Pools.Single(p => p.NodeId == sourceNode).DriverUnitId != key.UnitId)
-            throw AllocationDiagnostics.Error("KEY_UNIT_INVALID", "Allocation.UnitInvalid", key.Id);
+            return (null, AllocationDiagnostics.Error("KEY_UNIT_INVALID", "Allocation.UnitInvalid", key.Id).Diagnostic);
         // Secondary self-services are always a valid routing choice, including keys
         // persisted before this policy change with SelfAllocationPolicy.Forbidden.
         // Reachability / closed-component checks belong to the reciprocal solver.
         // A 100% self-loop is rejected later as GRAPH_CLOSED_COMPONENT.
-        return key;
+        return (key, null);
     }
 
     public static void ValidateAbsolute(AbsolutePartAllocation allocation, ResourcePartDraft part, long revision, ModelStructure model)
@@ -114,9 +129,11 @@ public static class AllocationKeyRules
         catch (OverflowException) { throw AllocationDiagnostics.Error("KEY_TOTAL_OVERFLOW", "Allocation.TotalOverflow", part.Id); }
     }
 
-    private static AllocationKeyVersion RequiredKey(EntityId id, AllocationStage stage,
-        IReadOnlyList<AllocationKeyVersion> keys, ModelStructure model) =>
-        keys.SingleOrDefault(k => k.Id == id && k.CompanyId == model.CompanyId && k.ModelVersionId == model.Id &&
-            k.Stage == stage && k.Status == ModelStatus.Published)
-        ?? throw AllocationDiagnostics.Error("KEY_PUBLICATION_REQUIRED", "Allocation.PublicationRequired", id);
+    private static (AllocationKeyVersion? Key, DomainDiagnostic? Diagnostic) RequiredKeyResult(EntityId id, AllocationStage stage,
+        IReadOnlyList<AllocationKeyVersion> keys, ModelStructure model)
+    {
+        var key = keys.SingleOrDefault(k => k.Id == id && k.CompanyId == model.CompanyId && k.ModelVersionId == model.Id &&
+            k.Stage == stage && k.Status == ModelStatus.Published);
+        return key is null ? (null, AllocationDiagnostics.Error("KEY_PUBLICATION_REQUIRED", "Allocation.PublicationRequired", id).Diagnostic) : (key, null);
+    }
 }

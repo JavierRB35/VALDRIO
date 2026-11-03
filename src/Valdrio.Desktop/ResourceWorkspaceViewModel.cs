@@ -302,6 +302,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
         if (!CanEdit || workspace is null || editing is null || IsRevaluing) return false;
         if (partDirty || adjustmentDirty || objectDirty) { statusKey = "ApplyFormsFirst"; Refresh(); return false; }
         if (!CheckCulture()) return false;
+        if (string.IsNullOrWhiteSpace(Reason)) return RejectInput("RES_COMMAND_INVALID", "Resource.CommandInvalid");
         return await Run(async token =>
         {
             var command = EditCommand(Reason); _ = ResourceWorkspaceRules.Apply(workspace, command);

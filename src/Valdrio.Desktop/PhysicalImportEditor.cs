@@ -118,8 +118,9 @@ public sealed partial class PhysicalImportEditor : ObservableObject
                 1, 2, csv);
             var document = await session.ReadAsync(settings);
             var model = host.Structure;
-            var preview = PhysicalImportMapper.Preview(document, model, host.Units,
+            var result = PhysicalImportMapper.PreviewResult(document, model, host.Units,
                 host.Study, numeric);
+            if (result.Preview is not { } preview) { Feedback = Text(result.Diagnostic!.MessageKey); return; }
             var current = host.Activity.ReadCurrent(host.Study.CompanyId, host.Study.Id)
                 .ToDictionary(p => p.PoolId);
             foreach (var line in preview.Lines)
@@ -159,7 +160,7 @@ public sealed partial class PhysicalImportEditor : ObservableObject
             var chosen = Lines.Where(l => l.Replace).Select(l => l.Source).ToArray();
             if (chosen.Any(l => !l.CanChoose) ||
                 chosen.Select(l => l.PoolId).Distinct().Count() != chosen.Length)
-                throw PhysicalActivityRules.Error("ACT_IMPORT_DUPLICATE", "Activity.ImportDuplicate");
+                { Feedback = Text("Activity.ImportDuplicate"); return false; }
             var commands = new List<PhysicalImportOperation>();
             foreach (var line in chosen)
             {
@@ -168,7 +169,7 @@ public sealed partial class PhysicalImportEditor : ObservableObject
                 var prior = reviewed?.State == PhysicalObservationState.Annulled ? null : reviewed;
                 if (prior?.State == PhysicalObservationState.Confirmed &&
                     string.IsNullOrWhiteSpace(CorrectionReason))
-                    throw PhysicalActivityRules.Error("ACT_CORRECTION_REASON", "Activity.CorrectionReason");
+                    { Feedback = Text("Activity.CorrectionReason"); return false; }
                 var normal = line.NormalQuantity ?? prior?.NormalQuantity;
                 var real = line.RealQuantity ?? prior?.RealQuantity;
                 var normalEvidence = line.NormalQuantity.HasValue ? line.NormalEvidence : prior?.NormalEvidence;

@@ -126,6 +126,11 @@ public partial class StudyWorkspacePanel
         Check(vm.ModelChoice?.Value.Structure.Id == previousModelId && vm.Currency == previousCurrency &&
             vm.Scenario?.Value == previousScenario && vm.PeriodStart is null && vm.PeriodEnd is null && vm.Name == "",
             "new period reuses structure currency and scenario without copying the previous dates or name");
+        var beforeInvalidCreate = Hash(path);
+        await Click(CreateStudyButton);
+        Check(vm.DiagnosticCode == "STUDY_NAME_REQUIRED" && vm.HasStatusError && vm.Current is null,
+            "empty new period displays a validation message and keeps the form open");
+        Check(Hash(path) == beforeInvalidCreate, "empty new period does not write to the company file");
         Select(StudyBox, vm.Studies.Single(s => s.Value.Id == studyId)); await Click(LoadStudyButton);
         Check(vm.Current?.Revision == 2 && vm.Snapshots.Count == 3, "load restores context and snapshot history");
         Text(StudyNameBox, "saved before closing"); pending.Choices.Enqueue(PendingEditChoice.Save); await Click(companyPanel.CloseButton);

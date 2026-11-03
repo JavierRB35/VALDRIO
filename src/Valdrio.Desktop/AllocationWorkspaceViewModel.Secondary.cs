@@ -205,7 +205,7 @@ public sealed partial class AllocationWorkspaceViewModel
             var model = workspace.Resources.Model.Structure;
             if (configuration.SecondaryRules.Any(rule => rule.IsActive && rule.AuxiliaryNodeId == auxiliaryId &&
                     rule.ComponentRoutingGroup != "all"))
-                throw AllocationDiagnostics.Error("KEY_AUXILIARY_MULTIPLE_KEYS", "Allocation.AuxiliaryMultipleKeys", auxiliaryId);
+                return RejectConfiguration("KEY_AUXILIARY_MULTIPLE_KEYS", "Allocation.AuxiliaryMultipleKeys", new DiagnosticArgument("entityId", DiagnosticArgumentType.Identifier, auxiliaryId.ToString()));
             var proposed = configuration.SecondaryRules
                 .Where(rule => rule.AuxiliaryNodeId != auxiliaryId || rule.ComponentRoutingGroup != "all")
                 .Append(new SecondaryRule(new EntityId(Guid.NewGuid()), model.CompanyId, model.Id, auxiliaryId, "all", keyId, true))
@@ -218,12 +218,12 @@ public sealed partial class AllocationWorkspaceViewModel
     private Task AssignSecondaryKeyToMissingAsync() => CommitConfig(c =>
     {
         if (workspace is null || !SecondaryKey.HasValue)
-            throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
+            return RejectConfiguration("KEY_RULE_INVALID", "Allocation.RuleInvalid");
         var model = workspace.Resources.Model.Structure;
         var group = string.IsNullOrWhiteSpace(GroupName) ? "all" : GroupName.Trim();
         var key = workspace.Keys.SingleOrDefault(k => k.Id == SecondaryKey.Value &&
-            k.Status == ModelStatus.Published && k.Stage == AllocationStage.Secondary)
-            ?? throw AllocationDiagnostics.Error("KEY_PUBLICATION_REQUIRED", "Allocation.PublicationRequired");
+            k.Status == ModelStatus.Published && k.Stage == AllocationStage.Secondary);
+        if (key is null) return RejectConfiguration("KEY_PUBLICATION_REQUIRED", "Allocation.PublicationRequired");
         var missing = model.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Auxiliary &&
             !c.SecondaryRules.Any(r => r.IsActive && r.AuxiliaryNodeId == n.Id &&
                 StringComparer.Ordinal.Equals(r.ComponentRoutingGroup, group)))
@@ -232,14 +232,13 @@ public sealed partial class AllocationWorkspaceViewModel
         foreach (var node in missing)
             if (c.SecondaryRules.Any(rule => rule.IsActive && rule.AuxiliaryNodeId == node.Id &&
                 rule.ComponentRoutingGroup != group))
-                throw AllocationDiagnostics.Error("KEY_AUXILIARY_MULTIPLE_KEYS", "Allocation.AuxiliaryMultipleKeys", node.Id);
+                return RejectConfiguration("KEY_AUXILIARY_MULTIPLE_KEYS", "Allocation.AuxiliaryMultipleKeys", new DiagnosticArgument("entityId", DiagnosticArgumentType.Identifier, node.Id.ToString()));
         // Driver mode cannot be copied to auxiliaries with different units.
         foreach (var node in missing)
             if (key.Mode == AllocationKeyMode.DriverUnits &&
                 model.Pools.Single(p => p.NodeId == node.Id).DriverUnitId != key.UnitId)
-                throw new DomainRuleException(new DomainDiagnostic("SECONDARY_BATCH_UNIT_MISMATCH",
-                    "Secondary.BatchUnitMismatch",
-                    [new DiagnosticArgument("source", DiagnosticArgumentType.Identifier, NodeLabel(node))]));
+                return RejectConfiguration("SECONDARY_BATCH_UNIT_MISMATCH", "Secondary.BatchUnitMismatch",
+                    new DiagnosticArgument("source", DiagnosticArgumentType.Identifier, NodeLabel(node)));
         var proposed = c.SecondaryRules.Concat(missing.Select(n => new SecondaryRule(
             new EntityId(Guid.NewGuid()), model.CompanyId, model.Id, n.Id, group, key.Id, true)))
             .ToArray();
@@ -251,7 +250,7 @@ public sealed partial class AllocationWorkspaceViewModel
     private Task SaveSecondaryPartGroupAsync() => CommitConfig(c =>
     {
         if (!SecondaryGroupPart.HasValue || !SecondaryGroupChoices.Any(g => g.Value == SecondaryGroupName))
-            throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
+            return RejectConfiguration("KEY_RULE_INVALID", "Allocation.RuleInvalid");
         var existing = c.SecondaryPartRoutingGroups ?? [];
         var groups = existing.Where(g => g.PartId != SecondaryGroupPart.Value)
             .Concat(SecondaryGroupName == "all"

@@ -85,6 +85,31 @@ public sealed partial class ResourceWorkspaceViewModel
         }
         finally { loading = false; partDirty = false; Refresh(); }
     }
+    private bool RejectInput(string code, string key)
+    { diagnostic = new(code, key, []); Refresh(); return false; }
+    private bool PartInputValid()
+    {
+        var f = PartForm;
+        if (!f.Numbers.TryCommit(f["Amount"], out _)) return RejectInput("RES_NUMBER_REQUIRED", "Resource.NumberRequired");
+        if (f.Route == ResourceRoutingKind.AllocationPool && !f.PoolId.HasValue || f.Capacity == ResourceCapacityTreatment.AssessAtPool && !f.PoolId.HasValue)
+            return RejectInput("RES_POOL_REQUIRED", "Resource.PoolRequired");
+        if (f.Route == ResourceRoutingKind.DirectObject && multipleAssignments is null && !f.ObjectId.HasValue)
+            return RejectInput("RES_OBJECT_SCOPE", "Resource.ObjectScope");
+        if (f.Route == ResourceRoutingKind.Excluded && string.IsNullOrWhiteSpace(f["Exclusion"]))
+            return RejectInput("RES_EXCLUSION_REASON", "Resource.ExclusionReasonRequired");
+        if (partVariablePercentage is null && f.Behavior is ResourceBehavior.Fixed or ResourceBehavior.Variable || f.UnitId.HasValue)
+        {
+            if (!f.UnitId.HasValue) return RejectInput("RES_UNIT_SCOPE", "Resource.UnitScope");
+            if (f.Start is null || f.End is null) return RejectInput("RES_DATE_REQUIRED", "Resource.DateRequired");
+            if (f.Start > f.End) return RejectInput("RES_BEHAVIOR_HORIZON_INVALID", "Resource.BehaviorHorizonInvalid");
+            if (!f.Numbers.TryCommit(f["Minimum"], out var min) || !f.Numbers.TryCommit(f["Maximum"], out var max))
+                return RejectInput("RES_NUMBER_REQUIRED", "Resource.NumberRequired");
+            if (min < 0 || max < min) return RejectInput("RES_BEHAVIOR_RANGE_INVALID", "Resource.BehaviorRangeInvalid");
+        }
+        if (f.Capacity == ResourceCapacityTreatment.AssessAtPool && new[] { "Theoretical", "Practical", "Normal", "Actual" }.Any(k => !string.IsNullOrWhiteSpace(f[k]) && !f.Numbers.TryCommit(f[k], out _)))
+            return RejectInput("RES_NUMBER_REQUIRED", "Resource.NumberRequired");
+        return true;
+    }
     private ResourcePartDraft Part()
     {
         var f = PartForm; var amount = Functional(Number(f, "Amount"));
@@ -114,6 +139,7 @@ public sealed partial class ResourceWorkspaceViewModel
     }
     private void ApplyPart()
     {
+        if (!PartInputValid()) return;
         var value = Part(); var previous = parts.ToArray();
         parts.RemoveAll(p => p.Id == value.Id); parts.Add(value);
         try { Recompute(); }
@@ -129,7 +155,19 @@ public sealed partial class ResourceWorkspaceViewModel
     }
     private void AddAdjustment()
     {
-        var f = AdjustmentForm; var original = new Money(Number(f, "Amount"), new(f["Currency"]), workspace!.Precision);
+        var f = AdjustmentForm;
+        if (!f.Numbers.TryCommit(f["Amount"], out _)) { RejectInput("RES_NUMBER_REQUIRED", "Resource.NumberRequired"); return; }
+        if (string.IsNullOrWhiteSpace(f["Type"]) || string.IsNullOrWhiteSpace(f["Reason"]))
+        { RejectInput("RES_INPUT_INVALID", "Resource.InputInvalid"); return; }
+        if (!catalog.GetAll().Any(c => c.AlphaCode.ToString() == f["Currency"] && c.IsMonetary))
+        { RejectInput("RES_INPUT_INVALID", "Resource.InputInvalid"); return; }
+        if (f["Currency"] != FunctionalCurrency)
+        {
+            if (!f.Numbers.TryCommit(f["Quote"], out var quote) || quote <= 0 || CanonicalDecimal.Scale(quote) > 18) { RejectInput("RES_NUMBER_REQUIRED", "Resource.NumberRequired"); return; }
+            if (f.RateDate is null) { RejectInput("RES_DATE_REQUIRED", "Resource.DateRequired"); return; }
+            if (string.IsNullOrWhiteSpace(f["RateSource"])) { RejectInput("FX_SOURCE_REQUIRED", "Fx.SourceRequired"); return; }
+        }
+        var original = new Money(Number(f, "Amount"), new(f["Currency"]), workspace!.Precision);
         FxRate? rate = null;
         if (original.Currency != workspace.Study.Currency.FunctionalCurrencyCode)
         {
@@ -149,12 +187,15 @@ public sealed partial class ResourceWorkspaceViewModel
     private void ReverseAdjustment()
     {
         if (AdjustmentChoice is not { } selected) return;
+        if (string.IsNullOrWhiteSpace(AdjustmentForm["Reason"])) { RejectInput("RES_COMMAND_INVALID", "Resource.CommandInvalid"); return; }
         AddDelta(new(new(Guid.NewGuid()), null, null, "", AdjustmentForm["Reason"], selected.Value.Id, null)); ClearAdjustment();
     }
     public bool ShowAdjustmentFx => AdjustmentForm["Currency"] != FunctionalCurrency;
     private async Task SaveObject()
     {
         if (workspace is null || !CheckCulture()) return;
+        if (string.IsNullOrWhiteSpace(ObjectForm["Code"]) || string.IsNullOrWhiteSpace(ObjectForm["Name"]))
+        { RejectInput("RES_INPUT_INVALID", "Resource.InputInvalid"); return; }
         await Run(async token =>
         {
             var obj = new ResourceCostObject(new(Guid.NewGuid()), workspace.Study.CompanyId, workspace.Study.Id,

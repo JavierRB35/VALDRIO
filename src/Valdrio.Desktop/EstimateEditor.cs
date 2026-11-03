@@ -86,7 +86,10 @@ public sealed partial class EstimateEditor : ObservableObject
     {
         preview = null; OnPropertyChanged(nameof(CanAccept)); Details.Clear(); Answers.Clear(); Summary = this["Pending"];
         if (!decimal.TryParse(Quantity.Trim(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
-            host.PhysicalFormatCulture, out var quantity) || quantity <= 0) throw Valdrio.Calculation.EstimateCalculator.Error("Number");
+            host.PhysicalFormatCulture, out var quantity) || quantity <= 0) { Feedback = this["Number"]; return; }
+        if (string.IsNullOrWhiteSpace(Code)) { Feedback = this["InvalidInput"]; return; }
+        if (!Recipes.Any(r => r.Value == Recipe)) { Feedback = this["NeedRecipe"]; return; }
+        if (!Runs.Any(r => r.Value == Run)) { Feedback = this["MissingRun"]; return; }
         var request = new EstimateRequest(host.PhysicalCompany!.Id, host.Current!.Id, orderId, Code.Trim(), Recipe, Run, quantity, previousId);
         var catalog = await Task.Run(() => host.ActiveCompositions!.ReadCompositions());
         var pools = host.PhysicalModels!.ReadModels().Where(m => m.Status == ModelStatus.Published)
@@ -167,6 +170,7 @@ public sealed partial class EstimateEditor : ObservableObject
         try { await action(); }
         catch(DomainRuleException ex){Feedback=new DomainDiagnosticFormatter(texts).Format(ex.Diagnostic,host.PhysicalUiCulture,host.PhysicalFormatCulture).Message; foreach(var unit in host.PhysicalCompany!.Units) Feedback=Feedback.Replace(unit.Id.ToString(),unit.Symbol,StringComparison.Ordinal);}
         catch(CompanyFileException ex){Feedback=texts.Get(ex.Diagnostic.MessageKey,host.PhysicalUiCulture);}
+        catch(OverflowException){Feedback=this["Overflow"];}
         finally {Busy=false;host.SetCompositionBusy(false);}
     }
 }

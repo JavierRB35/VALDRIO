@@ -395,8 +395,19 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         return new(DateOnly.FromDateTime(value.Value));
     }
     private EntityId ModelId() => ModelChoice?.Value.Structure.Id ?? throw StudyRules.Error("STUDY_MODEL_NOT_PUBLISHED", "Study.ModelNotPublished");
+    private bool ValidateContext()
+    {
+        diagnostic = string.IsNullOrWhiteSpace(Name) ? new("STUDY_NAME_REQUIRED", "Study.NameRequired", [])
+            : PeriodStart is null || PeriodEnd is null ? new("STUDY_DATES_REQUIRED", "Study.DatesRequired", [])
+            : PeriodStart.Value.Date > PeriodEnd.Value.Date ? new("STUDY_PERIOD_INVALID", "Study.PeriodInvalid", [])
+            : ModelChoice is null ? new("STUDY_MODEL_NOT_PUBLISHED", "Study.ModelNotPublished", [])
+            : !CurrencyOptions.Contains(Currency) ? new("STUDY_CURRENCY_INVALID", "Study.CurrencyInvalid", [])
+            : Scenario is null ? new("STUDY_CONTEXT_INVALID", "Study.ContextInvalid", []) : null;
+        return diagnostic is null;
+    }
     private async Task Create() => await Run(async token =>
     {
+        if (!ValidateContext()) return;
         var port = company.ActiveStudies!;
         var command = new CreateStudy(company.Snapshot!.Id, createId, Name, Date(PeriodStart), Date(PeriodEnd), StudyPurpose.Management,
             Scenario!.Value, ModelId(), new(Currency), "local-user");
@@ -405,6 +416,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     });
     private async Task Save() => await Run(async token =>
     {
+        if (!ValidateContext()) return;
         var port = company.ActiveStudies!; var current = Current!;
         var command = new UpdateStudyContext(current.CompanyId, current.Id, current.Revision, Name, Date(PeriodStart), Date(PeriodEnd),
             current.Purpose, Scenario!.Value, ModelId(), new(Currency), "local-user");

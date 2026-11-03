@@ -58,6 +58,21 @@ public sealed partial class ImportColumnMappingViewModel
         };
     }
     private void RateChanged(object? sender, PropertyChangedEventArgs e) => ConversionChanged();
+    private bool ConversionInputValid()
+    {
+        bool Reject() { diagnostic = new("IMP_CONVERSION_INVALID", "Import.ConversionInvalid", []); return false; }
+        if (currencyCatalog is null || targetStudy is null || !allowedRateStart.HasValue || !allowedRateEnd.HasValue || allowedRateStart > allowedRateEnd) return Reject();
+        var codes = currencyCatalog.GetAll().Where(c => c.IsMonetary && c.MinorUnitDigits.HasValue).Select(c => c.AlphaCode.ToString()).ToHashSet();
+        if (!currencyFromColumn && !codes.Contains(sourceCurrency) || currencyFromColumn && !currencyColumn.HasValue) return Reject();
+        if (Rates.Count > 0 && string.IsNullOrWhiteSpace(rateSetName) || Rates.Select(r => r.Id).Distinct(StringComparer.Ordinal).Count() != Rates.Count) return Reject();
+        foreach (var r in Rates)
+        {
+            if (string.IsNullOrWhiteSpace(r.Id) || r.Id != r.Id.Trim() || !codes.Contains(r.Currency) || r.Currency == targetStudy.Currency.FunctionalCurrencyCode.ToString() ||
+                string.IsNullOrWhiteSpace(r.Source) || !DateOnly.TryParseExact(r.Date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _) ||
+                !decimal.TryParse(r.Quote, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var quote) || quote <= 0 || CanonicalDecimal.Scale(quote) > 18) return Reject();
+        }
+        return true;
+    }
     private ImportConversionPolicy BuildConversion()
     {
         if (currencyCatalog is null || !allowedRateStart.HasValue || !allowedRateEnd.HasValue)

@@ -30,6 +30,13 @@ public static class PhysicalImportMapper
         ImportSourceDocument document, ModelStructure model,
         IReadOnlyList<UnitDefinition> units, StudyDefinition study, CultureInfo numericCulture)
     {
+        var result = PreviewResult(document, model, units, study, numericCulture);
+        return result.Preview ?? throw new DomainRuleException(result.Diagnostic!);
+    }
+    public static (PhysicalImportPreview? Preview, DomainDiagnostic? Diagnostic) PreviewResult(
+        ImportSourceDocument document, ModelStructure model,
+        IReadOnlyList<UnitDefinition> units, StudyDefinition study, CultureInfo numericCulture)
+    {
         ArgumentNullException.ThrowIfNull(document);
         ArgumentNullException.ThrowIfNull(model);
         ArgumentNullException.ThrowIfNull(units);
@@ -39,30 +46,31 @@ public static class PhysicalImportMapper
             .GroupBy(x => x.Header).ToDictionary(g => g.Key, g => g.Select(x => x.Index).ToArray());
         foreach (var required in new[] { "node", "unit", "period_start", "period_end" })
             if (!map.TryGetValue(required, out var numbers) || numbers.Length != 1)
-                throw PhysicalActivityRules.Error("ACT_IMPORT_HEADER", "Activity.ImportHeader");
+                return (null, new("ACT_IMPORT_HEADER", "Activity.ImportHeader", []));
         if (!map.ContainsKey("normal") && !map.ContainsKey("real"))
-            throw PhysicalActivityRules.Error("ACT_IMPORT_HEADER", "Activity.ImportHeader");
+            return (null, new("ACT_IMPORT_HEADER", "Activity.ImportHeader", []));
         if (map.Any(kv => kv.Value.Length != 1))
-            throw PhysicalActivityRules.Error("ACT_IMPORT_HEADER", "Activity.ImportHeader");
+            return (null, new("ACT_IMPORT_HEADER", "Activity.ImportHeader", []));
 
         string Read(SourceRow row, string key) =>
             map.TryGetValue(key, out var values)
                 ? row.GetCell(values[0]).TextValue?.Trim() ?? "" : "";
 
-        decimal? Number(SourceRow row, string key)
+        bool Number(SourceRow row, string key, out decimal? value)
         {
+            value = null;
             var cell = map.TryGetValue(key, out var columns) ? row.GetCell(columns[0]) : SourceCell.Missing(0);
             var raw = cell.TextValue?.Trim() ?? "";
             var kind = cell.Kind == SourceValueKind.FormulaWithCachedValue ? cell.CachedValueKind : cell.Kind;
             if (kind is not (SourceValueKind.Missing or SourceValueKind.Empty or SourceValueKind.Text or SourceValueKind.Number))
-                throw PhysicalActivityRules.Error("ACT_IMPORT_NUMBER", "Activity.ImportNumber");
-            if (raw.Length == 0) return null;
+                return false;
+            if (raw.Length == 0) return true;
             // No group separators or scientific notation: lexical and culture are explicit.
             if (!decimal.TryParse(raw, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
                 document.SourceKind == ImportSourceKind.Xlsx && kind == SourceValueKind.Number
                     ? CultureInfo.InvariantCulture : numericCulture, out var val) ||
-                val < 0) throw PhysicalActivityRules.Error("ACT_IMPORT_NUMBER", "Activity.ImportNumber");
-            return val;
+                val < 0) return false;
+            value = val; return true;
         }
         var nodes = model.Nodes.Where(n => n.Role is NodeRole.Principal or NodeRole.Auxiliary && n.IsActive)
             .GroupBy(n => n.Code, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Single(), StringComparer.Ordinal);
@@ -81,20 +89,13 @@ public static class PhysicalImportMapper
             else if (!units.Any(u => u.Id == pool!.DriverUnitId && u.Code == unit))
                 issue = "Activity.ImportUnit";
             BusinessDate? start = null, end = null;
-            try
-            {
-                start = BusinessDate.ParseIso(Read(record, "period_start"));
-                end = BusinessDate.ParseIso(Read(record, "period_end"));
-                if (start.Value.Value > end.Value.Value) issue ??= "Activity.ImportPeriod";
-            }
-            catch (Exception e) when (e is FormatException or ArgumentException) { issue ??= "Activity.ImportPeriod"; }
-            decimal? normal = null, real = null;
-            try
-            {
-                normal = Number(record, "normal");
-                real = Number(record, "real");
-            }
-            catch (DomainRuleException) { issue ??= "Activity.ImportNumber"; }
+            if (DateOnly.TryParseExact(Read(record, "period_start"), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var startDate) &&
+                DateOnly.TryParseExact(Read(record, "period_end"), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var endDate))
+            { start = new(startDate); end = new(endDate); if (startDate > endDate) issue ??= "Activity.ImportPeriod"; }
+            else issue ??= "Activity.ImportPeriod";
+            var normalValid = Number(record, "normal", out var normal);
+            var realValid = Number(record, "real", out var real);
+            if (!normalValid || !realValid) issue ??= "Activity.ImportNumber";
             if (!normal.HasValue && !real.HasValue) issue ??= "Activity.ImportEmpty";
 
             var partial = start.HasValue && end.HasValue &&
@@ -123,7 +124,7 @@ public static class PhysicalImportMapper
         var duplicates = lines.Where(x => x.PoolId.HasValue && x.ProblemKey is null)
             .GroupBy(x => x.PoolId!.Value).Where(g => g.Count() > 1)
             .SelectMany(g => g).Select(g => g.RecordNumber).ToHashSet();
-        return new(document.FileName, document.FileHash, FrozenList.Copy(lines
-            .Select(line => line with { Duplicate = duplicates.Contains(line.RecordNumber) })));
+        return (new(document.FileName, document.FileHash, FrozenList.Copy(lines
+            .Select(line => line with { Duplicate = duplicates.Contains(line.RecordNumber) }))), null);
     }
 }

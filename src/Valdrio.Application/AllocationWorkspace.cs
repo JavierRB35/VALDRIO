@@ -241,17 +241,18 @@ public static class AllocationWorkspaceRules
             var account = resources.Origins.Single(o => o.Id == resource.Id).Code;
             try
             {
-                if (part.Routing == ResourceRoutingKind.Pending && !workspace.IncludeUnroutedAccounts) throw AllocationDiagnostics.Error("KEY_PART_PENDING", "Allocation.PartPending", part.Id);
+                if (part.Routing == ResourceRoutingKind.Pending && !workspace.IncludeUnroutedAccounts) { result.Add(new(part.Id, account, null, AllocationDiagnostics.Error("KEY_PART_PENDING", "Allocation.PartPending", part.Id).Diagnostic)); continue; }
                 if (workspace.Configuration.AbsoluteAssignments.SingleOrDefault(a => a.PartId == part.Id) is { } absolute)
                 {
                     // Descriptive/rule changes do not invalidate amounts. A new import or resource revision does.
-                    if (absolute.SourceRevision != resources.EconomicRevision) throw AllocationDiagnostics.Error("KEY_ABSOLUTE_STALE", "Allocation.AbsoluteStale", part.Id);
+                    if (absolute.SourceRevision != resources.EconomicRevision) { result.Add(new(part.Id, account, null, AllocationDiagnostics.Error("KEY_ABSOLUTE_STALE", "Allocation.AbsoluteStale", part.Id).Diagnostic)); continue; }
                     AllocationKeyRules.ValidateAbsolute(absolute, part, resources.EconomicRevision, resources.Model.Structure);
                     result.Add(new(part.Id, account, null, null)); continue;
                 }
-                var key = AllocationKeyRules.ResolvePrimary(account,
+                var resolution = AllocationKeyRules.ResolvePrimaryResult(account,
                     workspace.Configuration.ExplicitAssignments.SingleOrDefault(a => a.PartId == part.Id)?.KeyVersionId,
                     workspace.Configuration.PrimaryRules, workspace.Keys, resources.Model.Structure);
+                if (resolution.Key is not { } key) { result.Add(new(part.Id, account, null, resolution.Diagnostic)); continue; }
                 AllocationKeyRules.Validate(key, resources.Model.Structure, resources.Model.DriverUnits, resources.Precision, true);
                 result.Add(new(part.Id, account, key.Id, null));
             }
@@ -268,7 +269,8 @@ public static class AllocationWorkspaceRules
             {
                 try
                 {
-                    var key = AllocationKeyRules.ResolveSecondary(node.Id, group, workspace.Configuration.SecondaryRules, workspace.Keys, resources.Model.Structure);
+                    var resolution = AllocationKeyRules.ResolveSecondaryResult(node.Id, group, workspace.Configuration.SecondaryRules, workspace.Keys, resources.Model.Structure);
+                    if (resolution.Key is not { } key) { result.Add(new(node.Id, node.Code, null, resolution.Diagnostic, group)); continue; }
                     AllocationKeyRules.Validate(key, resources.Model.Structure, resources.Model.DriverUnits, resources.Precision, true);
                     result.Add(new(node.Id, node.Code, key.Id, null, group));
                 }

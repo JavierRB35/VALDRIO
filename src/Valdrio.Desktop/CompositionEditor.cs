@@ -140,10 +140,12 @@ public sealed partial class CompositionEditor : ObservableObject
         if (!Writable) { Feedback = this["ReadOnlyImport"]; return; }
         try
         {
-            var imported = ProductCostImport.Read(path, host.PhysicalFormatCulture);
+            var read = ProductCostImport.ReadResult(path, host.PhysicalFormatCulture);
+            if (read.Value is not { } imported) { ShowImportError(read.Error!); return; }
             var source = Path.GetFileName(path) + " · " + DateTimeOffset.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             var units = host.PhysicalCompany!.Units;
-            var merged = ProductCostImport.Merge(catalog.Items, imported, units, ImportKind, source);
+            var merge = ProductCostImport.MergeResult(catalog.Items, imported, units, ImportKind, source);
+            if (merge.Value is not { } merged) { ShowImportError(merge.Error!); return; }
             var rowsById = Items.ToDictionary(item => item.Id);
             foreach (var item in merged)
             {
@@ -165,7 +167,14 @@ public sealed partial class CompositionEditor : ObservableObject
         }
         catch (InvalidDataException ex)
         {
-            var details = ex.Message.Split(':');
+            ShowImportError(ex.Message);
+        }
+        catch (IOException) { Feedback = this["ImportFailed"]; }
+        catch (UnauthorizedAccessException) { Feedback = this["ImportFailed"]; }
+    }
+    private void ShowImportError(string error)
+    {
+            var details = error.Split(':');
             Feedback = details[0] switch
             {
                 "Unit" => string.Format(host.PhysicalUiCulture, this["ImportUnknownUnit"], details.Last()),
@@ -174,9 +183,6 @@ public sealed partial class CompositionEditor : ObservableObject
                 "Empty" => this["ImportEmpty"], "Headers" => this["ImportHeaders"], "Quotes" => this["ImportQuotes"],
                 "ReferenceAmbiguous" => this["ImportReferenceAmbiguous"], _ => this["ImportFailed"]
             };
-        }
-        catch (IOException) { Feedback = this["ImportFailed"]; }
-        catch (UnauthorizedAccessException) { Feedback = this["ImportFailed"]; }
     }
     public void Open()
     {
@@ -208,6 +214,29 @@ public sealed partial class CompositionEditor : ObservableObject
     }
     public void AddLine() { if (Editable) { Attach(new() { Unit = Units.FirstOrDefault()?.Value ?? default }); Changed(); } }
     public void RemoveLine(CompositionLineRow? row) { if (Editable && row is not null) { Lines.Remove(row); Changed(); } }
+    private bool ValidateInput(bool publish, bool preview = false)
+    {
+        bool Number(string text, out decimal value) => decimal.TryParse(text.Trim(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, host.PhysicalFormatCulture, out value);
+        if (Items.Select(i => i.Code.Trim()).Distinct(StringComparer.Ordinal).Count() != Items.Count)
+        { Feedback = this["InvalidCatalog"]; return false; }
+        if (Items.Any(i => string.IsNullOrWhiteSpace(i.Code) || string.IsNullOrWhiteSpace(i.Name) || !Units.Any(u => u.Value == i.Unit) ||
+            i.ReferenceUnitCost < 0 || i.ReferenceUnitCost.HasValue && string.IsNullOrWhiteSpace(i.ReferenceCostSource)))
+        { Feedback = this["InvalidItem"]; return false; }
+        if (current?.State == CompositionState.Draft)
+        {
+            if (!Number(BatchSize, out var batch) || batch <= 0) { Feedback = this["InvalidVersion"]; return false; }
+            if (publish && Lines.Count == 0) { Feedback = this["Empty"]; return false; }
+            foreach (var line in Lines)
+            {
+                if (!Number(line.Quantity, out var quantity) || !Number(line.Factor, out var factor) || !Number(line.Percent, out var percent))
+                { Feedback = this["Number"]; return false; }
+                if (line.Target is null || quantity < 0 || factor <= 0 || percent < 0 || line.Loss == CompositionLossKind.None && percent != 0 || line.Loss == CompositionLossKind.Yield && (percent == 0 || percent > 100) || !Units.Any(u => u.Value == line.Unit))
+                { Feedback = this["InvalidLine"]; return false; }
+            }
+        }
+        if (preview && (!Number(OutputQuantity, out var output) || output <= 0)) { Feedback = this["Number"]; return false; }
+        return true;
+    }
     private CompositionCatalog Proposal(bool publish)
     {
         var versions = catalog.Versions;
@@ -221,7 +250,7 @@ public sealed partial class CompositionEditor : ObservableObject
     }
     public bool Save(bool publish)
     {
-        if (!Writable || publish && !Editable) return false;
+        if (!Writable || publish && !Editable || !ValidateInput(publish)) return false;
         try
         {
             var id = current?.Id;
@@ -234,7 +263,7 @@ public sealed partial class CompositionEditor : ObservableObject
     }
     public async Task<bool> SaveAsync(bool publish)
     {
-        if (!Writable || Busy || publish && !Editable) return false;
+        if (!Writable || Busy || publish && !Editable || !ValidateInput(publish)) return false;
         var committed = false;
         try
         {
@@ -259,6 +288,7 @@ public sealed partial class CompositionEditor : ObservableObject
         if (current is null || current.Id != Version || current.ProductId != Product) { Feedback = this["ChooseRecipe"]; return; }
         try
         {
+            if (!ValidateInput(false, true)) return;
             var p = Proposal(false);
             var result = CompositionCalculator.Preview(p, current.Id, Parse(OutputQuantity), host.PhysicalCompany!.Units, pools);
             foreach (var r in result.Lines)

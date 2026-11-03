@@ -220,7 +220,8 @@ public sealed partial class AllocationWorkspaceViewModel
         {
             foreach (var row in CompositionAccounts.Where(r => r.IsDirty))
             {
-                var variableWeight = Parse(row.VariablePercentage);
+                if (!numbers.TryCommit(row.VariablePercentage, out var variableWeight))
+                { statusKey = "CompositionWeightsInvalid"; Refresh(); return false; }
                 if (variableWeight < 0m || variableWeight > 100m) { statusKey = "CompositionWeightsInvalid"; Refresh(); return false; }
                 var fixedWeight = 100m - variableWeight;
                 if (!row.CanBulk || fixedWeight < 0m || variableWeight < 0m || fixedWeight + variableWeight != 100m ||
@@ -249,8 +250,8 @@ public sealed partial class AllocationWorkspaceViewModel
             { statusKey = "CompositionContextRequired"; Refresh(); return; }
             try
             {
-                var min = Parse(CompositionMinimum);
-                var max = Parse(CompositionMaximum);
+                if (!numbers.TryCommit(CompositionMinimum, out var min) || !numbers.TryCommit(CompositionMaximum, out var max) || min < 0 || max < min)
+                { statusKey = "CompositionContextRequired"; Refresh(); return; }
                 context = new(unit, workspace.Resources.Study.PeriodStart.Value,
                     workspace.Resources.Study.PeriodEnd.Value,
                     new Quantity(min, unit, workspace.Resources.Precision),
@@ -277,9 +278,7 @@ public sealed partial class AllocationWorkspaceViewModel
     private async Task ApplyCompositionWeightsAsync()
     {
         if (!CanEditClassification || workspace is null) return;
-        decimal fixedWeight, variableWeight;
-        try { fixedWeight = Parse(CompositionFixedPercentage); variableWeight = Parse(CompositionVariablePercentage); }
-        catch (Exception ex) when (ex is ArgumentException or DomainRuleException or OverflowException)
+        if (!numbers.TryCommit(CompositionFixedPercentage, out var fixedWeight) || !numbers.TryCommit(CompositionVariablePercentage, out var variableWeight))
         { statusKey = "CompositionWeightsInvalid"; Refresh(); return; }
         if (fixedWeight < 0m || fixedWeight > 100m || variableWeight < 0m || variableWeight > 100m || fixedWeight + variableWeight != 100m)
         { statusKey = "CompositionWeightsInvalid"; Refresh(); return; }

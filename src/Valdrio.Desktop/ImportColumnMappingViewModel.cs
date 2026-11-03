@@ -257,6 +257,10 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         columnOptions = []; descriptionOptions = []; ResetAccountChoices(); InvalidatePreparation(true);
         await Run(async token =>
         {
+            if (!int.TryParse(headerRow, NumberStyles.None, CultureInfo.InvariantCulture, out var header) || header < 1 ||
+                !int.TryParse(firstDataRow, NumberStyles.None, CultureInfo.InvariantCulture, out var first) || first <= header ||
+                IsCsv && delimiter is not (";" or "," or "tab") || IsXlsx && string.IsNullOrWhiteSpace(worksheet))
+            { diagnostic = new("IMP_PROFILE_INVALID", "Import.InvalidProfile", []); return; }
             var settings = Settings(); var source = await session!.ReadAsync(settings, token);
             token.ThrowIfCancellationRequested(); document = source; readSettings = settings;
             columnOptions = ImportColumnSelection.GetColumns(source).Select(c =>
@@ -272,14 +276,19 @@ public sealed partial class ImportColumnMappingViewModel : ObservableObject, IDi
         validation = null; ResetAccountChoices(); InvalidatePreparation(true);
         await Run(async token =>
         {
+            if (!IsSignedAmount && !IsDebitCredit || negativeSyntax is not ("minus" or "parentheses" or "trailing"))
+            { diagnostic = new("IMP_PROFILE_INVALID", "Import.InvalidProfile", []); return; }
             var assigned = IsSignedAmount ? new[] { accountColumn, amountColumn } :
                 IsDebitCredit ? new[] { accountColumn, debitColumn, creditColumn } :
                 throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile");
-            if (assigned.Any(c => c is null)) throw ImportRules.Error("IMP_COLUMN_SELECTION", "Import.ColumnsRequired");
-            if (assigned.Distinct().Count() != assigned.Length) throw ImportRules.Error("IMP_COLUMN_SELECTION", "Import.ColumnsDistinct");
+            if (assigned.Any(c => c is null)) { diagnostic = new("IMP_COLUMN_SELECTION", "Import.ColumnsRequired", []); return; }
+            if (assigned.Distinct().Count() != assigned.Length) { diagnostic = new("IMP_COLUMN_SELECTION", "Import.ColumnsDistinct", []); return; }
             var negative = negativeSyntax switch
             { "minus" => ImportNegativeSyntax.LeadingMinus, "parentheses" => ImportNegativeSyntax.Parentheses,
                 "trailing" => ImportNegativeSyntax.TrailingMinus, _ => throw ImportRules.Error("IMP_PROFILE_INVALID", "Import.InvalidProfile") };
+            static bool Reserved(string value) => value.Length != 1 || char.IsControl(value[0]) || "0123456789+-()eE".Contains(value[0]);
+            if (Reserved(decimalSeparator) || groupSeparator.Length > 0 && (Reserved(groupSeparator) || groupSeparator == decimalSeparator))
+            { diagnostic = new("IMP_AMBIGUOUS_FORMAT", "Import.AmbiguousFormat", []); return; }
             var number = new SourceNumberFormat(decimalSeparator, groupSeparator.Length == 0 ? null : groupSeparator,
                 groupSeparator.Length == 0 ? [] : [3], negative);
             var columns = IsSignedAmount ? new ImportColumnMap(accountColumn!.Value, description: descriptionColumn, amount: amountColumn!.Value) :

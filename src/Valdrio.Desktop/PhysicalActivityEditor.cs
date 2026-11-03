@@ -281,12 +281,12 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     public string StatusLabel => Label("Activity.Status");
     public string Label(string key) => texts.Get(key, uiCulture);
 
-    private decimal? Parse(string raw)
+    private bool TryQuantity(string raw, out decimal? value)
     {
-        if (string.IsNullOrWhiteSpace(raw)) return null;
-        if (!decimal.TryParse(raw.Trim(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, formatCulture, out var number))
-            throw PhysicalActivityRules.Error("ACT_INPUT_INVALID", "Activity.InputInvalid");
-        return number;
+        value = null;
+        if (string.IsNullOrWhiteSpace(raw)) return true;
+        if (!decimal.TryParse(raw.Trim(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, formatCulture, out var number)) return false;
+        value = number; return true;
     }
     private PhysicalEvidence? Evidence(decimal? value, PhysicalEvidenceQuality quality,
         string source, string description) =>
@@ -342,7 +342,8 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
                 row.Status = row.HasChanges ? Label("Activity.UnsavedRow") : row.SavedStatus;
                 try
                 {
-                    var normal = Parse(row.NormalText); var real = Parse(row.RealText);
+                    if (!TryQuantity(row.NormalText, out var normal) || !TryQuantity(row.RealText, out var real))
+                    { row.Utilization = Label("Activity.Pending"); return; }
                     var percent = PhysicalActivityRules.Utilization(normal, real);
                     row.Utilization = percent is { } value ? value.ToString("0.##", formatCulture) + " %" :
                         Label(normal == 0 ? "Activity.UtilizationUndefined" : "Activity.Pending");
@@ -361,11 +362,21 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         if (row is null || IsReadOnly) return;
         try
         {
-            var normal = Parse(row.NormalText);
-            var real = Parse(row.RealText);
+            if (!TryQuantity(row.NormalText, out var normal) || !TryQuantity(row.RealText, out var real) ||
+                !TryQuantity(row.TheoreticalText, out var theoretical) || !TryQuantity(row.PracticalText, out var practical))
+            { Feedback = Label("Activity.InputInvalid"); return; }
+            if (new[] { normal, real, theoretical, practical }.Any(v => v < 0))
+            { Feedback = Label("Activity.NegativeQuantity"); return; }
+            if (practical > theoretical) { Feedback = Label("Activity.CapacityOrder"); return; }
+            if (row.NormalSource.Length > 500 || row.RealSource.Length > 500 || row.NormalDescription.Length > 4000 || row.RealDescription.Length > 4000)
+            { Feedback = Label("Activity.EvidenceTooLong"); EvidenceExpanded = true; return; }
+            if (row.NormalZeroReason.Length > 4000 || row.ExceptionReason.Length > 4000 || row.CorrectionReason.Length > 4000)
+            { Feedback = Label("Activity.InputInvalid"); return; }
+            if (confirm && (normal is null || real is null))
+            { Feedback = Label("Activity.Incomplete"); return; }
             var command = new SavePhysicalObservation(study.CompanyId, study.Id, study.Revision, row.NodeId, row.PoolId,
                 row.Version, confirm ? PhysicalObservationState.Confirmed : PhysicalObservationState.Draft,
-                Parse(row.TheoreticalText), Parse(row.PracticalText), normal, real,
+                theoretical, practical, normal, real,
                 Evidence(normal, row.NormalQuality, row.NormalSource, row.NormalDescription),
                 Evidence(real, row.RealQuality, row.RealSource, row.RealDescription),
                 string.IsNullOrWhiteSpace(row.NormalZeroReason) ? null : row.NormalZeroReason.Trim(),
@@ -394,6 +405,8 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         if (row is null || IsReadOnly) return;
         try
         {
+            if (row.CorrectionReason.Length > 4000)
+            { Feedback = Label("Activity.InputInvalid"); return; }
             var saved = activity.Annul(new(study.CompanyId, study.Id, study.Revision, row.NodeId, row.PoolId,
                 row.Version, row.CorrectionReason, "local-user"));
             ReadSavedRow(row, saved);

@@ -918,6 +918,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     private async Task CreateCenter()
     {
         if (DuplicateCenterCode) { Refresh(); return; }
+        if (string.IsNullOrWhiteSpace(CenterCode) || string.IsNullOrWhiteSpace(CenterName))
+        { diagnostic = new("MODEL_CENTER_INVALID", "Model.CenterInvalid", []); Refresh(); return; }
         await Run(async t =>
     {
         var created = await Task.Run(() => company.ActiveModels!.CreateCenter(new(company.Snapshot!.Id, CenterCode, CenterName, "local-user"), t));
@@ -976,6 +978,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     private async Task ChangeCenter(bool active, string successKey)
     {
         if (DuplicateCenterCode) { Refresh(); return; }
+        if (string.IsNullOrWhiteSpace(CenterCode) || string.IsNullOrWhiteSpace(CenterName))
+        { diagnostic = new("MODEL_CENTER_INVALID", "Model.CenterInvalid", []); Refresh(); return; }
         await Run(async t =>
     {
         var current = Master!.Value;
@@ -996,6 +1000,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             return;
         await Run(async t =>
         {
+            if (string.IsNullOrWhiteSpace(Description))
+            { diagnostic = new("MODEL_STRUCTURE_INVALID", "Model.StructureInvalid", []); return; }
             var value = await Task.Run(() => company.ActiveModels!.CreateDraft(new(company.Snapshot!.Id, Description, "local-user"), t));
             await ApplyConfirmedThenReload(value, ApplyConfirmedModel);
             if (!committedRefreshPending) statusKey = "Model.StructureCreated";
@@ -1023,6 +1029,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
 
         await Run(async t =>
         {
+            if (string.IsNullOrWhiteSpace(Description))
+            { diagnostic = new("MODEL_STRUCTURE_INVALID", "Model.StructureInvalid", []); return; }
             var value = Structure();
             var port = company.ActiveModels!;
             var current = Current!;
@@ -1056,7 +1064,14 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         try
         {
             if (Physical is null || DriverUnit is null || Role is null)
-                throw ModelRules.Error("MODEL_INPUT_INVALID", "Model.InputInvalid");
+            { diagnostic = new("MODEL_INPUT_INVALID", "Model.InputInvalid", []); Refresh(); return; }
+            var tags = FunctionTags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            if (string.IsNullOrWhiteSpace(NodeCode) || tags.Distinct(StringComparer.Ordinal).Count() != tags.Length)
+            { diagnostic = new("MODEL_NODE_INVALID", "Model.NodeInvalid", []); Refresh(); return; }
+            if (string.IsNullOrWhiteSpace(Description))
+            { diagnostic = new("MODEL_STRUCTURE_INVALID", "Model.StructureInvalid", []); Refresh(); return; }
+            if (draftNodes.Any(n => n.Id != SelectedNode?.Node.Id && n.Code == NodeCode))
+            { diagnostic = new("MODEL_DUPLICATE", "Model.Duplicate", []); Refresh(); return; }
             var id = SelectedNode?.Node.Id ?? new(Guid.NewGuid());
             var modelId = Current!.Structure.Id;
             var n = new CalculationNodeDefinition(id, modelId, Physical.Value.Id, NodeCode, Role.Value, FunctionTags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), true);

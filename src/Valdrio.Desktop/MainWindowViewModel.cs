@@ -425,23 +425,23 @@ public sealed partial class MainWindowViewModel : ObservableObject
         OnPropertyChanged(nameof(FxCapturedCulture));
     }
 
+    private void RejectFx(DomainDiagnostic error)
+    { fxDiagnostic = error; OnPropertyChanged(nameof(FxStatus)); OnPropertyChanged(nameof(FxCapturedCulture)); }
+
     private void ApplyFxRate()
     {
         BeginFxEdit();
         try
         {
-            if (!fxEditSession!.TryCommit(FxQuoteText, out var quote))
-                throw new DomainRuleException(new DomainDiagnostic("FX_QUOTE_TEXT_INVALID", "Fx.QuoteTextInvalid",
-                    [new("culture", DiagnosticArgumentType.Text, fxEditSession.CapturedCulture.Name)]));
-
-            BusinessDate rateDate;
-            try { rateDate = BusinessDate.ParseIso(FxRateDateText); }
-            catch (Exception ex) when (ex is FormatException or ArgumentException)
+            if (!fxEditSession!.TryCommit(FxQuoteText, out var quote) || quote <= 0 || CanonicalDecimal.Scale(quote) > 18)
             {
-                throw new DomainRuleException(new DomainDiagnostic("FX_DATE_INVALID", "Fx.DateInvalid", []));
+                RejectFx(new("FX_QUOTE_TEXT_INVALID", "Fx.QuoteTextInvalid", [new("culture", DiagnosticArgumentType.Text, fxEditSession.CapturedCulture.Name)])); return;
             }
+            if (!DateOnly.TryParseExact(FxRateDateText, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+            { RejectFx(new("FX_DATE_INVALID", "Fx.DateInvalid", [])); return; }
+            var rateDate = new BusinessDate(date);
             if (string.IsNullOrWhiteSpace(FxRateSourceText))
-                throw new DomainRuleException(new DomainDiagnostic("FX_SOURCE_REQUIRED", "Fx.SourceRequired", []));
+            { RejectFx(new("FX_SOURCE_REQUIRED", "Fx.SourceRequired", [])); return; }
 
             var next = fxConversionExampleService.Build(quote, rateDate, FxRateSourceText);
             fxExample = next;

@@ -39,6 +39,7 @@ public sealed partial class AllocationWorkspaceViewModel
             try
             {
                 var selected = AbsoluteLines.Where(line => line.Included).ToArray();
+                if (selected.Any(line => !numbers.TryCommit(line.Value, out _))) return this["CheckNumbers"];
                 return selected.Length == 0 ? "" : StudyMoney(selected.Sum(line => Parse(line.Value)));
             }
             catch (Exception ex) when (ex is DomainRuleException or ArgumentException or OverflowException)

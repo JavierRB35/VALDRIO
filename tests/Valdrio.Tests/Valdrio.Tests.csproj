@@ -15,6 +15,10 @@
     <Using Include="System.IO" />
     <Compile Include="../../src/Valdrio.Desktop/WorkspaceGuidance.cs" Link="Desktop/WorkspaceGuidance.cs" />
     <Compile Include="../../src/Valdrio.Desktop/ProductCostImport.cs" Link="Desktop/ProductCostImport.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/CompositionEditor.cs" Link="Desktop/CompositionEditor.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/EstimateEditor.cs" Link="Desktop/EstimateEditor.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/AuxiliaryCapacityEditor.cs" Link="Desktop/AuxiliaryCapacityEditor.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/PrincipalRatesEditor.cs" Link="Desktop/PrincipalRatesEditor.cs" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="MSTest.TestAdapter" />
     <PackageReference Include="MSTest.TestFramework" />

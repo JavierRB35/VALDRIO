@@ -75,6 +75,15 @@ public sealed partial class ResourceWorkspaceViewModel
     {
         if (!CanEditRule || workspace is null) return;
         if (archive && card.Saved is null) { RuleCards.Remove(card); Refresh(); return; }
+        if (!archive)
+        {
+            if (!new DecimalEditSession(card.Culture).TryCommit(card.Value, out _))
+            { RejectInput("RES_NUMBER_REQUIRED", "Resource.NumberRequired"); return; }
+            var pattern = card.Pattern.Trim();
+            if (string.IsNullOrWhiteSpace(card.Name) || string.IsNullOrWhiteSpace(card.Reason) || string.IsNullOrWhiteSpace(card.Code) || card.Code.Contains('*') ||
+                pattern == "*" || pattern.Count(c => c == '*') > 1 || pattern.TrimEnd('*').Contains('*') || !Enum.IsDefined(card.Mode))
+            { RejectInput("ADJ_INVALID", "Adjustment.Invalid"); return; }
+        }
         await Run(async token =>
         {
             var rule = archive ? card.Saved! with { Version = card.Saved!.Version + 1, Archived = true } : BuildRule(card);
@@ -97,7 +106,8 @@ public sealed partial class ResourceWorkspaceViewModel
             string text;
             if (undo)
             {
-                var applied = ActiveApplication(card.Id) ?? throw ResourceWorkspaceRules.Error("ADJ_NOTAPPLIED", "Adjustment.NotApplied");
+                var applied = ActiveApplication(card.Id);
+                if (applied is null) { RejectInput("ADJ_NOTAPPLIED", "Adjustment.NotApplied"); return; }
                 command = RuleCommand(applied.Rule, AdjustmentRuleAction.Undo, applied.Id);
                 text = RuleText("UndoPreview");
             }

@@ -228,6 +228,10 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     {
         if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
         var name = CompanyName; var selectedCurrency = Currency;
+        if (string.IsNullOrWhiteSpace(name))
+        { diagnostic = new("FILE_NAME_REQUIRED", "File.NameRequired", []); Refresh(); return; }
+        if (!CurrencyOptions.Contains(selectedCurrency))
+        { diagnostic = new("FILE_INPUT_INVALID", "File.InputInvalid", []); Refresh(); return; }
         var path = dialogs.SelectNewFile(name); if (path is null) return;
         await Run(async token =>
         {
@@ -392,6 +396,9 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
 
     private async Task AddUnit()
     {
+        if (string.IsNullOrWhiteSpace(UnitCode) || string.IsNullOrWhiteSpace(UnitDimension) || UnitScale is < 0 or > 12 ||
+            Snapshot?.Units.Any(u => u.Code == UnitCode) == true)
+        { diagnostic = new("FILE_UNIT_INVALID", "File.UnitInvalid", []); Refresh(); return; }
         await Run(async token =>
         {
             var unit = new UnitDefinition(new(new(Guid.NewGuid())), UnitCode, UnitDimension, UnitSymbol, UnitScale, UnitDiscrete);

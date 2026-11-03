@@ -28,14 +28,17 @@ public sealed partial class ResourceWorkspaceViewModel
         {
             correctionCommitPending = false; company.NotifyWorkspaceStateChanged(); Refresh(); return false;
         }
+        if (!new DecimalEditSession(capturedCulture).TryCommit(text, out var requested))
+        {
+            correctionCommitPending = false; correctionFailed = true;
+            RejectInput("RES_NUMBER_REQUIRED", "Resource.NumberRequired"); company.NotifyWorkspaceStateChanged(); return false;
+        }
         var declined = false;
         var success = await Run(async token =>
         {
             StudyRules.CheckRevision(row.Revision, workspace.Study.Revision, workspace.Study.Id);
             if (!Rows.Any(r => r.Id == row.Id))
                 throw ResourceWorkspaceRules.Error("RES_NOT_FOUND", "Resource.NotFound");
-            if (!new DecimalEditSession(capturedCulture).TryCommit(text, out var requested))
-                throw ResourceWorkspaceRules.Error("RES_NUMBER_REQUIRED", "Resource.NumberRequired");
             var currency = workspace.Study.Currency.FunctionalCurrencyCode;
             var total = new Money(requested, currency, workspace.Precision);
             var command = ResourceCorrectionCommand.Prepare(workspace, row.Id, row.Revision, total,

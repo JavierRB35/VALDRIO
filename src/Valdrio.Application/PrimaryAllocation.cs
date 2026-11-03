@@ -106,8 +106,15 @@ public static class PrimaryAllocationService
                 else
                 {
                     var manual = input.Configuration.ExplicitAssignments.SingleOrDefault(a => a.PartId == part.Id);
-                    key = AllocationKeyRules.ResolvePrimary(account, manual?.KeyVersionId,
+                    var resolution = AllocationKeyRules.ResolvePrimaryResult(account, manual?.KeyVersionId,
                         input.Configuration.PrimaryRules, input.Keys, model);
+                    if (resolution.Key is null)
+                    {
+                        gaps.Add(new(part.Id, resolution.Diagnostic!));
+                        parts.Add(new(resource.Id, part.Id, part.Amount, new Money(0m, currency, precision), part.Amount, false));
+                        continue;
+                    }
+                    key = resolution.Key;
                     selection = manual is null ? "rule" : "manual";
                     if (manual is null)
                         rule = WinningRule(account, input.Configuration.PrimaryRules, model);

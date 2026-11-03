@@ -52,6 +52,10 @@ public sealed partial class ResourceWorkspaceViewModel
         var choices = new List<ResourceRateChoice>();
         foreach (var row in RevalueRows)
         {
+            if (!row.Form.Numbers.TryCommit(row.Form["Quote"], out var quote) || quote <= 0 || CanonicalDecimal.Scale(quote) > 18)
+            { RejectInput("RES_NUMBER_REQUIRED", "Resource.NumberRequired"); return; }
+            if (row.Form.RateDate is null) { RejectInput("RES_DATE_REQUIRED", "Resource.DateRequired"); return; }
+            if (string.IsNullOrWhiteSpace(row.Form["Source"])) { RejectInput("FX_SOURCE_REQUIRED", "Fx.SourceRequired"); return; }
             var rate = new FxRate(new(Guid.NewGuid().ToString("N")), row.Previous.OriginalMoney.Currency, workspace.Study.Currency.FunctionalCurrencyCode,
                 Number(row.Form, "Quote"), Date(row.Form.RateDate), row.Form["Source"], version);
             rates.Add(rate); choices.Add(new(row.ValueId, rate.Id));
@@ -89,13 +93,14 @@ public sealed partial class ResourceWorkspaceViewModel
         {
             RecomputeRevalue();
             if (preview!.Preparation.Coverage.Single(c => c.ResourceId == editing!.Id).Difference.Amount != 0)
-                throw ResourceWorkspaceRules.Error("RES_REVALUE_UNBALANCED", "Resource.RevalueUnbalanced");
+                { RejectInput("RES_REVALUE_UNBALANCED", "Resource.RevalueUnbalanced"); return; }
             editing = null; parts.Clear(); deltas.Clear(); dirty = false; stage = 0; statusKey = "RevaluePartsKept"; RebuildRows();
         });
     }
     private async Task CommitRevalue()
     {
         if (!CheckCulture()) return;
+        if (string.IsNullOrWhiteSpace(RevalueReason)) { RejectInput("RES_COMMAND_INVALID", "Resource.CommandInvalid"); return; }
         await Run(token => Commit(RevalueCommand(RevalueReason), token));
     }
     private void CancelRevalue()

@@ -101,8 +101,10 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
     private string CalendarError(string value, string label, decimal minimum, decimal maximum)
     {
         if (string.IsNullOrWhiteSpace(value)) return "";
-        try { Input(value, label, minimum, maximum); return ""; }
-        catch (FormatException e) { return e.Message; }
+        if (ParseOptional(value) is not { } number)
+            return string.Format(culture, L("Activity.Assistant.NumberRequired"), label, 1.5m.ToString(culture));
+        return number < minimum || number > maximum
+            ? string.Format(culture, L("Activity.Assistant.Range"), label, minimum, maximum) : "";
     }
     public string DaysError => CalendarError(OperatingDays, DaysLabel, 0, host.Study.PeriodEnd.Value.DayNumber - host.Study.PeriodStart.Value.DayNumber + 1);
     public string ShiftsError => CalendarError(ShiftsPerDay, ShiftsLabel, 0, 24);
@@ -320,43 +322,38 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
         { HasPendingProposal = true; Preview(); }
     }
 
-    private decimal Input(string text, string label, decimal minimum, decimal maximum)
+    private bool Input(string text, string label, decimal minimum, decimal maximum, out decimal value)
     {
-        if (!decimal.TryParse(text.Trim(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, culture, out var value))
-            throw new FormatException(string.Format(culture, L("Activity.Assistant.NumberRequired"), label, 1.5m.ToString(culture)));
+        if (!decimal.TryParse(text.Trim(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, culture, out value))
+        { Feedback = string.Format(culture, L("Activity.Assistant.NumberRequired"), label, 1.5m.ToString(culture)); return false; }
         if (value < minimum || value > maximum)
-            throw new FormatException(string.Format(culture, L("Activity.Assistant.Range"), label, minimum, maximum));
-        return value;
+        { Feedback = string.Format(culture, L("Activity.Assistant.Range"), label, minimum, maximum); return false; }
+        return true;
     }
+    private (decimal Normal, decimal? Theoretical, decimal? Practical, PhysicalEvidence Evidence)? Invalid(string message)
+    { Feedback = message; return null; }
 
-    private decimal Number(string text)
-    {
-        if (!decimal.TryParse(text.Trim(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, culture, out var result))
-            throw PhysicalActivityRules.Error("ACT_INPUT_INVALID", "Activity.InputInvalid");
-        return result;
-    }
-
-    private (decimal Normal, decimal? Theoretical, decimal? Practical, PhysicalEvidence Evidence) Calculate()
+    private (decimal Normal, decimal? Theoretical, decimal? Practical, PhysicalEvidence Evidence)? Calculate()
     {
         switch (Method)
         {
             case PhysicalCapacityMethod.Calendar:
             {
                 if (!CalendarSupported)
-                    throw PhysicalActivityRules.Error("ACT_CALENDAR_UNIT", "Activity.CalendarUnit");
-                var days = Input(OperatingDays, DaysLabel, 0,
-                    host.Study.PeriodEnd.Value.DayNumber - host.Study.PeriodStart.Value.DayNumber + 1);
+                    return Invalid(L("Activity.CalendarUnit"));
+                if (!Input(OperatingDays, DaysLabel, 0,
+                    host.Study.PeriodEnd.Value.DayNumber - host.Study.PeriodStart.Value.DayNumber + 1, out var days)) return null;
                 if (days != decimal.Truncate(days))
-                    throw new FormatException(L("Activity.Assistant.WholeDays"));
-                var shifts = Input(ShiftsPerDay, ShiftsLabel, 0, 24);
-                var hours = Input(HoursPerShift, HoursLabel, 0, 24);
-                var resources = Input(EquivalentResources, ResourcesLabel, 0, decimal.MaxValue);
+                    return Invalid(L("Activity.Assistant.WholeDays"));
+                if (!Input(ShiftsPerDay, ShiftsLabel, 0, 24, out var shifts)) return null;
+                if (!Input(HoursPerShift, HoursLabel, 0, 24, out var hours)) return null;
+                if (!Input(EquivalentResources, ResourcesLabel, 0, decimal.MaxValue, out var resources)) return null;
                 if (shifts == 0 || hours == 0 || resources == 0)
-                    throw new FormatException(L("Activity.Assistant.PositiveCalendar"));
+                    return Invalid(L("Activity.Assistant.PositiveCalendar"));
                 if (shifts * hours > 24)
-                    throw new FormatException(L("Activity.Assistant.DayLimit"));
+                    return Invalid(L("Activity.Assistant.DayLimit"));
                 var theoretical = checked(days * shifts * hours * resources);
-                var enteredStops = Input(Stoppages, StoppagesLabel, 0, decimal.MaxValue);
+                if (!Input(Stoppages, StoppagesLabel, 0, decimal.MaxValue, out var enteredStops)) return null;
                 var multiplier = StoppageBasis switch
                 {
                     PhysicalStoppageBasis.PerResourceShift => checked(days * shifts * resources),
@@ -366,8 +363,11 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
                 };
                 var stops = checked(enteredStops * multiplier);
                 if (stops > theoretical)
-                    throw new FormatException(string.Format(culture, L("Activity.Stoppages.Exceeds"), stops, theoretical));
-                var factor = Input(NormalFactor, FactorLabel, 0, 100) / 100m;
+                    return Invalid(string.Format(culture, L("Activity.Stoppages.Exceeds"), stops, theoretical));
+                if (!Input(NormalFactor, FactorLabel, 0, 100, out var enteredFactor)) return null;
+                var factor = enteredFactor / 100m;
+                if (FactorReason.Length > 4000)
+                    return Invalid(L("Activity.CalendarInvalid"));
                 var parameters = new PhysicalCalendarInput((int)days,
                     shifts, hours, resources, stops, factor, FactorReason);
                 var result = PhysicalActivityInference.CalendarSegments([new(host.Study.PeriodStart, host.Study.PeriodEnd, parameters)]);
@@ -390,14 +390,14 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
             case PhysicalCapacityMethod.Historical:
             {
                 var chosen = Historical.ToArray();
-                if (chosen.Length == 0)
-                    throw PhysicalActivityRules.Error("ACT_HISTORY_INVALID", "Activity.HistoryInvalid");
+                if (chosen.Length == 0 || chosen.Any(p => p.ReviewReason.Length > 4000))
+                    return Invalid(L("Activity.HistoryInvalid"));
                 var periods = chosen.Select(p => new PhysicalHistoryPeriod(
                     p.Observation.PeriodStart, p.Observation.PeriodEnd, p.Observation.RealQuantity!.Value,
                     p.Include, p.ReviewReason)).ToArray();
                 var duration = host.Study.PeriodEnd.Value.DayNumber - host.Study.PeriodStart.Value.DayNumber + 1;
-                if (periods.Any(p => p.Include && p.End.Value.DayNumber - p.Start.Value.DayNumber + 1 != duration))
-                    throw PhysicalActivityRules.Error("ACT_HISTORY_NOT_COMPARABLE", "Activity.HistoryNotComparable");
+                if (!periods.Any(p => p.Include) || periods.Any(p => p.Include && p.End.Value.DayNumber - p.Start.Value.DayNumber + 1 != duration))
+                    return Invalid(L("Activity.HistoryNotComparable"));
                 var result = PhysicalNormalCalculator.History(periods);
                 var refs = string.Join("; ", chosen.Select(p =>
                     string.Format(CultureInfo.InvariantCulture, "{0}/{1}:real={2}:include={3}:reason={4}:version={5}",
@@ -408,11 +408,12 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
             }
             case PhysicalCapacityMethod.Declared:
             {
-                return (Number(DeclaredQuantity), null, null,
+                if (!Input(DeclaredQuantity, L("Activity.Normal"), 0, decimal.MaxValue, out var declared)) return null;
+                return (declared, null, null,
                     new(PhysicalEvidenceQuality.Declared, string.IsNullOrWhiteSpace(DeclaredSource) ? L("Activity.Guided.Manual") : DeclaredSource.Trim(), DeclaredDescription.Trim()));
             }
             default:
-                throw PhysicalActivityRules.Error("ACT_INPUT_INVALID", "Activity.InputInvalid");
+                return Invalid(L("Activity.InputInvalid"));
         }
     }
 
@@ -420,11 +421,12 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
     {
         CanAdopt = false;
         proposedNumber = null;
+        Proposed = "";
         CalculationSteps = "";
         try
         {
-            var item = Calculate();
-            if (item.Normal < 0) throw PhysicalActivityRules.Error("ACT_NEGATIVE_QUANTITY", "Activity.NegativeQuantity");
+            if (Calculate() is not { } item) return;
+            if (item.Normal < 0) { Feedback = L("Activity.NegativeQuantity"); return; }
             proposedNumber = item.Normal;
             Proposed = item.Normal.ToString(culture) + " " + QuantityUnit;
             Feedback = "";
@@ -433,7 +435,7 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
         catch (FormatException e) { Proposed = ""; Feedback = e.Message; }
         catch (DomainRuleException e) { Proposed = ""; Feedback = L(e.Diagnostic.MessageKey); }
         catch (OverflowException) { Proposed = ""; Feedback = L("Activity.CalendarInvalid"); }
-        NotifyGuided();
+        finally { NotifyGuided(); }
     }
 
     public void Adopt()
@@ -441,10 +443,10 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
         if (!host.IsWritable) return;
         try
         {
-            var item = Calculate();
-            if (item.Normal < 0) throw PhysicalActivityRules.Error("ACT_NEGATIVE_QUANTITY", "Activity.NegativeQuantity");
+            if (Calculate() is not { } item) return;
+            if (item.Normal < 0) { Feedback = L("Activity.NegativeQuantity"); return; }
             if (item.Evidence.Source.Length > 500 || item.Evidence.Description.Length > 4000)
-                throw PhysicalActivityRules.Error("ACT_EVIDENCE_TOO_LONG", "Activity.EvidenceTooLong");
+                { Feedback = L("Activity.EvidenceTooLong"); return; }
             var note = row.NormalDescription.Split("\nNote: ", 2).ElementAtOrDefault(1);
             row.NormalText = item.Normal.ToString(culture);
             row.NormalSource = item.Evidence.Source;

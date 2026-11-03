@@ -47,8 +47,7 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
     public string GroupCoverage => SelectedRow is not { } row ? "" : string.Join(Environment.NewLine,
         row.Services.GroupBy(s => s.Group).Select(group =>
         {
-            try { return group.First().GroupLabel + ": " + Qty(group.Sum(s => Parse(s.Quantity))) + " / " + row.Real + " " + row.Unit; }
-            catch (Exception error) when (error is DomainRuleException or OverflowException) { return group.First().GroupLabel + ": " + this["Invalid"]; }
+            return GroupTotal(group, row);
         }));
     public bool CanCalculate => host.PhysicalWritable && workspace is not null && Rows.Count > 0;
     public string NextStep => Dirty ? this["Save"] : run is null ? this["Calculate"] : this["ReviewResults"];
@@ -119,6 +118,19 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
             ServiceSets = row.Services.GroupBy(s => s.Group).Select(g => new AuxiliaryServiceSet(g.Key,
                 g.Select(l => new AuxiliaryServiceQuantity(l.Destination, Parse(l.Quantity))).ToArray())).ToArray() }).ToArray());
     }
+    private bool ValidQuantity(string text) => decimal.TryParse(text, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, host.PhysicalFormatCulture, out var value) && value >= 0;
+    private bool ValidPlan()
+    {
+        if (Rows.Any(r => r.Mode is null || r.Services.Any(s => !ValidQuantity(s.Quantity))))
+        { Feedback = this["Invalid"]; return false; }
+        return true;
+    }
+    private string GroupTotal(IEnumerable<AuxiliaryServiceEdit> group, AuxiliaryCenterEdit row)
+    {
+        if (group.Any(s => !ValidQuantity(s.Quantity))) return group.First().GroupLabel + ": " + this["Invalid"];
+        try { return group.First().GroupLabel + ": " + Qty(group.Sum(s => Parse(s.Quantity))) + " / " + row.Real + " " + row.Unit; }
+        catch (OverflowException) { return group.First().GroupLabel + ": " + this["Invalid"]; }
+    }
     private decimal Parse(string text)
     {
         if (!decimal.TryParse(text, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, host.PhysicalFormatCulture, out var value) || value < 0)
@@ -127,7 +139,7 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
     }
     public void Save()
     {
-        if (!CanSave || workspace is null) return;
+        if (!CanSave || workspace is null || !ValidPlan()) return;
         try
         {
             var study = workspace.Resources.Study;
@@ -135,7 +147,7 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
             // The displayed T14 measurement must still be the one the user reviewed.
             var current = host.ActivePhysicalActivity!.ReadCurrent(study.CompanyId, study.Id);
             if (Rows.Any(r => r.Value.Observation is not null && !current.Any(o => o.Id == r.Value.Observation.Id && o.Version == r.Value.Observation.Version)))
-                throw AuxiliaryCapacityRules.Error("AUX_PHYSICAL_STALE", "Stale");
+                { Feedback = this["Stale"]; return; }
             var receipt = host.AuxiliaryAllocations!.ChangeAllocations(new(study.CompanyId, study.Id, study.Revision, new(Guid.NewGuid()), "local-user", workspace.Configuration.WithAuxiliaryCapacity(plan)));
             host.AcceptExternalReceipt(receipt.ConfirmedStudy);
             Reload(); Feedback = this["Saved"];
@@ -150,7 +162,7 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
     }
     public void Validate()
     {
-        if (workspace is null) return;
+        if (workspace is null || !ValidPlan()) return;
         try { var candidate = new AllocationWorkspaceSnapshot(workspace.Resources, workspace.Keys, workspace.Configuration.WithAuxiliaryCapacity(Plan()), workspace.ConfigurationRevision);
             _ = SecondaryAllocationService.Calculate(candidate); Feedback = this["Valid"]; }
         catch (Exception ex) when (ex is DomainRuleException or CompanyFileException or InvalidOperationException) { ShowError(ex); }
@@ -176,15 +188,16 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
         try
         {
             var lines = csv.Replace("\r", "").Split('\n', StringSplitOptions.RemoveEmptyEntries);
-            if (lines.Length < 2 || lines[0].TrimStart('\uFEFF') != "Center;Group;Destination;Quantity") throw AuxiliaryCapacityRules.Error("AUX_INPUT_INVALID", "ImportHelp");
+            if (lines.Length < 2 || lines[0].TrimStart('\uFEFF') != "Center;Group;Destination;Quantity") { Feedback = this["ImportHelp"]; return; }
             var changes = new List<(AuxiliaryServiceEdit Line, string Value)>();
             foreach (var line in lines.Skip(1))
             {
-                var c = line.Split(';'); if (c.Length != 4) throw AuxiliaryCapacityRules.Error("AUX_INPUT_INVALID", "ImportHelp");
+                var c = line.Split(';'); if (c.Length != 4) { Feedback = this["ImportHelp"]; return; }
                 var node = workspace!.Resources.Model.Structure.Nodes.SingleOrDefault(n => n.Code == c[0]);
                 var row = Rows.SingleOrDefault(r => r.Value.NodeId == node?.Id);
                 var target = row?.Services.SingleOrDefault(s => s.Group == c[1] && s.Code == c[2]);
-                if (target is null || changes.Any(x => x.Line == target)) throw AuxiliaryCapacityRules.Error("AUX_INPUT_INVALID", "ImportHelp");
+                if (target is null || changes.Any(x => x.Line == target)) { Feedback = this["ImportHelp"]; return; }
+                if (!ValidQuantity(c[3])) { Feedback = this["Invalid"]; return; }
                 changes.Add((target, Qty(Parse(c[3]))));
             }
             foreach (var change in changes) change.Line.Quantity = change.Value;
@@ -208,7 +221,7 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
         Answers.Add(new(this["QTransfer"], Value(outgoing)));
         Answers.Add(new(this["QDestinations"], string.Join(" · ", row.Services.Where(s => s.Quantity != "0").Select(s => s.GroupLabel + ": " + s.Name + " " + s.Quantity + " " + row.Unit))));
         string coverage;
-        try { coverage = !evaluated ? this["NotEvaluated"] : string.Join(" · ", row.Services.GroupBy(s => s.Group).Select(g => g.First().GroupLabel + ": " + Qty(g.Sum(s => Parse(s.Quantity))) + " / " + row.Real + " " + row.Unit)); }
+        try { coverage = !evaluated ? this["NotEvaluated"] : string.Join(" · ", row.Services.GroupBy(s => s.Group).Select(g => GroupTotal(g, row))); }
         catch (DomainRuleException) { coverage = this["Invalid"]; }
         Answers.Add(new(this["QCoverage"], coverage));
         Answers.Add(new(this["QBalance"], secondary is null ? this["NoResult"] : Value(initial) + " + " + Value(incoming) + " = " + Value(outgoing) + " + " + Value(variance) + ". " + this["CirculationHelp"]));

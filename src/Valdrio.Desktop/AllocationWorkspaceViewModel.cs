@@ -210,7 +210,9 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         {
             try
             {
-                var value = Lines.Where(l => l.Included).Sum(l => Mode == AllocationKeyMode.EqualShares ? 1 : Parse(l.Value));
+                var selected = Lines.Where(l => l.Included).ToArray();
+                if (Mode != AllocationKeyMode.EqualShares && selected.Any(l => !numbers.TryCommit(l.Value, out _))) return this["CheckNumbers"];
+                var value = selected.Sum(l => Mode == AllocationKeyMode.EqualShares ? 1 : Parse(l.Value));
                 return value.ToString("0.##################", numbers.CapturedCulture) + (IsPercentage ? " %" : IsDriver ? " " + Units.FirstOrDefault(u => u.Value == Unit)?.Label : " " + this["Destinations"]);
             }
             catch (Exception ex) when (ex is DomainRuleException or OverflowException) { return this["CheckNumbers"]; }
@@ -384,6 +386,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     {
         if (string.IsNullOrWhiteSpace(Name)) return "NameRequired";
         if (publish && IsDriver && !Unit.HasValue) return "UnitRequired";
+        if (Mode != AllocationKeyMode.EqualShares && Lines.Where(l => l.Included).Any(l => !numbers.TryCommit(l.Value, out var n) || n < 0)) return "CheckNumbers";
         if (!publish) return null;
         if (!Lines.Any(l => l.Included)) return "DestinationsRequired";
         try
@@ -431,10 +434,11 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     }
     private async Task SaveRuleAsync(bool apply)
     {
+        if (!RuleKey.HasValue || !int.TryParse(Priority, NumberStyles.Integer, numbers.CapturedCulture, out var preference) || string.IsNullOrWhiteSpace(IsExact ? RuleAccount : Prefix))
+        { diagnostic = new("KEY_RULE_INVALID", "Allocation.RuleInvalid", []); Refresh(); return; }
         EntityId? savedId = null;
         var saved = await CommitConfig(c =>
     {
-        if (!RuleKey.HasValue || !int.TryParse(Priority, NumberStyles.Integer, numbers.CapturedCulture, out var preference)) throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
         var previous = c.PrimaryRules.SingleOrDefault(r => r.Id == editingRule);
         var r = new PrimaryRule(previous is { IsActive: true } && !apply ? new(Guid.NewGuid()) : editingRule ?? new(Guid.NewGuid()), workspace!.Resources.Study.CompanyId, workspace.Resources.Model.Structure.Id,
             SelectorKind, IsExact ? RuleAccount : Prefix, preference, RuleKey.Value, apply)
@@ -449,13 +453,13 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     }
     private Task SaveSecondaryAsync() => CommitConfig(c =>
     {
-        if (!Auxiliary.HasValue || !SecondaryKey.HasValue) throw AllocationDiagnostics.Error("KEY_RULE_INVALID", "Allocation.RuleInvalid");
+        if (!Auxiliary.HasValue || !SecondaryKey.HasValue) return RejectConfiguration("KEY_RULE_INVALID", "Allocation.RuleInvalid");
         var r = new SecondaryRule(editingSecondary ?? new(Guid.NewGuid()), workspace!.Resources.Study.CompanyId, workspace.Resources.Model.Structure.Id,
             Auxiliary.Value, string.IsNullOrWhiteSpace(GroupName) ? "all" : GroupName.Trim(), SecondaryKey.Value, true);
         // Editing or assigning a second key for the same node/group replaces the old route.
         if (c.SecondaryRules.Any(old => old.IsActive && old.AuxiliaryNodeId == r.AuxiliaryNodeId &&
                 old.ComponentRoutingGroup != r.ComponentRoutingGroup))
-            throw AllocationDiagnostics.Error("KEY_AUXILIARY_MULTIPLE_KEYS", "Allocation.AuxiliaryMultipleKeys", r.AuxiliaryNodeId);
+            return RejectConfiguration("KEY_AUXILIARY_MULTIPLE_KEYS", "Allocation.AuxiliaryMultipleKeys", new DiagnosticArgument("entityId", DiagnosticArgumentType.Identifier, r.AuxiliaryNodeId.ToString()));
         return c.WithSecondaryRules(c.SecondaryRules.Where(old => old.Id != r.Id &&
             !(old.AuxiliaryNodeId == r.AuxiliaryNodeId &&
               old.ComponentRoutingGroup == r.ComponentRoutingGroup)).Append(r).ToArray());
@@ -464,19 +468,23 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         c.ExplicitAssignments.Where(a => a.PartId != Part).Append(new(Part!.Value, PartKey!.Value)).ToArray(), c.AbsoluteAssignments.Where(a => a.PartId != Part).ToArray(), c.Descriptions));
     private Task SaveAbsoluteAsync() => CommitConfig(c =>
     {
+        if (AbsoluteLines.Where(l => l.Included).Any(l => !numbers.TryCommit(l.Value, out _)))
+            return RejectConfiguration("KEY_NUMBER_INVALID", "Allocation.NumberInvalid");
         var selected = workspace!.Resources.Resources.SelectMany(r => r.Parts).Single(p => p.Id == Part);
         var absolute = new AbsolutePartAllocation(selected.Id, workspace!.Resources.EconomicRevision, selected.Amount,
             AbsoluteLines.Where(l => l.Included).Select(l => new AbsoluteAllocationLine(l.Id, new Money(Parse(l.Value), selected.Amount.Currency, selected.Amount.PrecisionPolicy))).ToArray());
         return new(c.PrimaryRules, c.SecondaryRules, c.ExplicitAssignments.Where(a => a.PartId != Part).ToArray(), c.AbsoluteAssignments.Where(a => a.PartId != Part).Append(absolute).ToArray(), c.Descriptions);
     });
-    private async Task<bool> CommitConfig(Func<AllocationConfiguration, AllocationConfiguration> change, bool allowClosed = false)
+    private async Task<bool> CommitConfig(Func<AllocationConfiguration, AllocationConfiguration?> change, bool allowClosed = false)
     {
         if ((!CanEdit && !(allowClosed && CanManagePrimary)) || workspace is null) return false;
-        return await Run(async () =>
+        var rejected = false;
+        var success = await Run(async () =>
         {
             var study = workspace.Resources.Study;
             var previous = workspace.Configuration;
             var config = change(previous);
+            if (config is null) { rejected = true; return; }
             // Legacy primary editor commands rebuild only the original five
             // fields. Never silently drop an explicit T11 group assignment.
             if (previous.SecondaryPartRoutingGroups is not null &&
@@ -498,7 +506,10 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             try { await studies.ApplyResourceReceiptAsync(receipt.ConfirmedStudy); }
             catch (Exception ex) when (ex is IOException or CompanyFileException or InvalidOperationException) { statusKey = "SavedRefreshPending"; }
         });
+        return success && !rejected;
     }
+    private AllocationConfiguration? RejectConfiguration(string code, string key, params DiagnosticArgument[] arguments)
+    { diagnostic = new(code, key, arguments); return null; }
     public Func<Task>? AfterPrimaryStateChanged { get; set; }
     private async Task TogglePrimaryAsync()
     {
