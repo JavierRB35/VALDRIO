@@ -61,6 +61,7 @@ public static class StableScrolling
             var target = hoveredGrid is { IsVisible: true, IsEnabled: true }
                 && ReferenceEquals(active, hoveredGrid)
                 && ReferenceEquals(PageScrollHost(Parent(hoveredGrid), horizontal), page)
+                    && (horizontal || ScrollViewer.GetVerticalScrollBarVisibility(hoveredGrid) != ScrollBarVisibility.Disabled)
                     ? Descendant<ScrollViewer>(hoveredGrid) ?? page
                     : page;
 

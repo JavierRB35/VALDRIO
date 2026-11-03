@@ -9,8 +9,8 @@
   <TabControl x:Name="ProductTabs" Grid.Row="1">
    <TabItem Header="{Binding [Catalog]}"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="12">
     <TextBlock Text="{Binding [CatalogHelp]}" TextWrapping="Wrap" Margin="0,0,0,12"/>
-    <WrapPanel Margin="0,0,0,12" VerticalAlignment="Center"><Button Content="{Binding [AddItem]}" Click="AddItem" IsEnabled="{Binding Writable}"/><Button Content="{Binding [ImportProducts]}" Click="ImportProducts" IsEnabled="{Binding Writable}" Margin="8,0,0,0"/><TextBlock Text="{Binding [ImportAs]}" VerticalAlignment="Center" Margin="12,0,6,0"/><ComboBox Width="150" ItemsSource="{Binding ImportKinds}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding ImportKind}"/><Button Content="{Binding [RemoveItem]}" Click="RemoveItem" IsEnabled="{Binding Writable}" Margin="8,0,0,0"/><Button Content="{Binding [Save]}" Click="Save" IsEnabled="{Binding Writable}" Margin="8,0,0,0"/></WrapPanel>
-    <DataGrid x:Name="CatalogGrid" FrozenColumnCount="1" ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" BeginningEdit="CatalogBeginningEdit" MinHeight="200"/>
+    <WrapPanel Margin="0,0,0,12" VerticalAlignment="Center"><Button Content="{Binding [AddItem]}" Click="AddItem" IsEnabled="{Binding Writable}"/><Button Content="{Binding [ImportProducts]}" Click="ImportProducts" IsEnabled="{Binding Writable}" Margin="8,0,0,0"/><TextBlock Text="{Binding [ImportAs]}" VerticalAlignment="Center" Margin="12,0,6,0"/><ComboBox Width="150" ItemsSource="{Binding ImportKinds}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding ImportKind}"/><Button Content="{Binding [RemoveItem]}" Click="RemoveItem" IsEnabled="{Binding Writable}" Margin="8,0,0,0"/><Button local:FixedPageActions.Pin="True" Content="{Binding [Save]}" Click="Save" IsEnabled="{Binding Writable}" Margin="8,0,0,0"/></WrapPanel>
+    <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="CatalogGrid" FrozenColumnCount="1" ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" BeginningEdit="CatalogBeginningEdit" MinHeight="200"/>
    </StackPanel></ScrollViewer></TabItem>
    <TabItem Header="{Binding [Recipe]}"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="12">
     <Border Style="{StaticResource Card}"><StackPanel>
@@ -23,13 +23,13 @@
       <StackPanel Margin="0,0,0,8"><TextBlock Text="{Binding [Note]}"/><TextBox Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" Width="450"/></StackPanel></WrapPanel>
      <TextBlock Text="{Binding [LineHelp]}" TextWrapping="Wrap" Margin="0,4,0,12"/>
      <WrapPanel IsEnabled="{Binding Editable}" Margin="0,0,0,8"><Button Content="{Binding [AddLine]}" Click="AddLine"/><Button Content="{Binding [RemoveLine]}" Click="RemoveLine" Margin="8,0,0,0"/></WrapPanel>
-     <DataGrid x:Name="LinesGrid" ItemsSource="{Binding Lines}" IsReadOnly="{Binding LinesReadOnly}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" MinHeight="160"/>
-     <WrapPanel Margin="0,12,0,0"><Button Content="{Binding [SaveDraft]}" Click="Save" IsEnabled="{Binding Editable}"/><Button Content="{Binding [Publish]}" Click="Publish" IsEnabled="{Binding Editable}" Style="{StaticResource Button.Primary}" Margin="8,0,0,0"/></WrapPanel>
+     <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="LinesGrid" ItemsSource="{Binding Lines}" IsReadOnly="{Binding LinesReadOnly}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" MinHeight="160"/>
+     <WrapPanel local:FixedPageActions.Pin="True" Margin="0,4,0,0"><Button Content="{Binding [SaveDraft]}" Click="Save" IsEnabled="{Binding Editable}"/><Button Content="{Binding [Publish]}" Click="Publish" IsEnabled="{Binding Editable}" Style="{StaticResource Button.Primary}" Margin="8,0,0,0"/></WrapPanel>
     </StackPanel></Border>
     <Border Style="{StaticResource Card}" Margin="0,12,0,0"><StackPanel>
      <WrapPanel><StackPanel Margin="0,0,12,8"><TextBlock Text="{Binding [OutputQuantity]}"/><TextBox Text="{Binding OutputQuantity, UpdateSourceTrigger=PropertyChanged}" Width="150"/></StackPanel><Button Content="{Binding [Preview]}" Click="Preview" Margin="0,16,0,8"/></WrapPanel>
-     <DataGrid x:Name="AnswersGrid" ItemsSource="{Binding Answers}" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column"/>
-     <Expander Header="{Binding [Detail]}" Margin="0,12,0,0"><DataGrid x:Name="ResultsGrid" ItemsSource="{Binding Results}" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False"/></Expander>
+     <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="AnswersGrid" ItemsSource="{Binding Answers}" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column"/>
+     <Expander Header="{Binding [Detail]}" Margin="0,12,0,0"><DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="ResultsGrid" ItemsSource="{Binding Results}" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False"/></Expander>
     </StackPanel></Border>
    </StackPanel></ScrollViewer></TabItem>
   </TabControl>

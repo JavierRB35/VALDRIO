@@ -249,6 +249,12 @@ public partial class App : System.Windows.Application
                     {
                         try
                         {
+                        if (e.Args.Contains("--single-scroll-checks-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("A synthetic source is required.");
+                            await window.RunSingleScrollChecks(captureDirectory, requestedPath, e.Args.Contains("--single-scroll-extras", StringComparer.Ordinal));
+                            Shutdown(0); return;
+                        }
                         if (e.Args.Contains("--consolidated-checks-only", StringComparer.Ordinal))
                         {
                             if (requestedPath is null) throw new InvalidOperationException("A synthetic source is required.");

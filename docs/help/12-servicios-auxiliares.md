@@ -26,3 +26,10 @@ Consultar los servicios auxiliares dentro de **Resultados y trazabilidad → Ser
 - Varios grupos económicos con la misma distribución física se muestran una vez. Si sus cantidades difieren, no se suman ni se elige un grupo arbitrariamente.
 - El informe no cambia clasificaciones, políticas, costes ni datos físicos. No obliga a reabrir un cierre.
 - Los costes y su conciliación están en las demás pestañas de Resultados. La circulación recíproca bruta no se suma como coste final.
+
+## Recorrido recomendado
+
+1. Finaliza correctamente el reparto secundario; el resultado se guarda automáticamente.
+2. Abre Resultados y trazabilidad del reparto y selecciona el informe Servicios auxiliares.
+3. Compara actividad normal, real, distribuida y pendiente, y consulta la capacidad no utilizada.
+4. Revisa las explicaciones si falta una base física compatible. El informe no exige introducir servicios ni reabrir repartos.

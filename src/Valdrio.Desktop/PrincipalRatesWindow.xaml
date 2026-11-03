@@ -18,7 +18,7 @@
      <StackPanel>
       <DockPanel Margin="0,0,0,8"><TextBlock Text="{Binding [Centers]}" FontSize="17" FontWeight="SemiBold"/>
        <CheckBox Content="{Binding [Attention]}" IsChecked="{Binding AttentionOnly}" Margin="20,0,0,0"/></DockPanel>
-      <DataGrid x:Name="CentersTable" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" AutoGenerateColumns="False"
+      <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="CentersTable" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" AutoGenerateColumns="False"
         IsReadOnly="True" CanUserAddRows="False" MinHeight="90" SelectionMode="Single" AutomationProperties.Name="{Binding [Centers]}">
        <DataGrid.Columns>
         <DataGridTextColumn x:Name="CenterColumn" Binding="{Binding Name}" Width="2*" ElementStyle="{StaticResource RateCell}"/>
@@ -34,7 +34,7 @@
      <StackPanel>
       <TextBlock Text="{Binding SelectedRow.Name}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource Brand.DeepGreen}" Margin="0,0,0,8"/>
       <TextBlock Text="{Binding SelectedSummary}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,0,0,12"/>
-      <DataGrid x:Name="AnswersTable" ItemsSource="{Binding Answers}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
+      <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="AnswersTable" ItemsSource="{Binding Answers}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
        HeadersVisibility="Column" RowHeaderWidth="0" AutomationProperties.Name="{Binding [Answers]}">
        <DataGrid.Columns>
         <DataGridTextColumn x:Name="QuestionColumn" Binding="{Binding Question}" Width="2*" ElementStyle="{StaticResource RateCell}"/>
@@ -45,7 +45,7 @@
     </Border>
     <Expander Header="{Binding [Detail]}" Margin="0,14,0,8">
      <StackPanel>
-      <DataGrid x:Name="DetailTable" ItemsSource="{Binding Details}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
+      <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="DetailTable" ItemsSource="{Binding Details}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
        <DataGrid.Columns>
         <DataGridTextColumn x:Name="SourceColumn" Binding="{Binding Source}" Width="*"/>
         <DataGridTextColumn x:Name="ComponentColumn" Binding="{Binding Component}" Width="*"/>

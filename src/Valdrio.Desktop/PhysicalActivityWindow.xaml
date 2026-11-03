@@ -18,7 +18,9 @@
    <RowDefinition Height="Auto"/>
    <RowDefinition Height="Auto"/>
   </Grid.RowDefinitions>
-  <StackPanel Grid.Row="0" Margin="0,0,0,6">
+  <ScrollViewer x:Name="PageScroll" Grid.Row="0" Grid.RowSpan="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+  <StackPanel>
+  <StackPanel Margin="0,0,0,6">
    <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource Brand.DeepGreen}"/>
    <Border Background="{DynamicResource Surface.Subtle}" BorderBrush="{DynamicResource Border.Soft}"
            BorderThickness="1" CornerRadius="5" Padding="8,4" Margin="0,6,0,2">
@@ -50,12 +52,13 @@
    <TextBlock Text="{Binding PendingRowsSummary}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
    <TextBlock Text="{Binding Help}" TextWrapping="Wrap" Margin="0,5,0,0"/>
   </StackPanel>
-  <DataGrid x:Name="ActivityTable" Grid.Row="1" ItemsSource="{Binding Rows}"
+
+  <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="ActivityTable" ItemsSource="{Binding Rows}"
             SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
             AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
             HeadersVisibility="Column" RowHeaderWidth="0"
             IsReadOnly="True" SelectionMode="Single"
-            HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Auto"
             AutomationProperties.Name="{Binding Title}">
    <DataGrid.Columns>
     <DataGridTextColumn x:Name="NodeColumn" Binding="{Binding Node}" IsReadOnly="True" Width="2*" ElementStyle="{StaticResource ActivityCell}"/>
@@ -78,6 +81,8 @@
     <DataGridTextColumn x:Name="StatusColumn" Binding="{Binding Status}" IsReadOnly="True" Width="*" ElementStyle="{StaticResource ActivityCell}"/>
    </DataGrid.Columns>
   </DataGrid>
+  </StackPanel>
+  </ScrollViewer>
   <StackPanel Grid.Row="3">
    <TextBlock Text="{Binding SelectionHelp}" TextWrapping="Wrap" Margin="0,0,0,8"/>
    <TextBlock Text="{Binding Feedback}"

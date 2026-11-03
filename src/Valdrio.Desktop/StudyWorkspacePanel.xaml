@@ -67,7 +67,7 @@
 
      <WrapPanel Margin="0,6,0,0">
       <Button x:Name="CreateStudyButton" Content="{Binding CreateLabel}" Command="{Binding CreateCommand}" TabIndex="70" Visibility="{Binding CreateVisibility}" FontWeight="SemiBold" Style="{StaticResource Button.Primary}"/>
-      <Button x:Name="SaveStudyButton" Content="{Binding SaveLabel}" Command="{Binding SaveCommand}" TabIndex="71" Visibility="{Binding SaveVisibility}" FontWeight="SemiBold" Style="{StaticResource Button.Primary}"/>
+      <Button local:FixedPageActions.Pin="True" x:Name="SaveStudyButton" Content="{Binding SaveLabel}" Command="{Binding SaveCommand}" TabIndex="71" Visibility="{Binding SaveVisibility}" FontWeight="SemiBold" Style="{StaticResource Button.Primary}"/>
       <Button x:Name="NewStudyButton" Content="{Binding NewLabel}" Command="{Binding NewCommand}" TabIndex="69"/>
      </WrapPanel>
      <Button x:Name="PhysicalActivityButton" Content="{Binding PhysicalOpenLabel}" IsEnabled="{Binding CanOpenPhysical}" Click="OpenPhysicalActivity" HorizontalAlignment="Left" TabIndex="72"/>

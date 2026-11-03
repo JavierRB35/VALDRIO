@@ -46,3 +46,5 @@ When auxiliary capacity is assessed, some cost may remain as capacity variance. 
 1. Check auxiliary nodes carrying costs and define service transfer keys towards principal nodes; self-allocation is allowed.
 2. Save destinations and percentages, run the calculation and inspect route viability, including closed loops.
 3. Review contributions, principal totals and the Pareto; resolve diagnostics before closing secondary allocation.
+
+Tables grow with their rows: use the outer page scroll. Save key and closure actions remain in the bottom bar and follow the active tab. Horizontal scrolling keeps columns accessible when the window is narrow.

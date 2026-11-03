@@ -21,3 +21,10 @@ Read **Results and traceability → Auxiliary services**. This is no longer an i
 
 ## 4. Use cases, validation and common errors
 Historical percentage keys do not record their physical meaning. Do not convert such percentages into hours automatically. Equal physical distributions in multiple economic groups count once; conflicting groups are not added or selected arbitrarily. Consultation never reopens allocations or changes their economic policy. Reciprocal gross circulation is not an additional final cost.
+
+## Recommended workflow
+
+1. Complete the secondary allocation successfully; its result is saved automatically.
+2. Open Allocation results and traceability and select the Auxiliary services report.
+3. Compare normal, actual, distributed and unassigned activity, and inspect unused capacity.
+4. Read the explanations when a compatible physical basis is missing. The report does not require entering services or reopening allocations.

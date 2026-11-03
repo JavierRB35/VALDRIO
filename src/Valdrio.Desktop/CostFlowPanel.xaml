@@ -31,13 +31,13 @@
  <TextBlock Text="{Binding ConcentrationThresholdHelp}" TextWrapping="Wrap"/><TextBox Text="{Binding ConcentrationThreshold,UpdateSourceTrigger=LostFocus,ValidatesOnExceptions=True}" Width="90" HorizontalAlignment="Left"/>
  <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="0,8"><Canvas x:Name="ConcentrationCanvas" Height="245"/></ScrollViewer>
  <TextBlock Text="{Binding [Filter]}"/><TextBox Text="{Binding ReportFilter,UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8"/>
- <DataGrid x:Name="ConcentrationGrid" ItemsSource="{Binding Concentration}" SelectionChanged="SelectConcentration" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" MinHeight="200" MaxHeight="400">
+ <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="ConcentrationGrid" ItemsSource="{Binding Concentration}" SelectionChanged="SelectConcentration" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" MinHeight="200">
  <DataGrid.Columns><DataGridTextColumn Binding="{Binding Node}" Width="2*"/><DataGridTextColumn Binding="{Binding Role}" Width="*"/><DataGridTextColumn Binding="{Binding Amount,StringFormat=N2}" Width="*"/><DataGridTextColumn Binding="{Binding Share}" Width="*"/><DataGridTextColumn Binding="{Binding Cumulative}" Width="*"/><DataGridTextColumn Binding="{Binding Behavior}" Width="2*"/></DataGrid.Columns>
  </DataGrid></StackPanel></TabItem><TabItem Header="{Binding [PrimaryGraph]}"><Border Style="{StaticResource Card}" Margin="0,0,0,16"><StackPanel>
    <CheckBox Content="{Binding [ShowAllFlowLabels]}" IsChecked="{Binding ShowAllFlowLabels}" Margin="0,0,0,8" />
    <TextBlock Text="{Binding [GraphTraceHelp]}" TextWrapping="Wrap" Margin="0,2,0,12" />
    <Expander Header="{Binding [PrimaryGraph]}" IsExpanded="True">
-    <ScrollViewer x:Name="PrimaryGraphViewport" SizeChanged="ResizeGraph" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="False" MaxHeight="565">
+    <ScrollViewer x:Name="PrimaryGraphViewport" SizeChanged="ResizeGraph" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" CanContentScroll="False">
      <Canvas x:Name="PrimaryGraphCanvas" Width="860" Height="360" Background="{DynamicResource Surface.Canvas}" ><Canvas.LayoutTransform><ScaleTransform ScaleX="{Binding Value,ElementName=FlowZoom}" ScaleY="{Binding Value,ElementName=FlowZoom}"/></Canvas.LayoutTransform></Canvas>
     </ScrollViewer>
    </Expander>
@@ -45,7 +45,7 @@
    <Expander Header="{Binding [SecondaryGraph]}" IsExpanded="True">
     <StackPanel>
      <TextBlock Text="{Binding [GrossGraphHelp]}" TextWrapping="Wrap" Margin="0,4,0,12" />
-     <ScrollViewer x:Name="SecondaryGraphViewport" SizeChanged="ResizeGraph" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="False" MaxHeight="640">
+     <ScrollViewer x:Name="SecondaryGraphViewport" SizeChanged="ResizeGraph" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" CanContentScroll="False">
       <Canvas x:Name="SecondaryGraphCanvas" Width="860" Height="430" Background="{DynamicResource Surface.Canvas}" ><Canvas.LayoutTransform><ScaleTransform ScaleX="{Binding Value,ElementName=FlowZoom}" ScaleY="{Binding Value,ElementName=FlowZoom}"/></Canvas.LayoutTransform></Canvas>
      </ScrollViewer>
     </StackPanel>
@@ -53,7 +53,7 @@
   </StackPanel></Border></TabItem><TabItem Header="{Binding [CenterBalances]}"><Border Style="{StaticResource Card}" Margin="0,0,0,16"><StackPanel>
    <TextBlock Text="{Binding [CenterBalances]}" Style="{StaticResource Text.Section}" />
    <TextBlock Text="{Binding [BalanceHelp]}" Margin="0,0,0,12" />
-   <DataGrid x:Name="CenterBalanceGrid" ItemsSource="{Binding CenterBalances}" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" MaxHeight="300" MinHeight="90" AutomationProperties.Name="{Binding [CenterBalances]}">
+   <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="CenterBalanceGrid" ItemsSource="{Binding CenterBalances}" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" MinHeight="90" AutomationProperties.Name="{Binding [CenterBalances]}">
     <DataGrid.Columns>
      <DataGridTextColumn Binding="{Binding Label}" Width="*" MinWidth="220" ElementStyle="{StaticResource Text.TableText}" />
      <DataGridTextColumn Binding="{Binding Primary}" SortMemberPath="PrimaryValue" Width="180" ElementStyle="{StaticResource Text.TableNumber}" />
@@ -66,7 +66,7 @@
    <TextBlock Text="{Binding [BalancePrecision]}" Margin="0,8" />
    <Expander Header="{Binding [NodeBalances]}" IsExpanded="False" Margin="0,8,0,0"><StackPanel>
     <TextBlock Text="{Binding [BalanceTraceHelp]}" Margin="0,8" />
-    <DataGrid x:Name="NodeBalanceGrid" ItemsSource="{Binding NodeBalances}" SelectedItem="{Binding SelectedBalance}" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" MaxHeight="300" MinHeight="90" AutomationProperties.Name="{Binding [NodeBalances]}">
+    <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="NodeBalanceGrid" ItemsSource="{Binding NodeBalances}" SelectedItem="{Binding SelectedBalance}" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" MinHeight="90" AutomationProperties.Name="{Binding [NodeBalances]}">
      <DataGrid.Columns>
       <DataGridTextColumn Binding="{Binding Label}" Width="*" MinWidth="250" ElementStyle="{StaticResource Text.TableText}" />
       <DataGridTextColumn Binding="{Binding Role}" Width="115" />
@@ -80,7 +80,7 @@
   </StackPanel></Border></TabItem><TabItem Header="{Binding [Details]}"><Border Style="{StaticResource Card}" Margin="0,0,0,16"><StackPanel>
    <DockPanel><Button DockPanel.Dock="Right" Content="{Binding [ClearSelection]}" Command="{Binding ClearSelectionCommand}" /><TextBlock Text="{Binding [Details]}" FontWeight="SemiBold" /></DockPanel>
    <TextBlock Text="{Binding Selection}" TextWrapping="Wrap" Margin="0,8" />
-   <DataGrid x:Name="DetailsGrid" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" IsReadOnly="True" AutoGenerateColumns="False" Height="260" CanUserAddRows="False" SelectionMode="Single">
+   <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="DetailsGrid" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single">
     <DataGrid.Columns>
      <DataGridTextColumn Binding="{Binding Stage}" Width="135" /><DataGridTextColumn Binding="{Binding Resource}" Width="200" />
      <DataGridTextColumn Binding="{Binding Source}" Width="240" /><DataGridTextColumn Binding="{Binding Destination}" Width="240" />
@@ -89,12 +89,12 @@
     </DataGrid.Columns>
    </DataGrid>
   </StackPanel></Border></TabItem><TabItem Header="{Binding [Reconciliation]}"><Border Style="{StaticResource Card}"><StackPanel><TextBlock Text="{Binding [Reconciliation]}" FontWeight="SemiBold" /><TextBlock Text="{Binding [ReconcileHelp]}" TextWrapping="Wrap" Margin="0,8" />
-   <DataGrid x:Name="ReconciliationGrid" ItemsSource="{Binding Reconciliation}" IsReadOnly="True" AutoGenerateColumns="False" MaxHeight="260" MinHeight="100" CanUserAddRows="False">
+   <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="ReconciliationGrid" ItemsSource="{Binding Reconciliation}" IsReadOnly="True" AutoGenerateColumns="False" MinHeight="100" CanUserAddRows="False">
     <DataGrid.Columns><DataGridTextColumn Binding="{Binding Resource}" Width="230" /><DataGridTextColumn Binding="{Binding Source}" Width="160" ElementStyle="{StaticResource Text.TableNumber}" /><DataGridTextColumn Binding="{Binding Destination}" Width="160" ElementStyle="{StaticResource Text.TableNumber}" /><DataGridTextColumn Binding="{Binding Rule}" Width="160" ElementStyle="{StaticResource Text.TableNumber}" /><DataGridTextColumn Binding="{Binding Assigned}" Width="160" ElementStyle="{StaticResource Text.TableNumber}" /><DataGridTextColumn Binding="{Binding Received}" Width="160" ElementStyle="{StaticResource Text.TableNumber}" /><DataGridTextColumn Binding="{Binding Terminal}" Width="160" ElementStyle="{StaticResource Text.TableNumber}" /></DataGrid.Columns>
    </DataGrid>
   </StackPanel></Border></TabItem><TabItem Header="{Binding [Aux.Title]}" IsSelected="{Binding ShowAuxiliaryReport,Mode=TwoWay}"><StackPanel Margin="12">
 <TextBlock Text="{Binding [Aux.Help]}" TextWrapping="Wrap" Margin="0,0,0,12"/>
-<DataGrid x:Name="AuxiliaryReportGrid" ItemsSource="{Binding AuxiliaryReportRows}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+<DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="AuxiliaryReportGrid" ItemsSource="{Binding AuxiliaryReportRows}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
 <DataGrid.Columns><DataGridTextColumn Binding="{Binding CenterSummary}" MinWidth="60" Width="2*" ElementStyle="{StaticResource Text.TableText}"/><DataGridTextColumn Binding="{Binding Normal}" MinWidth="60" Width="*" ElementStyle="{StaticResource Text.TableText}"/><DataGridTextColumn Binding="{Binding Real}" MinWidth="60" Width="*" ElementStyle="{StaticResource Text.TableText}"/><DataGridTextColumn Binding="{Binding Distributed}" MinWidth="60" Width="*" ElementStyle="{StaticResource Text.TableText}"/><DataGridTextColumn Binding="{Binding Unassigned}" MinWidth="60" Width="*" ElementStyle="{StaticResource Text.TableText}"/><DataGridTextColumn Binding="{Binding Idle}" MinWidth="60" Width="*" ElementStyle="{StaticResource Text.TableText}"/></DataGrid.Columns></DataGrid>
 <ItemsControl ItemsSource="{Binding AuxiliaryReportRows}" Margin="0,12,0,0"><ItemsControl.ItemTemplate><DataTemplate><StackPanel Margin="0,0,0,12"><TextBlock Text="{Binding Center}" FontWeight="SemiBold"/><TextBlock Text="{Binding Detail}" TextWrapping="Wrap"/></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></StackPanel></TabItem></TabControl></StackPanel>
 </UserControl>

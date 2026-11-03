@@ -54,3 +54,5 @@ El gráfico ordena los nodos principales con su coste final, sin volver a sumar 
 1. Comprueba los nodos auxiliares con coste y define las claves que transfieren servicios a los nodos principales; la autoprestación está permitida.
 2. Guarda destinos y porcentajes, ejecuta el cálculo y revisa la viabilidad de las rutas, incluidos posibles circuitos sin salida.
 3. Contrasta el detalle de aportaciones, totales por principal y Pareto; resuelve los diagnósticos antes de cerrar el reparto secundario.
+
+Las tablas crecen con sus filas: utiliza el desplazamiento exterior de la página. Guardar claves y las acciones de cierre permanecen en la barra inferior; cambian con la pestaña activa. El desplazamiento horizontal permite consultar las columnas que no caben.

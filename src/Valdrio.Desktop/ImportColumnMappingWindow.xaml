@@ -46,16 +46,7 @@
   </Style>
  </local:IntegratedWorkspaceWindow.Resources>
  <DockPanel Margin="14">
-  <StackPanel DockPanel.Dock="Top">
-   <TextBlock Text="{Binding Target}" FontWeight="SemiBold"/>
-   <TextBlock Text="{Binding PrimaryClosedNotice}" TextWrapping="Wrap" Foreground="{DynamicResource Brand.Red}" Margin="0,5,0,5"
-              Visibility="{Binding HasClosedPrimaryDestination,Converter={StaticResource Visible}}" AutomationProperties.LiveSetting="Assertive"/>
-   <TextBlock Text="{Binding CurrencyImportNotice}" TextWrapping="Wrap" Foreground="{DynamicResource Text.Primary}" Margin="0,4,0,6"/>
-   <TextBlock TextWrapping="Wrap" Margin="0,4,0,6" AutomationProperties.LiveSetting="Polite" x:Name="ImportStepHelp"/>
-  </StackPanel>
   <StackPanel DockPanel.Dock="Bottom">
-   <TextBlock Text="{Binding ImportImpact}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,8"/>
-   <TextBlock Text="{Binding OperationSummary}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,4,0,8"/>
    <TextBlock Text="{Binding UserStatus}" AutomationProperties.LiveSetting="Polite">
     <TextBlock.Style>
      <Style TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
@@ -78,9 +69,19 @@
     <Button x:Name="CloseMappingButton" Content="{Binding [Close]}" Click="CloseMapping" IsEnabled="{Binding IsIdle}"/>
    </WrapPanel>
   </StackPanel>
+  <ScrollViewer x:Name="MappingPageScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel>
+  <StackPanel>
+   <TextBlock Text="{Binding Target}" FontWeight="SemiBold"/>
+   <TextBlock Text="{Binding PrimaryClosedNotice}" TextWrapping="Wrap" Foreground="{DynamicResource Brand.Red}" Margin="0,5,0,5"
+              Visibility="{Binding HasClosedPrimaryDestination,Converter={StaticResource Visible}}" AutomationProperties.LiveSetting="Assertive"/>
+   <TextBlock Text="{Binding CurrencyImportNotice}" TextWrapping="Wrap" Foreground="{DynamicResource Text.Primary}" Margin="0,4,0,6"/>
+   <TextBlock TextWrapping="Wrap" Margin="0,4,0,6" AutomationProperties.LiveSetting="Polite" x:Name="ImportStepHelp"/>
+   <TextBlock Text="{Binding ImportImpact}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,8"/>
+   <TextBlock Text="{Binding OperationSummary}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,4,0,8"/>
+  </StackPanel>
   <TabControl SelectionChanged="ImportStepChanged" x:Name="ImportSteps" IsEnabled="{Binding IsIdle}">
    <TabItem x:Name="ImportTab0">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
      <StackPanel Margin="4,8,4,8">
       <TextBlock Text="{Binding [FileStepTitle]}" Style="{StaticResource StepTitle}"/>
       <TextBlock Text="{Binding [FileStepHelp]}" Style="{StaticResource StepHelp}"/>
@@ -172,7 +173,7 @@
     </ScrollViewer>
    </TabItem>
    <TabItem x:Name="ImportTab1" IsEnabled="{Binding HasColumns}">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
      <StackPanel Margin="4,8,4,8">
       <TextBlock Text="{Binding [ColumnsStepTitle]}" Style="{StaticResource StepTitle}"/>
       <TextBlock Text="{Binding [ColumnsStepHelp]}" Style="{StaticResource StepHelp}"/>
@@ -258,7 +259,7 @@
 
       <TextBlock Text="{Binding FriendlySummary}" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite"/>
       <TextBlock Text="{Binding [PreviewHelp]}"/>
-      <DataGrid x:Name="PreviewGrid" ItemsSource="{Binding Preview}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="Auto" MinHeight="280" MaxHeight="590" FlowDirection="LeftToRight" EnableRowVirtualization="True">
+      <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="PreviewGrid" ItemsSource="{Binding Preview}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" MinHeight="280" FlowDirection="LeftToRight" EnableRowVirtualization="True">
        <DataGrid.ColumnHeaderStyle>
         <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
          <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -287,7 +288,7 @@
     </ScrollViewer>
    </TabItem>
    <TabItem x:Name="ImportTab2" IsEnabled="{Binding IsReady}">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
      <StackPanel Margin="4,8,4,8">
       <TextBlock Text="{Binding [RecordsStepTitle]}" Style="{StaticResource StepTitle}"/>
       <TextBlock Text="{Binding [RecordsStepHelp]}" Style="{StaticResource StepHelp}"/>
@@ -298,7 +299,7 @@
         <Button x:Name="SelectAllRecordsButton" Content="{Binding [SelectAllRecords]}" Command="{Binding SelectAllRecordsCommand}"/>
         <Button x:Name="DeselectAllRecordsButton" Content="{Binding [DeselectAllRecords]}" Command="{Binding DeselectAllRecordsCommand}"/>
        </WrapPanel>
-       <DataGrid local:FieldHelp.Key="Records" x:Name="AccountSelectionGrid" ItemsSource="{Binding AccountChoices}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Height="230" FlowDirection="LeftToRight" EnableRowVirtualization="True" AutomationProperties.Name="{Binding [SelectAccounts]}">
+       <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" local:FieldHelp.Key="Records" x:Name="AccountSelectionGrid" ItemsSource="{Binding AccountChoices}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" FlowDirection="LeftToRight" EnableRowVirtualization="True" AutomationProperties.Name="{Binding [SelectAccounts]}">
         <DataGrid.Columns>
          <DataGridTemplateColumn Width="95">
           <DataGridTemplateColumn.CellTemplate>
@@ -317,7 +318,7 @@
        <TextBlock Text="{Binding [SelectionPreviewTitle]}" FontWeight="SemiBold"/>
        <TextBlock Text="{Binding [SelectionPreviewHelp]}"/>
        <TextBlock x:Name="SelectionReconciliationText" Text="{Binding SelectionReconciliation}" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite"/>
-       <DataGrid x:Name="SelectionPreviewGrid" ColumnHeaderStyle="{StaticResource WrappedHeader}" CanUserSortColumns="True" GridLinesVisibility="Vertical" VerticalGridLinesBrush="{DynamicResource Border.Soft}" ItemsSource="{Binding SelectionPreview}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="170" FlowDirection="LeftToRight" EnableRowVirtualization="True" AutomationProperties.Name="{Binding [SelectionPreviewTitle]}">
+       <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="SelectionPreviewGrid" ColumnHeaderStyle="{StaticResource WrappedHeader}" CanUserSortColumns="True" GridLinesVisibility="Vertical" VerticalGridLinesBrush="{DynamicResource Border.Soft}" ItemsSource="{Binding SelectionPreview}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" FlowDirection="LeftToRight" EnableRowVirtualization="True" AutomationProperties.Name="{Binding [SelectionPreviewTitle]}">
         <DataGrid.Columns>
          <DataGridTextColumn Binding="{Binding Code}" Width="135"/>
          <DataGridTextColumn Binding="{Binding Description}" Width="2*"/>
@@ -330,14 +331,14 @@
     </ScrollViewer>
    </TabItem>
    <TabItem x:Name="ImportTab3" IsEnabled="{Binding CanOpenReview}">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
      <StackPanel Margin="4,8,4,8">
       <TextBlock Text="{Binding [ReviewStepTitle]}" Style="{StaticResource StepTitle}"/>
       <TextBlock Text="{Binding [ReviewStepHelp]}" Style="{StaticResource StepHelp}"/>
       <TextBlock Text="{Binding ReviewSaveRequirement}" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite"/>
       <StackPanel x:Name="ConversionPreviewPanel" Visibility="{Binding HasConversion,Converter={StaticResource Visible}}">
        <TextBlock Text="{Binding [ConversionPreview]}" FontWeight="SemiBold"/>
-       <DataGrid x:Name="ConversionGrid" ItemsSource="{Binding ConversionRows}" AutoGenerateColumns="False" ColumnHeaderStyle="{StaticResource WrappedHeader}" IsReadOnly="True" CanUserAddRows="False" Height="220" FlowDirection="LeftToRight">
+       <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="ConversionGrid" ItemsSource="{Binding ConversionRows}" AutoGenerateColumns="False" ColumnHeaderStyle="{StaticResource WrappedHeader}" IsReadOnly="True" CanUserAddRows="False" FlowDirection="LeftToRight">
         <DataGrid.Columns>
          <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding Record}" Width="100"/>
          <DataGridTextColumn ElementStyle="{StaticResource WrappedCell}" Binding="{Binding DocumentDate}" Width="110"/>
@@ -353,7 +354,7 @@
       </StackPanel>
       <TextBlock x:Name="ConfirmationSummaryText" Text="{Binding ConfirmationSummary}" FontWeight="SemiBold"/>
       <TextBlock Text="{Binding PreparationIssues}" Foreground="{DynamicResource Brand.Red}"/>
-      <DataGrid x:Name="ComparisonGrid" ColumnHeaderStyle="{StaticResource WrappedHeader}" CanUserSortColumns="True" GridLinesVisibility="Vertical" VerticalGridLinesBrush="{DynamicResource Border.Soft}" ItemsSource="{Binding ComparisonRows}" Visibility="{Binding HasComparisonRows,Converter={StaticResource Visible}}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="150" FlowDirection="LeftToRight">
+      <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="ComparisonGrid" ColumnHeaderStyle="{StaticResource WrappedHeader}" CanUserSortColumns="True" GridLinesVisibility="Vertical" VerticalGridLinesBrush="{DynamicResource Border.Soft}" ItemsSource="{Binding ComparisonRows}" Visibility="{Binding HasComparisonRows,Converter={StaticResource Visible}}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" FlowDirection="LeftToRight">
        <DataGrid.Columns>
         <DataGridTextColumn Binding="{Binding Code}" Width="*"/>
         <DataGridTextColumn Binding="{Binding Description}" Width="2*"/>
@@ -365,7 +366,7 @@
       </DataGrid>
       <StackPanel Visibility="{Binding HasPreparedGroups,Converter={StaticResource Visible}}">
        <TextBlock Text="{Binding [GroupedPreview]}" FontWeight="SemiBold"/>
-       <DataGrid x:Name="GroupedPreviewGrid" ColumnHeaderStyle="{StaticResource WrappedHeader}" CanUserSortColumns="True" GridLinesVisibility="Vertical" VerticalGridLinesBrush="{DynamicResource Border.Soft}" ItemsSource="{Binding PreparedGroups}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="170" FlowDirection="LeftToRight" EnableRowVirtualization="True">
+       <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="GroupedPreviewGrid" ColumnHeaderStyle="{StaticResource WrappedHeader}" CanUserSortColumns="True" GridLinesVisibility="Vertical" VerticalGridLinesBrush="{DynamicResource Border.Soft}" ItemsSource="{Binding PreparedGroups}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" FlowDirection="LeftToRight" EnableRowVirtualization="True">
         <DataGrid.Columns>
          <DataGridTextColumn Binding="{Binding Code}" Width="135"/>
          <DataGridTextColumn Binding="{Binding Description}" Width="2*"/>
@@ -386,5 +387,6 @@
     </ScrollViewer>
    </TabItem>
   </TabControl>
+  </StackPanel></ScrollViewer>
  </DockPanel>
 </local:IntegratedWorkspaceWindow>

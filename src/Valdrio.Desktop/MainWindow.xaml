@@ -194,6 +194,7 @@
      <Setter Property="Margin" Value="16,0,16,8"/>
     </DataTrigger></Style.Triggers>
    </Style></StackPanel.Style>
+   <WrapPanel x:Name="FixedPageActionsHost" HorizontalAlignment="Right"/>
    <ContentControl x:Name="AllocationActionsHost" Visibility="Collapsed"/>
    <Grid>
     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>

@@ -65,3 +65,5 @@ El gráfico ordena todos los nodos que reciben coste en el primario de mayor a m
 1. Crea o selecciona las claves de reparto y verifica el criterio y los destinos de cada cuenta o recurso.
 2. Asigna las claves en las tablas, guarda los cambios y calcula solo cuando la cobertura y los porcentajes sean válidos.
 3. Examina importes por nodo y el Pareto (barras de coste, línea de porcentaje acumulado); consulta el detalle y cierra el reparto cuando esté revisado.
+
+Las tablas crecen con sus filas: utiliza el desplazamiento exterior de la página. Guardar claves y las acciones de cierre permanecen en la barra inferior; cambian con la pestaña activa. El desplazamiento horizontal permite consultar las columnas que no caben.

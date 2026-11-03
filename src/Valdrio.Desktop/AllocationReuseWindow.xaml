@@ -5,6 +5,8 @@
  WindowStartupLocation="CenterOwner" Background="{DynamicResource Surface.Canvas}">
  <Grid Margin="24">
   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <ScrollViewer x:Name="PageScroll" Grid.Row="0" Grid.RowSpan="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+  <StackPanel>
   <StackPanel Margin="0,0,0,16">
    <TextBlock Text="{Binding Title}" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource Brand.DeepGreen}"/>
    <TextBlock Text="{Binding TargetLabel}" Margin="0,6" FontWeight="SemiBold"/>
@@ -14,7 +16,8 @@
     <ComboBox ItemsSource="{Binding Sources}" DisplayMemberPath="Label" SelectedItem="{Binding Source}" AutomationProperties.Name="{Binding SourceLabel}"/>
    </DockPanel>
   </StackPanel>
-  <DataGrid x:Name="Table" Grid.Row="1" ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+
+  <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="Table" ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
    <DataGrid.Columns>
     <DataGridTemplateColumn Width="60"><DataGridTemplateColumn.CellTemplate><DataTemplate>
      <CheckBox IsChecked="{Binding Selected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanSelect}" HorizontalAlignment="Center" AutomationProperties.Name="{Binding Selector}"/>
@@ -26,6 +29,8 @@
     </DataGridTextColumn>
    </DataGrid.Columns>
   </DataGrid>
+  </StackPanel>
+  </ScrollViewer>
   <StackPanel Grid.Row="2" Margin="0,12,0,0">
    <CheckBox Content="{Binding ReplaceLabel}" IsChecked="{Binding ReplaceConflicts}" Margin="0,0,0,8"/>
    <TextBlock Text="{Binding Feedback}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" Margin="0,0,0,12"/>

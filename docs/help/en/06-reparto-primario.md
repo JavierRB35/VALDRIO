@@ -56,3 +56,5 @@ An explicit individual key overrides automatic rules. Among rules, exact account
 1. Create or select allocation keys and verify each account or resource's driver and destinations.
 2. Assign keys in the tables, save changes and calculate only after coverage and percentages are valid.
 3. Inspect cost by node and the Pareto (cost bars and cumulative-percentage line); review details and close primary allocation when satisfied.
+
+Tables grow with their rows: use the outer page scroll. Save key and closure actions remain in the bottom bar and follow the active tab. Horizontal scrolling keeps columns accessible when the window is narrow.

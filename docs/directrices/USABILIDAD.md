@@ -156,3 +156,10 @@ temporales de otro registro.
 
 La integración actual y sus límites están documentados en la
 [auditoría de 20/10/2026](../evidencias/auditoria-20261020/README.md).
+
+
+## Desplazamiento exterior y acciones fijas — decisión del propietario, 2026-11-03
+
+- En primario, secundario y el resto de pantallas de trabajo, las tablas crecen con sus filas y el desplazamiento vertical pertenece a la página/pestaña. Seleccionar una tabla no debe atrapar la rueda: esta decisión sustituye la excepción de scroll interior del 2026-10-11.
+- Las acciones inferiores de guardar/publicar/cerrar/cancelar permanecen visibles. Las acciones de una pestaña solo se muestran mientras esa pestaña está activa, conservando permisos, validaciones y comandos. La nueva posición fija de guardar claves sustituye su posición bajo los destinos.
+- Mantener el desplazamiento horizontal necesario para columnas o diagramas. Los desplegables y editores de texto conservan su desplazamiento propio; no son una segunda zona de trabajo.

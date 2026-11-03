@@ -141,7 +141,7 @@
 
 </StackPanel>
           <WrapPanel Margin="0,6,0,0">
-           <Button x:Name="SaveCenterButton" Content="{Binding CenterPrimaryActionLabel}" Command="{Binding SaveCenterFormCommand}" TabIndex="27" FontWeight="SemiBold" Style="{StaticResource Button.Primary}"/>
+           <Button local:FixedPageActions.Pin="True" x:Name="SaveCenterButton" Content="{Binding CenterPrimaryActionLabel}" Command="{Binding SaveCenterFormCommand}" TabIndex="27" FontWeight="SemiBold" Style="{StaticResource Button.Primary}"/>
            <Button x:Name="CreateCenterButton" Visibility="{Binding NewCenterVisibility}" Content="{Binding NewCenterLabel}" Command="{Binding NewCenterCommand}" TabIndex="28"/>
           </WrapPanel>
           <TextBlock Text="{Binding CenterFeedback}" Style="{StaticResource InlineStatus}" AutomationProperties.LiveSetting="Assertive"/>
@@ -157,7 +157,7 @@
          <TextBlock Text="{Binding CenterListTitle}" Style="{StaticResource SectionTitle}"/>
          <TextBlock Text="{Binding CenterListHelp}" Style="{StaticResource SectionHelp}"/><TextBlock Text="{Binding TableEditHelp}" Style="{StaticResource SectionHelp}"/>
          <ComboBox x:Name="MasterBox" ItemsSource="{Binding Centers}" SelectedItem="{Binding Master}" Visibility="Collapsed"/>
-         <DataGrid x:Name="CenterGrid" ItemsSource="{Binding Centers}" SelectedItem="{Binding Master}" IsReadOnly="{Binding CentersReadOnly}" BeginningEdit="BeginStructureCellEdit" CellEditEnding="EndStructureCellEdit" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" MinHeight="170" MaxHeight="320" HeadersVisibility="Column" local:FieldHelp.Key="Master">
+         <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="CenterGrid" ItemsSource="{Binding Centers}" SelectedItem="{Binding Master}" IsReadOnly="{Binding CentersReadOnly}" BeginningEdit="BeginStructureCellEdit" CellEditEnding="EndStructureCellEdit" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" MinHeight="170" HeadersVisibility="Column" local:FieldHelp.Key="Master">
           <DataGrid.Columns>
            <DataGridTemplateColumn Width="140" SortMemberPath="Value.Code">
  <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource CellText}">
@@ -217,7 +217,7 @@
       <TextBlock Text="{Binding NodeListHelp}" Style="{StaticResource SectionHelp}"/><TextBlock Text="{Binding TableEditHelp}" Style="{StaticResource SectionHelp}"/>
 
       <ComboBox x:Name="NodeBox" ItemsSource="{Binding Nodes}" SelectedItem="{Binding SelectedNode}" Visibility="Collapsed"/>
-      <DataGrid x:Name="NodeSummary" ItemsSource="{Binding Nodes}" SelectedItem="{Binding SelectedNode}" IsReadOnly="{Binding NodesReadOnly}" BeginningEdit="BeginStructureCellEdit" CellEditEnding="EndStructureCellEdit" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" MinHeight="180" MaxHeight="330" IsEnabled="{Binding CanSelectNode}" local:FieldHelp.Key="SelectedNode">
+      <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="NodeSummary" ItemsSource="{Binding Nodes}" SelectedItem="{Binding SelectedNode}" IsReadOnly="{Binding NodesReadOnly}" BeginningEdit="BeginStructureCellEdit" CellEditEnding="EndStructureCellEdit" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" MinHeight="180" IsEnabled="{Binding CanSelectNode}" local:FieldHelp.Key="SelectedNode">
        <DataGrid.Columns>
         <DataGridTemplateColumn Width="220" SortMemberPath="CenterLabel">
  <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource CellText}">
@@ -320,7 +320,7 @@
 
         <TextBlock Text="{Binding NodePersistenceHelp}" Style="{StaticResource SectionHelp}"/>
         <WrapPanel>
-         <Button x:Name="ApplyNodeButton" Content="{Binding NodePrimaryActionLabel}" Command="{Binding SaveNodeCommand}" TabIndex="48" FontWeight="SemiBold" Style="{StaticResource Button.Primary}"/>
+         <Button local:FixedPageActions.Pin="True" x:Name="ApplyNodeButton" Content="{Binding NodePrimaryActionLabel}" Command="{Binding SaveNodeCommand}" TabIndex="48" FontWeight="SemiBold" Style="{StaticResource Button.Primary}"/>
          <Button x:Name="NewNodeButton" Content="{Binding NewNodeLabel}" Command="{Binding NewNodeCommand}" TabIndex="49"/>
          <Button x:Name="RemoveNodeButton" Content="{Binding RemoveLabel}" Command="{Binding DeleteNodeCommand}" TabIndex="50" Foreground="{DynamicResource Brand.Red}"/>
         </WrapPanel>
@@ -334,7 +334,7 @@
      <StackPanel Margin="10">
       <TextBlock Text="{Binding ReviewModelHelp}" Style="{StaticResource SectionHelp}"/>
 
-      <WrapPanel>
+      <WrapPanel local:FixedPageActions.Pin="True">
        <Button x:Name="SaveModelButton" Content="{Binding SaveLabel}" Command="{Binding SaveCommand}" TabIndex="34"/>
        <Button x:Name="ValidateModelButton" Content="{Binding ValidateLabel}" Command="{Binding ValidateCommand}" TabIndex="35"/>
        <Button x:Name="PublishModelButton" Content="{Binding PublishLabel}" Command="{Binding PublishCommand}" TabIndex="36" Style="{StaticResource Button.Primary}"/>

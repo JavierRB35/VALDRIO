@@ -110,11 +110,12 @@ public sealed class ParetoChart : UserControl
         }
         var details = new DataGrid
         {
-            AutoGenerateColumns = false, IsReadOnly = true, CanUserAddRows = false, MaxHeight = 260,
+            AutoGenerateColumns = false, IsReadOnly = true, CanUserAddRows = false,
             ItemsSource = points.Select(x => new Detail(x.Label, vm.ParetoMoney(x.Amount),
                 x.CumulativePercent is { } value ? value.ToString("0.##", vm.ParetoFormat) + " %" : "—",
                 x.Amount, x.CumulativePercent)).ToArray()
         };
+        ScrollViewer.SetVerticalScrollBarVisibility(details, ScrollBarVisibility.Disabled);
         details.Columns.Add(new DataGridTextColumn { Header = vm["ParetoNode"], Binding = new Binding("Node"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
         details.Columns.Add(new DataGridTextColumn { Header = vm["PrimaryAmount"], Binding = new Binding("Cost"), SortMemberPath = "Amount", Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
         details.Columns.Add(new DataGridTextColumn { Header = vm["ParetoCumulative"], Binding = new Binding("Cumulative"), SortMemberPath = "Percentage", Width = new DataGridLength(1, DataGridLengthUnitType.Star) });

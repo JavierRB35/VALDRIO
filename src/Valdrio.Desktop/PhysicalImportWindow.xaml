@@ -11,12 +11,14 @@
    <RowDefinition Height="Auto"/>
    <RowDefinition Height="Auto"/>
   </Grid.RowDefinitions>
-  <StackPanel Grid.Row="0">
+  <ScrollViewer x:Name="PageScroll" Grid.Row="0" Grid.RowSpan="3" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+  <StackPanel>
+  <StackPanel>
    <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold"
               Foreground="{DynamicResource Brand.DeepGreen}"/>
    <TextBlock Text="{Binding Help}" TextWrapping="Wrap" Margin="0,8,0,12"/>
   </StackPanel>
-  <WrapPanel Grid.Row="1" Margin="0,0,0,10">
+  <WrapPanel Margin="0,0,0,10">
    <Button Content="{Binding TemplateLabel}" Click="SaveTemplate" Margin="0,0,8,0"/>
    <Button Content="{Binding BrowseLabel}" Click="Browse" Margin="0,0,8,0"/>
    <TextBlock Text="{Binding Path}" MaxWidth="280" TextTrimming="CharacterEllipsis"
@@ -29,7 +31,8 @@
              Width="65" Margin="0,0,12,0"/>
    <Button Content="{Binding PreviewLabel}" Click="Preview" Margin="0,0,8,0"/>
   </WrapPanel>
-  <DataGrid x:Name="PreviewTable" Grid.Row="2" ItemsSource="{Binding Lines}" AutoGenerateColumns="False"
+
+  <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="PreviewTable" ItemsSource="{Binding Lines}" AutoGenerateColumns="False"
             CanUserAddRows="False" CanUserDeleteRows="False" RowHeaderWidth="0"
             SelectionMode="Single" HeadersVisibility="Column"
             HorizontalScrollBarVisibility="Auto">
@@ -45,6 +48,8 @@
     <DataGridTextColumn Binding="{Binding Warning}" IsReadOnly="True" Width="2*" x:Name="WarningColumn"/>
    </DataGrid.Columns>
   </DataGrid>
+  </StackPanel>
+  </ScrollViewer>
   <StackPanel Grid.Row="3" Margin="0,12,0,8">
    <TextBlock Text="{Binding CorrectionLabel}"/>
    <TextBox Text="{Binding CorrectionReason,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
