@@ -22,6 +22,10 @@ public sealed partial class CompositionItemRow : ObservableObject
     [ObservableProperty] private bool active = true;
     [ObservableProperty] private decimal? referenceUnitCost;
     [ObservableProperty] private string referenceCostSource = "";
+    partial void OnReferenceUnitCostChanged(decimal? value)
+    {
+        ReferenceCostSource = value.HasValue ? "Manual · " + DateTimeOffset.Now.ToString("yyyy-MM-dd") : "";
+    }
     public string Label => Code + " · " + Name;
     public CompositionItem Value => new(Id, Code.Trim(), Name.Trim(), Unit, Kind, Active)
     {
@@ -73,6 +77,7 @@ public sealed partial class CompositionEditor : ObservableObject
     public bool Writable => host.PhysicalWritable;
     public bool Editable => Writable && current?.State == CompositionState.Draft && current.ProductId == Product && current.Id == Version;
     public bool LinesReadOnly => !Editable;
+    public string NumericCulture => host.PhysicalFormatCulture.Name;
     public string Context => host.PhysicalCompany!.Name + " · " + host.Current!.Name + " · " + host.ContextSummary;
     public string ActionLabel(string key) => texts.Get("UX." + key, host.PhysicalUiCulture);
     public string State => current is null ? this["ChooseRecipe"] : catalog.Items.Single(i => i.Id == current.ProductId).Name + " · " + this[current.State.ToString()] + " · v" + current.Number + (Dirty ? " · " + this["Unsaved"] : "");
@@ -144,7 +149,7 @@ public sealed partial class CompositionEditor : ObservableObject
             if (read.Value is not { } imported) { ShowImportError(read.Error!); return; }
             var source = Path.GetFileName(path) + " · " + DateTimeOffset.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             var units = host.PhysicalCompany!.Units;
-            var merge = ProductCostImport.MergeResult(catalog.Items, imported, units, ImportKind, source);
+            var merge = ProductCostImport.MergeResult(Items.Select(i => i.Value).ToArray(), imported, units, ImportKind, source);
             if (merge.Value is not { } merged) { ShowImportError(merge.Error!); return; }
             var rowsById = Items.ToDictionary(item => item.Id);
             foreach (var item in merged)
@@ -183,6 +188,16 @@ public sealed partial class CompositionEditor : ObservableObject
                 "Empty" => this["ImportEmpty"], "Headers" => this["ImportHeaders"], "Quotes" => this["ImportQuotes"],
                 "ReferenceAmbiguous" => this["ImportReferenceAmbiguous"], _ => this["ImportFailed"]
             };
+    }
+    public bool OpenProduct(EntityId id)
+    {
+        if (!catalog.Items.Any(i => i.Id == id && i.Kind != CompositionItemKind.Material)) return false;
+        Product = id;
+        var versions = catalog.Versions.Where(v => v.ProductId == id && v.ModelVersionId == host.Current!.SelectedModelVersionId);
+        var selected = versions.FirstOrDefault(v => v.State == CompositionState.Draft) ?? versions.OrderBy(v => v.Number).LastOrDefault();
+        if (selected is null) NewVersion();
+        else { Version = selected.Id; Open(); }
+        return true;
     }
     public void Open()
     {

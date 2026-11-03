@@ -1,16 +1,16 @@
 # Ayuda contextual: Resultados y trazabilidad
 **ID Vista UI:** `View_CostRuns`  
-**Última actualización:** `2026-10-28`
+**Última actualización:** `2026-11-03`
 **Estado:** guía revisada sobre `2599188` y la auditoría contextual de 28/10/2026. Las evidencias de validación se registran por separado.
 
 ## 1. Objetivo y función financiera
-Publicar y consultar ejecuciones persistidas del cálculo de costes y explicar flujos por centro, nodo, regla y recurso sin volver a calcular automáticamente al abrir un histórico.
+Consultar ejecuciones persistidas del cálculo de costes y explicar flujos por centro, nodo, regla y recurso sin volver a calcular automáticamente al abrir un histórico.
 
 ## 2. Guía de campos y entradas (Inputs)
 | Campo / parámetro | Tipo / unidad | Requerido | Descripción e impacto en el cálculo |
 | :--- | :--- | :--- | :--- |
 | Ejecución seleccionada | Lista de corridas | Según consulta | Distingue versión vigente e histórica. |
-| Calcular, cancelar, actualizar | Acciones | Según estado | Controla creación de ejecución, cancelación y recarga. |
+| Actualizar | Consulta | Opcional | Recarga el resultado guardado; el cálculo se consolida al cerrar el secundario. |
 | Vista de gráfico | Primario/secundario | Opcional | Filtra la etapa de flujo a inspeccionar. |
 | Zoom y etiquetas | Interacción de gráfico | Opcional | Ajusta legibilidad sin modificar resultados. |
 | Selección de centro, nodo o arco | Tabla/gráfico | Opcional | Acota procedencias y conciliación. |
@@ -48,3 +48,6 @@ El filtro y **Agrupar por centro físico** afectan a la concentración. La curva
 1. Completa los repartos y guarda una ejecución económica antes de consultar sus resultados históricos.
 2. Selecciona una ejecución concreta y recorre los flujos de costes por recurso, regla, nodo y centro para justificar los importes.
 3. Compara el resultado con el análisis vigente sin confundir una ejecución guardada con un recálculo automático; consulta el origen de cada cifra.
+
+### Resultado consolidado
+Cerrar el secundario valida y guarda automáticamente el resultado en una sola transacción. Si falla, no queda falsamente cerrado. Tarifas y productos usan la ejecución vigente sin selección manual. El histórico es una consulta secundaria. Antes de existir una ejecución permanece disponible la consulta del primario actual. Véase [Servicios auxiliares](12-servicios-auxiliares.md).

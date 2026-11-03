@@ -39,7 +39,7 @@ public static class PrincipalRateReportService
         var input = run?.Snapshot.Input as AllocationStudySnapshotInput;
         if (run?.Snapshot.StudyId != study.Id || run.Snapshot.CompanyId != study.CompanyId ||
             input?.Model.Structure.Id != study.SelectedModelVersionId) { run = null; input = null; }
-        var publication = AuxiliaryCapacityRules.IsCurrent(input?.Allocations.Configuration.AuxiliaryCapacity, observations) ? run?.Output?.Secondary : null;
+        var publication = input?.Allocations.Configuration.SecondaryClosed == true || AuxiliaryCapacityRules.IsCurrent(input?.Allocations.Configuration.AuxiliaryCapacity, observations) ? run?.Output?.Secondary : null;
         var structure = input?.Allocations.Resources.Model.Structure ?? model.Structure;
         var rows = new List<PrincipalRateRow>();
         foreach (var node in structure.Nodes.Where(n => n.IsActive && n.Role == NodeRole.Principal).OrderBy(n => n.Code))

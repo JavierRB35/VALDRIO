@@ -143,7 +143,7 @@
       <Expander.Header><TextBlock x:Name="CapacityMenuGroup" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource Brand.White}" Margin="4,7,2,7"/></Expander.Header>
       <StackPanel Margin="0,5,0,3">
        <Button x:Name="PhysicalStep" Click="ChoosePhysicalActivity" Style="{StaticResource NavigationStepButton}"/>
-       <Button x:Name="AuxiliaryStep" Click="OpenAuxiliary" Style="{StaticResource NavigationStepButton}"/>
+       <Button x:Name="AuxiliaryStep" Visibility="Collapsed" Click="OpenAuxiliary" Style="{StaticResource NavigationStepButton}"/>
        <Button x:Name="RatesStep" Click="ChooseRates" Style="{StaticResource NavigationStepButton}"/>
       </StackPanel>
      </Expander>
@@ -187,14 +187,40 @@
                 Visibility="{Binding Company.IsProcessing, Converter={StaticResource BooleanVisibility}}"
                 AutomationProperties.Name="{Binding Company.WorkingLabel}"/>
   <Border x:Name="ReportStatusBanner" DockPanel.Dock="Top" Visibility="Collapsed" Background="{DynamicResource Status.WarningBg}" Padding="12,6"><StackPanel><TextBlock Text="{Binding CostFlows.ReportContext}" TextWrapping="Wrap"/><TextBlock Text="{Binding CostFlows.CurrentState}" TextWrapping="Wrap" FontWeight="SemiBold"/></StackPanel></Border>
-  <StackPanel x:Name="ActionFooter" Margin="{StaticResource Space.Page}" DockPanel.Dock="Bottom">
+  <StackPanel x:Name="ActionFooter" DockPanel.Dock="Bottom">
+   <StackPanel.Style><Style TargetType="StackPanel">
+    <Setter Property="Margin" Value="{StaticResource Space.Page}"/>
+    <Style.Triggers><DataTrigger Binding="{Binding Visibility, ElementName=WorkspaceContent}" Value="Visible">
+     <Setter Property="Margin" Value="16,0,16,8"/>
+    </DataTrigger></Style.Triggers>
+   </Style></StackPanel.Style>
    <ContentControl x:Name="AllocationActionsHost" Visibility="Collapsed"/>
-   <TextBlock TextWrapping="Wrap" Height="48" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" AutomationProperties.LiveSetting="Polite" x:Name="FieldHelpText" />
+   <Grid>
+    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+   <TextBlock TextWrapping="Wrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" AutomationProperties.LiveSetting="Polite" x:Name="FieldHelpText">
+    <TextBlock.Style><Style TargetType="TextBlock">
+     <Setter Property="Height" Value="48"/>
+     <Setter Property="Grid.ColumnSpan" Value="2"/>
+     <Style.Triggers><DataTrigger Binding="{Binding Visibility, ElementName=WorkspaceContent}" Value="Visible">
+      <Setter Property="Height" Value="48"/>
+      <Setter Property="Grid.ColumnSpan" Value="1"/>
+     </DataTrigger></Style.Triggers>
+    </Style></TextBlock.Style>
+   </TextBlock>
    <WrapPanel>
+    <WrapPanel.Style><Style TargetType="WrapPanel">
+     <Setter Property="Grid.Row" Value="1"/><Setter Property="Grid.ColumnSpan" Value="2"/>
+     <Style.Triggers><DataTrigger Binding="{Binding Visibility, ElementName=WorkspaceContent}" Value="Visible">
+      <Setter Property="Grid.Row" Value="0"/><Setter Property="Grid.Column" Value="1"/>
+      <Setter Property="Grid.ColumnSpan" Value="1"/><Setter Property="MaxWidth" Value="480"/>
+     </DataTrigger></Style.Triggers>
+    </Style></WrapPanel.Style>
     <Button x:Name="ReadFieldHelpButton" Click="ReadFieldHelp" Content="{Binding GuideReadFull}" Margin="0,4,8,0"/>
     <Button Click="PreviousStep" Padding="14,7" Margin="0,4,8,0" ContentTemplate="{StaticResource Button.WrappedText}" MaxWidth="{Binding ActualWidth, ElementName=ActionFooter}" x:Name="WorkflowBack" />
     <Button Style="{StaticResource Button.Primary}" Click="ContinueWorkflow" Padding="14,7" Margin="0,4,8,0" ContentTemplate="{StaticResource Button.WrappedText}" MaxWidth="{Binding ActualWidth, ElementName=ActionFooter}" x:Name="WorkflowNext" />
    </WrapPanel>
+   </Grid>
   </StackPanel>
   <Grid>
   <ScrollViewer x:Name="RootScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">

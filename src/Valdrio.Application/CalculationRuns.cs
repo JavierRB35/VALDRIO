@@ -64,6 +64,22 @@ public static class CalculationRunService
                 return new(primary, null, [], primary.Gaps.Select(g => g.Diagnostic)
                     .Append(new DomainDiagnostic("RUN_INCOMPLETE", "Run.Incomplete", [])).ToArray());
             var result = SecondaryAllocationService.Calculate(input, token);
+            return Assemble(input, primary, SecondaryAllocationService.Publish(result, input.Allocations.Configuration, run.Snapshot.InputRevision), token);
+        }
+        catch (DomainRuleException ex) { return new(primary, null, [], [ex.Diagnostic]); }
+        catch (OverflowException) { return new(primary, null, [], [new("RUN_OVERFLOW", "Run.Overflow", [])]); }
+    }
+    // Compatibility materialization: reuse the immutable secondary publication and its
+    // solved circulation; never rerun the reciprocal solver or reopen either phase.
+    public static RunOutput FromClosedPublication(StudySnapshotReceipt snapshot, CancellationToken token = default)
+    {
+        var input = (AllocationStudySnapshotInput)snapshot.Input;
+        var publication = input.Allocations.SecondaryPublication ?? throw new InvalidOperationException("Closed publication missing");
+        return Assemble(input, PrimaryAllocationService.Calculate(input), publication with { SourceRevision = snapshot.InputRevision }, token);
+    }
+    private static RunOutput Assemble(AllocationStudySnapshotInput input, PrimaryAllocationResult primary,
+        SecondaryCalculationPublication result, CancellationToken token)
+    {
             var transfers = new List<RunTransfer>();
             foreach (var group in result.GroupCirculations)
             {
@@ -82,10 +98,7 @@ public static class CalculationRunService
                         if (graph.B[i][j] != 0) transfers.Add(new(group.ComponentRoutingGroup, source, EntityId.Parse(graph.TerminalIds[j]), key, graph.B[i][j], checked(gross * graph.B[i][j]), false) { MeasuredServices = measured });
                 }
             }
-            return new(primary, SecondaryAllocationService.Publish(result, input.Allocations.Configuration, run.Snapshot.InputRevision),
-                transfers, result.GroupCirculations.SelectMany(g => g.Solution.Warnings).ToArray());
-        }
-        catch (DomainRuleException ex) { return new(primary, null, [], [ex.Diagnostic]); }
-        catch (OverflowException) { return new(primary, null, [], [new("RUN_OVERFLOW", "Run.Overflow", [])]); }
+            return new(primary, result, transfers, result.GroupCirculations.SelectMany(g => g.Solution.Warnings).ToArray());
     }
+
 }

@@ -71,3 +71,6 @@ Para valorar también la actividad y conservar una versión aceptada, abre **Pro
 1. Importa o revisa el catálogo y los costes unitarios de referencia en la moneda del proyecto.
 2. Define los componentes, cantidades, unidades y bases de una composición; valida la receta y publícala cuando esté completa.
 3. Consulta el subtotal estimado y su desglose; para valorar una orden concreta continúa en Órdenes estimadas, sin confundir esta cifra con un consumo real.
+
+### Coste de referencia y acceso a composición
+Edita el coste unitario de referencia en su celda, también en registros existentes; queda identificado su origen manual. La primera columna abre la composición del producto por su identidad, priorizando el borrador y conservando las versiones publicadas. La importación previsualiza cambios en el catálogo; Guardar persiste el catálogo validado de forma atómica. No se introduce ninguna política económica nueva sobre materiales.

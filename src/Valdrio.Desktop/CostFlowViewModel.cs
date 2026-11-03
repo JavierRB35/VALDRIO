@@ -23,7 +23,7 @@ public sealed partial class CostFlowViewModel : ObservableObject
     private readonly PresentationPreferencesService preferences;
     private RunHistory? history;
     private AllocationWorkspaceSnapshot? liveWorkspace;
-    [ObservableProperty] private bool useCurrentPrimary = true;
+    [ObservableProperty] private bool useCurrentPrimary = false;
     partial void OnUseCurrentPrimaryChanged(bool value) { if (value) SecondaryPhase = false; Present(); OnPropertyChanged(nameof(ReportContext)); }
     public string ExecutiveSummary { get; private set; } = "";
     public ObservableCollection<ReportConcentrationRow> Concentration { get; } = [];
@@ -128,8 +128,10 @@ public sealed partial class CostFlowViewModel : ObservableObject
     partial void OnSelectedRunChanged(RunChoice? value)
     {
         UseCurrentPrimary = false;
+        if (value?.Run.Snapshot.Input is AllocationStudySnapshotInput { Allocations.Configuration.SecondaryClosed: true }) SecondaryPhase = true;
         Present();
         if (value is not null) Status = CurrentState;
+        RebuildAuxiliaryReport();
         OnPropertyChanged(nameof(ExecutionDuration));
         OnPropertyChanged(nameof(ReportContext));
     }
@@ -151,14 +153,14 @@ public sealed partial class CostFlowViewModel : ObservableObject
     }
     private void RebuildChoices()
     {
-        var preview = UseCurrentPrimary;
         var id = SelectedRun?.Run.Id;
         Runs.Clear();
         if (history is not null)
             foreach (var run in history.Runs.Reverse())
                 Runs.Add(new(run, $"{TimeZoneInfo.ConvertTime(run.StartedAtUtc.Value, TimeZoneInfo.FindSystemTimeZoneById(preferences.Current.DisplayTimeZoneId)).ToString("g", Format) + " " + preferences.Current.DisplayTimeZoneId} · {this[RunState(run)]} · {this["Revision"]} {run.Snapshot.InputRevision}"));
-        SelectedRun = Runs.FirstOrDefault(r => r.Run.Id == id) ?? Runs.FirstOrDefault();
-        UseCurrentPrimary = preview;
+        SelectedRun = Runs.FirstOrDefault(r => r.Run.Id == history?.CurrentRunId) ?? Runs.FirstOrDefault(r => r.Run.Id == id) ?? Runs.FirstOrDefault();
+        UseCurrentPrimary = Runs.Count == 0;
+        RebuildAuxiliaryReport();
         Present(); OnPropertyChanged(string.Empty);
     }
     private void Commands() { company.NotifyWorkspaceStateChanged(); CalculateCommand.NotifyCanExecuteChanged(); RefreshCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged(); }

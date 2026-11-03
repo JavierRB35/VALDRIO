@@ -115,6 +115,7 @@ public sealed partial class SqliteCompanyFileService(ICurrencyCatalog catalog, I
                     if (!string.Equals(Scalar(connection, "PRAGMA journal_mode;"), "delete", StringComparison.OrdinalIgnoreCase))
                         throw Error("FILE_JOURNAL_UNSUPPORTED", "File.JournalUnsupported");
                 session.AttachEditLock(reservation.Detach());
+                session.ConsolidateClosedStudies(cancellationToken);
                 return session;
             }
             catch { session.Dispose(); throw; }

@@ -1,6 +1,6 @@
 # Ayuda contextual: Tarifas de centros
 **ID Vista UI:** `View_PrincipalRates`  
-**Última actualización:** `2026-10-28`
+**Última actualización:** `2026-11-03`
 **Estado:** guía revisada sobre `2599188` y la auditoría contextual de 28/10/2026. Las evidencias de validación se registran por separado.
 
 ## 1. Objetivo y función financiera
@@ -11,7 +11,6 @@ Interpretar tarifas y variaciones de capacidad por centro principal, usando cost
 | :--- | :--- | :--- | :--- |
 | Centro seleccionado | Tabla | Sí para detalle | Filtra las preguntas al centro y unidad concreta. |
 | Solo incidencias | Booleano | No | Reduce filas visibles a casos que requieren atención. |
-| Actualizar | Acción | Opcional | Reconstruye la lectura del estado vigente. |
 | Ver actividad / ver costes | Acciones | Opcional | Abren la fuente de las observaciones físicas o la ejecución T12. |
 | Exportar | Acción | Opcional | Extrae reporte y procedencia JSON cuando hay resultados. |
 
@@ -47,3 +46,5 @@ Ejemplo: 1.000 de fijo propio, normal de 100 h y real de 80 h dan 10/h, 800 de c
 1. Guarda una ejecución económica compatible con la revisión del análisis y pulsa Actualizar; esta pantalla obtiene la ejecución vigente sin un selector de históricos.
 2. Verifica que el centro principal dispone de observaciones de actividad y capacidad confirmadas; los datos ausentes no equivalen a cero.
 3. Consulta la tarifa y la explicación de las variaciones, su unidad y su procedencia; corrige los datos en las pantallas de origen, no en esta tabla de análisis.
+
+Las tarifas se presentan automáticamente desde los costes cerrados vigentes y los datos físicos confirmados. Actualizar actividad no reabre repartos; la evaluación auxiliar fijada en el cierre conserva su trazabilidad.

@@ -1,5 +1,5 @@
 # Contextual help: Cost centre rates
-**Last updated:** `2026-10-28`
+**Last updated:** `2026-11-03`
 
 
 ## 1. Purpose and financial function
@@ -10,7 +10,6 @@ Review normalised management rates for principal cost centres from compatible pu
 | :--- | :--- | :--- | :--- |
 | Selected centre | Table selection | For centre detail | Scopes questions to the centre, study and measurement unit. |
 | Only issues | Yes/no | Optional | Displays situations requiring attention. |
-| Refresh | Action | Optional | Re-reads the currently valid calculation and physical state. |
 | View activity / view costs | Actions | Optional | Go to the source of Activity and capacities observations or T12 runs. |
 | Export | Action | When results exist | Saves report and provenance JSON. |
 
@@ -40,3 +39,5 @@ Example: own fixed cost 1,000, normal capacity 100 h and actual activity 80 h gi
 1. Save an economic run compatible with the analysis revision and refresh; this screen uses the current run without a historical-run selector.
 2. Check the principal centre has confirmed activity and capacity observations; missing data is not zero.
 3. Review the rate, capacity variance, unit and provenance; make corrections in source screens, not this analysis table.
+
+Rates load automatically from the current closed costs and confirmed physical data. Updating activity does not reopen allocations; frozen auxiliary assessments remain traceable.

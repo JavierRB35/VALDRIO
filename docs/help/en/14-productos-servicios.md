@@ -62,3 +62,6 @@ To include activity costs and retain an accepted version, open **Products and re
 1. Import or review the catalogue and reference unit costs in the project currency.
 2. Build the component list, quantities, units and bases of a composition; validate and publish the recipe.
 3. Review the estimated subtotal and breakdown, then use Estimated orders for a specific order without confusing estimates with actual consumption.
+
+### Reference price and direct composition
+Edit the reference unit cost in its catalogue cell, including existing items; the manual origin is recorded. The first column opens the selected product composition by identity, preferring its draft and preserving published versions. Import previews changes in the catalogue; Save persists the complete validated catalogue atomically. No new material valuation policy is introduced.

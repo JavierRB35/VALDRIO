@@ -23,7 +23,7 @@ public sealed class AdaptiveColumnsPanel : Panel
         for (var i = 0; i < InternalChildren.Count; i++)
         {
             var child = InternalChildren[i];
-            child.Measure(new Size(width, MinimumRowHeight > 0 ? MinimumRowHeight : double.PositiveInfinity));
+            child.Measure(new Size(width, double.PositiveInfinity));
             heights[i / columns] = Math.Max(heights[i / columns], Math.Max(MinimumRowHeight, child.DesiredSize.Height));
         }
         return new Size(width * columns, heights.Sum());

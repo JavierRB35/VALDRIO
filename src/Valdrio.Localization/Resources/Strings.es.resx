@@ -1256,7 +1256,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="AllocationUI.SecondaryRouteHelp" xml:space="preserve"><value>Asigna a cada auxiliar una clave secundaria publicada; sus destinos pueden ser nodos principales u otros auxiliares. El grupo «all» se aplica al cálculo completo.</value></data>
   <data name="AllocationUI.SecondaryNeedStudy" xml:space="preserve"><value>Selecciona un estudio para calcular los costes secundarios.</value></data>
   <data name="AllocationUI.SecondaryOpenState" xml:space="preserve"><value>El reparto secundario está abierto para edición.</value></data>
-  <data name="AllocationUI.SecondaryClosedState" xml:space="preserve"><value>El reparto secundario está cerrado; la edición del primario está bloqueada.</value></data>
+  <data name="AllocationUI.SecondaryClosedState" xml:space="preserve"><value>Reparto secundario cerrado y resultado consolidado disponible para informes y tarifas.</value></data>
   <data name="AllocationUI.SecondaryPrimaryIncomplete" xml:space="preserve"><value>Completa primero el reparto primario.</value></data>
   <data name="AllocationUI.SecondaryReady" xml:space="preserve"><value>Todas las asignaciones secundarias están definidas. Ya puedes realizar el cálculo.</value></data>
   <data name="AllocationUI.SecondaryMissingAssignments" xml:space="preserve"><value>Faltan claves secundarias publicadas para estos auxiliares: {0}.</value></data>
@@ -1555,7 +1555,7 @@ Diferencia que falta repartir: {7}</value></data>
 <data name="Adjustment.UndoDone" xml:space="preserve"><value>Aplicación deshecha. Los importes de la tabla se han actualizado.</value></data>
 <data name="Adjustment.ManualIncluded" xml:space="preserve"><value>Si las cuentas ya tienen correcciones manuales, estas se incluyen en el saldo efectivo que se compensará. Se conservarán en el historial.</value></data>
 <data name="Adjustment.ManualOnRule" xml:space="preserve"><value>Cuenta: {0}. Regla activa: {1}. Corrección manual anterior: {2}; nueva corrección manual: {3}. Saldo efectivo: {4} → {5}. Esta corrección es independiente: no modifica la regla ni sus ajustes automáticos. Si corriges una cuenta compensada, volverá a tener el saldo indicado sin modificar el coste analítico generado. Si corriges la propia línea analítica, cambiará su saldo efectivo. Deshacer la regla conservará esta corrección manual. ¿Deseas continuar?</value></data>
-  <data name="Run.Help" xml:space="preserve"><value>Flujos de costes guardados. Calcula expresamente para crear una ejecución nueva; abrir una ejecución guardada no la recalcula.</value></data>
+  <data name="Run.Help" xml:space="preserve"><value>Los resultados se consolidan automáticamente al cerrar el reparto secundario. El histórico conserva los resultados anteriores.</value></data>
   <data name="Run.OriginStage" xml:space="preserve"><value>1 · Cuentas de origen</value></data>
   <data name="Run.PrimaryStage" xml:space="preserve"><value>2 · Reparto primario</value></data>
   <data name="Run.SecondaryStage" xml:space="preserve"><value>3 · Circulación auxiliar</value></data>
@@ -1589,7 +1589,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Run.Excluded" xml:space="preserve"><value>Excluido</value></data>
   <data name="Run.Pending" xml:space="preserve"><value>Pendiente</value></data>
   <data name="Run.Difference" xml:space="preserve"><value>Diferencia</value></data>
-  <data name="Run.NoRuns" xml:space="preserve"><value>No hay ejecuciones guardadas. Puedes consultar el primario actual sin guardar o calcular un resultado completo.</value></data>
+  <data name="Run.NoRuns" xml:space="preserve"><value>Todavía no hay resultado consolidado. Completa y cierra el reparto secundario.</value></data>
   <data name="Run.ReadOnlyResults" xml:space="preserve"><value>Se muestran resultados guardados. Seleccionar una ejecución no la calcula ni la modifica.</value></data>
   <data name="Run.LoadFailed" xml:space="preserve"><value>No se ha podido completar la operación. Recarga las ejecuciones guardadas para comprobar su estado.</value></data>
   <data name="Run.Started" xml:space="preserve"><value>Iniciada</value></data>
@@ -1840,7 +1840,7 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
   <data name="Rates.MissingActivity" xml:space="preserve"><value>Faltan datos de actividad. Revísalos en Actividad y capacidades.</value></data>
   <data name="Rates.ZeroDenominator" xml:space="preserve"><value>La actividad base es cero y el componente tiene coste. Revisa costes y actividad.</value></data>
   <data name="Rates.ExcessConsumption" xml:space="preserve"><value>El consumo asignado supera la actividad real. Revisa los registros.</value></data>
-  <data name="Rates.MissingCosts" xml:space="preserve"><value>Falta una ejecución de costes vigente. Ve a Resultados y trazabilidad.</value></data>
+  <data name="Rates.MissingCosts" xml:space="preserve"><value>No hay costes consolidados vigentes para esta revisión. Completa el reparto secundario; los cierres históricos se conservan.</value></data>
   <data name="Rates.UnconfirmedActivity" xml:space="preserve"><value>Faltan datos físicos confirmados. Revisa y confirma Actividad y capacidades.</value></data>
   <data name="Rates.MultiplePools" xml:space="preserve"><value>Este centro tiene varias bases de actividad. No se puede repartir su coste sin una asignación por base.</value></data>
   <data name="Rates.SourceMismatch" xml:space="preserve"><value>Los costes no coinciden con su procedencia. Revisa la ejecución de costes.</value></data>
@@ -2239,7 +2239,7 @@ Excluido: {7} · Directo a productos/órdenes: {8}</value></data>
   <data name="AllocationUI.KeysTask" xml:space="preserve"><value>Claves de reparto</value></data>
   <data name="AllocationUI.CheckTask" xml:space="preserve"><value>Comprobar y cerrar</value></data>
   <data name="AllocationUI.CapacityServices" xml:space="preserve"><value>Capacidad y servicios</value></data>
-  <data name="AllocationUI.CapacityDependencies" xml:space="preserve"><value>Revisa el tratamiento antes de calcular: repartir sin evaluar capacidad no demuestra inactividad cero. Si el método evalúa capacidad, completa las observaciones y servicios de los auxiliares en el editor compartido.</value></data>
+  <data name="AllocationUI.CapacityDependencies" xml:space="preserve"><value>Consulta los servicios auxiliares en Resultados y trazabilidad. La actividad física se introduce una sola vez en Actividad y capacidades. El informe conserva el tratamiento guardado y no reabre repartos.</value></data>
   <data name="AllocationUI.ViewPhaseReport" xml:space="preserve"><value>Ver resultados de esta fase</value></data>
   <data name="AllocationUI.ReopenSecondaryFirst" xml:space="preserve"><value>Para modificar el primario, reabre antes el secundario →</value></data>
   <data name="Estimate.MissingRateDetail" xml:space="preserve"><value>Coste incompleto: {0} necesita {1} {2}, pero falta una tarifa completa. Revisa ese nodo en Actividad y tarifas. La necesidad física se conserva; no se puede aceptar un coste cero.</value></data>
@@ -2248,7 +2248,7 @@ Excluido: {7} · Directo a productos/órdenes: {8}</value></data>
   <data name="Run.SelectedContributions" xml:space="preserve"><value>Aportaciones de este origen (los nodos del gráfico conservan su total global):</value></data>
   <data name="Run.ThresholdHelp" xml:space="preserve"><value>Umbral de concentración (%) entre 0 y 100. Referencia inicial 80 %; no implica una regla económica 80/20. Abonos fuera de la curva; base: costes positivos de la selección.</value></data>
   <data name="Run.GroupByCenter" xml:space="preserve"><value>Agrupar por centro físico</value></data>
-  <data name="Run.ExecutionOptions" xml:space="preserve"><value>Calcular o consultar una ejecución guardada</value></data>
+  <data name="Run.ExecutionOptions" xml:space="preserve"><value>Histórico de resultados guardados</value></data>
   <data name="Resources.AmountsTask" xml:space="preserve"><value>Importes y correcciones</value></data>
   <data name="Resources.ClassificationTask" xml:space="preserve"><value>Clasificación y destino</value></data>
   <data name="Resources.ChecksTask" xml:space="preserve"><value>Comprobaciones</value></data>
@@ -2294,4 +2294,25 @@ Excluido: {7} · Directo a productos/órdenes: {8}</value></data>
 <data name="Activity.Guided.NormalNotes" xml:space="preserve"><value>Nota sobre la capacidad normal (opcional)</value></data>
 <data name="Activity.Guided.RealNotes" xml:space="preserve"><value>Nota sobre la actividad real (opcional)</value></data>
 <data name="Activity.Guided.AboveNormal" xml:space="preserve"><value>La actividad real supera la referencia habitual. Revisa las cifras; puedes añadir una nota opcional.</value></data>
+  <data name="Composition.EditComposition" xml:space="preserve"><value>Editar composición</value></data>
+  <data name="CompanyDuplicate" xml:space="preserve"><value>Duplicar proyecto…</value></data>
+  <data name="CompanyDuplicateDone" xml:space="preserve"><value>Copia independiente creada. Puedes abrirla con Abrir proyecto.</value></data>
+<data name="Run.Aux.Title" xml:space="preserve"><value>Servicios auxiliares</value></data>
+<data name="Run.Aux.Help" xml:space="preserve"><value>Consulta sin edición. La capacidad no utilizada es normal menos real (mínimo cero); la actividad pendiente es real menos distribuida. Los grupos económicos no se suman como servicios físicos. Un porcentaje sin unidad o significado físico acreditado no se convierte en horas.</value></data>
+<data name="Run.Aux.Center" xml:space="preserve"><value>Auxiliar</value></data>
+<data name="Run.Aux.Policy" xml:space="preserve"><value>Tratamiento</value></data>
+<data name="Run.Aux.Unit" xml:space="preserve"><value>Unidad</value></data>
+<data name="Run.Aux.Normal" xml:space="preserve"><value>Normal</value></data>
+<data name="Run.Aux.Real" xml:space="preserve"><value>Real</value></data>
+<data name="Run.Aux.Distributed" xml:space="preserve"><value>Distribuida</value></data>
+<data name="Run.Aux.Unassigned" xml:space="preserve"><value>Pendiente</value></data>
+<data name="Run.Aux.Idle" xml:space="preserve"><value>Capacidad no utilizada</value></data>
+<data name="Run.Aux.Detail" xml:space="preserve"><value>Destinos y explicación</value></data>
+<data name="Run.Aux.MissingActivity" xml:space="preserve"><value>Falta actividad real confirmada.</value></data>
+<data name="Run.Aux.UnknownBasis" xml:space="preserve"><value>No se puede deducir servicio físico de esta clave sin conocer su base.</value></data>
+<data name="Run.Aux.MultipleGroups" xml:space="preserve"><value>Los grupos contienen distribuciones diferentes; no se suman ni se elige una arbitrariamente.</value></data>
+<data name="Run.Aux.Derived" xml:space="preserve"><value>Servicios derivados de la base física identificada o de la evidencia guardada.</value></data>
+<data name="Aux.ClassificationSourceRequired" xml:space="preserve"><value>Cuenta {0}, auxiliar {1}, clave {2}: falta definir la clasificación fija/variable o la proporción mixta para evaluar la capacidad.</value></data>
+<data name="Study.SaveBeforeContinuing" xml:space="preserve"><value>Guarda o descarta los cambios pendientes del análisis antes de continuar.</value></data>
+  <data name="Composition.InvalidCell" xml:space="preserve"><value>Revisa la celda marcada: introduce un número válido con el formato regional seleccionado antes de continuar.</value></data>
 </root>

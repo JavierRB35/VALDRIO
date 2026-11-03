@@ -56,9 +56,49 @@ public sealed partial class SqliteCompanyFileService
     }
     private sealed partial class Session
     {
+        // One-time upgrade of legacy closed receipts on opening an editable project.
+        // Existing runs and all historical receipts remain unchanged.
+        public void ConsolidateClosedStudies(CancellationToken token)
+        {
+            var required = Workspace(false, token, (context, file) =>
+            {
+                var db = (RunDbContext)context;
+                return db.Studies.AsNoTracking().ToArray().Any(row =>
+                {
+                    var study = Study(row);
+                    return !db.Runs.AsNoTracking().Where(r => r.StudyId == row.Id).AsEnumerable().Select(Run).Any(r => r.IsCurrentFor(study.Revision))
+                        && AllocationWorkspace(db, file, study) is { Configuration.SecondaryClosed: true } workspace
+                        && workspace.ConfigurationRevision == study.Revision;
+                });
+            });
+            if (!required) return;
+            PhysicalWorkspace(true, token, (db, file) =>
+        {
+            foreach (var row in db.Studies.AsNoTracking().ToArray())
+            {
+                var study = Study(row);
+                if (db.Runs.AsNoTracking().Where(r => r.StudyId == row.Id).AsEnumerable()
+                    .Select(Run).Any(r => r.IsCurrentFor(study.Revision))) continue;
+                var workspace = AllocationWorkspace(db, file, study);
+                if (!workspace.Configuration.SecondaryClosed || workspace.SecondaryPublication is null || workspace.ConfigurationRevision != study.Revision) continue;
+                var snapshot = CaptureInTransaction(db, file, new(study.CompanyId, study.Id, study.Revision, new(Guid.NewGuid()), "closed-result-consolidation"));
+                var run = new CalculationRun(snapshot.Id, snapshot, CalculationRun.Algorithm, CalculationRunStatus.Completed,
+                    snapshot.CapturedAtUtc, owner.time.GetUtcNow(), CalculationRunService.FromClosedPublication(snapshot, token));
+                ValidateRunOutput(run);
+                var saved = new CalculationRunRow(); SetRun(saved, run); db.Runs.Add(saved);
+            }
+            return true;
+        });
+        }
         public CalculationRun PrepareRun(CaptureStudySnapshot request, CancellationToken token = default)
         {
-            // Capture already guarantees coherent frozen v7 inputs and hashes. A captured input is not a completed run.
+            // Closed revisions have one consolidated result. Legacy callers that still
+            // request an extra calculation reuse it without another snapshot or run.
+            request.RequestId.EnsureValid();
+            var current = ReadRuns(request.CompanyId, request.StudyId, token).MatchingCompleted(request.ExpectedRevision);
+            if (current?.Snapshot.Input is AllocationStudySnapshotInput { Allocations.Configuration.SecondaryClosed: true })
+                return current;
+            // Capture guarantees coherent frozen inputs; capture alone is not completion.
             var snapshot = Capture(request, token);
             if (snapshot.Input is not AllocationStudySnapshotInput)
                 throw new DomainRuleException(new("RUN_INPUT_REQUIRED", "Run.InputRequired", []));
@@ -74,6 +114,9 @@ public sealed partial class SqliteCompanyFileService
         public CalculationRun PublishRun(EntityId runId, RunOutput output, CancellationToken token = default) => RunWorkspace(true, token, db =>
         {
             var row = db.Runs.Single(r => r.Id == runId.ToString()); var before = Run(row);
+            if (before.Status == CalculationRunStatus.Completed &&
+                before.Snapshot.Input is AllocationStudySnapshotInput { Allocations.Configuration.SecondaryClosed: true } &&
+                Json(before.Output) == Json(output)) return before;
             if (before.Status != CalculationRunStatus.Started) throw new InvalidOperationException("Run already finished.");
             if (output.Secondary is null && output.Diagnostics.Count == 0) throw new InvalidOperationException("A failed run requires a diagnostic.");
             var after = before with { Output = output, Status = output.Secondary is null ? CalculationRunStatus.Failed : CalculationRunStatus.Completed,
@@ -95,7 +138,7 @@ public sealed partial class SqliteCompanyFileService
             var physical = ((PhysicalDbContext)db).PhysicalObservations.AsNoTracking().Where(o => o.StudyId == studyId.ToString() && o.ModelVersionId == study.SelectedModelVersionId && o.PeriodStart == study.PeriodStart && o.PeriodEnd == study.PeriodEnd)
                 .ToArray().Select(RestorePhysical).GroupBy(o => o.PoolId).Select(g => g.OrderByDescending(o => o.Version).First()).ToArray();
             return history with { StalePhysicalRuns = history.Runs.Where(r => r.Snapshot.Input is AllocationStudySnapshotInput i &&
-                !AuxiliaryCapacityRules.IsCurrent(i.Allocations.Configuration.AuxiliaryCapacity, physical)).Select(r => r.Id).ToArray() };
+                !i.Allocations.Configuration.SecondaryClosed && !AuxiliaryCapacityRules.IsCurrent(i.Allocations.Configuration.AuxiliaryCapacity, physical)).Select(r => r.Id).ToArray() };
         });
         // No ValidateAllocations/replay here: querying a saved execution must not call any cost solver.
         private T RunWorkspace<T>(bool write, CancellationToken token, Func<RunDbContext, T> action)

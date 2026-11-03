@@ -12,6 +12,21 @@ public sealed class T18CompositionCostTests
     private static EntityId Id() => new(Guid.NewGuid());
 
     [TestMethod]
+    [DataRow("es-ES", "1.25", "1.25")]
+    [DataRow("es-ES", "1,25", "1.25")]
+    [DataRow("es-ES", "1.234,56", "1234.56")]
+    [DataRow("es-ES", "1.234", "1234")]
+    [DataRow("en-US", "1,25", "1.25")]
+    [DataRow("en-US", "1,234.56", "1234.56")]
+    [DataRow("en-US", "1,234", "1234")]
+    public void CatalogueImportPreservesLocalNumbersAndUnambiguousForeignDecimals(string culture,string input,string expected)
+    {
+        Assert.IsTrue(ProductCostImport.TryCost(input,CultureInfo.GetCultureInfo(culture),out var actual));
+        Assert.AreEqual(decimal.Parse(expected,CultureInfo.InvariantCulture),actual);
+    }
+
+
+    [TestMethod]
     public void T18_EstimateSeparatesPricedComponentsMissingPricesActivityAndOutputReference()
     {
         var each = new UnitDefinition(new(Id()), "each", "count", "ea", 0, true);

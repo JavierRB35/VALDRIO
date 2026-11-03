@@ -115,7 +115,7 @@ public partial class MainWindow
         }
         CostFlowStep.Content = Menu("CostFlows");
         AuxiliaryStep.ToolTip = AuxiliaryStep.IsEnabled ? Menu("AuxiliaryHelp") : Menu("NeedStudy");
-        CompositionStep.ToolTip = CompositionStep.IsEnabled ? Menu("CompositionHelp") : Menu("NeedStudy");
+        CompositionStep.ToolTip = CompositionStep.IsEnabled ? Menu("CompositionHelp") : vm.Studies.PhysicalBlockReason;
         Border[] markers = [CompanyStepMarker, ModelStepMarker, StudyStepMarker,
             ImportStepMarker, ResourcesStepMarker, AllocationsStepMarker, SecondaryStepMarker, CostFlowStepMarker, PhysicalStepMarker, RatesStepMarker];
         int[] markerSteps = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10];
@@ -385,18 +385,8 @@ public partial class MainWindow
     }
     private async void OpenAuxiliary(object sender, RoutedEventArgs e)
     {
-        if (viewModel?.Allocations is { } a && !await a.CanLeaveAsync()) return;
-        if (viewModel?.Company?.WorkspaceIdle != false && viewModel?.Studies is { CanOpenPhysical: true } studies)
-        {
-            if (!LeaveIntegratedWorkspace()) return;
-            new AuxiliaryCapacityWindow(studies) { Owner = this }.ShowIntegrated(async () =>
-            {
-                await studies.LoadCommand.ExecuteAsync(null);
-                if (viewModel.Allocations is { } allocations) await allocations.EnterAsync();
-                UpdateWorkflow();
-            });
-            UpdateWorkflow();
-        }
+        await NavigateWorkflow(8);
+        if (viewModel?.CostFlows is { } report) report.ShowAuxiliaryReport = true;
     }
     private async void ChooseSettings(object sender, RoutedEventArgs e) => await NavigateWorkflow(6);
     private bool changingDistributionDetails;

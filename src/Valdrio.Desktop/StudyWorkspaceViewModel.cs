@@ -109,6 +109,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public string PhysicalOpenLabel => Text("Activity.Open");
     public bool CanOpenPhysical => Current is not null && !IsDirty && Ready &&
         company.ActivePhysicalActivity is not null && company.ActiveModels is not null;
+    public string PhysicalBlockReason => Text(Current is null ? "Study.ChooseExisting" : IsDirty ? "Study.SaveBeforeContinuing" : "CompanyWorking");
     public bool PhysicalWritable => company.CanWrite && Current?.State == StudyState.Open;
     public bool HasStudies => Studies.Count > 0;
     public bool HasPublishedModels => PublishedModels.Count > 0;

@@ -43,6 +43,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
             !string.IsNullOrWhiteSpace(UnitCode) && !string.IsNullOrWhiteSpace(UnitDimension));
         AddDefaultUnitsCommand = new AsyncRelayCommand(AddDefaultUnits,
             () => Available && CanWrite && Snapshot is not null && DefaultActivityUnitCatalog.HasMissing(Snapshot.Units));
+        DuplicateCommand = new AsyncRelayCommand(Duplicate, () => Available && active is not null);
         BackupCommand = new AsyncRelayCommand(Backup, () => Available && active is not null);
         RestoreCommand = new AsyncRelayCommand(Restore, () => Available);
         UpgradeCommand = new AsyncRelayCommand(Upgrade, () => Available);
@@ -60,6 +61,9 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public IAsyncRelayCommand NewProjectCommand { get; }
     public IAsyncRelayCommand AddUnitCommand { get; }
     public IAsyncRelayCommand AddDefaultUnitsCommand { get; }
+    public IAsyncRelayCommand DuplicateCommand { get; }
+    public string DuplicateLabel => Text("CompanyDuplicate");
+    public string? DuplicatedPath { get; private set; }
     public IAsyncRelayCommand BackupCommand { get; }
     public IAsyncRelayCommand RestoreCommand { get; }
     public IAsyncRelayCommand UpgradeCommand { get; }
@@ -164,7 +168,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     private CultureInfo UiCulture => CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag);
     // UI-02: distinguish a domain validation error from neutral operation feedback.
     public bool HasStatusError => diagnostic is not null;
-    public string Status => diagnostic is null ? Text(statusKey)
+    public string Status => diagnostic is null ? Text(statusKey) + (statusKey == "CompanyDuplicateDone" ? " " + DuplicatedPath : "")
         : new DomainDiagnosticFormatter(texts).Format(diagnostic, UiCulture,
             CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag)).Message;
     public string? DiagnosticCode => diagnostic?.Code;
@@ -183,7 +187,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
         OnPropertyChanged(string.Empty);
         OpenExampleCommand.NotifyCanExecuteChanged();
         CreateCommand.NotifyCanExecuteChanged(); OpenCommand.NotifyCanExecuteChanged(); CloseCommand.NotifyCanExecuteChanged(); NewProjectCommand.NotifyCanExecuteChanged();
-        AddUnitCommand.NotifyCanExecuteChanged(); AddDefaultUnitsCommand.NotifyCanExecuteChanged(); BackupCommand.NotifyCanExecuteChanged(); RestoreCommand.NotifyCanExecuteChanged(); UpgradeCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
+        AddUnitCommand.NotifyCanExecuteChanged(); AddDefaultUnitsCommand.NotifyCanExecuteChanged(); BackupCommand.NotifyCanExecuteChanged(); DuplicateCommand.NotifyCanExecuteChanged(); RestoreCommand.NotifyCanExecuteChanged(); UpgradeCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
     }
     private async Task Run(Func<CancellationToken, Task> operation)
     {
@@ -415,6 +419,18 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
             UnitScale = 12;
             UnitDiscrete = false;
             Refresh();
+        }
+    }
+    private async Task Duplicate()
+    {
+        if (BeforeChangeAsync is not null && !await BeforeChangeAsync()) return;
+        var path = dialogs.SelectNewFile(); if (path is null) return;
+        await Run(token => Task.Run(() => active!.Backup(path, token)));
+        if (diagnostic is null && statusKey == "CompanyCompleted")
+        {
+            DuplicatedPath = path; statusKey = "CompanyDuplicateDone"; Refresh();
+            if (ConfirmFileOperation?.Invoke(Text("CompanyOpen"), ActivePath ?? "", path) == true)
+                await OpenPath(path);
         }
     }
     private async Task Backup()

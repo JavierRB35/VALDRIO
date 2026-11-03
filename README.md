@@ -15,8 +15,8 @@ El menú tiene cinco grupos desplegables independientes. El acceso a una pantall
 | **Proyecto** | Proyecto · Estructura de costes |
 | **Datos del análisis** | Análisis y periodo · Importar saldos · Preparar cuentas |
 | **Repartos de costes** | Reparto primario · Reparto secundario |
-| **Actividad y tarifas** | Actividad y capacidades · Capacidad y servicios auxiliares · Tarifas de centros |
-| **Productos y resultados** | Productos y servicios · Órdenes estimadas · Resultados y trazabilidad |
+| **Actividad y tarifas** | Actividad y capacidades · Tarifas de centros |
+| **Productos y resultados** | Productos y servicios · Órdenes estimadas · Resultados y trazabilidad (incluye informe auxiliar) |
 | **Preferencias** (acceso separado) | Idioma · formato regional · zona horaria |
 
 ### Qué puede hacer el analista

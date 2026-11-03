@@ -150,6 +150,11 @@ public partial class CostFlowPanel : UserControl
     }
     private void Draw()
     {
+        if (vm is not null)
+        {
+            string[] columns = ["Center", "Normal", "Real", "Distributed", "Unassigned", "Idle"];
+            for (var i=0;i<columns.Length;i++) AuxiliaryReportGrid.Columns[i].Header=vm["Aux."+columns[i]];
+        }
         DrawConcentration();
         PrimaryGraphCanvas.Children.Clear();
         SecondaryGraphCanvas.Children.Clear();

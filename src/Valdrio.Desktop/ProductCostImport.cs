@@ -35,8 +35,7 @@ internal static class ProductCostImport
             if (refValue.Length == 0 || nameValue.Length == 0 || unitValue.Length == 0 || !refs.Add(refValue))
                 return (null, "Data:" + (i + 1));
             var costText = row[cost].Trim();
-            if (!decimal.TryParse(costText, NumberStyles.Number, culture, out var unitCost) &&
-                !decimal.TryParse(costText, NumberStyles.Number, CultureInfo.InvariantCulture, out unitCost) || unitCost < 0)
+            if (!TryCost(costText, culture, out var unitCost) || unitCost < 0)
                 return (null, "Cost:" + (i + 1));
             output.Add(new(refValue, nameValue, unitValue, unitCost, i + 1));
         }
@@ -87,6 +86,20 @@ internal static class ProductCostImport
         return (current.Select(item => updated.GetValueOrDefault(item.Id, item)).Concat(additions).ToArray(), null);
     }
 
+    internal static bool TryCost(string text, CultureInfo culture, out decimal value)
+    {
+        var decimalMark = culture.NumberFormat.NumberDecimalSeparator;
+        // A single foreign decimal marker is accepted only when it cannot be a three-digit group.
+        var foreign = decimalMark == "," ? "." : ",";
+        if (!text.Contains(decimalMark) && text.Contains(foreign))
+        {
+            var parts = text.Split(foreign);
+            if (parts.Length == 2 && parts[1].Length != 3)
+                return decimal.TryParse(text.Replace(foreign, "."), NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint,
+                    CultureInfo.InvariantCulture, out value);
+        }
+        return decimal.TryParse(text, NumberStyles.Number, culture, out value);
+    }
     private static string Normalize(string value)
     {
         var decomposed = value.Trim().ToLowerInvariant().Normalize(NormalizationForm.FormD);

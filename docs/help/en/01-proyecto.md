@@ -38,3 +38,6 @@ Accepted estimated orders are stored inside the company file in schema 13. Upgra
 1. Create a project or open a working copy of an existing file; check its name and location.
 2. Select the currency and define the physical units needed by your cost centres; check dimension, scale and whether each unit is discrete.
 3. Confirm the project is open and saved before moving to Structure design; upgrade old file formats into a copy while keeping the original.
+
+### Duplicate project
+Use **Duplicate project…** to select a new name and location. Existing files and the source are never overwritten. The copy includes consistent saved data and audit history, operates independently, and can be opened after success. Save pending changes first.

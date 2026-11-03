@@ -135,7 +135,10 @@ public static class AuxiliaryCapacityService
                 if (row?.Mode == AuxiliaryCapacityMode.OwnerOnceCapacity)
                 {
                     if (source.Behavior is ResourceBehavior.Unclassified or ResourceBehavior.MixedPending or ResourceBehavior.Mixed)
-                        throw AuxiliaryCapacityRules.Error("AUX_CLASSIFICATION_REQUIRED", "ClassificationRequired");
+                        throw new DomainRuleException(new("AUX_CLASSIFICATION_REQUIRED", "Aux.ClassificationSourceRequired",
+                            [new("account", DiagnosticArgumentType.Text, source.Account),
+                             new("node", DiagnosticArgumentType.Text, w.Resources.Model.Structure.Nodes.Single(n => n.Id == source.NodeId).Code),
+                             new("rule", DiagnosticArgumentType.Text, source.KeyVersionId is { } key ? w.Keys.Single(k => k.Id == key).Name : source.Selection)]));
                     if (source.Behavior is ResourceBehavior.Fixed or ResourceBehavior.AssumedFixed && source.CapacityTreatment == ResourceCapacityTreatment.AssessAtPool)
                     {
                         var owner = parts[source.PartId].Classification?.CapacityOwner;

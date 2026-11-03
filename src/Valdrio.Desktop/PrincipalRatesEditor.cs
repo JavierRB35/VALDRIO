@@ -68,7 +68,10 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
             if (Report.AuxiliaryCapacityPartiallyAssessed) Feedback += " " + texts.Get("Aux.NotEvaluated", host.PhysicalUiCulture);
         }
         catch (Exception ex) when (ex is DomainRuleException or CompanyFileException or InvalidOperationException)
-        { Feedback = this["LoadFailed"]; }
+        { Feedback = ex switch {
+            DomainRuleException d => new DomainDiagnosticFormatter(texts).Format(d.Diagnostic, host.PhysicalUiCulture, host.PhysicalFormatCulture).Message,
+            CompanyFileException f => new DomainDiagnosticFormatter(texts).Format(f.Diagnostic, host.PhysicalUiCulture, host.PhysicalFormatCulture).Message,
+            _ => this["LoadFailed"] }; }
         OnPropertyChanged(nameof(Context)); OnPropertyChanged(nameof(Provenance)); OnPropertyChanged(nameof(SelectedSummary)); OnPropertyChanged(nameof(CanExport));
     }
     partial void OnAttentionOnlyChanged(bool value) => Filter();

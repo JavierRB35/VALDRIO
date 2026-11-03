@@ -117,7 +117,10 @@ public sealed partial class SqliteCompanyFileService
             return after;
         });
 
-        public StudySnapshotReceipt Capture(CaptureStudySnapshot command, CancellationToken token = default) => PhysicalWorkspace(true, token, (context, file) =>
+        public StudySnapshotReceipt Capture(CaptureStudySnapshot command, CancellationToken token = default) =>
+            PhysicalWorkspace(true, token, (context, file) => CaptureInTransaction(context, file, command));
+
+        private StudySnapshotReceipt CaptureInTransaction(PhysicalDbContext context, CompanyFileSnapshot file, CaptureStudySnapshot command)
         {
             Scope(command.CompanyId, file); command.RequestId.EnsureValid(); var db = (StudyDbContext)context;
             var existing = db.StudySnapshots.AsNoTracking().SingleOrDefault(s => s.Id == command.RequestId.ToString());
@@ -147,7 +150,7 @@ public sealed partial class SqliteCompanyFileService
             if (allocations.Count > 0)
                 input = new AllocationStudySnapshotInput(study, file.PrecisionPolicy, model,
                     new(command.RequestId, command.RequestId, instant, command.Actor), imports, history, allocations, includeUnroutedAccounts: true);
-            if (input is AllocationStudySnapshotInput auxInput)
+            if (input is AllocationStudySnapshotInput auxInput && !auxInput.Allocations.Configuration.SecondaryClosed)
                 EnsureAuxiliaryPhysicalCurrent(context, study, auxInput.Allocations.Configuration.AuxiliaryCapacity);
             var json = StudySnapshotJson.Serialize(input);
             var result = new StudySnapshotReceipt(command.RequestId, file.Id, study.Id, study.Revision, instant, input.SnapshotSchemaVersion,
@@ -159,7 +162,7 @@ public sealed partial class SqliteCompanyFileService
             FirstWrite(db);
             Audit(db, file, "StudySnapshot", result.Id, 0, "CaptureStudySnapshot", command.Actor, (StudySnapshotReceipt?)null, result);
             return result;
-        });
+        }
 
         public IReadOnlyList<StudySnapshotReceipt> ReadSnapshots(EntityId companyId, EntityId studyId, CancellationToken token = default) =>
             Workspace(false, token, (context, file) =>

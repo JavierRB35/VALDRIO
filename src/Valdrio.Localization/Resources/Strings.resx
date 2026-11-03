@@ -1256,7 +1256,7 @@ Difference to distribute: {7}</value></data>
   <data name="AllocationUI.SecondaryRouteHelp" xml:space="preserve"><value>Assign each auxiliary to a published secondary key; destinations may be principal or other auxiliary nodes. Group 'all' applies to the full calculation.</value></data>
   <data name="AllocationUI.SecondaryNeedStudy" xml:space="preserve"><value>Select a study to calculate secondary costs.</value></data>
   <data name="AllocationUI.SecondaryOpenState" xml:space="preserve"><value>Secondary allocation is open for editing.</value></data>
-  <data name="AllocationUI.SecondaryClosedState" xml:space="preserve"><value>Secondary allocation is closed; primary edits are locked.</value></data>
+  <data name="AllocationUI.SecondaryClosedState" xml:space="preserve"><value>Secondary allocation is closed and its consolidated result is available for reports and rates.</value></data>
   <data name="AllocationUI.SecondaryPrimaryIncomplete" xml:space="preserve"><value>Complete the primary allocation first.</value></data>
   <data name="AllocationUI.SecondaryReady" xml:space="preserve"><value>All secondary assignments are defined. You can run the calculation.</value></data>
   <data name="AllocationUI.SecondaryMissingAssignments" xml:space="preserve"><value>Secondary allocation is missing published keys for these auxiliaries: {0}.</value></data>
@@ -1555,7 +1555,7 @@ Difference to distribute: {7}</value></data>
 <data name="Adjustment.UndoDone" xml:space="preserve"><value>Application undone. Table amounts have been updated.</value></data>
 <data name="Adjustment.ManualIncluded" xml:space="preserve"><value>Existing manual corrections are included in the effective balance being offset. They remain in the history.</value></data>
 <data name="Adjustment.ManualOnRule" xml:space="preserve"><value>Account: {0}. Active rule: {1}. Previous manual correction: {2}; new manual correction: {3}. Effective balance: {4} → {5}. This correction is independent: it does not change the rule or its automatic adjustments. Correcting an offset account restores the stated balance without changing the generated analytical cost. Correcting the analytical row changes its own effective balance. Undoing the rule preserves this manual correction. Continue?</value></data>
-  <data name="Run.Help" xml:space="preserve"><value>Saved cost flows. Calculate explicitly to create a new execution; opening a saved execution never recalculates it.</value></data>
+  <data name="Run.Help" xml:space="preserve"><value>Results are consolidated automatically when secondary allocation closes. History preserves prior results.</value></data>
   <data name="Run.OriginStage" xml:space="preserve"><value>1 · Source accounts</value></data>
   <data name="Run.PrimaryStage" xml:space="preserve"><value>2 · Primary allocation</value></data>
   <data name="Run.SecondaryStage" xml:space="preserve"><value>3 · Auxiliary circulation</value></data>
@@ -1589,7 +1589,7 @@ Difference to distribute: {7}</value></data>
   <data name="Run.Excluded" xml:space="preserve"><value>Excluded</value></data>
   <data name="Run.Pending" xml:space="preserve"><value>Pending</value></data>
   <data name="Run.Difference" xml:space="preserve"><value>Difference</value></data>
-  <data name="Run.NoRuns" xml:space="preserve"><value>No saved runs. View the current primary allocation without saving, or calculate a complete result.</value></data>
+  <data name="Run.NoRuns" xml:space="preserve"><value>No consolidated result yet. Complete and close secondary allocation.</value></data>
   <data name="Run.ReadOnlyResults" xml:space="preserve"><value>Showing saved results. Selecting an execution does not calculate or change it.</value></data>
   <data name="Run.LoadFailed" xml:space="preserve"><value>The operation could not be completed. Reload saved executions to verify their status.</value></data>
   <data name="Run.Started" xml:space="preserve"><value>Started</value></data>
@@ -1840,7 +1840,7 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Rates.MissingActivity" xml:space="preserve"><value>Activity data is missing. Review Activity and capacity.</value></data>
   <data name="Rates.ZeroDenominator" xml:space="preserve"><value>The activity base is zero but the component has a cost. Review costs and activity.</value></data>
   <data name="Rates.ExcessConsumption" xml:space="preserve"><value>Assigned consumption exceeds actual activity. Review the records.</value></data>
-  <data name="Rates.MissingCosts" xml:space="preserve"><value>A current cost run is required. Open Cost flows and runs.</value></data>
+  <data name="Rates.MissingCosts" xml:space="preserve"><value>No current consolidated costs for this revision. Complete secondary allocation; closed results are preserved.</value></data>
   <data name="Rates.UnconfirmedActivity" xml:space="preserve"><value>Confirmed physical data is required. Review and confirm Activity and capacity.</value></data>
   <data name="Rates.MultiplePools" xml:space="preserve"><value>This centre has several activity bases. Costs require an allocation per base.</value></data>
   <data name="Rates.SourceMismatch" xml:space="preserve"><value>Costs do not match their provenance. Review the cost run.</value></data>
@@ -2239,7 +2239,7 @@ Excluded: {7} · Direct to products/orders: {8}</value></data>
   <data name="AllocationUI.KeysTask" xml:space="preserve"><value>Allocation keys</value></data>
   <data name="AllocationUI.CheckTask" xml:space="preserve"><value>Check and close</value></data>
   <data name="AllocationUI.CapacityServices" xml:space="preserve"><value>Capacity and services</value></data>
-  <data name="AllocationUI.CapacityDependencies" xml:space="preserve"><value>Review the treatment before calculating: distributing without capacity evaluation does not prove zero inactivity. If the method evaluates capacity, complete auxiliary observations and services in the shared editor.</value></data>
+  <data name="AllocationUI.CapacityDependencies" xml:space="preserve"><value>View auxiliary services in Results and traceability. Physical activity is entered once in Activity and capacity. The report preserves the saved capacity policy and never reopens allocations.</value></data>
   <data name="AllocationUI.ViewPhaseReport" xml:space="preserve"><value>View results for this phase</value></data>
   <data name="AllocationUI.ReopenSecondaryFirst" xml:space="preserve"><value>To change primary, reopen secondary first →</value></data>
   <data name="Estimate.MissingRateDetail" xml:space="preserve"><value>Incomplete cost: {0} requires {1} {2}, but a complete rate is missing. Review this node in Activity and rates. The physical requirement is preserved; zero cost cannot be accepted.</value></data>
@@ -2248,7 +2248,7 @@ Excluded: {7} · Direct to products/orders: {8}</value></data>
   <data name="Run.SelectedContributions" xml:space="preserve"><value>Contributions from this origin (graph nodes retain their global totals):</value></data>
   <data name="Run.ThresholdHelp" xml:space="preserve"><value>Concentration threshold (%) from 0 to 100. Initial reference 80%; it does not imply an economic 80/20 rule. Credits stay outside the curve; base: selected positive costs.</value></data>
   <data name="Run.GroupByCenter" xml:space="preserve"><value>Group by physical center</value></data>
-  <data name="Run.ExecutionOptions" xml:space="preserve"><value>Calculate or view a saved run</value></data>
+  <data name="Run.ExecutionOptions" xml:space="preserve"><value>Saved result history</value></data>
   <data name="Resources.AmountsTask" xml:space="preserve"><value>Amounts and corrections</value></data>
   <data name="Resources.ClassificationTask" xml:space="preserve"><value>Classification and destination</value></data>
   <data name="Resources.ChecksTask" xml:space="preserve"><value>Checks</value></data>
@@ -2294,4 +2294,25 @@ Excluded: {7} · Direct to products/orders: {8}</value></data>
 <data name="Activity.Guided.NormalNotes" xml:space="preserve"><value>Normal capacity note (optional)</value></data>
 <data name="Activity.Guided.RealNotes" xml:space="preserve"><value>Actual activity note (optional)</value></data>
 <data name="Activity.Guided.AboveNormal" xml:space="preserve"><value>Actual activity exceeds the usual reference. Review the quantities; you may add an optional note.</value></data>
+  <data name="Composition.EditComposition" xml:space="preserve"><value>Edit composition</value></data>
+  <data name="CompanyDuplicate" xml:space="preserve"><value>Duplicate project…</value></data>
+  <data name="CompanyDuplicateDone" xml:space="preserve"><value>Independent copy created. You can open it with Open project.</value></data>
+<data name="Run.Aux.Title" xml:space="preserve"><value>Auxiliary services</value></data>
+<data name="Run.Aux.Help" xml:space="preserve"><value>Read-only report. Unused capacity is normal minus actual (minimum zero); unassigned activity is actual minus distributed. Economic groups are not added as physical services. Percentages without an evidenced physical basis are not converted into hours.</value></data>
+<data name="Run.Aux.Center" xml:space="preserve"><value>Auxiliary</value></data>
+<data name="Run.Aux.Policy" xml:space="preserve"><value>Treatment</value></data>
+<data name="Run.Aux.Unit" xml:space="preserve"><value>Unit</value></data>
+<data name="Run.Aux.Normal" xml:space="preserve"><value>Normal</value></data>
+<data name="Run.Aux.Real" xml:space="preserve"><value>Actual</value></data>
+<data name="Run.Aux.Distributed" xml:space="preserve"><value>Distributed</value></data>
+<data name="Run.Aux.Unassigned" xml:space="preserve"><value>Unassigned</value></data>
+<data name="Run.Aux.Idle" xml:space="preserve"><value>Unused capacity</value></data>
+<data name="Run.Aux.Detail" xml:space="preserve"><value>Destinations and explanation</value></data>
+<data name="Run.Aux.MissingActivity" xml:space="preserve"><value>Confirmed actual activity is missing.</value></data>
+<data name="Run.Aux.UnknownBasis" xml:space="preserve"><value>Physical service cannot be inferred without an identified basis.</value></data>
+<data name="Run.Aux.MultipleGroups" xml:space="preserve"><value>Groups have different distributions; they are neither added nor selected arbitrarily.</value></data>
+<data name="Run.Aux.Derived" xml:space="preserve"><value>Services derived from the identified physical basis or saved evidence.</value></data>
+<data name="Aux.ClassificationSourceRequired" xml:space="preserve"><value>Account {0}, auxiliary {1}, key {2}: define the fixed/variable classification or the mixed proportion before assessing capacity.</value></data>
+<data name="Study.SaveBeforeContinuing" xml:space="preserve"><value>Save or discard the pending analysis changes before continuing.</value></data>
+  <data name="Composition.InvalidCell" xml:space="preserve"><value>Check the marked cell: enter a valid number using the selected regional format before continuing.</value></data>
 </root>

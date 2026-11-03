@@ -128,7 +128,7 @@ public sealed partial class SqliteCompanyFileService
                 return result;
             });
         public AllocationChangeReceipt ChangeAllocations(ChangeAllocations request, CancellationToken token = default) =>
-            Workspace(true, token, (context, file) =>
+            PhysicalWorkspace(true, token, (context, file) =>
             {
                 Scope(request.CompanyId, file); var db = (AllocationDbContext)context;
                 if (request.Reuse is { } selection)
@@ -204,6 +204,24 @@ public sealed partial class SqliteCompanyFileService
                 Audit(db, file, "Study", before.Id, after.Revision, "ChangeAllocations", request.Actor, before, after);
                 Audit(db, file, "AllocationChange", request.RequestId, 0, "ChangeAllocations", request.Actor,
                     (AllocationChangeReceipt?)null, result, request.RequestId.ToString());
+                if (config.SecondaryClosed)
+                {
+                    // Closure, frozen inputs and the current run share one SQLite transaction.
+                    // Any calculation, checkpoint or persistence failure rolls back all three.
+                    db.SaveChanges();
+                    var snapshot = CaptureInTransaction(context, file,
+                        new(before.CompanyId, before.Id, after.Revision, new(Guid.NewGuid()), request.Actor));
+                    var started = new CalculationRun(snapshot.Id, snapshot, CalculationRun.Algorithm,
+                        CalculationRunStatus.Started, snapshot.CapturedAtUtc, null, null);
+                    var output = CalculationRunService.Calculate(started, token);
+                    if (output.Secondary is null)
+                        throw new DomainRuleException(output.Diagnostics.First());
+                    var completed = started with { Status = CalculationRunStatus.Completed,
+                        CompletedAtUtc = owner.time.GetUtcNow(), Output = output };
+                    ValidateRunOutput(completed);
+                    var runRow = new CalculationRunRow(); SetRun(runRow, completed);
+                    context.Runs.Add(runRow);
+                }
                 return result;
             });
     }

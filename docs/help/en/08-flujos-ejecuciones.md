@@ -1,5 +1,5 @@
 # Contextual help: Cost flows and calculation runs
-**Last updated:** `2026-10-28`
+**Last updated:** `2026-11-03`
 
 
 ## 1. Purpose and financial function
@@ -9,7 +9,7 @@ Inspect and compare persisted calculation runs, their diagrams and the provenanc
 | Field / parameter | Type / unit | Required | Purpose and cost impact |
 | :--- | :--- | :--- | :--- |
 | Selected calculation run | Run selector | As needed | Distinguishes current and historical runs. |
-| Calculate, cancel and refresh | Actions | By state | Generate, interrupt or reload calculations. |
+| Refresh | Read-only action | Optional | Reload saved results; calculation is automatic on secondary closure. |
 | Graph stage | Primary or secondary | Optional | Restricts displayed flows to the chosen stage. |
 | Zoom and labels | Graph controls | Optional | Improve legibility without changing calculations. |
 | Centre, node or connection selection | Graph or table | Optional | Filters origins, destinations and reconciliation detail. |
@@ -40,3 +40,6 @@ The filter and **Group by physical centre** affect concentration. The curve uses
 1. Complete allocations and save an economic run before browsing historical results.
 2. Select a specific saved run and trace costs by resource, rule, node and centre.
 3. Compare results with the current analysis without treating saved history as an automatic recalculation; inspect each figure's source.
+
+### Consolidated result
+Closing secondary allocation validates and saves the result atomically. Failure leaves the phase open. Reports and rates select the current revision internally; prior executions remain in the secondary history expander. Before any run exists, the primary preview remains available. See [Auxiliary services](12-servicios-auxiliares.md).
