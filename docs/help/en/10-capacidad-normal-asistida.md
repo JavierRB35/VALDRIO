@@ -1,6 +1,6 @@
 # Contextual help: Edit activity and capacity
 **ID Vista UI:** `View_NormalCapacityAssistant`
-**Last updated:** `2026-10-28`
+**Last updated:** `2026-11-03`
 
 ## 1. Purpose and financial function
 Review normal capacity and record actual activity for the selected node and period. These are independent quantities: actual activity is never inferred from shifts or copied from another month. Proposals do not change published costs or runs.
@@ -10,7 +10,7 @@ Review normal capacity and record actual activity for the selected node and peri
 | :--- | :--- | :--- | :--- |
 | Normal capacity for the period | Quantity in displayed unit | To confirm | Usual reference. May display an unconfirmed proposal. Editing selects manual input. |
 | Actual activity for the period | Quantity in the same unit | To confirm | Actual total. Blank means unknown; 0 means no activity. |
-| Review calculation | Expandable panel | Optional | Opens parameters and proposal without saving. |
+| Capacity calculation | Visible primary panel | Depends on method | Days, shifts, hours per shift, resources, stoppages and factor remain accessible. The breakdown and proposal stay beside the save actions. |
 | How to obtain normal capacity | Calendar / historical / manual | For a proposal | Manual input uses the same primary quantity field. |
 | Operating days | Days within period | Calendar | Days from a different month are not copied. Complete when no reliable calendar exists. |
 | Shifts per day | Daily shifts | Calendar | May be proposed from a compatible previous calendar; review validity. |
@@ -49,5 +49,5 @@ Review normal capacity and record actual activity for the selected node and peri
 
 ## Recommended workflow
 1. Review node, period and both quantities. Complete only missing information.
-2. Open Review calculation if needed; review parameters or periods and select the proposal before saving.
-3. Save a draft or confirm. Open Sources, notes and history only when needed.
+2. Review the calculation panel; review parameters or periods and select the proposal before saving.
+3. Save a draft or confirm. Open Sources, notes and history only when needed. Manually adjusting capacity preserves calendar parameters; reopening restores them without replacing your quantity.

@@ -27,11 +27,12 @@ public partial class MainWindow
             window.Show();
             await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
             var editor = (PhysicalCapacityAssistantEditor)window.DataContext;
-            Check(!editor.ReviewExpanded && !editor.DetailsExpanded, "secondary fields initially hidden " + language);
+            Check(!editor.DetailsExpanded && ((FrameworkElement)window.FindName("CalculationPanel")).IsVisible, "calculation visible and optional notes collapsed " + language);
             VisualEvidenceCapture.Capture(window, Path.Combine(directory, "primary-" + language + ".png"));
-            editor.ReviewExpanded = true;
+
             editor.Method = PhysicalCapacityMethod.Calendar;
             editor.UseProposal = true;
+            Check(((TextBox)window.FindName("HoursPerShiftInput")).IsVisible, "hours per shift visible without expanding a panel " + language);
             window.UpdateLayout();
             void Enter(string name, string value)
             {
@@ -46,6 +47,11 @@ public partial class MainWindow
             Enter("StoppagesInput", language == "es" ? "0,5" : "0.5");
             Enter("NormalFactorInput", "90");
             Check(editor.CanAdopt && editor.Proposed.StartsWith("810"), "live WPF calculation " + language);
+            Enter("HoursPerShiftInput", "9");
+            Check(editor.Proposed.StartsWith("918"), "hours per shift recalculate period capacity " + language);
+            Enter("HoursPerShiftInput", "8");
+            Check(((FrameworkElement)window.FindName("CalculationSummary")).IsVisible && editor.CalculationSteps.Length > 0,
+                "calculation breakdown remains visible " + language);
             Check(!host.HasPendingEdits, "preview does not mutate row " + language);
             window.UpdateLayout();
             ((ScrollViewer)window.FindName("FieldsScroll")).ScrollToTop();
@@ -57,7 +63,7 @@ public partial class MainWindow
             window.Width = 680; window.Height = 720;
             window.UpdateLayout();
             VisualEvidenceCapture.Capture(window, Path.Combine(directory, "calculator-narrow-" + language + ".png"));
-            editor.ReviewExpanded = false;
+
             ((ScrollViewer)window.FindName("FieldsScroll")).ScrollToTop();
             Enter("RealInput", "800");
             editor.Save(true);

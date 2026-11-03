@@ -42,6 +42,7 @@ public sealed partial class PhysicalActivityRow : ObservableObject
     [ObservableProperty] private string utilization = "";
     public required string Cost { get; init; }
     public long Version { get; set; }
+    public string CalendarReferenceDescription { get; set; } = "";
     public PhysicalObservationState? SavedState { get; private set; }
     private PhysicalRowInputs? savedInputs;
     public string SavedStatus { get; private set; } = "";
@@ -58,7 +59,7 @@ public sealed partial class PhysicalActivityRow : ObservableObject
             NormalQuality = reverted ? savedInputs!.NormalQuality : PhysicalEvidenceQuality.Declared;
             NormalSource = reverted ? savedInputs!.NormalSource : manual;
             if (reverted) NormalDescription = savedInputs!.NormalDescription;
-            else if (NormalDescription.StartsWith("calendar:", StringComparison.Ordinal)) NormalDescription = "";
+            // A manual adjustment changes provenance, not the reusable calendar parameters.
         }
         else
         {
@@ -87,6 +88,9 @@ public sealed partial class PhysicalActivityRow : ObservableObject
         NormalSource = available ? data?.NormalEvidence?.Source ?? "" : "";
         RealSource = available ? data?.RealEvidence?.Source ?? "" : "";
         NormalDescription = available ? data?.NormalEvidence?.Description ?? "" : "";
+        if (!available) CalendarReferenceDescription = "";
+        else if (NormalDescription.StartsWith("calendar: days=", StringComparison.Ordinal))
+            CalendarReferenceDescription = NormalDescription;
         RealDescription = available ? data?.RealEvidence?.Description ?? "" : "";
         NormalQuality = data?.NormalEvidence?.Quality ?? PhysicalEvidenceQuality.Calculated;
         RealQuality = data?.RealEvidence?.Quality ?? PhysicalEvidenceQuality.Recorded;
@@ -326,6 +330,14 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
             row.ReadFrom(latest.GetValueOrDefault(pool.Id), formatCulture, Label("Activity.Pending"),
                 Label("Activity.UtilizationUndefined"), Label("Activity.AnnulledRow"),
                 Label("Activity.State.Draft"), Label("Activity.State.Confirmed"));
+            if (latest.GetValueOrDefault(pool.Id) is { Version: > 1, State: not PhysicalObservationState.Annulled } current &&
+                row.CalendarReferenceDescription.Length == 0)
+                row.CalendarReferenceDescription = activity.ReadHistory(study.CompanyId, study.Id, pool.Id)
+                    .Where(o => o.ModelVersionId == study.SelectedModelVersionId && o.UnitId == pool.DriverUnitId &&
+                        o.PeriodStart == study.PeriodStart && o.PeriodEnd == study.PeriodEnd &&
+                        o.Version < current.Version && o.State != PhysicalObservationState.Annulled &&
+                        o.NormalEvidence?.Description.StartsWith("calendar: days=", StringComparison.Ordinal) == true)
+                    .OrderByDescending(o => o.Version).FirstOrDefault()?.NormalEvidence?.Description ?? "";
             Rows.Add(row);
             row.PropertyChanged += (_, e) =>
             {

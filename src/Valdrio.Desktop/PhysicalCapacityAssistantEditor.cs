@@ -45,7 +45,7 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
     [ObservableProperty] private string calculationSteps = "";
     [ObservableProperty] private bool canAdopt;
     private bool initialized;
-    [ObservableProperty] private bool reviewExpanded;
+    [ObservableProperty] private bool reviewExpanded = true;
     [ObservableProperty] private bool detailsExpanded;
     [ObservableProperty] private bool useProposal;
     private decimal? proposedNumber;
@@ -123,9 +123,9 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
     public string HistoryText => host.History();
     public string NormalNotes
     {
-        get => row.NormalQuality != PhysicalEvidenceQuality.Calculated ? row.NormalDescription :
+        get => row.NormalQuality != PhysicalEvidenceQuality.Calculated && !row.NormalDescription.StartsWith("calendar:", StringComparison.Ordinal) ? row.NormalDescription :
             row.NormalDescription.Split("\nNote: ", 2).ElementAtOrDefault(1) ?? "";
-        set => row.NormalDescription = row.NormalQuality != PhysicalEvidenceQuality.Calculated ? value :
+        set => row.NormalDescription = row.NormalQuality != PhysicalEvidenceQuality.Calculated && !row.NormalDescription.StartsWith("calendar:", StringComparison.Ordinal) ? value :
             row.NormalDescription.Split("\nNote: ", 2)[0] + (string.IsNullOrEmpty(value) ? "" : "\nNote: " + value);
     }
     public string NormalKind => string.IsNullOrWhiteSpace(NormalValue) ? L("Activity.Guided.MissingNormal") : host.Label("Activity.Quality." + (UseProposal ? PhysicalEvidenceQuality.Calculated : row.NormalQuality));
@@ -277,9 +277,11 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
 
     private void RestoreCalendar()
     {
-        if (!CalendarSupported || row.NormalQuality != PhysicalEvidenceQuality.Calculated ||
-            !row.NormalDescription.StartsWith("calendar: days=", StringComparison.Ordinal)) return;
-        var parts = row.NormalDescription.Split("; ");
+        var description = row.NormalDescription.StartsWith("calendar: days=", StringComparison.Ordinal)
+            ? row.NormalDescription : row.CalendarReferenceDescription;
+        if (!CalendarSupported || !description.StartsWith("calendar: days=", StringComparison.Ordinal)) return;
+        Method = PhysicalCapacityMethod.Calendar;
+        var parts = description.Split("; ");
         var values = parts.Select(p => p.Split('=', 2)).Where(p => p.Length == 2)
             .GroupBy(p => p[0]).ToDictionary(g => g.Key, g => g.First()[1]);
         string Read(string key) => values.TryGetValue(key, out var text) &&
@@ -296,9 +298,9 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
             Enum.TryParse<PhysicalStoppageBasis>(basis, out var parsed) && Enum.IsDefined(parsed) &&
             Read("stopsEntered") is { Length: > 0 } entered)
         { StoppageBasis = parsed; Stoppages = entered; }
-        var start = row.NormalDescription.IndexOf("; reason=", StringComparison.Ordinal);
-        var end = row.NormalDescription.LastIndexOf("; stopsBasis=", StringComparison.Ordinal);
-        if (start >= 0) FactorReason = row.NormalDescription[(start + 9)..(end > start ? end : row.NormalDescription.Length)];
+        var start = description.IndexOf("; reason=", StringComparison.Ordinal);
+        var end = description.LastIndexOf("; stopsBasis=", StringComparison.Ordinal);
+        if (start >= 0) FactorReason = description[(start + 9)..(end > start ? end : description.Length)];
     }
 
     partial void OnMethodChanged(PhysicalCapacityMethod value)

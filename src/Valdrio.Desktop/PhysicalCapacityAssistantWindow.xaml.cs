@@ -21,7 +21,7 @@ public partial class PhysicalCapacityAssistantWindow : IntegratedWorkspaceWindow
         Closed += (_, _) => editor.Detach();
         ContentRendered += (_, _) =>
         {
-            NormalInput.Focus();
+            if (editor.CalendarVisible) DaysInput.Focus(); else NormalInput.Focus();
         };
     }
     private void SaveActivityDraft(object sender, RoutedEventArgs e) => editor.Save(false);

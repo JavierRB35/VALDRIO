@@ -16,9 +16,18 @@
   <StackPanel DockPanel.Dock="Top" Margin="0,0,0,16">
    <TextBlock Text="{Binding Title}" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource Brand.DeepGreen}"/>
    <TextBlock Text="{Binding Context}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,8,0,4"/>
+   <TextBlock Text="{Binding ExistingCost}" TextWrapping="Wrap" Foreground="{DynamicResource Text.Secondary}" Margin="0,0,0,4"/>
    <TextBlock Text="{Binding ProposalHelp}" TextWrapping="Wrap"/>
   </StackPanel>
   <StackPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
+   <Border x:Name="CalculationSummary" Background="{DynamicResource Surface.Subtle}" BorderBrush="{DynamicResource Border.Soft}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,8">
+    <ScrollViewer MaxHeight="140" VerticalScrollBarVisibility="Auto"><StackPanel>
+     <TextBlock Text="{Binding ResultLabel}" FontWeight="SemiBold"/>
+     <TextBlock Text="{Binding CalculationSteps}" TextWrapping="Wrap" Margin="0,4,0,4"/>
+     <TextBlock Text="{Binding Proposed}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource Accent.ActiveGreen}"/>
+     <TextBlock Text="{Binding Feedback}" TextWrapping="Wrap" Foreground="{DynamicResource Brand.Red}" AutomationProperties.LiveSetting="Polite"/>
+    </StackPanel></ScrollViewer>
+   </Border>
    <TextBlock Text="{Binding Host.Feedback}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
    <WrapPanel Margin="0,8,0,0">
     <Button Content="{Binding SaveLabel}" Click="SaveActivityDraft" IsEnabled="{Binding CanSave}" Margin="0,0,8,0"/>
@@ -28,28 +37,7 @@
   </StackPanel>
   <ScrollViewer x:Name="FieldsScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
    <StackPanel>
-    <Border Background="{DynamicResource Brand.White}" BorderBrush="{DynamicResource Border.Soft}" BorderThickness="1" CornerRadius="6" Padding="16">
-     <StackPanel>
-      <TextBlock Text="{Binding NormalFieldLabel}" FontSize="16" FontWeight="SemiBold"/>
-      <TextBox x:Name="NormalInput" Text="{Binding NormalValue,UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding Host.IsReadOnly}"
-               AutomationProperties.Name="{Binding NormalFieldLabel}" AutomationProperties.HelpText="{Binding NormalHelp}" ToolTip="{Binding NormalHelp}" Margin="0,6,0,4"/>
-      <TextBlock Text="{Binding NormalHelp}" TextWrapping="Wrap"/>
-      <TextBlock Text="{Binding NormalError}" Foreground="{DynamicResource Brand.Red}" TextWrapping="Wrap"/>
-      <TextBlock Text="{Binding ProvenanceSummary}" Foreground="{DynamicResource Accent.ActiveGreen}" Margin="0,4,0,0" TextWrapping="Wrap"/>
-      <TextBlock Text="{Binding RealFieldLabel}" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,0"/>
-      <TextBox x:Name="RealInput" Text="{Binding RealValue,UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding Host.IsReadOnly}"
-               AutomationProperties.Name="{Binding RealFieldLabel}" AutomationProperties.HelpText="{Binding RealHelp}" ToolTip="{Binding RealHelp}" Margin="0,6,0,4"/>
-      <TextBlock Text="{Binding RealHelp}" TextWrapping="Wrap"/>
-      <TextBlock Text="{Binding RealError}" Foreground="{DynamicResource Brand.Red}" TextWrapping="Wrap"/>
-      <TextBlock Text="{Binding RealProvenance}" Foreground="{DynamicResource Accent.ActiveGreen}" TextWrapping="Wrap" Margin="0,4,0,0"/>
-      <TextBlock Text="{Binding ReviewWarning}" TextWrapping="Wrap" Margin="0,8,0,0"/>
-      <TextBlock Text="{Binding UtilizationSummary}" Margin="0,8,0,0" TextWrapping="Wrap"/>
-      <Border Background="{DynamicResource Surface.Subtle}" Padding="12" Margin="0,16,0,0" CornerRadius="4">
-       <TextBlock Text="{Binding Readiness}" FontWeight="SemiBold" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
-      </Border>
-     </StackPanel>
-    </Border>
-    <Expander x:Name="CalculationExpander" Header="{Binding ReviewLabelText}" IsExpanded="{Binding ReviewExpanded}" Margin="0,12,0,0">
+    <Border x:Name="CalculationPanel" Margin="0,0,0,12">
      <Border Background="{DynamicResource Brand.White}" Padding="16"><StackPanel IsEnabled="{Binding Host.IsWritable}">
       <TextBlock Text="{Binding MethodLabel}" FontWeight="SemiBold"/>
       <ComboBox ItemsSource="{Binding Methods}" DisplayMemberPath="Label" SelectedValuePath="Value"
@@ -120,11 +108,29 @@
 
       <CheckBox Content="{Binding UseProposalLabel}" IsChecked="{Binding UseProposal}" IsEnabled="{Binding CanAdopt}" Visibility="{Binding CalendarVisible,Converter={StaticResource Visibility}}" Margin="0,12,0,4"/>
       <CheckBox Content="{Binding UseProposalLabel}" IsChecked="{Binding UseProposal}" IsEnabled="{Binding CanAdopt}" Visibility="{Binding HistoryVisible,Converter={StaticResource Visibility}}" Margin="0,12,0,4"/>
-      <TextBlock Text="{Binding Proposed}" FontWeight="SemiBold" FontSize="18" TextWrapping="Wrap"/>
-      <TextBlock Text="{Binding CalculationSteps}" TextWrapping="Wrap" Margin="0,6,0,0"/>
-      <TextBlock Text="{Binding Feedback}" TextWrapping="Wrap" Foreground="{DynamicResource Brand.Red}" AutomationProperties.LiveSetting="Polite"/>
      </StackPanel></Border>
-    </Expander>
+    </Border>
+    <Border Background="{DynamicResource Brand.White}" BorderBrush="{DynamicResource Border.Soft}" BorderThickness="1" CornerRadius="6" Padding="16">
+     <StackPanel>
+      <TextBlock Text="{Binding NormalFieldLabel}" FontSize="16" FontWeight="SemiBold"/>
+      <TextBox x:Name="NormalInput" Text="{Binding NormalValue,UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding Host.IsReadOnly}"
+               AutomationProperties.Name="{Binding NormalFieldLabel}" AutomationProperties.HelpText="{Binding NormalHelp}" ToolTip="{Binding NormalHelp}" Margin="0,6,0,4"/>
+      <TextBlock Text="{Binding NormalHelp}" TextWrapping="Wrap"/>
+      <TextBlock Text="{Binding NormalError}" Foreground="{DynamicResource Brand.Red}" TextWrapping="Wrap"/>
+      <TextBlock Text="{Binding ProvenanceSummary}" Foreground="{DynamicResource Accent.ActiveGreen}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+      <TextBlock Text="{Binding RealFieldLabel}" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,0"/>
+      <TextBox x:Name="RealInput" Text="{Binding RealValue,UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding Host.IsReadOnly}"
+               AutomationProperties.Name="{Binding RealFieldLabel}" AutomationProperties.HelpText="{Binding RealHelp}" ToolTip="{Binding RealHelp}" Margin="0,6,0,4"/>
+      <TextBlock Text="{Binding RealHelp}" TextWrapping="Wrap"/>
+      <TextBlock Text="{Binding RealError}" Foreground="{DynamicResource Brand.Red}" TextWrapping="Wrap"/>
+      <TextBlock Text="{Binding RealProvenance}" Foreground="{DynamicResource Accent.ActiveGreen}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+      <TextBlock Text="{Binding ReviewWarning}" TextWrapping="Wrap" Margin="0,8,0,0"/>
+      <TextBlock Text="{Binding UtilizationSummary}" Margin="0,8,0,0" TextWrapping="Wrap"/>
+      <Border Background="{DynamicResource Surface.Subtle}" Padding="12" Margin="0,16,0,0" CornerRadius="4">
+       <TextBlock Text="{Binding Readiness}" FontWeight="SemiBold" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
+      </Border>
+     </StackPanel>
+    </Border>
     <Expander Header="{Binding DetailsLabel}" IsExpanded="{Binding DetailsExpanded}" Margin="0,12,0,0">
      <Border Background="{DynamicResource Brand.White}" Padding="16"><StackPanel>
       <TextBlock Text="{Binding NormalSourceLabel}" FontWeight="SemiBold"/>

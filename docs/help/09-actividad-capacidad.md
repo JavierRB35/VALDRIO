@@ -1,6 +1,6 @@
 # Ayuda contextual: Actividad y capacidades
 **ID Vista UI:** `View_PhysicalActivity`  
-**Última actualización:** `2026-10-28`
+**Última actualización:** `2026-11-03`
 **Estado:** guía revisada sobre `2599188` y la auditoría contextual de 28/10/2026. Las evidencias de validación se registran por separado.
 
 ## 1. Objetivo y función financiera
@@ -43,6 +43,8 @@ Registrar observaciones físicas por nodo/pool, análisis y período, manteniend
 
 ### Dónde editar
 La tabla general es de consulta. Abre **Editar actividad y capacidad** para el nodo seleccionado: comparte normal, real y fuentes con esta pantalla. Guarda borrador o confirma explícitamente; la propuesta seleccionada se incorpora en la misma operación de guardado.
+
+Los parámetros de calendario y su desglose están visibles en el editor; ajustar la capacidad normal no elimina días, turnos, horas ni recursos guardados. Si una versión anterior perdió esos parámetros, se recupera como referencia el último calendario del mismo nodo, modelo, unidad y período, cuando existe en el historial.
 
 ## Recorrido recomendado
 1. Selecciona nodo, unidad y período para registrar la actividad real y la capacidad normal que correspondan.

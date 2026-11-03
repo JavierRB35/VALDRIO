@@ -1,6 +1,6 @@
 # Ayuda contextual: Editar actividad y capacidad
 **ID Vista UI:** `View_NormalCapacityAssistant`
-**Última actualización:** `2026-10-28`
+**Última actualización:** `2026-11-03`
 
 ## 1. Objetivo y función financiera
 Revisar la capacidad normal de referencia y registrar la actividad real del nodo y período seleccionados. Son magnitudes independientes: la actividad real nunca se calcula a partir de turnos ni se copia de otro mes. La propuesta no modifica costes ni ejecuciones publicadas.
@@ -10,7 +10,7 @@ Revisar la capacidad normal de referencia y registrar la actividad real del nodo
 | :--- | :--- | :--- | :--- |
 | Capacidad normal del período | Cantidad en la unidad indicada | Para confirmar | Referencia habitual. Puede mostrarse una propuesta sin confirmar. Editarla selecciona entrada manual. |
 | Actividad real del período | Cantidad en la misma unidad | Para confirmar | Total realizado. Vacío significa pendiente; 0 significa ausencia de actividad. |
-| Revisar cálculo | Panel desplegable | Opcional | Abre parámetros y propuesta, sin guardar automáticamente. |
+| Cálculo de capacidad | Panel principal visible | Según método | Días, turnos, horas por turno, recursos, paradas y factor permanecen accesibles. El desglose y la propuesta se muestran junto a las acciones de guardado. |
 | Cómo obtener la capacidad normal | Calendario / histórico / manual | Para calcular una propuesta | Selecciona el procedimiento. La entrada manual usa el mismo campo principal. |
 | Días de funcionamiento | Días del período | Si calendario | No se copian días de otro mes. Completar si no existe calendario fiable. |
 | Turnos diarios | Turnos diarios | Si calendario | Recuperables del último calendario compatible; revisar su vigencia. |
@@ -49,5 +49,5 @@ Revisar la capacidad normal de referencia y registrar la actividad real del nodo
 
 ## Recorrido recomendado
 1. Revisa centro, período y las dos cantidades; completa únicamente lo pendiente.
-2. Si necesitas una propuesta, abre Revisar cálculo y revisa parámetros o períodos. Selecciona su uso antes de guardar.
-3. Guarda un borrador o confirma los datos. Consulta Origen, notas e historial solo si necesitas más detalle.
+2. Si necesitas una propuesta, revisa el panel de cálculo y revisa parámetros o períodos. Selecciona su uso antes de guardar.
+3. Guarda un borrador o confirma los datos. Consulta Origen, notas e historial solo si necesitas más detalle. Ajustar manualmente la capacidad conserva los parámetros del calendario; al reabrir se recuperan sin reemplazar tu cifra.

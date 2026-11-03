@@ -1,5 +1,5 @@
 # Contextual help: Activity and capacity
-**Last updated:** `2026-10-28`
+**Last updated:** `2026-11-03`
 
 
 ## 1. Purpose and financial function
@@ -37,6 +37,8 @@ Record normal capacity and actual activity for each analytical node, study and p
 
 ### Where to edit
 The overview table is read-only. Open **Edit activity and capacity** for the selected node: it shares normal, actual and source values with this screen. Explicitly save a draft or confirm; the selected proposal is included in the same save operation.
+
+Calendar inputs and their breakdown are visible in the editor. Adjusting normal capacity does not erase saved days, shifts, hours or resources. If an older version lost those parameters, the latest calendar with the same node, model, unit and period is recovered as a reference when available in history.
 
 ## Recommended workflow
 1. Select the node, unit and period for actual activity and normal capacity observations.
