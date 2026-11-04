@@ -1795,7 +1795,7 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
   <data name="Activity.Stoppages.Exceeds" xml:space="preserve"><value>Las paradas calculadas ({0} h) superan las horas de calendario ({1} h). Revisa las horas y si son por turno, día o totales.</value></data>
   <data name="Activity.Stoppages.Calculation" xml:space="preserve"><value>Paradas: {0} h ({1}) × {2} = {3} h totales</value></data>
   <data name="Rates.Title" xml:space="preserve"><value>Tarifas y costes unitarios</value></data>
-  <data name="Rates.Centers" xml:space="preserve"><value>Centros principales</value></data>
+  <data name="Rates.Centers" xml:space="preserve"><value>Centros de la categoría seleccionada</value></data>
   <data name="Rates.Center" xml:space="preserve"><value>Centro</value></data>
   <data name="Rates.Unit" xml:space="preserve"><value>Unidad</value></data>
   <data name="Rates.Cost" xml:space="preserve"><value>Coste del período</value></data>
@@ -2117,8 +2117,8 @@ Se escribirá en el destino elegido. Revisa ambos archivos antes de continuar. C
   <data name="Guide.ResumeChooseAnalysis" xml:space="preserve"><value>Elegir o crear periodo</value></data>
   <data name="AllocationUI.ParetoPrimaryTitle" xml:space="preserve"><value>Pareto · reparto primario</value></data>
   <data name="AllocationUI.ParetoSecondaryTitle" xml:space="preserve"><value>Pareto · reparto secundario</value></data>
-  <data name="AllocationUI.ParetoPrimaryHelp" xml:space="preserve"><value>Coste asignado a cada nexo (nodo), de mayor a menor. Vista previa de los datos actuales; consulta arriba el estado del reparto.</value></data>
-  <data name="AllocationUI.ParetoSecondaryHelp" xml:space="preserve"><value>Coste final por nexo principal: primario más lo recibido de auxiliares. Las transferencias internas no se suman de nuevo.</value></data>
+  <data name="AllocationUI.ParetoPrimaryHelp" xml:space="preserve"><value>Coste asignado a cada nodo de la categoría seleccionada, de mayor a menor. Vista previa de los datos actuales; consulta arriba el estado del reparto.</value></data>
+  <data name="AllocationUI.ParetoSecondaryHelp" xml:space="preserve"><value>Coste final de cada nodo principal de la categoría seleccionada: primario más servicios auxiliares. Las transferencias internas no se suman de nuevo.</value></data>
   <data name="AllocationUI.ParetoLegend" xml:space="preserve"><value>Barras verdes: coste por nexo (eje izquierdo). Línea amarilla: porcentaje acumulado del total (eje derecho).</value></data>
   <data name="AllocationUI.ParetoEmpty" xml:space="preserve"><value>Sin resultados disponibles. Completa o calcula este reparto para ver el gráfico.</value></data>
   <data name="AllocationUI.ParetoCumulative" xml:space="preserve"><value>Acumulado</value></data>
