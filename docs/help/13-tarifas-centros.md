@@ -48,3 +48,11 @@ Ejemplo: 1.000 de fijo propio, normal de 100 h y real de 80 h dan 10/h, 800 de c
 3. Consulta la tarifa y la explicación de las variaciones, su unidad y su procedencia; corrige los datos en las pantallas de origen, no en esta tabla de análisis.
 
 Las tarifas se presentan automáticamente desde los costes cerrados vigentes y los datos físicos confirmados. Actualizar actividad no reabre repartos; la evaluación auxiliar fijada en el cierre conserva su trazabilidad.
+
+## Ampliación: tarifas y costes unitarios (candidatura 2026-11-04)
+
+La pantalla se denomina **Tarifas y costes unitarios**. La pestaña **Tarifas de centros** muestra los nodos generales; **Factores directos** muestra grupos homogéneos de MOD y grupos de aprovisionamiento configurados. Ambas consultan el **mismo cálculo** y las mismas fuentes congeladas; seleccionar una pestaña no modifica importes ni recalcula el reparto.
+
+La finalidad del nodo se selecciona al diseñar la estructura. Los modelos históricos sin clasificación explícita permanecen en centros generales hasta que el usuario actualice su configuración en una versión editable. Los importes propios, recibidos, variables y de capacidad se siguen calculando conforme a CM08/CM09. La tarifa MOD no implica que sus horas se hayan aplicado a órdenes: eso requiere consumos reales T19. No se transforma una estimación de tiempo en actividad real ni se duplica la prestación auxiliar.
+
+**Estado:** funcionalidad desarrollada en rama candidata; no considerar integrada o validada en Windows hasta disponer de prueba y aceptación de la versión.
