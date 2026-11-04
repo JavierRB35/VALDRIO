@@ -43,7 +43,7 @@ public sealed partial class T06ImportConfirmationTests
         Assert.IsTrue(await vm.SaveCorrectionAsync(vm.Rows.Single(), "50,00", EsNumbers));
         Assert.AreEqual(saved, Hash(ui.Company.ActivePath!));
         Assert.IsTrue(await vm.SaveCorrectionAsync(vm.Rows.Single(), "0", EsNumbers));
-        Assert.AreEqual("1000 EUR", vm.Rows.Single().Effective);
+        Assert.AreEqual("1.000 EUR", vm.Rows.Single().Effective);
         Assert.AreEqual("0 EUR", vm.Rows.Single().Adjustments);
         var study = ui.Studies.Current!;
         CollectionAssert.AreEquivalent(new[] { 50m, -50m }, ui.Company.ActiveResources!.ReadResources(study.CompanyId, study.Id)

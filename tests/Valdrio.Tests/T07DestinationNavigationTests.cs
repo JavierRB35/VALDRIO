@@ -19,7 +19,7 @@ public sealed partial class T06ImportConfirmationTests
         Assert.IsFalse(vm.ShowParts); Assert.IsFalse(vm.IsDirty);
         Assert.AreEqual(0, ui.Dialogs.Prompts);
         Assert.IsTrue(await vm.SaveCorrectionAsync(vm.Rows.Single(), "10", EsNumbers), vm.Status);
-        Assert.AreEqual("1010 EUR", vm.Rows.Single().Effective);
+        Assert.AreEqual("1.010 EUR", vm.Rows.Single().Effective);
     }
     [TestMethod]
     public async Task T07_ReturnWithUnappliedDestinationCanCancelThenDiscardWithoutLosingSavedCorrection()

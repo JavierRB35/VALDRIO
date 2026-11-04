@@ -19,7 +19,7 @@ public sealed partial class T06ImportConfirmationTests
         ui.Dialogs.ConfirmEconomic = false;
         await card.ApplyCommand.ExecuteAsync(null);
         Assert.AreEqual(1, vm.Rows.Count);
-        StringAssert.Contains(ui.Dialogs.EconomicBody, "1020 EUR");
+        StringAssert.Contains(ui.Dialogs.EconomicBody, "1.020 EUR");
         Assert.IsFalse(card.HasPreview);
         ui.Dialogs.ConfirmEconomic = true;
         await card.ApplyCommand.ExecuteAsync(null);
@@ -32,7 +32,7 @@ public sealed partial class T06ImportConfirmationTests
         Assert.IsTrue(await vm.SaveCorrectionAsync(vm.Rows.Single(r => r.Code == "681001"), "50", System.Globalization.CultureInfo.InvariantCulture));
         Assert.AreEqual("30 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
         card.UndoCommand.Execute(null); await card.ConfirmCommand.ExecuteAsync(null);
-        Assert.AreEqual("1050 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
+        Assert.AreEqual("1.050 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
     }
     [TestMethod]
     public async Task ReusableAdjustment_SuggestsCodeButPreservesManualAndSavedCodes()
@@ -98,11 +98,11 @@ public sealed partial class T06ImportConfirmationTests
         await card.ConfirmCommand.ExecuteAsync(null);
         Assert.IsFalse(card.HasPreview);
         Assert.IsFalse(string.IsNullOrWhiteSpace(card.Feedback));
-        Assert.AreEqual("1000 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
+        Assert.AreEqual("1.000 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
         Assert.AreEqual("500 EUR", vm.Rows.Single(r => r.Code == "AJ-EXTRA").Effective);
         card.UndoCommand.Execute(null); await card.ConfirmCommand.ExecuteAsync(null);
         Assert.AreEqual("0 EUR", vm.Rows.Single(r => r.Code == "AJ-EXTRA").Effective);
-        Assert.AreEqual("1000 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
+        Assert.AreEqual("1.000 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
         Assert.IsFalse(string.IsNullOrWhiteSpace(card.Feedback));
     }
     [TestMethod]
@@ -150,14 +150,14 @@ public sealed partial class T06ImportConfirmationTests
         Assert.AreEqual(2, vm.Rows.Count, vm.Status);
         Assert.AreEqual("0 EUR", vm.Rows.Single(r => r.Code == "681001").Effective);
         Assert.AreEqual("0 EUR", vm.Rows.Single(r => r.Code == "681001").Adjustments);
-        Assert.AreEqual("-1000 EUR", vm.Rows.Single(r => r.Code == "681001").RuleAdjustments);
-        StringAssert.Contains(card.SelectionSummary, "1000 EUR");
+        Assert.AreEqual("-1.000 EUR", vm.Rows.Single(r => r.Code == "681001").RuleAdjustments);
+        StringAssert.Contains(card.SelectionSummary, "1.000 EUR");
         StringAssert.Contains(card.SelectionSummary, ": 0 EUR");
         Assert.IsFalse(card.ApplyCommand.CanExecute(null));
         await card.DeleteCommand.ExecuteAsync(null);
         card = vm.RuleCards.Single(); Assert.IsTrue(card.Saved!.Archived);
         card.UndoCommand.Execute(null); await card.ConfirmCommand.ExecuteAsync(null);
-        Assert.AreEqual("1000 EUR", vm.Rows.Single(r => r.Code == "681001").Effective, vm.Status);
+        Assert.AreEqual("1.000 EUR", vm.Rows.Single(r => r.Code == "681001").Effective, vm.Status);
     }
     [TestMethod]
     public async Task ReusableAdjustment_ReopensPreservesSnapshotAndDoesNotApplyInAnotherAnalysis()

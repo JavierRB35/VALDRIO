@@ -78,7 +78,7 @@ public partial class MainWindow
         await Click(panel.SaveRuleButton); Check(vm.PrimaryRules.Count == 1 && vm.PrimaryResults.Count == 0, "save rule persists without applying");
         await Click(panel.ApplyRuleButton);
         // Validate the economic ledger, not a hard-coded display string.
-        // es-ES presents 1,000 EUR as "1.000,00 EUR", rather than "1000 EUR".
+        // es-ES presents 1,000 EUR as "1.000 EUR", without redundant decimal zeroes.
         // Keeping the displayed result equal to the node total also verifies
         // that the two UI projections agree with the underlying posted amount.
         var previewMatchesLedger = vm.PrimaryResults.Count == 1 &&
