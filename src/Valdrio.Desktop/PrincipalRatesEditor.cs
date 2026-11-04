@@ -73,10 +73,15 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
             var old = host.Current ?? throw new InvalidOperationException();
             var study = host.PhysicalStudies!.ReadStudies().Single(s => s.Id == old.Id);
             var model = host.PhysicalModels!.ReadModels().Single(m => m.Structure.Id == study.SelectedModelVersionId).Publication!;
-            directFactorNodes = model.Structure.Nodes.Where(NodeCostClassification.IsDirectFactor).Select(n => n.Id).ToHashSet();
             Report = PrincipalRateReportService.Read(study, model, host.PhysicalRuns?.ReadRuns(study.CompanyId, study.Id),
                 host.ActivePhysicalActivity!.ReadCurrent(study.CompanyId, study.Id));
             sourceRun = host.PhysicalRuns?.ReadRuns(study.CompanyId, study.Id).Runs.SingleOrDefault(r => r.Id == Report.EconomicRunId);
+            // Study-level adapted nodes are frozen with the economic run; do not
+            // classify the rate from a different published structure revision.
+            var rateNodes = sourceRun?.Snapshot.Input is AllocationStudySnapshotInput input
+                ? input.Allocations.Resources.Model.Structure.Nodes
+                : model.Structure.Nodes;
+            directFactorNodes = rateNodes.Where(NodeCostClassification.IsDirectFactor).Select(n => n.Id).ToHashSet();
             allRows = Report.Rows.Select(row =>
             {
                 var definition = host.PhysicalCompany!.Units.Single(u => u.Id == row.UnitId);
