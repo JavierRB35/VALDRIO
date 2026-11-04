@@ -74,6 +74,11 @@ public partial class MainWindow
             var primaryToggleY = AllocationPanel.TogglePrimaryButton.TranslatePoint(new Point(), this).Y;
             Check(AllocationPanel.LinesGrid.ActualHeight >= 200, "primary destinations use available height " + language);
             Check(vm.IsPrimaryClosed && vm.PrimaryResults.All(r => !string.IsNullOrWhiteSpace(r.Behavior)), "closed primary shows behavior " + language);
+            Check(vm.GeneralPrimaryResults.Count + vm.DirectPrimaryResults.Count == vm.PrimaryResults.Count &&
+                vm.GeneralPrimaryNodeTotals.Sum(r => r.PresentedAmount) +
+                vm.DirectPrimaryNodeTotals.Sum(r => r.PresentedAmount) ==
+                vm.PrimaryNodeTotals.Sum(r => r.PresentedAmount),
+                "two primary presentation tabs retain complete currency-projected totals " + language);
             Check(vm.PrimaryAccounts.Count > 0 && vm.PrimaryAccounts.Sum(row => row.PresentedAssigned) == vm.PrimaryNodeTotals.Sum(row => row.PresentedAmount),
                 "primary grouped-account assignments reconcile to the primary node totals " + language);
             Check(vm.PrimaryAccounts.All(row => row.PresentedBase - row.PresentedAssigned == row.PresentedPending),
@@ -115,6 +120,11 @@ public partial class MainWindow
             var snapshot = company.ActiveAllocations!.ReadAllocations(studies.Current!.CompanyId, studies.Current.Id);
             var publication = snapshot.SecondaryPublication!;
             Check(vm.PrincipalCosts.Sum(r => r.TotalAmount) == publication.Facts.Sum(f => f.PostedAmount.Amount), "principal totals equal posted ledger " + language);
+            Check(vm.GeneralPrincipalCosts.Count + vm.DirectPrincipalCosts.Count == vm.PrincipalCosts.Count &&
+                vm.GeneralPrincipalCosts.Sum(r => r.TotalAmount) + vm.DirectPrincipalCosts.Sum(r => r.TotalAmount) ==
+                vm.PrincipalCosts.Sum(r => r.TotalAmount) &&
+                vm.GeneralSecondaryResults.Count + vm.DirectSecondaryResults.Count == vm.SecondaryResults.Count,
+                "secondary terminal and contribution tabs partition the published costs without duplication " + language);
             Check(vm.AuxiliarySettlements.Count > 0 && vm.AuxiliarySettlements.All(row => row.InitialAmount + row.IncomingAmount == row.GrossAmount),
                 "auxiliary liquidation displays signed mathematically reconciled primary and reciprocal inputs " + language);
             ScrollToElement(panel.AuxiliarySettlementSection); await Idle();
