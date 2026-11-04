@@ -2338,4 +2338,10 @@ Excluido: {7} · Directo a productos/órdenes: {8}</value></data>
   <data name="AllocationUI.ResultsGeneral" xml:space="preserve"><value>Centros generales / costes indirectos</value></data>
   <data name="AllocationUI.ResultsDirect" xml:space="preserve"><value>Factores directos (MOD y aprovisionamiento)</value></data>
   <data name="AllocationUI.ResultsConsolidatedTotal" xml:space="preserve"><value>Total conciliado · ambas categorías</value></data>
+  <data name="Run.FunctionalCosts" xml:space="preserve"><value>Costes terminales por función económica</value></data>
+  <data name="Run.FunctionalCostsHelp" xml:space="preserve"><value>Agrupación de costes finales de nodos principales según su destino. No representa el coste de ventas, el margen comercial ni la valoración de existencias; los nodos sin clasificar permanecen visibles.</value></data>
+  <data name="Run.Function.Unspecified" xml:space="preserve"><value>Sin clasificar (nodos anteriores)</value></data>
+  <data name="Run.Function.Production" xml:space="preserve"><value>Producción / actividad principal</value></data>
+  <data name="Run.Function.Commercial" xml:space="preserve"><value>Comercial</value></data>
+  <data name="Run.Function.Structure" xml:space="preserve"><value>Estructura / administración</value></data>
 </root>
