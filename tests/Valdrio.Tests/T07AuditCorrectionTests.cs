@@ -97,7 +97,7 @@ public sealed partial class T06ImportConfirmationTests
         Assert.AreEqual("Keep my reason", vm.RevalueReason); Assert.AreEqual(hash, Hash(ui.Company.ActivePath!));
         rate.Form["Quote"] = "2"; vm.PrepareRevalueCommand.Execute(null);
         Assert.IsTrue(vm.IsRevaluing, vm.Status); Assert.IsFalse(vm.CanEditRates);
-        Assert.AreEqual("1002 EUR", vm.Rows.Single().Effective);
+        Assert.AreEqual("1.002 EUR", vm.Rows.Single().Effective);
     }
 
     [TestMethod]

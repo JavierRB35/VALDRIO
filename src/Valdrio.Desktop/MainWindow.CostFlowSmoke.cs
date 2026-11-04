@@ -21,7 +21,7 @@ public partial class MainWindow
             Check(flows.Nodes.Select(n=>n.Stage).Distinct().Count()==4,"four stages "+language);
             Check(flows.Arrows.Count(a=>a.Row?.Stage==flows["SecondaryStage"])==4,"four secondary arrows "+language);
             Check(flows.Arrows.Count(a=>a.Internal)==2,"reciprocal arrows "+language);
-            Check(flows.Nodes.Single(n=>n.Stage==3).Amount=="6500 EUR","final 6500 "+language);
+            Check(flows.Nodes.Single(n=>n.Stage==3).Amount==UiCompactNumbers.Money(6500m,"EUR",flows.NumericCulture),"final 6500 "+language);
             Check(flows.CurrentState==flows["Current"],"current revision "+language);
             Check(flows.CenterBalances.Sum(r=>r.FinalValue)==6500m && flows.NodeBalances.Sum(r=>r.SecondaryNetValue)==0m,
                 "centre summary conserves final cost without reciprocal double counting "+language);
