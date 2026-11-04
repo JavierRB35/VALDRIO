@@ -7,7 +7,8 @@ using Valdrio.Domain;
 using Valdrio.Localization;
 namespace Valdrio.Desktop;
 
-public sealed record ReportConcentrationRow(string Node, string Role, decimal Amount, string Share, string Cumulative, string Behavior, string GraphId);
+public sealed record ReportConcentrationRow(string Node, string Role, decimal Amount, string Share, string Cumulative, string Behavior, string GraphId)
+{ public string AmountDisplay { get; init; } = ""; }
 public sealed record FlowRow(string Stage, string Resource, string Source, string Destination, string Rule,
     string Assigned, string Received, string Terminal, string Detail, string SourceId, string DestinationId);
 public sealed record FlowNode(string Id, int Stage, string Label, string Amount, string? DisplayAmount = null);
@@ -38,7 +39,7 @@ public sealed partial class CostFlowViewModel : ObservableObject
     partial void OnConcentrationThresholdChanged(decimal value) => Present();
     public string ConcentrationThresholdHelp => this["ThresholdHelp"];
     public string PhaseLabel => this[SecondaryPhase ? "SecondaryReportPhase" : "PrimaryReportPhase"];
-    public string DisplayReportAmount(decimal value) => value.ToString("N2", Format);
+    public string DisplayReportAmount(decimal value) => UiCompactNumbers.Number(value, Format);
     public CultureInfo NumericCulture => Format;
     public string ReportTitle => this["ReportTitle"];
     public IEnumerable<string[]> ExportRows()
@@ -312,10 +313,10 @@ public sealed partial class CostFlowViewModel : ObservableObject
                     this["Adjustments"] + ": " + Amount(a.Conversion.ConvertedOriginalMoney.Amount) + " · " + a.Type + " · " + a.Reason));
         }
         string Key(EntityId? id) => id is null ? "—" : w.Keys.FirstOrDefault(k => k.Id == id)?.Name ?? id.ToString()!;
-        string Amount(decimal value) => value.ToString("0.############################", Format) + " " + w.Resources.Study.Currency.FunctionalCurrencyCode;
+        string Amount(decimal value) => UiCompactNumbers.Money(value, w.Resources.Study.Currency.FunctionalCurrencyCode.Value, Format);
         // Compact graph-only numbers; persisted audit and detail remain exact.
-        string GraphAmount(decimal value) => value.ToString("N2", Format) + " " + w.Resources.Study.Currency.FunctionalCurrencyCode;
-        string GraphPercent(decimal share) => (share * 100m).ToString("N2", Format) + " %";
+        string GraphAmount(decimal value) => Amount(value);
+        string GraphPercent(decimal share) => UiCompactNumbers.Percent(share * 100m, Format);
         string nodeId(int stage, EntityId id) => stage + ":" + id;
         var output = run?.Output;
         if (output?.Diagnostics is { } diagnosticList)
@@ -346,9 +347,9 @@ public sealed partial class CostFlowViewModel : ObservableObject
             {
                 var row = new FlowRow(this["PrimaryStage"],Account(fact.ResourceId),Account(fact.ResourceId),Node(fact.NodeId),Key(fact.KeyVersionId),
                     Amount(fact.PostedAmount.Amount),Amount(fact.PostedAmount.Amount),"—",
-                    $"{Key(fact.KeyVersionId)} · {(fact.Share * 100m).ToString("0.########",Format)} % · {Amount(fact.PostedAmount.Amount)}" + Environment.NewLine + Origin(fact.ResourceId),
+                    $"{Key(fact.KeyVersionId)} · {GraphPercent(fact.Share)} · {Amount(fact.PostedAmount.Amount)}" + Environment.NewLine + Origin(fact.ResourceId),
                     nodeId(0,fact.ResourceId),nodeId(1,fact.NodeId));
-                allRows.Add(row); Arrows.Add(new(row.SourceId,row.DestinationId,row.Assigned + " · " + (fact.Share*100m).ToString("0.####",Format)+" %",row,DisplayLabel:GraphAmount(fact.PostedAmount.Amount)+" · "+GraphPercent(fact.Share)));
+                allRows.Add(row); Arrows.Add(new(row.SourceId,row.DestinationId,row.Assigned + " · " + GraphPercent(fact.Share),row,DisplayLabel:GraphAmount(fact.PostedAmount.Amount)+" · "+GraphPercent(fact.Share)));
             }
         }
         if (output?.Secondary is { } secondary)
@@ -364,7 +365,7 @@ public sealed partial class CostFlowViewModel : ObservableObject
                     (w.Configuration.SecondaryPartRoutingGroups?.FirstOrDefault(g=>g.PartId==f.PartId)?.ComponentRoutingGroup ?? "all")==group.ComponentRoutingGroup).Sum(f=>f.PostedAmount.Amount);
                 var received=output.Transfers.Where(t=>t.Internal && t.DestinationNodeId==id && t.Group==group.ComponentRoutingGroup).Sum(t=>t.Amount);
                 Nodes.Add(new(graphId,2,Node(id)+(group.ComponentRoutingGroup=="all"?"":" · "+group.ComponentRoutingGroup),
-                    string.Format(Format,this["Available"],initial.ToString("0.############################",Format),received.ToString("0.############################",Format),Amount(group.Solution.Gross[i])),
+                    string.Format(Format,this["Available"],UiCompactNumbers.Number(initial,Format),UiCompactNumbers.Number(received,Format),Amount(group.Solution.Gross[i])),
                      this["GrossAmount"]+": "+GraphAmount(group.Solution.Gross[i])));
                 Arrows.Add(new(nodeId(1,id),graphId,Amount(initial),null,DisplayLabel:GraphAmount(initial)));
             }
@@ -377,8 +378,8 @@ public sealed partial class CostFlowViewModel : ObservableObject
                 var source=nodeId(2,flow.SourceNodeId)+":"+flow.Group;
                 var dest=flow.Internal ? nodeId(2,flow.DestinationNodeId)+":"+flow.Group : nodeId(3,flow.DestinationNodeId);
                 var row=new FlowRow(this["SecondaryStage"],this["AllResources"],Node(flow.SourceNodeId),Node(flow.DestinationNodeId),(flow.MeasuredServices ? texts.Get("Aux.MeasuredServices", CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)) : Key(flow.KeyId)),Amount(flow.Amount),Amount(flow.Amount),flow.Internal?"—":Node(flow.DestinationNodeId),
-                    this["GrossHelp"]+" · "+flow.Group+" · "+(flow.MeasuredServices ? texts.Get("Aux.MeasuredServices", CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)) : Key(flow.KeyId))+" · "+(flow.Share*100m).ToString("0.########",Format)+" %",source,dest);
-                allRows.Add(row); Arrows.Add(new(source,dest,(flow.Internal ? nodes[flow.SourceNodeId].Code+" → "+nodes[flow.DestinationNodeId].Code+"\n" : "")+(flow.Share*100m).ToString("0.####",Format)+" % · "+Amount(flow.Amount),row,flow.Internal,
+                    this["GrossHelp"]+" · "+flow.Group+" · "+(flow.MeasuredServices ? texts.Get("Aux.MeasuredServices", CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)) : Key(flow.KeyId))+" · "+GraphPercent(flow.Share),source,dest);
+                allRows.Add(row); Arrows.Add(new(source,dest,(flow.Internal ? nodes[flow.SourceNodeId].Code+" → "+nodes[flow.DestinationNodeId].Code+"\n" : "")+GraphPercent(flow.Share)+" · "+Amount(flow.Amount),row,flow.Internal,
                     (flow.Internal ? nodes[flow.SourceNodeId].Code+" → "+nodes[flow.DestinationNodeId].Code+" · " : "")+GraphAmount(flow.Amount)+" · "+GraphPercent(flow.Share)));
             }
             foreach (var group in primary!.Facts.Where(f=>nodes[f.NodeId].Role==NodeRole.Principal).GroupBy(f=>f.NodeId))
@@ -463,7 +464,8 @@ public sealed partial class CostFlowViewModel : ObservableObject
                 if (GroupByCenter) reportMembers[graphId] = c.Members.Select(id => nodeId(SecondaryPhase ? 3 : 1, id)).ToArray();
                 Concentration.Add(new(c.Label, c.Role, c.Amount,
                     c.Amount > 0 && net > 0 ? GraphPercent(c.Amount / positiveTotal) : "—",
-                    c.Amount > 0 && net > 0 ? GraphPercent(cumulative / positiveTotal) : "—", behavior, graphId));
+                    c.Amount > 0 && net > 0 ? GraphPercent(cumulative / positiveTotal) : "—", behavior, graphId)
+                    { AmountDisplay = DisplayReportAmount(c.Amount) });
             }
             ExecutiveSummary += Environment.NewLine + this["FilteredNet"] + ": " + GraphAmount(net) + " · " + this["PositiveBase"] + ": " + GraphAmount(positiveTotal) + " · " + this["Credits"] + ": " + GraphAmount(filtered.Where(c => c.Amount < 0).Sum(c => c.Amount));
         }

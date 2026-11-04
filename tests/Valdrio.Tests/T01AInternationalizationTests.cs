@@ -31,7 +31,7 @@ public sealed class T01AInternationalizationTests
             CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag),
             preferences.Current.NumberDisplayOptions);
 
-        Assert.AreEqual("1.234,50 USD", before);
+        Assert.AreEqual("1.234,5 USD", before);
         Assert.AreEqual(before, after);
         Assert.AreEqual("USD", before[^3..]);
     }
@@ -46,7 +46,7 @@ public sealed class T01AInternationalizationTests
             CultureInfo.GetCultureInfo("en-US"),
             new NumberDisplayOptions());
 
-        Assert.AreEqual("1,234.50 EUR", value);
+        Assert.AreEqual("1,234.5 EUR", value);
         Assert.IsFalse(value.Contains("USD", StringComparison.Ordinal));
     }
 

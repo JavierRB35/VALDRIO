@@ -1751,6 +1751,7 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Activity.SelectionHelp" xml:space="preserve"><value>Edita capacidad normal y actividad real en la tabla. Utilización = real ÷ normal; sin dato no es cero. Guardar y confirmar afectan solo a la fila seleccionada. Completa sus fuentes y calidad antes de confirmar; las otras filas conservan sus cambios pendientes.</value></data>
   <data name="Activity.EvidenceDetails" xml:space="preserve"><value>Fuentes, calidad y justificación de la fila seleccionada</value></data>
   <data name="Activity.RowSaved" xml:space="preserve"><value>Fila guardada</value></data>
+  <data name="Activity.Saving" xml:space="preserve"><value>Guardando y comprobando los datos…</value></data>
   <data name="Activity.UnsavedRow" xml:space="preserve"><value>Cambios sin guardar</value></data>
   <data name="Activity.Calculator" xml:space="preserve"><value>Editar actividad y capacidad</value></data>
   <data name="Reuse.NoDescription" xml:space="preserve"><value>Sin descripción de origen</value></data>
@@ -1798,6 +1799,8 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
   <data name="Rates.Center" xml:space="preserve"><value>Centro</value></data>
   <data name="Rates.Unit" xml:space="preserve"><value>Unidad</value></data>
   <data name="Rates.Cost" xml:space="preserve"><value>Coste del período</value></data>
+  <data name="Rates.Numerator" xml:space="preserve"><value>Numerador (coste de tarifa)</value></data>
+  <data name="Rates.Denominator" xml:space="preserve"><value>Denominador (normal / real)</value></data>
   <data name="Rates.Rate" xml:space="preserve"><value>Tarifa calculada</value></data>
   <data name="Rates.Status" xml:space="preserve"><value>Estado</value></data>
   <data name="Rates.Question" xml:space="preserve"><value>Pregunta</value></data>

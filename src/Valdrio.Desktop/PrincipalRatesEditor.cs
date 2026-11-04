@@ -8,7 +8,8 @@ using Valdrio.Localization;
 namespace Valdrio.Desktop;
 
 public sealed record AnalystAnswer(string Question, string Answer);
-public sealed record PrincipalRateDisplay(PrincipalRateRow Value, string Name, string Unit, string Symbol, string Cost, string Rate, string Status);
+public sealed record PrincipalRateDisplay(PrincipalRateRow Value, string Name, string Unit, string Symbol,
+    string Cost, string Numerator, string Denominator, string Rate, string Status);
 public sealed record RateDetailDisplay(string Component, string Behavior, string Cost, string Base, string Rate, string Source);
 public sealed partial class PrincipalRatesEditor : ObservableObject
 {
@@ -38,12 +39,29 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
     private string Quantity(decimal? value) => value?.ToString("0.############", host.PhysicalFormatCulture) ?? this["Unavailable"];
     private string Money(decimal? value)
     {
-        var digits = Report!.Study.Currency.CurrencyMetadataSnapshot.MinorUnitDigits;
-        var format = "N" + digits;
-        return value.HasValue ? value.Value.ToString(format, host.PhysicalFormatCulture) + " " + Report.Study.Currency.FunctionalCurrencyCode : this["Unavailable"];
+        return value.HasValue ? UiCompactNumbers.Number(value.Value, host.PhysicalFormatCulture) + " " +
+            Report!.Study.Currency.FunctionalCurrencyCode : this["Unavailable"];
     }
     private string Rate(decimal? value, string unit) => value.HasValue ?
-        (decimal.Round(value.Value, 6) == value.Value ? "" : "≈ ") + value.Value.ToString("0.######", host.PhysicalFormatCulture) + " " + Report!.Study.Currency.FunctionalCurrencyCode + "/" + unit : this["Unavailable"];
+        (decimal.Round(value.Value, 2) == value.Value ? "" : "≈ ") + UiCompactNumbers.Number(value.Value, host.PhysicalFormatCulture) + " " + Report!.Study.Currency.FunctionalCurrencyCode + "/" + unit : this["Unavailable"];
+    private (string Numerator, string Denominator) CalculationBasis(PrincipalRateRow row, string unit)
+    {
+        if (row.Result is not { } result) return (this["Unavailable"], this["Unavailable"]);
+        var components = result.Components.Where(c => c.Source.Kind != RateComponentKind.Period).ToArray();
+        if (components.Length == 0) return (this["Unavailable"], this["Unavailable"]);
+        var normal = components.Where(c => c.Source.Kind == RateComponentKind.OwnFixed).ToArray();
+        var real = components.Where(c => c.Source.Kind != RateComponentKind.OwnFixed).ToArray();
+        var normalText = normal.Length == 0 ? null : Money(normal.Sum(c => c.Source.Amount));
+        var realText = real.Length == 0 ? null : Money(real.Sum(c => c.Source.Amount));
+        if (normalText is not null && realText is not null)
+            return (this["Normal"] + ": " + normalText + " · " + this["Real"] + ": " + realText,
+                this["Normal"] + ": " + Quantity(row.Observation?.NormalQuantity) + " " + unit +
+                " · " + this["Real"] + ": " + Quantity(row.Observation?.RealQuantity) + " " + unit);
+        var normalOnly = normalText is not null;
+        return (normalText ?? realText!,
+            Quantity(normalOnly ? row.Observation?.NormalQuantity : row.Observation?.RealQuantity) + " " + unit +
+            " (" + this[normalOnly ? "Normal" : "Real"] + ")");
+    }
     public void Reload()
     {
         var selected = SelectedRow?.Value.PoolId;
@@ -60,7 +78,9 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
             {
                 var definition = host.PhysicalCompany!.Units.Single(u => u.Id == row.UnitId);
                 var unit = DefaultActivityUnitCatalog.IsPreset(definition) ? texts.Get("ActivityUnit." + definition.Code, host.PhysicalUiCulture) : definition.Code;
-                return new PrincipalRateDisplay(row, row.Name, unit, definition.Symbol, Money(row.Cost), Rate(row.Result?.CombinedRate, definition.Symbol),
+                var basis = CalculationBasis(row, unit);
+                return new PrincipalRateDisplay(row, row.Name, unit, definition.Symbol, Money(row.Cost), basis.Numerator, basis.Denominator,
+                    Rate(row.Result?.CombinedRate, definition.Symbol),
                     row.Diagnostics.Count == 0 ? this["Calculated"] : row.Name + ": " + string.Join(" ", row.Diagnostics.Select(k => texts.Get(k, host.PhysicalUiCulture))) + BlockingAccounts(row));
             }).ToArray();
             Filter(); SelectedRow = Rows.FirstOrDefault(r => r.Value.PoolId == selected) ?? Rows.FirstOrDefault();

@@ -30,6 +30,13 @@ public partial class AllocationWorkspacePanel
         }
     }
 
+    private void ClearPrincipalFlowBackground(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (!ReferenceEquals(e.OriginalSource, sender)) return;
+        EmphasizeNetworkNode(null);
+        e.Handled = true;
+    }
+
     private void PrincipalFlowChanged(object? sender, EventArgs e) => RedrawPrincipalCostFlow();
     private void CompleteFlowChanged(object? sender, EventArgs e) => RedrawPrincipalCostFlow();
 

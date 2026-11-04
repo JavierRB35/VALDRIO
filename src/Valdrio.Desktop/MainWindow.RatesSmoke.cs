@@ -34,9 +34,16 @@ public partial class MainWindow
             var editor=window.Editor;
             var grid=(DataGrid)window.FindName("CentersTable");
             Check(editor.Rows.Count==2,"Both real centres loaded "+language);
+            Check(grid.Columns.Count==7 && grid.Columns[3].Header?.ToString()==editor["Numerator"] &&
+                grid.Columns[4].Header?.ToString()==editor["Denominator"],
+                "The rate table exposes numerator and activity denominator "+language);
             grid.SelectedIndex=0;grid.Focus();
             Check(editor.Answers.Count==7,"Seven answers "+language);
             Check(editor.SelectedRow!.Value.Result!.CombinedRate==20m,"Real persisted 20/h "+language);
+            Check(editor.SelectedRow!.Numerator.Contains("EUR",StringComparison.Ordinal) &&
+                (editor.SelectedRow.Denominator.Contains(editor["Real"],StringComparison.Ordinal) ||
+                 editor.SelectedRow.Denominator.Contains(editor["Normal"],StringComparison.Ordinal)),
+                "Rate calculation visibly identifies its cost and activity basis "+language);
             Check(editor.Answers[4].Answer==editor["UnknownAssignment"],"Unknown assignment not zero "+language);
             Check(editor.Answers[6].Answer.Contains(editor["Partial"],StringComparison.Ordinal),"Partial reconciliation labelled "+language);
             VisualEvidenceCapture.Capture(window,Path.Combine(directory,"rates-"+language+".png"));

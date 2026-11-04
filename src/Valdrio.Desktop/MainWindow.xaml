@@ -180,12 +180,15 @@
    <!-- Fixed in the application shell: visible on every page while any
         company/workspace process reports busy. Unlike a page-local bar, it
         stays on screen while the central content scrolls. -->
-   <ProgressBar x:Name="GlobalActivityBar" DockPanel.Dock="Top" Height="5"
-                IsIndeterminate="True"
-                Background="{DynamicResource Surface.Subtle}"
-                Foreground="{DynamicResource Accent.ActiveGreen}"
-                Visibility="{Binding Company.IsProcessing, Converter={StaticResource BooleanVisibility}}"
-                AutomationProperties.Name="{Binding Company.WorkingLabel}"/>
+   <StackPanel DockPanel.Dock="Top" Background="{DynamicResource Status.WarningBg}"
+               Visibility="{Binding Company.IsProcessing, Converter={StaticResource BooleanVisibility}}">
+    <ProgressBar x:Name="GlobalActivityBar" Height="4" IsIndeterminate="True"
+                 Background="{DynamicResource Surface.Subtle}" Foreground="{DynamicResource Accent.ActiveGreen}"
+                 AutomationProperties.Name="{Binding Company.WorkingLabel}"/>
+    <TextBlock x:Name="GlobalActivityText" Text="{Binding Company.WorkingLabel}" FontWeight="SemiBold"
+               Padding="12,5" Foreground="{DynamicResource Brand.DeepGreen}"
+               AutomationProperties.LiveSetting="Polite"/>
+   </StackPanel>
   <Border x:Name="ReportStatusBanner" DockPanel.Dock="Top" Visibility="Collapsed" Background="{DynamicResource Status.WarningBg}" Padding="12,6"><StackPanel><TextBlock Text="{Binding CostFlows.ReportContext}" TextWrapping="Wrap"/><TextBlock Text="{Binding CostFlows.CurrentState}" TextWrapping="Wrap" FontWeight="SemiBold"/></StackPanel></Border>
   <StackPanel x:Name="ActionFooter" DockPanel.Dock="Bottom">
    <StackPanel.Style><Style TargetType="StackPanel">
@@ -195,7 +198,6 @@
     </DataTrigger></Style.Triggers>
    </Style></StackPanel.Style>
    <WrapPanel x:Name="FixedPageActionsHost" HorizontalAlignment="Right"/>
-   <ContentControl x:Name="AllocationActionsHost" Visibility="Collapsed"/>
    <Grid>
     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
@@ -209,22 +211,26 @@
      </DataTrigger></Style.Triggers>
     </Style></TextBlock.Style>
    </TextBlock>
-   <WrapPanel>
+   <WrapPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left">
     <WrapPanel.Style><Style TargetType="WrapPanel">
-     <Setter Property="Grid.Row" Value="1"/><Setter Property="Grid.ColumnSpan" Value="2"/>
-     <Style.Triggers><DataTrigger Binding="{Binding Visibility, ElementName=WorkspaceContent}" Value="Visible">
-      <Setter Property="Grid.Row" Value="0"/><Setter Property="Grid.Column" Value="1"/>
-      <Setter Property="Grid.ColumnSpan" Value="1"/><Setter Property="MaxWidth" Value="480"/>
+     <Setter Property="Grid.ColumnSpan" Value="2"/>
+     <Style.Triggers><DataTrigger Binding="{Binding Visibility, ElementName=AllocationActionsHost}" Value="Visible">
+      <Setter Property="Grid.ColumnSpan" Value="1"/>
      </DataTrigger></Style.Triggers>
     </Style></WrapPanel.Style>
     <Button x:Name="ReadFieldHelpButton" Click="ReadFieldHelp" Content="{Binding GuideReadFull}" Margin="0,4,8,0"/>
     <Button Click="PreviousStep" Padding="14,7" Margin="0,4,8,0" ContentTemplate="{StaticResource Button.WrappedText}" MaxWidth="{Binding ActualWidth, ElementName=ActionFooter}" x:Name="WorkflowBack" />
     <Button Style="{StaticResource Button.Primary}" Click="ContinueWorkflow" Padding="14,7" Margin="0,4,8,0" ContentTemplate="{StaticResource Button.WrappedText}" MaxWidth="{Binding ActualWidth, ElementName=ActionFooter}" x:Name="WorkflowNext" />
    </WrapPanel>
+   <ContentControl x:Name="AllocationActionsHost" Grid.Row="1" Grid.Column="1" Visibility="Collapsed"
+                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
    </Grid>
   </StackPanel>
   <Grid>
   <ScrollViewer x:Name="RootScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+   <ScrollViewer.Style><Style TargetType="ScrollViewer"><Setter Property="local:StickyTableHeaders.Enabled" Value="True"/><Style.Triggers>
+    <DataTrigger Binding="{Binding Company.IsProcessing}" Value="True"><Setter Property="Cursor" Value="Wait"/></DataTrigger>
+   </Style.Triggers></Style></ScrollViewer.Style>
    <Border Width="{Binding ViewportWidth, ElementName=RootScrollViewer}" MinWidth="520" Padding="{StaticResource Space.Page}">
    <Grid x:Name="MainContent">
     <Grid.RowDefinitions>

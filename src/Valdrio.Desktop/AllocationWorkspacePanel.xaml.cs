@@ -40,7 +40,7 @@ public partial class AllocationWorkspacePanel : UserControl
         };
     }
     private readonly TabControl taskTabs = new();
-    private readonly TabItem assignTask = new(), keyTask = new(), checkTask = new(), capacityTask = new(), methodTask = new();
+    private readonly TabItem assignTask = new(), keyTask = new(), checkTask = new();
     private void BuildTaskTabs()
     {
         var assignments = new StackPanel(); var keys = new StackPanel(); var checks = new StackPanel();
@@ -53,22 +53,7 @@ public partial class AllocationWorkspacePanel : UserControl
         Move((System.Windows.UIElement)ResultsSection.Parent, checks);
         Move((System.Windows.UIElement)SecondaryResultsSection.Parent, checks);
         assignTask.Content = assignments; keyTask.Content = keys; checkTask.Content = checks;
-        var capacity = new StackPanel();
-        var openCapacity = new Button { HorizontalAlignment = HorizontalAlignment.Left };
-        openCapacity.SetBinding(ContentControl.ContentProperty, new System.Windows.Data.Binding("[CapacityServices]"));
-        openCapacity.Click += (_, e) => { if (Window.GetWindow(this) is MainWindow main) main.OpenAuxiliaryFromAllocation(); };
-        var explanation = new TextBlock { TextWrapping = TextWrapping.Wrap };
-        explanation.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding("[CapacityDependencies]"));
-        capacity.Children.Add(explanation); capacity.Children.Add(openCapacity); capacityTask.Content = capacity;
-        var method = new StackPanel();
-        var methodHelp = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(12) };
-        methodHelp.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding("[MethodScopeHelp]"));
-        var chooseCapacity = new Button { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(12) };
-        chooseCapacity.SetBinding(ContentControl.ContentProperty, new System.Windows.Data.Binding("[CapacityServices]"));
-        chooseCapacity.Click += (_, _) => { if (Window.GetWindow(this) is MainWindow main) main.OpenAuxiliaryFromAllocation(); };
-        method.Children.Add(methodHelp); method.Children.Add(chooseCapacity); methodTask.Content = method;
-        methodTask.SetBinding(HeaderedContentControl.HeaderProperty, new System.Windows.Data.Binding("[MethodScope]"));
-        taskTabs.Items.Add(assignTask); taskTabs.Items.Add(keyTask); taskTabs.Items.Add(capacityTask); taskTabs.Items.Add(checkTask);
+        taskTabs.Items.Add(assignTask); taskTabs.Items.Add(keyTask); taskTabs.Items.Add(checkTask);
         WorkspaceBody.Children.Insert(2, taskTabs);
         var report = new Button { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 8, 0, 8) };
         report.SetBinding(ContentControl.ContentProperty, new System.Windows.Data.Binding("[ViewPhaseReport]"));
@@ -77,7 +62,6 @@ public partial class AllocationWorkspacePanel : UserControl
         assignTask.SetBinding(HeaderedContentControl.HeaderProperty, new System.Windows.Data.Binding("[AssignTask]"));
         keyTask.SetBinding(HeaderedContentControl.HeaderProperty, new System.Windows.Data.Binding("[KeysTask]"));
         checkTask.SetBinding(HeaderedContentControl.HeaderProperty, new System.Windows.Data.Binding("[CheckTask]"));
-        capacityTask.SetBinding(HeaderedContentControl.HeaderProperty, new System.Windows.Data.Binding("[CapacityServices]"));
     }
     public bool SecondaryOnly { set => ConfigurePage(value); }
     internal void ShowAssignments() => taskTabs.SelectedItem = assignTask;
@@ -118,11 +102,10 @@ public partial class AllocationWorkspacePanel : UserControl
         secondaryOnly = secondary;
         var selected = taskTabs.SelectedItem;
         taskTabs.Items.Clear();
-        if (secondary) { taskTabs.Items.Add(methodTask); taskTabs.Items.Add(keyTask); taskTabs.Items.Add(assignTask); taskTabs.Items.Add(capacityTask); }
+        if (secondary) { taskTabs.Items.Add(keyTask); taskTabs.Items.Add(assignTask); }
         else { taskTabs.Items.Add(assignTask); taskTabs.Items.Add(keyTask); }
         taskTabs.Items.Add(checkTask);
         taskTabs.SelectedItem = selected is not null && taskTabs.Items.Contains(selected) ? selected : taskTabs.Items[0];
-        capacityTask.Visibility = secondary ? Visibility.Visible : Visibility.Collapsed;
         RedrawPrincipalCostFlow();
         RedrawPrimaryFlow();
         // Each page has its own visual tree; shared controls retain the same commands and validation.
@@ -133,8 +116,8 @@ public partial class AllocationWorkspacePanel : UserControl
         Card(ResultsSection, !secondary);
         Card(SecondaryResultsSection, secondary);
         SecondaryPhaseBar.Visibility = secondary ? Visibility.Visible : Visibility.Collapsed;
-        PrimaryPhaseBar.Visibility = PrimaryFooterState.Visibility = secondary ? Visibility.Collapsed : Visibility.Visible;
-        SecondaryCalculationActions.Visibility = SecondaryFooterState.Visibility = SecondaryPhaseBar.Visibility;
+        PrimaryPhaseBar.Visibility = secondary ? Visibility.Collapsed : Visibility.Visible;
+        SecondaryCalculationActions.Visibility = SecondaryPhaseBar.Visibility;
         PrimaryRulesSection.Visibility = ExceptionsSection.Visibility = NamesSection.Visibility = secondary ? Visibility.Collapsed : Visibility.Visible;
         SecondaryRulesSection.Visibility = secondary ? Visibility.Visible : Visibility.Collapsed;
         RulesSection.IsExpanded = true;

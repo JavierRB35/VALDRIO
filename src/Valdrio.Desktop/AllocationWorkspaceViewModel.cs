@@ -138,7 +138,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private int DisplayCurrencyDigits => workspace?.Resources.Study.Currency.CurrencyMetadataSnapshot.MinorUnitDigits ?? 2;
     private decimal DisplayCurrencyQuantum => workspace?.Resources.Study.Currency.CurrencyMetadataSnapshot.ReportQuantum ?? 0.01m;
     private string DisplayMoney(decimal amount, CurrencyCode currency) =>
-        amount.ToString("N" + DisplayCurrencyDigits, Format) + " " + currency;
+        UiCompactNumbers.Money(amount, currency.Value, Format);
     private string MoneyText(Money value) => DisplayMoney(value.Amount, value.Currency);
     public bool IsBusy => busy;
     public bool CanManagePrimary => !busy && earlierBusy?.Invoke() != true && company.CanWrite && workspace?.Resources.Study.State == StudyState.Open;
@@ -213,7 +213,9 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
                 var selected = Lines.Where(l => l.Included).ToArray();
                 if (Mode != AllocationKeyMode.EqualShares && selected.Any(l => !numbers.TryCommit(l.Value, out _))) return this["CheckNumbers"];
                 var value = selected.Sum(l => Mode == AllocationKeyMode.EqualShares ? 1 : Parse(l.Value));
-                return value.ToString("0.##################", numbers.CapturedCulture) + (IsPercentage ? " %" : IsDriver ? " " + Units.FirstOrDefault(u => u.Value == Unit)?.Label : " " + this["Destinations"]);
+                return (IsPercentage ? UiCompactNumbers.Number(value, numbers.CapturedCulture)
+                    : value.ToString("0.##################", numbers.CapturedCulture)) +
+                    (IsPercentage ? " %" : IsDriver ? " " + Units.FirstOrDefault(u => u.Value == Unit)?.Label : " " + this["Destinations"]);
             }
             catch (Exception ex) when (ex is DomainRuleException or OverflowException) { return this["CheckNumbers"]; }
         }

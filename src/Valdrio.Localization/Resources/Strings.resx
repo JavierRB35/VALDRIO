@@ -1751,6 +1751,7 @@ Difference to distribute: {7}</value></data>
   <data name="Activity.SelectionHelp" xml:space="preserve"><value>Edit normal capacity and actual activity in the table. Utilization = actual ÷ normal; missing is not zero. Save and confirm affect only the selected row. Complete its sources and quality before confirmation; other rows retain their pending changes.</value></data>
   <data name="Activity.EvidenceDetails" xml:space="preserve"><value>Sources, quality and justification for the selected row</value></data>
   <data name="Activity.RowSaved" xml:space="preserve"><value>Row saved</value></data>
+  <data name="Activity.Saving" xml:space="preserve"><value>Saving and validating data…</value></data>
   <data name="Activity.UnsavedRow" xml:space="preserve"><value>Unsaved changes</value></data>
   <data name="Activity.Calculator" xml:space="preserve"><value>Edit activity and capacity</value></data>
   <data name="Reuse.NoDescription" xml:space="preserve"><value>No source description</value></data>
@@ -1798,6 +1799,8 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Rates.Center" xml:space="preserve"><value>Centre</value></data>
   <data name="Rates.Unit" xml:space="preserve"><value>Unit</value></data>
   <data name="Rates.Cost" xml:space="preserve"><value>Period cost</value></data>
+  <data name="Rates.Numerator" xml:space="preserve"><value>Numerator (rate cost)</value></data>
+  <data name="Rates.Denominator" xml:space="preserve"><value>Denominator (normal / actual)</value></data>
   <data name="Rates.Rate" xml:space="preserve"><value>Calculated rate</value></data>
   <data name="Rates.Status" xml:space="preserve"><value>Status</value></data>
   <data name="Rates.Question" xml:space="preserve"><value>Question</value></data>

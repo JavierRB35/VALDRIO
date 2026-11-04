@@ -29,16 +29,16 @@
  <CheckBox Content="{Binding [UseSecondary]}" IsChecked="{Binding SecondaryPhase}" Margin="0,8"/>
  <TextBlock Text="{Binding ExecutiveSummary}" TextWrapping="Wrap" Margin="0,8"/>
  <TextBlock Text="{Binding ConcentrationThresholdHelp}" TextWrapping="Wrap"/><TextBox Text="{Binding ConcentrationThreshold,UpdateSourceTrigger=LostFocus,ValidatesOnExceptions=True}" Width="90" HorizontalAlignment="Left"/>
- <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="0,8"><Canvas x:Name="ConcentrationCanvas" Height="245"/></ScrollViewer>
+ <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="0,8"><Canvas x:Name="ConcentrationCanvas" Height="245" Background="{DynamicResource Surface.Canvas}" MouseLeftButtonDown="ClearGraphBackground"/></ScrollViewer>
  <TextBlock Text="{Binding [Filter]}"/><TextBox Text="{Binding ReportFilter,UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8"/>
  <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="ConcentrationGrid" ItemsSource="{Binding Concentration}" SelectionChanged="SelectConcentration" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" MinHeight="200">
- <DataGrid.Columns><DataGridTextColumn Binding="{Binding Node}" Width="2*"/><DataGridTextColumn Binding="{Binding Role}" Width="*"/><DataGridTextColumn Binding="{Binding Amount,StringFormat=N2}" Width="*"/><DataGridTextColumn Binding="{Binding Share}" Width="*"/><DataGridTextColumn Binding="{Binding Cumulative}" Width="*"/><DataGridTextColumn Binding="{Binding Behavior}" Width="2*"/></DataGrid.Columns>
+ <DataGrid.Columns><DataGridTextColumn Binding="{Binding Node}" Width="2*"/><DataGridTextColumn Binding="{Binding Role}" Width="*"/><DataGridTextColumn Binding="{Binding AmountDisplay}" SortMemberPath="Amount" Width="*"/><DataGridTextColumn Binding="{Binding Share}" Width="*"/><DataGridTextColumn Binding="{Binding Cumulative}" Width="*"/><DataGridTextColumn Binding="{Binding Behavior}" Width="2*"/></DataGrid.Columns>
  </DataGrid></StackPanel></TabItem><TabItem Header="{Binding [PrimaryGraph]}"><Border Style="{StaticResource Card}" Margin="0,0,0,16"><StackPanel>
    <CheckBox Content="{Binding [ShowAllFlowLabels]}" IsChecked="{Binding ShowAllFlowLabels}" Margin="0,0,0,8" />
    <TextBlock Text="{Binding [GraphTraceHelp]}" TextWrapping="Wrap" Margin="0,2,0,12" />
    <Expander Header="{Binding [PrimaryGraph]}" IsExpanded="True">
     <ScrollViewer x:Name="PrimaryGraphViewport" SizeChanged="ResizeGraph" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" CanContentScroll="False">
-     <Canvas x:Name="PrimaryGraphCanvas" Width="860" Height="360" Background="{DynamicResource Surface.Canvas}" ><Canvas.LayoutTransform><ScaleTransform ScaleX="{Binding Value,ElementName=FlowZoom}" ScaleY="{Binding Value,ElementName=FlowZoom}"/></Canvas.LayoutTransform></Canvas>
+     <Canvas x:Name="PrimaryGraphCanvas" Width="860" Height="360" Background="{DynamicResource Surface.Canvas}" MouseLeftButtonDown="ClearGraphBackground"><Canvas.LayoutTransform><ScaleTransform ScaleX="{Binding Value,ElementName=FlowZoom}" ScaleY="{Binding Value,ElementName=FlowZoom}"/></Canvas.LayoutTransform></Canvas>
     </ScrollViewer>
    </Expander>
   </StackPanel></Border></TabItem><TabItem Header="{Binding [SecondaryGraph]}"><Border Style="{StaticResource Card}" Margin="0,0,0,16"><StackPanel>
@@ -46,7 +46,7 @@
     <StackPanel>
      <TextBlock Text="{Binding [GrossGraphHelp]}" TextWrapping="Wrap" Margin="0,4,0,12" />
      <ScrollViewer x:Name="SecondaryGraphViewport" SizeChanged="ResizeGraph" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" CanContentScroll="False">
-      <Canvas x:Name="SecondaryGraphCanvas" Width="860" Height="430" Background="{DynamicResource Surface.Canvas}" ><Canvas.LayoutTransform><ScaleTransform ScaleX="{Binding Value,ElementName=FlowZoom}" ScaleY="{Binding Value,ElementName=FlowZoom}"/></Canvas.LayoutTransform></Canvas>
+      <Canvas x:Name="SecondaryGraphCanvas" Width="860" Height="430" Background="{DynamicResource Surface.Canvas}" MouseLeftButtonDown="ClearGraphBackground"><Canvas.LayoutTransform><ScaleTransform ScaleX="{Binding Value,ElementName=FlowZoom}" ScaleY="{Binding Value,ElementName=FlowZoom}"/></Canvas.LayoutTransform></Canvas>
      </ScrollViewer>
     </StackPanel>
    </Expander>

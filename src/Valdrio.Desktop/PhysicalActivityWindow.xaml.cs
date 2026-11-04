@@ -1,6 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.ComponentModel;
+using System.Windows.Input;
+using System.Windows.Threading;
 using Valdrio.Domain;
 
 namespace Valdrio.Desktop;
@@ -10,6 +12,7 @@ public partial class PhysicalActivityWindow : IntegratedWorkspaceWindow
     private readonly PhysicalActivityEditor editor;
     private readonly StudyWorkspaceViewModel studyHost;
     private bool suppressStudyChange;
+    private bool operationRunning;
 
     public PhysicalActivityWindow(StudyWorkspaceViewModel study)
     {
@@ -106,20 +109,41 @@ public partial class PhysicalActivityWindow : IntegratedWorkspaceWindow
         new PhysicalImportWindow(editor) { Owner = WorkspaceHost ?? (Window)this }.ShowIntegrated();
     }
 
-    private void SaveDraft(object sender, RoutedEventArgs e)
+    private async void SaveDraft(object sender, RoutedEventArgs e)
     {
         CommitTableEdit();
-        editor.Save(confirm: false);
+        await WithOperationFeedback(() => editor.Save(confirm: false));
     }
-    private void Confirm(object sender, RoutedEventArgs e)
+    private async void Confirm(object sender, RoutedEventArgs e)
     {
         CommitTableEdit();
-        editor.Save(confirm: true);
+        await WithOperationFeedback(() => editor.Save(confirm: true));
     }
-    private void Annul(object sender, RoutedEventArgs e)
+    private async void Annul(object sender, RoutedEventArgs e)
     {
         CommitTableEdit();
-        editor.Annul();
+        await WithOperationFeedback(editor.Annul);
+    }
+    private async Task WithOperationFeedback(Action operation)
+    {
+        if (operationRunning) return;
+        operationRunning = true;
+        Cursor = Cursors.Wait;
+        editor.Feedback = editor.Label("Activity.Saving");
+        studyHost.SetCompositionBusy(true);
+        try
+        {
+            // Allow the WPF render pass to show the global progress bar and
+            // cursor before a legacy synchronous persistence operation starts.
+            await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+            operation();
+        }
+        finally
+        {
+            studyHost.SetCompositionBusy(false);
+            Cursor = null;
+            operationRunning = false;
+        }
     }
     private void History(object sender, RoutedEventArgs e) =>
         new PhysicalHistoryPage(editor) { Owner = WorkspaceHost ?? (Window)this }.ShowIntegrated();

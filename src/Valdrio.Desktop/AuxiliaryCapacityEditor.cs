@@ -59,7 +59,7 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
         : this["NoResult"];
     public AuxiliaryCapacityEditor(StudyWorkspaceViewModel host) { this.host = host; Reload(); }
     private string Qty(decimal? value) => value?.ToString("0.############", host.PhysicalFormatCulture) ?? this["Unknown"];
-    private string Money(decimal value) => value.ToString("#,0.00########", host.PhysicalFormatCulture) + " " + workspace!.Resources.Study.Currency.FunctionalCurrencyCode;
+    private string Money(decimal value) => UiCompactNumbers.Money(value, workspace!.Resources.Study.Currency.FunctionalCurrencyCode.Value, host.PhysicalFormatCulture);
     public void Reload()
     {
         var selected = SelectedRow?.Value.NodeId; Rows.Clear(); SelectedRow = null; Answers.Clear(); run = null;

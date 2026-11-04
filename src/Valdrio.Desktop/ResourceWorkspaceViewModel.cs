@@ -104,7 +104,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     public string Guide(string key) => Text("Guide." + key);
     private CultureInfo Format => CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
     private string Text(string key) { var s = texts.Get(key, CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag)); return pseudo ? PseudoLocalization.Expand(s) : s; }
-    private string MoneyText(Money m) => m.Amount.ToString("0.########", Format) + " " + m.Currency;
+    private string MoneyText(Money m) => UiCompactNumbers.Money(m.Amount, m.Currency.Value, Format);
     // Resource totals are derived from the current economic coverage, never from
     // formatted table strings. Do not add balances in different original currencies.
     private string SumResourceCoverage(Func<ResourceCoverage, Money> field)
@@ -113,7 +113,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
         var coverage = current?.Preparation.Coverage;
         if (coverage is null || coverage.Count == 0) return "";
         var sum = coverage.Sum(row => field(row).Amount);
-        return sum.ToString("0.########", Format) + " " + field(coverage[0]).Currency;
+        return UiCompactNumbers.Money(sum, field(coverage[0]).Currency.Value, Format);
     }
     public string ResourcesTotalOriginal
     {
@@ -125,7 +125,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
                 .SelectMany(resource => ResourceWorkspaceRules.OriginalTotals(resource, current.Precision))
                 .GroupBy(m => m.Currency)
                 .OrderBy(group => group.Key.ToString(), StringComparer.Ordinal)
-                .Select(group => group.Sum(m => m.Amount).ToString("0.########", Format) + " " + group.Key));
+                .Select(group => UiCompactNumbers.Money(group.Sum(m => m.Amount), group.Key.Value, Format)));
         }
     }
     public string ResourcesTotalConverted => SumResourceCoverage(c => c.ConvertedOriginal);
@@ -135,7 +135,7 @@ public sealed partial class ResourceWorkspaceViewModel : ObservableObject, IDisp
     public string ResourcesTotalDifference => SumResourceCoverage(c => c.Difference);
     // Parts and review show the same selected account, not an extra economic layer.
     public string ResourcePartsTotal => parts.Count == 0 ? "" :
-        parts.Sum(part => part.Amount.Amount).ToString("0.########", Format) + " " + parts[0].Amount.Currency;
+        UiCompactNumbers.Money(parts.Sum(part => part.Amount.Amount), parts[0].Amount.Currency.Value, Format);
 
     public bool IsBusy => busy;
     public bool CanNavigate => !busy && !correctionCommitPending;

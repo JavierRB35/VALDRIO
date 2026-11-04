@@ -47,12 +47,12 @@ public partial class MainWindow
         Text(FxRateDateBox, "2026-10-05");
         Text(FxRateSourceBox, "wpf-audit");
         Apply();
-        Check(vm.FxFunctional == "90,00 EUR", "es-ES regional input and output");
+        Check(vm.FxFunctional == "90 EUR", "es-ES regional input and output");
 
         Culture("en-US");
         Text(FxQuoteBox, "0.90");
         Apply();
-        Check(vm.FxFunctional == "90.00 EUR", "en-US regional input and output");
+        Check(vm.FxFunctional == "90 EUR", "en-US regional input and output");
 
         Culture("es-ES");
         Text(FxQuoteBox, "0,95");
@@ -60,13 +60,13 @@ public partial class MainWindow
         Culture("en-US");
         Check(vm.FxQuoteText == "0,95", "keep dirty text across region change");
         Apply();
-        Check(vm.FxFunctional == "95.00 EUR", "commit using captured culture");
+        Check(vm.FxFunctional == "95 EUR", "commit using captured culture");
 
         Text(FxQuoteBox, "1,2,3");
         Apply();
         Check(vm.FxStatus.StartsWith("FX_QUOTE_TEXT_INVALID", StringComparison.Ordinal),
             "concrete malformed-number diagnostic");
-        Check(vm.FxFunctional == "95.00 EUR", "error preserves last valid result");
+        Check(vm.FxFunctional == "95 EUR", "error preserves last valid result");
 
         Text(FxQuoteBox, "0.9");
         Text(FxRateDateBox, "01/02/2026");
@@ -91,9 +91,9 @@ public partial class MainWindow
         Culture("de-DE");
         Text(FxQuoteBox, "0,90");
         Apply();
-        Check(vm.FxFunctional == "90,00 EUR", "de-DE input and output");
+        Check(vm.FxFunctional == "90 EUR", "de-DE input and output");
         vm.SelectedUiLanguageTag = "en";
-        Check(vm.FxFunctional == "90,00 EUR", "language does not alter number region");
+        Check(vm.FxFunctional == "90 EUR", "language does not alter number region");
 
         // Restore the development fixture before the visual captures.
         Text(FxQuoteBox, "0,9");

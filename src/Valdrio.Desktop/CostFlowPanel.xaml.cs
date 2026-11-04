@@ -99,6 +99,16 @@ public partial class CostFlowPanel : UserControl
     {
         if (ConcentrationGrid.SelectedItem is ReportConcentrationRow row) { vm?.SelectNode(row.GraphId); AnalysisTabs.SelectedIndex = 4; }
     }
+    private void ClearGraphBackground(object sender, MouseButtonEventArgs e)
+    {
+        // Only the empty canvas dismisses a selection: nodes, edges and
+        // keyboard-activated labels retain their own selection handlers.
+        if (!ReferenceEquals(e.OriginalSource, sender) || vm is null) return;
+        focusedNodeId = null;
+        focusedArrow = null;
+        vm.ClearSelectionCommand.Execute(null);
+        e.Handled = true;
+    }
     private void Changed(object? sender, EventArgs e) => Draw();
     private void ToggleAnalysis(object sender, RoutedEventArgs e)
     {
@@ -131,7 +141,7 @@ public partial class CostFlowPanel : UserControl
         {
             var row = rows[i]; var x = 40 + i * 120;
             var h = Math.Abs(Y(row.Amount) - Y(0));
-            var bar = new Border { Width = 64, Height = Math.Max(1, h), Background = ThemeBrush(row.Amount < 0 ? "Brand.Red" : "Accent.ActiveGreen"), ToolTip = row.Node + " · " + row.Amount.ToString("N2"), Focusable = true };
+            var bar = new Border { Width = 64, Height = Math.Max(1, h), Background = ThemeBrush(row.Amount < 0 ? "Brand.Red" : "Accent.ActiveGreen"), ToolTip = row.Node + " · " + UiCompactNumbers.Number(row.Amount, vm.NumericCulture), Focusable = true };
             Canvas.SetLeft(bar, x); Canvas.SetTop(bar, Math.Min(Y(row.Amount), Y(0))); ConcentrationCanvas.Children.Add(bar);
             bar.MouseLeftButtonDown += (_, _) => vm.SelectNode(row.GraphId);
             bar.KeyDown += (_, e) => { if (e.Key is Key.Enter or Key.Space) vm.SelectNode(row.GraphId); };

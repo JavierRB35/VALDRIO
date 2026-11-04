@@ -44,11 +44,14 @@ public sealed class PresentationFormatter
         ArgumentNullException.ThrowIfNull(culture);
         ArgumentNullException.ThrowIfNull(options);
 
-        var pattern = options.UseGrouping
-            ? $"N{options.DecimalDigits}"
-            : $"F{options.DecimalDigits}";
-
-        return $"{amount.ToString(pattern, culture)} {currencyCode.ToUpperInvariant()}";
+        // Currency rounding is a view concern. Do not change the source Money,
+        // project a new ledger quantum, or force trailing zeroes on whole values.
+        var decimals = Math.Clamp(options.DecimalDigits, 0, 2);
+        var pattern = (options.UseGrouping ? "#,##0" : "0") +
+            (decimals > 0 ? "." + new string('#', decimals) : "");
+        var rounded = decimal.Round(amount, decimals, MidpointRounding.AwayFromZero);
+        var marker = rounded == 0m && amount != 0m ? "≈ " : "";
+        return $"{marker}{rounded.ToString(pattern, culture)} {currencyCode.ToUpperInvariant()}";
     }
 
     public string FormatCurrency(Money money, CurrencyMetadataSnapshot metadata,
@@ -58,10 +61,10 @@ public sealed class PresentationFormatter
         metadata.EnsureValid();
         if (money.Currency != metadata.AlphaCode)
             throw new ArgumentException("DISPLAY_CURRENCY_MISMATCH");
-        // A normal monetary display retains at least the currency's minor units.
-        // Extra ledger precision is an explicit view; display never changes the ledger.
+        // A detailed/audit view retains frozen currency metadata and full ledger
+        // precision. The compact business view never exceeds two decimals.
         return FormatCurrency(money.Amount, money.Currency.Value, culture,
-            options with { DecimalDigits = Math.Max(options.DecimalDigits, metadata.MinorUnitDigits) });
+            options with { DecimalDigits = Math.Min(2, Math.Max(options.DecimalDigits, metadata.MinorUnitDigits)) });
     }
 
     public string FormatDate(

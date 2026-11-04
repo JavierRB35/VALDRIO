@@ -503,7 +503,7 @@
             Height follows the canvas, so the page remains the only vertical scroller. -->
        <Viewbox x:Name="PrincipalFlowViewport" Stretch="Uniform"
                 StretchDirection="DownOnly" HorizontalAlignment="Stretch">
-        <Canvas x:Name="PrincipalFlowCanvas" Width="1320" Height="760" Background="Transparent"/>
+        <Canvas x:Name="PrincipalFlowCanvas" Width="1320" Height="760" Background="Transparent" MouseLeftButtonDown="ClearPrincipalFlowBackground"/>
        </Viewbox>
       </StackPanel>
      </Expander>
@@ -560,15 +560,8 @@
    </Expander>
   </Border>
 
-  <Border x:Name="BottomActions" Style="{StaticResource Card}" Margin="0,0,0,8">
-   <StackPanel>
-    <TextBlock Text="{Binding Status}" TextWrapping="Wrap" MaxHeight="36" TextTrimming="CharacterEllipsis" ToolTip="{Binding Status}" AutomationProperties.LiveSetting="Polite" Margin="0,0,0,4">
-     <TextBlock.Visibility><MultiBinding Converter="{StaticResource DistinctStatusVisibility}"><Binding Path="Status"/><Binding Path="Text" ElementName="PrimaryFooterState"/><Binding Path="Text" ElementName="SecondaryFooterState"/></MultiBinding></TextBlock.Visibility>
-    </TextBlock>
-    <Button Content="{Binding [ReopenSecondaryFirst]}" Click="OpenSecondaryDependency" Visibility="{Binding IsSecondaryClosed,Converter={StaticResource Visible}}" HorizontalAlignment="Left"/>
-    <TextBlock x:Name="PrimaryFooterState" Text="{Binding PrimaryState}" TextWrapping="Wrap" Margin="0,0,0,6"/>
-    <TextBlock x:Name="SecondaryFooterState" Text="{Binding SecondaryState}" TextWrapping="Wrap" Margin="0,0,0,6"/>
-    <WrapPanel HorizontalAlignment="Right">
+  <WrapPanel x:Name="BottomActions" HorizontalAlignment="Right" VerticalAlignment="Center">
+     <Button Content="{Binding [ReopenSecondaryFirst]}" Click="OpenSecondaryDependency" Visibility="{Binding IsSecondaryClosed,Converter={StaticResource Visible}}"/>
      <Button Content="{Binding [Discard]}" Command="{Binding DiscardCommand}" x:Name="DiscardButton"/>
      <WrapPanel x:Name="SecondaryCalculationActions">
       <Button x:Name="CalculateSecondaryButton" Content="{Binding [CalculateSecondary]}" Command="{Binding CalculateSecondaryCommand}"/>
@@ -576,8 +569,6 @@
      </WrapPanel>
      <WrapPanel x:Name="PrimaryPhaseBar"><Expander Header="{Binding [CloseReview]}"><StackPanel MaxWidth="480"><TextBlock Text="{Binding PrimarySummary}" TextWrapping="Wrap"/><TextBlock Text="{Binding CoverageSummary}" TextWrapping="Wrap"/><TextBlock Text="{Binding CompositionSummary}" TextWrapping="Wrap"/><TextBlock Text="{Binding [BaseScope]}" TextWrapping="Wrap"/><TextBlock Text="{Binding [CompositionCloseHelp]}" TextWrapping="Wrap"/></StackPanel></Expander><Button x:Name="TogglePrimaryButton" Content="{Binding PrimaryToggleLabel}" Command="{Binding TogglePrimaryCommand}" Style="{StaticResource Button.Primary}"/></WrapPanel>
      <WrapPanel x:Name="SecondaryPhaseBar"><Button x:Name="ToggleSecondaryButton" Content="{Binding SecondaryToggleLabel}" Command="{Binding ToggleSecondaryCommand}" Style="{StaticResource Button.Primary}"/></WrapPanel>
-    </WrapPanel>
-   </StackPanel>
-  </Border>
+  </WrapPanel>
  </StackPanel>
 </UserControl>

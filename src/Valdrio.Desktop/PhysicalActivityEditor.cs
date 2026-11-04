@@ -318,7 +318,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
             var cost = result is null ? Label("Activity.CostUnavailable") :
                 (node.Role == NodeRole.Auxiliary ? publishedRun!.Runs.Single(r => r.Id == currentRunId).Output!.Primary!.Facts.Where(f => f.NodeId == node.Id).Sum(f => f.PostedAmount.Amount)
                     : result.Totals.Where(x => x.TerminalNodeId == node.Id).Sum(x => x.PostedAmount.Amount))
-                    .ToString("N2", formatCulture) + " " + study.Currency.FunctionalCurrencyCode;
+                    .ToString("#,##0.##", formatCulture) + " " + study.Currency.FunctionalCurrencyCode;
             var center = model.Publication?.PhysicalCenters.SingleOrDefault(c => c.Id == node.PhysicalCenterId)?.Name;
             var row = new PhysicalActivityRow
             {

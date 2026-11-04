@@ -47,7 +47,8 @@ public partial class MainWindow
             company.NotifyWorkspaceStateChanged();
             await Idle();
             Check(company.IsProcessing && GlobalActivityBar.IsIndeterminate &&
-                GlobalActivityBar.IsVisible,
+                GlobalActivityBar.IsVisible && GlobalActivityText.IsVisible &&
+                GlobalActivityText.Text == company.WorkingLabel,
                 "global shell indeterminate progress displays while an operation is running");
         }
         finally

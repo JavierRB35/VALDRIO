@@ -132,7 +132,7 @@ public sealed partial class EstimateEditor : ObservableObject
             a.Preview.Input.Rates.Study.Currency.FunctionalCurrencyCode != b.Preview.Input.Rates.Study.Currency.FunctionalCurrencyCode)
         { Feedback = this["SameOrder"]; return; }
         ShowHistory();
-        Answers.Add(new(this["Comparison"], $"v{a.Version} → v{b.Version}: {this["Quantity"]} {Q(a.Preview.Cost.OutputQuantity)} → {Q(b.Preview.Cost.OutputQuantity)}; {this["Total"]} {Money(a.Preview)} → {Money(b.Preview)}; Δ {Q(b.Preview.Cost.Total-a.Preview.Cost.Total)}; {this["UnitCost"]} {Q(a.Preview.Cost.UnitCost)} → {Q(b.Preview.Cost.UnitCost)}"));
+        Answers.Add(new(this["Comparison"], $"v{a.Version} → v{b.Version}: {this["Quantity"]} {Q(a.Preview.Cost.OutputQuantity)} → {Q(b.Preview.Cost.OutputQuantity)}; {this["Total"]} {Money(a.Preview)} → {Money(b.Preview)}; Δ {UiCompactNumbers.Number(b.Preview.Cost.Total-a.Preview.Cost.Total, host.PhysicalFormatCulture)}; {this["UnitCost"]} {UiCompactNumbers.Number(a.Preview.Cost.UnitCost, host.PhysicalFormatCulture)} → {UiCompactNumbers.Number(b.Preview.Cost.UnitCost, host.PhysicalFormatCulture)}"));
         Answers.Add(new(this["Sources"], SourceLabel(a.Preview) + " → " + SourceLabel(b.Preview))); Feedback = this["CompareHelp"];
     }
     private string SourceLabel(EstimatePreview value)
@@ -144,7 +144,7 @@ public sealed partial class EstimateEditor : ObservableObject
     }
     private string Stamp(UtcInstant? value) => value is null ? "—" : TimeZoneInfo.ConvertTime(DateTimeOffset.Parse(value.Value.ToCanonicalString(), CultureInfo.InvariantCulture), TimeZoneInfo.FindSystemTimeZoneById(host.PhysicalTimeZoneId)).ToString("g", host.PhysicalFormatCulture) + " " + host.PhysicalTimeZoneId;
     private string Q(decimal value) => value.ToString("0.############", host.PhysicalFormatCulture);
-    private string Money(EstimatePreview value) => Q(value.Cost.Total) + " " + value.Input.Rates.Study.Currency.FunctionalCurrencyCode;
+    private string Money(EstimatePreview value) => UiCompactNumbers.Money(value.Cost.Total, value.Input.Rates.Study.Currency.FunctionalCurrencyCode.Value, host.PhysicalFormatCulture);
     private void Display(EstimatePreview value, string state)
     {
         var currency=value.Input.Rates.Study.Currency.FunctionalCurrencyCode.ToString(); Details.Clear(); Answers.Clear();
@@ -152,14 +152,14 @@ public sealed partial class EstimateEditor : ObservableObject
         {
             var unit=value.Input.Units.Single(x=>x.Id==line.Quantity.UnitId).Symbol;
             Details.Add(new(line.Quantity.Name+" · "+line.Quantity.Path,Q(line.Quantity.RequiredQuantity)+" "+unit,
-                Q(line.UnitCost)+" "+currency+"/"+unit,Q(line.Amount)+" "+currency,line.Quantity.Activity?this["FrozenRate"]:line.Source));
+                UiCompactNumbers.Money(line.UnitCost,currency,host.PhysicalFormatCulture)+"/"+unit,UiCompactNumbers.Money(line.Amount,currency,host.PhysicalFormatCulture),line.Quantity.Activity?this["FrozenRate"]:line.Source));
         }
         Summary=value.Input.Request.OrderCode+" · "+state;
         Answers.Add(new(this["QCost"],Money(value)));
         var recipe=value.Input.Catalog.Versions.Single(x=>x.Id==value.Input.Request.RecipeVersionId);
         var product=value.Input.Catalog.Items.Single(x=>x.Id==recipe.ProductId);
         var outputUnit=value.Input.Units.Single(x=>x.Id==product.UnitId).Symbol;
-        Answers.Add(new(this["QUnit"],Q(value.Cost.UnitCost)+" "+currency+"/"+outputUnit));
+        Answers.Add(new(this["QUnit"],UiCompactNumbers.Money(value.Cost.UnitCost,currency,host.PhysicalFormatCulture)+"/"+outputUnit));
         Answers.Add(new(this["QQuantity"],Q(value.Cost.OutputQuantity)+" · "+this["Batches"]+": "+Q(value.Cost.StartedBatches)));
         Answers.Add(new(this["QSources"],SourceLabel(value))); Answers.Add(new(this["QMissing"],this["Complete"]));
         Answers.Add(new(this["QVersion"],state)); Answers.Add(new(this["QReal"],this["NoActual"]));

@@ -96,7 +96,7 @@ public sealed partial class AllocationWorkspaceViewModel
                 if (key is not null) criterion += ": " + key.Name;
                 var driver = key is null ? "—" : this[key.Mode.ToString()];
                 var share = fact.Selection == "absolute" ? "—" :
-                    (fact.Share * 100m).ToString("0.####", Format) + " %";
+                    UiCompactNumbers.Percent(fact.Share * 100m, Format);
                 var weight = fact.Selection == "absolute" ? "—" :
                     fact.Weight.ToString("0.####", Format) +
                     (key is { Mode: AllocationKeyMode.DriverUnits } ? " " +

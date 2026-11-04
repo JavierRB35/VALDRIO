@@ -45,7 +45,7 @@ public sealed class Audit20261005PresentationTests
         var date = new DateOnly(2026, 10, 5);
         var kwd = new CurrencyCode("KWD");
         var metadata = new CurrencyMetadataSnapshot(kwd, "414", 3, true, "catalog", "fixture", date, date);
-        Assert.AreEqual("0,001 KWD", formatter.FormatCurrency(new Money(0.001m, kwd), metadata,
+        Assert.AreEqual("≈ 0 KWD", formatter.FormatCurrency(new Money(0.001m, kwd), metadata,
             CultureInfo.GetCultureInfo("es-ES"), new NumberDisplayOptions(2, false)));
         var jpy = new CurrencyCode("JPY");
         var jpyMetadata = new CurrencyMetadataSnapshot(jpy, "392", 0, true, "catalog", "fixture", date, date);

@@ -13,6 +13,7 @@ public partial class PrincipalRatesWindow : IntegratedWorkspaceWindow
     {
         this.host = host; Editor = new(host); InitializeComponent(); DataContext = Editor;
         CenterColumn.Header = Editor["Center"]; UnitColumn.Header = Editor["Unit"]; CostColumn.Header = Editor["Cost"];
+        NumeratorColumn.Header = Editor["Numerator"]; DenominatorColumn.Header = Editor["Denominator"];
         RateColumn.Header = Editor["Rate"]; StatusColumn.Header = Editor["Status"];
         QuestionColumn.Header = Editor["Question"]; AnswerColumn.Header = Editor["Answer"];
         ComponentColumn.Header = Editor["Component"]; BehaviorColumn.Header = Editor["Behavior"];

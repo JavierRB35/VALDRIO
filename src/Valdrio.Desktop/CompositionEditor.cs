@@ -318,7 +318,7 @@ public sealed partial class CompositionEditor : ObservableObject
             Answers.Add(new(this["QVersion"], State + (Dirty ? " · " + this["Unsaved"] : "")));
             Answers.Add(new(this["QLoss"], string.Join("; ", selected.Lines.Select(l =>
                 Targets.Single(t => t.Id == (l.MaterialId ?? l.RecipeVersionId ?? l.PoolId)).Label + ": " +
-                this[l.LossKind.ToString()] + (l.LossKind == CompositionLossKind.None ? "" : " " + Q(l.LossPercent) + " %")))));
+                this[l.LossKind.ToString()] + (l.LossKind == CompositionLossKind.None ? "" : " " + UiCompactNumbers.Percent(l.LossPercent, host.PhysicalFormatCulture))))));
             var previous = p.Versions.SingleOrDefault(v => v.ProductId == current.ProductId && v.Number == current.Number - 1);
             // Ignore line identity when comparing a cloned version with its predecessor.
             var same = previous is not null && previous.BatchSize == selected.BatchSize &&
@@ -328,7 +328,7 @@ public sealed partial class CompositionEditor : ObservableObject
             var estimate = CompositionCostEstimator.Estimate(p, result, selected.ProductId, host.PhysicalCompany!.DefaultCurrency);
             var costParts = new List<string>
             {
-                string.Format(host.PhysicalUiCulture, this["EstimatedComponents"], estimate.PricedComponents!.Value.ToString("N2", host.PhysicalFormatCulture), estimate.Currency)
+                string.Format(host.PhysicalUiCulture, this["EstimatedComponents"], UiCompactNumbers.Number(estimate.PricedComponents!.Value, host.PhysicalFormatCulture), estimate.Currency)
             };
             if (estimate.UnpricedComponents.Count > 0) costParts.Add(string.Format(host.PhysicalUiCulture, this["MissingPrices"], string.Join(", ", estimate.UnpricedComponents)));
             if (estimate.HasActivity) costParts.Add(this["ActivityNotIncluded"]);
@@ -336,8 +336,8 @@ public sealed partial class CompositionEditor : ObservableObject
             {
                 var outputItem = p.Items.Single(i => i.Id == selected.ProductId);
                 var outputUnit = host.PhysicalCompany.Units.Single(u => u.Id == outputItem.UnitId).Symbol;
-                costParts.Add(string.Format(host.PhysicalUiCulture, this["ImportedOutputReference"], outputItem.ReferenceUnitCost!.Value.ToString("N2", host.PhysicalFormatCulture), estimate.Currency,
-                    outputUnit, reference.ToString("N2", host.PhysicalFormatCulture), result.OutputQuantity.ToString("N2", host.PhysicalFormatCulture)));
+                costParts.Add(string.Format(host.PhysicalUiCulture, this["ImportedOutputReference"], UiCompactNumbers.Number(outputItem.ReferenceUnitCost!.Value, host.PhysicalFormatCulture), estimate.Currency,
+                    outputUnit, UiCompactNumbers.Number(reference, host.PhysicalFormatCulture), result.OutputQuantity.ToString("0.############", host.PhysicalFormatCulture)));
             }
             else costParts.Add(this["NoOutputReference"]);
             Answers.Add(new(this["QCost"], string.Join(" · ", costParts))); Answers.Add(new(this["QActual"], this["T19"]));

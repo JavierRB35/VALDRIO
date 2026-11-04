@@ -363,7 +363,7 @@ public sealed partial class AllocationWorkspaceViewModel
         {
             var name = nodes.Values.FirstOrDefault(n => n.Id.ToString() == flow.AuxiliaryId);
             SecondaryCirculation.Add(new(name is null ? flow.AuxiliaryId : NodeLabel(name),
-                this["SecondaryGross"], flow.GrossAmount.ToString("0.########", Format)));
+                this["SecondaryGross"], UiCompactNumbers.Number(flow.GrossAmount, Format)));
         }
         SecondarySummary = string.Format(Format, this["SecondaryTotals"],
             SecondaryResults.Count, PrincipalCosts.Count, workspace.Resources.Study.Currency.FunctionalCurrencyCode);
@@ -385,7 +385,7 @@ public sealed partial class AllocationWorkspaceViewModel
                 var id = result.Circulation.AuxiliaryIds[i];
                 var name = nodes.Values.FirstOrDefault(n => n.Id.ToString() == id);
                 SecondaryCirculation.Add(new(name is null ? id : NodeLabel(name),
-                    this["SecondaryGross"], result.Circulation.Gross[i].ToString("0.########", Format)));
+                    this["SecondaryGross"], UiCompactNumbers.Number(result.Circulation.Gross[i], Format)));
             }
             SecondarySummary = string.Format(Format, this["SecondaryTotals"],
                 SecondaryResults.Count, PrincipalCosts.Count, result.Primary.Currency);
@@ -604,18 +604,18 @@ public sealed partial class AllocationWorkspaceViewModel
             SecondaryExplanationDetails.Add(new(
                 origins.TryGetValue(fact.ResourceId, out var origin) ? AccountLabel(origin) : fact.Account,
                 MoneyText(new Money(initial, fact.PostedAmount.Currency, fact.PostedAmount.PrecisionPolicy)),
-                initial == 0m ? "—" : (raw / initial * 100m).ToString("0.####", Format) + " %",
+                initial == 0m ? "—" : UiCompactNumbers.Percent(raw / initial * 100m, Format),
                 DisplayMoney(amounts[i], fact.PostedAmount.Currency),
                 string.Join(", ", keys))
             {
                 TechnicalDetail = string.Format(Format, this["ExplainContributionAdjustment"],
-                    raw.ToString("0.########", Format) + " " + Currency,
-                    (contribution.PostedAmount - raw).ToString("0.########", Format) + " " + Currency)
+                    UiCompactNumbers.Money(raw, Currency, Format),
+                    UiCompactNumbers.Money(contribution.PostedAmount - raw, Currency, Format))
                     + Environment.NewLine + this["ExplainTerminalDetail"] + " " +
                     string.Format(Format, this["SecondaryExplainAmounts"], MoneyText(fact.PostedAmount),
-                        fact.RawAmount.ToString("0.########", Format) + " " + Currency,
-                        fact.NumericAdjustment.ToString("0.########", Format) + " " + Currency,
-                        fact.RoundingAdjustment.ToString("0.########", Format) + " " + Currency)
+                        UiCompactNumbers.Money(fact.RawAmount, Currency, Format),
+                        UiCompactNumbers.Money(fact.NumericAdjustment, Currency, Format),
+                        UiCompactNumbers.Money(fact.RoundingAdjustment, Currency, Format))
             });
         }
         OnPropertyChanged(nameof(SecondaryExplanation));

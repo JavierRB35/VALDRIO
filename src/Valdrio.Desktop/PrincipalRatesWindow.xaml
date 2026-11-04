@@ -21,11 +21,13 @@
       <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="CentersTable" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" AutoGenerateColumns="False"
         IsReadOnly="True" CanUserAddRows="False" MinHeight="90" SelectionMode="Single" AutomationProperties.Name="{Binding [Centers]}">
        <DataGrid.Columns>
-        <DataGridTextColumn x:Name="CenterColumn" Binding="{Binding Name}" Width="2*" ElementStyle="{StaticResource RateCell}"/>
-        <DataGridTextColumn x:Name="UnitColumn" Binding="{Binding Unit}" Width="*" ElementStyle="{StaticResource RateCell}"/>
-        <DataGridTextColumn x:Name="CostColumn" Binding="{Binding Cost}" Width="*" ElementStyle="{StaticResource RateCell}"/>
-        <DataGridTextColumn x:Name="RateColumn" Binding="{Binding Rate}" Width="*" ElementStyle="{StaticResource RateCell}"/>
-        <DataGridTextColumn x:Name="StatusColumn" Binding="{Binding Status}" Width="2*" ElementStyle="{StaticResource RateCell}"/>
+        <DataGridTextColumn x:Name="CenterColumn" Binding="{Binding Name}" Width="2*" MinWidth="160" ElementStyle="{StaticResource RateCell}"/>
+        <DataGridTextColumn x:Name="UnitColumn" Binding="{Binding Unit}" Width="*" MinWidth="75" ElementStyle="{StaticResource RateCell}"/>
+        <DataGridTextColumn x:Name="CostColumn" Binding="{Binding Cost}" Width="*" MinWidth="110" ElementStyle="{StaticResource RateCell}"/>
+        <DataGridTextColumn x:Name="NumeratorColumn" Binding="{Binding Numerator}" Width="2*" MinWidth="130" ElementStyle="{StaticResource RateCell}"/>
+        <DataGridTextColumn x:Name="DenominatorColumn" Binding="{Binding Denominator}" Width="2*" MinWidth="135" ElementStyle="{StaticResource RateCell}"/>
+        <DataGridTextColumn x:Name="RateColumn" Binding="{Binding Rate}" Width="*" MinWidth="100" ElementStyle="{StaticResource RateCell}"/>
+        <DataGridTextColumn x:Name="StatusColumn" Binding="{Binding Status}" Width="2*" MinWidth="125" ElementStyle="{StaticResource RateCell}"/>
        </DataGrid.Columns>
       </DataGrid>
      </StackPanel>
