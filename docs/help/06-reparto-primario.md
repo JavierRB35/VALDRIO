@@ -67,3 +67,9 @@ El gráfico ordena todos los nodos que reciben coste en el primario de mayor a m
 3. Examina importes por nodo y el Pareto (barras de coste, línea de porcentaje acumulado); consulta el detalle y cierra el reparto cuando esté revisado.
 
 Las tablas crecen con sus filas: utiliza el desplazamiento exterior de la página. Guardar claves y las acciones de cierre permanecen en la barra inferior; cambian con la pestaña activa. El desplazamiento horizontal permite consultar las columnas que no caben.
+
+## Ampliación de presentación por finalidad — candidatura 2026-11-04
+
+Las tablas de asignaciones y de totales por nodo ofrecen dos categorías independientes: **Centros generales/indirectos** y **Factores directos**. La selección utiliza la finalidad explícita del nodo, no su nombre, papel principal/auxiliar ni el tipo de recurso. Los nodos antiguos sin finalidad explícita se muestran provisionalmente entre los generales. Los **totales conciliados** siguen incluyendo ambas categorías y proceden de los mismos hechos primarios, sin otro reparto. El Pareto sigue la categoría elegida.
+
+**Estado:** implementación candidata pendiente de validación en Windows.
