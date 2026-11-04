@@ -301,6 +301,25 @@
         </Grid>
 
 </StackPanel>
+        <StackPanel Margin="0,10,0,8">
+         <TextBlock Text="{Binding EconomicClassificationHelp}" Style="{StaticResource SectionHelp}"/>
+         <WrapPanel>
+          <StackPanel Width="300" Margin="0,0,16,4">
+           <TextBlock Text="{Binding EconomicFunctionLabel}"/>
+           <ComboBox x:Name="EconomicFunctionBox" ItemsSource="{Binding EconomicFunctions}"
+                     DisplayMemberPath="Label" SelectedValuePath="Value"
+                     SelectedValue="{Binding EconomicFunctionChoice, Mode=TwoWay}"
+                     AutomationProperties.Name="{Binding EconomicFunctionLabel}" TabIndex="46"/>
+          </StackPanel>
+          <StackPanel Width="300" Margin="0,0,16,4">
+           <TextBlock Text="{Binding TariffPurposeLabel}"/>
+           <ComboBox x:Name="TariffPurposeBox" ItemsSource="{Binding TariffPurposes}"
+                     DisplayMemberPath="Label" SelectedValuePath="Value"
+                     SelectedValue="{Binding TariffPurposeChoice, Mode=TwoWay}"
+                     AutomationProperties.Name="{Binding TariffPurposeLabel}" TabIndex="47"/>
+          </StackPanel>
+         </WrapPanel>
+        </StackPanel>
         <TextBlock Text="{Binding PoolHelp}" Style="{StaticResource FieldHint}"/>
 
         <Expander x:Name="NodeUnitCreator" Header="{Binding CreateUnitHereLabel}" Margin="0,4,0,8">
