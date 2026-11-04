@@ -16,6 +16,7 @@ public sealed record PrimaryNodeTotalRow(string Center, string Node, string Amou
 // The preview belongs to the T08 workspace: never invent a second, editable set of rules.
 public sealed partial class AllocationWorkspaceViewModel
 {
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty] private int primaryResultCategoryIndex;
     public ObservableCollection<PrimaryAllocationRow> PrimaryResults { get; } = [];
     public ObservableCollection<PrimaryNodeTotalRow> PrimaryNodeTotals { get; } = [];
     // Two read-only presentations of the same primary facts; never independent ledgers.
