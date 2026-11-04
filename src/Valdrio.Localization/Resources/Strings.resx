@@ -2338,4 +2338,10 @@ Excluded: {7} · Direct to products/orders: {8}</value></data>
   <data name="AllocationUI.ResultsGeneral" xml:space="preserve"><value>General / indirect cost centres</value></data>
   <data name="AllocationUI.ResultsDirect" xml:space="preserve"><value>Direct factors (labour and procurement)</value></data>
   <data name="AllocationUI.ResultsConsolidatedTotal" xml:space="preserve"><value>Consolidated total · both categories</value></data>
+  <data name="Run.FunctionalCosts" xml:space="preserve"><value>Terminal costs by economic function</value></data>
+  <data name="Run.FunctionalCostsHelp" xml:space="preserve"><value>Read-only grouping of final principal-node costs by destination. This is not cost of goods sold, sales margin or inventory valuation; unclassified nodes remain visible.</value></data>
+  <data name="Run.Function.Unspecified" xml:space="preserve"><value>Unclassified (historical nodes)</value></data>
+  <data name="Run.Function.Production" xml:space="preserve"><value>Production / core activity</value></data>
+  <data name="Run.Function.Commercial" xml:space="preserve"><value>Commercial</value></data>
+  <data name="Run.Function.Structure" xml:space="preserve"><value>Structure / administration</value></data>
 </root>
