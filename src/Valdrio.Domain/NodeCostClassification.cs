@@ -63,8 +63,10 @@ public static class NodeCostClassification
         var purposes = all.Where(t => t.StartsWith(PurposePrefix, StringComparison.Ordinal)).ToArray();
         return functions.Length <= 1 && purposes.Length <= 1 &&
             (functions.Length == 0 || Function(all) != NodeEconomicFunction.Unspecified) &&
-            (purposes.Length == 0 || purposes[0] is
-                PurposePrefix + "general" or PurposePrefix + "labor" or PurposePrefix + "procurement");
+            (purposes.Length == 0 ||
+             purposes[0] == PurposePrefix + "general" ||
+             purposes[0] == PurposePrefix + "labor" ||
+             purposes[0] == PurposePrefix + "procurement");
     }
 
     public static IReadOnlyList<string> WithFunction(IEnumerable<string> tags, NodeEconomicFunction function)
