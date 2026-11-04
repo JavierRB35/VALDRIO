@@ -63,6 +63,7 @@ public sealed partial class AllocationWorkspaceViewModel
     private bool secondaryCalculationFailed;
     public bool SecondaryCalculationFailed => secondaryCalculationFailed && !IsSecondaryClosed;
     private CancellationTokenSource? secondaryCalculationCts;
+    [ObservableProperty] private int secondaryResultCategoryIndex;
     public ObservableCollection<SecondaryAllocationRow> SecondaryResults { get; } = [];
     public ObservableCollection<PrincipalCostRow> PrincipalCosts { get; } = [];
     // UI-only projections. The complete published facts and reconciliation stay intact.
