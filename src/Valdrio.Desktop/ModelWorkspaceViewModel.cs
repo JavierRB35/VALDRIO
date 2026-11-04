@@ -15,6 +15,8 @@ public sealed record UnitOption(DriverUnitState Value, string Label);
 public sealed record ModelOption(ModelVersionSnapshot Value, string Label);
 public sealed record RoleOption(NodeRole Value, string Label);
 public sealed record LayerOption(CostLayer Value, string Label);
+public sealed record NodeFunctionOption(NodeEconomicFunction Value, string Label);
+public sealed record NodePurposeOption(NodeTariffPurpose Value, string Label);
 public sealed record NodeOption(
     CalculationNodeDefinition Node,
     CostPoolDefinition? Pool,
@@ -132,6 +134,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public ObservableCollection<NodeOption> Nodes { get; } = [];
     public ObservableCollection<RoleOption> Roles { get; } = [];
     public ObservableCollection<LayerOption> Layers { get; } = [];
+    public ObservableCollection<NodeFunctionOption> EconomicFunctions { get; } = [];
+    public ObservableCollection<NodePurposeOption> TariffPurposes { get; } = [];
 
     public CenterOption? Master
     {
@@ -383,6 +387,29 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         }
     }
 
+    private string[] ParsedFunctionTags => functionTags.Split(',',
+        StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+    public NodeEconomicFunction EconomicFunctionChoice
+    {
+        get => NodeCostClassification.Function(ParsedFunctionTags);
+        set
+        {
+            if (!loading && IsEditable && EconomicFunctionChoice != value)
+                FunctionTags = string.Join(", ", NodeCostClassification.WithFunction(ParsedFunctionTags, value));
+        }
+    }
+
+    public NodeTariffPurpose TariffPurposeChoice
+    {
+        get => NodeCostClassification.Purpose(ParsedFunctionTags);
+        set
+        {
+            if (!loading && IsEditable && TariffPurposeChoice != value)
+                FunctionTags = string.Join(", ", NodeCostClassification.WithPurpose(ParsedFunctionTags, value));
+        }
+    }
+
     public string PoolDescription
     {
         get => poolDescription;
@@ -512,6 +539,9 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string PhysicalLabel => Text("Model.Physical");
     public string RoleLabel => Text("Model.Role");
     public string FunctionLabel => Text("Model.FunctionTags");
+    public string EconomicFunctionLabel => Text("Model.EconomicFunction");
+    public string TariffPurposeLabel => Text("Model.TariffPurpose");
+    public string EconomicClassificationHelp => Text("Model.EconomicClassificationHelp");
     public string UnitLabel => Text("Model.DriverUnit");
     public string LayerLabel => Text("Model.CostLayer");
     public string PoolLabel => Text("Model.NodeDescription");
@@ -596,6 +626,10 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         Replace(Units, unitValues.Select(u => new UnitOption(u, ActivityUnitName(u.Definition) + " · " + Text(u.IsActive ? "Model.Active" : "Model.Inactive"))));
         Replace(Models, modelValues.Select(m => new ModelOption(m, m.Structure.Description + " · " + Text(m.Status == ModelStatus.Draft ? "Model.Draft" : "Model.Published") + " · " + m.Structure.VersionNumber.ToString(Format))));
         Replace(Roles, Enum.GetValues<NodeRole>().Select(r => new RoleOption(r, Text(r == NodeRole.Principal ? "Model.Principal" : "Model.Auxiliary"))));
+        Replace(EconomicFunctions, Enum.GetValues<NodeEconomicFunction>().Select(value =>
+            new NodeFunctionOption(value, Text("Model.Function." + value))));
+        Replace(TariffPurposes, Enum.GetValues<NodeTariffPurpose>().Select(value =>
+            new NodePurposeOption(value, Text("Model.Purpose." + value))));
         Replace(Layers, Enum.GetValues<CostLayer>().Select(l => new LayerOption(l, Text(l switch
         {
             CostLayer.Fixed => "Model.LayerFixed",
@@ -1065,7 +1099,14 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         {
             if (Physical is null || DriverUnit is null || Role is null)
             { diagnostic = new("MODEL_INPUT_INVALID", "Model.InputInvalid", []); Refresh(); return; }
-            var tags = FunctionTags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var tags = ParsedFunctionTags;
+            if (!NodeCostClassification.HasValidTags(tags) || EconomicFunctionChoice == NodeEconomicFunction.Unspecified)
+            { diagnostic = new("MODEL_FUNCTION_REQUIRED", "Model.NodeFunctionRequired", []); Refresh(); return; }
+            if (TariffPurposeChoice != NodeTariffPurpose.General && Role.Value != NodeRole.Principal)
+            { diagnostic = new("MODEL_PURPOSE_ROLE", "Model.NodePurposeRequiresPrincipal", []); Refresh(); return; }
+            if (TariffPurposeChoice == NodeTariffPurpose.DirectLabor &&
+                EconomicFunctionChoice != NodeEconomicFunction.Production)
+            { diagnostic = new("MODEL_PURPOSE_FUNCTION", "Model.NodePurposeRequiresProduction", []); Refresh(); return; }
             if (string.IsNullOrWhiteSpace(NodeCode) || tags.Distinct(StringComparer.Ordinal).Count() != tags.Length)
             { diagnostic = new("MODEL_NODE_INVALID", "Model.NodeInvalid", []); Refresh(); return; }
             if (string.IsNullOrWhiteSpace(Description))
@@ -1074,7 +1115,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             { diagnostic = new("MODEL_DUPLICATE", "Model.Duplicate", []); Refresh(); return; }
             var id = SelectedNode?.Node.Id ?? new(Guid.NewGuid());
             var modelId = Current!.Structure.Id;
-            var n = new CalculationNodeDefinition(id, modelId, Physical.Value.Id, NodeCode, Role.Value, FunctionTags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), true);
+            var classifiedTags = NodeCostClassification.WithClassification(tags, EconomicFunctionChoice, TariffPurposeChoice);
+            var n = new CalculationNodeDefinition(id, modelId, Physical.Value.Id, NodeCode, Role.Value, classifiedTags, true);
             var p = new CostPoolDefinition(SelectedNode?.Pool?.Id ?? new(Guid.NewGuid()), modelId, n.Id, DriverUnit.Value.Definition.Id, PoolDescription, SelectedNode?.Pool?.CostLayer ?? CostLayer.Unclassified, SelectedNode?.Pool?.CapacityPolicy ?? ModelPolicyReference.PendingCapacity);
             var ns = draftNodes.Where(x => x.Id != id).Append(n).ToArray();
             var ps = draftPools.Where(x => x.NodeId != id).Append(p).ToArray();
