@@ -422,14 +422,10 @@ public sealed partial class CostFlowViewModel : ObservableObject
 
                 // Destination-based functional summary of frozen principal-node
                 // costs. Not sales margin, inventory valuation or a new ledger.
-                foreach (var group in balances.Where(b => b.Role == NodeRole.Principal)
-                    .GroupBy(b => NodeCostClassification.Function(nodes[b.NodeId]))
-                    .OrderBy(g => g.Key))
-                {
-                    var total = group.Sum(b => b.Final);
-                    FunctionBalances.Add(new(this["Function." + group.Key],
-                        GraphAmount(total), total, group.Count()));
-                }
+                foreach (var group in Valdrio.Reporting.RunCostBalanceProjector.GroupByFunction(
+                    balances, model.Structure.Nodes))
+                    FunctionBalances.Add(new(this["Function." + group.Function],
+                        GraphAmount(group.Final), group.Final, group.NodeCount));
             }
         }
         if (primary is not null)
