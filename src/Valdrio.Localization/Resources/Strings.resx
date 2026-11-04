@@ -2337,4 +2337,5 @@ Excluded: {7} · Direct to products/orders: {8}</value></data>
   <data name="Rates.NoGeneralCenters" xml:space="preserve"><value>No general cost-centre nodes are configured in this model.</value></data>
   <data name="AllocationUI.ResultsGeneral" xml:space="preserve"><value>General / indirect cost centres</value></data>
   <data name="AllocationUI.ResultsDirect" xml:space="preserve"><value>Direct factors (labour and procurement)</value></data>
+  <data name="AllocationUI.ResultsConsolidatedTotal" xml:space="preserve"><value>Consolidated total · both categories</value></data>
 </root>
