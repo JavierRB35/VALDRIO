@@ -2335,4 +2335,6 @@ Excluido: {7} · Directo a productos/órdenes: {8}</value></data>
   <data name="Rates.TabFactors" xml:space="preserve"><value>Factores directos</value></data>
   <data name="Rates.NoDirectFactors" xml:space="preserve"><value>El modelo no tiene configurados nodos de MOD ni de aprovisionamiento.</value></data>
   <data name="Rates.NoGeneralCenters" xml:space="preserve"><value>El modelo no tiene configurados centros de costes generales.</value></data>
+  <data name="AllocationUI.ResultsGeneral" xml:space="preserve"><value>Centros generales / costes indirectos</value></data>
+  <data name="AllocationUI.ResultsDirect" xml:space="preserve"><value>Factores directos (MOD y aprovisionamiento)</value></data>
 </root>
