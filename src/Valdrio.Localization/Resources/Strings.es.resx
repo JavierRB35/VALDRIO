@@ -1794,7 +1794,7 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
   <data name="Activity.Stoppages.TotalPeriod" xml:space="preserve"><value>Total del período, todos los recursos</value></data>
   <data name="Activity.Stoppages.Exceeds" xml:space="preserve"><value>Las paradas calculadas ({0} h) superan las horas de calendario ({1} h). Revisa las horas y si son por turno, día o totales.</value></data>
   <data name="Activity.Stoppages.Calculation" xml:space="preserve"><value>Paradas: {0} h ({1}) × {2} = {3} h totales</value></data>
-  <data name="Rates.Title" xml:space="preserve"><value>Tarifas de centros principales</value></data>
+  <data name="Rates.Title" xml:space="preserve"><value>Tarifas y costes unitarios</value></data>
   <data name="Rates.Centers" xml:space="preserve"><value>Centros principales</value></data>
   <data name="Rates.Center" xml:space="preserve"><value>Centro</value></data>
   <data name="Rates.Unit" xml:space="preserve"><value>Unidad</value></data>
@@ -1860,8 +1860,8 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
   <data name="Rates.Behavior.Fixed" xml:space="preserve"><value>Fijo</value></data>
   <data name="Rates.Behavior.AssumedFixed" xml:space="preserve"><value>Fijo asumido</value></data>
   <data name="Rates.Behavior.Variable" xml:space="preserve"><value>Variable</value></data>
-  <data name="Guide.Rates" xml:space="preserve"><value>Tarifas de centros</value></data>
-  <data name="Guide.RatesHelp" xml:space="preserve"><value>Consulta las tarifas y las respuestas para el centro seleccionado. Los costes y las horas proceden del análisis guardado.</value></data>
+  <data name="Guide.Rates" xml:space="preserve"><value>Tarifas y costes unitarios</value></data>
+  <data name="Guide.RatesHelp" xml:space="preserve"><value>Consulta tarifas de centros y factores directos, su procedencia, capacidad y conciliación en el análisis seleccionado.</value></data>
 <data name="Rates.Source" xml:space="preserve"><value>Cuenta de origen</value></data>
 <data name="Rates.UndefinedRate" xml:space="preserve"><value>No hay una tarifa unitaria definida para esta base. Revisa los componentes y la actividad.</value></data>
 <data name="Rates.ZeroNormal" xml:space="preserve"><value>La actividad normal es cero y hay coste fijo propio. Revisa la referencia de capacidad en Actividad y capacidades.</value></data>
@@ -2318,4 +2318,21 @@ Excluido: {7} · Directo a productos/órdenes: {8}</value></data>
 <data name="Aux.ClassificationSourceRequired" xml:space="preserve"><value>Cuenta {0}, auxiliar {1}, clave {2}: falta definir la clasificación fija/variable o la proporción mixta para evaluar la capacidad.</value></data>
 <data name="Study.SaveBeforeContinuing" xml:space="preserve"><value>Guarda o descarta los cambios pendientes del análisis antes de continuar.</value></data>
   <data name="Composition.InvalidCell" xml:space="preserve"><value>Revisa la celda marcada: introduce un número válido con el formato regional seleccionado antes de continuar.</value></data>
+  <data name="Model.EconomicFunction" xml:space="preserve"><value>Función económica</value></data>
+  <data name="Model.TariffPurpose" xml:space="preserve"><value>Finalidad de la tarifa</value></data>
+  <data name="Model.EconomicClassificationHelp" xml:space="preserve"><value>Selecciona la función económica del nodo y si acumula costes indirectos o un factor directo. Estas clasificaciones no limitan los repartos entre funciones.</value></data>
+  <data name="Model.Function.Unspecified" xml:space="preserve"><value>Sin clasificar (solo modelos anteriores)</value></data>
+  <data name="Model.Function.Production" xml:space="preserve"><value>Producción / actividad principal</value></data>
+  <data name="Model.Function.Commercial" xml:space="preserve"><value>Comercial</value></data>
+  <data name="Model.Function.Structure" xml:space="preserve"><value>Estructura / administración</value></data>
+  <data name="Model.Purpose.General" xml:space="preserve"><value>Centro general / costes indirectos</value></data>
+  <data name="Model.Purpose.DirectLabor" xml:space="preserve"><value>Grupo homogéneo de MOD</value></data>
+  <data name="Model.Purpose.Procurement" xml:space="preserve"><value>Grupo de aprovisionamiento</value></data>
+  <data name="Model.NodeFunctionRequired" xml:space="preserve"><value>Selecciona una función económica válida antes de guardar el nodo.</value></data>
+  <data name="Model.NodePurposeRequiresPrincipal" xml:space="preserve"><value>Los nodos de tarifas de factores directos deben ser principales y recibir el reparto secundario.</value></data>
+  <data name="Model.NodePurposeRequiresProduction" xml:space="preserve"><value>Un grupo de MOD debe pertenecer a Producción / actividad principal.</value></data>
+  <data name="Rates.TabCenters" xml:space="preserve"><value>Tarifas de centros</value></data>
+  <data name="Rates.TabFactors" xml:space="preserve"><value>Factores directos</value></data>
+  <data name="Rates.NoDirectFactors" xml:space="preserve"><value>El modelo no tiene configurados nodos de MOD ni de aprovisionamiento.</value></data>
+  <data name="Rates.NoGeneralCenters" xml:space="preserve"><value>El modelo no tiene configurados centros de costes generales.</value></data>
 </root>
