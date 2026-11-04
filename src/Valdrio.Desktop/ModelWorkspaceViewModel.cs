@@ -1123,7 +1123,15 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             if (Physical is null || DriverUnit is null || Role is null)
             { diagnostic = new("MODEL_INPUT_INVALID", "Model.InputInvalid", []); Refresh(); return; }
             var tags = ParsedFunctionTags;
-            if (!NodeCostClassification.HasValidTags(tags) || EconomicFunctionChoice == NodeEconomicFunction.Unspecified)
+            // Legacy published models may have only free-form functions. Do not
+            // force an economic reclassification when editing an unrelated field.
+            // New nodes and newly assigned purposes require an explicit function.
+            var legacyUnclassified = SelectedNode?.Node is { } existing &&
+                NodeCostClassification.Function(existing) == NodeEconomicFunction.Unspecified &&
+                EconomicFunctionChoice == NodeEconomicFunction.Unspecified &&
+                TariffPurposeChoice == NodeTariffPurpose.General;
+            if (!NodeCostClassification.HasValidTags(tags) ||
+                EconomicFunctionChoice == NodeEconomicFunction.Unspecified && !legacyUnclassified)
             { diagnostic = new("MODEL_FUNCTION_REQUIRED", "Model.NodeFunctionRequired", []); Refresh(); return; }
             if (TariffPurposeChoice != NodeTariffPurpose.General && Role.Value != NodeRole.Principal)
             { diagnostic = new("MODEL_PURPOSE_ROLE", "Model.NodePurposeRequiresPrincipal", []); Refresh(); return; }
@@ -1138,7 +1146,9 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             { diagnostic = new("MODEL_DUPLICATE", "Model.Duplicate", []); Refresh(); return; }
             var id = SelectedNode?.Node.Id ?? new(Guid.NewGuid());
             var modelId = Current!.Structure.Id;
-            var classifiedTags = NodeCostClassification.WithClassification(tags, EconomicFunctionChoice, TariffPurposeChoice);
+            var classifiedTags = legacyUnclassified
+                ? tags
+                : NodeCostClassification.WithClassification(tags, EconomicFunctionChoice, TariffPurposeChoice);
             var n = new CalculationNodeDefinition(id, modelId, Physical.Value.Id, NodeCode, Role.Value, classifiedTags, true);
             var p = new CostPoolDefinition(SelectedNode?.Pool?.Id ?? new(Guid.NewGuid()), modelId, n.Id, DriverUnit.Value.Definition.Id, PoolDescription, SelectedNode?.Pool?.CostLayer ?? CostLayer.Unclassified, SelectedNode?.Pool?.CapacityPolicy ?? ModelPolicyReference.PendingCapacity);
             var ns = draftNodes.Where(x => x.Id != id).Append(n).ToArray();
