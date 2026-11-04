@@ -253,7 +253,7 @@
  <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource CellText}">
  <Setter Property="Text" Value="{Binding FunctionsLabel}"/><Style.Triggers><DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True"><Setter Property="Text" Value="{Binding DataContext.FunctionTags, RelativeSource={RelativeSource AncestorType=DataGrid}}"/></DataTrigger></Style.Triggers>
  </Style></TextBlock.Style></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate>
- <DataGridTemplateColumn.CellEditingTemplate><DataTemplate><TextBox Text="{Binding DataContext.FunctionTags, RelativeSource={RelativeSource AncestorType=DataGrid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="True" MinWidth="40"/></DataTemplate></DataGridTemplateColumn.CellEditingTemplate>
+ <DataGridTemplateColumn.CellEditingTemplate><DataTemplate><TextBox Text="{Binding DataContext.AdditionalFunctionTags, RelativeSource={RelativeSource AncestorType=DataGrid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="True" MinWidth="40"/></DataTemplate></DataGridTemplateColumn.CellEditingTemplate>
 </DataGridTemplateColumn>
        </DataGrid.Columns>
       </DataGrid>
@@ -333,7 +333,7 @@
          <StackPanel>
           <TextBlock Text="{Binding FunctionHelp}" Style="{StaticResource SectionHelp}"/>
           <TextBlock Text="{Binding FunctionLabel}"/>
-          <TextBox x:Name="FunctionBox" Text="{Binding FunctionTags,UpdateSourceTrigger=PropertyChanged}" TabIndex="44" AutomationProperties.Name="{Binding FunctionLabel}" local:FieldHelp.Key="FunctionTags"/>
+          <TextBox x:Name="FunctionBox" Text="{Binding AdditionalFunctionTags,UpdateSourceTrigger=PropertyChanged}" TabIndex="44" AutomationProperties.Name="{Binding FunctionLabel}" local:FieldHelp.Key="FunctionTags"/>
          </StackPanel>
         </Expander>
 
