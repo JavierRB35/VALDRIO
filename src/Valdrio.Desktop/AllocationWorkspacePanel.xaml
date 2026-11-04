@@ -349,7 +349,9 @@
         </ScrollViewer>
       </StackPanel>
     </Expander>
-    <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="PrimaryResultsGrid" ItemsSource="{Binding PrimaryResults}" IsReadOnly="True" AutoGenerateColumns="False"
+    <TabControl Margin="0,0,0,8" SelectedIndex="{Binding PrimaryResultCategoryIndex, Mode=TwoWay}">
+      <TabItem Header="{Binding [ResultsGeneral]}">
+       <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="PrimaryResultsGrid" ItemsSource="{Binding GeneralPrimaryResults}" IsReadOnly="True" AutoGenerateColumns="False"
               SelectionMode="Single" AutomationProperties.Name="{Binding [PrimaryTitle]}">
      <DataGrid.Columns>
       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Source}" Width="2*"/>
@@ -358,12 +360,27 @@
       <DataGridTextColumn ElementStyle="{StaticResource PrimaryBehavior}" Binding="{Binding Behavior}" Width="*"/>
      </DataGrid.Columns>
     </DataGrid>
+      </TabItem>
+      <TabItem Header="{Binding [ResultsDirect]}">
+       <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="PrimaryResultsGridDirect" ItemsSource="{Binding DirectPrimaryResults}" IsReadOnly="True" AutoGenerateColumns="False"
+              SelectionMode="Single" AutomationProperties.Name="{Binding [PrimaryTitle]}">
+     <DataGrid.Columns>
+      <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Source}" Width="2*"/>
+      <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Destination}" Width="2*"/>
+      <DataGridTextColumn Binding="{Binding Amount}" HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Width="120"/>
+      <DataGridTextColumn ElementStyle="{StaticResource PrimaryBehavior}" Binding="{Binding Behavior}" Width="*"/>
+     </DataGrid.Columns>
+    </DataGrid>
+      </TabItem>
+     </TabControl>
 <Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="120"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
 <TextBlock Grid.Column="2" Text="{Binding PrimaryResultsTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
 
     <local:ParetoChart x:Name="PrimaryPareto"/>
     <TextBlock Text="{Binding [PrimaryNodeTotalsTitle]}" FontWeight="SemiBold" Margin="0,12,0,6"/>
-     <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="PrimaryNodeTotalsGrid" ItemsSource="{Binding PrimaryNodeTotals}" IsReadOnly="True"
+     <TabControl Margin="0,0,0,8" SelectedIndex="{Binding PrimaryResultCategoryIndex, Mode=TwoWay}">
+      <TabItem Header="{Binding [ResultsGeneral]}">
+       <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="PrimaryNodeTotalsGrid" ItemsSource="{Binding GeneralPrimaryNodeTotals}" IsReadOnly="True"
           AutoGenerateColumns="False" CanUserSortColumns="True" Margin="0,12,0,8">
       <DataGrid.Columns>
        <DataGridTextColumn Binding="{Binding Center}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
@@ -371,6 +388,18 @@
        <DataGridTextColumn Binding="{Binding Amount}" SortMemberPath="NumericAmount" HeaderStyle="{StaticResource NumberHeader}" Width="150" ElementStyle="{StaticResource Text.TableNumber}"/>
       </DataGrid.Columns>
      </DataGrid>
+      </TabItem>
+      <TabItem Header="{Binding [ResultsDirect]}">
+       <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="PrimaryNodeTotalsGridDirect" ItemsSource="{Binding DirectPrimaryNodeTotals}" IsReadOnly="True"
+          AutoGenerateColumns="False" CanUserSortColumns="True" Margin="0,12,0,8">
+      <DataGrid.Columns>
+       <DataGridTextColumn Binding="{Binding Center}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
+       <DataGridTextColumn Binding="{Binding Node}" Width="2*" ElementStyle="{StaticResource Text.TableText}"/>
+       <DataGridTextColumn Binding="{Binding Amount}" SortMemberPath="NumericAmount" HeaderStyle="{StaticResource NumberHeader}" Width="150" ElementStyle="{StaticResource Text.TableNumber}"/>
+      </DataGrid.Columns>
+     </DataGrid>
+      </TabItem>
+     </TabControl>
 <Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="150"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
 <TextBlock Grid.Column="2" Text="{Binding PrimaryNodeTotalsTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
 
@@ -432,7 +461,9 @@
      <TextBlock Text="{Binding [PrincipalOriginOverviewHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
      <StackPanel Margin="0,0,0,12">
       <StackPanel Margin="0,0,0,12">
-     <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="PrincipalCostsGrid" ItemsSource="{Binding PrincipalCosts}" SelectedItem="{Binding SelectedPrincipalCostRow, Mode=TwoWay}" SelectionMode="Single" IsReadOnly="True" AutoGenerateColumns="False" MinHeight="100" CanUserAddRows="False">
+     <TabControl Margin="0,0,0,8" SelectedIndex="{Binding SecondaryResultCategoryIndex, Mode=TwoWay}">
+      <TabItem Header="{Binding [ResultsGeneral]}">
+       <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="PrincipalCostsGrid" ItemsSource="{Binding GeneralPrincipalCosts}" SelectedItem="{Binding SelectedPrincipalCostRow, Mode=TwoWay}" SelectionMode="Single" IsReadOnly="True" AutoGenerateColumns="False" MinHeight="100" CanUserAddRows="False">
       <DataGrid.Columns>
        <DataGridTextColumn Binding="{Binding Node}" Width="3*" MinWidth="180">
          <DataGridTextColumn.ElementStyle>
@@ -448,6 +479,26 @@
        <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Total}" Width="*" MinWidth="120"/>
       </DataGrid.Columns>
      </DataGrid>
+      </TabItem>
+      <TabItem Header="{Binding [ResultsDirect]}">
+       <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="PrincipalCostsGridDirect" ItemsSource="{Binding DirectPrincipalCosts}" SelectedItem="{Binding SelectedPrincipalCostRow, Mode=TwoWay}" SelectionMode="Single" IsReadOnly="True" AutoGenerateColumns="False" MinHeight="100" CanUserAddRows="False">
+      <DataGrid.Columns>
+       <DataGridTextColumn Binding="{Binding Node}" Width="3*" MinWidth="180">
+         <DataGridTextColumn.ElementStyle>
+          <Style TargetType="TextBlock" BasedOn="{StaticResource Text.TableText}">
+           <Setter Property="TextWrapping" Value="NoWrap"/>
+           <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+           <Setter Property="ToolTip" Value="{Binding Node}"/>
+          </Style>
+         </DataGridTextColumn.ElementStyle>
+        </DataGridTextColumn>
+       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Primary}" Width="*" MinWidth="120"/>
+       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Auxiliary}" Width="*" MinWidth="120"/>
+       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Total}" Width="*" MinWidth="120"/>
+      </DataGrid.Columns>
+     </DataGrid>
+      </TabItem>
+     </TabControl>
 <Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="3*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
 <TextBlock Grid.Column="1" Text="{Binding PrincipalCostsPrimaryTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/>
 <TextBlock Grid.Column="2" Text="{Binding PrincipalCostsAuxiliaryTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/>
@@ -510,7 +561,9 @@
 
      <TextBlock Text="{Binding [SecondaryContributionsTitle]}" FontWeight="SemiBold" Margin="0,16,0,8"/>
      <TextBlock Text="{Binding [SecondaryContributionsHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
-     <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="SecondaryResultsGrid" ItemsSource="{Binding SecondaryResults}" SelectionMode="Single" SelectionUnit="FullRow" SelectedItem="{Binding SelectedSecondaryResultRow, Mode=TwoWay}" IsReadOnly="True" AutoGenerateColumns="False">
+     <TabControl Margin="0,0,0,8" SelectedIndex="{Binding SecondaryResultCategoryIndex, Mode=TwoWay}">
+      <TabItem Header="{Binding [ResultsGeneral]}">
+       <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="SecondaryResultsGrid" ItemsSource="{Binding GeneralSecondaryResults}" SelectionMode="Single" SelectionUnit="FullRow" SelectedItem="{Binding SelectedSecondaryResultRow, Mode=TwoWay}" IsReadOnly="True" AutoGenerateColumns="False">
       <DataGrid.Columns>
        <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Source}" Width="2*"/>
        <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Destination}" Width="2*"/>
@@ -518,6 +571,18 @@
        <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Behavior}" Width="*"/>
       </DataGrid.Columns>
      </DataGrid>
+      </TabItem>
+      <TabItem Header="{Binding [ResultsDirect]}">
+       <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="SecondaryResultsGridDirect" ItemsSource="{Binding DirectSecondaryResults}" SelectionMode="Single" SelectionUnit="FullRow" SelectedItem="{Binding SelectedSecondaryResultRow, Mode=TwoWay}" IsReadOnly="True" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Source}" Width="2*"/>
+       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Destination}" Width="2*"/>
+       <DataGridTextColumn HeaderStyle="{StaticResource NumberHeader}" ElementStyle="{StaticResource Text.TableNumber}" Binding="{Binding Amount}" Width="*" MinWidth="160"/>
+       <DataGridTextColumn ElementStyle="{StaticResource Text.TableText}" Binding="{Binding Behavior}" Width="*"/>
+      </DataGrid.Columns>
+     </DataGrid>
+      </TabItem>
+     </TabControl>
 <Grid Background="{DynamicResource Surface.Subtle}" Margin="0,-4,0,12" MinHeight="34"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Grid.Column="0" Text="{Binding [TableTotal]}" Margin="9,8" FontWeight="SemiBold"/>
 <TextBlock Grid.Column="2" Text="{Binding SecondaryResultsTotal}" TextAlignment="Right" Margin="6,8" FontWeight="SemiBold"/></Grid>
 
