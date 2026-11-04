@@ -158,7 +158,7 @@ public static class StickyTableHeaders
             overlay = new Border
             {
                 Child = image,
-                Background = Application.Current?.TryFindResource("Surface.Subtle") as Brush ?? Brushes.White,
+                Background = System.Windows.Application.Current?.TryFindResource("Surface.Subtle") as Brush ?? Brushes.White,
                 Visibility = Visibility.Collapsed
             };
             visuals = new VisualCollection(this) { overlay };

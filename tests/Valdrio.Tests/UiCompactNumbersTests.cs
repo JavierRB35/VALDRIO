@@ -8,7 +8,7 @@ namespace Valdrio.Tests;
 public sealed class UiCompactNumbersTests
 {
     [TestMethod]
-    public void MonetaryAndPercentageDisplay_UsesAtMostTwoDecimalsWithoutChangingInputs()
+    public void MonetaryAndPercentageDisplay_UsesAtMostTwoDecimals()
     {
         var culture = CultureInfo.GetCultureInfo("es-ES");
         const decimal exact = 6.73154907m;
@@ -16,7 +16,6 @@ public sealed class UiCompactNumbersTests
         Assert.AreEqual("3.000,25 EUR", UiCompactNumbers.Money(3000.25m, "EUR", culture));
         Assert.AreEqual("125,5 EUR", UiCompactNumbers.Money(125.5000m, "EUR", culture));
         Assert.AreEqual("6,73 %", UiCompactNumbers.Percent(exact, culture));
-        Assert.AreEqual(6.73154907m, exact);
     }
 
     [TestMethod]
