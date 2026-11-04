@@ -24,7 +24,8 @@ public sealed class NodeCostClassificationTests
         Assert.AreEqual(NodeTariffPurpose.DirectLabor, NodeCostClassification.Purpose(node));
         Assert.IsTrue(NodeCostClassification.IsDirectFactor(node));
         Assert.IsTrue(NodeCostClassification.HasValidTags(node.FunctionTags));
-        CollectionAssert.IsSubsetOf(new[] { "maintenance", "production" }, node.FunctionTags.ToArray());
+        CollectionAssert.Contains(node.FunctionTags.ToArray(), "maintenance");
+        CollectionAssert.Contains(node.FunctionTags.ToArray(), "production");
     }
 
     [TestMethod]
