@@ -33,7 +33,10 @@ public sealed class ParetoChart : UserControl
     }
     private void Changed(object? sender, PropertyChangedEventArgs e)
     {
-        if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == "Item[]") QueueDraw();
+        if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == "Item[]" ||
+            e.PropertyName is nameof(AllocationWorkspaceViewModel.PrimaryResultCategoryIndex)
+                or nameof(AllocationWorkspaceViewModel.SecondaryResultCategoryIndex))
+            QueueDraw();
     }
     private void QueueDraw()
     {
@@ -46,8 +49,10 @@ public sealed class ParetoChart : UserControl
     {
         if (model is not { } vm) { Content = null; return; }
         var points = ParetoSeries.Build(Secondary
-            ? vm.PrincipalCosts.Select(x => new ParetoCost(x.Node, x.TotalAmount))
-            : vm.PrimaryNodeTotals.Select(x => new ParetoCost(x.Center + " · " + x.Node, x.NumericAmount)));
+            ? (vm.SecondaryResultCategoryIndex == 1 ? vm.DirectPrincipalCosts : vm.GeneralPrincipalCosts)
+                .Select(x => new ParetoCost(x.Node, x.TotalAmount))
+            : (vm.PrimaryResultCategoryIndex == 1 ? vm.DirectPrimaryNodeTotals : vm.GeneralPrimaryNodeTotals)
+                .Select(x => new ParetoCost(x.Center + " · " + x.Node, x.NumericAmount)));
         var panel = new StackPanel();
         Content = panel;
         panel.Children.Add(new TextBlock { Text = vm[Secondary ? "ParetoSecondaryTitle" : "ParetoPrimaryTitle"], FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 12, 0, 6), TextWrapping = TextWrapping.Wrap });
