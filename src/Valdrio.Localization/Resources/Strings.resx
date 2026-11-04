@@ -1794,7 +1794,7 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Activity.Stoppages.TotalPeriod" xml:space="preserve"><value>Period total, all resources</value></data>
   <data name="Activity.Stoppages.Exceeds" xml:space="preserve"><value>Calculated downtime ({0} h) exceeds scheduled hours ({1} h). Check the hours and whether they are per shift, day or total.</value></data>
   <data name="Activity.Stoppages.Calculation" xml:space="preserve"><value>Downtime: {0} h ({1}) × {2} = {3} h total</value></data>
-  <data name="Rates.Title" xml:space="preserve"><value>Principal centre rates</value></data>
+  <data name="Rates.Title" xml:space="preserve"><value>Rates and unit costs</value></data>
   <data name="Rates.Centers" xml:space="preserve"><value>Principal centres</value></data>
   <data name="Rates.Center" xml:space="preserve"><value>Centre</value></data>
   <data name="Rates.Unit" xml:space="preserve"><value>Unit</value></data>
@@ -1860,8 +1860,8 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Rates.Behavior.Fixed" xml:space="preserve"><value>Fixed</value></data>
   <data name="Rates.Behavior.AssumedFixed" xml:space="preserve"><value>Assumed fixed</value></data>
   <data name="Rates.Behavior.Variable" xml:space="preserve"><value>Variable</value></data>
-  <data name="Guide.Rates" xml:space="preserve"><value>Centre rates</value></data>
-  <data name="Guide.RatesHelp" xml:space="preserve"><value>View rates and answers for the selected centre. Costs and hours come from the saved analysis.</value></data>
+  <data name="Guide.Rates" xml:space="preserve"><value>Rates and unit costs</value></data>
+  <data name="Guide.RatesHelp" xml:space="preserve"><value>Review centre and direct-factor rates, their sources, capacity and reconciliation for the selected analysis.</value></data>
 <data name="Rates.Source" xml:space="preserve"><value>Source account</value></data>
 <data name="Rates.UndefinedRate" xml:space="preserve"><value>No unit rate is defined for this base. Review components and activity.</value></data>
 <data name="Rates.ZeroNormal" xml:space="preserve"><value>Normal activity is zero and own fixed costs exist. Review the capacity reference in Activity and capacities.</value></data>
@@ -2318,4 +2318,21 @@ Excluded: {7} · Direct to products/orders: {8}</value></data>
 <data name="Aux.ClassificationSourceRequired" xml:space="preserve"><value>Account {0}, auxiliary {1}, key {2}: define the fixed/variable classification or the mixed proportion before assessing capacity.</value></data>
 <data name="Study.SaveBeforeContinuing" xml:space="preserve"><value>Save or discard the pending analysis changes before continuing.</value></data>
   <data name="Composition.InvalidCell" xml:space="preserve"><value>Check the marked cell: enter a valid number using the selected regional format before continuing.</value></data>
+  <data name="Model.EconomicFunction" xml:space="preserve"><value>Economic function</value></data>
+  <data name="Model.TariffPurpose" xml:space="preserve"><value>Tariff purpose</value></data>
+  <data name="Model.EconomicClassificationHelp" xml:space="preserve"><value>Select the node's economic function and whether it accumulates indirect costs or a direct factor. These classifications do not restrict allocations between functions.</value></data>
+  <data name="Model.Function.Unspecified" xml:space="preserve"><value>Not yet classified (legacy only)</value></data>
+  <data name="Model.Function.Production" xml:space="preserve"><value>Production / core activity</value></data>
+  <data name="Model.Function.Commercial" xml:space="preserve"><value>Commercial</value></data>
+  <data name="Model.Function.Structure" xml:space="preserve"><value>Structure / administration</value></data>
+  <data name="Model.Purpose.General" xml:space="preserve"><value>General centre / indirect costs</value></data>
+  <data name="Model.Purpose.DirectLabor" xml:space="preserve"><value>Direct labour group</value></data>
+  <data name="Model.Purpose.Procurement" xml:space="preserve"><value>Procurement factor group</value></data>
+  <data name="Model.NodeFunctionRequired" xml:space="preserve"><value>Choose a valid economic function before saving the node.</value></data>
+  <data name="Model.NodePurposeRequiresPrincipal" xml:space="preserve"><value>Direct-factor tariff nodes must be principal nodes receiving secondary allocations.</value></data>
+  <data name="Model.NodePurposeRequiresProduction" xml:space="preserve"><value>A direct labour group must belong to Production / core activity.</value></data>
+  <data name="Rates.TabCenters" xml:space="preserve"><value>Centre rates</value></data>
+  <data name="Rates.TabFactors" xml:space="preserve"><value>Direct factors</value></data>
+  <data name="Rates.NoDirectFactors" xml:space="preserve"><value>No direct labour or procurement nodes are configured in this model.</value></data>
+  <data name="Rates.NoGeneralCenters" xml:space="preserve"><value>No general cost-centre nodes are configured in this model.</value></data>
 </root>
