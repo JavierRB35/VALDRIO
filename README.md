@@ -68,5 +68,6 @@ Objetivo habitual: **0 USD**. El límite de seguridad absoluto es 20 USD y el ga
 - [Directriz de usabilidad](docs/directrices/USABILIDAD.md) · [sistema visual aprobado](docs/diseno/SISTEMA_VISUAL_VALDRIO_V1.md).
 - [Tareas y decisiones](docs/tareas) · [ADR](docs/adr) · [evidencias](docs/evidencias) · [auditorías](docs/auditorias).
 - [Especificación v0.4](specification/v0.4): contratos y hoja de ruta; no debe leerse como descripción de funciones ya integradas.
+- [Acuerdos funcionales 2026-11-04](docs/decisiones/ACUERDOS_COSTES_DIRECTOS_MARGENES_2026-11-04.md): adenda aprobada a la hoja de ruta para nodos, MOD, materiales y márgenes; **pendiente de implementación**, sin alterar la v0.4 ni los códigos T.
 
 Los informes históricos conservan su fecha y SHA como evidencia de esa entrega. Para conocer el comportamiento actual, empieza por el inventario funcional y las guías de pantalla.

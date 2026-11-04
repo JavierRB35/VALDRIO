@@ -1,3 +1,13 @@
+# Actualización de decisiones — 2026-11-04
+
+Se aprueba la [adenda de factores directos, funciones económicas, presentación de repartos y márgenes](ACUERDOS_COSTES_DIRECTOS_MARGENES_2026-11-04.md) como referencia para ampliar la hoja de ruta **sin renumerar tareas ni reinterpretar entregas ya aceptadas**. Lo no debatido mantiene su estado de pendiente.
+
+**PEND-AC-01: RETIRADO DE PENDIENTES.** Se conservan las fichas de ajustes extracontables reutilizables **ya implementadas** (ADR-0017, UI, persistencia y pruebas); **no** se crea T07A y **no** se amplía esa capacidad. Retirar el pendiente no significa retirar la funcionalidad.
+
+La resolución de **D07** se actualiza a **principio funcional aceptado** (margen industrial, coste comercial y estructura residual), manteniendo pendientes los criterios detallados de imputación y comparabilidad para T20. Esta actualización prevalece sobre el estado de propuesta de cortes históricos y de la fuente v0.4, que permanece intacta.
+
+---
+
 ## T09 — separación entre preview y política económica (2026-10-08)
 
 La T09 implementa un **candidato técnico de preview** para reparto primario
@@ -89,7 +99,7 @@ expresa. No se deduce una aprobación productiva de su Excel de prueba.
 | D04 Capacidad | **ACEPTADA PARA T15 R1 — 18/10/2026** | El propietario solicita desarrollar y fusionar T15 en los términos debatidos: `NormalizedManagement`, fijo propio sujeto a capacidad sobre normal, variable y consumido sobre real. | Conservar procedencia y validaciones; D05 y las políticas alternativas no quedan aprobadas por esta decisión. |
 | D05 Auxiliares | **PROPUESTA** | `OwnerOnceCapacity` para auxiliares medidos; `ThroughFlow` deja capacidad auxiliar sin evaluar. | Antes de T16: datos, fórmula, resultado y alternativas. |
 | D06 Recetas y lotes | **PROPUESTA** | Setup por lote iniciado completo; unidades continuas sin redondeo a pieza; merma explícita. | Antes de T17-T18: datos, fórmula, resultado y alternativas. |
-| D07 Perímetro de márgenes | **PROPUESTA** | Coste productivo y capas comercial/estructura separadas y visibles. | Antes de T20: datos, fórmula, resultado y alternativas. |
+| D07 Perímetro de márgenes | **ACEPTADA EN PRINCIPIO (2026-11-04)** | Margen industrial/de prestación, margen tras comercialización y estructura residual del período; transferencias entre funciones justificadas y trazables. | T20: concretar claves comerciales, correspondencia ventas-costes, costes no absorbidos y demás reglas pendientes; ver adenda 2026-11-04. |
 | D08 Protección y recuperación | **PENDIENTE DE OPERACIÓN** | No prometer cifrado por defecto. | Hito previsto T24; no bloquea trabajo independiente actual. |
 | D09 Venta/licencia | **PENDIENTE COMERCIAL** | Licencia perpetua para versiones adquiridas; actualizaciones con vigencia separada; uso offline. | Hito previsto T24; no bloquea trabajo independiente actual. |
 | D10 Autorreparto | **PROPUESTA** | Autorreparto prohibido por defecto; habilitable por versión con diagnóstico. | Revisar si aparecen servicios a sí mismo. |
