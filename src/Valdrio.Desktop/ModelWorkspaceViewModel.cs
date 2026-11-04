@@ -390,6 +390,24 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     private string[] ParsedFunctionTags => functionTags.Split(',',
         StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
+    // Only free-form descriptive tags appear in the old optional text editor.
+    // Reserved classification tags are maintained by the controlled selectors.
+    public string AdditionalFunctionTags
+    {
+        get => string.Join(", ", ParsedFunctionTags.Where(t =>
+            !t.StartsWith(NodeCostClassification.FunctionPrefix, StringComparison.Ordinal) &&
+            !t.StartsWith(NodeCostClassification.PurposePrefix, StringComparison.Ordinal)));
+        set
+        {
+            if (loading || !IsEditable) return;
+            var reserved = ParsedFunctionTags.Where(t =>
+                t.StartsWith(NodeCostClassification.FunctionPrefix, StringComparison.Ordinal) ||
+                t.StartsWith(NodeCostClassification.PurposePrefix, StringComparison.Ordinal));
+            var free = value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            FunctionTags = string.Join(", ", reserved.Concat(free));
+        }
+    }
+
     public NodeEconomicFunction EconomicFunctionChoice
     {
         get => NodeCostClassification.Function(ParsedFunctionTags);
@@ -654,7 +672,12 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
                 CostLayer.Mixed => "Model.LayerMixed",
                 _ => "Model.LayerUnclassified"
             });
-            var functions = string.Join(", ", n.FunctionTags);
+            var freeFunctions = string.Join(", ", n.FunctionTags.Where(t =>
+                !t.StartsWith(NodeCostClassification.FunctionPrefix, StringComparison.Ordinal) &&
+                !t.StartsWith(NodeCostClassification.PurposePrefix, StringComparison.Ordinal)));
+            var functions = Text("Model.Function." + NodeCostClassification.Function(n)) + " · " +
+                Text("Model.Purpose." + NodeCostClassification.Purpose(n)) +
+                (string.IsNullOrWhiteSpace(freeFunctions) ? "" : " · " + freeFunctions);
             return new NodeOption(
                 n,
                 p,
