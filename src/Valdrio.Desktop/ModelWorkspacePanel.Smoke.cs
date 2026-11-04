@@ -112,7 +112,8 @@ public partial class ModelWorkspacePanel
             Select(PhysicalBox, vm.Centers.Single(x => x.Value.Code == physical));
             Select(UnitBox, vm.Units.Single(x => x.Value.Definition.Code == unit));
             Select(RoleBox, vm.Roles.Single(x => x.Value == role));
-            Select(EconomicFunctionBox, vm.EconomicFunctions.Single(x => x.Value == NodeEconomicFunction.Production));
+            EconomicFunctionBox.SetCurrentValue(ComboBox.SelectedValueProperty, NodeEconomicFunction.Production);
+            EconomicFunctionBox.GetBindingExpression(ComboBox.SelectedValueProperty)!.UpdateSource();
             Text(FunctionBox, functions);
             Text(PoolBox, code + " driver " + unit);
             await Click(ApplyNodeButton);
