@@ -34,6 +34,15 @@ public partial class MainWindow
             var editor=window.Editor;
             var grid=(DataGrid)window.FindName("CentersTable");
             Check(editor.Rows.Count==2,"Both real centres loaded "+language);
+            Check(window.RateCategoryTabs.Items.Count == 2 && editor.SelectedRateTabIndex == 0,
+                "centre and direct-factor tabs are available " + language);
+            editor.SelectedRateTabIndex = 1;
+            Check(editor.Rows.Count == 0 && editor.Report?.Rows.Count == 2 &&
+                editor.SelectedRow is null && editor.Details.Count == 0,
+                "direct-factor tab does not invent rates or change the frozen calculation " + language);
+            editor.SelectedRateTabIndex = 0;
+            Check(editor.Rows.Count == 2 && editor.SelectedRow is not null,
+                "returning to general centres restores existing answers " + language);
             Check(grid.Columns.Count==7 && grid.Columns[3].Header?.ToString()==editor["Numerator"] &&
                 grid.Columns[4].Header?.ToString()==editor["Denominator"],
                 "The rate table exposes numerator and activity denominator "+language);
