@@ -56,3 +56,9 @@ El gráfico ordena los nodos principales con su coste final, sin volver a sumar 
 3. Contrasta el detalle de aportaciones, totales por principal y Pareto; resuelve los diagnósticos antes de cerrar el reparto secundario.
 
 Las tablas crecen con sus filas: utiliza el desplazamiento exterior de la página. Guardar claves y las acciones de cierre permanecen en la barra inferior; cambian con la pestaña activa. El desplazamiento horizontal permite consultar las columnas que no caben.
+
+## Ampliación de presentación por finalidad — candidatura 2026-11-04
+
+Los resultados terminales por nodo y las contribuciones efectivas se muestran en pestañas/tablas separadas para **Centros generales/indirectos** y **Factores directos** (MOD y aprovisionamiento). La separación es exclusivamente visual: los grupos directos siguen recibiendo prestaciones auxiliares según las claves; el cálculo recíproco y sus flujos no se duplican. Los **totales conciliados** abarcan ambas categorías; el Pareto sigue la categoría seleccionada.
+
+**Estado:** implementación candidata pendiente de validación en Windows.
