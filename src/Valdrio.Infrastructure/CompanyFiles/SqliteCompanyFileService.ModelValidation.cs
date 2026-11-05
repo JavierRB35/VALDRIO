@@ -171,9 +171,13 @@ public sealed partial class SqliteCompanyFileService
                 deletion.BeforeJson != previous ||
                 deletion.AfterJson != Json(new { Deleted = true }),
                 "Deleted model audit terminal invalid");
-            Invalid(db.Studies.Any(st => st.SelectedModelVersionId == group.Key) ||
+            // ValidateWorkspace also runs against older schema contexts,
+            // which deliberately do not expose later study/allocation tables.
+            Invalid((db is StudyDbContext studies &&
+                        studies.Studies.Any(st => st.SelectedModelVersionId == group.Key)) ||
                 db.Models.Any(m => m.ParentVersionId == group.Key) ||
-                db.AllocationKeyEvents.Any(k => k.ModelVersionId == group.Key) ||
+                (db is AllocationDbContext allocations &&
+                        allocations.AllocationKeyEvents.Any(k => k.ModelVersionId == group.Key)) ||
                 audit.Any(a => a.Type == "Study" &&
                     (a.Row.BeforeJson.Contains(group.Key, StringComparison.Ordinal) ||
                      a.Row.AfterJson.Contains(group.Key, StringComparison.Ordinal))),
