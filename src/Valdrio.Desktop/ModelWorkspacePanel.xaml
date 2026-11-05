@@ -398,24 +398,30 @@
         <TextBlock Text="{Binding ProcessMapTitle}" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,4"/>
         <TextBlock Text="{Binding ProcessMapHelp}" TextWrapping="Wrap" Margin="0,0,0,8"/>
         <TextBlock Text="{Binding ProcessMapSummary}" Margin="0,0,0,8" FontWeight="SemiBold"/>
+        <TextBlock Text="{Binding ProcessMapSelectHelp}" TextWrapping="Wrap"
+                   Foreground="{DynamicResource Text.Secondary}" Margin="0,0,0,8"/>
         <WrapPanel Margin="0,0,0,8">
-         <CheckBox x:Name="MapConnectToggle" Content="{Binding ProcessMapConnectLabel}"
-                   IsEnabled="{Binding CanEditProcessMap}" Checked="MapOptionsChanged" Unchecked="MapOptionsChanged"
-                   Margin="4,4,14,4"/>
-         <ComboBox x:Name="MapLinkKindBox" Width="205" SelectedIndex="0"
-                   IsEnabled="{Binding CanEditProcessMap}" SelectionChanged="MapOptionsChanged"
-                   Margin="4,2,14,2">
-          <ComboBoxItem Content="{Binding ProcessMapSequenceLabel}" Tag="Sequence"/>
-          <ComboBoxItem Content="{Binding ProcessMapServiceLabel}" Tag="AuxiliaryService"/>
-         </ComboBox>
-         <CheckBox x:Name="MapRemoveToggle" Content="{Binding ProcessMapRemoveLabel}"
-                   IsEnabled="{Binding CanEditProcessMap}" Checked="MapOptionsChanged" Unchecked="MapOptionsChanged"
-                   Margin="4,4,14,4"/>
          <TextBlock Text="{Binding ProcessMapZoomLabel}" Margin="6,8,4,0"/>
          <Slider x:Name="MapZoomSlider" Width="120" Minimum="0.5" Maximum="2" Value="1"
                  SmallChange="0.1" TickFrequency="0.25" IsSnapToTickEnabled="False"
                  ValueChanged="MapZoomChanged" Margin="4,0,12,0"/>
         </WrapPanel>
+        <Expander Header="{Binding ProcessMapAdvancedLabel}" IsExpanded="False" Margin="0,0,0,8">
+         <WrapPanel Margin="0,8,0,4">
+          <CheckBox x:Name="MapConnectToggle" Content="{Binding ProcessMapConnectLabel}"
+                    IsEnabled="{Binding CanEditProcessMap}" Checked="MapOptionsChanged" Unchecked="MapOptionsChanged"
+                    Margin="4,4,14,4"/>
+          <ComboBox x:Name="MapLinkKindBox" Width="205" SelectedIndex="0"
+                    IsEnabled="{Binding CanEditProcessMap}" SelectionChanged="MapOptionsChanged"
+                    Margin="4,2,14,2">
+           <ComboBoxItem Content="{Binding ProcessMapSequenceLabel}" Tag="Sequence"/>
+           <ComboBoxItem Content="{Binding ProcessMapServiceLabel}" Tag="AuxiliaryService"/>
+          </ComboBox>
+          <CheckBox x:Name="MapRemoveToggle" Content="{Binding ProcessMapRemoveLabel}"
+                    IsEnabled="{Binding CanEditProcessMap}" Checked="MapOptionsChanged" Unchecked="MapOptionsChanged"
+                    Margin="4,4,14,4"/>
+         </WrapPanel>
+        </Expander>
         <WrapPanel Margin="0,0,0,8">
          <Button Content="{Binding ProcessMapArrangeLabel}" IsEnabled="{Binding CanEditProcessMap}"
                  Click="AutoArrangeProcessMap"/>
