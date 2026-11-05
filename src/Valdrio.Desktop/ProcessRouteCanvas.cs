@@ -214,10 +214,31 @@ public sealed class ProcessRouteCanvas : UserControl
                 Focusable = true
             };
             AutomationProperties.SetName(border, n.Code + " · " + description);
+            AutomationProperties.SetHelpText(border,
+                vm.Text("Model.MapKeyboardHelp"));
             Canvas.SetLeft(border, p.X); Canvas.SetTop(border, p.Y);
             border.MouseLeftButtonDown += (_, e) => StartDrag(n.Id, border, e);
             border.MouseMove += (_, e) => ContinueDrag(border, e);
             border.MouseLeftButtonUp += (_, e) => EndDrag(n.Id, border, e);
+            border.KeyDown += (_, e) =>
+            {
+                if (e.Key is Key.Enter or Key.Space)
+                {
+                    HandleNodeClick(n.Id);
+                    Draw();
+                    e.Handled = true;
+                }
+                else if (vm.CanEditProcessMap && !ConnectMode &&
+                         e.Key is Key.Left or Key.Right or Key.Up or Key.Down)
+                {
+                    var p = nodePositions[n.Id];
+                    var x = e.Key == Key.Left ? -10 : e.Key == Key.Right ? 10 : 0;
+                    var y = e.Key == Key.Up ? -10 : e.Key == Key.Down ? 10 : 0;
+                    vm.SetProcessPosition(n.Id, new ProcessRoutePoint((int)p.X + x, (int)p.Y + y));
+                    Draw();
+                    e.Handled = true;
+                }
+            };
             canvas.Children.Add(border);
         }
     }
@@ -259,7 +280,14 @@ public sealed class ProcessRouteCanvas : UserControl
         var colX = 12d + group * ColumnWidth;
         Canvas.SetLeft(card, Math.Clamp(cardStart.X + offset.X,
             colX + 10, colX + ColumnWidth - CardWidth - 18));
-        Canvas.SetTop(card, Math.Clamp(cardStart.Y + offset.Y, 75, canvas.Height - CardHeight - 15));
+        var maxPrincipals = Functions.Max(f => model?.ProcessMapNodes.Count(n =>
+            n.IsActive && n.Role == NodeRole.Principal &&
+            NodeCostClassification.Function(n) == f) ?? 0);
+        var auxiliaryTop = 75d + Math.Max(1, maxPrincipals) * RowHeight + 55d;
+        var minTop = current.Role == NodeRole.Principal ? 75d : auxiliaryTop;
+        var maxTop = current.Role == NodeRole.Principal
+            ? auxiliaryTop - CardHeight - 12 : canvas.Height - CardHeight - 20;
+        Canvas.SetTop(card, Math.Clamp(cardStart.Y + offset.Y, minTop, maxTop));
     }
     private void EndDrag(EntityId id, Border card, MouseButtonEventArgs e)
     {
