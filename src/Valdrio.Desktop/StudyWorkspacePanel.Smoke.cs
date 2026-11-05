@@ -55,7 +55,15 @@ public partial class StudyWorkspacePanel
         // Restore through the production UI to an isolated study file. The model
         // stage's artifact and manifest must remain valid after all later smokes.
         files.Paths.Enqueue(modelSource); files.Paths.Enqueue(path); await Click(companyPanel.RestoreButton);
-        await Click(RefreshStudyButton);
+        // COR-06 removed the manual Refresh button: opening the study
+        // selector must refresh the list without loading a different study.
+        Check(StudyBox.IsEnabled, "saved-study selector is enabled for on-demand refresh");
+        StudyBox.SetCurrentValue(ComboBox.IsDropDownOpenProperty, true);
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+        if (vm.RefreshCommand.ExecutionTask is { } refresh)
+            await refresh.WaitAsync(TimeSpan.FromSeconds(45));
+        StudyBox.SetCurrentValue(ComboBox.IsDropDownOpenProperty, false);
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         Check(vm.PublishedModels.Count == 1 && vm.Studies.Count == 0, "only published models offered");
         Check(company.Snapshot?.DefaultCurrency.ToString() == "USD", "company USD preserved");
         main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", false, false);
