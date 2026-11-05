@@ -100,6 +100,30 @@
      </Grid></Expander>
    </Border>
 </local:AdaptiveColumnsPanel>
+  <Border Style="{StaticResource Card}" Margin="0,0,0,16"
+          Visibility="{Binding IsSecondary, Converter={StaticResource Visible}}">
+   <Expander Header="{Binding RouteProposalTitle}" IsExpanded="False">
+    <StackPanel Margin="0,8,0,0">
+     <TextBlock Text="{Binding RouteProposalHelp}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+     <TextBlock Text="{Binding RouteProposalStatus}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+     <DataGrid x:Name="RouteProposalGrid" ItemsSource="{Binding RouteProposals}"
+               SelectedItem="{Binding SelectedRouteProposal, Mode=TwoWay}"
+               IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single"
+               ScrollViewer.VerticalScrollBarVisibility="Disabled" MinHeight="90">
+      <DataGrid.Columns>
+       <DataGridTextColumn Binding="{Binding Source}" Width="*" MinWidth="190"
+                           ElementStyle="{StaticResource Text.TableText}"/>
+       <DataGridTextColumn Binding="{Binding Destinations}" Width="2*" MinWidth="240"
+                           ElementStyle="{StaticResource Text.TableText}"/>
+      </DataGrid.Columns>
+     </DataGrid>
+     <Button x:Name="PrepareRouteProposalButton" Content="{Binding RouteProposalActionLabel}"
+             IsEnabled="{Binding CanUseRouteProposal}"
+             Click="PrepareRouteProposal" Style="{StaticResource Button.Primary}"
+             HorizontalAlignment="Left" Margin="0,8,0,0"/>
+    </StackPanel>
+   </Expander>
+  </Border>
     <Border Style="{StaticResource Card}" Margin="0,0,0,16">
    <Expander x:Name="CompositionSection" Header="{Binding [CompositionTitle]}" IsExpanded="True">
     <StackPanel Margin="0,8,0,0">
