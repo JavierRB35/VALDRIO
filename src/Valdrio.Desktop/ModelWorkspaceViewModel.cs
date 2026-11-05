@@ -37,7 +37,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     private readonly PresentationPreferencesService preferences;
     private readonly IModelEditorDialogs dialogs;
     private readonly PresentationFormatter formatter;
-    private bool busy, dirty, pseudo, nodeFormEdited, nodeCodeManuallyEdited, modelSelectionTouched;
+    private bool busy, dirty, pseudo, nodeFormEdited, nodeCodeManuallyEdited, modelSelectionTouched, showArchivedModels;
     private string centerCode = "", centerName = "", description = "", nodeCode = "", functionTags = "", poolDescription = "";
     private CenterOption? master, physical;
     private UnitOption? unit, unitMaster;
@@ -78,7 +78,9 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         SaveCommand = new AsyncRelayCommand(Save, () => CanEdit && (dirty || nodeFormEdited));
         ValidateCommand = new AsyncRelayCommand(Validate, () => Ready && Current is not null && !dirty && !nodeFormEdited);
         PublishCommand = new AsyncRelayCommand(Publish, () => CanEdit && !IsPublished && !dirty && !nodeFormEdited);
-        CloneCommand = new AsyncRelayCommand(Clone, () => Ready && company.CanWrite && Current?.Status == ModelStatus.Published);
+        CloneCommand = new AsyncRelayCommand(Clone, () => Ready && company.CanWrite && Current?.Status == ModelStatus.Published && Current.IsArchived != true);
+        DeleteDraftModelCommand = new AsyncRelayCommand(DeleteCurrentDraft, () => Ready && company.CanWrite && Current?.Status == ModelStatus.Draft && !IsDirty);
+        ArchiveModelCommand = new AsyncRelayCommand(ChangeArchive, () => Ready && company.CanWrite && Current?.Status == ModelStatus.Published && !IsDirty);
         ApplyNodeCommand = new RelayCommand(ApplyNode, () => CanEdit);
         SaveNodeCommand = new AsyncRelayCommand(SaveNode, () => CanEdit && nodeFormEdited);
         RemoveNodeCommand = new RelayCommand(RemoveNode, () => CanEdit && !IsPublished && SelectedNode is not null);
@@ -469,6 +471,16 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public IAsyncRelayCommand ValidateCommand { get; }
     public IAsyncRelayCommand PublishCommand { get; }
     public IAsyncRelayCommand CloneCommand { get; }
+    public IAsyncRelayCommand DeleteDraftModelCommand { get; }
+    public IAsyncRelayCommand ArchiveModelCommand { get; }
+    public string DeleteDraftModelLabel => Text("Model.DeleteDraftModel");
+    public string ArchiveModelLabel => Text(Current?.IsArchived == true ? "Model.RestoreArchivedModel" : "Model.ArchiveModel");
+    public string ShowArchivedModelsLabel => Text("Model.ShowArchivedModels");
+    public bool ShowArchivedModels
+    {
+        get => showArchivedModels;
+        set { if (SetProperty(ref showArchivedModels, value)) Reformat(); }
+    }
     public IRelayCommand ApplyNodeCommand { get; }
     public IAsyncRelayCommand SaveNodeCommand { get; }
     public IRelayCommand RemoveNodeCommand { get; }
@@ -598,6 +610,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             ValidateCommand,
             PublishCommand,
             CloneCommand,
+            DeleteDraftModelCommand,
+            ArchiveModelCommand,
             ApplyNodeCommand,
             SaveNodeCommand,
             RemoveNodeCommand,
@@ -654,7 +668,12 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             c.Code + " · " + c.Name + " · " + Text(c.IsActive ? "Model.Active" : "Model.Inactive"),
             Text(c.IsActive ? "Model.Active" : "Model.Inactive"))));
         Replace(Units, unitValues.Select(u => new UnitOption(u, ActivityUnitName(u.Definition) + " · " + Text(u.IsActive ? "Model.Active" : "Model.Inactive"))));
-        Replace(Models, modelValues.Select(m => new ModelOption(m, m.Structure.Description + " · " + Text(m.Status == ModelStatus.Draft ? "Model.Draft" : "Model.Published") + " · " + m.Structure.VersionNumber.ToString(Format))));
+        Replace(Models, modelValues
+            .Where(m => !m.IsArchived || showArchivedModels || m.Structure.Id == Current?.Structure.Id)
+            .Select(m => new ModelOption(m, m.Structure.Description + " · " +
+                Text(m.Status == ModelStatus.Draft ? "Model.Draft" : "Model.Published") +
+                " · " + Text("Model.VersionLabel") + " " + m.Structure.VersionNumber.ToString(Format) +
+                (m.IsArchived ? " · " + Text("Model.Archived") : ""))));
         Replace(Roles, Enum.GetValues<NodeRole>().Select(r => new RoleOption(r, Text(r == NodeRole.Principal ? "Model.Principal" : "Model.Auxiliary"))));
         Replace(EconomicFunctions, Enum.GetValues<NodeEconomicFunction>().Select(value =>
             new NodeFunctionOption(value, Text("Model.Function." + value))));
@@ -1154,6 +1173,51 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             await ApplyConfirmedThenReload(result, ApplyConfirmedModel);
         });
     }
+    private async Task DeleteCurrentDraft()
+    {
+        var current = Current;
+        if (current is not { Status: ModelStatus.Draft } || IsDirty) return;
+        if (!dialogs.ConfirmEconomicChange(Text("Model.DeleteDraftTitle"),
+                string.Format(Format, Text("Model.DeleteDraftConfirmation"), current.Structure.Description),
+                Text("Model.DeleteDraftModel"), Text("CompanyCancel")))
+            return;
+
+        await Run(async token =>
+        {
+            await Task.Run(() => company.ActiveModels!.DeleteDraft(
+                new(company.Snapshot!.Id, current.Structure.Id, current.Revision, "local-user"), token), token);
+            Current = null;
+            choice = null;
+            dirty = false;
+            description = "";
+            draftNodes.Clear();
+            draftPools.Clear();
+            ResetNode();
+            await Reload(token);
+            statusKey = "Model.DraftDeleted";
+        });
+    }
+
+    private async Task ChangeArchive()
+    {
+        var current = Current;
+        if (current is not { Status: ModelStatus.Published } || IsDirty) return;
+        var archived = !current.IsArchived;
+        if (!dialogs.ConfirmEconomicChange(Text(archived ? "Model.ArchiveTitle" : "Model.RestoreTitle"),
+                string.Format(Format, Text(archived ? "Model.ArchiveConfirmation" : "Model.RestoreConfirmation"),
+                    current.Structure.Description),
+                Text(archived ? "Model.ArchiveModel" : "Model.RestoreArchivedModel"), Text("CompanyCancel")))
+            return;
+        await Run(async token =>
+        {
+            var changed = await Task.Run(() => company.ActiveModels!.ChangeArchive(
+                new(company.Snapshot!.Id, current.Structure.Id, current.Revision, archived, "local-user"), token), token);
+            await ApplyConfirmedThenReload(changed, ApplyConfirmedModel);
+            if (!committedRefreshPending)
+                statusKey = archived ? "Model.ArchivedSuccessfully" : "Model.RestoredSuccessfully";
+        });
+    }
+
     private void ApplyNode()
     {
         try
