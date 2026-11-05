@@ -386,6 +386,7 @@ public sealed class ProcessRouteCanvas : UserControl
                     : vm.Text("Model.MapRestriction." + restriction)
             };
             AutomationProperties.SetName(check, label);
+            ToolTipService.SetShowOnDisabled(check, true);
             check.Checked += (_, _) => UpdateDestination(vm, link, true);
             check.Unchecked += (_, _) => UpdateDestination(vm, link, false);
             selectionContent.Children.Add(check);
