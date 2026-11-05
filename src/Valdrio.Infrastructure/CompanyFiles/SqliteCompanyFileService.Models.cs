@@ -31,7 +31,17 @@ public sealed partial class SqliteCompanyFileService
         var publication = db.Publications.AsNoTracking().SingleOrDefault(x => x.ModelVersionId == r.Id);
         if (publication is not null && publication.PayloadSchema != PublishedModelStructure.PayloadSchema)
             throw new InvalidDataException("Publication schema invalid");
-        return new(structure, Enum.Parse<ModelStatus>(r.Status), r.Revision, r.PublishedAtUtc is null ? null : UtcInstant.ParseIso(r.PublishedAtUtc), publication?.StructuralHash, publication?.CanonicalJson);
+        // Archive is an auditable metadata decision, not a change to the
+        // published model schema, immutable hash, or role in historical studies.
+        var lastArchiveChange = db.Audit.AsNoTracking()
+            .Where(a => EF.Property<string>(a, "AggregateType") == "ModelVersion" &&
+                EF.Property<string>(a, "AggregateId") == r.Id &&
+                (a.Operation == "ArchiveModel" || a.Operation == "RestoreModel"))
+            .OrderByDescending(a => a.Revision).Select(a => a.Operation).FirstOrDefault();
+        return new(structure, Enum.Parse<ModelStatus>(r.Status), r.Revision,
+            r.PublishedAtUtc is null ? null : UtcInstant.ParseIso(r.PublishedAtUtc),
+            publication?.StructuralHash, publication?.CanonicalJson)
+        { IsArchived = lastArchiveChange == "ArchiveModel" };
     }
 
     private static IReadOnlyList<ModelVersionSnapshot> Models(ModelDbContext db) => FrozenList.Copy(db.Models.AsNoTracking().ToArray().Select(r => Model(db, r)).OrderBy(x => x.Structure.FamilyId).ThenBy(x => x.Structure.VersionNumber));
@@ -271,6 +281,51 @@ public sealed partial class SqliteCompanyFileService
             Audit(db, file, "ModelVersion", command.Id, row.Revision, "Publish", command.Actor, before, after);
             return after;
         });
+        public void DeleteDraft(DeleteModelDraft command, CancellationToken token = default) => Workspace(true, token, (db, file) =>
+        {
+            Scope(command.CompanyId, file);
+            var row = Required(db, file.Id, command.Id);
+            var before = Model(db, row);
+            Editable(before);
+            Revision(command.ExpectedRevision, row.Revision, command.Id);
+            // Never cascade into studies, key versions or descendant model
+            // versions. Their historical provenance must survive.
+            if (db.Studies.Any(s => s.SelectedModelVersionId == row.Id) ||
+                db.AllocationKeyEvents.Any(k => k.ModelVersionId == row.Id) ||
+                db.Models.Any(m => m.ParentVersionId == row.Id) ||
+                db.Publications.Any(p => p.ModelVersionId == row.Id))
+                throw ModelRules.Error("MODEL_REFERENCED", "Model.Referenced", command.Id);
+            db.Pools.RemoveRange(db.Pools.Where(p => p.ModelVersionId == row.Id));
+            db.SaveChanges();
+            db.Nodes.RemoveRange(db.Nodes.Where(n => n.ModelVersionId == row.Id));
+            db.SaveChanges();
+            db.Models.Remove(row);
+            db.SaveChanges();
+            if (!db.Models.Any(m => m.FamilyId == row.FamilyId))
+                db.Families.Remove(db.Families.Single(f => f.Id == row.FamilyId));
+            FirstWrite(db);
+            Audit<ModelVersionSnapshot?>(db, file, "ModelVersion", command.Id,
+                checked(row.Revision + 1), "DeleteDraft", command.Actor, before, null);
+            return 0;
+        });
+
+        public ModelVersionSnapshot ChangeArchive(ChangeModelArchive command, CancellationToken token = default) => Workspace(true, token, (db, file) =>
+        {
+            Scope(command.CompanyId, file);
+            var row = Required(db, file.Id, command.Id);
+            var before = Model(db, row);
+            Revision(command.ExpectedRevision, row.Revision, command.Id);
+            if (before.Status != ModelStatus.Published)
+                throw ModelRules.Error("MODEL_NOT_PUBLISHED", "Model.ParentNotPublished", command.Id);
+            if (before.IsArchived == command.Archived) return before;
+            row.Revision = checked(row.Revision + 1);
+            var after = before with { Revision = row.Revision, IsArchived = command.Archived };
+            FirstWrite(db);
+            Audit(db, file, "ModelVersion", command.Id, row.Revision,
+                command.Archived ? "ArchiveModel" : "RestoreModel", command.Actor, before, after);
+            return after;
+        });
+
         public ModelVersionSnapshot Clone(CloneModel command, CancellationToken token = default) => Workspace(true, token, (db, file) =>
         {
             Scope(command.CompanyId, file);
