@@ -22,9 +22,12 @@ public sealed class ProcessRouteCanvas : UserControl
     private const double RowHeight = 100;
     private readonly Canvas canvas = new();
     private readonly ScrollViewer scroll;
+    private readonly Border selectionPanel = new();
+    private readonly StackPanel selectionContent = new();
     private readonly ScaleTransform zoomTransform = new(1, 1);
     private ModelWorkspaceViewModel? model;
     private EntityId? firstNode;
+    private EntityId? selectedOrigin;
     private Border? draggedCard;
     private EntityId? draggedId;
     private Point mouseStart;
@@ -57,7 +60,30 @@ public sealed class ProcessRouteCanvas : UserControl
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
             VerticalScrollBarVisibility = ScrollBarVisibility.Disabled
         };
-        Content = scroll;
+        // A stable left-hand master/detail panel is the primary way to define
+        // destinations. The original click-to-connect interaction remains
+        // available behind the advanced controls.
+        selectionPanel.Width = 288;
+        selectionPanel.Margin = new Thickness(0, 0, 14, 0);
+        selectionPanel.Padding = new Thickness(12);
+        selectionPanel.BorderThickness = new Thickness(1);
+        selectionPanel.CornerRadius = new CornerRadius(7);
+        var sidebarScroll = new ScrollViewer
+        {
+            Content = selectionContent,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            MaxHeight = 580
+        };
+        selectionPanel.Child = sidebarScroll;
+        var layout = new Grid();
+        layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(288) });
+        layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        Grid.SetColumn(selectionPanel, 0);
+        Grid.SetColumn(scroll, 1);
+        layout.Children.Add(selectionPanel);
+        layout.Children.Add(scroll);
+        Content = layout;
         DataContextChanged += (_, _) => Attach();
         Loaded += (_, _) => Attach();
         Unloaded += (_, _) => Detach();
@@ -68,6 +94,7 @@ public sealed class ProcessRouteCanvas : UserControl
     {
         if (model is not null) model.PropertyChanged -= ModelChanged;
         model = null;
+        selectedOrigin = null;
     }
     private void Attach()
     {
@@ -89,6 +116,7 @@ public sealed class ProcessRouteCanvas : UserControl
     private void Draw()
     {
         if (model is not { } vm || draggedCard is not null) return;
+        RenderDestinations(vm);
         canvas.Children.Clear();
         nodePositions.Clear();
         var all = vm.ProcessMapNodes.Where(n => n.IsActive).ToArray();
@@ -204,7 +232,8 @@ public sealed class ProcessRouteCanvas : UserControl
             {
                 Width = CardWidth, Height = CardHeight, CornerRadius = new CornerRadius(6),
                 BorderThickness = new Thickness(n.Id == firstNode ? 2 : 1),
-                BorderBrush = ResourceBrush(n.Id == firstNode ? "Brand.Yellow" : "Accent.ActiveGreen"),
+                BorderBrush = ResourceBrush(n.Id == firstNode || n.Id == selectedOrigin
+                    ? "Brand.Yellow" : "Accent.ActiveGreen"),
                 Background = ResourceBrush("Brand.White"), Padding = new Thickness(9, 5, 8, 4),
                 ToolTip = n.Code + Environment.NewLine + description + Environment.NewLine +
                           vm.Text("Model.Function." + NodeCostClassification.Function(n)) +
@@ -241,6 +270,124 @@ public sealed class ProcessRouteCanvas : UserControl
             };
             canvas.Children.Add(border);
         }
+    }
+
+    private void RenderDestinations(ModelWorkspaceViewModel vm)
+    {
+        selectionContent.Children.Clear();
+        selectionPanel.Background = ResourceBrush("Brand.White");
+        selectionPanel.BorderBrush = ResourceBrush("Border.Soft");
+        var nodes = vm.ProcessMapNodes.Where(n => n.IsActive)
+            .OrderBy(n => n.Code, StringComparer.CurrentCultureIgnoreCase).ToArray();
+        if (selectedOrigin is not null && nodes.All(n => n.Id != selectedOrigin))
+            selectedOrigin = null;
+        void Heading(string text, int size = 14)
+        {
+            selectionContent.Children.Add(new TextBlock
+            {
+                Text = text,
+                FontSize = size,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = ResourceBrush("Brand.DeepGreen"),
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 8)
+            });
+        }
+        void Help(string text)
+        {
+            selectionContent.Children.Add(new TextBlock
+            {
+                Text = text,
+                Foreground = ResourceBrush("Text.Secondary"),
+                TextWrapping = TextWrapping.Wrap,
+                FontSize = 11,
+                Margin = new Thickness(0, 0, 0, 10)
+            });
+        }
+        Heading(vm.Text("Model.MapChooseOrigin"));
+        var origins = new ComboBox
+        {
+            ItemsSource = nodes,
+            DisplayMemberPath = nameof(CalculationNodeDefinition.Code),
+            IsEnabled = nodes.Length > 0,
+            Margin = new Thickness(0, 0, 0, 10),
+            MinHeight = 30
+        };
+        AutomationProperties.SetName(origins, vm.Text("Model.MapChooseOrigin"));
+        origins.SelectedItem = nodes.FirstOrDefault(n => n.Id == selectedOrigin);
+        origins.SelectionChanged += (_, _) =>
+        {
+            if (origins.SelectedItem is CalculationNodeDefinition chosen)
+            {
+                selectedOrigin = chosen.Id;
+                firstNode = null;
+                Draw();
+            }
+        };
+        selectionContent.Children.Add(origins);
+        if (selectedOrigin is null)
+        {
+            Help(vm.Text("Model.MapSelectOriginHelp"));
+            return;
+        }
+        var source = nodes.Single(n => n.Id == selectedOrigin);
+        Heading(source.Code, 13);
+        Help(vm.Text("Model.Function." + NodeCostClassification.Function(source)) +
+             " · " + vm.Text(source.Role == NodeRole.Principal
+                ? "Model.Principal" : "Model.Auxiliary"));
+        Heading(vm.Text(source.Role == NodeRole.Principal
+            ? "Model.MapNextNodes" : "Model.MapServiceDestinations"), 13);
+        Help(vm.Text(source.Role == NodeRole.Principal
+            ? "Model.MapSequenceCheckHelp" : "Model.MapServiceCheckHelp"));
+        if (vm.Current?.Status == ModelStatus.Published)
+            Help(vm.Text("Model.MapReadOnly"));
+
+        var kind = source.Role == NodeRole.Principal
+            ? ProcessRouteKind.Sequence : ProcessRouteKind.AuxiliaryService;
+        var links = vm.ProcessMapLinks.ToHashSet();
+        foreach (var target in nodes)
+        {
+            var link = new ProcessRouteLink(source.Id, target.Id, kind);
+            var alreadyLinked = links.Contains(link);
+            var restriction = ProcessRouteGraph.Restriction(nodes, link);
+            var canChange = vm.CanEditProcessMap &&
+                (alreadyLinked || restriction == ProcessRouteRestriction.None);
+            var label = target.Code +
+                " · " + vm.Text(target.Role == NodeRole.Principal
+                    ? "Model.Principal" : "Model.Auxiliary");
+            if (source.Id == target.Id && source.Role == NodeRole.Auxiliary)
+                label += " · " + vm.Text("Model.MapSelfService");
+            var check = new CheckBox
+            {
+                Content = label,
+                IsChecked = alreadyLinked,
+                IsEnabled = canChange,
+                Margin = new Thickness(0, 4, 0, 4),
+                VerticalContentAlignment = VerticalAlignment.Center,
+                ToolTip = restriction == ProcessRouteRestriction.None
+                    ? vm.Text("Model.MapCheckDestinationHelp")
+                    : vm.Text("Model.MapRestriction." + restriction)
+            };
+            AutomationProperties.SetName(check, label);
+            check.Checked += (_, _) => UpdateDestination(vm, link, true);
+            check.Unchecked += (_, _) => UpdateDestination(vm, link, false);
+            selectionContent.Children.Add(check);
+        }
+        if (source.Role == NodeRole.Auxiliary)
+            Help(vm.Text("Model.MapSelfServiceHelp"));
+        Help(vm.Text("Model.MapChangesRequireValidation"));
+    }
+
+    private void UpdateDestination(ModelWorkspaceViewModel vm, ProcessRouteLink link, bool enabled)
+    {
+        // Never turn a UI checkbox into an economic allocation. This only edits
+        // a versioned route; the secondary key proposal remains a separate act.
+        if (!vm.TrySetProcessLink(link, enabled))
+        {
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(Draw));
+            return;
+        }
+        Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(Draw));
     }
 
     private void Text(string value, double left, double top, double width, bool strong)
@@ -309,12 +456,20 @@ public sealed class ProcessRouteCanvas : UserControl
 
     private void HandleNodeClick(EntityId id)
     {
-        if (model?.CanEditProcessMap != true || !ConnectMode) return;
-        if (firstNode is null) { firstNode = id; return; }
+        // Selecting a card always displays its destinations, including in
+        // published models where the map is intentionally read-only.
+        selectedOrigin = id;
+        if (model?.CanEditProcessMap != true || !ConnectMode)
+        {
+            Draw();
+            return;
+        }
+        if (firstNode is null) { firstNode = id; Draw(); return; }
         if (firstNode == id && ConnectionKind == ProcessRouteKind.Sequence)
         { firstNode = null; return; }
         model.TrySetProcessLink(new ProcessRouteLink(firstNode.Value, id, ConnectionKind), !RemoveMode);
         firstNode = null;
+        Draw();
     }
 
     public void ClearConnection() { firstNode = null; Draw(); }
