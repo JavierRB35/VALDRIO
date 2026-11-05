@@ -76,7 +76,7 @@ public static class ProcessRouteGraph
             t => t.StartsWith(PositionPrefix, StringComparison.Ordinal),
             point is null ? [] :
             [PositionPrefix + point.X.ToString(CultureInfo.InvariantCulture) +
-             "," + point.Y.ToString(CultureInfo.InvariantCulture)]);
+             ":" + point.Y.ToString(CultureInfo.InvariantCulture)]);
         return Copy(source, tags);
     }
 
@@ -84,7 +84,7 @@ public static class ProcessRouteGraph
     {
         var value = node.FunctionTags.FirstOrDefault(t => t.StartsWith(PositionPrefix, StringComparison.Ordinal));
         if (value is null) return null;
-        var coords = value[PositionPrefix.Length..].Split(',');
+        var coords = value[PositionPrefix.Length..].Split(':');
         if (coords.Length != 2 ||
             !int.TryParse(coords[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out var x) ||
             !int.TryParse(coords[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out var y))
