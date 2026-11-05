@@ -238,6 +238,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     }
     public bool HasPendingModelSelection => modelSelectionTouched && choice is not null &&
         choice.Value.Structure.Id != Current?.Structure.Id;
+    public string LoadSelectionHelp => HasPendingModelSelection
+        ? Text("Model.SelectionPendingLoad") : LoadLabel;
 
     public NodeOption? SelectedNode
     {
