@@ -2344,4 +2344,23 @@ Excluded: {7} · Direct to products/orders: {8}</value></data>
   <data name="Run.Function.Production" xml:space="preserve"><value>Production / core activity</value></data>
   <data name="Run.Function.Commercial" xml:space="preserve"><value>Commercial</value></data>
   <data name="Run.Function.Structure" xml:space="preserve"><value>Structure / administration</value></data>
+  <data name="Model.StudyNodeCreationRestriction" xml:space="preserve"><value>This study only allows editing existing nodes. To add or remove nodes, create a new editable version of the cost structure.</value></data>
+  <data name="Model.DescriptionDuplicate" xml:space="preserve"><value>A structure with that name already exists. Load the saved structure or choose a different name.</value></data>
+  <data name="Model.ExistingDraftOpened" xml:space="preserve"><value>The existing editable version was reopened; no extra copy was created.</value></data>
+  <data name="Model.VersionLabel" xml:space="preserve"><value>Version</value></data>
+  <data name="Model.Archived" xml:space="preserve"><value>Archived</value></data>
+  <data name="Model.DeleteDraftModel" xml:space="preserve"><value>Delete draft</value></data>
+  <data name="Model.ArchiveModel" xml:space="preserve"><value>Archive structure</value></data>
+  <data name="Model.RestoreArchivedModel" xml:space="preserve"><value>Restore archived structure</value></data>
+  <data name="Model.ShowArchivedModels" xml:space="preserve"><value>Show archived structures</value></data>
+  <data name="Model.DeleteDraftTitle" xml:space="preserve"><value>Delete cost-structure draft</value></data>
+  <data name="Model.DeleteDraftConfirmation" xml:space="preserve"><value>The draft “{0}” will be deleted if no studies, keys or model versions depend on it. This cannot be undone. Continue?</value></data>
+  <data name="Model.ArchiveTitle" xml:space="preserve"><value>Archive published version</value></data>
+  <data name="Model.ArchiveConfirmation" xml:space="preserve"><value>“{0}” will be hidden from structures offered for new studies. Existing studies keep their historical link. Archive?</value></data>
+  <data name="Model.RestoreTitle" xml:space="preserve"><value>Restore archived version</value></data>
+  <data name="Model.RestoreConfirmation" xml:space="preserve"><value>“{0}” will be available for new studies again. Restore?</value></data>
+  <data name="Model.ArchivedSuccessfully" xml:space="preserve"><value>Structure archived. Existing studies retain their data.</value></data>
+  <data name="Model.RestoredSuccessfully" xml:space="preserve"><value>Structure restored successfully.</value></data>
+  <data name="Model.DraftDeleted" xml:space="preserve"><value>Draft successfully deleted.</value></data>
+  <data name="Model.Referenced" xml:space="preserve"><value>Cannot delete: studies, keys or other versions depend on this structure.</value></data>
 </root>
