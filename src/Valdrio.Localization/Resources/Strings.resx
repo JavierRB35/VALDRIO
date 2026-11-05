@@ -2384,4 +2384,11 @@ Excluded: {7} · Direct to products/orders: {8}</value></data>
   <data name="Model.MapArranged" xml:space="preserve"><value>Positions auto-arranged.</value></data>
   <data name="Model.MapValidatedAndSaved" xml:space="preserve"><value>Map validated and saved in the editable version. Sequences do not create allocations.</value></data>
   <data name="Model.MapSaveFailed" xml:space="preserve"><value>The map validation could not be saved. Keep your changes and review the structure status.</value></data>
+  <data name="AllocationUI.RouteProposalTitle" xml:space="preserve"><value>Allocation proposals from the process map</value></data>
+  <data name="AllocationUI.RouteProposalHelp" xml:space="preserve"><value>Only auxiliary service links from a validated optional process map suggest secondary destinations. Select a source and prepare an editable draft key. No percentages are invented. You can edit or discard the proposal before saving it. Production sequences never generate allocations.</value></data>
+  <data name="AllocationUI.RouteProposalUnavailable" xml:space="preserve"><value>No proposals available: validate the optional model map, or configure allocation keys manually.</value></data>
+  <data name="AllocationUI.RouteProposalCount" xml:space="preserve"><value>{0} auxiliary groups with suggested destinations.</value></data>
+  <data name="AllocationUI.RouteProposalAction" xml:space="preserve"><value>Prepare key with these destinations</value></data>
+  <data name="AllocationUI.RouteProposalPrefix" xml:space="preserve"><value>Service proposal</value></data>
+  <data name="AllocationUI.RouteProposalPrepared" xml:space="preserve"><value>Destinations copied to the draft. Enter weights, review destinations and save the key; no allocation has been published or applied.</value></data>
 </root>
