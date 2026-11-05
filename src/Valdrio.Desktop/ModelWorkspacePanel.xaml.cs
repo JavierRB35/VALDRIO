@@ -80,6 +80,36 @@ public partial class ModelWorkspacePanel : UserControl
         };
     }
 
+    private void MapOptionsChanged(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (ProcessMapCanvas is null || MapLinkKindBox is null) return;
+        ProcessMapCanvas.ConnectMode = MapConnectToggle?.IsChecked == true;
+        ProcessMapCanvas.RemoveMode = MapRemoveToggle?.IsChecked == true;
+        ProcessMapCanvas.ConnectionKind = (MapLinkKindBox.SelectedItem as ComboBoxItem)?.Tag as string ==
+            "AuxiliaryService"
+            ? Valdrio.Domain.ProcessRouteKind.AuxiliaryService
+            : Valdrio.Domain.ProcessRouteKind.Sequence;
+        ProcessMapCanvas.ClearConnection();
+    }
+
+    private void MapZoomChanged(object sender,
+        System.Windows.RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (ProcessMapCanvas is not null) ProcessMapCanvas.Zoom = e.NewValue;
+    }
+
+    private void AutoArrangeProcessMap(object sender, System.Windows.RoutedEventArgs e) =>
+        ProcessMapCanvas.AutoArrange();
+
+    private async void ValidateProcessMap(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (DataContext is ModelWorkspaceViewModel vm)
+            await vm.ValidateProcessMapAsync();
+    }
+
+    private void ExportProcessMap(object sender, System.Windows.RoutedEventArgs e) =>
+        ProcessMapCanvas.ExportPng();
+
     private void OpenModelSetup(object sender, System.Windows.RoutedEventArgs e)
     {
         // A new node needs a draft model; navigate, do not create or mutate one.
