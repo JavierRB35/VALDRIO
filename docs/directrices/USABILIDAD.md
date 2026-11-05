@@ -184,3 +184,22 @@ La integración actual y sus límites están documentados en la
 - Todas las tablas actuales y futuras deben ajustar las columnas a contenido y espacio disponible con anchuras mínimas y máximas razonables, conservando cabeceras legibles, desplazamiento horizontal cuando haga falta y acceso al texto completo (por ejemplo, mediante tooltip).
 - Evitar que una descripción corta absorba la anchura que necesitan otras columnas. Revisar especialmente la tabla de Nodos, con «Función económica» separada de «Funciones» y del papel principal/auxiliar.
 
+
+
+## Diseñador del proceso y propuestas secundarias — COR-05 (2026-11-05)
+
+- «Estructura de costes → Revisar y finalizar» presenta un **mapa opcional** de los nodos agrupados por función económica (estructura, producción/actividad principal, comercial y nodos históricos sin clasificar) y por papel (principal/auxiliar). El mapa sustituye la preeminencia visual del árbol textual, que permanece accesible en una sección desplegable.
+- Dos tipos de aristas, **sin equivalencia económica automática**:
+  - **Secuencia operativa**, entre nodos principales: orden, bifurcaciones y rutas de producción/prestación; nunca añade automáticamente una transferencia de costes entre principales.
+  - **Prestación auxiliar**, desde un nodo auxiliar hacia otro nodo principal o auxiliar: expresa un servicio y **solo propone destinos** de claves de reparto secundario; admite autoprestaciones y ciclos entre auxiliares porque su resolubilidad corresponde al cálculo recíproco existente.
+- El usuario puede conectar, desconectar, mover dentro de la agrupación, autoordenar, ampliar/reducir, revisar ciclos, validar y exportar el diagrama; mantener operación por teclado y ratón. Las posiciones y relaciones quedan asociadas a la **versión de estructura** y sus identidades; al clonar se remapean los nodos y se exige nueva validación. En versiones publicadas, **solo lectura**.
+- **Validar el mapa es una acción expresa e independiente del cálculo de costes**. No dibujar ni validar el mapa no impide continuar un estudio ni calcular repartos. Las referencias inexistentes, la semántica incorrecta y los ciclos de secuencia se notifican, sin afectar la integridad del motor económico.
+- En «Reparto secundario», cuando exista un mapa validado, el usuario puede elegir una propuesta auxiliar y preparar un **borrador normal de clave**, con destinos marcados y pesos **sin definir**. El usuario debe introducir, validar, guardar y eventualmente publicar la clave con los controles económicos habituales. No se crean asignaciones ni claves publicadas, no se sobrescriben configuraciones o reglas existentes y puede descartarse la propuesta.
+- La representación de flujos **no sustituye** la definición de inductores, porcentajes, grupos de componentes, reglas o claves económicas del cálculo de repartos. La distinción debe ser comprensible para un analista sin conocimientos técnicos.
+
+## Gestión segura de versiones y nodos — COR-07 a COR-09 (2026-11-05)
+
+- Un análisis abierto permite adaptar únicamente nodos **existentes** cuando el contrato conserva sus identidades; reabrir repartos primarios/secundarios **no habilita** añadir o eliminar nodos estructurales. Para hacerlo debe abrirse una **nueva versión editable** desde Estructura de costes. La interfaz no mostrará estados falsos de guardado ni controles de inserción estructural operativos dentro del análisis.
+- Las acciones «Crear estructura» y «Crear versión editable» tienen consecuencias distintas. La navegación no debe crear borradores nuevos cuando se ha seleccionado una estructura para cargar. Evitar clones involuntarios; recuperar la versión editable ya existente cuando procede y distinguir inequívocamente nombre/estado/versión.
+- Puede **eliminarse un borrador sin dependencias**, con confirmación y auditoría terminal verificable. Si tiene análisis, claves, versiones descendientes u otras referencias históricas, se rechaza y se explica el motivo. No borrar datos publicados ni ejecutar cascadas sobre históricos.
+- Las versiones **publicadas** solo pueden **archivarse o restaurarse** mediante registro de auditoría independiente: su modelo, contenido canónico, hash, revisión y vínculos con análisis previos permanecen inmutables. Las archivadas dejan de ofrecerse para nuevos análisis, sin impedir consultarlas o restaurarlas desde la gestión de estructuras.
