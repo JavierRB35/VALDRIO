@@ -53,7 +53,9 @@ public partial class AllocationWorkspacePanel : UserControl
         Move((System.Windows.UIElement)ResultsSection.Parent, checks);
         Move((System.Windows.UIElement)SecondaryResultsSection.Parent, checks);
         assignTask.Content = assignments; keyTask.Content = keys; checkTask.Content = checks;
-        taskTabs.Items.Add(assignTask); taskTabs.Items.Add(keyTask); taskTabs.Items.Add(checkTask);
+        // Both primary and secondary follow the analyst's workflow: define
+        // allocation keys first, assign them next, then check and close.
+        taskTabs.Items.Add(keyTask); taskTabs.Items.Add(assignTask); taskTabs.Items.Add(checkTask);
         WorkspaceBody.Children.Insert(2, taskTabs);
         var report = new Button { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 8, 0, 8) };
         report.SetBinding(ContentControl.ContentProperty, new System.Windows.Data.Binding("[ViewPhaseReport]"));
@@ -102,8 +104,10 @@ public partial class AllocationWorkspacePanel : UserControl
         secondaryOnly = secondary;
         var selected = taskTabs.SelectedItem;
         taskTabs.Items.Clear();
-        if (secondary) { taskTabs.Items.Add(keyTask); taskTabs.Items.Add(assignTask); }
-        else { taskTabs.Items.Add(assignTask); taskTabs.Items.Add(keyTask); }
+        // The same logical order applies to both allocations. Preserve the
+        // selected tab when toggling page configuration if it still exists.
+        taskTabs.Items.Add(keyTask);
+        taskTabs.Items.Add(assignTask);
         taskTabs.Items.Add(checkTask);
         taskTabs.SelectedItem = selected is not null && taskTabs.Items.Contains(selected) ? selected : taskTabs.Items[0];
         RedrawPrincipalCostFlow();
