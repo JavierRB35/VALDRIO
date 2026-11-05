@@ -48,6 +48,8 @@ public partial class MainWindow
             var panel = SecondaryPanel.Workspace;
             var tasks=panel.WorkspaceBody.Children.OfType<TabControl>().Single();
             Check(tasks.Items.Count==3,"secondary work has only keys, assignments and check/close "+language);
+            Check(ReferenceEquals(panel.KeyWorkspaceLayout.Parent, panel.RouteProposalSection.Parent),
+                "secondary route proposals live in the allocation-key tab "+language);
             RootScrollViewer.ScrollToTop(); await Idle();
             VisualEvidenceCapture.Capture(this, Path.Combine(directory, language + "-secondary-edit.png"));
             await Invoke(panel.CalculateSecondaryButton);
