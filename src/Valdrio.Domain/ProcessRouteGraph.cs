@@ -20,6 +20,7 @@ public enum ProcessRouteRestriction
     SequenceCycle
 }
 public sealed record ProcessRouteLink(EntityId Source, EntityId Destination, ProcessRouteKind Kind);
+public sealed record AuxiliaryServiceDestinations(EntityId AuxiliaryNodeId, IReadOnlyList<EntityId> DestinationNodeIds);
 public sealed record ProcessRouteValidation(
     IReadOnlyList<string> Errors, IReadOnlyList<string> Warnings, int LinkCount)
 {
@@ -62,6 +63,25 @@ public static class ProcessRouteGraph
                 : null)
             .OfType<ProcessRouteLink>())
         .Distinct().OrderBy(x => x.Source).ThenBy(x => x.Kind).ThenBy(x => x.Destination).ToArray();
+
+    // Suggestions use only saved, structurally valid auxiliary-service links.
+    // The validation fingerprint is a workflow acknowledgement, not a source
+    // of economic weights. An unmarked but valid map can still suggest destinations.
+    public static IReadOnlyList<AuxiliaryServiceDestinations> SuggestAuxiliaryDestinations(
+        IReadOnlyList<CalculationNodeDefinition> nodes)
+    {
+        if (!Check(nodes).IsValid) return [];
+        var active = nodes.Where(n => n.IsActive).ToDictionary(n => n.Id);
+        return Read(nodes)
+            .Where(link => link.Kind == ProcessRouteKind.AuxiliaryService &&
+                active.TryGetValue(link.Source, out var source) && source.Role == NodeRole.Auxiliary &&
+                active.ContainsKey(link.Destination))
+            .GroupBy(link => link.Source)
+            .OrderBy(group => group.Key)
+            .Select(group => new AuxiliaryServiceDestinations(group.Key,
+                group.Select(link => link.Destination).Distinct().OrderBy(id => id).ToArray()))
+            .ToArray();
+    }
 
     /// <summary>
     /// Descriptive route restrictions, independently of any cost-allocation rule.
