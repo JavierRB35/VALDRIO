@@ -63,6 +63,12 @@ Los resultados terminales por nodo y las contribuciones efectivas se muestran en
 
 **Estado:** implementación candidata pendiente de validación en Windows.
 
+## Propuestas desde relaciones de la estructura
+
+En **Claves de reparto**, el panel «Propuestas de reparto desde el mapa del proceso» muestra los destinos de las **prestaciones con origen en un nodo auxiliar** que estén guardadas en la versión de estructura usada por el análisis. Las secuencias operativas entre nodos principales no generan repartos secundarios.
+
+Las propuestas no crean costes ni se aplican automáticamente: prepara un borrador de clave con esos destinos, completa los pesos o porcentajes y revisa/publica la clave antes de asignarla. Se informa si el mapa no está validado o si no existen relaciones de prestación auxiliares. Si no aparecen relaciones guardadas, comprueba qué versión publicada de la estructura utiliza el análisis.
+
 ## Orden de las pestañas
 
 El reparto secundario mantiene el mismo orden: **Claves de reparto → Asignar cuentas / nodos → Comprobar y cerrar**. Define o selecciona primero las claves de prestación auxiliar, asígnalas después a nodos/grupos y comprueba la viabilidad antes de cerrar. Las autoprestaciones siguen sujetas a la validación matemática existente.
