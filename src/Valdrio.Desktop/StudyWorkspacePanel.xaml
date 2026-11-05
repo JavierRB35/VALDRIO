@@ -42,7 +42,7 @@
         </Button.Style>
        </Button>
       </WrapPanel>
-      <ComboBox x:Name="StudyBox" DropDownOpened="RefreshStudiesOnDropDownOpened" ItemsSource="{Binding Studies}" SelectedItem="{Binding StudyChoice}" IsEnabled="{Binding HasStudies}" TabIndex="61" AutomationProperties.Name="{Binding Title}" local:FieldHelp.Key="StudyChoice"/>
+      <ComboBox x:Name="StudyBox" DropDownOpened="RefreshStudiesOnDropDownOpened" ItemsSource="{Binding Studies}" SelectedItem="{Binding StudyChoice}" IsEnabled="{Binding Ready}" TabIndex="61" AutomationProperties.Name="{Binding Title}" local:FieldHelp.Key="StudyChoice"/>
      </DockPanel>
      <TextBlock Text="{Binding LoadSelectionHelp}" Foreground="{DynamicResource Accent.ActiveGreen}" FontWeight="SemiBold"
                 AutomationProperties.LiveSetting="Polite" Margin="0,0,0,8"
