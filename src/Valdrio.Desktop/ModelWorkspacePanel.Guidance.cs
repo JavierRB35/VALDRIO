@@ -142,9 +142,12 @@ public partial class ModelWorkspacePanel
         }
         if (vm.Current is null)
         {
-            if (string.IsNullOrWhiteSpace(vm.Description) && vm.ModelChoice is not null)
+            // Explicitly selected saved structure wins over the text input. A
+            // non-empty description must never accidentally create a new family.
+            if (vm.ModelChoice is not null)
                 await vm.LoadCommand.ExecuteAsync(null);
-            else if (!string.IsNullOrWhiteSpace(vm.Description)) await vm.NewDraftCommand.ExecuteAsync(null);
+            else if (!string.IsNullOrWhiteSpace(vm.Description))
+                await vm.NewDraftCommand.ExecuteAsync(null);
             if (vm.Current is null) { FocusAt(0, DescriptionBox); return false; }
             if (vm.IsPublished) return true;
             ModelSteps.SelectedIndex = 1;
