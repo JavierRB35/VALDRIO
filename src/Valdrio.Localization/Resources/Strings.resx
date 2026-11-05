@@ -197,7 +197,7 @@ Structural SHA-256: {6} · {7}</value></data>
   <data name="Model.Nodes" xml:space="preserve"><value>Calculation nodes</value></data>
   <data name="Model.NodeCode" xml:space="preserve"><value>Calculation unit code</value></data>
   <data name="Model.NodeDescription" xml:space="preserve"><value>Node description</value></data>
-  <data name="ImportMapping.AdvancedOptions" xml:space="preserve"><value>Advanced options: replacement and comparisons</value></data>
+  <data name="ImportMapping.AdvancedOptions" xml:space="preserve"><value>Advanced options: comparisons</value></data>
   <data name="Model.Physical" xml:space="preserve"><value>Physical center</value></data>
   <data name="Model.Role" xml:space="preserve"><value>Node type</value></data>
   <data name="Model.FunctionTags" xml:space="preserve"><value>Functions (optional)</value></data>
@@ -434,13 +434,18 @@ Full: {5}</value></data>
   <data name="ImportMapping.ComparisonScope" xml:space="preserve"><value>Verified shared scope (company, accounts and accounting basis)</value></data>
   <data name="ImportMapping.PreviousEnd" xml:space="preserve"><value>Earlier cumulative closing date</value></data>
   <data name="Import.ComparisonMissing" xml:space="preserve"><value>Selected codes must exist in both cumulative sources. A missing account is not zero.</value></data>
-  <data name="ImportMapping.ReplacementHelp" xml:space="preserve"><value>Use this only when the new import must completely replace an earlier saved import. The previous import remains in history.</value></data>
+  <data name="ImportMapping.ReplacementHelp" xml:space="preserve"><value>The replaced import will no longer count towards the current analysis, but will remain available in history.</value></data>
   <data name="ImportMapping.FreezeComparison" xml:space="preserve"><value>Retain this file as the earlier cumulative source</value></data>
   <data name="ImportMapping.CumulativeBasis" xml:space="preserve"><value>Analysis amount = current cumulative balance − earlier cumulative balance. Missing accounts are not silently treated as zero.</value></data>
   <data name="ImportMapping.ComparisonReady" xml:space="preserve"><value>Earlier source retained: {0}, closing {1}. Open the current file now.</value></data>
   <data name="ImportMapping.FiscalStart" xml:space="preserve"><value>Shared fiscal year start</value></data>
   <data name="ImportMapping.ComparisonTitle" xml:space="preserve"><value>Compare two cumulative sources: prepare the earlier file</value></data>
-  <data name="ImportMapping.ReplaceBatch" xml:space="preserve"><value>Correct a previous import</value></data>
+  <data name="ImportMapping.OperationChoiceTitle" xml:space="preserve"><value>What do you want to do with this import?</value></data>
+  <data name="ImportMapping.AddBatchOption" xml:space="preserve"><value>Add a new import</value></data>
+  <data name="ImportMapping.AddBatchHelp" xml:space="preserve"><value>Adds new records. If they have already been imported, VALDRIO prevents duplicates.</value></data>
+  <data name="ImportMapping.ReplaceBatchHelp" xml:space="preserve"><value>Correct a saved import by replacing its entire contents without adding its records twice.</value></data>
+  <data name="ImportMapping.ReplacementLabel" xml:space="preserve"><value>Import to replace</value></data>
+  <data name="ImportMapping.ReplaceBatch" xml:space="preserve"><value>Replace a previous import</value></data>
   <data name="ImportMapping.ComparisonEmpty" xml:space="preserve"><value>No earlier cumulative source retained.</value></data>
   <data name="ImportMapping.CumulativeMode" xml:space="preserve"><value>Difference between two cumulative balances</value></data>
 <data name="ImportMapping.BatchActive" xml:space="preserve"><value>Active</value></data>
@@ -580,6 +585,7 @@ Full: {5}</value></data>
   <data name="Guide.Help.GroupSeparator" xml:space="preserve"><value>Source thousands separator. Choose None if absent. This is not the CSV column delimiter.</value></data>
   <data name="Guide.Help.NegativeSyntax" xml:space="preserve"><value>How source negatives are written: -123, (123) or 123-.</value></data>
   <data name="Guide.Help.AllowNumericAccounts" xml:space="preserve"><value>Allows account codes stored as Excel numbers. Check leading zeros: Excel may already have removed them.</value></data>
+  <data name="Guide.Help.AddBatch" xml:space="preserve"><value>Add keeps existing imports active. To correct previously saved records, choose Replace and select the original import.</value></data>
   <data name="Guide.Help.ReplaceBatch" xml:space="preserve"><value>Optional. Replaces an identified import, preserving history while removing its amounts from active totals. Unchecked adds an import.</value></data>
   <data name="Guide.Help.Replacement" xml:space="preserve"><value>Specific import to replace in full. Review the selection before saving.</value></data>
   <data name="Guide.Help.AmountMode" xml:space="preserve"><value>Period: movements between dates. Full balance: incorporates the entire closing balance. Cumulative: subtracts an explicitly prepared earlier closing.</value></data>
