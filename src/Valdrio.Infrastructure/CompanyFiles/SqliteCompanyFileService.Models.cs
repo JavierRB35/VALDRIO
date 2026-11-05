@@ -3,6 +3,7 @@ using Valdrio.Application;
 using Valdrio.Domain;
 
 namespace Valdrio.Infrastructure.CompanyFiles;
+internal sealed record ModelArchiveState(EntityId ModelId, bool Archived, long Revision);
 public sealed partial class SqliteCompanyFileService
 {
     private static PhysicalCenter Center(PhysicalCenterRow r)
@@ -34,14 +35,14 @@ public sealed partial class SqliteCompanyFileService
         // Archive is an auditable metadata decision, not a change to the
         // published model schema, immutable hash, or role in historical studies.
         var lastArchiveChange = db.Audit.AsNoTracking()
-            .Where(a => EF.Property<string>(a, "AggregateType") == "ModelVersion" &&
-                EF.Property<string>(a, "AggregateId") == r.Id &&
-                (a.Operation == "ArchiveModel" || a.Operation == "RestoreModel"))
-            .OrderByDescending(a => a.Revision).Select(a => a.Operation).FirstOrDefault();
+            .Where(a => EF.Property<string>(a, "AggregateType") == "ModelArchive" &&
+                EF.Property<string>(a, "AggregateId") == r.Id)
+            .OrderByDescending(a => a.Revision).Select(a => a.AfterJson).FirstOrDefault();
         return new(structure, Enum.Parse<ModelStatus>(r.Status), r.Revision,
             r.PublishedAtUtc is null ? null : UtcInstant.ParseIso(r.PublishedAtUtc),
             publication?.StructuralHash, publication?.CanonicalJson)
-        { IsArchived = lastArchiveChange == "ArchiveModel" };
+        { IsArchived = lastArchiveChange is not null &&
+            CanonicalSnapshotJson.Deserialize<ModelArchiveState>(lastArchiveChange).Archived };
     }
 
     private static IReadOnlyList<ModelVersionSnapshot> Models(ModelDbContext db) => FrozenList.Copy(db.Models.AsNoTracking().ToArray().Select(r => Model(db, r)).OrderBy(x => x.Structure.FamilyId).ThenBy(x => x.Structure.VersionNumber));
@@ -292,8 +293,11 @@ public sealed partial class SqliteCompanyFileService
             // versions. Their historical provenance must survive.
             if (db.Studies.Any(s => s.SelectedModelVersionId == row.Id) ||
                 db.AllocationKeyEvents.Any(k => k.ModelVersionId == row.Id) ||
-                db.Models.Any(m => m.ParentVersionId == row.Id) ||
-                db.Publications.Any(p => p.ModelVersionId == row.Id))
+                db.Models.Any(m => m.ParentVersionId == row.Id ||
+                    m.FamilyId == row.FamilyId && m.VersionNumber > row.VersionNumber) ||
+                db.Publications.Any(p => p.ModelVersionId == row.Id) ||
+                db.Audit.Any(a => EF.Property<string>(a, "AggregateType") == "Study" &&
+                    (a.BeforeJson.Contains(row.Id) || a.AfterJson.Contains(row.Id))))
                 throw ModelRules.Error("MODEL_REFERENCED", "Model.Referenced", command.Id);
             db.Pools.RemoveRange(db.Pools.Where(p => p.ModelVersionId == row.Id));
             db.SaveChanges();
@@ -304,8 +308,8 @@ public sealed partial class SqliteCompanyFileService
             if (!db.Models.Any(m => m.FamilyId == row.FamilyId))
                 db.Families.Remove(db.Families.Single(f => f.Id == row.FamilyId));
             FirstWrite(db);
-            Audit<ModelVersionSnapshot?>(db, file, "ModelVersion", command.Id,
-                checked(row.Revision + 1), "DeleteDraft", command.Actor, before, null);
+            Audit<object>(db, file, "ModelVersion", command.Id,
+                checked(row.Revision + 1), "DeleteDraft", command.Actor, before, new { Deleted = true });
             return 0;
         });
 
@@ -318,12 +322,19 @@ public sealed partial class SqliteCompanyFileService
             if (before.Status != ModelStatus.Published)
                 throw ModelRules.Error("MODEL_NOT_PUBLISHED", "Model.ParentNotPublished", command.Id);
             if (before.IsArchived == command.Archived) return before;
-            row.Revision = checked(row.Revision + 1);
-            var after = before with { Revision = row.Revision, IsArchived = command.Archived };
-            FirstWrite(db);
-            Audit(db, file, "ModelVersion", command.Id, row.Revision,
-                command.Archived ? "ArchiveModel" : "RestoreModel", command.Actor, before, after);
-            return after;
+            // PublishedModelUpdate explicitly prohibits UPDATE even for metadata.
+            // Store archive intent in a separate append-only audit stream instead.
+            var previous = db.Audit.AsNoTracking()
+                .Where(a => EF.Property<string>(a, "AggregateType") == "ModelArchive" &&
+                    EF.Property<string>(a, "AggregateId") == row.Id)
+                .OrderByDescending(a => a.Revision).Select(a => a.AfterJson).FirstOrDefault();
+            ModelArchiveState? prior = previous is null ? null :
+                CanonicalSnapshotJson.Deserialize<ModelArchiveState>(previous);
+            var next = new ModelArchiveState(command.Id, command.Archived,
+                prior is null ? 0 : checked(prior.Revision + 1));
+            Audit(db, file, "ModelArchive", command.Id, next.Revision,
+                command.Archived ? "ArchiveModel" : "RestoreModel", command.Actor, prior, next);
+            return before with { IsArchived = command.Archived };
         });
 
         public ModelVersionSnapshot Clone(CloneModel command, CancellationToken token = default) => Workspace(true, token, (db, file) =>
