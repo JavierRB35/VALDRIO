@@ -24,9 +24,21 @@ public sealed partial class AllocationWorkspaceViewModel
     public string RouteProposalTitle => this["RouteProposalTitle"];
     public string RouteProposalHelp => this["RouteProposalHelp"];
     public string RouteProposalActionLabel => this["RouteProposalAction"];
-    public string RouteProposalStatus => RouteProposals.Count == 0
-        ? this["RouteProposalUnavailable"]
-        : string.Format(Format, this["RouteProposalCount"], RouteProposals.Count);
+    public string RouteProposalStatus
+    {
+        get
+        {
+            if (workspace is null) return this["RouteProposalUnavailable"];
+            var nodes = workspace.Resources.Model.Structure.Nodes;
+            var links = ProcessRouteGraph.Read(nodes);
+            if (links.Count == 0) return this["RouteProposalNoLinks"];
+            if (!ProcessRouteGraph.Check(nodes).IsValid) return this["RouteProposalInvalidLinks"];
+            if (RouteProposals.Count == 0) return this["RouteProposalNoServices"];
+            var count = string.Format(Format, this["RouteProposalCount"], RouteProposals.Count);
+            return ProcessRouteGraph.IsValidated(nodes)
+                ? count : count + " " + this["RouteProposalReviewMap"];
+        }
+    }
     public bool CanUseRouteProposal => SelectedRouteProposal is not null &&
         !IsDirty && !IsSecondaryClosed && CanManageSecondary && Stage == AllocationStage.Secondary;
 
@@ -34,22 +46,20 @@ public sealed partial class AllocationWorkspaceViewModel
     {
         RouteProposals.Clear();
         SelectedRouteProposal = null;
-        if (workspace is not { } w || !ProcessRouteGraph.IsValidated(w.Resources.Model.Structure.Nodes))
+        if (workspace is not { } w)
         {
             OnPropertyChanged(nameof(RouteProposalStatus));
             return;
         }
         var nodes = w.Resources.Model.Structure.Nodes.Where(n => n.IsActive).ToDictionary(n => n.Id);
-        foreach (var group in ProcessRouteGraph.Read(w.Resources.Model.Structure.Nodes)
-            .Where(link => link.Kind == ProcessRouteKind.AuxiliaryService &&
-                nodes.TryGetValue(link.Source, out var src) && src.Role == NodeRole.Auxiliary &&
-                nodes.ContainsKey(link.Destination))
-            .GroupBy(link => link.Source).OrderBy(g => nodes[g.Key].Code, StringComparer.Ordinal))
+        foreach (var proposal in ProcessRouteGraph.SuggestAuxiliaryDestinations(w.Resources.Model.Structure.Nodes)
+            .OrderBy(p => nodes[p.AuxiliaryNodeId].Code, StringComparer.Ordinal))
         {
-            var targets = group.Select(link => link.Destination).Distinct().ToArray();
-            RouteProposals.Add(new(group.Key, NodeLabel(nodes[group.Key]),
-                targets, string.Join(" · ", targets.Select(id => NodeLabel(nodes[id])))));
+            RouteProposals.Add(new(proposal.AuxiliaryNodeId, NodeLabel(nodes[proposal.AuxiliaryNodeId]),
+                proposal.DestinationNodeIds,
+                string.Join(" · ", proposal.DestinationNodeIds.Select(id => NodeLabel(nodes[id])))));
         }
+        SelectedRouteProposal = RouteProposals.FirstOrDefault();
         OnPropertyChanged(nameof(RouteProposalStatus));
     }
 
