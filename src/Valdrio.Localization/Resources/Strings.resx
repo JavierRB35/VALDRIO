@@ -2364,7 +2364,7 @@ Excluded: {7} · Direct to products/orders: {8}</value></data>
   <data name="Model.DraftDeleted" xml:space="preserve"><value>Draft successfully deleted.</value></data>
   <data name="Model.Referenced" xml:space="preserve"><value>Cannot delete: studies, keys or other versions depend on this structure.</value></data>
   <data name="Model.MapTitle" xml:space="preserve"><value>Process map and auxiliary services</value></data>
-  <data name="Model.MapHelp" xml:space="preserve"><value>Optionally draw operational sequences between principal nodes and services from auxiliary nodes. Select Connect, choose a relation type, then click source and destination. Drag cards inside their function and role. Validating the map does not assign amounts or publish keys.</value></data>
+  <data name="Model.MapHelp" xml:space="preserve"><value>Select a card or choose a node on the left, then tick its destinations. Arrows update immediately. Operational sequences connect principal nodes; auxiliary services may include self service. Validating does not create allocation keys or weights.</value></data>
   <data name="Model.MapConnect" xml:space="preserve"><value>Connect nodes</value></data>
   <data name="Model.MapSequence" xml:space="preserve"><value>Production sequence</value></data>
   <data name="Model.MapService" xml:space="preserve"><value>Auxiliary service</value></data>
@@ -2394,4 +2394,24 @@ Excluded: {7} · Direct to products/orders: {8}</value></data>
   <data name="Model.SelectionPendingLoad" xml:space="preserve"><value>Another structure is selected. Choose Load selection to open it; the current structure remains active.</value></data>
   <data name="Study.SelectionPendingLoad" xml:space="preserve"><value>Another study is selected. Choose Open study to load it; the current study remains active.</value></data>
   <data name="Model.MapKeyboardHelp" xml:space="preserve"><value>Press Enter or Space on a node to choose it as the source/target in Connect mode. Outside that mode, use arrow keys to move the node.</value></data>
+  <data name="Model.MapSelectHelp" xml:space="preserve"><value>Select a node in the diagram or left list, then tick the following or serviced nodes. No Connect mode is required.</value></data>
+  <data name="Model.MapAdvancedLabel" xml:space="preserve"><value>Connect by clicking cards (optional)</value></data>
+  <data name="Model.MapChooseOrigin" xml:space="preserve"><value>Source node</value></data>
+  <data name="Model.MapSelectOriginHelp" xml:space="preserve"><value>Select a node to view and edit its destinations. Existing links are already checked.</value></data>
+  <data name="Model.MapNextNodes" xml:space="preserve"><value>Following nodes</value></data>
+  <data name="Model.MapServiceDestinations" xml:space="preserve"><value>Nodes served</value></data>
+  <data name="Model.MapSequenceCheckHelp" xml:space="preserve"><value>Tick the principal nodes following this operation. Self links and production cycles are not permitted.</value></data>
+  <data name="Model.MapServiceCheckHelp" xml:space="preserve"><value>Tick the nodes served by this auxiliary, including nodes in other economic functions.</value></data>
+  <data name="Model.MapReadOnly" xml:space="preserve"><value>This structure is finalized: you can view links but must create or open an editable version to change them.</value></data>
+  <data name="Model.MapSelfService" xml:space="preserve"><value>Self service</value></data>
+  <data name="Model.MapSelfServiceHelp" xml:space="preserve"><value>Auxiliary self service is permitted. When applying it to secondary allocations, provide weights and verify there is a viable economic outlet; 100% self allocation may make the calculation impossible.</value></data>
+  <data name="Model.MapCheckDestinationHelp" xml:space="preserve"><value>Tick to add this link or untick to remove it. Allocation weights are configured later.</value></data>
+  <data name="Model.MapChangesRequireValidation" xml:space="preserve"><value>Link changes affect the draft map. Validate and save the map before using its links as allocation proposals.</value></data>
+  <data name="Model.MapEmptyWarning" xml:space="preserve"><value>The map has no links yet. Select a node and tick its destinations.</value></data>
+  <data name="Model.MapRestriction.None" xml:space="preserve"><value>Eligible destination</value></data>
+  <data name="Model.MapRestriction.MissingNode" xml:space="preserve"><value>Node is missing or inactive.</value></data>
+  <data name="Model.MapRestriction.SequenceNeedsPrincipals" xml:space="preserve"><value>Operational sequences can only connect principal nodes.</value></data>
+  <data name="Model.MapRestriction.ServiceNeedsAuxiliary" xml:space="preserve"><value>Service relationships must originate in an auxiliary node.</value></data>
+  <data name="Model.MapRestriction.PrincipalSelfLoop" xml:space="preserve"><value>A principal node cannot be its own next step.</value></data>
+  <data name="Model.MapRestriction.SequenceCycle" xml:space="preserve"><value>This connection would create a production-route cycle.</value></data>
 </root>
