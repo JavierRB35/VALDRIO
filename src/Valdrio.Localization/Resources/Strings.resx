@@ -2363,4 +2363,25 @@ Excluded: {7} · Direct to products/orders: {8}</value></data>
   <data name="Model.RestoredSuccessfully" xml:space="preserve"><value>Structure restored successfully.</value></data>
   <data name="Model.DraftDeleted" xml:space="preserve"><value>Draft successfully deleted.</value></data>
   <data name="Model.Referenced" xml:space="preserve"><value>Cannot delete: studies, keys or other versions depend on this structure.</value></data>
+  <data name="Model.MapTitle" xml:space="preserve"><value>Process map and auxiliary services</value></data>
+  <data name="Model.MapHelp" xml:space="preserve"><value>Optionally draw operational sequences between principal nodes and services from auxiliary nodes. Select Connect, choose a relation type, then click source and destination. Drag cards inside their function and role. Validating the map does not assign amounts or publish keys.</value></data>
+  <data name="Model.MapConnect" xml:space="preserve"><value>Connect nodes</value></data>
+  <data name="Model.MapSequence" xml:space="preserve"><value>Production sequence</value></data>
+  <data name="Model.MapService" xml:space="preserve"><value>Auxiliary service</value></data>
+  <data name="Model.MapRemove" xml:space="preserve"><value>Remove relation</value></data>
+  <data name="Model.MapZoom" xml:space="preserve"><value>Zoom</value></data>
+  <data name="Model.MapArrange" xml:space="preserve"><value>Auto-arrange</value></data>
+  <data name="Model.MapValidate" xml:space="preserve"><value>Validate and save map</value></data>
+  <data name="Model.MapExport" xml:space="preserve"><value>Export image</value></data>
+  <data name="Model.MapOriginalTreeHelp" xml:space="preserve"><value>The original centre/node list remains available as an accessible alternative to the diagram.</value></data>
+  <data name="Model.MapEmpty" xml:space="preserve"><value>Add nodes in the previous tab to design the map.</value></data>
+  <data name="Model.MapSummary" xml:space="preserve"><value>{0} nodes · {1} links · {2} issues · {3} warnings</value></data>
+  <data name="Model.MapValidated" xml:space="preserve"><value>Map validated</value></data>
+  <data name="Model.MapInvalidDestination" xml:space="preserve"><value>The chosen node does not exist or is inactive.</value></data>
+  <data name="Model.MapInvalidConnection" xml:space="preserve"><value>Sequences link principal nodes; services must originate in an auxiliary node.</value></data>
+  <data name="Model.MapConnectionAdded" xml:space="preserve"><value>Link added. Save and validate the map before using its proposals.</value></data>
+  <data name="Model.MapConnectionRemoved" xml:space="preserve"><value>Link removed. Recheck the map validation.</value></data>
+  <data name="Model.MapArranged" xml:space="preserve"><value>Positions auto-arranged.</value></data>
+  <data name="Model.MapValidatedAndSaved" xml:space="preserve"><value>Map validated and saved in the editable version. Sequences do not create allocations.</value></data>
+  <data name="Model.MapSaveFailed" xml:space="preserve"><value>The map validation could not be saved. Keep your changes and review the structure status.</value></data>
 </root>
