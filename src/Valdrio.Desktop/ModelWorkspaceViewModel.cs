@@ -410,13 +410,15 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     {
         get => string.Join(", ", ParsedFunctionTags.Where(t =>
             !t.StartsWith(NodeCostClassification.FunctionPrefix, StringComparison.Ordinal) &&
-            !t.StartsWith(NodeCostClassification.PurposePrefix, StringComparison.Ordinal)));
+            !t.StartsWith(NodeCostClassification.PurposePrefix, StringComparison.Ordinal) &&
+                !ProcessRouteGraph.IsTag(t)));
         set
         {
             if (loading || !IsEditable) return;
             var reserved = ParsedFunctionTags.Where(t =>
                 t.StartsWith(NodeCostClassification.FunctionPrefix, StringComparison.Ordinal) ||
-                t.StartsWith(NodeCostClassification.PurposePrefix, StringComparison.Ordinal));
+                t.StartsWith(NodeCostClassification.PurposePrefix, StringComparison.Ordinal) ||
+                ProcessRouteGraph.IsTag(t));
             var free = value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             FunctionTags = string.Join(", ", reserved.Concat(free));
         }
@@ -705,7 +707,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             });
             var freeFunctions = string.Join(", ", n.FunctionTags.Where(t =>
                 !t.StartsWith(NodeCostClassification.FunctionPrefix, StringComparison.Ordinal) &&
-                !t.StartsWith(NodeCostClassification.PurposePrefix, StringComparison.Ordinal)));
+                !t.StartsWith(NodeCostClassification.PurposePrefix, StringComparison.Ordinal) &&
+                !ProcessRouteGraph.IsTag(t)));
             var economicFunction = Text("Model.Function." + NodeCostClassification.Function(n));
             var functions = Text("Model.Purpose." + NodeCostClassification.Purpose(n)) +
                 (string.IsNullOrWhiteSpace(freeFunctions) ? "" : " · " + freeFunctions);
