@@ -4,9 +4,23 @@ namespace Valdrio.Desktop;
 
 public sealed partial class ModelWorkspaceViewModel
 {
+    public string ProcessMapTitle => Text("Model.MapTitle");
+    public string ProcessMapHelp => Text("Model.MapHelp");
+    public string ProcessMapConnectLabel => Text("Model.MapConnect");
+    public string ProcessMapSequenceLabel => Text("Model.MapSequence");
+    public string ProcessMapServiceLabel => Text("Model.MapService");
+    public string ProcessMapRemoveLabel => Text("Model.MapRemove");
+    public string ProcessMapZoomLabel => Text("Model.MapZoom");
+    public string ProcessMapArrangeLabel => Text("Model.MapArrange");
+    public string ProcessMapValidateLabel => Text("Model.MapValidate");
+    public string ProcessMapExportLabel => Text("Model.MapExport");
+    public string ProcessMapOriginalTreeHelp => Text("Model.MapOriginalTreeHelp");
+    public string ProcessMapFeedback => string.Join(Environment.NewLine,
+        new[] { routeFeedback }.Concat(ProcessMapCheck.Errors)
+            .Where(x => !string.IsNullOrWhiteSpace(x)));
     private string routeFeedback = "";
     public string RouteFeedback => routeFeedback;
-    public bool CanEditProcessMap => Current?.Status == ModelStatus.Draft && CanEdit;
+    public bool CanEditProcessMap => Current?.Status == ModelStatus.Draft && CanEdit && !nodeFormEdited;
     public bool ProcessMapValidated => ProcessRouteGraph.IsValidated(draftNodes);
     public IReadOnlyList<CalculationNodeDefinition> ProcessMapNodes => draftNodes.ToArray();
     public IReadOnlyList<ProcessRouteLink> ProcessMapLinks => ProcessRouteGraph.Read(draftNodes);
