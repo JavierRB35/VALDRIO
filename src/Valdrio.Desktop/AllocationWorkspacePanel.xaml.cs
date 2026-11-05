@@ -403,5 +403,13 @@ public partial class AllocationWorkspacePanel : UserControl
         await CoverageAssignmentTask;
         box.GetBindingExpression(ComboBox.SelectedValueProperty)?.UpdateTarget();
     }
+    private void PrepareRouteProposal(object sender, RoutedEventArgs e)
+    {
+        if (viewModel is not { CanUseRouteProposal: true }) return;
+        viewModel.PrepareRouteProposal();
+        DefinitionSection.IsExpanded = true;
+        KeyNameBox.BringIntoView();
+        KeyNameBox.Focus();
+    }
     private void SelectNumber(object sender, KeyboardFocusChangedEventArgs e) { if (sender is TextBox box) box.SelectAll(); }
 }
