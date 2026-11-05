@@ -7,14 +7,6 @@ namespace Valdrio.Desktop;
 
 public partial class StudyWorkspacePanel : UserControl
 {
-    private async void RefreshStudiesOnDropDownOpened(object sender, System.EventArgs e)
-    {
-        // Refresh in-place without loading the selected study or losing pending
-        // context edits. Reformat preserves the selected study identity.
-        if (DataContext is StudyWorkspaceViewModel vm && vm.RefreshCommand.CanExecute(null))
-            await vm.RefreshCommand.ExecuteAsync(null);
-    }
-
     private async void OpenResults(object sender, RoutedEventArgs e)
     {
         if (Window.GetWindow(this) is MainWindow main && DataContext is StudyWorkspaceViewModel vm && await vm.CanLeaveAsync())
