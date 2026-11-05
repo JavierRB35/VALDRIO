@@ -26,7 +26,10 @@ public sealed record NodeOption(
     string UnitLabel,
     string LayerLabel,
     string FunctionsLabel,
-    string PoolLabel);
+    string PoolLabel)
+{
+    public string EconomicFunctionDisplay { get; init; } = "";
+}
 public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposable
 {
     private readonly CompanyFileViewModel company;
@@ -113,6 +116,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string NodeEditorPublishedHelp => Text(EditingStudyNodes ? "Model.StudyNodesClosedHelp" : "Model.NodeEditorPublishedHelp");
     public string NodeEditorMissingModelHelp => Text("Model.NodeEditorMissingModelHelp");
     public string NodeClassificationHelp => Text("Model.NodeClassificationHelp");
+    public string StudyNodeCreationWarning => Text("Model.StudyNodeCreationRestriction");
     private bool Ready => !busy && company.WorkspaceIdle && company.ActiveModels is not null;
     public bool IsEditable => Current?.Status == ModelStatus.Draft || CanEditStudyNodes;
     public bool CanEdit => Ready && IsEditable && company.CanWrite;
@@ -123,8 +127,10 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string TableEditHelp => Text("Model.TableEditHelp");
     public bool CentersReadOnly => !CanEditMasters;
     public bool NodesReadOnly => !CanEdit;
+    public bool CanCreateStructuralNode => CanEdit && Current?.Status == ModelStatus.Draft;
+    public bool HasStudyNodeCreationRestriction => CanEditStudyNodes && SelectedNode is null;
     public string NewCenterFormVisibility => Master is null ? "Visible" : "Collapsed";
-    public string NewNodeFormVisibility => SelectedNode is null ? "Visible" : "Collapsed";
+    public string NewNodeFormVisibility => SelectedNode is null && Current?.Status == ModelStatus.Draft ? "Visible" : "Collapsed";
     public bool IsEditingCenter => Master is not null;
     public bool CanSelectNode => !busy;
     public ModelVersionSnapshot? Current { get; private set; }
@@ -675,8 +681,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             var freeFunctions = string.Join(", ", n.FunctionTags.Where(t =>
                 !t.StartsWith(NodeCostClassification.FunctionPrefix, StringComparison.Ordinal) &&
                 !t.StartsWith(NodeCostClassification.PurposePrefix, StringComparison.Ordinal)));
-            var functions = Text("Model.Function." + NodeCostClassification.Function(n)) + " · " +
-                Text("Model.Purpose." + NodeCostClassification.Purpose(n)) +
+            var economicFunction = Text("Model.Function." + NodeCostClassification.Function(n));
+            var functions = Text("Model.Purpose." + NodeCostClassification.Purpose(n)) +
                 (string.IsNullOrWhiteSpace(freeFunctions) ? "" : " · " + freeFunctions);
             return new NodeOption(
                 n,
@@ -687,7 +693,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
                 unitName,
                 layerName,
                 functions,
-                p?.Description ?? "");
+                p?.Description ?? "") { EconomicFunctionDisplay = economicFunction };
         }));
         master = Centers.SingleOrDefault(c => c.Value.Id == masterId);
         physical = Centers.SingleOrDefault(c => c.Value.Id == physicalId);
@@ -1120,6 +1126,12 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     {
         try
         {
+            if (EditingStudyNodes && SelectedNode is null)
+            {
+                diagnostic = new("MODEL_STUDY_NODE_IDENTITY", "Model.StudyNodeCreationRestriction", []);
+                Refresh();
+                return;
+            }
             if (Physical is null || DriverUnit is null || Role is null)
             { diagnostic = new("MODEL_INPUT_INVALID", "Model.InputInvalid", []); Refresh(); return; }
             var tags = ParsedFunctionTags;
@@ -1179,6 +1191,12 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     private async Task SaveNode()
     {
         if (!nodeFormEdited) return;
+        if (EditingStudyNodes && SelectedNode is null)
+        {
+            diagnostic = new("MODEL_STUDY_NODE_IDENTITY", "Model.StudyNodeCreationRestriction", []);
+            Refresh();
+            return;
+        }
 
         var selectedId = SelectedNode?.Node.Id;
         var code = NodeCode;
