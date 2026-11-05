@@ -10,6 +10,15 @@ namespace Valdrio.Domain;
 /// Encoded in node tags to preserve the existing model file schema.
 /// </summary>
 public enum ProcessRouteKind { Sequence, AuxiliaryService }
+public enum ProcessRouteRestriction
+{
+    None,
+    MissingNode,
+    SequenceNeedsPrincipals,
+    ServiceNeedsAuxiliary,
+    PrincipalSelfLoop,
+    SequenceCycle
+}
 public sealed record ProcessRouteLink(EntityId Source, EntityId Destination, ProcessRouteKind Kind);
 public sealed record ProcessRouteValidation(
     IReadOnlyList<string> Errors, IReadOnlyList<string> Warnings, int LinkCount)
@@ -53,6 +62,48 @@ public static class ProcessRouteGraph
                 : null)
             .OfType<ProcessRouteLink>())
         .Distinct().OrderBy(x => x.Source).ThenBy(x => x.Kind).ThenBy(x => x.Destination).ToArray();
+
+    /// <summary>
+    /// Descriptive route restrictions, independently of any cost-allocation rule.
+    /// Auxiliary self service is permitted; a principal cannot be its own next step.
+    /// A new operational edge must not introduce a directed process cycle.
+    /// </summary>
+    public static ProcessRouteRestriction Restriction(
+        IReadOnlyList<CalculationNodeDefinition> nodes, ProcessRouteLink link)
+    {
+        var source = nodes.FirstOrDefault(n => n.Id == link.Source);
+        var target = nodes.FirstOrDefault(n => n.Id == link.Destination);
+        if (source is null || target is null || !source.IsActive || !target.IsActive)
+            return ProcessRouteRestriction.MissingNode;
+
+        if (source.Role == NodeRole.Auxiliary)
+            return link.Kind == ProcessRouteKind.AuxiliaryService
+                ? ProcessRouteRestriction.None
+                : ProcessRouteRestriction.SequenceNeedsPrincipals;
+
+        if (link.Kind != ProcessRouteKind.Sequence)
+            return ProcessRouteRestriction.ServiceNeedsAuxiliary;
+        if (target.Role != NodeRole.Principal)
+            return ProcessRouteRestriction.SequenceNeedsPrincipals;
+        if (source.Id == target.Id)
+            return ProcessRouteRestriction.PrincipalSelfLoop;
+
+        var adjacency = Read(nodes).Where(l => l.Kind == ProcessRouteKind.Sequence)
+            .GroupBy(l => l.Source)
+            .ToDictionary(g => g.Key, g => g.Select(l => l.Destination).ToArray());
+        var visited = new HashSet<EntityId>();
+        var pending = new Stack<EntityId>();
+        pending.Push(target.Id);
+        while (pending.Count > 0)
+        {
+            var next = pending.Pop();
+            if (next == source.Id) return ProcessRouteRestriction.SequenceCycle;
+            if (!visited.Add(next)) continue;
+            if (adjacency.TryGetValue(next, out var successors))
+                foreach (var successor in successors) pending.Push(successor);
+        }
+        return ProcessRouteRestriction.None;
+    }
 
     private static IReadOnlyList<string> ReplaceTags(IEnumerable<string> tags, Func<string, bool> remove,
         IEnumerable<string> append) => tags.Where(t => !remove(t)).Concat(append)
