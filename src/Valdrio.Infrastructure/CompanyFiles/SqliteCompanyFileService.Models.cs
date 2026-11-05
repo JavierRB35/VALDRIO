@@ -348,7 +348,7 @@ public sealed partial class SqliteCompanyFileService
             var p = parent.Publication!.Structure;
             var id = EntityId.Parse(NewId());
             var remap = p.Nodes.ToDictionary(x => x.Id, _ => EntityId.Parse(NewId()));
-            var m = new ModelStructure(id, file.Id, p.FamilyId, checked(db.Models.Where(x => x.FamilyId == p.FamilyId.ToString()).Max(x => x.VersionNumber) + 1), p.Id, command.Description, p.PrecisionPolicyVersion, p.MethodPolicy, p.Nodes.Select(n => new CalculationNodeDefinition(remap[n.Id], id, n.PhysicalCenterId, n.Code, n.Role, n.FunctionTags, n.IsActive)).ToArray(), p.Pools.Select(pool => new CostPoolDefinition(EntityId.Parse(NewId()), id, remap[pool.NodeId], pool.DriverUnitId, pool.Description, pool.CostLayer, pool.CapacityPolicy)).ToArray());
+            var m = new ModelStructure(id, file.Id, p.FamilyId, checked(db.Models.Where(x => x.FamilyId == p.FamilyId.ToString()).Max(x => x.VersionNumber) + 1), p.Id, command.Description, p.PrecisionPolicyVersion, p.MethodPolicy, p.Nodes.Select(n => new CalculationNodeDefinition(remap[n.Id], id, n.PhysicalCenterId, n.Code, n.Role, ProcessRouteGraph.RemapTags(n.FunctionTags, remap), n.IsActive)).ToArray(), p.Pools.Select(pool => new CostPoolDefinition(EntityId.Parse(NewId()), id, remap[pool.NodeId], pool.DriverUnitId, pool.Description, pool.CostLayer, pool.CapacityPolicy)).ToArray());
             db.Models.Add(Row(m));
             AddStructure(db, m);
             FirstWrite(db);
