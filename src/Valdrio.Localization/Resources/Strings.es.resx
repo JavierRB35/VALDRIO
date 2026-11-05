@@ -1162,6 +1162,7 @@ Diferencia que falta repartir: {7}</value></data>
 <data name="Allocation.PartChanged" xml:space="preserve"><value>Una asignación guardada apunta a una parte que ya cambió o desapareció. Quita las asignaciones obsoletas en Asignación manual.</value></data>
   <data name="AllocationUI.ClearObsolete" xml:space="preserve"><value>Quitar asignaciones y nombres que ya no existen en el origen</value></data>
   <data name="AllocationUI.ObsoleteBeforeSave" xml:space="preserve"><value>Hay asignaciones, grupos de reparto o nombres guardados que corresponden a partidas eliminadas o modificadas. Para guardar este cambio es necesario retirar esas referencias obsoletas de la configuración actual. Los cambios anteriores se conservan en el historial. ¿Quieres continuar?</value></data>
+  <data name="AllocationUI.ObsoleteCancel" xml:space="preserve"><value>Cancelar</value></data>
   <data name="AllocationUI.ObsoleteSaveCancelled" xml:space="preserve"><value>No se ha guardado el cambio. Puedes revisar y quitar las referencias obsoletas en Asignación manual.</value></data>
 <data name="AllocationUI.ChangedPart" xml:space="preserve"><value>Parte modificada o eliminada</value></data>
 <data name="Resources.AssignmentStatus" xml:space="preserve"><value>Estado de asignación</value></data>
