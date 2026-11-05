@@ -63,7 +63,7 @@ public sealed class ProcessRouteCanvas : UserControl
         // A stable left-hand master/detail panel is the primary way to define
         // destinations. The original click-to-connect interaction remains
         // available behind the advanced controls.
-        selectionPanel.Width = 288;
+        selectionPanel.Width = 270;
         selectionPanel.Margin = new Thickness(0, 0, 14, 0);
         selectionPanel.Padding = new Thickness(12);
         selectionPanel.BorderThickness = new Thickness(1);
@@ -169,12 +169,24 @@ public sealed class ProcessRouteCanvas : UserControl
         {
             if (!nodePositions.TryGetValue(link.Source, out var a) ||
                 !nodePositions.TryGetValue(link.Destination, out var b)) continue;
-            var p0 = new Point(a.X + CardWidth - 4, a.Y + CardHeight / 2);
-            var p3 = new Point(b.X + 4, b.Y + CardHeight / 2);
-            if (p3.X <= p0.X + 25)
+            var selfService = link.Source == link.Destination &&
+                link.Kind == ProcessRouteKind.AuxiliaryService;
+            // Draw auxiliary self service as a clear, small loop to the
+            // right of its own card instead of an ambiguous line across it.
+            var p0 = selfService
+                ? new Point(a.X + CardWidth - 10, a.Y + 15)
+                : new Point(a.X + CardWidth - 4, a.Y + CardHeight / 2);
+            var p3 = selfService
+                ? new Point(a.X + CardWidth - 10, a.Y + CardHeight - 15)
+                : new Point(b.X + 4, b.Y + CardHeight / 2);
+            if (!selfService && p3.X <= p0.X + 25)
                 p0 = new Point(a.X + CardWidth / 2, a.Y + CardHeight);
-            var c1 = new Point(p0.X + Math.Max(45, Math.Abs(p3.X - p0.X) * .4), p0.Y);
-            var c2 = new Point(p3.X - Math.Max(45, Math.Abs(p3.X - p0.X) * .4), p3.Y);
+            var c1 = selfService
+                ? new Point(p0.X + 24, p0.Y - 10)
+                : new Point(p0.X + Math.Max(45, Math.Abs(p3.X - p0.X) * .4), p0.Y);
+            var c2 = selfService
+                ? new Point(p3.X + 24, p3.Y + 10)
+                : new Point(p3.X - Math.Max(45, Math.Abs(p3.X - p0.X) * .4), p3.Y);
             var figure = new PathFigure { StartPoint = p0 };
             figure.Segments.Add(new BezierSegment(c1, c2, p3, true));
             var geom = new PathGeometry();
