@@ -1162,6 +1162,7 @@ Difference to distribute: {7}</value></data>
 <data name="Allocation.PartChanged" xml:space="preserve"><value>A saved assignment refers to a part that changed or disappeared. Clear obsolete assignments in Manual part assignment.</value></data>
   <data name="AllocationUI.ClearObsolete" xml:space="preserve"><value>Clear assignments and names no longer present in the source</value></data>
   <data name="AllocationUI.ObsoleteBeforeSave" xml:space="preserve"><value>Some saved assignments, routing groups or account names refer to parts that were removed or changed. To save this change, those obsolete references must be removed from the current configuration. Previous changes remain in the history. Continue?</value></data>
+  <data name="AllocationUI.ObsoleteCancel" xml:space="preserve"><value>Cancel</value></data>
   <data name="AllocationUI.ObsoleteSaveCancelled" xml:space="preserve"><value>The change was not saved. You can review and remove obsolete references under Manual assignments.</value></data>
 <data name="AllocationUI.ChangedPart" xml:space="preserve"><value>Changed or removed part</value></data>
 <data name="Resources.AssignmentStatus" xml:space="preserve"><value>Assignment status</value></data>
