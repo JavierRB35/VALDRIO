@@ -26,7 +26,7 @@
      <DockPanel>
       <WrapPanel DockPanel.Dock="Right">
        
-       <Button x:Name="LoadStudyButton" Content="{Binding LoadLabel}" Command="{Binding LoadCommand}" TabIndex="62" FontWeight="SemiBold" AutomationProperties.HelpText="{Binding LoadLabel}">
+       <Button x:Name="LoadStudyButton" Content="{Binding LoadLabel}" Command="{Binding LoadCommand}" TabIndex="62" FontWeight="SemiBold" AutomationProperties.HelpText="{Binding LoadSelectionHelp}">
         <Button.Style>
          <Style TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
           <Style.Triggers>
@@ -43,6 +43,9 @@
       </WrapPanel>
       <ComboBox x:Name="StudyBox" DropDownOpened="RefreshStudiesOnDropDownOpened" ItemsSource="{Binding Studies}" SelectedItem="{Binding StudyChoice}" IsEnabled="{Binding HasStudies}" TabIndex="61" AutomationProperties.Name="{Binding Title}" local:FieldHelp.Key="StudyChoice"/>
      </DockPanel>
+     <TextBlock Text="{Binding LoadSelectionHelp}" Foreground="{DynamicResource Accent.ActiveGreen}" FontWeight="SemiBold"
+                AutomationProperties.LiveSetting="Polite" Margin="0,0,0,8"
+                Visibility="{Binding HasPendingStudySelection, Converter={StaticResource BooleanVisibility}}"/>
     </StackPanel>
    </GroupBox>
 
