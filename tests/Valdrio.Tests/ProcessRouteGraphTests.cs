@@ -46,6 +46,50 @@ public sealed class ProcessRouteGraphTests
     }
 
     [TestMethod]
+    public void DestinationCheckboxEligibilityAllowsOnlyAuxiliarySelfServiceAndAcyclicSequences()
+    {
+        var cutting = Node(31, NodeRole.Principal, NodeEconomicFunction.Production);
+        var assembly = Node(32, NodeRole.Principal, NodeEconomicFunction.Production);
+        var finishing = Node(33, NodeRole.Principal, NodeEconomicFunction.Commercial);
+        var services = Node(34, NodeRole.Auxiliary, NodeEconomicFunction.Structure);
+        var nodes = new[] { cutting, assembly, finishing, services };
+
+        Assert.AreEqual(ProcessRouteRestriction.PrincipalSelfLoop,
+            ProcessRouteGraph.Restriction(nodes,
+                new(cutting.Id, cutting.Id, ProcessRouteKind.Sequence)));
+        Assert.AreEqual(ProcessRouteRestriction.SequenceNeedsPrincipals,
+            ProcessRouteGraph.Restriction(nodes,
+                new(cutting.Id, services.Id, ProcessRouteKind.Sequence)));
+        Assert.AreEqual(ProcessRouteRestriction.None,
+            ProcessRouteGraph.Restriction(nodes,
+                new(services.Id, services.Id, ProcessRouteKind.AuxiliaryService)),
+            "Self service from an auxiliary is permitted.");
+        Assert.AreEqual(ProcessRouteRestriction.None,
+            ProcessRouteGraph.Restriction(nodes,
+                new(services.Id, cutting.Id, ProcessRouteKind.AuxiliaryService)),
+            "A structure auxiliary may service production.");
+        Assert.AreEqual(ProcessRouteRestriction.ServiceNeedsAuxiliary,
+            ProcessRouteGraph.Restriction(nodes,
+                new(cutting.Id, assembly.Id, ProcessRouteKind.AuxiliaryService)));
+        Assert.AreEqual(ProcessRouteRestriction.None,
+            ProcessRouteGraph.Restriction(nodes,
+                new(cutting.Id, assembly.Id, ProcessRouteKind.Sequence)));
+
+        cutting = ProcessRouteGraph.WithLink(cutting,
+            new(cutting.Id, assembly.Id, ProcessRouteKind.Sequence), true);
+        assembly = ProcessRouteGraph.WithLink(assembly,
+            new(assembly.Id, finishing.Id, ProcessRouteKind.Sequence), true);
+        nodes = [cutting, assembly, finishing, services];
+        Assert.AreEqual(ProcessRouteRestriction.SequenceCycle,
+            ProcessRouteGraph.Restriction(nodes,
+                new(finishing.Id, cutting.Id, ProcessRouteKind.Sequence)),
+            "The destination panel must not enable a production cycle.");
+        Assert.AreEqual(ProcessRouteRestriction.None,
+            ProcessRouteGraph.Restriction(nodes,
+                new(services.Id, finishing.Id, ProcessRouteKind.AuxiliaryService)));
+    }
+
+    [TestMethod]
     public void CycleDetectionIsLimitedToOperationalRoutes()
     {
         var first = Node(5, NodeRole.Principal, NodeEconomicFunction.Production);
