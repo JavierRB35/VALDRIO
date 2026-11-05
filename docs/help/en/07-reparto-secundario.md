@@ -48,3 +48,7 @@ When auxiliary capacity is assessed, some cost may remain as capacity variance. 
 3. Review contributions, principal totals and the Pareto; resolve diagnostics before closing secondary allocation.
 
 Tables grow with their rows: use the outer page scroll. Save key and closure actions remain in the bottom bar and follow the active tab. Horizontal scrolling keeps columns accessible when the window is narrow.
+
+## Tab order
+
+Secondary allocation uses the same order: **Allocation keys → Assign accounts / nodes → Check and close**. Define or select auxiliary service keys, assign them to nodes/groups, and check mathematical feasibility before closing. Self-service remains subject to the existing solver validation.
