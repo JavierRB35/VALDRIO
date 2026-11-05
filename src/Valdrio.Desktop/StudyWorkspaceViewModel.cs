@@ -161,6 +161,8 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     }
     public bool HasPendingStudySelection =>
         studySelectionTouched && studyChoice is not null && studyChoice.Value.Id != Current?.Id;
+    public string LoadSelectionHelp => HasPendingStudySelection
+        ? Text("Study.SelectionPendingLoad") : LoadLabel;
     public SnapshotOption? SnapshotChoice { get => snapshotChoice; set { SetProperty(ref snapshotChoice, value); OnPropertyChanged(nameof(SnapshotDetails)); OnPropertyChanged(nameof(Preparation)); OnPropertyChanged(nameof(HistoricalDefinitions)); } }
     private CultureInfo Ui => CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag);
     private CultureInfo Format => CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
