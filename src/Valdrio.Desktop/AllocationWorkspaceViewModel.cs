@@ -495,6 +495,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     private async Task<bool> CommitConfig(Func<AllocationConfiguration, AllocationConfiguration?> change, bool allowClosed = false)
     {
         if ((!CanEdit && !(allowClosed && CanManagePrimary)) || workspace is null) return false;
+        var canCleanObsolete = CanEdit; // Run marks the workspace busy before invoking the delegate.
         var rejected = false;
         var success = await Run(async () =>
         {
@@ -512,7 +513,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
                     previous.SecondaryPartRoutingGroups, config.AuxiliaryCapacity);
             if (config.AuxiliaryCapacity is null && previous.AuxiliaryCapacity is not null)
                 config = config.WithAuxiliaryCapacity(previous.AuxiliaryCapacity);
-            if (CanEdit)
+            if (canCleanObsolete)
             {
                 var clean = ClearObsoleteReferences(config);
                 if (clean.ExplicitAssignments.Count != config.ExplicitAssignments.Count ||
@@ -521,7 +522,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
                     (clean.SecondaryPartRoutingGroups?.Count ?? 0) != (config.SecondaryPartRoutingGroups?.Count ?? 0))
                 {
                     if (!dialogs.ConfirmEconomicChange(this["ClearObsolete"], this["ObsoleteBeforeSave"],
-                            this["ClearObsolete"], Text("Model.Cancel")))
+                            this["ClearObsolete"], this["ObsoleteCancel"]))
                     {
                         rejected = true;
                         statusKey = "ObsoleteSaveCancelled";
