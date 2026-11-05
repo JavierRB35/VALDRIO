@@ -245,7 +245,10 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         loading = true;
         var modelId = modelChoice?.Value.Structure.Id; var studyId = studyChoice?.Value.Id; var snapshotId = snapshotChoice?.Value.Id;
         var scenarioValue = scenario?.Value ?? StudyScenario.Actual;
-        Replace(PublishedModels, modelValues.Where(m => m.Status == ModelStatus.Published).Select(m => new ModelOption(m, m.Structure.Description + " · " + m.Structure.VersionNumber.ToString(Format))));
+        Replace(PublishedModels, modelValues.Where(m => m.Status == ModelStatus.Published &&
+            (!m.IsArchived || Current?.SelectedModelVersionId == m.Structure.Id))
+            .Select(m => new ModelOption(m, m.Structure.Description + " · " + m.Structure.VersionNumber.ToString(Format) +
+                (m.IsArchived ? " · " + Text("Model.Archived") : ""))));
         Replace(Studies, studyValues.Select(s => new StudyOption(s, s.Name + " · " + s.Currency.FunctionalCurrencyCode + " · " + StateText(s.State))));
         Replace(Scenarios, Enum.GetValues<StudyScenario>().Select(s => new ScenarioOption(s, ScenarioText(s))));
         Replace(Snapshots, snapshotValues.Select(s => new SnapshotOption(s, s.InputRevision.ToString(Format) + " · " + formatter.FormatInstant(s.CapturedAtUtc.Value, preferences.Current.DisplayTimeZoneId, Format) + " · " + s.Id)));
