@@ -586,7 +586,7 @@ Full: {5}</value></data>
   <data name="Guide.Help.NegativeSyntax" xml:space="preserve"><value>How source negatives are written: -123, (123) or 123-.</value></data>
   <data name="Guide.Help.AllowNumericAccounts" xml:space="preserve"><value>Allows account codes stored as Excel numbers. Check leading zeros: Excel may already have removed them.</value></data>
   <data name="Guide.Help.AddBatch" xml:space="preserve"><value>Add keeps existing imports active. To correct previously saved records, choose Replace and select the original import.</value></data>
-  <data name="Guide.Help.ReplaceBatch" xml:space="preserve"><value>Optional. Replaces an identified import, preserving history while removing its amounts from active totals. Unchecked adds an import.</value></data>
+  <data name="Guide.Help.ReplaceBatch" xml:space="preserve"><value>Choose Replace to correct a saved import, then select the original batch. Its amounts will stop counting, while its history is retained.</value></data>
   <data name="Guide.Help.Replacement" xml:space="preserve"><value>Specific import to replace in full. Review the selection before saving.</value></data>
   <data name="Guide.Help.AmountMode" xml:space="preserve"><value>Period: movements between dates. Full balance: incorporates the entire closing balance. Cumulative: subtracts an explicitly prepared earlier closing.</value></data>
   <data name="Guide.Help.SourceCurrency" xml:space="preserve"><value>Currency code for source amounts, for example EUR. Not inferred from symbol or region.</value></data>
