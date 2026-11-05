@@ -174,10 +174,10 @@ public sealed class ProcessRouteCanvas : UserControl
             // Draw auxiliary self service as a clear, small loop to the
             // right of its own card instead of an ambiguous line across it.
             var p0 = selfService
-                ? new Point(a.X + CardWidth - 10, a.Y + 15)
+                ? new Point(a.X + CardWidth + 4, a.Y + 13)
                 : new Point(a.X + CardWidth - 4, a.Y + CardHeight / 2);
             var p3 = selfService
-                ? new Point(a.X + CardWidth - 10, a.Y + CardHeight - 15)
+                ? new Point(a.X + CardWidth + 4, a.Y + CardHeight - 13)
                 : new Point(b.X + 4, b.Y + CardHeight / 2);
             if (!selfService && p3.X <= p0.X + 25)
                 p0 = new Point(a.X + CardWidth / 2, a.Y + CardHeight);
