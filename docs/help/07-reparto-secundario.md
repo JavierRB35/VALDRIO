@@ -62,3 +62,7 @@ Las tablas crecen con sus filas: utiliza el desplazamiento exterior de la págin
 Los resultados terminales por nodo y las contribuciones efectivas se muestran en pestañas/tablas separadas para **Centros generales/indirectos** y **Factores directos** (MOD y aprovisionamiento). La separación es exclusivamente visual: los grupos directos siguen recibiendo prestaciones auxiliares según las claves; el cálculo recíproco y sus flujos no se duplican. Los **totales conciliados** abarcan ambas categorías; el Pareto sigue la categoría seleccionada.
 
 **Estado:** implementación candidata pendiente de validación en Windows.
+
+## Orden de las pestañas
+
+El reparto secundario mantiene el mismo orden: **Claves de reparto → Asignar cuentas / nodos → Comprobar y cerrar**. Define o selecciona primero las claves de prestación auxiliar, asígnalas después a nodos/grupos y comprueba la viabilidad antes de cerrar. Las autoprestaciones siguen sujetas a la validación matemática existente.
