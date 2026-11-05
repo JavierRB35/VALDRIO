@@ -15,9 +15,13 @@ public sealed partial class ModelWorkspaceViewModel
     public string ProcessMapValidateLabel => Text("Model.MapValidate");
     public string ProcessMapExportLabel => Text("Model.MapExport");
     public string ProcessMapOriginalTreeHelp => Text("Model.MapOriginalTreeHelp");
-    public string ProcessMapFeedback => string.Join(Environment.NewLine,
-        new[] { routeFeedback }.Concat(ProcessMapCheck.Errors)
-            .Where(x => !string.IsNullOrWhiteSpace(x)));
+    public string ProcessMapFeedback => Current?.Status == ModelStatus.Published
+        ? Text("Model.MapReadOnly")
+        : string.Join(Environment.NewLine,
+            new[] { routeFeedback }.Concat(ProcessMapCheck.Errors.Select(error =>
+                error.StartsWith("Draw at least one relationship", StringComparison.Ordinal)
+                    ? Text("Model.MapEmptyWarning") : error))
+                .Where(x => !string.IsNullOrWhiteSpace(x)));
     private string routeFeedback = "";
     public string RouteFeedback => routeFeedback;
     public bool CanEditProcessMap => Current?.Status == ModelStatus.Draft && CanEdit && !nodeFormEdited;
@@ -44,14 +48,15 @@ public sealed partial class ModelWorkspaceViewModel
             return false;
         }
         var source = draftNodes[from];
-        if (link.Kind == ProcessRouteKind.Sequence &&
-            (source.Role != NodeRole.Principal || dest.Role != NodeRole.Principal ||
-             source.Id == dest.Id) ||
-            link.Kind == ProcessRouteKind.AuxiliaryService && source.Role != NodeRole.Auxiliary)
+        if (enabled)
         {
-            routeFeedback = Text("Model.MapInvalidConnection");
-            Refresh();
-            return false;
+            var restriction = ProcessRouteGraph.Restriction(draftNodes, link);
+            if (restriction != ProcessRouteRestriction.None)
+            {
+                routeFeedback = Text("Model.MapRestriction." + restriction);
+                Refresh();
+                return false;
+            }
         }
         var changed = ProcessRouteGraph.WithLink(source, link, enabled);
         if (changed.FunctionTags.SequenceEqual(source.FunctionTags)) return true;
