@@ -37,7 +37,7 @@ public sealed class ProcessRouteGraphTests
         Assert.IsTrue(ProcessRouteGraph.Check(nodes).IsValid);
         var validated = ProcessRouteGraph.MarkValidated(nodes);
         Assert.IsTrue(ProcessRouteGraph.IsValidated(validated));
-        Assert.AreEqual(3, validated.Length);
+        Assert.AreEqual(3, validated.Count);
 
         var changed = validated.ToArray();
         changed[0] = ProcessRouteGraph.WithLink(changed[0],
