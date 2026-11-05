@@ -49,6 +49,12 @@ When auxiliary capacity is assessed, some cost may remain as capacity variance. 
 
 Tables grow with their rows: use the outer page scroll. Save key and closure actions remain in the bottom bar and follow the active tab. Horizontal scrolling keeps columns accessible when the window is narrow.
 
+## Proposals from cost-structure relationships
+
+Under **Allocation keys**, the process-map proposal panel lists destinations from **saved service relationships originating at an auxiliary node** in the structure version currently used by the analysis. Operational sequences between principal nodes do not imply a secondary cost allocation.
+
+A proposal does not post any cost or apply a rule: prepare an editable key draft, enter the weights or percentages, review/publish it, then assign the key. The screen explains missing auxiliary services or an unvalidated map. If no saved relationships appear, check which published structure version is selected for this analysis.
+
 ## Tab order
 
 Secondary allocation uses the same order: **Allocation keys → Assign accounts / nodes → Check and close**. Define or select auxiliary service keys, assign them to nodes/groups, and check mathematical feasibility before closing. Self-service remains subject to the existing solver validation.
