@@ -2363,4 +2363,25 @@ Excluido: {7} · Directo a productos/órdenes: {8}</value></data>
   <data name="Model.RestoredSuccessfully" xml:space="preserve"><value>Estructura restaurada correctamente.</value></data>
   <data name="Model.DraftDeleted" xml:space="preserve"><value>Borrador eliminado correctamente.</value></data>
   <data name="Model.Referenced" xml:space="preserve"><value>No se puede eliminar: esta estructura tiene análisis, claves o versiones que dependen de ella.</value></data>
+  <data name="Model.MapTitle" xml:space="preserve"><value>Mapa del proceso y prestaciones auxiliares</value></data>
+  <data name="Model.MapHelp" xml:space="preserve"><value>Diseña de forma opcional las secuencias entre nodos principales y las prestaciones desde auxiliares. Pulsa Conectar, elige el tipo y selecciona origen y destino. Arrastra las tarjetas dentro de su función y papel. Validar el mapa no asigna importes ni publica claves.</value></data>
+  <data name="Model.MapConnect" xml:space="preserve"><value>Conectar nodos</value></data>
+  <data name="Model.MapSequence" xml:space="preserve"><value>Secuencia productiva</value></data>
+  <data name="Model.MapService" xml:space="preserve"><value>Prestación auxiliar</value></data>
+  <data name="Model.MapRemove" xml:space="preserve"><value>Eliminar relación</value></data>
+  <data name="Model.MapZoom" xml:space="preserve"><value>Zoom</value></data>
+  <data name="Model.MapArrange" xml:space="preserve"><value>Autoordenar</value></data>
+  <data name="Model.MapValidate" xml:space="preserve"><value>Validar y guardar mapa</value></data>
+  <data name="Model.MapExport" xml:space="preserve"><value>Exportar imagen</value></data>
+  <data name="Model.MapOriginalTreeHelp" xml:space="preserve"><value>Lista de centros y nodos conservada como alternativa accesible al diagrama.</value></data>
+  <data name="Model.MapEmpty" xml:space="preserve"><value>Añade nodos en la pestaña anterior para diseñar el mapa.</value></data>
+  <data name="Model.MapSummary" xml:space="preserve"><value>{0} nodos · {1} relaciones · {2} incidencias · {3} avisos</value></data>
+  <data name="Model.MapValidated" xml:space="preserve"><value>Mapa validado</value></data>
+  <data name="Model.MapInvalidDestination" xml:space="preserve"><value>El nodo elegido no existe o está inactivo.</value></data>
+  <data name="Model.MapInvalidConnection" xml:space="preserve"><value>Las secuencias unen nodos principales y las prestaciones parten de un auxiliar. Revisa el tipo de relación.</value></data>
+  <data name="Model.MapConnectionAdded" xml:space="preserve"><value>Relación añadida. Guarda y valida el mapa para usar propuestas.</value></data>
+  <data name="Model.MapConnectionRemoved" xml:space="preserve"><value>Relación eliminada. Revisa la validación del mapa.</value></data>
+  <data name="Model.MapArranged" xml:space="preserve"><value>Posiciones reorganizadas automáticamente.</value></data>
+  <data name="Model.MapValidatedAndSaved" xml:space="preserve"><value>Mapa validado y guardado en la versión editable. Las secuencias no generan repartos.</value></data>
+  <data name="Model.MapSaveFailed" xml:space="preserve"><value>La validación del mapa no pudo guardarse. Conserva los cambios y revisa el estado de la estructura.</value></data>
 </root>
