@@ -163,3 +163,24 @@ La integración actual y sus límites están documentados en la
 - En primario, secundario y el resto de pantallas de trabajo, las tablas crecen con sus filas y el desplazamiento vertical pertenece a la página/pestaña. Seleccionar una tabla no debe atrapar la rueda: esta decisión sustituye la excepción de scroll interior del 2026-10-11.
 - Las acciones inferiores de guardar/publicar/cerrar/cancelar permanecen visibles. Las acciones de una pestaña solo se muestran mientras esa pestaña está activa, conservando permisos, validaciones y comandos. La nueva posición fija de guardar claves sustituye su posición bajo los destinos.
 - Mantener el desplazamiento horizontal necesario para columnas o diagramas. Los desplegables y editores de texto conservan su desplazamiento propio; no son una segunda zona de trabajo.
+
+
+## Indicador global de actividad — obligatorio en toda pantalla (COR-02, 2026-11-05)
+
+- **MUST**: cada operación interna perceptible de VALDRIO — actual o futura, en cualquier página del espacio de trabajo — debe anunciarse mediante el mismo indicador verde animado de la ventana principal (`GlobalActivityBar`). No crear barras locales inconsistentes ni depender del cursor ocupado como único feedback.
+- Reutilizar `CompanyFileViewModel.IsProcessing` y los estados de actividad de cada workspace, encadenándolos sin sobrescribir la actividad de otros módulos. Notificar inicio y fin (incluidos fallo y cancelación) y desactivar el indicador al quedar inactiva la aplicación.
+- Toda operación costosa debe realizar su trabajo fuera del dispatcher de WPF y reservar el hilo de interfaz para actualizar controles. La animación debe seguir moviéndose y la ventana debe responder; no basta con mostrar una barra inmóvil.
+- Mostrar indicación contextual del paso ejecutado y errores recuperables cuando proceda. El usuario no debe confundir espera con bloqueo ni con éxito confirmado. Para tareas de duración indeterminada mantener animación; para las cancelables preservar cancelación.
+- Verificar nuevos recorridos con operaciones lentas, fallidas y canceladas, incluidos carga de estructuras/análisis, importación, cálculos, guardados, exportaciones y componentes embebidos.
+
+## Selectores con confirmación explícita (COR-06 y COR-10, 2026-11-05)
+
+- En las listas de selección que requieren el botón «Cargar selección», «Abrir análisis» o acción equivalente, distinguir el elemento **seleccionado** del **realmente cargado**. La apariencia inicial del botón es secundaria (blanca), y cambia al verde primario en cuanto hay una selección distinta pendiente de cargar; vuelve al estado neutro tras cargar o revertir la selección.
+- Mantener texto/ayuda accesible que explique que la selección sigue pendiente, sin depender únicamente del color. No cargar automáticamente al cambiar la selección.
+- En «Análisis y periodo», refrescar los análisis disponibles al abrir el desplegable; no duplicar un botón de actualización. No sustituir el análisis activo ni perder campos pendientes por el mero refresco.
+
+## Tablas legibles y adaptables (COR-03, 2026-11-05)
+
+- Todas las tablas actuales y futuras deben ajustar las columnas a contenido y espacio disponible con anchuras mínimas y máximas razonables, conservando cabeceras legibles, desplazamiento horizontal cuando haga falta y acceso al texto completo (por ejemplo, mediante tooltip).
+- Evitar que una descripción corta absorba la anchura que necesitan otras columnas. Revisar especialmente la tabla de Nodos, con «Función económica» separada de «Funciones» y del papel principal/auxiliar.
+
