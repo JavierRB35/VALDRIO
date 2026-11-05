@@ -27,6 +27,7 @@
      <DockPanel>
       <WrapPanel DockPanel.Dock="Right">
        
+       <Button x:Name="RefreshStudyButton" Content="{Binding RefreshLabel}" Command="{Binding RefreshCommand}" TabIndex="60"/>
        <Button x:Name="LoadStudyButton" Content="{Binding LoadLabel}" Command="{Binding LoadCommand}" TabIndex="62" FontWeight="SemiBold" AutomationProperties.HelpText="{Binding LoadSelectionHelp}">
         <Button.Style>
          <Style TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
@@ -42,7 +43,7 @@
         </Button.Style>
        </Button>
       </WrapPanel>
-      <ComboBox x:Name="StudyBox" DropDownOpened="RefreshStudiesOnDropDownOpened" ItemsSource="{Binding Studies}" SelectedItem="{Binding StudyChoice}" IsEnabled="{Binding Ready}" TabIndex="61" AutomationProperties.Name="{Binding Title}" local:FieldHelp.Key="StudyChoice"/>
+      <ComboBox x:Name="StudyBox" ItemsSource="{Binding Studies}" SelectedItem="{Binding StudyChoice}" IsEnabled="{Binding Ready}" TabIndex="61" AutomationProperties.Name="{Binding Title}" local:FieldHelp.Key="StudyChoice"/>
      </DockPanel>
      <TextBlock Text="{Binding LoadSelectionHelp}" Foreground="{DynamicResource Accent.ActiveGreen}" FontWeight="SemiBold"
                 AutomationProperties.LiveSetting="Polite" Margin="0,0,0,8"
