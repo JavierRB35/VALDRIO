@@ -130,6 +130,44 @@ public sealed class ProcessRouteGraphTests
     }
 
     [TestMethod]
+    public void ValidAuxiliaryServicesSuggestDestinationsBeforeMapIsMarkedValidated()
+    {
+        var cut = Node(41, NodeRole.Principal, NodeEconomicFunction.Production);
+        var assembly = Node(42, NodeRole.Principal, NodeEconomicFunction.Production);
+        var maintenance = Node(43, NodeRole.Auxiliary, NodeEconomicFunction.Structure);
+        cut = ProcessRouteGraph.WithLink(cut,
+            new(cut.Id, assembly.Id, ProcessRouteKind.Sequence), true);
+        maintenance = ProcessRouteGraph.WithLink(maintenance,
+            new(maintenance.Id, cut.Id, ProcessRouteKind.AuxiliaryService), true);
+        maintenance = ProcessRouteGraph.WithLink(maintenance,
+            new(maintenance.Id, maintenance.Id, ProcessRouteKind.AuxiliaryService), true);
+
+        var saved = new[] { cut, assembly, maintenance };
+        Assert.IsTrue(ProcessRouteGraph.Check(saved).IsValid);
+        Assert.IsFalse(ProcessRouteGraph.IsValidated(saved),
+            "A missing validation acknowledgement must not hide saved suggestions.");
+
+        var proposals = ProcessRouteGraph.SuggestAuxiliaryDestinations(saved);
+        Assert.AreEqual(1, proposals.Count);
+        Assert.AreEqual(maintenance.Id, proposals.Single().AuxiliaryNodeId);
+        CollectionAssert.AreEquivalent(new[] { cut.Id, maintenance.Id },
+            proposals.Single().DestinationNodeIds.ToArray(),
+            "Operational sequences do not add secondary allocation destinations.");
+        var acknowledged = ProcessRouteGraph.MarkValidated(saved);
+        CollectionAssert.AreEquivalent(proposals.Single().DestinationNodeIds.ToArray(),
+            ProcessRouteGraph.SuggestAuxiliaryDestinations(acknowledged).Single().DestinationNodeIds.ToArray());
+
+        var sequenceOnly = new[] { cut, assembly };
+        Assert.IsTrue(ProcessRouteGraph.Check(sequenceOnly).IsValid);
+        Assert.AreEqual(0, ProcessRouteGraph.SuggestAuxiliaryDestinations(sequenceOnly).Count);
+        var invalid = ProcessRouteGraph.WithLink(cut,
+            new(cut.Id, maintenance.Id, ProcessRouteKind.AuxiliaryService), true);
+        Assert.AreEqual(0, ProcessRouteGraph.SuggestAuxiliaryDestinations(
+            [invalid, assembly, maintenance]).Count,
+            "Invalid structural links must never be offered as proposals.");
+    }
+
+    [TestMethod]
     public void MissingEndpointsAndMisclassifiedSourcesCannotBeValidated()
     {
         var principal = Node(21, NodeRole.Principal, NodeEconomicFunction.Production);
