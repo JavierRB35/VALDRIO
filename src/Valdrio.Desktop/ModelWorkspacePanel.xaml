@@ -88,7 +88,7 @@
 
       <TextBlock Text="{Binding ExistingModelHelp}" FontWeight="SemiBold"/>
       <DockPanel Margin="0,0,0,10">
-       <Button x:Name="LoadModelButton" DockPanel.Dock="Right" Content="{Binding LoadLabel}" Command="{Binding LoadCommand}" TabIndex="31" AutomationProperties.HelpText="{Binding LoadLabel}">
+       <Button x:Name="LoadModelButton" DockPanel.Dock="Right" Content="{Binding LoadLabel}" Command="{Binding LoadCommand}" TabIndex="31" AutomationProperties.HelpText="{Binding LoadSelectionHelp}">
         <Button.Style>
          <Style TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
           <Style.Triggers>
@@ -104,6 +104,9 @@
        </Button>
        <ComboBox x:Name="ModelBox" ItemsSource="{Binding Models}" SelectedItem="{Binding ModelChoice}" TabIndex="30" AutomationProperties.Name="{Binding ModelLabel}" local:FieldHelp.Key="ModelChoice"/>
       </DockPanel>
+      <TextBlock Text="{Binding LoadSelectionHelp}" Foreground="{DynamicResource Accent.ActiveGreen}" FontWeight="SemiBold"
+                 AutomationProperties.LiveSetting="Polite" Margin="0,0,0,10"
+                 Visibility="{Binding HasPendingModelSelection, Converter={StaticResource BooleanVisibility}}"/>
 
       <Border Style="{StaticResource Card}">
        <StackPanel>
