@@ -586,7 +586,7 @@ Completa: {5}</value></data>
   <data name="Guide.Help.NegativeSyntax" xml:space="preserve"><value>Cómo se escriben los negativos en el origen: -123, (123) o 123-.</value></data>
   <data name="Guide.Help.AllowNumericAccounts" xml:space="preserve"><value>Permite códigos almacenados como números en Excel. Comprueba los ceros iniciales: Excel puede haberlos eliminado.</value></data>
   <data name="Guide.Help.AddBatch" xml:space="preserve"><value>Añadir conserva las importaciones vigentes. Si quieres corregir registros ya guardados, elige Sustituir e indica el lote original.</value></data>
-  <data name="Guide.Help.ReplaceBatch" xml:space="preserve"><value>Opcional. Reemplaza una importación identificada; conserva su historial y deja de contar sus importes. Sin marcar añade una importación.</value></data>
+  <data name="Guide.Help.ReplaceBatch" xml:space="preserve"><value>Selecciona Sustituir para corregir una importación ya guardada e indica el lote original. Sus importes dejarán de contar, pero el historial se conservará.</value></data>
   <data name="Guide.Help.Replacement" xml:space="preserve"><value>Importación concreta que se sustituirá íntegramente. Revisa la selección antes de guardar.</value></data>
   <data name="Guide.Help.AmountMode" xml:space="preserve"><value>Periodo: movimientos entre las fechas. Saldo íntegro: incorpora el saldo completo al cierre. Acumulados: resta un cierre anterior preparado explícitamente.</value></data>
   <data name="Guide.Help.SourceCurrency" xml:space="preserve"><value>Código de moneda de los importes del archivo, por ejemplo EUR. No se deduce del símbolo o de la región.</value></data>
