@@ -2384,4 +2384,11 @@ Excluido: {7} · Directo a productos/órdenes: {8}</value></data>
   <data name="Model.MapArranged" xml:space="preserve"><value>Posiciones reorganizadas automáticamente.</value></data>
   <data name="Model.MapValidatedAndSaved" xml:space="preserve"><value>Mapa validado y guardado en la versión editable. Las secuencias no generan repartos.</value></data>
   <data name="Model.MapSaveFailed" xml:space="preserve"><value>La validación del mapa no pudo guardarse. Conserva los cambios y revisa el estado de la estructura.</value></data>
+  <data name="AllocationUI.RouteProposalTitle" xml:space="preserve"><value>Propuestas de reparto desde el mapa del proceso</value></data>
+  <data name="AllocationUI.RouteProposalHelp" xml:space="preserve"><value>Solo las prestaciones de auxiliares de un mapa validado se utilizan para proponer destinos de reparto secundario. Elige un auxiliar y prepara una clave en borrador: se seleccionan sus destinos, pero no se inventan porcentajes. Puedes modificar o eliminar la propuesta antes de guardarla. Las secuencias productivas no generan repartos.</value></data>
+  <data name="AllocationUI.RouteProposalUnavailable" xml:space="preserve"><value>No hay propuestas disponibles: valida el mapa opcional de la estructura o configura las claves manualmente.</value></data>
+  <data name="AllocationUI.RouteProposalCount" xml:space="preserve"><value>{0} grupos auxiliares con destinos propuestos.</value></data>
+  <data name="AllocationUI.RouteProposalAction" xml:space="preserve"><value>Preparar clave con estos destinos</value></data>
+  <data name="AllocationUI.RouteProposalPrefix" xml:space="preserve"><value>Propuesta de prestación</value></data>
+  <data name="AllocationUI.RouteProposalPrepared" xml:space="preserve"><value>Destinos copiados al borrador. Introduce pesos, revisa los destinos y guarda la clave; no se ha publicado ni aplicado ninguna asignación.</value></data>
 </root>
