@@ -197,7 +197,7 @@ SHA-256 estructural: {6} · {7}</value></data>
   <data name="Model.Nodes" xml:space="preserve"><value>Nodos de cálculo</value></data>
   <data name="Model.NodeCode" xml:space="preserve"><value>Código de la unidad de cálculo</value></data>
   <data name="Model.NodeDescription" xml:space="preserve"><value>Descripción del nodo</value></data>
-  <data name="ImportMapping.AdvancedOptions" xml:space="preserve"><value>Opciones avanzadas: sustitución y comparaciones</value></data>
+  <data name="ImportMapping.AdvancedOptions" xml:space="preserve"><value>Opciones avanzadas: comparaciones</value></data>
   <data name="Model.Physical" xml:space="preserve"><value>Centro físico</value></data>
   <data name="Model.Role" xml:space="preserve"><value>Tipo de nodo</value></data>
   <data name="Model.FunctionTags" xml:space="preserve"><value>Funciones (opcional)</value></data>
@@ -434,13 +434,18 @@ Completa: {5}</value></data>
   <data name="ImportMapping.ComparisonScope" xml:space="preserve"><value>Ámbito común comprobado (empresa, cuentas y criterio contable)</value></data>
   <data name="ImportMapping.PreviousEnd" xml:space="preserve"><value>Fecha de cierre del acumulado anterior</value></data>
   <data name="Import.ComparisonMissing" xml:space="preserve"><value>Los códigos seleccionados deben existir en ambos acumulados. Una cuenta ausente no equivale a cero.</value></data>
-  <data name="ImportMapping.ReplacementHelp" xml:space="preserve"><value>Usa esta opción solo si esta importación debe reemplazar completamente otra ya guardada. La anterior se conserva en el historial.</value></data>
+  <data name="ImportMapping.ReplacementHelp" xml:space="preserve"><value>La importación sustituida dejará de contar en el análisis actual, pero seguirá disponible en el historial.</value></data>
   <data name="ImportMapping.FreezeComparison" xml:space="preserve"><value>Conservar este archivo como acumulado anterior</value></data>
   <data name="ImportMapping.CumulativeBasis" xml:space="preserve"><value>Importe del análisis = saldo acumulado actual − saldo acumulado anterior. Las cuentas ausentes no se convierten automáticamente en cero.</value></data>
   <data name="ImportMapping.ComparisonReady" xml:space="preserve"><value>Anterior conservado: {0}, cierre {1}. Abre ahora el archivo actual.</value></data>
   <data name="ImportMapping.FiscalStart" xml:space="preserve"><value>Inicio del ejercicio común</value></data>
   <data name="ImportMapping.ComparisonTitle" xml:space="preserve"><value>Comparar dos acumulados: preparar el archivo anterior</value></data>
-  <data name="ImportMapping.ReplaceBatch" xml:space="preserve"><value>Corregir una importación anterior</value></data>
+  <data name="ImportMapping.OperationChoiceTitle" xml:space="preserve"><value>¿Qué quieres hacer con estos datos?</value></data>
+  <data name="ImportMapping.AddBatchOption" xml:space="preserve"><value>Añadir una nueva importación</value></data>
+  <data name="ImportMapping.AddBatchHelp" xml:space="preserve"><value>Incorpora registros nuevos. Si ya están importados, VALDRIO impedirá duplicarlos.</value></data>
+  <data name="ImportMapping.ReplaceBatchHelp" xml:space="preserve"><value>Corrige una importación guardada, reemplazando todo su contenido sin sumar de nuevo sus registros.</value></data>
+  <data name="ImportMapping.ReplacementLabel" xml:space="preserve"><value>Importación que se sustituirá</value></data>
+  <data name="ImportMapping.ReplaceBatch" xml:space="preserve"><value>Sustituir una importación anterior</value></data>
   <data name="ImportMapping.ComparisonEmpty" xml:space="preserve"><value>No hay acumulado anterior conservado.</value></data>
   <data name="ImportMapping.CumulativeMode" xml:space="preserve"><value>Diferencia entre dos saldos acumulados</value></data>
 <data name="ImportMapping.BatchActive" xml:space="preserve"><value>Activa</value></data>
@@ -580,6 +585,7 @@ Completa: {5}</value></data>
   <data name="Guide.Help.GroupSeparator" xml:space="preserve"><value>Separador de miles del origen. Elige Ninguno si los números no lo tienen. No es el separador de columnas del CSV.</value></data>
   <data name="Guide.Help.NegativeSyntax" xml:space="preserve"><value>Cómo se escriben los negativos en el origen: -123, (123) o 123-.</value></data>
   <data name="Guide.Help.AllowNumericAccounts" xml:space="preserve"><value>Permite códigos almacenados como números en Excel. Comprueba los ceros iniciales: Excel puede haberlos eliminado.</value></data>
+  <data name="Guide.Help.AddBatch" xml:space="preserve"><value>Añadir conserva las importaciones vigentes. Si quieres corregir registros ya guardados, elige Sustituir e indica el lote original.</value></data>
   <data name="Guide.Help.ReplaceBatch" xml:space="preserve"><value>Opcional. Reemplaza una importación identificada; conserva su historial y deja de contar sus importes. Sin marcar añade una importación.</value></data>
   <data name="Guide.Help.Replacement" xml:space="preserve"><value>Importación concreta que se sustituirá íntegramente. Revisa la selección antes de guardar.</value></data>
   <data name="Guide.Help.AmountMode" xml:space="preserve"><value>Periodo: movimientos entre las fechas. Saldo íntegro: incorpora el saldo completo al cierre. Acumulados: resta un cierre anterior preparado explícitamente.</value></data>
