@@ -2391,4 +2391,6 @@ Excluido: {7} · Directo a productos/órdenes: {8}</value></data>
   <data name="AllocationUI.RouteProposalAction" xml:space="preserve"><value>Preparar clave con estos destinos</value></data>
   <data name="AllocationUI.RouteProposalPrefix" xml:space="preserve"><value>Propuesta de prestación</value></data>
   <data name="AllocationUI.RouteProposalPrepared" xml:space="preserve"><value>Destinos copiados al borrador. Introduce pesos, revisa los destinos y guarda la clave; no se ha publicado ni aplicado ninguna asignación.</value></data>
+  <data name="Model.SelectionPendingLoad" xml:space="preserve"><value>Has seleccionado otra estructura. Pulsa «Cargar selección» para abrirla; la estructura actual sigue activa.</value></data>
+  <data name="Study.SelectionPendingLoad" xml:space="preserve"><value>Has seleccionado otro análisis. Pulsa «Abrir análisis» para cargarlo; el análisis actual sigue activo.</value></data>
 </root>
