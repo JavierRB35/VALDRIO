@@ -291,8 +291,13 @@ public sealed partial class SqliteCompanyFileService
             Revision(command.ExpectedRevision, row.Revision, command.Id);
             // Never cascade into studies, key versions or descendant model
             // versions. Their historical provenance must survive.
-            if (db.Studies.Any(s => s.SelectedModelVersionId == row.Id) ||
-                db.AllocationKeyEvents.Any(k => k.ModelVersionId == row.Id) ||
+            // Workspace creates a RunDbContext (which derives from
+            // AllocationDbContext). The base ModelDbContext intentionally does
+            // not map studies or allocation keys in its frozen v2 schema.
+            if (db is not AllocationDbContext references)
+                throw new InvalidOperationException("Deleting a draft requires an allocation-aware context.");
+            if (references.Studies.Any(s => s.SelectedModelVersionId == row.Id) ||
+                references.AllocationKeyEvents.Any(k => k.ModelVersionId == row.Id) ||
                 db.Models.Any(m => m.ParentVersionId == row.Id ||
                     m.FamilyId == row.FamilyId && m.VersionNumber > row.VersionNumber) ||
                 db.Publications.Any(p => p.ModelVersionId == row.Id) ||
