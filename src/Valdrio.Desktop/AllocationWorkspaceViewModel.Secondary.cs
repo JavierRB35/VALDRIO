@@ -278,6 +278,7 @@ public sealed partial class AllocationWorkspaceViewModel
 
     private void RebuildSecondary()
     {
+        RebuildRouteProposals();
         requiredSecondaryGroups = DetermineRequiredSecondaryGroups();
         secondaryPreview = null;
         secondaryCalculated = false;
