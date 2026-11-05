@@ -390,7 +390,45 @@
       </WrapPanel>
 
       <TextBlock Text="{Binding Details}"/>
-      <TextBlock Text="{Binding ReviewTreeLabel}" FontWeight="SemiBold"/>
+      <Border Style="{StaticResource Card}" Margin="0,8,0,12">
+       <StackPanel>
+        <TextBlock Text="{Binding ProcessMapTitle}" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,4"/>
+        <TextBlock Text="{Binding ProcessMapHelp}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+        <TextBlock Text="{Binding ProcessMapSummary}" Margin="0,0,0,8" FontWeight="SemiBold"/>
+        <WrapPanel Margin="0,0,0,8">
+         <CheckBox x:Name="MapConnectToggle" Content="{Binding ProcessMapConnectLabel}"
+                   IsEnabled="{Binding CanEditProcessMap}" Checked="MapOptionsChanged" Unchecked="MapOptionsChanged"
+                   Margin="4,4,14,4"/>
+         <ComboBox x:Name="MapLinkKindBox" Width="205" SelectedIndex="0"
+                   IsEnabled="{Binding CanEditProcessMap}" SelectionChanged="MapOptionsChanged"
+                   Margin="4,2,14,2">
+          <ComboBoxItem Content="{Binding ProcessMapSequenceLabel}" Tag="Sequence"/>
+          <ComboBoxItem Content="{Binding ProcessMapServiceLabel}" Tag="AuxiliaryService"/>
+         </ComboBox>
+         <CheckBox x:Name="MapRemoveToggle" Content="{Binding ProcessMapRemoveLabel}"
+                   IsEnabled="{Binding CanEditProcessMap}" Checked="MapOptionsChanged" Unchecked="MapOptionsChanged"
+                   Margin="4,4,14,4"/>
+         <TextBlock Text="{Binding ProcessMapZoomLabel}" Margin="6,8,4,0"/>
+         <Slider x:Name="MapZoomSlider" Width="120" Minimum="0.5" Maximum="2" Value="1"
+                 SmallChange="0.1" TickFrequency="0.25" IsSnapToTickEnabled="False"
+                 ValueChanged="MapZoomChanged" Margin="4,0,12,0"/>
+        </WrapPanel>
+        <WrapPanel Margin="0,0,0,8">
+         <Button Content="{Binding ProcessMapArrangeLabel}" IsEnabled="{Binding CanEditProcessMap}"
+                 Click="AutoArrangeProcessMap"/>
+         <Button Content="{Binding ProcessMapValidateLabel}" IsEnabled="{Binding CanEditProcessMap}"
+                 Click="ValidateProcessMap" Style="{StaticResource Button.Primary}"/>
+         <Button Content="{Binding ProcessMapExportLabel}" Click="ExportProcessMap"/>
+        </WrapPanel>
+        <TextBlock Text="{Binding ProcessMapFeedback}" TextWrapping="Wrap"
+                   Foreground="{DynamicResource Text.Secondary}" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite"/>
+        <local:ProcessRouteCanvas x:Name="ProcessMapCanvas" MinHeight="400"/>
+       </StackPanel>
+      </Border>
+      <Expander Header="{Binding ReviewTreeLabel}" Margin="0,0,0,8" IsExpanded="False">
+       <StackPanel>
+        <TextBlock Text="{Binding ProcessMapOriginalTreeHelp}" TextWrapping="Wrap" Margin="0,0,0,5"/>
+        <TextBlock Text="{Binding ReviewTreeLabel}" FontWeight="SemiBold"/>
       <TreeView x:Name="StructureReviewTree" ItemsSource="{Binding ReviewTree}" AutomationProperties.Name="{Binding ReviewTreeLabel}">
        <TreeView.Resources>
         <HierarchicalDataTemplate DataType="{x:Type local:CenterTreeRow}" ItemsSource="{Binding Children}">
@@ -407,6 +445,8 @@
         <Style TargetType="TreeViewItem"><Setter Property="IsExpanded" Value="True"/></Style>
        </TreeView.Resources>
       </TreeView>
+       </StackPanel>
+      </Expander>
       <Expander Header="{Binding TechnicalDetailsLabel}"><TextBlock Text="{Binding TechnicalDetails}"/></Expander>
       <TextBlock Text="{Binding ValidationText}" Foreground="{DynamicResource Brand.Red}" FontWeight="SemiBold" AutomationProperties.LiveSetting="Assertive"/>
 
