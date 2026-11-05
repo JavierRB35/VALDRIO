@@ -113,8 +113,14 @@
         <WrapPanel>
          <Button x:Name="NewDraftButton" Content="{Binding NewDraftLabel}" Command="{Binding NewDraftCommand}" TabIndex="33" Style="{StaticResource Button.Primary}"/>
          <Button x:Name="CloneModelButton" Content="{Binding CloneLabel}" Command="{Binding CloneCommand}" TabIndex="37"/>
+         <Button x:Name="DeleteDraftModelButton" Content="{Binding DeleteDraftModelLabel}" Command="{Binding DeleteDraftModelCommand}" TabIndex="55"
+                 Foreground="{DynamicResource Brand.Red}" ToolTip="{Binding DeleteDraftModelLabel}"/>
+         <Button x:Name="ArchiveModelButton" Content="{Binding ArchiveModelLabel}" Command="{Binding ArchiveModelCommand}" TabIndex="56"
+                 ToolTip="{Binding ArchiveModelLabel}"/>
          <Button ToolTip="{Binding RefreshHelp}" local:FieldHelp.Key="RefreshModel" x:Name="RefreshModelButton" Content="{Binding RefreshLabel}" Command="{Binding RefreshCommand}" TabIndex="39"/>
         </WrapPanel>
+        <CheckBox IsChecked="{Binding ShowArchivedModels, Mode=TwoWay}" Content="{Binding ShowArchivedModelsLabel}"
+                  Margin="0,8,0,0" AutomationProperties.Name="{Binding ShowArchivedModelsLabel}"/>
         <TextBlock Text="{Binding RefreshHelp}" Style="{StaticResource FieldHint}"/>
        </StackPanel>
       </Border>
