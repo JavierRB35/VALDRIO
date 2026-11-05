@@ -15,6 +15,8 @@ public sealed record UnitOption(DriverUnitState Value, string Label);
 public sealed record ModelOption(ModelVersionSnapshot Value, string Label);
 public sealed record RoleOption(NodeRole Value, string Label);
 public sealed record LayerOption(CostLayer Value, string Label);
+public sealed record NodeFunctionOption(NodeEconomicFunction Value, string Label);
+public sealed record NodePurposeOption(NodeTariffPurpose Value, string Label);
 public sealed record NodeOption(
     CalculationNodeDefinition Node,
     CostPoolDefinition? Pool,
@@ -24,7 +26,10 @@ public sealed record NodeOption(
     string UnitLabel,
     string LayerLabel,
     string FunctionsLabel,
-    string PoolLabel);
+    string PoolLabel)
+{
+    public string EconomicFunctionDisplay { get; init; } = "";
+}
 public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposable
 {
     private readonly CompanyFileViewModel company;
@@ -32,7 +37,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     private readonly PresentationPreferencesService preferences;
     private readonly IModelEditorDialogs dialogs;
     private readonly PresentationFormatter formatter;
-    private bool busy, dirty, pseudo, nodeFormEdited, nodeCodeManuallyEdited;
+    private bool busy, dirty, pseudo, nodeFormEdited, nodeCodeManuallyEdited, modelSelectionTouched, showArchivedModels;
     private string centerCode = "", centerName = "", description = "", nodeCode = "", functionTags = "", poolDescription = "";
     private CenterOption? master, physical;
     private UnitOption? unit, unitMaster;
@@ -73,7 +78,9 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         SaveCommand = new AsyncRelayCommand(Save, () => CanEdit && (dirty || nodeFormEdited));
         ValidateCommand = new AsyncRelayCommand(Validate, () => Ready && Current is not null && !dirty && !nodeFormEdited);
         PublishCommand = new AsyncRelayCommand(Publish, () => CanEdit && !IsPublished && !dirty && !nodeFormEdited);
-        CloneCommand = new AsyncRelayCommand(Clone, () => Ready && company.CanWrite && Current?.Status == ModelStatus.Published);
+        CloneCommand = new AsyncRelayCommand(Clone, () => Ready && company.CanWrite && Current?.Status == ModelStatus.Published && Current.IsArchived != true);
+        DeleteDraftModelCommand = new AsyncRelayCommand(DeleteCurrentDraft, () => Ready && company.CanWrite && Current?.Status == ModelStatus.Draft && !IsDirty);
+        ArchiveModelCommand = new AsyncRelayCommand(ChangeArchive, () => Ready && company.CanWrite && Current?.Status == ModelStatus.Published && !IsDirty);
         ApplyNodeCommand = new RelayCommand(ApplyNode, () => CanEdit);
         SaveNodeCommand = new AsyncRelayCommand(SaveNode, () => CanEdit && nodeFormEdited);
         RemoveNodeCommand = new RelayCommand(RemoveNode, () => CanEdit && !IsPublished && SelectedNode is not null);
@@ -111,6 +118,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string NodeEditorPublishedHelp => Text(EditingStudyNodes ? "Model.StudyNodesClosedHelp" : "Model.NodeEditorPublishedHelp");
     public string NodeEditorMissingModelHelp => Text("Model.NodeEditorMissingModelHelp");
     public string NodeClassificationHelp => Text("Model.NodeClassificationHelp");
+    public string StudyNodeCreationWarning => Text("Model.StudyNodeCreationRestriction");
     private bool Ready => !busy && company.WorkspaceIdle && company.ActiveModels is not null;
     public bool IsEditable => Current?.Status == ModelStatus.Draft || CanEditStudyNodes;
     public bool CanEdit => Ready && IsEditable && company.CanWrite;
@@ -121,8 +129,10 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string TableEditHelp => Text("Model.TableEditHelp");
     public bool CentersReadOnly => !CanEditMasters;
     public bool NodesReadOnly => !CanEdit;
+    public bool CanCreateStructuralNode => CanEdit && Current?.Status == ModelStatus.Draft;
+    public bool HasStudyNodeCreationRestriction => CanEditStudyNodes && SelectedNode is null;
     public string NewCenterFormVisibility => Master is null ? "Visible" : "Collapsed";
-    public string NewNodeFormVisibility => SelectedNode is null ? "Visible" : "Collapsed";
+    public string NewNodeFormVisibility => SelectedNode is null && Current?.Status == ModelStatus.Draft ? "Visible" : "Collapsed";
     public bool IsEditingCenter => Master is not null;
     public bool CanSelectNode => !busy;
     public ModelVersionSnapshot? Current { get; private set; }
@@ -132,6 +142,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public ObservableCollection<NodeOption> Nodes { get; } = [];
     public ObservableCollection<RoleOption> Roles { get; } = [];
     public ObservableCollection<LayerOption> Layers { get; } = [];
+    public ObservableCollection<NodeFunctionOption> EconomicFunctions { get; } = [];
+    public ObservableCollection<NodePurposeOption> TariffPurposes { get; } = [];
 
     public CenterOption? Master
     {
@@ -216,10 +228,18 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         get => choice;
         set
         {
-            SetProperty(ref choice, value);
+            if (SetProperty(ref choice, value) && !loading)
+            {
+                modelSelectionTouched = true;
+                OnPropertyChanged(nameof(HasPendingModelSelection));
+            }
             RefreshCommands();
         }
     }
+    public bool HasPendingModelSelection => modelSelectionTouched && choice is not null &&
+        choice.Value.Structure.Id != Current?.Structure.Id;
+    public string LoadSelectionHelp => HasPendingModelSelection
+        ? Text("Model.SelectionPendingLoad") : LoadLabel;
 
     public NodeOption? SelectedNode
     {
@@ -383,6 +403,49 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         }
     }
 
+    private string[] ParsedFunctionTags => functionTags.Split(',',
+        StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+    // Only free-form descriptive tags appear in the old optional text editor.
+    // Reserved classification tags are maintained by the controlled selectors.
+    public string AdditionalFunctionTags
+    {
+        get => string.Join(", ", ParsedFunctionTags.Where(t =>
+            !t.StartsWith(NodeCostClassification.FunctionPrefix, StringComparison.Ordinal) &&
+            !t.StartsWith(NodeCostClassification.PurposePrefix, StringComparison.Ordinal) &&
+                !ProcessRouteGraph.IsTag(t)));
+        set
+        {
+            if (loading || !IsEditable) return;
+            var reserved = ParsedFunctionTags.Where(t =>
+                t.StartsWith(NodeCostClassification.FunctionPrefix, StringComparison.Ordinal) ||
+                t.StartsWith(NodeCostClassification.PurposePrefix, StringComparison.Ordinal) ||
+                ProcessRouteGraph.IsTag(t));
+            var free = value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            FunctionTags = string.Join(", ", reserved.Concat(free));
+        }
+    }
+
+    public NodeEconomicFunction EconomicFunctionChoice
+    {
+        get => NodeCostClassification.Function(ParsedFunctionTags);
+        set
+        {
+            if (!loading && IsEditable && EconomicFunctionChoice != value)
+                FunctionTags = string.Join(", ", NodeCostClassification.WithFunction(ParsedFunctionTags, value));
+        }
+    }
+
+    public NodeTariffPurpose TariffPurposeChoice
+    {
+        get => NodeCostClassification.Purpose(ParsedFunctionTags);
+        set
+        {
+            if (!loading && IsEditable && TariffPurposeChoice != value)
+                FunctionTags = string.Join(", ", NodeCostClassification.WithPurpose(ParsedFunctionTags, value));
+        }
+    }
+
     public string PoolDescription
     {
         get => poolDescription;
@@ -412,6 +475,16 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public IAsyncRelayCommand ValidateCommand { get; }
     public IAsyncRelayCommand PublishCommand { get; }
     public IAsyncRelayCommand CloneCommand { get; }
+    public IAsyncRelayCommand DeleteDraftModelCommand { get; }
+    public IAsyncRelayCommand ArchiveModelCommand { get; }
+    public string DeleteDraftModelLabel => Text("Model.DeleteDraftModel");
+    public string ArchiveModelLabel => Text(Current?.IsArchived == true ? "Model.RestoreArchivedModel" : "Model.ArchiveModel");
+    public string ShowArchivedModelsLabel => Text("Model.ShowArchivedModels");
+    public bool ShowArchivedModels
+    {
+        get => showArchivedModels;
+        set { if (SetProperty(ref showArchivedModels, value)) Reformat(); }
+    }
     public IRelayCommand ApplyNodeCommand { get; }
     public IAsyncRelayCommand SaveNodeCommand { get; }
     public IRelayCommand RemoveNodeCommand { get; }
@@ -512,6 +585,9 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string PhysicalLabel => Text("Model.Physical");
     public string RoleLabel => Text("Model.Role");
     public string FunctionLabel => Text("Model.FunctionTags");
+    public string EconomicFunctionLabel => Text("Model.EconomicFunction");
+    public string TariffPurposeLabel => Text("Model.TariffPurpose");
+    public string EconomicClassificationHelp => Text("Model.EconomicClassificationHelp");
     public string UnitLabel => Text("Model.DriverUnit");
     public string LayerLabel => Text("Model.CostLayer");
     public string PoolLabel => Text("Model.NodeDescription");
@@ -538,6 +614,8 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             ValidateCommand,
             PublishCommand,
             CloneCommand,
+            DeleteDraftModelCommand,
+            ArchiveModelCommand,
             ApplyNodeCommand,
             SaveNodeCommand,
             RemoveNodeCommand,
@@ -594,8 +672,17 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             c.Code + " · " + c.Name + " · " + Text(c.IsActive ? "Model.Active" : "Model.Inactive"),
             Text(c.IsActive ? "Model.Active" : "Model.Inactive"))));
         Replace(Units, unitValues.Select(u => new UnitOption(u, ActivityUnitName(u.Definition) + " · " + Text(u.IsActive ? "Model.Active" : "Model.Inactive"))));
-        Replace(Models, modelValues.Select(m => new ModelOption(m, m.Structure.Description + " · " + Text(m.Status == ModelStatus.Draft ? "Model.Draft" : "Model.Published") + " · " + m.Structure.VersionNumber.ToString(Format))));
+        Replace(Models, modelValues
+            .Where(m => !m.IsArchived || showArchivedModels || m.Structure.Id == Current?.Structure.Id)
+            .Select(m => new ModelOption(m, m.Structure.Description + " · " +
+                Text(m.Status == ModelStatus.Draft ? "Model.Draft" : "Model.Published") +
+                " · " + Text("Model.VersionLabel") + " " + m.Structure.VersionNumber.ToString(Format) +
+                (m.IsArchived ? " · " + Text("Model.Archived") : ""))));
         Replace(Roles, Enum.GetValues<NodeRole>().Select(r => new RoleOption(r, Text(r == NodeRole.Principal ? "Model.Principal" : "Model.Auxiliary"))));
+        Replace(EconomicFunctions, Enum.GetValues<NodeEconomicFunction>().Select(value =>
+            new NodeFunctionOption(value, Text("Model.Function." + value))));
+        Replace(TariffPurposes, Enum.GetValues<NodeTariffPurpose>().Select(value =>
+            new NodePurposeOption(value, Text("Model.Purpose." + value))));
         Replace(Layers, Enum.GetValues<CostLayer>().Select(l => new LayerOption(l, Text(l switch
         {
             CostLayer.Fixed => "Model.LayerFixed",
@@ -620,7 +707,13 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
                 CostLayer.Mixed => "Model.LayerMixed",
                 _ => "Model.LayerUnclassified"
             });
-            var functions = string.Join(", ", n.FunctionTags);
+            var freeFunctions = string.Join(", ", n.FunctionTags.Where(t =>
+                !t.StartsWith(NodeCostClassification.FunctionPrefix, StringComparison.Ordinal) &&
+                !t.StartsWith(NodeCostClassification.PurposePrefix, StringComparison.Ordinal) &&
+                !ProcessRouteGraph.IsTag(t)));
+            var economicFunction = Text("Model.Function." + NodeCostClassification.Function(n));
+            var functions = Text("Model.Purpose." + NodeCostClassification.Purpose(n)) +
+                (string.IsNullOrWhiteSpace(freeFunctions) ? "" : " · " + freeFunctions);
             return new NodeOption(
                 n,
                 p,
@@ -630,7 +723,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
                 unitName,
                 layerName,
                 functions,
-                p?.Description ?? "");
+                p?.Description ?? "") { EconomicFunctionDisplay = economicFunction };
         }));
         master = Centers.SingleOrDefault(c => c.Value.Id == masterId);
         physical = Centers.SingleOrDefault(c => c.Value.Id == physicalId);
@@ -808,6 +901,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     {
         loading = true;
         Current = current;
+        modelSelectionTouched = false;
         description = current.Structure.Description;
         dirty = false;
         validation = [];
@@ -1002,6 +1096,12 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         {
             if (string.IsNullOrWhiteSpace(Description))
             { diagnostic = new("MODEL_STRUCTURE_INVALID", "Model.StructureInvalid", []); return; }
+            if (modelValues.Any(m => string.Equals(m.Structure.Description.Trim(),
+                    Description.Trim(), StringComparison.OrdinalIgnoreCase)))
+            {
+                diagnostic = new("MODEL_DESCRIPTION_DUPLICATE", "Model.DescriptionDuplicate", []);
+                return;
+            }
             var value = await Task.Run(() => company.ActiveModels!.CreateDraft(new(company.Snapshot!.Id, Description, "local-user"), t));
             await ApplyConfirmedThenReload(value, ApplyConfirmedModel);
             if (!committedRefreshPending) statusKey = "Model.StructureCreated";
@@ -1053,19 +1153,104 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         await ApplyConfirmedThenReload(result, ApplyConfirmedModel);
         if (!committedRefreshPending) statusKey = "Model.StructurePublished";
     });
-    private async Task Clone() => await Run(async t =>
+    private async Task Clone()
     {
-        var current = Current!;
-        var result = await Task.Run(() => company.ActiveModels!.Clone(new(company.Snapshot!.Id, current.Structure.Id, current.Revision, new(Guid.NewGuid()), current.Structure.Description, "local-user"), t));
-        await ApplyConfirmedThenReload(result, ApplyConfirmedModel);
-    });
+        // Reuse the draft already derived from this published version. Repeated
+        // clicks or returning from an analysis must not create another clone.
+        var parent = Current;
+        if (parent is null || parent.Status != ModelStatus.Published) return;
+        var existing = modelValues.Where(m => m.Status == ModelStatus.Draft &&
+            m.Structure.ParentVersionId == parent.Structure.Id)
+            .OrderByDescending(m => m.Structure.VersionNumber).FirstOrDefault();
+        if (existing is not null)
+        {
+            if (!await CanLeaveAsync()) return;
+            SetCurrent(existing);
+            statusKey = "Model.ExistingDraftOpened";
+            Refresh();
+            return;
+        }
+        await Run(async t =>
+        {
+            var result = await Task.Run(() => company.ActiveModels!.Clone(
+                new(company.Snapshot!.Id, parent.Structure.Id, parent.Revision,
+                    new(Guid.NewGuid()), parent.Structure.Description, "local-user"), t));
+            await ApplyConfirmedThenReload(result, ApplyConfirmedModel);
+        });
+    }
+    private async Task DeleteCurrentDraft()
+    {
+        var current = Current;
+        if (current is not { Status: ModelStatus.Draft } || IsDirty) return;
+        if (!dialogs.ConfirmEconomicChange(Text("Model.DeleteDraftTitle"),
+                string.Format(Format, Text("Model.DeleteDraftConfirmation"), current.Structure.Description),
+                Text("Model.DeleteDraftModel"), Text("CompanyCancel")))
+            return;
+
+        await Run(async token =>
+        {
+            await Task.Run(() => company.ActiveModels!.DeleteDraft(
+                new(company.Snapshot!.Id, current.Structure.Id, current.Revision, "local-user"), token), token);
+            Current = null;
+            choice = null;
+            dirty = false;
+            description = "";
+            draftNodes.Clear();
+            draftPools.Clear();
+            ResetNode();
+            await Reload(token);
+            statusKey = "Model.DraftDeleted";
+        });
+    }
+
+    private async Task ChangeArchive()
+    {
+        var current = Current;
+        if (current is not { Status: ModelStatus.Published } || IsDirty) return;
+        var archived = !current.IsArchived;
+        if (!dialogs.ConfirmEconomicChange(Text(archived ? "Model.ArchiveTitle" : "Model.RestoreTitle"),
+                string.Format(Format, Text(archived ? "Model.ArchiveConfirmation" : "Model.RestoreConfirmation"),
+                    current.Structure.Description),
+                Text(archived ? "Model.ArchiveModel" : "Model.RestoreArchivedModel"), Text("CompanyCancel")))
+            return;
+        await Run(async token =>
+        {
+            var changed = await Task.Run(() => company.ActiveModels!.ChangeArchive(
+                new(company.Snapshot!.Id, current.Structure.Id, current.Revision, archived, "local-user"), token), token);
+            await ApplyConfirmedThenReload(changed, ApplyConfirmedModel);
+            if (!committedRefreshPending)
+                statusKey = archived ? "Model.ArchivedSuccessfully" : "Model.RestoredSuccessfully";
+        });
+    }
+
     private void ApplyNode()
     {
         try
         {
+            if (EditingStudyNodes && SelectedNode is null)
+            {
+                diagnostic = new("MODEL_STUDY_NODE_IDENTITY", "Model.StudyNodeCreationRestriction", []);
+                Refresh();
+                return;
+            }
             if (Physical is null || DriverUnit is null || Role is null)
             { diagnostic = new("MODEL_INPUT_INVALID", "Model.InputInvalid", []); Refresh(); return; }
-            var tags = FunctionTags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var tags = ParsedFunctionTags;
+            // Legacy published models may have only free-form functions. Do not
+            // force an economic reclassification when editing an unrelated field.
+            // New nodes and newly assigned purposes require an explicit function.
+            var legacyUnclassified = SelectedNode?.Node is { } existing &&
+                NodeCostClassification.Function(existing) == NodeEconomicFunction.Unspecified &&
+                EconomicFunctionChoice == NodeEconomicFunction.Unspecified &&
+                TariffPurposeChoice == NodeTariffPurpose.General;
+            if (!NodeCostClassification.HasValidTags(tags) ||
+                EconomicFunctionChoice == NodeEconomicFunction.Unspecified && !legacyUnclassified)
+            { diagnostic = new("MODEL_FUNCTION_REQUIRED", "Model.NodeFunctionRequired", []); Refresh(); return; }
+            if (TariffPurposeChoice != NodeTariffPurpose.General && Role.Value != NodeRole.Principal)
+            { diagnostic = new("MODEL_PURPOSE_ROLE", "Model.NodePurposeRequiresPrincipal", []); Refresh(); return; }
+            if (TariffPurposeChoice == NodeTariffPurpose.DirectLabor &&
+                EconomicFunctionChoice != NodeEconomicFunction.Production)
+            { diagnostic = new("MODEL_PURPOSE_FUNCTION", "Model.NodePurposeRequiresProduction", []); Refresh(); return; }
             if (string.IsNullOrWhiteSpace(NodeCode) || tags.Distinct(StringComparer.Ordinal).Count() != tags.Length)
             { diagnostic = new("MODEL_NODE_INVALID", "Model.NodeInvalid", []); Refresh(); return; }
             if (string.IsNullOrWhiteSpace(Description))
@@ -1074,7 +1259,10 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             { diagnostic = new("MODEL_DUPLICATE", "Model.Duplicate", []); Refresh(); return; }
             var id = SelectedNode?.Node.Id ?? new(Guid.NewGuid());
             var modelId = Current!.Structure.Id;
-            var n = new CalculationNodeDefinition(id, modelId, Physical.Value.Id, NodeCode, Role.Value, FunctionTags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), true);
+            var classifiedTags = legacyUnclassified
+                ? tags
+                : NodeCostClassification.WithClassification(tags, EconomicFunctionChoice, TariffPurposeChoice);
+            var n = new CalculationNodeDefinition(id, modelId, Physical.Value.Id, NodeCode, Role.Value, classifiedTags, true);
             var p = new CostPoolDefinition(SelectedNode?.Pool?.Id ?? new(Guid.NewGuid()), modelId, n.Id, DriverUnit.Value.Definition.Id, PoolDescription, SelectedNode?.Pool?.CostLayer ?? CostLayer.Unclassified, SelectedNode?.Pool?.CapacityPolicy ?? ModelPolicyReference.PendingCapacity);
             var ns = draftNodes.Where(x => x.Id != id).Append(n).ToArray();
             var ps = draftPools.Where(x => x.NodeId != id).Append(p).ToArray();
@@ -1104,6 +1292,12 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     private async Task SaveNode()
     {
         if (!nodeFormEdited) return;
+        if (EditingStudyNodes && SelectedNode is null)
+        {
+            diagnostic = new("MODEL_STUDY_NODE_IDENTITY", "Model.StudyNodeCreationRestriction", []);
+            Refresh();
+            return;
+        }
 
         var selectedId = SelectedNode?.Node.Id;
         var code = NodeCode;

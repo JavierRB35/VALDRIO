@@ -64,6 +64,20 @@
    </DataGrid>
    <TextBlock Text="{Binding [BalanceEmpty]}" Margin="0,8"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding CenterBalances.Count}" Value="0"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
    <TextBlock Text="{Binding [BalancePrecision]}" Margin="0,8" />
+   <Expander Header="{Binding [FunctionalCosts]}" IsExpanded="True" Margin="0,8,0,12">
+    <StackPanel>
+     <TextBlock Text="{Binding [FunctionalCostsHelp]}" TextWrapping="Wrap" Margin="0,0,0,8" />
+     <DataGrid x:Name="FunctionBalanceGrid" ItemsSource="{Binding FunctionBalances}"
+               ScrollViewer.VerticalScrollBarVisibility="Disabled" IsReadOnly="True"
+               AutoGenerateColumns="False" CanUserAddRows="False" MinHeight="90">
+      <DataGrid.Columns>
+       <DataGridTextColumn Binding="{Binding Function}" Width="2*" MinWidth="200" ElementStyle="{StaticResource Text.TableText}" />
+       <DataGridTextColumn Binding="{Binding Cost}" SortMemberPath="NumericAmount" Width="*" MinWidth="150" ElementStyle="{StaticResource Text.TableNumber}" />
+       <DataGridTextColumn Binding="{Binding NodeCount}" Width="*" MinWidth="80" ElementStyle="{StaticResource Text.TableNumber}" />
+      </DataGrid.Columns>
+     </DataGrid>
+    </StackPanel>
+   </Expander>
    <Expander Header="{Binding [NodeBalances]}" IsExpanded="False" Margin="0,8,0,0"><StackPanel>
     <TextBlock Text="{Binding [BalanceTraceHelp]}" Margin="0,8" />
     <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="NodeBalanceGrid" ItemsSource="{Binding NodeBalances}" SelectedItem="{Binding SelectedBalance}" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" MinHeight="90" AutomationProperties.Name="{Binding [NodeBalances]}">

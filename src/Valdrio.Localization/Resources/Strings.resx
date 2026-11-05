@@ -1794,8 +1794,8 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Activity.Stoppages.TotalPeriod" xml:space="preserve"><value>Period total, all resources</value></data>
   <data name="Activity.Stoppages.Exceeds" xml:space="preserve"><value>Calculated downtime ({0} h) exceeds scheduled hours ({1} h). Check the hours and whether they are per shift, day or total.</value></data>
   <data name="Activity.Stoppages.Calculation" xml:space="preserve"><value>Downtime: {0} h ({1}) × {2} = {3} h total</value></data>
-  <data name="Rates.Title" xml:space="preserve"><value>Principal centre rates</value></data>
-  <data name="Rates.Centers" xml:space="preserve"><value>Principal centres</value></data>
+  <data name="Rates.Title" xml:space="preserve"><value>Rates and unit costs</value></data>
+  <data name="Rates.Centers" xml:space="preserve"><value>Centres in the selected category</value></data>
   <data name="Rates.Center" xml:space="preserve"><value>Centre</value></data>
   <data name="Rates.Unit" xml:space="preserve"><value>Unit</value></data>
   <data name="Rates.Cost" xml:space="preserve"><value>Period cost</value></data>
@@ -1860,8 +1860,8 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Rates.Behavior.Fixed" xml:space="preserve"><value>Fixed</value></data>
   <data name="Rates.Behavior.AssumedFixed" xml:space="preserve"><value>Assumed fixed</value></data>
   <data name="Rates.Behavior.Variable" xml:space="preserve"><value>Variable</value></data>
-  <data name="Guide.Rates" xml:space="preserve"><value>Centre rates</value></data>
-  <data name="Guide.RatesHelp" xml:space="preserve"><value>View rates and answers for the selected centre. Costs and hours come from the saved analysis.</value></data>
+  <data name="Guide.Rates" xml:space="preserve"><value>Rates and unit costs</value></data>
+  <data name="Guide.RatesHelp" xml:space="preserve"><value>Review centre and direct-factor rates, their sources, capacity and reconciliation for the selected analysis.</value></data>
 <data name="Rates.Source" xml:space="preserve"><value>Source account</value></data>
 <data name="Rates.UndefinedRate" xml:space="preserve"><value>No unit rate is defined for this base. Review components and activity.</value></data>
 <data name="Rates.ZeroNormal" xml:space="preserve"><value>Normal activity is zero and own fixed costs exist. Review the capacity reference in Activity and capacities.</value></data>
@@ -2117,8 +2117,8 @@ The selected destination will be written. Review both files before continuing. C
   <data name="Guide.ResumeChooseAnalysis" xml:space="preserve"><value>Choose or create period</value></data>
   <data name="AllocationUI.ParetoPrimaryTitle" xml:space="preserve"><value>Pareto · primary allocation</value></data>
   <data name="AllocationUI.ParetoSecondaryTitle" xml:space="preserve"><value>Pareto · secondary allocation</value></data>
-  <data name="AllocationUI.ParetoPrimaryHelp" xml:space="preserve"><value>Cost assigned to each node, highest first. Preview of current data; check the allocation status above.</value></data>
-  <data name="AllocationUI.ParetoSecondaryHelp" xml:space="preserve"><value>Final cost per principal node: primary cost plus auxiliary contributions. Internal transfers are not counted again.</value></data>
+  <data name="AllocationUI.ParetoPrimaryHelp" xml:space="preserve"><value>Cost assigned to each node in the selected category, highest first. Preview of current data; check the allocation status above.</value></data>
+  <data name="AllocationUI.ParetoSecondaryHelp" xml:space="preserve"><value>Final cost per principal node in the selected category: primary cost plus auxiliary contributions. Internal transfers are not counted again.</value></data>
   <data name="AllocationUI.ParetoLegend" xml:space="preserve"><value>Green bars: cost per node (left axis). Yellow line: cumulative percentage of the total (right axis).</value></data>
   <data name="AllocationUI.ParetoEmpty" xml:space="preserve"><value>No results available. Complete or calculate this allocation to view the chart.</value></data>
   <data name="AllocationUI.ParetoCumulative" xml:space="preserve"><value>Cumulative</value></data>
@@ -2318,4 +2318,104 @@ Excluded: {7} · Direct to products/orders: {8}</value></data>
 <data name="Aux.ClassificationSourceRequired" xml:space="preserve"><value>Account {0}, auxiliary {1}, key {2}: define the fixed/variable classification or the mixed proportion before assessing capacity.</value></data>
 <data name="Study.SaveBeforeContinuing" xml:space="preserve"><value>Save or discard the pending analysis changes before continuing.</value></data>
   <data name="Composition.InvalidCell" xml:space="preserve"><value>Check the marked cell: enter a valid number using the selected regional format before continuing.</value></data>
+  <data name="Model.EconomicFunction" xml:space="preserve"><value>Economic function</value></data>
+  <data name="Model.TariffPurpose" xml:space="preserve"><value>Tariff purpose</value></data>
+  <data name="Model.EconomicClassificationHelp" xml:space="preserve"><value>Select the node's economic function and whether it accumulates indirect costs or a direct factor. These classifications do not restrict allocations between functions.</value></data>
+  <data name="Model.Function.Unspecified" xml:space="preserve"><value>Not yet classified (legacy only)</value></data>
+  <data name="Model.Function.Production" xml:space="preserve"><value>Production / core activity</value></data>
+  <data name="Model.Function.Commercial" xml:space="preserve"><value>Commercial</value></data>
+  <data name="Model.Function.Structure" xml:space="preserve"><value>Structure / administration</value></data>
+  <data name="Model.Purpose.General" xml:space="preserve"><value>General centre / indirect costs</value></data>
+  <data name="Model.Purpose.DirectLabor" xml:space="preserve"><value>Direct labour group</value></data>
+  <data name="Model.Purpose.Procurement" xml:space="preserve"><value>Procurement factor group</value></data>
+  <data name="Model.NodeFunctionRequired" xml:space="preserve"><value>Choose a valid economic function before saving the node.</value></data>
+  <data name="Model.NodePurposeRequiresPrincipal" xml:space="preserve"><value>Direct-factor tariff nodes must be principal nodes receiving secondary allocations.</value></data>
+  <data name="Model.NodePurposeRequiresProduction" xml:space="preserve"><value>A direct labour group must belong to Production / core activity.</value></data>
+  <data name="Rates.TabCenters" xml:space="preserve"><value>Centre rates</value></data>
+  <data name="Rates.TabFactors" xml:space="preserve"><value>Direct factors</value></data>
+  <data name="Rates.NoDirectFactors" xml:space="preserve"><value>No direct labour or procurement nodes are configured in this model.</value></data>
+  <data name="Rates.NoGeneralCenters" xml:space="preserve"><value>No general cost-centre nodes are configured in this model.</value></data>
+  <data name="AllocationUI.ResultsGeneral" xml:space="preserve"><value>General / indirect cost centres</value></data>
+  <data name="AllocationUI.ResultsDirect" xml:space="preserve"><value>Direct factors (labour and procurement)</value></data>
+  <data name="AllocationUI.ResultsConsolidatedTotal" xml:space="preserve"><value>Consolidated total · both categories</value></data>
+  <data name="Run.FunctionalCosts" xml:space="preserve"><value>Terminal costs by economic function</value></data>
+  <data name="Run.FunctionalCostsHelp" xml:space="preserve"><value>Read-only grouping of final principal-node costs by destination. This is not cost of goods sold, sales margin or inventory valuation; unclassified nodes remain visible.</value></data>
+  <data name="Run.Function.Unspecified" xml:space="preserve"><value>Unclassified (historical nodes)</value></data>
+  <data name="Run.Function.Production" xml:space="preserve"><value>Production / core activity</value></data>
+  <data name="Run.Function.Commercial" xml:space="preserve"><value>Commercial</value></data>
+  <data name="Run.Function.Structure" xml:space="preserve"><value>Structure / administration</value></data>
+  <data name="Model.StudyNodeCreationRestriction" xml:space="preserve"><value>This study only allows editing existing nodes. To add or remove nodes, create a new editable version of the cost structure.</value></data>
+  <data name="Model.DescriptionDuplicate" xml:space="preserve"><value>A structure with that name already exists. Load the saved structure or choose a different name.</value></data>
+  <data name="Model.ExistingDraftOpened" xml:space="preserve"><value>The existing editable version was reopened; no extra copy was created.</value></data>
+  <data name="Model.VersionLabel" xml:space="preserve"><value>Version</value></data>
+  <data name="Model.Archived" xml:space="preserve"><value>Archived</value></data>
+  <data name="Model.DeleteDraftModel" xml:space="preserve"><value>Delete draft</value></data>
+  <data name="Model.ArchiveModel" xml:space="preserve"><value>Archive structure</value></data>
+  <data name="Model.RestoreArchivedModel" xml:space="preserve"><value>Restore archived structure</value></data>
+  <data name="Model.ShowArchivedModels" xml:space="preserve"><value>Show archived structures</value></data>
+  <data name="Model.DeleteDraftTitle" xml:space="preserve"><value>Delete cost-structure draft</value></data>
+  <data name="Model.DeleteDraftConfirmation" xml:space="preserve"><value>The draft “{0}” will be deleted if no studies, keys or model versions depend on it. This cannot be undone. Continue?</value></data>
+  <data name="Model.ArchiveTitle" xml:space="preserve"><value>Archive published version</value></data>
+  <data name="Model.ArchiveConfirmation" xml:space="preserve"><value>“{0}” will be hidden from structures offered for new studies. Existing studies keep their historical link. Archive?</value></data>
+  <data name="Model.RestoreTitle" xml:space="preserve"><value>Restore archived version</value></data>
+  <data name="Model.RestoreConfirmation" xml:space="preserve"><value>“{0}” will be available for new studies again. Restore?</value></data>
+  <data name="Model.ArchivedSuccessfully" xml:space="preserve"><value>Structure archived. Existing studies retain their data.</value></data>
+  <data name="Model.RestoredSuccessfully" xml:space="preserve"><value>Structure restored successfully.</value></data>
+  <data name="Model.DraftDeleted" xml:space="preserve"><value>Draft successfully deleted.</value></data>
+  <data name="Model.Referenced" xml:space="preserve"><value>Cannot delete: studies, keys or other versions depend on this structure.</value></data>
+  <data name="Model.MapTitle" xml:space="preserve"><value>Process map and auxiliary services</value></data>
+  <data name="Model.MapHelp" xml:space="preserve"><value>Select a card or choose a node on the left, then tick its destinations. Arrows update immediately. Operational sequences connect principal nodes; auxiliary services may include self service. Validating does not create allocation keys or weights.</value></data>
+  <data name="Model.MapConnect" xml:space="preserve"><value>Connect nodes</value></data>
+  <data name="Model.MapSequence" xml:space="preserve"><value>Production sequence</value></data>
+  <data name="Model.MapService" xml:space="preserve"><value>Auxiliary service</value></data>
+  <data name="Model.MapRemove" xml:space="preserve"><value>Remove relation</value></data>
+  <data name="Model.MapZoom" xml:space="preserve"><value>Zoom</value></data>
+  <data name="Model.MapArrange" xml:space="preserve"><value>Auto-arrange</value></data>
+  <data name="Model.MapValidate" xml:space="preserve"><value>Validate and save map</value></data>
+  <data name="Model.MapExport" xml:space="preserve"><value>Export image</value></data>
+  <data name="Model.MapOriginalTreeHelp" xml:space="preserve"><value>The original centre/node list remains available as an accessible alternative to the diagram.</value></data>
+  <data name="Model.MapEmpty" xml:space="preserve"><value>Add nodes in the previous tab to design the map.</value></data>
+  <data name="Model.MapSummary" xml:space="preserve"><value>{0} nodes · {1} links · {2} issues · {3} warnings</value></data>
+  <data name="Model.MapValidated" xml:space="preserve"><value>Map validated</value></data>
+  <data name="Model.MapInvalidDestination" xml:space="preserve"><value>The chosen node does not exist or is inactive.</value></data>
+  <data name="Model.MapInvalidConnection" xml:space="preserve"><value>Sequences link principal nodes; services must originate in an auxiliary node.</value></data>
+  <data name="Model.MapConnectionAdded" xml:space="preserve"><value>Link added. Save and validate the map before using its proposals.</value></data>
+  <data name="Model.MapConnectionRemoved" xml:space="preserve"><value>Link removed. Recheck the map validation.</value></data>
+  <data name="Model.MapArranged" xml:space="preserve"><value>Positions auto-arranged.</value></data>
+  <data name="Model.MapValidatedAndSaved" xml:space="preserve"><value>Map validated and saved in the editable version. Sequences do not create allocations.</value></data>
+  <data name="Model.MapSaveFailed" xml:space="preserve"><value>The map validation could not be saved. Keep your changes and review the structure status.</value></data>
+  <data name="AllocationUI.RouteProposalTitle" xml:space="preserve"><value>Allocation proposals from the process map</value></data>
+  <data name="AllocationUI.RouteProposalHelp" xml:space="preserve"><value>Auxiliary-service links and destinations saved in the cost structure can prepare a secondary allocation key. Review the proposal and enter percentages before saving. Production sequences do not imply a cost allocation.</value></data>
+  <data name="AllocationUI.RouteProposalNoLinks" xml:space="preserve"><value>This version of the cost structure contains no saved relationships. Check the structure version selected for this analysis and save/publish any structural changes.</value></data>
+  <data name="AllocationUI.RouteProposalInvalidLinks" xml:space="preserve"><value>The saved relationships contain structural problems. Review them in Cost structure before using them as proposals.</value></data>
+  <data name="AllocationUI.RouteProposalNoServices" xml:space="preserve"><value>The structure contains relationships, but none originate as a service from an auxiliary node. Production sequences do not create secondary allocation keys.</value></data>
+  <data name="AllocationUI.RouteProposalReviewMap" xml:space="preserve"><value>The process map has not been marked as validated: review its relationships and destinations before publishing the key.</value></data>
+  <data name="AllocationUI.RouteProposalUnavailable" xml:space="preserve"><value>No proposals available: validate the optional model map, or configure allocation keys manually.</value></data>
+  <data name="AllocationUI.RouteProposalCount" xml:space="preserve"><value>{0} auxiliary groups with suggested destinations.</value></data>
+  <data name="AllocationUI.RouteProposalAction" xml:space="preserve"><value>Prepare key with these destinations</value></data>
+  <data name="AllocationUI.RouteProposalPrefix" xml:space="preserve"><value>Service proposal</value></data>
+  <data name="AllocationUI.RouteProposalPrepared" xml:space="preserve"><value>Destinations copied to the draft. Enter weights, review destinations and save the key; no allocation has been published or applied.</value></data>
+  <data name="Model.SelectionPendingLoad" xml:space="preserve"><value>Another structure is selected. Choose Load selection to open it; the current structure remains active.</value></data>
+  <data name="Study.SelectionPendingLoad" xml:space="preserve"><value>Another study is selected. Choose Open study to load it; the current study remains active.</value></data>
+  <data name="Model.MapKeyboardHelp" xml:space="preserve"><value>Press Enter or Space on a node to choose it as the source/target in Connect mode. Outside that mode, use arrow keys to move the node.</value></data>
+  <data name="Model.MapSelectHelp" xml:space="preserve"><value>Select a node in the diagram or left list, then tick the following or serviced nodes. No Connect mode is required.</value></data>
+  <data name="Model.MapAdvancedLabel" xml:space="preserve"><value>Connect by clicking cards (optional)</value></data>
+  <data name="Model.MapChooseOrigin" xml:space="preserve"><value>Source node</value></data>
+  <data name="Model.MapSelectOriginHelp" xml:space="preserve"><value>Select a node to view and edit its destinations. Existing links are already checked.</value></data>
+  <data name="Model.MapNextNodes" xml:space="preserve"><value>Following nodes</value></data>
+  <data name="Model.MapServiceDestinations" xml:space="preserve"><value>Nodes served</value></data>
+  <data name="Model.MapSequenceCheckHelp" xml:space="preserve"><value>Tick the principal nodes following this operation. Self links and production cycles are not permitted.</value></data>
+  <data name="Model.MapServiceCheckHelp" xml:space="preserve"><value>Tick the nodes served by this auxiliary, including nodes in other economic functions.</value></data>
+  <data name="Model.MapReadOnly" xml:space="preserve"><value>This structure is finalized: you can view links but must create or open an editable version to change them.</value></data>
+  <data name="Model.MapSelfService" xml:space="preserve"><value>Self service</value></data>
+  <data name="Model.MapSelfServiceHelp" xml:space="preserve"><value>Auxiliary self service is permitted. When applying it to secondary allocations, provide weights and verify there is a viable economic outlet; 100% self allocation may make the calculation impossible.</value></data>
+  <data name="Model.MapCheckDestinationHelp" xml:space="preserve"><value>Tick to add this link or untick to remove it. Allocation weights are configured later.</value></data>
+  <data name="Model.MapChangesRequireValidation" xml:space="preserve"><value>Link changes affect the draft map. Validate and save the map before using its links as allocation proposals.</value></data>
+  <data name="Model.MapEmptyWarning" xml:space="preserve"><value>The map has no links yet. Select a node and tick its destinations.</value></data>
+  <data name="Model.MapRestriction.None" xml:space="preserve"><value>Eligible destination</value></data>
+  <data name="Model.MapRestriction.MissingNode" xml:space="preserve"><value>Node is missing or inactive.</value></data>
+  <data name="Model.MapRestriction.SequenceNeedsPrincipals" xml:space="preserve"><value>Operational sequences can only connect principal nodes.</value></data>
+  <data name="Model.MapRestriction.ServiceNeedsAuxiliary" xml:space="preserve"><value>Service relationships must originate in an auxiliary node.</value></data>
+  <data name="Model.MapRestriction.PrincipalSelfLoop" xml:space="preserve"><value>A principal node cannot be its own next step.</value></data>
+  <data name="Model.MapRestriction.SequenceCycle" xml:space="preserve"><value>This connection would create a production-route cycle.</value></data>
 </root>

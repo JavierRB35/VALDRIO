@@ -55,7 +55,17 @@ public partial class StudyWorkspacePanel
         // Restore through the production UI to an isolated study file. The model
         // stage's artifact and manifest must remain valid after all later smokes.
         files.Paths.Enqueue(modelSource); files.Paths.Enqueue(path); await Click(companyPanel.RestoreButton);
+        // Reload is explicit: refreshing in DropDownOpened used to disable the
+        // ComboBox and replace its items while the user was selecting a study.
+        Check(StudyBox.IsEnabled, "saved-study selector is enabled");
         await Click(RefreshStudyButton);
+        var completedRefresh = vm.RefreshCommand.ExecutionTask;
+        StudyBox.SetCurrentValue(ComboBox.IsDropDownOpenProperty, true);
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+        Check(ReferenceEquals(completedRefresh, vm.RefreshCommand.ExecutionTask),
+            "opening the study selector does not start an overlapping reload");
+        StudyBox.SetCurrentValue(ComboBox.IsDropDownOpenProperty, false);
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         Check(vm.PublishedModels.Count == 1 && vm.Studies.Count == 0, "only published models offered");
         Check(company.Snapshot?.DefaultCurrency.ToString() == "USD", "company USD preserved");
         main.ApplyPresentationPreset("en", "es-ES", "Europe/Madrid", false, false);
@@ -71,6 +81,9 @@ public partial class StudyWorkspacePanel
         Check(!vm.IsDirty && !SaveStudyButton.IsEnabled && CaptureStudyButton.IsEnabled, "saved study ready for context capture");
         Check(Descendants<DatePickerTextBox>(StartPicker).Single().IsReadOnly && Descendants<DatePickerTextBox>(EndPicker).Single().IsReadOnly, "calendar-only dates prevent ambiguous pending text");
         var studyId = vm.Current!.Id; var companyId = vm.Current.CompanyId;
+        await Click(RefreshStudyButton);
+        Check(vm.Current?.Id == studyId && vm.StudyChoice?.Value.Id == studyId,
+            "explicit study refresh keeps the active analysis selected");
         await Click(CaptureStudyButton); var first = vm.SnapshotChoice!.Value;
         Check(vm.Snapshots.Count == 1 && vm.Current.Revision == 0 && vm.Current.CurrentRunId is null, "capture is a photo, not a revision or execution");
         Check(!StudyPreparationService.Evaluate(first.Input).ReadyForCalculation && StudyPreparationService.Evaluate(first.Input).Diagnostics.Count == 4, "pending policies and missing inputs explained");

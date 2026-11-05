@@ -29,6 +29,10 @@ public sealed record ModelVersionSnapshot(ModelStructure Structure, ModelStatus 
 {
     [System.Text.Json.Serialization.JsonIgnore]
     public PublishedModelStructure? Publication => PublishedCanonicalJson is null ? null : CanonicalSnapshotJson.Deserialize<PublishedModelStructure>(PublishedCanonicalJson);
+    // UI/archive metadata only. Published snapshots and economic histories
+    // retain their immutable payload even after a version is hidden.
+    [System.Text.Json.Serialization.JsonIgnore]
+    public bool IsArchived { get; init; }
 }
 
 public sealed record CreatePhysicalCenter(EntityId CompanyId, string Code, string Name, string Actor);
@@ -39,6 +43,8 @@ public sealed record CreateModelDraft(EntityId CompanyId, string Description, st
 public sealed record SaveModelDraft(ModelStructure Structure, long ExpectedRevision, string Actor);
 public sealed record PublishModel(EntityId CompanyId, EntityId Id, long ExpectedRevision, string Actor);
 public sealed record CloneModel(EntityId CompanyId, EntityId Id, long ExpectedRevision, EntityId RequestId, string Description, string Actor);
+public sealed record DeleteModelDraft(EntityId CompanyId, EntityId Id, long ExpectedRevision, string Actor);
+public sealed record ChangeModelArchive(EntityId CompanyId, EntityId Id, long ExpectedRevision, bool Archived, string Actor);
 // The workspace shares the lifetime and serialization gate of its company file session.
 public sealed record ModelWorkspaceData(
     IReadOnlyList<PhysicalCenter> Centers,
@@ -61,4 +67,6 @@ public interface IModelWorkspace
     IReadOnlyList<DomainDiagnostic> ValidateModel(EntityId companyId, EntityId modelId, CancellationToken token = default);
     ModelVersionSnapshot Publish(PublishModel command, CancellationToken token = default);
     ModelVersionSnapshot Clone(CloneModel command, CancellationToken token = default);
+    void DeleteDraft(DeleteModelDraft command, CancellationToken token = default) => throw new NotSupportedException();
+    ModelVersionSnapshot ChangeArchive(ChangeModelArchive command, CancellationToken token = default) => throw new NotSupportedException();
 }

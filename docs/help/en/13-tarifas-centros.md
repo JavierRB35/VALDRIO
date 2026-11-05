@@ -41,3 +41,11 @@ Example: own fixed cost 1,000, normal capacity 100 h and actual activity 80 h gi
 3. Review the rate, capacity variance, unit and provenance; make corrections in source screens, not this analysis table.
 
 Rates load automatically from the current closed costs and confirmed physical data. Updating activity does not reopen allocations; frozen auxiliary assessments remain traceable.
+
+## Extension: rates and unit costs (candidate 2026-11-04)
+
+The screen is now called **Rates and unit costs**. The **Centre rates** tab presents general centres; **Direct factors** lists explicitly configured homogeneous direct-labour groups and procurement groups. Both use the **same economic run**, frozen sources and calculation; changing tabs never posts costs.
+
+Each node's purpose is selected when editing the cost model. Historic nodes without an explicit purpose remain under general centres until the model is explicitly adapted. Own fixed, variable and previously assessed auxiliary service components continue to follow CM08/CM09. A direct-labour tariff does not prove that hours have been consumed by orders; actual order consumption belongs to T19. Estimates do not substitute real hours.
+
+**Status:** candidate feature branch, not yet validated or accepted on Windows.

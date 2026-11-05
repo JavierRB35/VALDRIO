@@ -43,3 +43,16 @@ Deletion requires confirmation and is allowed only without nodes or historical r
 1. Create the required centres and nodes, assigning compatible pools and physical units.
 2. Check codes, descriptions and relationships in the draft structure before publication.
 3. Publish the consistent structure version and select it for the analysis so allocation destinations are valid.
+
+## Optional process map (COR-05)
+
+Under **4. Review and finalize**, the map groups nodes by economic function and role. Open an **editable version** to change it; finalized versions are read-only.
+
+1. Click a node card in the diagram **or choose its code in the left-hand source selector**.
+2. Under **Following nodes** (principal) or **Nodes served** (auxiliary), tick the destinations. Existing links are already checked. Ticking or unticking creates or removes the arrows **immediately** in the draft map.
+3. A **principal** may link to **other principals** through operational sequences, but not to itself or through a production route cycle. An **auxiliary** may provide services to principals, other auxiliaries, or **itself**, regardless of economic function. Incompatible targets are disabled with a reason.
+4. **Validate and save map** stores the graph for later use. Not validating the map does not prevent ordinary VALDRIO calculations, and drawing a line never publishes an allocation key.
+
+In **Secondary allocation**, validated auxiliary service links can supply **destinations** for a draft allocation key. The user supplies weights and reviews or discards that draft separately. A 100% self-allocation with no external economic outlet can make the reciprocal system unsolvable. Sequences between principal nodes **never** generate cost transfers.
+
+Zoom, drag, auto-arrange and image export are still available; the old two-click connector is under **Advanced controls**.
