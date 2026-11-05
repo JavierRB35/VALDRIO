@@ -81,6 +81,9 @@ public partial class StudyWorkspacePanel
         Check(!vm.IsDirty && !SaveStudyButton.IsEnabled && CaptureStudyButton.IsEnabled, "saved study ready for context capture");
         Check(Descendants<DatePickerTextBox>(StartPicker).Single().IsReadOnly && Descendants<DatePickerTextBox>(EndPicker).Single().IsReadOnly, "calendar-only dates prevent ambiguous pending text");
         var studyId = vm.Current!.Id; var companyId = vm.Current.CompanyId;
+        await Click(RefreshStudyButton);
+        Check(vm.Current?.Id == studyId && vm.StudyChoice?.Value.Id == studyId,
+            "explicit study refresh keeps the active analysis selected");
         await Click(CaptureStudyButton); var first = vm.SnapshotChoice!.Value;
         Check(vm.Snapshots.Count == 1 && vm.Current.Revision == 0 && vm.Current.CurrentRunId is null, "capture is a photo, not a revision or execution");
         Check(!StudyPreparationService.Evaluate(first.Input).ReadyForCalculation && StudyPreparationService.Evaluate(first.Input).Diagnostics.Count == 4, "pending policies and missing inputs explained");
