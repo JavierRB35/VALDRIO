@@ -6,6 +6,8 @@ public sealed partial class ModelWorkspaceViewModel
 {
     public string ProcessMapTitle => Text("Model.MapTitle");
     public string ProcessMapHelp => Text("Model.MapHelp");
+    public string ProcessMapSelectHelp => Text("Model.MapSelectHelp");
+    public string ProcessMapAdvancedLabel => Text("Model.MapAdvancedLabel");
     public string ProcessMapConnectLabel => Text("Model.MapConnect");
     public string ProcessMapSequenceLabel => Text("Model.MapSequence");
     public string ProcessMapServiceLabel => Text("Model.MapService");
