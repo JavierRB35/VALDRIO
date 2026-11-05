@@ -24,6 +24,8 @@ public sealed class ProcessRouteCanvas : UserControl
     private readonly ScrollViewer scroll;
     private readonly Border selectionPanel = new();
     private readonly StackPanel selectionContent = new();
+    private readonly ScrollViewer destinationScroll;
+    private EntityId? lastRenderedOrigin;
     private readonly ScaleTransform zoomTransform = new(1, 1);
     private ModelWorkspaceViewModel? model;
     private EntityId? firstNode;
@@ -68,14 +70,14 @@ public sealed class ProcessRouteCanvas : UserControl
         selectionPanel.Padding = new Thickness(12);
         selectionPanel.BorderThickness = new Thickness(1);
         selectionPanel.CornerRadius = new CornerRadius(7);
-        var sidebarScroll = new ScrollViewer
+        destinationScroll = new ScrollViewer
         {
             Content = selectionContent,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
             MaxHeight = 580
         };
-        selectionPanel.Child = sidebarScroll;
+        selectionPanel.Child = destinationScroll;
         var layout = new Grid();
         layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(288) });
         layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -286,6 +288,8 @@ public sealed class ProcessRouteCanvas : UserControl
 
     private void RenderDestinations(ModelWorkspaceViewModel vm)
     {
+        var previousOffset = selectedOrigin == lastRenderedOrigin
+            ? destinationScroll.VerticalOffset : 0;
         selectionContent.Children.Clear();
         selectionPanel.Background = ResourceBrush("Brand.White");
         selectionPanel.BorderBrush = ResourceBrush("Border.Soft");
@@ -342,6 +346,7 @@ public sealed class ProcessRouteCanvas : UserControl
             Help(vm.Text("Model.MapSelectOriginHelp"));
             return;
         }
+        lastRenderedOrigin = selectedOrigin;
         var source = nodes.Single(n => n.Id == selectedOrigin);
         Heading(source.Code, 13);
         Help(vm.Text("Model.Function." + NodeCostClassification.Function(source)) +
@@ -388,6 +393,10 @@ public sealed class ProcessRouteCanvas : UserControl
         if (source.Role == NodeRole.Auxiliary)
             Help(vm.Text("Model.MapSelfServiceHelp"));
         Help(vm.Text("Model.MapChangesRequireValidation"));
+        // Rebuilding checkboxes after an edit must not jump a long target list
+        // back to the top and disrupt the analyst's work.
+        Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded,
+            new Action(() => destinationScroll.ScrollToVerticalOffset(previousOffset)));
     }
 
     private void UpdateDestination(ModelWorkspaceViewModel vm, ProcessRouteLink link, bool enabled)
