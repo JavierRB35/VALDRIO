@@ -1072,6 +1072,12 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         {
             if (string.IsNullOrWhiteSpace(Description))
             { diagnostic = new("MODEL_STRUCTURE_INVALID", "Model.StructureInvalid", []); return; }
+            if (modelValues.Any(m => string.Equals(m.Structure.Description.Trim(),
+                    Description.Trim(), StringComparison.OrdinalIgnoreCase)))
+            {
+                diagnostic = new("MODEL_DESCRIPTION_DUPLICATE", "Model.DescriptionDuplicate", []);
+                return;
+            }
             var value = await Task.Run(() => company.ActiveModels!.CreateDraft(new(company.Snapshot!.Id, Description, "local-user"), t));
             await ApplyConfirmedThenReload(value, ApplyConfirmedModel);
             if (!committedRefreshPending) statusKey = "Model.StructureCreated";
@@ -1123,12 +1129,31 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         await ApplyConfirmedThenReload(result, ApplyConfirmedModel);
         if (!committedRefreshPending) statusKey = "Model.StructurePublished";
     });
-    private async Task Clone() => await Run(async t =>
+    private async Task Clone()
     {
-        var current = Current!;
-        var result = await Task.Run(() => company.ActiveModels!.Clone(new(company.Snapshot!.Id, current.Structure.Id, current.Revision, new(Guid.NewGuid()), current.Structure.Description, "local-user"), t));
-        await ApplyConfirmedThenReload(result, ApplyConfirmedModel);
-    });
+        // Reuse the draft already derived from this published version. Repeated
+        // clicks or returning from an analysis must not create another clone.
+        var parent = Current;
+        if (parent is null || parent.Status != ModelStatus.Published) return;
+        var existing = modelValues.Where(m => m.Status == ModelStatus.Draft &&
+            m.Structure.ParentVersionId == parent.Structure.Id)
+            .OrderByDescending(m => m.Structure.VersionNumber).FirstOrDefault();
+        if (existing is not null)
+        {
+            if (!await CanLeaveAsync()) return;
+            SetCurrent(existing);
+            statusKey = "Model.ExistingDraftOpened";
+            Refresh();
+            return;
+        }
+        await Run(async t =>
+        {
+            var result = await Task.Run(() => company.ActiveModels!.Clone(
+                new(company.Snapshot!.Id, parent.Structure.Id, parent.Revision,
+                    new(Guid.NewGuid()), parent.Structure.Description, "local-user"), t));
+            await ApplyConfirmedThenReload(result, ApplyConfirmedModel);
+        });
+    }
     private void ApplyNode()
     {
         try
