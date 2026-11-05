@@ -2393,4 +2393,5 @@ Excluded: {7} · Direct to products/orders: {8}</value></data>
   <data name="AllocationUI.RouteProposalPrepared" xml:space="preserve"><value>Destinations copied to the draft. Enter weights, review destinations and save the key; no allocation has been published or applied.</value></data>
   <data name="Model.SelectionPendingLoad" xml:space="preserve"><value>Another structure is selected. Choose Load selection to open it; the current structure remains active.</value></data>
   <data name="Study.SelectionPendingLoad" xml:space="preserve"><value>Another study is selected. Choose Open study to load it; the current study remains active.</value></data>
+  <data name="Model.MapKeyboardHelp" xml:space="preserve"><value>Press Enter or Space on a node to choose it as the source/target in Connect mode. Outside that mode, use arrow keys to move the node.</value></data>
 </root>
