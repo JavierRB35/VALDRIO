@@ -37,7 +37,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     private readonly PresentationPreferencesService preferences;
     private readonly IModelEditorDialogs dialogs;
     private readonly PresentationFormatter formatter;
-    private bool busy, dirty, pseudo, nodeFormEdited, nodeCodeManuallyEdited;
+    private bool busy, dirty, pseudo, nodeFormEdited, nodeCodeManuallyEdited, modelSelectionTouched;
     private string centerCode = "", centerName = "", description = "", nodeCode = "", functionTags = "", poolDescription = "";
     private CenterOption? master, physical;
     private UnitOption? unit, unitMaster;
@@ -226,10 +226,16 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         get => choice;
         set
         {
-            SetProperty(ref choice, value);
+            if (SetProperty(ref choice, value) && !loading)
+            {
+                modelSelectionTouched = true;
+                OnPropertyChanged(nameof(HasPendingModelSelection));
+            }
             RefreshCommands();
         }
     }
+    public bool HasPendingModelSelection => modelSelectionTouched && choice is not null &&
+        choice.Value.Structure.Id != Current?.Structure.Id;
 
     public NodeOption? SelectedNode
     {
@@ -871,6 +877,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     {
         loading = true;
         Current = current;
+        modelSelectionTouched = false;
         description = current.Structure.Description;
         dirty = false;
         validation = [];
