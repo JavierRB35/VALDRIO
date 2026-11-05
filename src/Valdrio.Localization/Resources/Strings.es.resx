@@ -2344,4 +2344,23 @@ Excluido: {7} · Directo a productos/órdenes: {8}</value></data>
   <data name="Run.Function.Production" xml:space="preserve"><value>Producción / actividad principal</value></data>
   <data name="Run.Function.Commercial" xml:space="preserve"><value>Comercial</value></data>
   <data name="Run.Function.Structure" xml:space="preserve"><value>Estructura / administración</value></data>
+  <data name="Model.StudyNodeCreationRestriction" xml:space="preserve"><value>Este análisis permite ajustar únicamente nodos ya existentes. Para añadir o eliminar nodos, crea una nueva versión editable de la estructura de costes.</value></data>
+  <data name="Model.DescriptionDuplicate" xml:space="preserve"><value>Ya existe una estructura con ese nombre. Carga la estructura guardada o escribe otro nombre para crear una distinta.</value></data>
+  <data name="Model.ExistingDraftOpened" xml:space="preserve"><value>Se ha cargado la versión editable que ya existía; no se ha creado otra copia.</value></data>
+  <data name="Model.VersionLabel" xml:space="preserve"><value>Versión</value></data>
+  <data name="Model.Archived" xml:space="preserve"><value>Archivada</value></data>
+  <data name="Model.DeleteDraftModel" xml:space="preserve"><value>Eliminar borrador</value></data>
+  <data name="Model.ArchiveModel" xml:space="preserve"><value>Archivar estructura</value></data>
+  <data name="Model.RestoreArchivedModel" xml:space="preserve"><value>Restaurar estructura archivada</value></data>
+  <data name="Model.ShowArchivedModels" xml:space="preserve"><value>Mostrar estructuras archivadas</value></data>
+  <data name="Model.DeleteDraftTitle" xml:space="preserve"><value>Eliminar borrador de estructura</value></data>
+  <data name="Model.DeleteDraftConfirmation" xml:space="preserve"><value>Se eliminará el borrador «{0}» si no tiene análisis, claves ni versiones dependientes. Esta acción no se puede deshacer. ¿Continuar?</value></data>
+  <data name="Model.ArchiveTitle" xml:space="preserve"><value>Archivar versión publicada</value></data>
+  <data name="Model.ArchiveConfirmation" xml:space="preserve"><value>Se ocultará «{0}» de las estructuras disponibles para nuevos análisis. Los análisis históricos conservarán su referencia. ¿Archivar?</value></data>
+  <data name="Model.RestoreTitle" xml:space="preserve"><value>Restaurar versión archivada</value></data>
+  <data name="Model.RestoreConfirmation" xml:space="preserve"><value>«{0}» volverá a estar disponible para nuevos análisis. ¿Restaurar?</value></data>
+  <data name="Model.ArchivedSuccessfully" xml:space="preserve"><value>Estructura archivada. Los análisis anteriores mantienen sus datos.</value></data>
+  <data name="Model.RestoredSuccessfully" xml:space="preserve"><value>Estructura restaurada correctamente.</value></data>
+  <data name="Model.DraftDeleted" xml:space="preserve"><value>Borrador eliminado correctamente.</value></data>
+  <data name="Model.Referenced" xml:space="preserve"><value>No se puede eliminar: esta estructura tiene análisis, claves o versiones que dependen de ella.</value></data>
 </root>
