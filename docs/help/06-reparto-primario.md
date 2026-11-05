@@ -73,3 +73,7 @@ Las tablas crecen con sus filas: utiliza el desplazamiento exterior de la págin
 Las tablas de asignaciones y de totales por nodo ofrecen dos categorías independientes: **Centros generales/indirectos** y **Factores directos**. La selección utiliza la finalidad explícita del nodo, no su nombre, papel principal/auxiliar ni el tipo de recurso. Los nodos antiguos sin finalidad explícita se muestran provisionalmente entre los generales. Los **totales conciliados** siguen incluyendo ambas categorías y proceden de los mismos hechos primarios, sin otro reparto. El Pareto sigue la categoría elegida.
 
 **Estado:** implementación candidata pendiente de validación en Windows.
+
+## Orden de las pestañas
+
+La secuencia de trabajo es **Claves de reparto → Asignar cuentas / nodos → Comprobar y cerrar**. Crea o selecciona primero una clave válida, después aplícala a los recursos y finalmente revisa la cobertura antes del cierre. Esta presentación no modifica el cálculo ni crea asignaciones automáticamente.
