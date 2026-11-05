@@ -106,7 +106,7 @@
       </DockPanel>
       <TextBlock Text="{Binding LoadSelectionHelp}" Foreground="{DynamicResource Accent.ActiveGreen}" FontWeight="SemiBold"
                  AutomationProperties.LiveSetting="Polite" Margin="0,0,0,10"
-                 Visibility="{Binding HasPendingModelSelection, Converter={StaticResource BooleanVisibility}}"/>
+                 Visibility="{Binding HasPendingModelSelection, Converter={StaticResource Visible}}"/>
 
       <Border Style="{StaticResource Card}">
        <StackPanel>
