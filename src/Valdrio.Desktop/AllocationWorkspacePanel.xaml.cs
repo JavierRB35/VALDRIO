@@ -47,6 +47,7 @@ public partial class AllocationWorkspacePanel : UserControl
         void Move(System.Windows.UIElement element, Panel destination)
         { WorkspaceBody.Children.Remove(element); destination.Children.Add(element); }
         Move(KeyWorkspaceLayout, keys);
+        Move(RouteProposalSection, keys);
         Move((System.Windows.UIElement)AccountsSection.Parent, assignments);
         Move((System.Windows.UIElement)CompositionSection.Parent, assignments);
         Move(RulesSection, assignments);
