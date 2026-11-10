@@ -35,7 +35,7 @@ public sealed partial class ImportColumnMappingViewModel
         existingBatches = batches;
         var culture = CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
         ExistingBatches = ImportConfirmationRules.ActiveBatches(batches).Select(b => new ImportBatchOption(b.Id,
-            $"{b.Prepared.Source.FileName} · {b.Resources.Sum(r => r.Functional.Amount).ToString("N2", culture)} {b.ConfirmedStudy.Currency.FunctionalCurrencyCode} · {b.ConfirmedAtUtc.ToString("dd/MM/yyyy HH:mm", culture)} UTC")).ToArray();
+            $"{b.Prepared.Source.FileName} · {b.Resources.Sum(r => r.Functional.Amount).ToString("N2", culture)} {b.ConfirmedStudy.Currency.FunctionalCurrencyCode} · {b.ConfirmedAtUtc.Value.ToString("dd/MM/yyyy HH:mm", culture)} UTC")).ToArray();
         replacement = null; replaceBatch = false; InvalidatePreparation(true); Refresh();
     }
     public bool HasExistingBatches => ExistingBatches.Count > 0;
