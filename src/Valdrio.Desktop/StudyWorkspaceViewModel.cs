@@ -111,6 +111,9 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         company.ActivePhysicalActivity is not null && company.ActiveModels is not null;
     public string PhysicalBlockReason => Text(Current is null ? "Study.ChooseExisting" : IsDirty ? "Study.SaveBeforeContinuing" : "CompanyWorking");
     public bool PhysicalWritable => company.CanWrite && Current?.State == StudyState.Open;
+    // Only the explicit Open action applies this choice; editing the combo does not load the study.
+    public bool HasPendingStudySelection => studyChoice is { } selected &&
+        (Current is null || selected.Value.Id != Current.Id);
     public bool HasStudies => Studies.Count > 0;
     public bool HasPublishedModels => PublishedModels.Count > 0;
     public string StudyListHelp => Text(HasStudies ? "Study.ChooseExisting" : "Study.NoStudiesYet");
@@ -145,7 +148,16 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public DateTime? PeriodEnd { get => end; set { if (SetProperty(ref end, value)) Edited(); } }
     public ModelOption? ModelChoice { get => modelChoice; set { if (SetProperty(ref modelChoice, value)) Edited(); } }
     public ScenarioOption? Scenario { get => scenario; set { if (SetProperty(ref scenario, value)) Edited(); } }
-    public StudyOption? StudyChoice { get => studyChoice; set { SetProperty(ref studyChoice, value); RefreshCommands(); } }
+    public StudyOption? StudyChoice
+    {
+        get => studyChoice;
+        set
+        {
+            if (SetProperty(ref studyChoice, value))
+                OnPropertyChanged(nameof(HasPendingStudySelection));
+            RefreshCommands();
+        }
+    }
     public SnapshotOption? SnapshotChoice { get => snapshotChoice; set { SetProperty(ref snapshotChoice, value); OnPropertyChanged(nameof(SnapshotDetails)); OnPropertyChanged(nameof(Preparation)); OnPropertyChanged(nameof(HistoricalDefinitions)); } }
     private CultureInfo Ui => CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag);
     private CultureInfo Format => CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
