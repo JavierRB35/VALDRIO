@@ -60,7 +60,7 @@ public sealed partial class SqliteCompanyFileService
         foreach (var a in audit)
         {
             Invalid(a.Row.CompanyId != file.Id.ToString() || EntityId.Parse(a.Row.Id).ToString() != a.Row.Id || EntityId.Parse(a.AggregateId).ToString() != a.AggregateId || EntityId.Parse(a.TransactionId).ToString() != a.TransactionId || string.IsNullOrWhiteSpace(a.Row.Actor) || UtcInstant.ParseIso(a.Row.AtUtc).ToCanonicalString() != a.Row.AtUtc || a.Schema != CanonicalSnapshotJson.SchemaVersion, "Audit envelope invalid");
-            Invalid(a.Type is not ("Company" or "CompanyFile" or "PhysicalCenter" or "ModelVersion" or "UnitState" or "Study" or "StudySnapshot" or "ImportBatch" or "ResourceChange" or "ResourceAdjustment" or "AllocationKey" or "AllocationChange" or "PhysicalObservation" or "CompositionCatalog" or "Estimate"), "Unknown audit aggregate");
+            Invalid(a.Type is not ("Company" or "CompanyFile" or "PhysicalCenter" or "ModelVersion" or "ModelArchive" or "UnitState" or "Study" or "StudySnapshot" or "ImportBatch" or "ResourceChange" or "ResourceAdjustment" or "AllocationKey" or "AllocationChange" or "PhysicalObservation" or "CompositionCatalog" or "Estimate"), "Unknown audit aggregate");
             if (a.Type == "Estimate") Invalid(file.SchemaVersion < 13, "Estimate audit scope invalid");
             if (a.Type == "CompositionCatalog")
                 Invalid(file.SchemaVersion < 12 || a.AggregateId != file.Id.ToString(), "Composition audit scope invalid");
@@ -120,6 +120,71 @@ public sealed partial class SqliteCompanyFileService
             Invalid(previous != Json(model), "Model audit/current state mismatch");
         }
 
+        // Independent archive stream is allowed without modifying a published
+        // ModelVersion row (the schema explicitly rejects such UPDATEs).
+        foreach (var group in audit.Where(a => a.Type == "ModelArchive").GroupBy(a => a.AggregateId))
+        {
+            Invalid(!models.Any(m => m.Structure.Id.ToString() == group.Key &&
+                m.Status == ModelStatus.Published), "Archive references an absent/unpublished model");
+            string previous = "null";
+            ModelArchiveState? prior = null;
+            var events = group.OrderBy(a => a.Row.Revision).ToArray();
+            for (var i = 0; i < events.Length; i++)
+            {
+                var entry = events[i].Row;
+                var after = CanonicalSnapshotJson.Deserialize<ModelArchiveState>(entry.AfterJson);
+                Invalid(entry.Revision != i || after.Revision != i ||
+                    after.ModelId.ToString() != group.Key ||
+                    entry.BeforeJson != previous ||
+                    entry.Operation != (after.Archived ? "ArchiveModel" : "RestoreModel") ||
+                    (prior is not null && prior.Archived == after.Archived),
+                    "Model archive audit chain invalid");
+                previous = Json(after);
+                prior = after;
+            }
+        }
+
+        // Deleted drafts must leave a terminal audit event, while their rows
+        // and children are removed only after dependency and version checks.
+        var deletedModelIds = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var group in audit.Where(a => a.Type == "ModelVersion" &&
+            !models.Any(m => m.Structure.Id.ToString() == a.AggregateId)).GroupBy(a => a.AggregateId))
+        {
+            var events = group.OrderBy(a => a.Row.Revision).ToArray();
+            Invalid(events.Length < 2 || events[^1].Row.Operation != "DeleteDraft",
+                "Deleted model without a terminal event");
+            string previous = "null";
+            for (var i = 0; i < events.Length - 1; i++)
+            {
+                var entry = events[i].Row;
+                var after = CanonicalSnapshotJson.Deserialize<ModelVersionSnapshot>(entry.AfterJson);
+                Invalid(entry.Revision != i || after.Revision != i ||
+                    after.Status != ModelStatus.Draft || after.Structure.Id.ToString() != group.Key ||
+                    entry.BeforeJson != previous ||
+                    entry.Operation != (i == 0
+                        ? after.Structure.ParentVersionId is null ? "CreateDraft" : "Clone"
+                        : "SaveDraft"), "Deleted model audit chain invalid");
+                previous = Json(after);
+            }
+            var deletion = events[^1].Row;
+            Invalid(deletion.Revision != events.Length - 1 ||
+                deletion.BeforeJson != previous ||
+                deletion.AfterJson != Json(new { Deleted = true }),
+                "Deleted model audit terminal invalid");
+            // ValidateWorkspace also runs against older schema contexts,
+            // which deliberately do not expose later study/allocation tables.
+            Invalid((db is StudyDbContext studies &&
+                        studies.Studies.Any(st => st.SelectedModelVersionId == group.Key)) ||
+                db.Models.Any(m => m.ParentVersionId == group.Key) ||
+                (db is AllocationDbContext allocations &&
+                        allocations.AllocationKeyEvents.Any(k => k.ModelVersionId == group.Key)) ||
+                audit.Any(a => a.Type == "Study" &&
+                    (a.Row.BeforeJson.Contains(group.Key, StringComparison.Ordinal) ||
+                     a.Row.AfterJson.Contains(group.Key, StringComparison.Ordinal))),
+                "Deleted model retains references");
+            deletedModelIds.Add(group.Key);
+        }
+
         var deletedCenterIds = new HashSet<string>(StringComparer.Ordinal);
         foreach (var group in audit.Where(a => a.Type == "PhysicalCenter" && !centers.Any(c => c.Id.ToString() == a.AggregateId)).GroupBy(a => a.AggregateId))
         {
@@ -141,7 +206,7 @@ public sealed partial class SqliteCompanyFileService
             deletedCenterIds.Add(group.Key);
         }
 
-        Invalid(audit.Any(a => a.Type == "PhysicalCenter" && !centers.Any(c => c.Id.ToString() == a.AggregateId) && !deletedCenterIds.Contains(a.AggregateId) || a.Type == "UnitState" && !units.Any(u => u.Definition.Id.ToString() == a.AggregateId) || a.Type == "ModelVersion" && !models.Any(m => m.Structure.Id.ToString() == a.AggregateId)), "Orphan aggregate audit");
+        Invalid(audit.Any(a => a.Type == "PhysicalCenter" && !centers.Any(c => c.Id.ToString() == a.AggregateId) && !deletedCenterIds.Contains(a.AggregateId) || a.Type == "UnitState" && !units.Any(u => u.Definition.Id.ToString() == a.AggregateId) || a.Type == "ModelVersion" && !models.Any(m => m.Structure.Id.ToString() == a.AggregateId) && !deletedModelIds.Contains(a.AggregateId)), "Orphan aggregate audit");
         Invalid(file.SchemaVersion < 3 && audit.Any(a => a.Type is "Study" or "StudySnapshot"), "Study audit in old schema");
         var upgrades = audit.Where(a => a.Type == "CompanyFile").OrderBy(a => a.Row.Revision).ToArray();
         Invalid(file.SchemaVersion < 4 && audit.Any(a => a.Type == "ImportBatch"), "Import audit in old schema");

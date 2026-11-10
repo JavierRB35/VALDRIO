@@ -63,8 +63,14 @@ public sealed partial class AllocationWorkspaceViewModel
     private bool secondaryCalculationFailed;
     public bool SecondaryCalculationFailed => secondaryCalculationFailed && !IsSecondaryClosed;
     private CancellationTokenSource? secondaryCalculationCts;
+    [ObservableProperty] private int secondaryResultCategoryIndex;
     public ObservableCollection<SecondaryAllocationRow> SecondaryResults { get; } = [];
     public ObservableCollection<PrincipalCostRow> PrincipalCosts { get; } = [];
+    // UI-only projections. The complete published facts and reconciliation stay intact.
+    public ObservableCollection<PrincipalCostRow> GeneralPrincipalCosts { get; } = [];
+    public ObservableCollection<PrincipalCostRow> DirectPrincipalCosts { get; } = [];
+    public ObservableCollection<SecondaryAllocationRow> GeneralSecondaryResults { get; } = [];
+    public ObservableCollection<SecondaryAllocationRow> DirectSecondaryResults { get; } = [];
     public ObservableCollection<SecondarySourceDetailRow> SecondaryExplanationDetails { get; } = [];
     private readonly List<SecondaryPresentedContribution> secondaryContributions = [];
     public ObservableCollection<SecondaryBridgeRow> SecondaryBridges { get; } = [];
@@ -272,11 +278,16 @@ public sealed partial class AllocationWorkspaceViewModel
 
     private void RebuildSecondary()
     {
+        RebuildRouteProposals();
         requiredSecondaryGroups = DetermineRequiredSecondaryGroups();
         secondaryPreview = null;
         secondaryCalculated = false;
         secondaryCalculationFailed = false;
         SecondaryResults.Clear();
+        GeneralSecondaryResults.Clear();
+        DirectSecondaryResults.Clear();
+        GeneralPrincipalCosts.Clear();
+        DirectPrincipalCosts.Clear();
         ClearAuxiliarySettlement();
         ClearCompleteSecondaryFlow();
         PrincipalCosts.Clear();
@@ -403,6 +414,10 @@ public sealed partial class AllocationWorkspaceViewModel
         secondaryCalculated = false;
         secondaryCalculationFailed = false;
         SecondaryResults.Clear();
+        GeneralSecondaryResults.Clear();
+        DirectSecondaryResults.Clear();
+        GeneralPrincipalCosts.Clear();
+        DirectPrincipalCosts.Clear();
         ClearAuxiliarySettlement();
         ClearCompleteSecondaryFlow();
         PrincipalCosts.Clear();
@@ -522,7 +537,7 @@ public sealed partial class AllocationWorkspaceViewModel
             var shown = presented[i];
             var originalTotal = checked(original.Direct + original.Auxiliary);
             shownByNode.Add(principals[i].Id, (shown.Direct, shown.Auxiliary));
-            PrincipalCosts.Add(new(NodeLabel(principals[i]),
+            var row = new PrincipalCostRow(NodeLabel(principals[i]),
                 DisplayMoney(shown.Direct, currency), DisplayMoney(shown.Auxiliary, currency),
                 DisplayMoney(shown.Final, currency), original.Direct, original.Auxiliary, originalTotal)
             {
@@ -530,7 +545,10 @@ public sealed partial class AllocationWorkspaceViewModel
                 PresentedPrimaryAmount = shown.Direct,
                 PresentedAuxiliaryAmount = shown.Auxiliary,
                 PresentedTotalAmount = shown.Final
-            });
+            };
+            PrincipalCosts.Add(row);
+            (NodeCostClassification.IsDirectFactor(principals[i])
+                ? DirectPrincipalCosts : GeneralPrincipalCosts).Add(row);
         }
 
         var resultGroups = secondaryContributions.GroupBy(c =>
@@ -558,13 +576,16 @@ public sealed partial class AllocationWorkspaceViewModel
         foreach (var group in resultGroups)
         {
             var shown = shownByGroup[group.Key];
-            SecondaryResults.Add(new(group.Key.PrimaryNodeId, group.Key.TerminalNodeId,
+            var row = new SecondaryAllocationRow(group.Key.PrimaryNodeId, group.Key.TerminalNodeId,
                 group.Key.Behavior, NodeLabel(nodes[group.Key.PrimaryNodeId]),
                 NodeLabel(nodes[group.Key.TerminalNodeId]), DisplayMoney(shown, currency),
                 this["SecondaryBehavior" + group.Key.Behavior], group.LedgerAmount)
             {
                 PresentedAmount = shown
-            });
+            };
+            SecondaryResults.Add(row);
+            (NodeCostClassification.IsDirectFactor(nodes[group.Key.TerminalNodeId])
+                ? DirectSecondaryResults : GeneralSecondaryResults).Add(row);
         }
         SelectedPrincipalCostRow = PrincipalCosts.FirstOrDefault();
         RebuildPrincipalOrigins();

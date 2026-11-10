@@ -21,8 +21,10 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
     public ObservableCollection<RateDetailDisplay> Details { get; } = [];
     [ObservableProperty] private PrincipalRateDisplay? selectedRow;
     [ObservableProperty] private bool attentionOnly;
+    [ObservableProperty] private int selectedRateTabIndex;
     [ObservableProperty] private string feedback = "";
     private PrincipalRateDisplay[] allRows = [];
+    private HashSet<EntityId> directFactorNodes = [];
     private CalculationRun? sourceRun;
     public PrincipalRatesEditor(StudyWorkspaceViewModel host) { this.host = host; Reload(); }
     public string this[string key] => texts.Get("Rates." + key, host.PhysicalUiCulture);
@@ -65,7 +67,7 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
     public void Reload()
     {
         var selected = SelectedRow?.Value.PoolId;
-        Rows.Clear(); Answers.Clear(); Details.Clear(); allRows = []; SelectedRow = null; Report = null;
+        Rows.Clear(); Answers.Clear(); Details.Clear(); allRows = []; directFactorNodes.Clear(); SelectedRow = null; Report = null;
         try
         {
             var old = host.Current ?? throw new InvalidOperationException();
@@ -74,6 +76,12 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
             Report = PrincipalRateReportService.Read(study, model, host.PhysicalRuns?.ReadRuns(study.CompanyId, study.Id),
                 host.ActivePhysicalActivity!.ReadCurrent(study.CompanyId, study.Id));
             sourceRun = host.PhysicalRuns?.ReadRuns(study.CompanyId, study.Id).Runs.SingleOrDefault(r => r.Id == Report.EconomicRunId);
+            // Study-level adapted nodes are frozen with the economic run; do not
+            // classify the rate from a different published structure revision.
+            var rateNodes = sourceRun?.Snapshot.Input is AllocationStudySnapshotInput input
+                ? input.Allocations.Resources.Model.Structure.Nodes
+                : model.Structure.Nodes;
+            directFactorNodes = rateNodes.Where(NodeCostClassification.IsDirectFactor).Select(n => n.Id).ToHashSet();
             allRows = Report.Rows.Select(row =>
             {
                 var definition = host.PhysicalCompany!.Units.Single(u => u.Id == row.UnitId);
@@ -84,7 +92,8 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
                     row.Diagnostics.Count == 0 ? this["Calculated"] : row.Name + ": " + string.Join(" ", row.Diagnostics.Select(k => texts.Get(k, host.PhysicalUiCulture))) + BlockingAccounts(row));
             }).ToArray();
             Filter(); SelectedRow = Rows.FirstOrDefault(r => r.Value.PoolId == selected) ?? Rows.FirstOrDefault();
-            Feedback = allRows.Length == 0 ? this["NoCenters"] : this["SelectCenter"];
+            Feedback = allRows.Length == 0 ? this["NoCenters"] : Rows.Count == 0 ?
+                this[SelectedRateTabIndex == 1 ? "NoDirectFactors" : "NoGeneralCenters"] : this["SelectCenter"];
             if (Report.AuxiliaryCapacityPartiallyAssessed) Feedback += " " + texts.Get("Aux.NotEvaluated", host.PhysicalUiCulture);
         }
         catch (Exception ex) when (ex is DomainRuleException or CompanyFileException or InvalidOperationException)
@@ -95,6 +104,7 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
         OnPropertyChanged(nameof(Context)); OnPropertyChanged(nameof(Provenance)); OnPropertyChanged(nameof(SelectedSummary)); OnPropertyChanged(nameof(CanExport));
     }
     partial void OnAttentionOnlyChanged(bool value) => Filter();
+    partial void OnSelectedRateTabIndexChanged(int value) => Filter();
     private string BlockingAccounts(PrincipalRateRow row)
     {
         if (sourceRun?.Snapshot.Input is not AllocationStudySnapshotInput input || sourceRun.Output?.Secondary is not { } secondary) return "";
@@ -109,7 +119,15 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
     private void Filter()
     {
         var id = SelectedRow?.Value.PoolId;
-        Rows.Clear(); foreach (var row in allRows.Where(r => !AttentionOnly || r.Value.Diagnostics.Count > 0)) Rows.Add(row);
+        Rows.Clear();
+        foreach (var row in allRows.Where(r =>
+            directFactorNodes.Contains(r.Value.NodeId) == (SelectedRateTabIndex == 1) &&
+            (!AttentionOnly || r.Value.Diagnostics.Count > 0)))
+            Rows.Add(row);
+        if (allRows.Length > 0)
+            Feedback = Rows.Count == 0
+                ? this[SelectedRateTabIndex == 1 ? "NoDirectFactors" : "NoGeneralCenters"]
+                : this["SelectCenter"];
         SelectedRow = Rows.FirstOrDefault(r => r.Value.PoolId == id) ?? Rows.FirstOrDefault();
     }
     partial void OnSelectedRowChanged(PrincipalRateDisplay? value)

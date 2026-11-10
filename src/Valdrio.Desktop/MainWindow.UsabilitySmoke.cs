@@ -78,11 +78,13 @@ public partial class MainWindow
         await AdvanceWorkflow();
         Text(ModelPanel.NodeCodeBox, "AUX"); Select(ModelPanel.PhysicalBox, models.Centers.Single());
         Select(ModelPanel.UnitBox, models.Units.Single(x => x.Value.Definition.Code == "HORAS")); Select(ModelPanel.RoleBox, models.Roles.Single(r => r.Value == NodeRole.Auxiliary));
+        models.EconomicFunctionChoice = NodeEconomicFunction.Production;
         await AdvanceWorkflow();
         Audit(ModelPanel.ModelSteps.SelectedIndex == 2 && models.Nodes.Count == 1 && WorkflowRequirement.Text == models.Guide("NeedPrincipal"),
             "auxiliary-only structure remains at nodes and explains the principal requirement");
         Text(ModelPanel.NodeCodeBox, "NODO"); Select(ModelPanel.PhysicalBox, models.Centers.Single());
         Select(ModelPanel.RoleBox, models.Roles.Single(r => r.Value == NodeRole.Principal));
+        models.EconomicFunctionChoice = NodeEconomicFunction.Production;
         Check(models.NextRequirement == models.Guide("NeedNodeUnit"), "missing node unit has a specific actionable explanation");
         await ModelPanel.PublishForStudy();
         Check(!models.IsPublished && models.NodeCode == "NODO", "incomplete node cannot publish and its form is retained");

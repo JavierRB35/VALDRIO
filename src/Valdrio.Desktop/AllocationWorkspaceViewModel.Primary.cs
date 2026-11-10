@@ -4,7 +4,10 @@ using Valdrio.Domain;
 
 namespace Valdrio.Desktop;
 
-public sealed record PrimaryAllocationRow(string Source, string Destination, string Amount, string AppliedRule, string Behavior);
+public sealed record PrimaryAllocationRow(string Source, string Destination, string Amount, string AppliedRule, string Behavior)
+{
+    public decimal PresentedAmount { get; init; }
+}
 public sealed record PrimaryNodeTotalRow(string Center, string Node, string Amount, decimal NumericAmount)
 {
     public decimal PresentedAmount { get; init; }
@@ -13,8 +16,14 @@ public sealed record PrimaryNodeTotalRow(string Center, string Node, string Amou
 // The preview belongs to the T08 workspace: never invent a second, editable set of rules.
 public sealed partial class AllocationWorkspaceViewModel
 {
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty] private int primaryResultCategoryIndex;
     public ObservableCollection<PrimaryAllocationRow> PrimaryResults { get; } = [];
     public ObservableCollection<PrimaryNodeTotalRow> PrimaryNodeTotals { get; } = [];
+    // Two read-only presentations of the same primary facts; never independent ledgers.
+    public ObservableCollection<PrimaryAllocationRow> GeneralPrimaryResults { get; } = [];
+    public ObservableCollection<PrimaryAllocationRow> DirectPrimaryResults { get; } = [];
+    public ObservableCollection<PrimaryNodeTotalRow> GeneralPrimaryNodeTotals { get; } = [];
+    public ObservableCollection<PrimaryNodeTotalRow> DirectPrimaryNodeTotals { get; } = [];
     public string PrimarySummary { get; private set; } = "";
     public string PrimaryDiagnostic { get; private set; } = "";
 
@@ -58,6 +67,10 @@ public sealed partial class AllocationWorkspaceViewModel
         primaryPostedTotal = 0m;
         PrimaryResults.Clear();
         PrimaryNodeTotals.Clear();
+        GeneralPrimaryResults.Clear();
+        DirectPrimaryResults.Clear();
+        GeneralPrimaryNodeTotals.Clear();
+        DirectPrimaryNodeTotals.Clear();
         if (workspace is null)
         {
             PrimarySummary = "";
@@ -94,9 +107,13 @@ public sealed partial class AllocationWorkspaceViewModel
                     var applied = workspace.Keys.Single(k => k.Id == key);
                     rule += ": " + KeyLabel(applied);
                 }
-                PrimaryResults.Add(new(source, destination,
+                var row = new PrimaryAllocationRow(source, destination,
                     DisplayMoney(displayAmount, fact.PostedAmount.Currency),
-                    rule, this["SecondaryBehavior" + fact.Behavior]));
+                    rule, this["SecondaryBehavior" + fact.Behavior])
+                { PresentedAmount = displayAmount };
+                PrimaryResults.Add(row);
+                (NodeCostClassification.IsDirectFactor(nodeById[fact.NodeId])
+                    ? DirectPrimaryResults : GeneralPrimaryResults).Add(row);
             }
             // Group published primary facts by node, not by account, without changing the ledger.
             var centers = workspace.Resources.Model.PhysicalCenters.ToDictionary(center => center.Id);
@@ -108,9 +125,12 @@ public sealed partial class AllocationWorkspaceViewModel
                 var center = centers[node.PhysicalCenterId];
                 var ledgerTotal = group.Sum(item => item.Fact.PostedAmount.Amount);
                 var shownTotal = group.Sum(item => item.Amount);
-                PrimaryNodeTotals.Add(new(center.Code + " · " + center.Name, node.Code,
+                var row = new PrimaryNodeTotalRow(center.Code + " · " + center.Name, node.Code,
                     DisplayMoney(shownTotal, primary.Currency), ledgerTotal)
-                { PresentedAmount = shownTotal });
+                { PresentedAmount = shownTotal };
+                PrimaryNodeTotals.Add(row);
+                (NodeCostClassification.IsDirectFactor(node)
+                    ? DirectPrimaryNodeTotals : GeneralPrimaryNodeTotals).Add(row);
             }
             PrimarySummary = string.Format(Format, this["PrimarySummary"], primary.Facts.Count,
                 primary.Gaps.Count, primary.Pools.Count, primary.Currency);

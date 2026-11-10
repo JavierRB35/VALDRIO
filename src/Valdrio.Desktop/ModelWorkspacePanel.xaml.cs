@@ -16,10 +16,23 @@ public partial class ModelWorkspacePanel : UserControl
         var element = e.OriginalSource as System.Windows.DependencyObject;
         while (element is not null && element is not DataGridCell)
             element = System.Windows.Media.VisualTreeHelper.GetParent(element);
-        if (element is not DataGridCell cell || cell.IsReadOnly || cell.IsEditing) return;
-        grid.SelectedItem = cell.DataContext;
-        grid.CurrentCell = new DataGridCellInfo(cell);
-        cell.Focus(); grid.BeginEdit();
+        if (element is not DataGridCell cell || cell.IsReadOnly || cell.IsEditing ||
+            cell.Column is not { } column || cell.DataContext is not { } item) return;
+
+        // A row selection can rebuild NodeSummary's ItemsSource synchronously.
+        // The original DataGridCell may already be detached after SelectedItem changes.
+        // Resolve the *current* row on the dispatcher, never from that detached cell.
+        grid.SelectedItem = item;
+        _ = grid.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
+        {
+            if (!grid.IsLoaded || grid.IsReadOnly || !grid.Columns.Contains(column) ||
+                grid.SelectedItem is not { } selected || !grid.Items.Contains(selected))
+                return;
+            grid.ScrollIntoView(selected, column);
+            grid.CurrentCell = new DataGridCellInfo(selected, column);
+            grid.Focus();
+            grid.BeginEdit();
+        }));
     }
     private Action? restoreStructureCell;
     private void BeginStructureCellEdit(object? sender, DataGridBeginningEditEventArgs e)
@@ -53,8 +66,8 @@ public partial class ModelWorkspacePanel : UserControl
         CenterGrid.PreviewMouseLeftButtonDown += EditCellOnClick;
         NodeSummary.PreviewMouseLeftButtonDown += EditCellOnClick;
         NodeSummary.Columns[4].DisplayIndex = 0;
-        NodeSummary.Columns[4].Width = new DataGridLength(2, DataGridLengthUnitType.Star);
-        NodeSummary.Columns[4].MinWidth = 220;
+        NodeSummary.Columns[4].Width = new DataGridLength(1.3, DataGridLengthUnitType.Star);
+        NodeSummary.Columns[4].MinWidth = 180;
         CenterGrid.PreparingCellForEdit += SelectEditorText;
         NodeSummary.PreparingCellForEdit += SelectEditorText;
         InitializeGuidance();
@@ -66,6 +79,36 @@ public partial class ModelWorkspacePanel : UserControl
                 tableViewModel.PropertyChanged -= TableViewModelChanged;
         };
     }
+
+    private void MapOptionsChanged(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (ProcessMapCanvas is null || MapLinkKindBox is null) return;
+        ProcessMapCanvas.ConnectMode = MapConnectToggle?.IsChecked == true;
+        ProcessMapCanvas.RemoveMode = MapRemoveToggle?.IsChecked == true;
+        ProcessMapCanvas.ConnectionKind = (MapLinkKindBox.SelectedItem as ComboBoxItem)?.Tag as string ==
+            "AuxiliaryService"
+            ? Valdrio.Domain.ProcessRouteKind.AuxiliaryService
+            : Valdrio.Domain.ProcessRouteKind.Sequence;
+        ProcessMapCanvas.ClearConnection();
+    }
+
+    private void MapZoomChanged(object sender,
+        System.Windows.RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (ProcessMapCanvas is not null) ProcessMapCanvas.Zoom = e.NewValue;
+    }
+
+    private void AutoArrangeProcessMap(object sender, System.Windows.RoutedEventArgs e) =>
+        ProcessMapCanvas.AutoArrange();
+
+    private async void ValidateProcessMap(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (DataContext is ModelWorkspaceViewModel vm)
+            await vm.ValidateProcessMapAsync();
+    }
+
+    private void ExportProcessMap(object sender, System.Windows.RoutedEventArgs e) =>
+        ProcessMapCanvas.ExportPng();
 
     private void OpenModelSetup(object sender, System.Windows.RoutedEventArgs e)
     {
@@ -103,5 +146,6 @@ public partial class ModelWorkspacePanel : UserControl
         NodeSummary.Columns[3].Header = tableViewModel.Text("Model.ColumnUnit");
         NodeSummary.Columns[4].Header = tableViewModel.Text("Model.NodeDescription");
         NodeSummary.Columns[5].Header = tableViewModel.Text("Model.ColumnFunctions");
+        NodeSummary.Columns[6].Header = tableViewModel.Text("Model.EconomicFunction");
     }
 }

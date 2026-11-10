@@ -16,6 +16,7 @@ public sealed record FlowArrow(string SourceId, string DestinationId, string Lab
 public sealed record RunChoice(CalculationRun Run, string Label);
 public sealed record RunBalanceRow(string Label, string Role, string Primary, string SecondaryNet, string Final,
     decimal PrimaryValue, decimal SecondaryNetValue, decimal FinalValue, string? GraphId, string Exact, string Received = "", string Ceded = "", string Adjustment = "", string Growth = "");
+public sealed record FunctionCostRow(string Function, string Cost, decimal NumericAmount, int NodeCount);
 public sealed partial class CostFlowViewModel : ObservableObject
 {
     private readonly CompanyFileViewModel company;
@@ -81,6 +82,7 @@ public sealed partial class CostFlowViewModel : ObservableObject
     public ObservableCollection<FlowRow> Reconciliation { get; } = [];
     public ObservableCollection<RunBalanceRow> CenterBalances { get; } = [];
     public ObservableCollection<RunBalanceRow> NodeBalances { get; } = [];
+    public ObservableCollection<FunctionCostRow> FunctionBalances { get; } = [];
     [ObservableProperty] private RunBalanceRow? selectedBalance;
     [ObservableProperty] private string effectiveTotal = "—";
     [ObservableProperty] private string finalTotal = "—";
@@ -282,7 +284,7 @@ public sealed partial class CostFlowViewModel : ObservableObject
     {
         Concentration.Clear(); reportMembers.Clear(); ExecutiveSummary = "";
         Nodes.Clear(); Arrows.Clear(); Rows.Clear(); Reconciliation.Clear(); allRows.Clear();
-        SelectedBalance = null; CenterBalances.Clear(); NodeBalances.Clear();
+        SelectedBalance = null; CenterBalances.Clear(); NodeBalances.Clear(); FunctionBalances.Clear();
         EffectiveTotal = FinalTotal = ReconciliationState = "—";
         highlightedNodes.Clear(); highlightedArrows.Clear();
         Summary = Diagnostics = CurrentState = ""; Selection = this["SelectHint"];
@@ -417,6 +419,13 @@ public sealed partial class CostFlowViewModel : ObservableObject
                 foreach (var group in balances.GroupBy(b => b.CenterId).OrderBy(g => centers[g.Key].Code, StringComparer.CurrentCulture))
                     CenterBalances.Add(Balance(centers[group.Key].Code + " · " + centers[group.Key].Name, "",
                         group.Sum(b => b.Primary), group.Sum(b => b.SecondaryNet), group.Sum(b => b.Final), null, group.Select(b => b.NodeId).ToArray()));
+
+                // Destination-based functional summary of frozen principal-node
+                // costs. Not sales margin, inventory valuation or a new ledger.
+                foreach (var group in Valdrio.Reporting.RunCostBalanceProjector.GroupByFunction(
+                    balances, model.Structure.Nodes))
+                    FunctionBalances.Add(new(this["Function." + group.Function],
+                        GraphAmount(group.Final), group.Final, group.NodeCount));
             }
         }
         if (primary is not null)

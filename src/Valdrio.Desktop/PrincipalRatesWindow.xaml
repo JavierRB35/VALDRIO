@@ -14,6 +14,15 @@
   </StackPanel>
   <ScrollViewer x:Name="RatesScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto">
    <StackPanel>
+    <TabControl x:Name="RateCategoryTabs" Margin="0,0,0,12"
+                SelectedIndex="{Binding SelectedRateTabIndex, Mode=TwoWay}">
+     <TabItem Header="{Binding [TabCenters]}">
+      <TextBlock Text="{Binding [Centers]}" Margin="10,8" TextWrapping="Wrap"/>
+     </TabItem>
+     <TabItem Header="{Binding [TabFactors]}">
+      <TextBlock Text="{Binding [TabFactors]}" Margin="10,8" TextWrapping="Wrap"/>
+     </TabItem>
+    </TabControl>
     <Border Style="{StaticResource Card}">
      <StackPanel>
       <DockPanel Margin="0,0,0,8"><TextBlock Text="{Binding [Centers]}" FontSize="17" FontWeight="SemiBold"/>

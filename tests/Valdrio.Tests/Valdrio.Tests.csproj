@@ -56,6 +56,8 @@
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Batch.cs" Link="Desktop/AllocationWorkspaceViewModel.Batch.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Reciprocal.cs" Link="Desktop/AllocationWorkspaceViewModel.Reciprocal.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.Secondary.cs" Link="Desktop/AllocationWorkspaceViewModel.Secondary.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.ProcessMap.cs" Link="Desktop/AllocationWorkspaceViewModel.ProcessMap.cs" />
+    <Compile Include="../../src/Valdrio.Desktop/ModelWorkspaceViewModel.ProcessMap.cs" Link="Desktop/ModelWorkspaceViewModel.ProcessMap.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.AuxiliarySettlement.cs" Link="Desktop/AllocationWorkspaceViewModel.AuxiliarySettlement.cs" />
     <Compile Include="../../src/Valdrio.Desktop/AllocationWorkspaceViewModel.SecondaryFlow.cs" Link="Desktop/AllocationWorkspaceViewModel.SecondaryFlow.cs" />
     <Compile Include="../../src/Valdrio.Desktop/SecondaryResultPresentation.cs" Link="Desktop/SecondaryResultPresentation.cs" />

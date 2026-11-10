@@ -3,6 +3,7 @@ using Valdrio.Application;
 using Valdrio.Domain;
 
 namespace Valdrio.Infrastructure.CompanyFiles;
+internal sealed record ModelArchiveState(EntityId ModelId, bool Archived, long Revision);
 public sealed partial class SqliteCompanyFileService
 {
     private static PhysicalCenter Center(PhysicalCenterRow r)
@@ -31,7 +32,17 @@ public sealed partial class SqliteCompanyFileService
         var publication = db.Publications.AsNoTracking().SingleOrDefault(x => x.ModelVersionId == r.Id);
         if (publication is not null && publication.PayloadSchema != PublishedModelStructure.PayloadSchema)
             throw new InvalidDataException("Publication schema invalid");
-        return new(structure, Enum.Parse<ModelStatus>(r.Status), r.Revision, r.PublishedAtUtc is null ? null : UtcInstant.ParseIso(r.PublishedAtUtc), publication?.StructuralHash, publication?.CanonicalJson);
+        // Archive is an auditable metadata decision, not a change to the
+        // published model schema, immutable hash, or role in historical studies.
+        var lastArchiveChange = db.Audit.AsNoTracking()
+            .Where(a => EF.Property<string>(a, "AggregateType") == "ModelArchive" &&
+                EF.Property<string>(a, "AggregateId") == r.Id)
+            .OrderByDescending(a => a.Revision).Select(a => a.AfterJson).FirstOrDefault();
+        return new(structure, Enum.Parse<ModelStatus>(r.Status), r.Revision,
+            r.PublishedAtUtc is null ? null : UtcInstant.ParseIso(r.PublishedAtUtc),
+            publication?.StructuralHash, publication?.CanonicalJson)
+        { IsArchived = lastArchiveChange is not null &&
+            CanonicalSnapshotJson.Deserialize<ModelArchiveState>(lastArchiveChange).Archived };
     }
 
     private static IReadOnlyList<ModelVersionSnapshot> Models(ModelDbContext db) => FrozenList.Copy(db.Models.AsNoTracking().ToArray().Select(r => Model(db, r)).OrderBy(x => x.Structure.FamilyId).ThenBy(x => x.Structure.VersionNumber));
@@ -271,6 +282,66 @@ public sealed partial class SqliteCompanyFileService
             Audit(db, file, "ModelVersion", command.Id, row.Revision, "Publish", command.Actor, before, after);
             return after;
         });
+        public void DeleteDraft(DeleteModelDraft command, CancellationToken token = default) => Workspace(true, token, (db, file) =>
+        {
+            Scope(command.CompanyId, file);
+            var row = Required(db, file.Id, command.Id);
+            var before = Model(db, row);
+            Editable(before);
+            Revision(command.ExpectedRevision, row.Revision, command.Id);
+            // Never cascade into studies, key versions or descendant model
+            // versions. Their historical provenance must survive.
+            // Workspace creates a RunDbContext (which derives from
+            // AllocationDbContext). The base ModelDbContext intentionally does
+            // not map studies or allocation keys in its frozen v2 schema.
+            if (db is not AllocationDbContext references)
+                throw new InvalidOperationException("Deleting a draft requires an allocation-aware context.");
+            if (references.Studies.Any(s => s.SelectedModelVersionId == row.Id) ||
+                references.AllocationKeyEvents.Any(k => k.ModelVersionId == row.Id) ||
+                db.Models.Any(m => m.ParentVersionId == row.Id ||
+                    m.FamilyId == row.FamilyId && m.VersionNumber > row.VersionNumber) ||
+                db.Publications.Any(p => p.ModelVersionId == row.Id) ||
+                db.Audit.Any(a => EF.Property<string>(a, "AggregateType") == "Study" &&
+                    (a.BeforeJson.Contains(row.Id) || a.AfterJson.Contains(row.Id))))
+                throw ModelRules.Error("MODEL_REFERENCED", "Model.Referenced", command.Id);
+            db.Pools.RemoveRange(db.Pools.Where(p => p.ModelVersionId == row.Id));
+            db.SaveChanges();
+            db.Nodes.RemoveRange(db.Nodes.Where(n => n.ModelVersionId == row.Id));
+            db.SaveChanges();
+            db.Models.Remove(row);
+            db.SaveChanges();
+            if (!db.Models.Any(m => m.FamilyId == row.FamilyId))
+                db.Families.Remove(db.Families.Single(f => f.Id == row.FamilyId));
+            FirstWrite(db);
+            Audit<object>(db, file, "ModelVersion", command.Id,
+                checked(row.Revision + 1), "DeleteDraft", command.Actor, before, new { Deleted = true });
+            return 0;
+        });
+
+        public ModelVersionSnapshot ChangeArchive(ChangeModelArchive command, CancellationToken token = default) => Workspace(true, token, (db, file) =>
+        {
+            Scope(command.CompanyId, file);
+            var row = Required(db, file.Id, command.Id);
+            var before = Model(db, row);
+            Revision(command.ExpectedRevision, row.Revision, command.Id);
+            if (before.Status != ModelStatus.Published)
+                throw ModelRules.Error("MODEL_NOT_PUBLISHED", "Model.ParentNotPublished", command.Id);
+            if (before.IsArchived == command.Archived) return before;
+            // PublishedModelUpdate explicitly prohibits UPDATE even for metadata.
+            // Store archive intent in a separate append-only audit stream instead.
+            var previous = db.Audit.AsNoTracking()
+                .Where(a => EF.Property<string>(a, "AggregateType") == "ModelArchive" &&
+                    EF.Property<string>(a, "AggregateId") == row.Id)
+                .OrderByDescending(a => a.Revision).Select(a => a.AfterJson).FirstOrDefault();
+            ModelArchiveState? prior = previous is null ? null :
+                CanonicalSnapshotJson.Deserialize<ModelArchiveState>(previous);
+            var next = new ModelArchiveState(command.Id, command.Archived,
+                prior is null ? 0 : checked(prior.Revision + 1));
+            Audit(db, file, "ModelArchive", command.Id, next.Revision,
+                command.Archived ? "ArchiveModel" : "RestoreModel", command.Actor, prior, next);
+            return before with { IsArchived = command.Archived };
+        });
+
         public ModelVersionSnapshot Clone(CloneModel command, CancellationToken token = default) => Workspace(true, token, (db, file) =>
         {
             Scope(command.CompanyId, file);
@@ -293,7 +364,7 @@ public sealed partial class SqliteCompanyFileService
             var p = parent.Publication!.Structure;
             var id = EntityId.Parse(NewId());
             var remap = p.Nodes.ToDictionary(x => x.Id, _ => EntityId.Parse(NewId()));
-            var m = new ModelStructure(id, file.Id, p.FamilyId, checked(db.Models.Where(x => x.FamilyId == p.FamilyId.ToString()).Max(x => x.VersionNumber) + 1), p.Id, command.Description, p.PrecisionPolicyVersion, p.MethodPolicy, p.Nodes.Select(n => new CalculationNodeDefinition(remap[n.Id], id, n.PhysicalCenterId, n.Code, n.Role, n.FunctionTags, n.IsActive)).ToArray(), p.Pools.Select(pool => new CostPoolDefinition(EntityId.Parse(NewId()), id, remap[pool.NodeId], pool.DriverUnitId, pool.Description, pool.CostLayer, pool.CapacityPolicy)).ToArray());
+            var m = new ModelStructure(id, file.Id, p.FamilyId, checked(db.Models.Where(x => x.FamilyId == p.FamilyId.ToString()).Max(x => x.VersionNumber) + 1), p.Id, command.Description, p.PrecisionPolicyVersion, p.MethodPolicy, p.Nodes.Select(n => new CalculationNodeDefinition(remap[n.Id], id, n.PhysicalCenterId, n.Code, n.Role, ProcessRouteGraph.RemapTags(n.FunctionTags, remap), n.IsActive)).ToArray(), p.Pools.Select(pool => new CostPoolDefinition(EntityId.Parse(NewId()), id, remap[pool.NodeId], pool.DriverUnitId, pool.Description, pool.CostLayer, pool.CapacityPolicy)).ToArray());
             db.Models.Add(Row(m));
             AddStructure(db, m);
             FirstWrite(db);

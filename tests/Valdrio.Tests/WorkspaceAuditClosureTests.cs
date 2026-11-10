@@ -313,6 +313,7 @@ public sealed partial class WorkspaceAuditClosureTests
         vm.Physical = vm.Centers.First(c => c.Value.IsActive);
         vm.DriverUnit = vm.Units.First(u => u.Value.IsActive);
         vm.Role = vm.Roles.First(r => r.Value == NodeRole.Principal);
+        vm.EconomicFunctionChoice = NodeEconomicFunction.Production;
         vm.Layer = vm.Layers.First();
         vm.PoolDescription = "UX cost group";
 
@@ -350,6 +351,7 @@ public sealed partial class WorkspaceAuditClosureTests
         vm.Physical = vm.Centers.First(c => c.Value.IsActive);
         vm.DriverUnit = vm.Units.First(u => u.Value.IsActive);
         vm.Role = vm.Roles.First(r => r.Value == NodeRole.Principal);
+        vm.EconomicFunctionChoice = NodeEconomicFunction.Production;
         vm.Layer = vm.Layers.First();
         vm.PoolDescription = "Retry cost group";
         await vm.SaveNodeCommand.ExecuteAsync(null);

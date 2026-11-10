@@ -56,3 +56,19 @@ El gráfico ordena los nodos principales con su coste final, sin volver a sumar 
 3. Contrasta el detalle de aportaciones, totales por principal y Pareto; resuelve los diagnósticos antes de cerrar el reparto secundario.
 
 Las tablas crecen con sus filas: utiliza el desplazamiento exterior de la página. Guardar claves y las acciones de cierre permanecen en la barra inferior; cambian con la pestaña activa. El desplazamiento horizontal permite consultar las columnas que no caben.
+
+## Ampliación de presentación por finalidad — candidatura 2026-11-04
+
+Los resultados terminales por nodo y las contribuciones efectivas se muestran en pestañas/tablas separadas para **Centros generales/indirectos** y **Factores directos** (MOD y aprovisionamiento). La separación es exclusivamente visual: los grupos directos siguen recibiendo prestaciones auxiliares según las claves; el cálculo recíproco y sus flujos no se duplican. Los **totales conciliados** abarcan ambas categorías; el Pareto sigue la categoría seleccionada.
+
+**Estado:** implementación candidata pendiente de validación en Windows.
+
+## Propuestas desde relaciones de la estructura
+
+En **Claves de reparto**, el panel «Propuestas de reparto desde el mapa del proceso» muestra los destinos de las **prestaciones con origen en un nodo auxiliar** que estén guardadas en la versión de estructura usada por el análisis. Las secuencias operativas entre nodos principales no generan repartos secundarios.
+
+Las propuestas no crean costes ni se aplican automáticamente: prepara un borrador de clave con esos destinos, completa los pesos o porcentajes y revisa/publica la clave antes de asignarla. Se informa si el mapa no está validado o si no existen relaciones de prestación auxiliares. Si no aparecen relaciones guardadas, comprueba qué versión publicada de la estructura utiliza el análisis.
+
+## Orden de las pestañas
+
+El reparto secundario mantiene el mismo orden: **Claves de reparto → Asignar cuentas / nodos → Comprobar y cerrar**. Define o selecciona primero las claves de prestación auxiliar, asígnalas después a nodos/grupos y comprueba la viabilidad antes de cerrar. Las autoprestaciones siguen sujetas a la validación matemática existente.

@@ -49,3 +49,16 @@ Solo se elimina tras confirmación si no tiene nodos ni referencias históricas.
 1. Crea los centros y nodos necesarios y asigna los pools y unidades físicas compatibles.
 2. Revisa códigos, descripciones y relaciones en la estructura en borrador antes de publicar.
 3. Publica la versión cuando sea consistente; selecciónala desde el análisis para que los repartos utilicen destinos válidos.
+
+## Mapa opcional del proceso (COR-05)
+
+En **4. Revisar y finalizar**, el mapa agrupa nodos por función económica y papel. Para trabajar con él, abre una **versión editable**; las versiones finalizadas se consultan en modo de solo lectura.
+
+1. Selecciona una tarjeta en el diagrama **o elige el nodo de origen en el panel izquierdo**.
+2. En **Nodos siguientes** (si es principal) o **Nodos atendidos** (si es auxiliar), marca los destinos. Los existentes aparecen ya marcados. Al marcar o desmarcar se crean o eliminan **flechas inmediatamente** en el borrador.
+3. Un **principal** solo se conecta con **otros principales** mediante secuencias operativas; no se admiten autoprestaciones ni ciclos de ruta entre principales. Un **auxiliar** puede prestar servicios a principales, a otros auxiliares o **a sí mismo**, independientemente de la función económica. Las opciones incompatibles aparecen deshabilitadas con explicación.
+4. Usa **Validar y guardar mapa** para conservar una versión utilizable como referencia. Sin validar, los cálculos habituales de VALDRIO siguen funcionando y no se publican claves por el hecho de trazar una flecha.
+
+En **Reparto secundario**, las prestaciones auxiliares validadas pueden convertirse en propuestas de **destinos de una clave**; el usuario configura los pesos y acepta o descarta el borrador por separado. Una autoprestación auxiliar del 100 % sin destino económico externo podría hacer irresoluble el reparto recíproco. Las secuencias entre principales **nunca** generan repartos económicos.
+
+Zoom, arrastre, autoordenación y exportación siguen disponibles; la conexión antigua por dos clics queda en **Controles avanzados**.

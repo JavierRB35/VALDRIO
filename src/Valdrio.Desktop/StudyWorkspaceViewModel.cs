@@ -24,6 +24,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     private readonly Func<Task<bool>>? earlierBefore;
     private readonly Func<Task>? earlierAfter;
     private bool busy, loading, dirty, pseudo, committedRefreshPending, compositionBusy;
+    private bool studySelectionTouched;
     private string name = "", currency = "EUR", statusKey = "Study.NoFile";
     private DateTime? start, end;
     private ModelOption? modelChoice;
@@ -145,7 +146,23 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public DateTime? PeriodEnd { get => end; set { if (SetProperty(ref end, value)) Edited(); } }
     public ModelOption? ModelChoice { get => modelChoice; set { if (SetProperty(ref modelChoice, value)) Edited(); } }
     public ScenarioOption? Scenario { get => scenario; set { if (SetProperty(ref scenario, value)) Edited(); } }
-    public StudyOption? StudyChoice { get => studyChoice; set { SetProperty(ref studyChoice, value); RefreshCommands(); } }
+    public StudyOption? StudyChoice
+    {
+        get => studyChoice;
+        set
+        {
+            if (SetProperty(ref studyChoice, value) && !loading)
+            {
+                studySelectionTouched = true;
+                OnPropertyChanged(nameof(HasPendingStudySelection));
+            }
+            RefreshCommands();
+        }
+    }
+    public bool HasPendingStudySelection =>
+        studySelectionTouched && studyChoice is not null && studyChoice.Value.Id != Current?.Id;
+    public string LoadSelectionHelp => HasPendingStudySelection
+        ? Text("Study.SelectionPendingLoad") : LoadLabel;
     public SnapshotOption? SnapshotChoice { get => snapshotChoice; set { SetProperty(ref snapshotChoice, value); OnPropertyChanged(nameof(SnapshotDetails)); OnPropertyChanged(nameof(Preparation)); OnPropertyChanged(nameof(HistoricalDefinitions)); } }
     private CultureInfo Ui => CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag);
     private CultureInfo Format => CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
@@ -230,7 +247,10 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         loading = true;
         var modelId = modelChoice?.Value.Structure.Id; var studyId = studyChoice?.Value.Id; var snapshotId = snapshotChoice?.Value.Id;
         var scenarioValue = scenario?.Value ?? StudyScenario.Actual;
-        Replace(PublishedModels, modelValues.Where(m => m.Status == ModelStatus.Published).Select(m => new ModelOption(m, m.Structure.Description + " · " + m.Structure.VersionNumber.ToString(Format))));
+        Replace(PublishedModels, modelValues.Where(m => m.Status == ModelStatus.Published &&
+            (!m.IsArchived || Current?.SelectedModelVersionId == m.Structure.Id))
+            .Select(m => new ModelOption(m, m.Structure.Description + " · " + m.Structure.VersionNumber.ToString(Format) +
+                (m.IsArchived ? " · " + Text("Model.Archived") : ""))));
         Replace(Studies, studyValues.Select(s => new StudyOption(s, s.Name + " · " + s.Currency.FunctionalCurrencyCode + " · " + StateText(s.State))));
         Replace(Scenarios, Enum.GetValues<StudyScenario>().Select(s => new ScenarioOption(s, ScenarioText(s))));
         Replace(Snapshots, snapshotValues.Select(s => new SnapshotOption(s, s.InputRevision.ToString(Format) + " · " + formatter.FormatInstant(s.CapturedAtUtc.Value, preferences.Current.DisplayTimeZoneId, Format) + " · " + s.Id)));
@@ -324,7 +344,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         currency = value?.Currency.FunctionalCurrencyCode.ToString() ?? company.Snapshot?.DefaultCurrency.ToString() ?? "EUR";
         modelChoice = PublishedModels.SingleOrDefault(m => m.Value.Structure.Id == value?.SelectedModelVersionId);
         scenario = Scenarios.Single(s => s.Value == (value?.ScenarioKind ?? StudyScenario.Actual));
-        studyChoice = Studies.SingleOrDefault(s => s.Value.Id == value?.Id); loading = false; Refresh();
+        studyChoice = Studies.SingleOrDefault(s => s.Value.Id == value?.Id); studySelectionTouched = false; loading = false; Refresh();
     }
     public Func<Task<bool>>? BeforeChangeAsync { get; set; }
     public bool HasConfirmedImports => importValues.Count > 0;

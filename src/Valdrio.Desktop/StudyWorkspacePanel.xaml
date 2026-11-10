@@ -1,5 +1,6 @@
 <UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:Valdrio.Desktop" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Valdrio.Desktop.StudyWorkspacePanel">
  <UserControl.Resources>
+  <BooleanToVisibilityConverter x:Key="Visible"/>
   <Style TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
    <Setter Property="Padding" Value="11,7"/>
    <Setter Property="Margin" Value="0,4,8,4"/>
@@ -25,11 +26,28 @@
      <TextBlock Text="{Binding StudyListHelp}"/>
      <DockPanel>
       <WrapPanel DockPanel.Dock="Right">
+       
        <Button x:Name="RefreshStudyButton" Content="{Binding RefreshLabel}" Command="{Binding RefreshCommand}" TabIndex="60"/>
-       <Button x:Name="LoadStudyButton" Content="{Binding LoadLabel}" Command="{Binding LoadCommand}" TabIndex="62" FontWeight="SemiBold"/>
+       <Button x:Name="LoadStudyButton" Content="{Binding LoadLabel}" Command="{Binding LoadCommand}" TabIndex="62" FontWeight="SemiBold" AutomationProperties.HelpText="{Binding LoadSelectionHelp}">
+        <Button.Style>
+         <Style TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
+          <Style.Triggers>
+           <DataTrigger Binding="{Binding HasPendingStudySelection}" Value="True">
+            <Setter Property="Background" Value="{DynamicResource Brand.DeepGreen}"/>
+            <Setter Property="Foreground" Value="{DynamicResource Brand.White}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource Brand.DeepGreen}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+           </DataTrigger>
+          </Style.Triggers>
+         </Style>
+        </Button.Style>
+       </Button>
       </WrapPanel>
-      <ComboBox x:Name="StudyBox" ItemsSource="{Binding Studies}" SelectedItem="{Binding StudyChoice}" IsEnabled="{Binding HasStudies}" TabIndex="61" AutomationProperties.Name="{Binding Title}" local:FieldHelp.Key="StudyChoice"/>
+      <ComboBox x:Name="StudyBox" ItemsSource="{Binding Studies}" SelectedItem="{Binding StudyChoice}" IsEnabled="{Binding Ready}" TabIndex="61" AutomationProperties.Name="{Binding Title}" local:FieldHelp.Key="StudyChoice"/>
      </DockPanel>
+     <TextBlock Text="{Binding LoadSelectionHelp}" Foreground="{DynamicResource Accent.ActiveGreen}" FontWeight="SemiBold"
+                AutomationProperties.LiveSetting="Polite" Margin="0,0,0,8"
+                Visibility="{Binding HasPendingStudySelection, Converter={StaticResource Visible}}"/>
     </StackPanel>
    </GroupBox>
 
