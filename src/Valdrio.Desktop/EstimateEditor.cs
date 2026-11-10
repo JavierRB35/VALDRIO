@@ -80,7 +80,8 @@ public sealed partial class EstimateEditor : ObservableObject
     {
         loading = true; orderId = new(Guid.NewGuid()); previousId = null; Code = ""; Quantity = "1";
         Recipe = Recipes.LastOrDefault()?.Value ?? default; Run = Runs.LastOrDefault()?.Value ?? default;
-        loading = false; Changed(); Dirty = false; OnPropertyChanged(nameof(CodeEditable));
+        loading = false; Changed(); Dirty = false;
+        OnPropertyChanged(nameof(CodeEditable)); OnPropertyChanged(nameof(HasPendingEstimatePreview));
     }
     public void Revise()
     {
@@ -130,6 +131,7 @@ public sealed partial class EstimateEditor : ObservableObject
     public void ShowHistory()
     {
         if (Selected is null) return; preview = null; OnPropertyChanged(nameof(CanAccept));
+        OnPropertyChanged(nameof(HasPendingEstimatePreview));
         Display(Selected.Value.Preview, "v" + Selected.Value.Version + " · " + Stamp(Selected.Value.AcceptedAtUtc)); Feedback = this["Frozen"];
         displayedEstimateId = Selected.Value.Id; OnPropertyChanged(nameof(HasPendingHistorySelection));
     }
