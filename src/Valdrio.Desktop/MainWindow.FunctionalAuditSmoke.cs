@@ -18,7 +18,16 @@ public partial class MainWindow
         var checks = new List<string>();
         void Check(bool valid, string message) { if (!valid) throw new InvalidOperationException(message); checks.Add(message); }
         async Task Idle() { await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle); UpdateLayout(); }
-        studies.StudyChoice = studies.Studies.First(); await studies.LoadCommand.ExecuteAsync(null);
+        // A change of the study picker highlights Open until that study becomes active.
+        await studies.NewCommand.ExecuteAsync(null);
+        studies.StudyChoice = studies.Studies.First();
+        await Idle();
+        Check(studies.HasPendingStudySelection && StudyPanel.LoadStudyButton.Tag is true,
+            "Choosing a different study highlights the Open analysis action");
+        await studies.LoadCommand.ExecuteAsync(null);
+        await Idle();
+        Check(!studies.HasPendingStudySelection && StudyPanel.LoadStudyButton.Tag is false,
+            "Opening the selected analysis clears the pending action highlight");
         foreach (var language in new[] { "es", "en" })
         {
             main.ApplyPresentationPreset(language, language == "es" ? "es-ES" : "en-US", "Europe/Madrid", false, false);

@@ -21,6 +21,11 @@ public sealed partial class EstimateEditor : ObservableObject
     public string Context => host.PhysicalCompany!.Name + " · " + host.Current!.Name;
     public bool Writable => host.PhysicalWritable;
     public bool CanAccept => Writable && preview is not null && !Busy;
+    public bool HasPendingEstimatePreview => Dirty && preview is null;
+    private EntityId? displayedEstimateId, comparedEstimateId, comparisonEstimateId;
+    public bool HasPendingHistorySelection => Selected is { } selected && displayedEstimateId != selected.Value.Id;
+    public bool HasPendingComparisonSelection => Selected is { } selected && Comparison is { } compared &&
+        (comparedEstimateId != selected.Value.Id || comparisonEstimateId != compared.Value.Id);
     public bool CodeEditable => previousId is null;
     public bool Dirty { get; private set; }
     public ObservableCollection<CompositionChoice<EntityId>> Recipes { get; } = [];
@@ -41,12 +46,15 @@ public sealed partial class EstimateEditor : ObservableObject
     partial void OnQuantityChanged(string value) => Changed();
     partial void OnRecipeChanged(EntityId value) => Changed();
     partial void OnRunChanged(EntityId value) => Changed();
+    partial void OnSelectedChanged(EstimateHistoryRow? value)
+    { OnPropertyChanged(nameof(HasPendingHistorySelection)); OnPropertyChanged(nameof(HasPendingComparisonSelection)); }
+    partial void OnComparisonChanged(EstimateHistoryRow? value) => OnPropertyChanged(nameof(HasPendingComparisonSelection));
     partial void OnBusyChanged(bool value) => OnPropertyChanged(nameof(CanAccept));
     private void Changed()
     {
         if (loading) return;
         Dirty = true; preview = null; Details.Clear(); Answers.Clear(); Summary = this["Pending"];
-        OnPropertyChanged(nameof(CanAccept));
+        OnPropertyChanged(nameof(CanAccept)); OnPropertyChanged(nameof(HasPendingEstimatePreview));
     }
     public EstimateEditor(StudyWorkspaceViewModel host) { this.host = host; }
     public async Task LoadAsync() => await Work(async () =>
@@ -72,7 +80,8 @@ public sealed partial class EstimateEditor : ObservableObject
     {
         loading = true; orderId = new(Guid.NewGuid()); previousId = null; Code = ""; Quantity = "1";
         Recipe = Recipes.LastOrDefault()?.Value ?? default; Run = Runs.LastOrDefault()?.Value ?? default;
-        loading = false; Changed(); Dirty = false; OnPropertyChanged(nameof(CodeEditable));
+        loading = false; Changed(); Dirty = false;
+        OnPropertyChanged(nameof(CodeEditable)); OnPropertyChanged(nameof(HasPendingEstimatePreview));
     }
     public void Revise()
     {
@@ -105,7 +114,7 @@ public sealed partial class EstimateEditor : ObservableObject
         Answers.Add(new(this["QQuantity"], Q(physical.OutputQuantity) + " · " + this["Batches"] + ": " + Q(physical.StartedBatches)));
         Summary = this["PhysicalOnly"];
         var result = await Task.Run(() => host.ActiveEstimates!.PreviewEstimate(request));
-        preview = result; Display(result, this["PreviewState"]); Feedback = this["Ready"]; OnPropertyChanged(nameof(CanAccept));
+        preview = result; Display(result, this["PreviewState"]); Feedback = this["Ready"]; OnPropertyChanged(nameof(CanAccept)); OnPropertyChanged(nameof(HasPendingEstimatePreview));
     });
     public async Task<bool> AcceptAsync()
     {
@@ -122,7 +131,9 @@ public sealed partial class EstimateEditor : ObservableObject
     public void ShowHistory()
     {
         if (Selected is null) return; preview = null; OnPropertyChanged(nameof(CanAccept));
+        OnPropertyChanged(nameof(HasPendingEstimatePreview));
         Display(Selected.Value.Preview, "v" + Selected.Value.Version + " · " + Stamp(Selected.Value.AcceptedAtUtc)); Feedback = this["Frozen"];
+        displayedEstimateId = Selected.Value.Id; OnPropertyChanged(nameof(HasPendingHistorySelection));
     }
     public void Compare()
     {
@@ -134,6 +145,7 @@ public sealed partial class EstimateEditor : ObservableObject
         ShowHistory();
         Answers.Add(new(this["Comparison"], $"v{a.Version} → v{b.Version}: {this["Quantity"]} {Q(a.Preview.Cost.OutputQuantity)} → {Q(b.Preview.Cost.OutputQuantity)}; {this["Total"]} {Money(a.Preview)} → {Money(b.Preview)}; Δ {UiCompactNumbers.Number(b.Preview.Cost.Total-a.Preview.Cost.Total, host.PhysicalFormatCulture)}; {this["UnitCost"]} {UiCompactNumbers.Number(a.Preview.Cost.UnitCost, host.PhysicalFormatCulture)} → {UiCompactNumbers.Number(b.Preview.Cost.UnitCost, host.PhysicalFormatCulture)}"));
         Answers.Add(new(this["Sources"], SourceLabel(a.Preview) + " → " + SourceLabel(b.Preview))); Feedback = this["CompareHelp"];
+        comparedEstimateId = a.Id; comparisonEstimateId = b.Id; OnPropertyChanged(nameof(HasPendingComparisonSelection));
     }
     private string SourceLabel(EstimatePreview value)
     {

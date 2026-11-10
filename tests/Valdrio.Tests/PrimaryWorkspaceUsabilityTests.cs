@@ -85,4 +85,62 @@ public sealed partial class T06ImportConfirmationTests
         Assert.AreEqual("Renamed in editor", vm.Coverage.Single().Key);
         Assert.IsFalse(vm.IsDirty);
     }
+
+    [TestMethod]
+    public async Task PrimaryKeyChangeAfterPartReplacementClearsObsoleteReferencesOnlyWithApproval()
+    {
+        EntityId companyId, studyId, oldPartId, newPartId, replacementKeyId;
+        using (var file = Baseline())
+        {
+            var w = RouteForKey(file, await ImportedResources(file));
+            companyId = w.Study.CompanyId;
+            studyId = w.Study.Id;
+            var oldPart = w.Resources.Single().Parts.Single();
+            oldPartId = oldPart.Id;
+            var first = file.Allocations.SaveAllocationKey(KeyCommand(w)).After;
+            var second = file.Allocations.SaveAllocationKey(KeyCommand(w) with
+            {
+                KeyId = Id(), RequestId = Id(), Name = "Replacement key",
+                Lines = [new(w.Model.Structure.Nodes.Last().Id, 100m)]
+            }).After;
+            replacementKeyId = second.Id;
+            file.Allocations.ChangeAllocations(AllocationCommand(w,
+                new AllocationConfiguration([], [], [new(oldPartId, first.Id)], [], [])));
+            w = file.Resources.ReadResources(companyId, studyId);
+            newPartId = Id();
+            file.Resources.ChangeResources(Mutation(w, ResourceMutationKind.EditResource,
+                w.Resources.Single().Id, [new ResourcePartDraft(newPartId, oldPart.Amount,
+                    ResourceRoutingKind.AllocationPool, poolId: oldPart.PoolId)]));
+            var changed = file.Allocations.ReadAllocations(companyId, studyId);
+            Assert.IsTrue(changed.Coverage.Any(c => c.SourceId == oldPartId &&
+                c.Diagnostic?.Code == "KEY_PART_CHANGED"));
+        }
+
+        using var ui = new ResourceUi(Service(), Catalog);
+        await ui.Company.OpenPath(FileOf("current.valdrio"));
+        ui.Studies.StudyChoice = ui.Studies.Studies.Single(s => s.Value.Id == studyId);
+        await ui.Studies.LoadCommand.ExecuteAsync(null);
+        using var vm = new AllocationWorkspaceViewModel(ui.Company, ui.Studies,
+            new UiTextCatalog(), ui.Preferences, ui.Dialogs);
+        await vm.EnterAsync();
+        Assert.IsTrue(vm.HasObsolete);
+        var before = Hash(ui.Company.ActivePath!);
+        await vm.AssignCoverageAsync(newPartId, replacementKeyId);
+        Assert.AreEqual(before, Hash(ui.Company.ActivePath!),
+            "Declining cleanup must not alter the file or its historical references.");
+        Assert.AreEqual(vm["ObsoleteSaveCancelled"], vm.Status);
+
+        ui.Dialogs.ConfirmEconomic = true;
+        await vm.AssignCoverageAsync(newPartId, replacementKeyId);
+        Assert.IsFalse(vm.HasStatusError, vm.Status);
+        Assert.IsFalse(vm.HasObsolete);
+        Assert.AreEqual(replacementKeyId, vm.Coverage.Single().SelectedKeyId);
+        var current = ui.Company.ActiveAllocations!.ReadAllocations(companyId, studyId);
+        Assert.AreEqual(newPartId, current.Configuration.ExplicitAssignments.Single().PartId);
+        Assert.IsFalse(current.Coverage.Any(c => c.Diagnostic?.Code == "KEY_PART_CHANGED"));
+        Assert.AreEqual(1000m, PrimaryAllocationService.Calculate(current).Facts.Sum(f => f.PostedAmount.Amount));
+        Assert.IsTrue(ui.Company.ActiveAllocations.ReadAllocationHistory(companyId, studyId)
+            .Any(receipt => receipt.Request.Configuration.ExplicitAssignments.Any(a => a.PartId == oldPartId)),
+            "Previous allocations must remain traceable in the saved history.");
+    }
 }

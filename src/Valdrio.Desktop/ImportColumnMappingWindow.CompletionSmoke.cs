@@ -78,7 +78,10 @@ public partial class ImportColumnMappingWindow
         Check(first.Resources.Single().Functional.Amount == 60m && firstPhoto.PayloadSchema == ImportedStudySnapshotInput.LedgerSchema,
             "comparison confirmed and captured in snapshot v4");
         await studies.AttachImportTarget(); await Read(corrected);
-        ReplaceBatchBox.SetCurrentValue(CheckBox.IsCheckedProperty, true); ReplaceBatchBox.GetBindingExpression(CheckBox.IsCheckedProperty)!.UpdateSource();
+        Check(vm.HasExistingBatches && vm.AddBatch && AddBatchBox.IsChecked == true &&
+            ReplaceBatchBox.Visibility == Visibility.Visible, "an existing batch offers visible add or replace choices, defaulting to add");
+        ReplaceBatchBox.SetCurrentValue(RadioButton.IsCheckedProperty, true); ReplaceBatchBox.GetBindingExpression(RadioButton.IsCheckedProperty)!.UpdateSource();
+        Check(vm.ReplaceBatch && !vm.AddBatch && ReplacementBox.IsEnabled, "replace choice reveals the original batch selector");
         ReplacementBox.SetCurrentValue(ComboBox.SelectedItemProperty, vm.ExistingBatches.Single(b => b.Id == first.Id));
         ReplacementBox.GetBindingExpression(ComboBox.SelectedItemProperty)!.UpdateSource();
         Approve(); await PrepareForSmoke();

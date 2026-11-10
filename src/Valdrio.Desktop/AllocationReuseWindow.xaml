@@ -12,7 +12,8 @@
    <TextBlock Text="{Binding TargetLabel}" Margin="0,6" FontWeight="SemiBold"/>
    <TextBlock Text="{Binding Help}" TextWrapping="Wrap" Margin="0,0,0,12"/>
    <TextBlock Text="{Binding SourceLabel}"/>
-   <DockPanel><Button DockPanel.Dock="Right" Content="{Binding PreviewLabel}" Click="Preview" IsEnabled="{Binding CanPreview}" Margin="12,0,0,0"/>
+   <DockPanel><Button DockPanel.Dock="Right" Content="{Binding PreviewLabel}" Click="Preview" IsEnabled="{Binding CanPreview}" Margin="12,0,0,0"
+                        Style="{StaticResource Button.PendingSelection}" Tag="{Binding HasPendingSourcePreview}"/>
     <ComboBox ItemsSource="{Binding Sources}" DisplayMemberPath="Label" SelectedItem="{Binding Source}" AutomationProperties.Name="{Binding SourceLabel}"/>
    </DockPanel>
   </StackPanel>

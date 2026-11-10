@@ -24,6 +24,7 @@ public sealed partial class AllocationReuseEditor : ObservableObject
     private readonly CultureInfo culture;
     private readonly UiTextCatalog texts = new();
     private AllocationWorkspaceSnapshot? sourceSnapshot, targetSnapshot;
+    private bool previewSucceeded;
     [ObservableProperty] private StudyOption? source;
     [ObservableProperty] private bool replaceConflicts;
     [ObservableProperty] private string feedback = "";
@@ -38,6 +39,7 @@ public sealed partial class AllocationReuseEditor : ObservableObject
     public string CancelLabel => L("Activity.Cancel");
     public string ReplaceLabel => L("Reuse.Replace");
     public bool CanPreview => Source is not null;
+    public bool HasPendingSourcePreview => CanPreview && !previewSucceeded;
     public bool CanAdopt => sourceSnapshot is not null && Items.Any(i => i.Selected && i.CanSelect) &&
         (ReplaceConflicts || !Items.Any(i => i.Selected && i.Item.Conflict));
     public string TargetLabel => target.Name + " · " + target.PeriodStart + " – " + target.PeriodEnd;
@@ -52,13 +54,14 @@ public sealed partial class AllocationReuseEditor : ObservableObject
     }
     partial void OnSourceChanged(StudyOption? value)
     {
-        Items.Clear(); sourceSnapshot = null; targetSnapshot = null; ReplaceConflicts = false; Feedback = "";
+        Items.Clear(); sourceSnapshot = null; targetSnapshot = null; previewSucceeded = false; ReplaceConflicts = false; Feedback = "";
         OnPropertyChanged(nameof(CanPreview)); OnPropertyChanged(nameof(CanAdopt));
+        OnPropertyChanged(nameof(HasPendingSourcePreview));
     }
     partial void OnReplaceConflictsChanged(bool value) => OnPropertyChanged(nameof(CanAdopt));
     public void Preview()
     {
-        Items.Clear(); sourceSnapshot = null; targetSnapshot = null;
+        Items.Clear(); sourceSnapshot = null; targetSnapshot = null; previewSucceeded = false;
         if (Source is null) { Feedback = L("Reuse.NoSources"); return; }
         try
         {
@@ -86,10 +89,11 @@ public sealed partial class AllocationReuseEditor : ObservableObject
             Feedback = string.Format(culture, L("Reuse.Summary"), result.Items.Count(i => i.Compatible && !i.AlreadyPresent),
                 result.Items.Count(i => !i.Compatible), result.Items.Count(i => i.Conflict),
                 result.Items.Count(i => i.Unused), result.OmittedAssignments);
+            previewSucceeded = true;
         }
         catch (DomainRuleException e) { Feedback = L(e.Diagnostic.MessageKey); }
         catch (CompanyFileException e) { Feedback = L(e.Diagnostic.MessageKey); }
-        finally { OnPropertyChanged(nameof(CanAdopt)); }
+        finally { OnPropertyChanged(nameof(CanAdopt)); OnPropertyChanged(nameof(HasPendingSourcePreview)); }
     }
     public bool Adopt()
     {

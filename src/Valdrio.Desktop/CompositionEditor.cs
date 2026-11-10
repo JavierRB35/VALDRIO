@@ -76,6 +76,7 @@ public sealed partial class CompositionEditor : ObservableObject
     public bool Busy { get; private set; }
     public bool Writable => host.PhysicalWritable;
     public bool Editable => Writable && current?.State == CompositionState.Draft && current.ProductId == Product && current.Id == Version;
+    public bool HasPendingCompositionOpen => Version != default && (current is null || current.Id != Version || current.ProductId != Product);
     public bool LinesReadOnly => !Editable;
     public string NumericCulture => host.PhysicalFormatCulture.Name;
     public string Context => host.PhysicalCompany!.Name + " · " + host.Current!.Name + " · " + host.ContextSummary;
@@ -85,7 +86,7 @@ public sealed partial class CompositionEditor : ObservableObject
     public CompositionEditor(StudyWorkspaceViewModel host) { this.host = host; Reload(); }
     partial void OnProductChanged(EntityId value) { OnPropertyChanged(nameof(Versions)); Version = Versions.LastOrDefault()?.Value ?? default; SelectionChanged(); }
     partial void OnVersionChanged(EntityId value) => SelectionChanged();
-    private void SelectionChanged() { Invalidate(); OnPropertyChanged(nameof(Editable)); OnPropertyChanged(nameof(LinesReadOnly)); }
+    private void SelectionChanged() { Invalidate(); OnPropertyChanged(nameof(Editable)); OnPropertyChanged(nameof(LinesReadOnly)); OnPropertyChanged(nameof(HasPendingCompositionOpen)); }
     partial void OnBatchSizeChanged(string value) => Changed();
     partial void OnNoteChanged(string value) => Changed();
     partial void OnOutputQuantityChanged(string value) => Invalidate();

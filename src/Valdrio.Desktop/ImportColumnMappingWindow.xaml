@@ -90,6 +90,29 @@
        <TextBlock Text="{Binding FileName}" FontWeight="SemiBold" VerticalAlignment="Center"/>
       </WrapPanel>
 
+      <StackPanel Visibility="{Binding HasFile,Converter={StaticResource Visible}}" Margin="0,12,0,10">
+       <TextBlock Text="{Binding [OperationChoiceTitle]}" FontWeight="SemiBold" Margin="0,4,0,8"/>
+       <RadioButton x:Name="AddBatchBox" GroupName="ImportBatchOperation"
+                    Content="{Binding [AddBatchOption]}" IsChecked="{Binding AddBatch,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                    AutomationProperties.Name="{Binding [AddBatchOption]}" local:FieldHelp.Key="AddBatch"/>
+       <TextBlock Text="{Binding [AddBatchHelp]}" TextWrapping="Wrap" Margin="22,2,0,10"
+                  Foreground="{DynamicResource Text.Secondary}"/>
+       <StackPanel Visibility="{Binding HasExistingBatches,Converter={StaticResource Visible}}">
+        <RadioButton x:Name="ReplaceBatchBox" GroupName="ImportBatchOperation"
+                     Content="{Binding [ReplaceBatch]}" IsChecked="{Binding ReplaceBatch,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                     AutomationProperties.Name="{Binding [ReplaceBatch]}" local:FieldHelp.Key="ReplaceBatch"/>
+        <TextBlock Text="{Binding [ReplaceBatchHelp]}" TextWrapping="Wrap" Margin="22,2,0,4"
+                   Foreground="{DynamicResource Text.Secondary}"/>
+        <StackPanel Visibility="{Binding ReplaceBatch,Converter={StaticResource Visible}}" Margin="22,4,0,6">
+         <TextBlock Text="{Binding [ReplacementLabel]}" FontWeight="SemiBold"/>
+         <ComboBox x:Name="ReplacementBox" ItemsSource="{Binding ExistingBatches}" DisplayMemberPath="Label"
+                   SelectedItem="{Binding Replacement}" IsEnabled="{Binding ReplaceBatch}" MinWidth="340" MaxWidth="700"
+                   HorizontalAlignment="Left" AutomationProperties.Name="{Binding [ReplacementLabel]}" local:FieldHelp.Key="Replacement"/>
+         <TextBlock Text="{Binding [ReplacementHelp]}" TextWrapping="Wrap"/>
+        </StackPanel>
+       </StackPanel>
+      </StackPanel>
+
       <StackPanel Visibility="{Binding IsXlsx,Converter={StaticResource Visible}}" IsEnabled="{Binding HasFile}">
        <TextBlock Text="{Binding [Worksheet]}"/>
        <ComboBox x:Name="WorksheetBox" ItemsSource="{Binding Worksheets}" SelectedItem="{Binding Worksheet}" AutomationProperties.Name="{Binding [Worksheet]}" MinWidth="260" HorizontalAlignment="Left" local:FieldHelp.Key="Worksheet"/>
@@ -136,15 +159,6 @@
 
       <Expander x:Name="ImportAdvancedOptions" Header="{Binding [AdvancedOptions]}" IsEnabled="{Binding HasFile}" Margin="0,8,0,4">
        <StackPanel Margin="8,4,0,0">
-      <Expander Header="{Binding [ReplaceAdvancedTitle]}" Margin="0,6,0,8">
-       <StackPanel Margin="8,4,0,0">
-        <CheckBox x:Name="ReplaceBatchBox" Content="{Binding [ReplaceBatch]}" IsChecked="{Binding ReplaceBatch}" local:FieldHelp.Key="ReplaceBatch"/>
-        <ComboBox x:Name="ReplacementBox" ItemsSource="{Binding ExistingBatches}" DisplayMemberPath="Label" SelectedItem="{Binding Replacement}" IsEnabled="{Binding ReplaceBatch}" AutomationProperties.Name="{Binding [ReplaceBatch]}" local:FieldHelp.Key="Replacement"/>
-        <TextBlock Text="{Binding [ReplacementHelp]}"/>
-       </StackPanel>
-      </Expander>
-
-
       <TextBlock Text="{Binding AmountBasis}" TextWrapping="Wrap" FontWeight="SemiBold"/>
       <Expander x:Name="ComparisonPanel" Header="{Binding [ComparisonTitle]}" Visibility="{Binding IsCumulativeMode,Converter={StaticResource Visible}}">
        <StackPanel>

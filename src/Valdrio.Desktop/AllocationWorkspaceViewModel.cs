@@ -117,10 +117,8 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
         NewSecondaryCommand = new RelayCommand(ClearRule, () => CanEditSecondaryConfiguration && !HasUnappliedRule);
         AssignCommand = new AsyncRelayCommand(AssignAsync, () => CanEditConfiguration && !absoluteDirty && Part.HasValue && PartKey.HasValue);
         AutomaticCommand = new AsyncRelayCommand(() => CommitConfig(c => new(c.PrimaryRules, c.SecondaryRules, c.ExplicitAssignments.Where(a => a.PartId != Part).ToArray(), c.AbsoluteAssignments.Where(a => a.PartId != Part).ToArray(), c.Descriptions)), () => CanEditConfiguration && !absoluteDirty && Part.HasValue);
-        ClearObsoleteCommand = new AsyncRelayCommand(() => CommitConfig(c => new(c.PrimaryRules, c.SecondaryRules,
-            c.ExplicitAssignments.Where(a => Parts.Any(p => p.Value == a.PartId)).ToArray(),
-            c.AbsoluteAssignments.Where(a => Parts.Any(p => p.Value == a.PartId)).ToArray(),
-            c.Descriptions.Where(d => workspace!.Resources.Origins.Any(o => o.Code == d.Account && o.Descriptions.Contains(d.Description, StringComparer.Ordinal))).ToArray())), () => CanEditConfiguration && !HasUnappliedRule && HasObsolete);
+        ClearObsoleteCommand = new AsyncRelayCommand(() => CommitConfig(ClearObsoleteReferences),
+            () => CanEditConfiguration && !HasUnappliedRule && (HasObsolete || HasObsoleteSecondaryGroups));
         SaveAbsoluteCommand = new AsyncRelayCommand(SaveAbsoluteAsync, () => CanEditConfiguration && Part.HasValue);
         ChooseDescriptionCommand = new AsyncRelayCommand(() => CommitConfig(c => new(c.PrimaryRules, c.SecondaryRules, c.ExplicitAssignments, c.AbsoluteAssignments,
             c.Descriptions.Where(d => d.Account != Account).Append(new(Account!, ChosenDescription)).ToArray())), () => CanEdit && Account is not null && DescriptionOptions.Contains(ChosenDescription, StringComparer.Ordinal));
@@ -477,9 +475,27 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
             AbsoluteLines.Where(l => l.Included).Select(l => new AbsoluteAllocationLine(l.Id, new Money(Parse(l.Value), selected.Amount.Currency, selected.Amount.PrecisionPolicy))).ToArray());
         return new(c.PrimaryRules, c.SecondaryRules, c.ExplicitAssignments.Where(a => a.PartId != Part).ToArray(), c.AbsoluteAssignments.Where(a => a.PartId != Part).Append(absolute).ToArray(), c.Descriptions);
     });
+    // An import replacement or changed resource can leave old part IDs in an otherwise valid
+    // allocation. Preserve them for review until the user explicitly approves their removal.
+    private AllocationConfiguration ClearObsoleteReferences(AllocationConfiguration config)
+    {
+        var validParts = Parts.Select(p => p.Value).ToHashSet();
+        var origins = workspace!.Resources.Origins;
+        return new AllocationConfiguration(
+            config.PrimaryRules, config.SecondaryRules,
+            config.ExplicitAssignments.Where(a => validParts.Contains(a.PartId)).ToArray(),
+            config.AbsoluteAssignments.Where(a => validParts.Contains(a.PartId)).ToArray(),
+            config.Descriptions.Where(d => origins.Any(o => o.Code == d.Account &&
+                o.Descriptions.Contains(d.Description, StringComparer.Ordinal))).ToArray(),
+            config.PrimaryClosed, config.SecondaryClosed, config.SecondaryCalculationHash,
+            config.SecondaryPartRoutingGroups?.Where(g => validParts.Contains(g.PartId)).ToArray(),
+            config.AuxiliaryCapacity);
+    }
+
     private async Task<bool> CommitConfig(Func<AllocationConfiguration, AllocationConfiguration?> change, bool allowClosed = false)
     {
         if ((!CanEdit && !(allowClosed && CanManagePrimary)) || workspace is null) return false;
+        var canCleanObsolete = CanEdit; // Run marks the workspace busy before invoking the delegate.
         var rejected = false;
         var success = await Run(async () =>
         {
@@ -497,6 +513,24 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
                     previous.SecondaryPartRoutingGroups, config.AuxiliaryCapacity);
             if (config.AuxiliaryCapacity is null && previous.AuxiliaryCapacity is not null)
                 config = config.WithAuxiliaryCapacity(previous.AuxiliaryCapacity);
+            if (canCleanObsolete)
+            {
+                var clean = ClearObsoleteReferences(config);
+                if (clean.ExplicitAssignments.Count != config.ExplicitAssignments.Count ||
+                    clean.AbsoluteAssignments.Count != config.AbsoluteAssignments.Count ||
+                    clean.Descriptions.Count != config.Descriptions.Count ||
+                    (clean.SecondaryPartRoutingGroups?.Count ?? 0) != (config.SecondaryPartRoutingGroups?.Count ?? 0))
+                {
+                    if (!dialogs.ConfirmEconomicChange(this["ClearObsolete"], this["ObsoleteBeforeSave"],
+                            this["ClearObsolete"], this["ObsoleteCancel"]))
+                    {
+                        rejected = true;
+                        statusKey = "ObsoleteSaveCancelled";
+                        return;
+                    }
+                    config = clean;
+                }
+            }
             var port = company.ActiveAllocations!;
             var receipt = await Task.Run(() => port.ChangeAllocations(new(study.CompanyId, study.Id, study.Revision, new(Guid.NewGuid()), "local-user", config)));
             // Retain the committed revision even if a dependent refresh fails.

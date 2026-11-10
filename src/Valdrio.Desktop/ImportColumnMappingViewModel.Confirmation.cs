@@ -33,11 +33,14 @@ public sealed partial class ImportColumnMappingViewModel
     public void SetExistingBatches(IReadOnlyList<ImportedBatch> batches)
     {
         existingBatches = batches;
+        var culture = CultureInfo.GetCultureInfo(preferences.Current.FormatCultureTag);
         ExistingBatches = ImportConfirmationRules.ActiveBatches(batches).Select(b => new ImportBatchOption(b.Id,
-            b.Prepared.Source.FileName + " · " + b.ConfirmedAtUtc + " · " + b.Id)).ToArray();
+            $"{b.Prepared.Source.FileName} · {b.Resources.Sum(r => r.Functional.Amount).ToString("N2", culture)} {b.ConfirmedStudy.Currency.FunctionalCurrencyCode} · {b.ConfirmedAtUtc.Value.ToString("dd/MM/yyyy HH:mm", culture)} UTC")).ToArray();
         replacement = null; replaceBatch = false; InvalidatePreparation(true); Refresh();
     }
-    public bool ReplaceBatch { get => replaceBatch; set { if (SetProperty(ref replaceBatch, value)) { InvalidatePreparation(true); Refresh(); } } }
+    public bool HasExistingBatches => ExistingBatches.Count > 0;
+    public bool AddBatch { get => !ReplaceBatch; set { if (value) ReplaceBatch = false; } }
+    public bool ReplaceBatch { get => replaceBatch; set { if (SetProperty(ref replaceBatch, value)) { OnPropertyChanged(nameof(AddBatch)); InvalidatePreparation(true); Refresh(); } } }
     public ImportBatchOption? Replacement { get => replacement; set { if (SetProperty(ref replacement, value)) { InvalidatePreparation(true); Refresh(); } } }
     public DateTime? FiscalStart { get => fiscalStart; set { if (SetProperty(ref fiscalStart, value)) ClearComparison(); } }
     public DateTime? FiscalEnd { get => fiscalEnd; set { if (SetProperty(ref fiscalEnd, value)) ClearComparison(); } }

@@ -28,7 +28,7 @@
       <WrapPanel DockPanel.Dock="Right">
        
        <Button x:Name="RefreshStudyButton" Content="{Binding RefreshLabel}" Command="{Binding RefreshCommand}" TabIndex="60"/>
-       <Button x:Name="LoadStudyButton" Content="{Binding LoadLabel}" Command="{Binding LoadCommand}" TabIndex="62" FontWeight="SemiBold" AutomationProperties.HelpText="{Binding LoadSelectionHelp}">
+       <Button x:Name="LoadStudyButton" Content="{Binding LoadLabel}" Command="{Binding LoadCommand}" TabIndex="62" FontWeight="SemiBold" AutomationProperties.HelpText="{Binding LoadSelectionHelp}" Tag="{Binding HasPendingStudySelection}">
         <Button.Style>
          <Style TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
           <Style.Triggers>

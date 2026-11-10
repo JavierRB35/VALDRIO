@@ -16,7 +16,7 @@
     <Border Style="{StaticResource Card}"><StackPanel>
      <WrapPanel><StackPanel Margin="0,0,12,8"><TextBlock Text="{Binding [Product]}"/><ComboBox Width="250" ItemsSource="{Binding Products}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Product}"/></StackPanel>
       <StackPanel Margin="0,0,12,8"><TextBlock Text="{Binding [Version]}"/><ComboBox Width="180" ItemsSource="{Binding Versions}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Version}"/></StackPanel>
-      <Button Content="{Binding [Open]}" Click="Open" Margin="0,16,8,8"/><Button Content="{Binding [NewVersion]}" Click="NewVersion" IsEnabled="{Binding Writable}" Margin="0,16,0,8"/>
+      <Button Content="{Binding [Open]}" Click="Open" Margin="0,16,8,8" Style="{StaticResource Button.PendingSelection}" Tag="{Binding HasPendingCompositionOpen}"/><Button Content="{Binding [NewVersion]}" Click="NewVersion" IsEnabled="{Binding Writable}" Margin="0,16,0,8"/>
      </WrapPanel>
      <TextBlock Text="{Binding State}" FontWeight="SemiBold" Margin="0,4,0,8"/>
      <WrapPanel IsEnabled="{Binding Editable}"><StackPanel Margin="0,0,16,8"><TextBlock Text="{Binding [BatchSize]}"/><TextBox Text="{Binding BatchSize, UpdateSourceTrigger=PropertyChanged}" Width="130"/></StackPanel>
