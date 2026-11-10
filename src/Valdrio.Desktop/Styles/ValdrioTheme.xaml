@@ -179,6 +179,21 @@
     <Setter Property="Foreground" Value="{DynamicResource Brand.White}"/>
     <Setter Property="BorderBrush" Value="{DynamicResource Brand.DeepGreen}"/>
   </Style>
+  <!-- Use for buttons that apply a pending ComboBox selection. Tag is bound to
+       the view model's comparison between the selected and active item. -->
+  <Style x:Key="Button.PendingSelection" TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
+    <Style.Triggers>
+      <MultiDataTrigger>
+        <MultiDataTrigger.Conditions>
+          <Condition Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="True"/>
+          <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True"/>
+        </MultiDataTrigger.Conditions>
+        <Setter Property="Background" Value="{DynamicResource Brand.DeepGreen}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Brand.White}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Brand.DeepGreen}"/>
+      </MultiDataTrigger>
+    </Style.Triggers>
+  </Style>
   <Style x:Key="Button.Danger" TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
     <Setter Property="Background" Value="{DynamicResource Brand.Red}"/>
     <Setter Property="Foreground" Value="{DynamicResource Brand.White}"/>
