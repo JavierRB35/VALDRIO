@@ -29,7 +29,7 @@
    <TextBlock Text="{Binding DelimiterLabel}" VerticalAlignment="Center" Margin="0,0,6,0"/>
    <ComboBox ItemsSource="{Binding SeparatorOptions}" SelectedItem="{Binding SelectedSeparator,Mode=TwoWay}"
              Width="65" Margin="0,0,12,0"/>
-   <Button Content="{Binding PreviewLabel}" Click="Preview" Margin="0,0,8,0"/>
+   <Button Content="{Binding PreviewLabel}" Click="Preview" Margin="0,0,8,0" Style="{StaticResource Button.PendingSelection}" Tag="{Binding HasPendingImportPreview}"/>
   </WrapPanel>
 
   <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="PreviewTable" ItemsSource="{Binding Lines}" AutoGenerateColumns="False"
