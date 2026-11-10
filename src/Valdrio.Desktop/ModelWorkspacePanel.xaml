@@ -88,7 +88,8 @@
 
       <TextBlock Text="{Binding ExistingModelHelp}" FontWeight="SemiBold"/>
       <DockPanel Margin="0,0,0,10">
-       <Button x:Name="LoadModelButton" DockPanel.Dock="Right" Content="{Binding LoadLabel}" Command="{Binding LoadCommand}" TabIndex="31"/>
+       <Button x:Name="LoadModelButton" DockPanel.Dock="Right" Content="{Binding LoadLabel}" Command="{Binding LoadCommand}" TabIndex="31"
+               Style="{StaticResource Button.PendingSelection}" Tag="{Binding HasPendingModelSelection}"/>
        <ComboBox x:Name="ModelBox" ItemsSource="{Binding Models}" SelectedItem="{Binding ModelChoice}" TabIndex="30" AutomationProperties.Name="{Binding ModelLabel}" local:FieldHelp.Key="ModelChoice"/>
       </DockPanel>
 
