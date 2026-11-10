@@ -36,6 +36,12 @@ public sealed partial class PhysicalImportEditor : ObservableObject
     [ObservableProperty] private string exceptionReason = "";
     [ObservableProperty] private string feedback = "";
     [ObservableProperty] private bool busy;
+    private string? previewPath, previewSheet, previewSeparator;
+    public bool HasPendingImportPreview => !string.IsNullOrWhiteSpace(Path) &&
+        (Path != previewPath || SelectedSheet != previewSheet || SelectedSeparator != previewSeparator);
+    partial void OnPathChanged(string value) => OnPropertyChanged(nameof(HasPendingImportPreview));
+    partial void OnSelectedSheetChanged(string value) => OnPropertyChanged(nameof(HasPendingImportPreview));
+    partial void OnSelectedSeparatorChanged(string value) => OnPropertyChanged(nameof(HasPendingImportPreview));
 
     public PhysicalImportEditor(PhysicalActivityEditor host)
     {
@@ -144,6 +150,8 @@ public sealed partial class PhysicalImportEditor : ObservableObject
             }
             Feedback = string.Format(ui, Text("Activity.Import.Summary"),
                 preview.Lines.Count, preview.Lines.Count(r => r.CanChoose));
+            previewPath = Path; previewSheet = SelectedSheet; previewSeparator = SelectedSeparator;
+            OnPropertyChanged(nameof(HasPendingImportPreview));
         }
         catch (DomainRuleException e) { Feedback = Text(e.Diagnostic.MessageKey); }
         catch (CompanyFileException e) { Feedback = Text(e.Diagnostic.MessageKey); }
