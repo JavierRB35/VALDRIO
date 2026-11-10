@@ -211,12 +211,15 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         }
     }
 
+    public bool HasPendingModelSelection => choice is { } selected &&
+        (Current is null || selected.Value.Structure.Id != Current.Structure.Id);
     public ModelOption? ModelChoice
     {
         get => choice;
         set
         {
-            SetProperty(ref choice, value);
+            if (SetProperty(ref choice, value))
+                OnPropertyChanged(nameof(HasPendingModelSelection));
             RefreshCommands();
         }
     }
