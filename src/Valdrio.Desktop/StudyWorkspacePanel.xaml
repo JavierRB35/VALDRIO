@@ -27,7 +27,7 @@
       <WrapPanel DockPanel.Dock="Right">
        <Button x:Name="RefreshStudyButton" Content="{Binding RefreshLabel}" Command="{Binding RefreshCommand}" TabIndex="60"/>
        <Button x:Name="LoadStudyButton" Content="{Binding LoadLabel}" Command="{Binding LoadCommand}" TabIndex="62" FontWeight="SemiBold"
-               Style="{StaticResource Button.PendingSelection}" Tag="{Binding HasPendingStudySelection}"/>
+               Style="{StaticResource Button.PendingSelection}" Tag="{Binding HasPendingStudySelection}" Margin="0,4,8,4" Padding="11,7"/>
       </WrapPanel>
       <ComboBox x:Name="StudyBox" ItemsSource="{Binding Studies}" SelectedItem="{Binding StudyChoice}" IsEnabled="{Binding HasStudies}" TabIndex="61" AutomationProperties.Name="{Binding Title}" local:FieldHelp.Key="StudyChoice"/>
      </DockPanel>
