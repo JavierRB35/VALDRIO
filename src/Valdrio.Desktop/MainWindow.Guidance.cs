@@ -290,7 +290,7 @@ public partial class MainWindow
         if (step is 4 or 5 or 7 or 8 && vm.Studies?.Current is null) step = 2;
         if (step is 4 or 5 or 7 && vm.Studies?.HasConfirmedImports != true) step = 3;
         if (vm.Company?.WorkspaceIdle == false) return;
-        if (!LeaveIntegratedWorkspace()) return;
+        if (!await LeaveIntegratedWorkspaceAsync()) return;
         if (workflowStep == 4 && step != 4 && vm.Resources is { } oldResources && !await oldResources.CanLeaveAsync())
         { ResourcePanel.ActionStatus.BringIntoView(); return; }
         if ((workflowStep is 4 or 5 or 7) && step != workflowStep && vm.Allocations is { } oldAllocations && !await oldAllocations.CanLeaveAsync())
@@ -361,7 +361,7 @@ public partial class MainWindow
         if (viewModel?.Resources is { } r && !await r.CanLeaveAsync()) return;
         if (viewModel?.Company?.WorkspaceIdle != false && viewModel?.Studies is { CanOpenPhysical: true } studies)
         {
-            if (!LeaveIntegratedWorkspace()) return;
+            if (!await LeaveIntegratedWorkspaceAsync()) return;
             new CompositionWindow(studies) { Owner = this }.ShowIntegrated();
             UpdateWorkflow();
         }
@@ -372,7 +372,7 @@ public partial class MainWindow
         if (viewModel?.Resources is { } r && !await r.CanLeaveAsync()) return;
         if (viewModel?.Company?.WorkspaceIdle != false && viewModel?.Studies is { CanOpenPhysical: true } studies)
         {
-            if (!LeaveIntegratedWorkspace()) return;
+            if (!await LeaveIntegratedWorkspaceAsync()) return;
             new EstimateWindow(studies) { Owner = this }.ShowIntegrated();
             UpdateWorkflow();
         }
@@ -447,7 +447,7 @@ public partial class MainWindow
     private async void PreviousStep(object sender, RoutedEventArgs e) => await GoBackWorkflow();
     internal async Task GoBackWorkflow()
     {
-        if (workspacePages.Count > 0) { PopWorkspace(workspacePages[^1]); return; }
+        if (workspacePages.Count > 0) { await PopWorkspaceAsync(workspacePages[^1]); return; }
         if (viewModel?.Company?.WorkspaceIdle == false) return;
         if (workflowStep == 1 && ModelPanel.PreviousModelStep()) { UpdateWorkflow(); return; }
         if (workflowStep == 4 && viewModel?.Resources is { ShowParts: true } resources)

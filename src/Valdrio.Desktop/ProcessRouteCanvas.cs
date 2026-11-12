@@ -497,7 +497,7 @@ public sealed class ProcessRouteCanvas : UserControl
     public void ClearConnection() { firstNode = null; Draw(); }
     public void AutoArrange() { model?.AutoArrangeProcessMap(); Draw(); }
 
-    public void ExportPng()
+    public async void ExportPng()
     {
         if (canvas.Children.Count == 0) return;
         var dlg = new Microsoft.Win32.SaveFileDialog
@@ -506,6 +506,7 @@ public sealed class ProcessRouteCanvas : UserControl
             FileName = "valdrio-proceso.png"
         };
         if (dlg.ShowDialog(Window.GetWindow(this)) != true) return;
+        using var activity = (Window.GetWindow(this)?.DataContext as MainWindowViewModel)?.Company?.BeginActivity();
         var original = Zoom;
         try
         {
@@ -518,11 +519,17 @@ public sealed class ProcessRouteCanvas : UserControl
                 Math.Max(1, (int)Math.Ceiling(canvas.Height)),
                 96, 96, PixelFormats.Pbgra32);
             bitmap.Render(canvas);
-            var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(bitmap));
-            using var file = System.IO.File.Create(dlg.FileName);
-            encoder.Save(file);
+            bitmap.Freeze();
+            await Task.Run(() =>
+            {
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                using var file = System.IO.File.Create(dlg.FileName);
+                encoder.Save(file);
+            });
         }
+        catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException)
+        { MessageBox.Show(Window.GetWindow(this), error.Message, "VALDRIO", MessageBoxButton.OK, MessageBoxImage.Warning); }
         finally { Zoom = original; }
     }
 }

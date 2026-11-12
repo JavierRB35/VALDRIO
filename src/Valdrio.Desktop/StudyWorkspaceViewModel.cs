@@ -83,6 +83,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
         if (Current is not null && !await CanLeaveAsync()) return false;
         // A study may be open while its PRIMARY allocation is closed. Do not
         // offer a write action that the persistence layer must reject.
+        using var activity = company.BeginActivity();
         var primaryClosed = Current is { } study && company.ActiveAllocations is { } allocations &&
             (await Task.Run(() => allocations.ReadAllocations(study.CompanyId, study.Id))).Configuration.PrimaryClosed;
         ImportColumns.BindTarget(company.ActiveImports, Current, company.CanWrite, async batch =>
@@ -97,6 +98,7 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public IPhysicalActivityWorkspace? ActivePhysicalActivity => company.ActivePhysicalActivity;
     public IEstimateWorkspace? ActiveEstimates => company.ActiveEstimates;
     public ICompositionWorkspace? ActiveCompositions => company.ActiveCompositions;
+    public IDisposable BeginActivity() => company.BeginActivity();
     public void SetCompositionBusy(bool value) { compositionBusy = value; company.NotifyWorkspaceStateChanged(); }
     public IModelWorkspace? PhysicalModels => company.ActiveModels;
     public IRunStore? PhysicalRuns => company.ActiveRuns;

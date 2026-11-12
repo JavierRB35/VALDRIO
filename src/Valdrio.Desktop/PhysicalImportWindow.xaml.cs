@@ -32,13 +32,14 @@ public partial class PhysicalImportWindow : IntegratedWorkspaceWindow
         };
     }
 
-    private void SaveTemplate(object sender, RoutedEventArgs e)
+    private async void SaveTemplate(object sender, RoutedEventArgs e)
     {
         var picker = new SaveFileDialog { Filter = "CSV|*.csv", FileName = "VALDRIO-actividad-plantilla.csv" };
         if (picker.ShowDialog(WorkspaceHost ?? (Window)this) != true) return;
         try
         {
-            System.IO.File.WriteAllText(picker.FileName, editor.CreateTemplate(), new System.Text.UTF8Encoding(true));
+            var template = editor.CreateTemplate();
+            await RunActivityAsync(() => System.IO.File.WriteAllTextAsync(picker.FileName, template, new System.Text.UTF8Encoding(true)));
             editor.Feedback = activityHost.Label("Activity.Import.TemplateSaved");
         }
         catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException)
@@ -49,14 +50,16 @@ public partial class PhysicalImportWindow : IntegratedWorkspaceWindow
         var picker = new OpenFileDialog { Filter = "Physical data (*.csv;*.xlsx)|*.csv;*.xlsx",
             CheckFileExists = true, Multiselect = false };
         if (picker.ShowDialog(WorkspaceHost ?? (Window)this) == true)
-            await editor.LoadFile(picker.FileName);
+            await RunActivityAsync(() => editor.LoadFile(picker.FileName));
     }
-    private async void Preview(object sender, RoutedEventArgs e) => await editor.Preview();
-    private void Apply(object sender, RoutedEventArgs e)
+    private async void Preview(object sender, RoutedEventArgs e) => await RunActivityAsync(editor.Preview);
+    private async void Apply(object sender, RoutedEventArgs e)
     {
         PreviewTable.CommitEdit(DataGridEditingUnit.Cell, true);
         PreviewTable.CommitEdit(DataGridEditingUnit.Row, true);
-        if (editor.Apply()) { applied = true; DialogResult = true; }
+        var success = false;
+        await RunActivityAsync(async () => success = await editor.ApplyAsync());
+        if (success) { applied = true; DialogResult = true; }
     }
     private void CloseWindow(object sender, RoutedEventArgs e) => Close();
 }

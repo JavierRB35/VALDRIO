@@ -103,7 +103,7 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public string UnitSymbol { get => unitSymbol; set => SetProperty(ref unitSymbol, value); }
     public int UnitScale { get => unitScale; set => SetProperty(ref unitScale, value); }
     public bool UnitDiscrete { get => unitDiscrete; set => SetProperty(ref unitDiscrete, value); }
-    public bool IsIdle => !busy;
+    public bool IsIdle => !busy && activityCount == 0;
     public Func<bool>? WorkspaceBusy { get; set; }
     public Func<Task<bool>>? BeforeChangeAsync { get; set; }
     public Func<Task>? AfterChangeAsync { get; set; }
@@ -120,14 +120,34 @@ public sealed partial class CompanyFileViewModel : ObservableObject, IDisposable
     public IEstimateWorkspace? ActiveEstimates => active?.Estimates;
     public ICompositionWorkspace? ActiveCompositions => active?.Compositions;
     public bool CanWrite => active?.Mode == CompanyFileOpenMode.Edit;
-    public bool WorkspaceIdle => !busy && WorkspaceBusy?.Invoke() != true;
+    public bool WorkspaceIdle => !busy && activityCount == 0 && WorkspaceBusy?.Invoke() != true;
     // Central activity state shared by every workspace. Existing asynchronous
     // workflows call NotifyWorkspaceStateChanged at start/end, so the shell
     // indicator follows file, model, study, import, resources and allocation.
     public bool IsProcessing => !WorkspaceIdle;
     public string WorkingLabel => Text("GlobalProcessing");
-    private bool Available => !busy && WorkspaceBusy?.Invoke() != true;
+    private bool Available => WorkspaceIdle;
     public void NotifyWorkspaceStateChanged() => Refresh();
+    private int activityCount;
+    // UI-thread scopes compose with workspace flags and with nested operations.
+    public IDisposable BeginActivity()
+    {
+        activityCount++;
+        Refresh();
+        return new ActivityScope(this);
+    }
+    private sealed class ActivityScope(CompanyFileViewModel owner) : IDisposable
+    {
+        private bool disposed;
+        public void Dispose()
+        {
+            if (disposed) return;
+            disposed = true;
+            owner.activityCount--;
+            owner.Refresh();
+        }
+    }
+
     public CompanyFileSnapshot? Snapshot { get; private set; }
     public bool HasProject => Snapshot is not null;
     public bool NoProject => Snapshot is null;

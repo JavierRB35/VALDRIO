@@ -93,6 +93,7 @@ public sealed partial class PhysicalImportEditor : ObservableObject
     public async Task LoadFile(string file)
     {
         if (Busy) return;
+        using var activityScope = host.BeginActivity?.Invoke();
         Busy = true;
         try
         {
@@ -112,6 +113,7 @@ public sealed partial class PhysicalImportEditor : ObservableObject
     public async Task Preview()
     {
         if (Busy || string.IsNullOrWhiteSpace(Path)) return;
+        using var activityScope = host.BeginActivity?.Invoke();
         Busy = true; Lines.Clear();
         try
         {
@@ -124,10 +126,10 @@ public sealed partial class PhysicalImportEditor : ObservableObject
                 1, 2, csv);
             var document = await session.ReadAsync(settings);
             var model = host.Structure;
-            var result = PhysicalImportMapper.PreviewResult(document, model, host.Units,
-                host.Study, numeric);
+            var result = await Task.Run(() => PhysicalImportMapper.PreviewResult(document, model, host.Units,
+                host.Study, numeric));
             if (result.Preview is not { } preview) { Feedback = Text(result.Diagnostic!.MessageKey); return; }
-            var current = host.Activity.ReadCurrent(host.Study.CompanyId, host.Study.Id)
+            var current = (await Task.Run(() => host.Activity.ReadCurrent(host.Study.CompanyId, host.Study.Id)))
                 .ToDictionary(p => p.PoolId);
             foreach (var line in preview.Lines)
             {
@@ -160,9 +162,13 @@ public sealed partial class PhysicalImportEditor : ObservableObject
         finally { Busy = false; OnPropertyChanged(nameof(CanApply)); }
     }
 
-    public bool Apply()
+    public bool Apply() => ApplyCore(false).GetAwaiter().GetResult();
+    public Task<bool> ApplyAsync() => ApplyCore(true);
+    private async Task<bool> ApplyCore(bool background)
     {
         if (!CanApply) return false;
+        using var activityScope = host.BeginActivity?.Invoke();
+        Busy = true;
         try
         {
             var chosen = Lines.Where(l => l.Replace).Select(l => l.Source).ToArray();
@@ -193,8 +199,12 @@ public sealed partial class PhysicalImportEditor : ObservableObject
                     "local-user");
                 commands.Add(new(command, PhysicalImportChoice.Replace));
             }
-            host.Activity.ApplyImport(new(commands));
-            host.Reload();
+            if (background)
+            {
+                await Task.Run(() => host.Activity.ApplyImport(new(commands)));
+                await host.ReloadAsync();
+            }
+            else { host.Activity.ApplyImport(new(commands)); host.Reload(); }
             Feedback = string.Format(ui, Text("Activity.Import.Applied"), chosen.Length);
             Lines.Clear();
             OnPropertyChanged(nameof(CanApply));
@@ -207,5 +217,6 @@ public sealed partial class PhysicalImportEditor : ObservableObject
             System.Diagnostics.Trace.TraceError("Physical import: {0}", ex);
             Feedback = Text("Activity.SaveFailed"); return false;
         }
+        finally { Busy = false; }
     }
 }

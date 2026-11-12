@@ -32,7 +32,7 @@ public partial class MainWindow
         foreach(var language in new[]{"es","en"})
         {
             main.ApplyPresentationPreset(language,language=="es"?"es-ES":"en-US","UTC",false,false);
-            var page=new CompositionWindow(studies){Owner=this};page.ShowIntegrated();
+            var page=new CompositionWindow(studies){Owner=this};page.ShowIntegrated(); await page.InitializeAsync();
             var editor=page.Editor;
             editor.AddItem();var item=editor.Items.Last();item.Code="CHECK-"+language;item.Name="Producto de prueba "+language;item.ReferenceUnitCost=12.5m;
             Check(await editor.SaveAsync(false),"Manual reference cost saves "+language+": "+editor.Feedback);
@@ -69,7 +69,7 @@ public partial class MainWindow
                 VisualEvidenceCapture.Capture(this,Path.Combine(directory,"composition-"+language+"-"+width+".png"));
             }
             page.Close();
-            var rates=new PrincipalRatesWindow(studies){Owner=this};rates.ShowIntegrated();UpdateLayout();
+            var rates=new PrincipalRatesWindow(studies){Owner=this};rates.ShowIntegrated(); await rates.InitializeAsync();UpdateLayout();
             Check(rates.Editor.Report is not null,"Rates load without manual refresh "+language+": "+rates.Editor.Feedback);
             VisualEvidenceCapture.Capture(this,Path.Combine(directory,"rates-"+language+".png"));rates.Close();
             await NavigateWorkflow(8);await main.CostFlows!.EnterAsync();main.CostFlows.ShowAuxiliaryReport=true;UpdateLayout();
@@ -82,7 +82,7 @@ public partial class MainWindow
             {
                 IntegratedWorkspaceWindow area=kind switch { "activity"=>new PhysicalActivityWindow(studies),
                     "capacity"=>new PhysicalCapacityAssistantWindow(new PhysicalActivityEditor(studies)), _=>new EstimateWindow(studies) };
-                area.Owner=this;area.ShowIntegrated();
+                area.Owner=this;area.ShowIntegrated();await area.InitializeAsync();
                 if(area is EstimateWindow estimate) await estimate.InitializeAsync();
                 foreach(var width in new[]{1536d,1000d})
                 {

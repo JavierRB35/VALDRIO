@@ -76,7 +76,7 @@ public partial class MainWindow
             {
                 var page = create();
                 File.AppendAllText(Path.Combine(directory, "progress.txt"), language + ": " + page.GetType().Name + "\n");
-                page.Owner = this; page.ShowIntegrated(); await Idle();
+                page.Owner = this; page.ShowIntegrated(); await page.InitializeAsync(); await Idle();
                 if (page is EstimateWindow estimate) await estimate.InitializeAsync();
                 await Inspect(ContextHelpCatalog.ViewFor(workflowStep, page.GetType().Name));
                 // The old example has no capacity plan. Opening that editor creates

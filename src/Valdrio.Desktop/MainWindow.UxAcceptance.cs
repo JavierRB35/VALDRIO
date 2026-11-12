@@ -148,7 +148,7 @@ public partial class MainWindow
         var revision = physical.Study.Revision;
         Check(import.CreateTemplate().Contains("node;unit;period_start;period_end", StringComparison.Ordinal), "physical template contract");
         Check(physical.Study.Revision == revision && !physical.HasPendingEdits, "template has no mutations");
-        var page = new PhysicalActivityWindow(vm.Studies!) { Owner = this }; page.ShowIntegrated();
+        var page = new PhysicalActivityWindow(vm.Studies!) { Owner = this }; page.ShowIntegrated(); await page.InitializeAsync();
         UpdateLayout(); await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         VisualEvidenceCapture.Capture(this, Path.Combine(directory, "activity-integrated.png"));
         page.Close();

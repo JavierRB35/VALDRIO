@@ -1,8 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.ComponentModel;
-using System.Windows.Input;
-using System.Windows.Threading;
 using Valdrio.Domain;
 
 namespace Valdrio.Desktop;
@@ -12,15 +10,14 @@ public partial class PhysicalActivityWindow : IntegratedWorkspaceWindow
     private readonly PhysicalActivityEditor editor;
     private readonly StudyWorkspaceViewModel studyHost;
     private bool suppressStudyChange;
-    private bool operationRunning;
 
     public PhysicalActivityWindow(StudyWorkspaceViewModel study)
     {
         studyHost = study;
         InitializeComponent();
-        editor = new PhysicalActivityEditor(study);
+        editor = new PhysicalActivityEditor(study, initialize: false);
         DataContext = editor;
-        SetStudyChoice();
+        ContentRendered += async (_, _) => await InitializeAsync();
         Closing += GuardUnsavedOnClose;
         NodeColumn.Header = editor.NodeLabel;
         UnitColumn.Header = editor.UnitLabel;
@@ -31,6 +28,17 @@ public partial class PhysicalActivityWindow : IntegratedWorkspaceWindow
         StatusColumn.Header = editor.StatusLabel;
     }
 
+    private Task? initialization;
+    internal override Task InitializeAsync() => initialization ??= RunActivityAsync(async () =>
+    {
+        try { await editor.InitializeAsync(); SetStudyChoice(); }
+        catch (Exception error)
+        {
+            System.Diagnostics.Trace.TraceError("T14 load: {0}", error);
+            editor.Feedback = editor.Label("Activity.SwitchFailed");
+        }
+    });
+
     private void SetStudyChoice()
     {
         suppressStudyChange = true;
@@ -40,7 +48,7 @@ public partial class PhysicalActivityWindow : IntegratedWorkspaceWindow
 
     private async void StudySelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (suppressStudyChange || editor is null || StudySelector.SelectedItem is not PhysicalStudyChoice choice)
+        if (suppressStudyChange || OperationRunning || editor is null || StudySelector.SelectedItem is not PhysicalStudyChoice choice)
             return;
         if (choice.Value.Id == editor.Study.Id) return;
         CommitTableEdit();
@@ -52,7 +60,7 @@ public partial class PhysicalActivityWindow : IntegratedWorkspaceWindow
         }
         try
         {
-            editor.ChangeStudy(choice.Value.Id, discardPendingEdits: true);
+            await RunActivityAsync(() => editor.ChangeStudyAsync(choice.Value.Id, discardPendingEdits: true));
             studyHost.StudyChoice = studyHost.Studies.Single(s => s.Value.Id == choice.Value.Id);
             await studyHost.LoadCommand.ExecuteAsync(null);
             SetStudyChoice();
@@ -74,6 +82,7 @@ public partial class PhysicalActivityWindow : IntegratedWorkspaceWindow
 
     private void GuardUnsavedOnClose(object? sender, CancelEventArgs e)
     {
+        if (editor.IsBusy) { e.Cancel = true; return; }
         CommitTableEdit();
         if (editor.HasPendingEdits &&
             !ConfirmDiscard())
@@ -112,38 +121,17 @@ public partial class PhysicalActivityWindow : IntegratedWorkspaceWindow
     private async void SaveDraft(object sender, RoutedEventArgs e)
     {
         CommitTableEdit();
-        await WithOperationFeedback(() => editor.Save(confirm: false));
+        await RunActivityAsync(() => editor.SaveAsync(confirm: false));
     }
     private async void Confirm(object sender, RoutedEventArgs e)
     {
         CommitTableEdit();
-        await WithOperationFeedback(() => editor.Save(confirm: true));
+        await RunActivityAsync(() => editor.SaveAsync(confirm: true));
     }
     private async void Annul(object sender, RoutedEventArgs e)
     {
         CommitTableEdit();
-        await WithOperationFeedback(editor.Annul);
-    }
-    private async Task WithOperationFeedback(Action operation)
-    {
-        if (operationRunning) return;
-        operationRunning = true;
-        Cursor = Cursors.Wait;
-        editor.Feedback = editor.Label("Activity.Saving");
-        studyHost.SetCompositionBusy(true);
-        try
-        {
-            // Allow the WPF render pass to show the global progress bar and
-            // cursor before a legacy synchronous persistence operation starts.
-            await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
-            operation();
-        }
-        finally
-        {
-            studyHost.SetCompositionBusy(false);
-            Cursor = null;
-            operationRunning = false;
-        }
+        await RunActivityAsync(editor.AnnulAsync);
     }
     private void History(object sender, RoutedEventArgs e) =>
         new PhysicalHistoryPage(editor) { Owner = WorkspaceHost ?? (Window)this }.ShowIntegrated();

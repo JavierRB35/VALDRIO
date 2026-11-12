@@ -57,17 +57,24 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
           this["Variance"] + ": " + Money(s.Facts.Where(f => f.IsCapacityVariance).Sum(f => f.PostedAmount.Amount)) + " · " +
           this["Difference"] + ": " + Money(s.Reconciliations.Sum(r => r.Difference.Amount))
         : this["NoResult"];
-    public AuxiliaryCapacityEditor(StudyWorkspaceViewModel host) { this.host = host; Reload(); }
+    public AuxiliaryCapacityEditor(StudyWorkspaceViewModel host, bool initialize = true) { this.host = host; if (initialize) Reload(); }
     private string Qty(decimal? value) => value?.ToString("0.############", host.PhysicalFormatCulture) ?? this["Unknown"];
     private string Money(decimal value) => UiCompactNumbers.Money(value, workspace!.Resources.Study.Currency.FunctionalCurrencyCode.Value, host.PhysicalFormatCulture);
-    public void Reload()
+    public void Reload() => ReloadCore(false).GetAwaiter().GetResult();
+    public Task ReloadAsync() => ReloadCore(true);
+    private async Task ReloadCore(bool background)
     {
+        using var activity = host.BeginActivity();
         var selected = SelectedRow?.Value.NodeId; Rows.Clear(); SelectedRow = null; Answers.Clear(); run = null;
         try
         {
             var study = host.Current ?? throw new InvalidOperationException();
-            workspace = host.AuxiliaryAllocations!.ReadAllocations(study.CompanyId, study.Id);
-            var physical = host.ActivePhysicalActivity!.ReadCurrent(study.CompanyId, study.Id);
+            var read = () => (workspace: host.AuxiliaryAllocations!.ReadAllocations(study.CompanyId, study.Id),
+                physical: host.ActivePhysicalActivity!.ReadCurrent(study.CompanyId, study.Id),
+                runs: host.PhysicalRuns!.ReadRuns(study.CompanyId, study.Id));
+            var data = background ? await Task.Run(read) : read();
+            workspace = data.workspace;
+            var physical = data.physical;
             var model = workspace.Resources.Model.Structure;
             var choices = Enum.GetValues<AuxiliaryCapacityMode>().Select(m => new AuxiliaryModeChoice(m, this[m.ToString()])).ToArray();
             var groups = workspace.Resources.Resources.SelectMany(r => r.Parts).Select(p => workspace.Configuration.SecondaryPartRoutingGroups?
@@ -99,7 +106,7 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
                 }
                 row.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(row.Mode)) MarkDirty(); }; Rows.Add(row);
             }
-            run = host.PhysicalRuns!.ReadRuns(study.CompanyId, study.Id).MatchingCompleted(workspace.Resources.Study.Revision);
+            run = data.runs.MatchingCompleted(workspace.Resources.Study.Revision);
             Dirty = workspace.Configuration.AuxiliaryCapacity is null && Rows.Count > 0 || Rows.Any(r => r.Mode?.Value == AuxiliaryCapacityMode.OwnerOnceCapacity &&
                 CanonicalSnapshotJson.Serialize(r.Value.Observation) != CanonicalSnapshotJson.Serialize(workspace.Configuration.AuxiliaryCapacity?.Rows.SingleOrDefault(x => x.NodeId == r.Value.NodeId)?.Observation));
             if (Dirty) run = null;
@@ -137,46 +144,71 @@ public sealed partial class AuxiliaryCapacityEditor : ObservableObject
             throw AuxiliaryCapacityRules.Error("AUX_INPUT_INVALID", "Invalid");
         return value;
     }
-    public void Save()
+    public void Save() => SaveCore(false).GetAwaiter().GetResult();
+    public Task SaveAsync() => SaveCore(true);
+    private async Task SaveCore(bool background)
     {
+        using var activity = host.BeginActivity();
         if (!CanSave || workspace is null || !ValidPlan()) return;
         try
         {
             var study = workspace.Resources.Study;
             var plan = Plan();
             // The displayed T14 measurement must still be the one the user reviewed.
-            var current = host.ActivePhysicalActivity!.ReadCurrent(study.CompanyId, study.Id);
+            var current = background ? await Task.Run(() => host.ActivePhysicalActivity!.ReadCurrent(study.CompanyId, study.Id)) : host.ActivePhysicalActivity!.ReadCurrent(study.CompanyId, study.Id);
             if (Rows.Any(r => r.Value.Observation is not null && !current.Any(o => o.Id == r.Value.Observation.Id && o.Version == r.Value.Observation.Version)))
                 { Feedback = this["Stale"]; return; }
-            var receipt = host.AuxiliaryAllocations!.ChangeAllocations(new(study.CompanyId, study.Id, study.Revision, new(Guid.NewGuid()), "local-user", workspace.Configuration.WithAuxiliaryCapacity(plan)));
+            var command = new ChangeAllocations(study.CompanyId, study.Id, study.Revision, new(Guid.NewGuid()), "local-user", workspace.Configuration.WithAuxiliaryCapacity(plan));
+            var receipt = background ? await Task.Run(() => host.AuxiliaryAllocations!.ChangeAllocations(command)) : host.AuxiliaryAllocations!.ChangeAllocations(command);
             host.AcceptExternalReceipt(receipt.ConfirmedStudy);
-            Reload(); Feedback = this["Saved"];
+            await ReloadCore(background); Feedback = this["Saved"];
         }
         catch (Exception ex) when (ex is DomainRuleException or CompanyFileException or InvalidOperationException) { ShowError(ex); }
     }
-    public void Reopen()
+    public void Reopen() => ReopenCore(false).GetAwaiter().GetResult();
+    public Task ReopenAsync() => ReopenCore(true);
+    private async Task ReopenCore(bool background)
     {
+        using var activity = host.BeginActivity();
         if (!CanReopen || workspace is null) return;
-        try { var s = workspace.Resources.Study; var receipt = host.AuxiliaryAllocations!.ChangeAllocations(new(s.CompanyId, s.Id, s.Revision, new(Guid.NewGuid()), "local-user", workspace.Configuration.WithSecondaryClosed(false))); host.AcceptExternalReceipt(receipt.ConfirmedStudy); Reload(); }
+        try
+        {
+            var s = workspace.Resources.Study;
+            var command = new ChangeAllocations(s.CompanyId, s.Id, s.Revision, new(Guid.NewGuid()), "local-user", workspace.Configuration.WithSecondaryClosed(false));
+            var receipt = background ? await Task.Run(() => host.AuxiliaryAllocations!.ChangeAllocations(command)) : host.AuxiliaryAllocations!.ChangeAllocations(command);
+            host.AcceptExternalReceipt(receipt.ConfirmedStudy); await ReloadCore(background);
+        }
         catch (Exception ex) when (ex is DomainRuleException or CompanyFileException or InvalidOperationException) { ShowError(ex); }
     }
-    public void Validate()
+    public void Validate() => ValidateCore(false).GetAwaiter().GetResult();
+    public Task ValidateAsync() => ValidateCore(true);
+    private async Task ValidateCore(bool background)
     {
+        using var activity = host.BeginActivity();
         if (workspace is null || !ValidPlan()) return;
         try { var candidate = new AllocationWorkspaceSnapshot(workspace.Resources, workspace.Keys, workspace.Configuration.WithAuxiliaryCapacity(Plan()), workspace.ConfigurationRevision);
-            _ = SecondaryAllocationService.Calculate(candidate); Feedback = this["Valid"]; }
+            _ = background ? await Task.Run(() => SecondaryAllocationService.Calculate(candidate)) : SecondaryAllocationService.Calculate(candidate); Feedback = this["Valid"]; }
         catch (Exception ex) when (ex is DomainRuleException or CompanyFileException or InvalidOperationException) { ShowError(ex); }
     }
-    public void Calculate()
+    public void Calculate() => CalculateCore(false).GetAwaiter().GetResult();
+    public Task CalculateAsync() => CalculateCore(true);
+    private async Task CalculateCore(bool background)
     {
+        using var activity = host.BeginActivity();
         if (workspace is null || !host.PhysicalWritable) return;
         if (Dirty) { Feedback = this["SaveFirst"]; return; }
         try
         {
             var s = workspace.Resources.Study;
-            var started = host.PhysicalRuns!.PrepareRun(new(s.CompanyId, s.Id, s.Revision, new(Guid.NewGuid()), "local-user"));
-            var output = CalculationRunService.Calculate(started); host.PhysicalRuns.PublishRun(started.Id, output);
-            Reload(); Feedback = output.Secondary is not null ? this["Calculated"] : string.Join(" ", output.Diagnostics.Select(d => texts.Get(d.MessageKey, host.PhysicalUiCulture)));
+            var calculate = () =>
+            {
+                var started = host.PhysicalRuns!.PrepareRun(new(s.CompanyId, s.Id, s.Revision, new(Guid.NewGuid()), "local-user"));
+                var result = CalculationRunService.Calculate(started);
+                host.PhysicalRuns.PublishRun(started.Id, result);
+                return result;
+            };
+            var output = background ? await Task.Run(calculate) : calculate();
+            await ReloadCore(background); Feedback = output.Secondary is not null ? this["Calculated"] : string.Join(" ", output.Diagnostics.Select(d => texts.Get(d.MessageKey, host.PhysicalUiCulture)));
         }
         catch (Exception ex) when (ex is DomainRuleException or CompanyFileException or InvalidOperationException) { ShowError(ex); }
     }

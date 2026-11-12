@@ -9,6 +9,24 @@ namespace Valdrio.Desktop;
 public class IntegratedWorkspaceWindow : Window
 {
     internal MainWindow? WorkspaceHost { get; private set; }
+    protected bool OperationRunning { get; private set; }
+    protected async Task RunActivityAsync(Func<Task> operation)
+    {
+        if (OperationRunning) return;
+        OperationRunning = true;
+        var surface = Surface ?? (FrameworkElement)Content;
+        var enabled = surface.IsEnabled;
+        var main = WorkspaceHost ?? Owner as MainWindow;
+        using var activity = (main?.DataContext as MainWindowViewModel)?.Company?.BeginActivity();
+        surface.SetCurrentValue(IsEnabledProperty, false);
+        try { await operation(); }
+        finally
+        {
+            surface.SetCurrentValue(IsEnabledProperty, enabled);
+            OperationRunning = false;
+        }
+    }
+
     internal FrameworkElement? Surface { get; private set; }
     internal Action? Returned { get; private set; }
     public void ShowIntegrated(Action? returned = null)
@@ -50,9 +68,11 @@ public class IntegratedWorkspaceWindow : Window
         OnClosing(args);
         return !args.Cancel;
     }
-    public new void Close()
+    internal virtual Task InitializeAsync() => Task.CompletedTask;
+    internal virtual Task<bool> CanLeaveAsync() => Task.FromResult(CanLeave());
+    public new async void Close()
     {
-        if (WorkspaceHost is { } main) main.PopWorkspace(this);
+        if (WorkspaceHost is { } main) await main.PopWorkspaceAsync(this);
         else base.Close();
     }
     public new bool? DialogResult
@@ -68,7 +88,11 @@ public class IntegratedWorkspaceWindow : Window
     private bool releasing;
     protected override void OnClosing(CancelEventArgs e)
     {
-        if (!releasing) base.OnClosing(e);
+        if (!releasing)
+        {
+            if (OperationRunning) { e.Cancel = true; return; }
+            base.OnClosing(e);
+        }
     }
     internal void Release()
     {
