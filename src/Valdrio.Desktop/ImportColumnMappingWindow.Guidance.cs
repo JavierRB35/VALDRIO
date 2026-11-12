@@ -30,7 +30,7 @@ public partial class ImportColumnMappingWindow
             0 => "FileHelp", 1 => "ColumnsHelp", 2 => "RecordsHelp",
             _ => vm.ConfirmedImport is not null ? "SavedImport" : "ReviewHelp"
         });
-        ImportBack.Content = vm.Guide("Back"); ImportBack.IsEnabled = step > 0 && vm.IsIdle;
+        ImportBack.Content = vm.Guide("Back"); ImportBack.IsEnabled = vm.IsIdle;
         ImportNext.Content = vm.Guide(step switch
         {
             0 => "ReadNext", 1 => "ValidateNext",
@@ -57,7 +57,12 @@ public partial class ImportColumnMappingWindow
         lastHelpKey = null;
         RefreshGuidance();
     }
-    private void PreviousImportStep(object sender, RoutedEventArgs e) => ImportSteps.SelectedIndex = Math.Max(0, ImportSteps.SelectedIndex - 1);
+    private void PreviousImportStep(object sender, RoutedEventArgs e)
+    {
+        if (viewModel?.IsIdle != true) return;
+        if (ImportSteps.SelectedIndex > 0) ImportSteps.SelectedIndex--;
+        else Close(); // First import step returns to the actual invoking workspace.
+    }
     private void AmountMeaningChanged(object sender, SelectionChangedEventArgs e)
     {
         if (viewModel is not null && AmountModeBox.IsKeyboardFocusWithin) viewModel.AcknowledgeAmountMeaning();

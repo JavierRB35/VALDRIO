@@ -206,6 +206,42 @@ public partial class MainWindow
         Audit(workflowStep == 4 && ResourcePanel.IsVisible,
             "continue-current task resumes at account preparation without revisiting completed screens");
 
+        // Reopening an existing structure on its last tab must not traverse unvisited tabs.
+        ModelPanel.ModelSteps.SelectedIndex = 3;
+        await NavigateWorkflow(1);
+        await GoBackWorkflow();
+        Check(workflowStep == 4 && ResourcePanel.IsVisible,
+            "back from an already-open structure tab returns to its invoking page");
+
+        // Non-linear navigation must return to the actual origin, not to the preceding menu index.
+        await NavigateWorkflow(8);
+        await NavigateWorkflow(6);
+        await GoBackWorkflow();
+        Check(workflowStep == 8 && CostFlowsPanel.IsVisible,
+            "back from settings restores the cost report opened before it");
+        await GoBackWorkflow();
+        Check(workflowStep == 4 && ResourcePanel.IsVisible,
+            "back from reports restores resources through a non-linear route");
+
+        await NavigateWorkflow(2);
+        await NavigateWorkflow(5);
+        await GoBackWorkflow();
+        Check(workflowStep == 2 && StudyPanel.IsVisible,
+            "back from primary allocation restores the actual analysis origin");
+
+        await NavigateWorkflow(3);
+        await OpenGuidedImport();
+        Check(workspacePages.LastOrDefault() is ImportColumnMappingWindow,
+            "import launches inside the current workspace");
+        var returnWizard = (ImportColumnMappingWindow)workspacePages[^1];
+        Check(returnWizard.ImportSteps.SelectedIndex == 0 && returnWizard.ImportBack.IsEnabled,
+            "back is available on the first import step");
+        returnWizard.ImportBack.RaiseEvent(
+            new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+        Check(workspacePages.Count == 0 && workflowStep == 3 && ImportHome.IsVisible,
+            "first-step import back returns to its invoking page without changing the analysis");
+
         File.WriteAllText(Path.Combine(output, "audit.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = audit }, new JsonSerializerOptions { WriteIndented = true }));
         File.WriteAllText(Path.Combine(output, "interaction.json"), JsonSerializer.Serialize(new { Status = "passed", PassedChecks = checks }, new JsonSerializerOptions { WriteIndented = true }));
     }
