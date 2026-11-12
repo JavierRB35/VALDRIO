@@ -49,6 +49,19 @@ Ejemplo: 1.000 de fijo propio, normal de 100 h y real de 80 h dan 10/h, 800 de c
 
 Las tarifas se presentan automáticamente desde los costes cerrados vigentes y los datos físicos confirmados. Actualizar actividad no reabre repartos; la evaluación auxiliar fijada en el cierre conserva su trazabilidad.
 
+## Lectura rápida de la tarifa (mejora T15)
+
+La pantalla muestra una tabla de **composición de la tarifa** para el centro seleccionado: fijo propio, variable observado, costes recibidos/consumidos y gastos del período, cada uno con su importe, base y tarifa. La variación de capacidad se presenta por separado, no como un gasto adicional.
+
+- **Fijo propio sujeto a capacidad:** se divide por actividad normal. La diferencia entre coste fijo y coste de actividad realizada queda identificada como variación de capacidad.
+- **Variable observado:** se divide por actividad real.
+- **Recibido o consumido:** se divide por actividad real porque su evaluación de capacidad no se repite en este centro. Si la procedencia muestra un fijo recibido sin evaluación acreditada, aparece un **aviso de revisión**, no un error automático ni una reclasificación.
+- **Gasto de período:** se muestra fuera de la tarifa.
+
+La opción **Requieren atención** incluye también centros con esa advertencia metodológica. Revisa el origen desde **Ver origen de costes** o la clasificación en **Preparar cuentas**; no se cambia ningún cálculo desde esta pantalla.
+
+**Finalidad:** tarifa de gestión, no valoración contable validada de existencias. El cálculo inventariable está fuera de esta pantalla y necesita el perímetro y los controles específicos del módulo T32. No se ofrecen tarifas inventariables ficticias ni se presentan las órdenes estimadas como consumos reales.
+
 ## Ampliación: tarifas y costes unitarios (candidatura 2026-11-04)
 
 La pantalla se denomina **Tarifas y costes unitarios**. La pestaña **Tarifas de centros** muestra los nodos generales; **Factores directos** muestra grupos homogéneos de MOD y grupos de aprovisionamiento configurados. Ambas consultan el **mismo cálculo** y las mismas fuentes congeladas; seleccionar una pestaña no modifica importes ni recalcula el reparto.
