@@ -206,6 +206,13 @@ public partial class MainWindow
         Audit(workflowStep == 4 && ResourcePanel.IsVisible,
             "continue-current task resumes at account preparation without revisiting completed screens");
 
+        // Reopening an existing structure on its last tab must not traverse unvisited tabs.
+        ModelPanel.ModelSteps.SelectedIndex = 3;
+        await NavigateWorkflow(1);
+        await GoBackWorkflow();
+        Check(workflowStep == 4 && ResourcePanel.IsVisible,
+            "back from an already-open structure tab returns to its invoking page");
+
         // Non-linear navigation must return to the actual origin, not to the preceding menu index.
         await NavigateWorkflow(8);
         await NavigateWorkflow(6);
