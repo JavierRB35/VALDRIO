@@ -41,6 +41,9 @@ public partial class MainWindow
             editor.Import("Center;Group;Destination;Quantity\nB;all;P;50"); editor.Save(); editor.Calculate();
             Check(editor.Export() is not null && editor.Summary.Contains("800",StringComparison.Ordinal),"Import save and calculate restores C20 "+language);
             var rates=new PrincipalRatesEditor(studies); Check(rates.Report!.Rows.Single().Result!.CombinedRate==16m,"T15 consumes auxiliary result once "+language);
+            Check(rates.Breakdown.Count > 0 && rates.Breakdown.All(row => row.Component.Length > 0 && row.Cost.Length > 0),
+                "T15 exposes rate breakdown for selected centre "+language);
+            Check(rates.CapacitySummary.Length > 0, "T15 explains capacity assessment even when not applicable "+language);
             window.Width=760;window.Height=650;window.UpdateLayout();
             await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
             Check(((DataGrid)window.FindName("AnswersTable")).ActualWidth>400,"Narrow answer layout "+language);
