@@ -97,13 +97,20 @@ public partial class MainWindow
             window.Close();
             Check(studies.Current!.Revision==revision,"Reading rates never changes study "+language);
         }
-        // Invoke the actual menu Click and verify that it opens the implemented window.
-        bool opened=false;var timer=new DispatcherTimer{Interval=TimeSpan.FromMilliseconds(200)};
-        timer.Tick+=(_,_)=>{var w=OwnedWindows.OfType<PrincipalRatesWindow>().FirstOrDefault();if(w is null)return;opened=true;timer.Stop();w.Close();};
-        timer.Start();((IInvokeProvider)new ButtonAutomationPeer(RatesStep).GetPattern(PatternInterface.Invoke)).Invoke();
-        await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);timer.Stop();
-        Check(opened,"Real menu opens rates window");
-        await GoBackWorkflow();Check(workflowStep==9,"Back returns to activity");
+        // A direct sidebar shortcut opens an embedded page and returns to its true origin.
+        await NavigateWorkflow(8);
+        ((IInvokeProvider)new ButtonAutomationPeer(RatesStep).GetPattern(PatternInterface.Invoke)).Invoke();
+        for (var attempt = 0; attempt < 200 && workspacePages.LastOrDefault() is not PrincipalRatesWindow; attempt++)
+            await Task.Delay(25);
+        Check(workspacePages.LastOrDefault() is PrincipalRatesWindow, "Real menu opens integrated rates page");
+        var embeddedRates = (PrincipalRatesWindow)workspacePages[^1];
+        await embeddedRates.InitializeAsync();
+        Check(new System.Windows.Interop.WindowInteropHelper(embeddedRates).Handle == IntPtr.Zero,
+            "Rates page does not create a separate native window");
+        await GoBackWorkflow();
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+        Check(workspacePages.Count == 0 && workflowStep == 8 && CostFlowsPanel.IsVisible,
+            "One Back from the rates shortcut restores the invoking cost report");
         File.WriteAllText(Path.Combine(directory,"checks.json"),JsonSerializer.Serialize(checks,new JsonSerializerOptions{WriteIndented=true}));
     }
 }
