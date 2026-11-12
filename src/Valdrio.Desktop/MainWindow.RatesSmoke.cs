@@ -108,6 +108,8 @@ public partial class MainWindow
         Check(new System.Windows.Interop.WindowInteropHelper(embeddedRates).Handle == IntPtr.Zero,
             "Rates page does not create a separate native window");
         await GoBackWorkflow();
+        for (var attempt = 0; attempt < 200 && workflowStep != 8; attempt++)
+            await Task.Delay(25);
         await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
         Check(workspacePages.Count == 0 && workflowStep == 8 && CostFlowsPanel.IsVisible,
             "One Back from the rates shortcut restores the invoking cost report");
