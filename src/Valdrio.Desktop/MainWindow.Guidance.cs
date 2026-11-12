@@ -47,6 +47,7 @@ public partial class MainWindow
     }
 
     private int workflowStep;
+    private readonly List<int> workflowHistory = [];
     private readonly List<INotifyPropertyChanged> workflowSources = [];
     private void InitializeGuidance()
     {
@@ -243,7 +244,11 @@ public partial class MainWindow
         ResumeReviewDetail.Text = hasImports
             ? string.Format(vm.Studies!.PhysicalFormatCulture, vm.Guide("ResumeReviewHelp"), vm.Studies.ConfirmedImportCount)
             : vm.Guide("ResumeReviewBlockedHelp");
-        WorkflowBack.Content = workflowStep == 4 && vm.Resources is { ShowParts: true } resourceEditor ? resourceEditor["BackToCorrectionsButton"] : vm.Guide("Back"); WorkflowBack.IsEnabled = workflowStep > 0 && vm.Company?.WorkspaceIdle != false;
+        WorkflowBack.Content = workflowStep == 4 && vm.Resources is { ShowParts: true } resourceEditor ? resourceEditor["BackToCorrectionsButton"] : vm.Guide("Back");
+        WorkflowBack.IsEnabled = vm.Company?.WorkspaceIdle != false &&
+            (workflowHistory.Count > 0 ||
+             workflowStep == 1 && ModelPanel.ModelSteps.SelectedIndex > 0 ||
+             workflowStep == 4 && vm.Resources?.ShowParts == true);
         WorkflowNext.Content = vm.Guide(workflowStep switch
         {
             0 when vm.Company?.Snapshot is null => "CreateCompanyNext",
@@ -282,9 +287,10 @@ public partial class MainWindow
         else AuxiliaryStep.Tag = null;
         RefreshContextHelp();
     }
-    internal async Task NavigateWorkflow(int step)
+    internal async Task NavigateWorkflow(int step, bool rememberPrevious = true)
     {
         if (viewModel is not { } vm) return;
+        if (vm.Company?.Snapshot is null) workflowHistory.Clear();
         if (step is > 0 and not 6 && vm.Company?.Snapshot is null) step = 0;
         if (step == 3 && vm.Studies?.HasImportDestination != true) step = 2;
         if (step is 4 or 5 or 7 or 8 && vm.Studies?.Current is null) step = 2;
@@ -305,6 +311,7 @@ public partial class MainWindow
             await vm.Studies.RefreshCommand.ExecuteAsync(null);
         if (step == 7 && vm.Allocations is { } fresh) { await fresh.EnterAsync(); if (!fresh.IsPrimaryClosed) step = 5; }
         lastHelpKey = null;
+        if (step != workflowStep && rememberPrevious) workflowHistory.Add(workflowStep);
         workflowStep = step;
         if (step == 1 && vm.Models is { } nodes) await nodes.LoadStudyNodesAsync();
         if (step == 2 && vm.Studies?.RefreshCommand.CanExecute(null) == true)
@@ -330,28 +337,44 @@ public partial class MainWindow
     private async void ChooseCostFlows(object sender, RoutedEventArgs e) => await NavigateWorkflow(8);
     private async void ChoosePhysicalActivity(object sender, RoutedEventArgs e)
     {
+        var origin = workflowStep;
         await NavigateWorkflow(9);
-        if (workflowStep == 9) OpenPhysicalFromMenu(sender, e);
+        if (workflowStep == 9) OpenPhysicalFromMenu(returnToOrigin: origin != 9);
     }
-    private void OpenPhysicalFromMenu(object sender, RoutedEventArgs e)
+    private void OpenPhysicalFromMenu(object sender, RoutedEventArgs e) =>
+        OpenPhysicalFromMenu(returnToOrigin: false);
+
+    private void OpenPhysicalFromMenu(bool returnToOrigin)
     {
         if (viewModel?.Company?.WorkspaceIdle != false && viewModel?.Studies is { CanOpenPhysical: true } studies)
         {
-            new PhysicalActivityWindow(studies) { Owner = this }.ShowIntegrated();
+            var window = new PhysicalActivityWindow(studies) { Owner = this };
+            if (returnToOrigin)
+                window.ShowIntegrated(async () => await GoBackWorkflow());
+            else
+                window.ShowIntegrated();
             UpdateWorkflow();
         }
     }
     private async void ChooseRates(object sender, RoutedEventArgs e)
     {
+        var origin = workflowStep;
         await NavigateWorkflow(10);
-        if (workflowStep == 10) OpenRatesFromMenu(sender, e);
+        if (workflowStep == 10) OpenRatesFromMenu(returnToOrigin: origin != 10);
     }
-    private async void OpenRatesFromMenu(object sender, RoutedEventArgs e)
+    private void OpenRatesFromMenu(object sender, RoutedEventArgs e) =>
+        OpenRatesFromMenu(returnToOrigin: false);
+
+    private void OpenRatesFromMenu(bool returnToOrigin)
     {
         if (viewModel?.Company?.WorkspaceIdle != false && viewModel?.Studies is { CanOpenPhysical: true } studies)
         {
             var window = new PrincipalRatesWindow(studies) { Owner = this };
-            window.ShowIntegrated(async () => { if (window.OpenCostsRequested) await NavigateWorkflow(8); });
+            window.ShowIntegrated(async () =>
+            {
+                if (window.OpenCostsRequested) await NavigateWorkflow(8);
+                else if (returnToOrigin) await GoBackWorkflow();
+            });
             UpdateWorkflow();
         }
     }
@@ -452,7 +475,15 @@ public partial class MainWindow
         if (workflowStep == 1 && ModelPanel.PreviousModelStep()) { UpdateWorkflow(); return; }
         if (workflowStep == 4 && viewModel?.Resources is { ShowParts: true } resources)
         { await resources.CloseDestinationsAsync(); UpdateWorkflow(); RootScrollViewer.ScrollToTop(); return; }
-        await NavigateWorkflow(workflowStep == 7 ? 5 : Math.Max(0, workflowStep - 1));
+        if (workflowHistory.Count == 0) return;
+
+        var origin = workflowStep;
+        var destination = workflowHistory[^1];
+        // A cancelled exit must leave both the current screen and its return route intact.
+        await NavigateWorkflow(destination, rememberPrevious: false);
+        if (workflowStep != origin && workflowHistory.Count > 0 && workflowHistory[^1] == destination)
+            workflowHistory.RemoveAt(workflowHistory.Count - 1);
+        UpdateWorkflow();
     }
     private async void ContinueWorkflow(object sender, RoutedEventArgs e) => await AdvanceWorkflow();
     internal async Task AdvanceWorkflow()
