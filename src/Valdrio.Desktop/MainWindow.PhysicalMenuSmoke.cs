@@ -62,6 +62,8 @@ public partial class MainWindow
                 "no independent native window " + language);
             VisualEvidenceCapture.Capture(this, Path.Combine(directory, "activity-" + language + ".png"));
             await GoBackWorkflow();
+            for (var attempt = 0; attempt < 200 && workflowStep != 8; attempt++)
+                await Task.Delay(25);
             Check(workspacePages.Count == 0 && workflowStep == 8 && CostFlowsPanel.IsVisible,
                 "one back returns directly to the invoking cost flows " + language);
             VisualEvidenceCapture.Capture(this, Path.Combine(directory, "cost-flows-return-" + language + ".png"));
