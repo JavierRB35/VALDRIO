@@ -47,6 +47,7 @@ public partial class MainWindow
     }
 
     private int workflowStep;
+    private int modelTabOnEntry;
     private readonly List<int> workflowHistory = [];
     private readonly List<INotifyPropertyChanged> workflowSources = [];
     private void InitializeGuidance()
@@ -311,9 +312,11 @@ public partial class MainWindow
             await vm.Studies.RefreshCommand.ExecuteAsync(null);
         if (step == 7 && vm.Allocations is { } fresh) { await fresh.EnterAsync(); if (!fresh.IsPrimaryClosed) step = 5; }
         lastHelpKey = null;
-        if (step != workflowStep && rememberPrevious) workflowHistory.Add(workflowStep);
+        var previousStep = workflowStep;
+        if (step != previousStep && rememberPrevious) workflowHistory.Add(previousStep);
         workflowStep = step;
         if (step == 1 && vm.Models is { } nodes) await nodes.LoadStudyNodesAsync();
+        if (step == 1 && previousStep != 1) modelTabOnEntry = ModelPanel.ModelSteps.SelectedIndex;
         if (step == 2 && vm.Studies?.RefreshCommand.CanExecute(null) == true)
             await vm.Studies.RefreshCommand.ExecuteAsync(null);
         if (step == 4 && vm.Resources is { } resources) await resources.EnterAsync();
@@ -472,7 +475,10 @@ public partial class MainWindow
     {
         if (workspacePages.Count > 0) { await PopWorkspaceAsync(workspacePages[^1]); return; }
         if (viewModel?.Company?.WorkspaceIdle == false) return;
-        if (workflowStep == 1 && ModelPanel.PreviousModelStep()) { UpdateWorkflow(); return; }
+        // Preserve wizard substeps, but do not make a direct visit to an existing
+        // model tab walk through tabs the user did not visit on this entry.
+        if (workflowStep == 1 && ModelPanel.ModelSteps.SelectedIndex > modelTabOnEntry &&
+            ModelPanel.PreviousModelStep()) { UpdateWorkflow(); return; }
         if (workflowStep == 4 && viewModel?.Resources is { ShowParts: true } resources)
         { await resources.CloseDestinationsAsync(); UpdateWorkflow(); RootScrollViewer.ScrollToTop(); return; }
         if (workflowHistory.Count == 0) return;
