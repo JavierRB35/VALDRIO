@@ -11,6 +11,7 @@ public sealed record AnalystAnswer(string Question, string Answer);
 public sealed record PrincipalRateDisplay(PrincipalRateRow Value, string Name, string Unit, string Symbol,
     string Cost, string Numerator, string Denominator, string Rate, string Status);
 public sealed record RateDetailDisplay(string Component, string Behavior, string Cost, string Base, string Rate, string Source);
+public sealed record RateSummaryDisplay(string Component, string Cost, string Base, string Rate);
 public sealed partial class PrincipalRatesEditor : ObservableObject
 {
     private readonly StudyWorkspaceViewModel host;
@@ -19,6 +20,9 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
     public ObservableCollection<PrincipalRateDisplay> Rows { get; } = [];
     public ObservableCollection<AnalystAnswer> Answers { get; } = [];
     public ObservableCollection<RateDetailDisplay> Details { get; } = [];
+    public ObservableCollection<RateSummaryDisplay> Breakdown { get; } = [];
+    [ObservableProperty] private string capacitySummary = "";
+    [ObservableProperty] private string reviewNotice = "";
     [ObservableProperty] private PrincipalRateDisplay? selectedRow;
     [ObservableProperty] private bool attentionOnly;
     [ObservableProperty] private int selectedRateTabIndex;
@@ -46,6 +50,33 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
     }
     private string Rate(decimal? value, string unit) => value.HasValue ?
         (decimal.Round(value.Value, 2) == value.Value ? "" : "≈ ") + UiCompactNumbers.Number(value.Value, host.PhysicalFormatCulture) + " " + Report!.Study.Currency.FunctionalCurrencyCode + "/" + unit : this["Unavailable"];
+    private static bool NeedsCapacityReview(PrincipalRateRow row) => row.Result?.Components.Any(c =>
+        c.Source.Kind == RateComponentKind.Consumed && c.Source.AssessmentId is null &&
+        (c.Source.Behavior == ResourceBehavior.Fixed || c.Source.Behavior == ResourceBehavior.AssumedFixed)) == true;
+
+    private void PopulateBreakdown(PrincipalRateDisplay selected)
+    {
+        Breakdown.Clear(); CapacitySummary = ""; ReviewNotice = "";
+        if (selected.Value.Result is not { } result) return;
+        foreach (var kind in new[] { RateComponentKind.OwnFixed, RateComponentKind.Variable, RateComponentKind.Consumed, RateComponentKind.Period })
+        {
+            var items = result.Components.Where(c => c.Source.Kind == kind).ToArray();
+            if (items.Length == 0) continue;
+            var isPeriod = kind == RateComponentKind.Period;
+            var basis = isPeriod ? this["NotApplicable"] : Quantity(items.First().Denominator) + " " + selected.Symbol +
+                " (" + this[kind == RateComponentKind.OwnFixed ? "Normal" : "Real"] + ")";
+            var rate = isPeriod ? this["NotApplicable"] : Rate(items.All(c => c.Rate.HasValue) ?
+                items.Sum(c => c.Rate!.Value) : null, selected.Symbol);
+            Breakdown.Add(new(this[kind.ToString()], Money(items.Sum(c => c.Source.Amount)), basis, rate));
+        }
+        if (!result.Components.Any(c => c.Source.Kind == RateComponentKind.OwnFixed))
+            CapacitySummary = this["NoCapacityAssessment"];
+        else if (result.CapacityVariance is { } variance)
+            CapacitySummary = this["CapacityResult"] + ": " + Money(variance) + " · " +
+                this[variance < 0 ? "Overactivity" : "Underactivity"];
+        ReviewNotice = NeedsCapacityReview(selected.Value) ? this["ReviewFixedConsumed"] : "";
+    }
+
     private (string Numerator, string Denominator) CalculationBasis(PrincipalRateRow row, string unit)
     {
         if (row.Result is not { } result) return (this["Unavailable"], this["Unavailable"]);
@@ -70,7 +101,8 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
     {
         using var activity = host.BeginActivity();
         var selected = SelectedRow?.Value.PoolId;
-        Rows.Clear(); Answers.Clear(); Details.Clear(); allRows = []; directFactorNodes.Clear(); SelectedRow = null; Report = null;
+        Rows.Clear(); Answers.Clear(); Details.Clear(); Breakdown.Clear(); CapacitySummary = ""; ReviewNotice = "";
+        allRows = []; directFactorNodes.Clear(); SelectedRow = null; Report = null;
         try
         {
             var old = host.Current ?? throw new InvalidOperationException();
@@ -100,7 +132,8 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
                 var basis = CalculationBasis(row, unit);
                 return new PrincipalRateDisplay(row, row.Name, unit, definition.Symbol, Money(row.Cost), basis.Numerator, basis.Denominator,
                     Rate(row.Result?.CombinedRate, definition.Symbol),
-                    row.Diagnostics.Count == 0 ? this["Calculated"] : row.Name + ": " + string.Join(" ", row.Diagnostics.Select(k => texts.Get(k, host.PhysicalUiCulture))) + BlockingAccounts(row));
+                    row.Diagnostics.Count == 0 ? this[NeedsCapacityReview(row) ? "ReviewCapacityShort" : "Calculated"] :
+                        row.Name + ": " + string.Join(" ", row.Diagnostics.Select(k => texts.Get(k, host.PhysicalUiCulture))) + BlockingAccounts(row));
             }).ToArray();
             Filter(); SelectedRow = Rows.FirstOrDefault(r => r.Value.PoolId == selected) ?? Rows.FirstOrDefault();
             Feedback = allRows.Length == 0 ? this["NoCenters"] : Rows.Count == 0 ?
@@ -133,7 +166,7 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
         Rows.Clear();
         foreach (var row in allRows.Where(r =>
             directFactorNodes.Contains(r.Value.NodeId) == (SelectedRateTabIndex == 1) &&
-            (!AttentionOnly || r.Value.Diagnostics.Count > 0)))
+            (!AttentionOnly || r.Value.Diagnostics.Count > 0 || NeedsCapacityReview(r.Value))))
             Rows.Add(row);
         if (allRows.Length > 0)
             Feedback = Rows.Count == 0
@@ -143,7 +176,8 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
     }
     partial void OnSelectedRowChanged(PrincipalRateDisplay? value)
     {
-        Answers.Clear(); Details.Clear(); OnPropertyChanged(nameof(Provenance)); OnPropertyChanged(nameof(SelectedSummary));
+        Answers.Clear(); Details.Clear(); Breakdown.Clear(); CapacitySummary = ""; ReviewNotice = "";
+        OnPropertyChanged(nameof(Provenance)); OnPropertyChanged(nameof(SelectedSummary));
         if (value is null) return;
         var row = value.Value; var result = row.Result;
         var reason = row.Diagnostics.Count > 0 ? value.Status : result?.CombinedRate is null ? this["UndefinedRate"] : this["AssignmentLater"];
@@ -161,6 +195,7 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
                 this["Normal"] + ": " + Quantity(row.Observation?.NormalQuantity) + " " + value.Unit + "; " +
                 this["Real"] + ": " + Quantity(row.Observation?.RealQuantity) + " " + value.Unit + ".";
         }
+        PopulateBreakdown(value);
         var variance = result?.CapacityVariance is { } v ? Money(v) + " · " + this[v < 0 ? "Overactivity" : "Underactivity"] : reason;
         if (result?.CapacityVariance is not null && !result.Components.Any(c => c.Source.Kind == RateComponentKind.OwnFixed))
             variance = this["NoCapacityAssessment"];
@@ -168,7 +203,8 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
             this["Partial"] + " " + Money(result.SourceCost) + " = " + Money(result.CapacityVariance) + " (" + this["Capacity"] + ") + " +
             Money(performed) + " (" + this["Performed"] + ")" + (result.PeriodCost == 0 ? "" : " + " + Money(result.PeriodCost) + " (" + this["Period"] + ")") + ". " + this["AssignmentLater"] : reason;
         string[] answers = [result?.CombinedRate is not null ? value.Rate : reason, composition,
-            this["AssignmentLater"], variance, this["UnknownAssignment"], row.Diagnostics.Count == 0 && result?.CombinedRate is not null ? this["NoIssues"] : reason, reconciliation];
+            this["AssignmentLater"], variance, this["UnknownAssignment"], row.Diagnostics.Count == 0 && result?.CombinedRate is not null
+                ? (NeedsCapacityReview(row) ? this["ReviewFixedConsumed"] : this["NoIssues"]) : reason, reconciliation];
         for (int i = 0; i < answers.Length; i++) Answers.Add(new(this["Question" + (i + 1)], answers[i]));
     }
 }

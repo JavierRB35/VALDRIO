@@ -20,9 +20,11 @@ public partial class MainWindow
         foreach(var language in new[]{"es","en"})
         {
             main.ApplyPresentationPreset(language,language=="es"?"es-ES":"en-US","UTC",false,false);
-            await NavigateWorkflow(10); UpdateWorkflow(); AuxiliaryStep.BringIntoView();
+            await NavigateWorkflow(8); main.CostFlows!.ShowAuxiliaryReport=true;
+            UpdateWorkflow(); CostFlowStep.BringIntoView();
             await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
-            Check(AuxiliaryStep.IsEnabled && AuxiliaryStep.Focus(),"Keyboard menu "+language+" enabled="+AuxiliaryStep.IsEnabled+" visible="+AuxiliaryStep.IsVisible+" step="+workflowStep+" can="+studies.CanOpenPhysical);
+            Check(CostFlowStep.IsEnabled && CostFlowStep.Focus() && main.CostFlows.ShowAuxiliaryReport,
+                "Keyboard access to current auxiliary report "+language);
             var window=new AuxiliaryCapacityWindow(studies){Owner=this};window.Show(); await window.InitializeAsync();
             await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
             var editor=window.Editor;
@@ -41,6 +43,11 @@ public partial class MainWindow
             editor.Import("Center;Group;Destination;Quantity\nB;all;P;50"); editor.Save(); editor.Calculate();
             Check(editor.Export() is not null && editor.Summary.Contains("800",StringComparison.Ordinal),"Import save and calculate restores C20 "+language);
             var rates=new PrincipalRatesEditor(studies); Check(rates.Report!.Rows.Single().Result!.CombinedRate==16m,"T15 consumes auxiliary result once "+language);
+            Check(rates.Breakdown.Count > 0 && rates.Breakdown.All(row => row.Component.Length > 0 && row.Cost.Length > 0),
+                "T15 exposes rate breakdown for selected centre "+language);
+            Check(rates.CapacitySummary.Length > 0, "T15 explains capacity assessment even when not applicable "+language);
+            Check(rates.ReviewNotice.Length == 0 && rates.CapacitySummary == rates["NoCapacityAssessment"],
+                "Assessed auxiliary fixed cost does not produce a false review notice or imply zero idle capacity "+language);
             window.Width=760;window.Height=650;window.UpdateLayout();
             await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
             Check(((DataGrid)window.FindName("AnswersTable")).ActualWidth>400,"Narrow answer layout "+language);
