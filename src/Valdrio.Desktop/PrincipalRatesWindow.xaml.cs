@@ -15,6 +15,8 @@ public partial class PrincipalRatesWindow : IntegratedWorkspaceWindow
         CenterColumn.Header = Editor["Center"]; UnitColumn.Header = Editor["Unit"]; CostColumn.Header = Editor["Cost"];
         NumeratorColumn.Header = Editor["Numerator"]; DenominatorColumn.Header = Editor["Denominator"];
         RateColumn.Header = Editor["Rate"]; StatusColumn.Header = Editor["Status"];
+        BreakdownComponentColumn.Header = Editor["Component"]; BreakdownCostColumn.Header = Editor["Cost"];
+        BreakdownBaseColumn.Header = Editor["Base"]; BreakdownRateColumn.Header = Editor["Rate"];
         QuestionColumn.Header = Editor["Question"]; AnswerColumn.Header = Editor["Answer"];
         ComponentColumn.Header = Editor["Component"]; BehaviorColumn.Header = Editor["Behavior"];
         SourceColumn.Header = Editor["Source"];
