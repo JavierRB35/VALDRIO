@@ -69,11 +69,11 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
                 items.Sum(c => c.Rate!.Value) : null, selected.Symbol);
             Breakdown.Add(new(this[kind.ToString()], Money(items.Sum(c => c.Source.Amount)), basis, rate));
         }
-        if (result.CapacityVariance is { } variance)
+        if (!result.Components.Any(c => c.Source.Kind == RateComponentKind.OwnFixed))
+            CapacitySummary = this["NoCapacityAssessment"];
+        else if (result.CapacityVariance is { } variance)
             CapacitySummary = this["CapacityResult"] + ": " + Money(variance) + " · " +
                 this[variance < 0 ? "Overactivity" : "Underactivity"];
-        else if (!result.Components.Any(c => c.Source.Kind == RateComponentKind.OwnFixed))
-            CapacitySummary = this["NoCapacityAssessment"];
         ReviewNotice = NeedsCapacityReview(selected.Value) ? this["ReviewFixedConsumed"] : "";
     }
 
