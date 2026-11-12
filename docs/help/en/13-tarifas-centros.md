@@ -49,3 +49,16 @@ The screen is now called **Rates and unit costs**. The **Centre rates** tab pres
 Each node's purpose is selected when editing the cost model. Historic nodes without an explicit purpose remain under general centres until the model is explicitly adapted. Own fixed, variable and previously assessed auxiliary service components continue to follow CM08/CM09. A direct-labour tariff does not prove that hours have been consumed by orders; actual order consumption belongs to T19. Estimates do not substitute real hours.
 
 **Status:** candidate feature branch, not yet validated or accepted on Windows.
+## Reading the rate at a glance (T15 improvement)
+
+The selected centre now shows a **rate breakdown**: own fixed, observed variable, received/consumed and period costs, with each component's amount, denominator and rate. The capacity variance is shown separately; it is not an additional expense.
+
+- **Own fixed cost subject to capacity assessment:** divided by normal activity. Its unabsorbed portion remains a capacity variance.
+- **Observed variable:** divided by actual activity.
+- **Received or consumed:** divided by actual activity; capacity already assessed elsewhere must not be assessed twice. A fixed received cost without identified assessment triggers a **review notice**, not an automatic error or reclassification.
+- **Period costs:** excluded from the combined rate.
+
+**Needs attention** also includes centres with this methodological review notice. Use **View cost origin** and **Prepare accounts** to check classification; this screen never modifies the calculation.
+
+**Purpose:** management cost rate, not a validated inventory valuation. Inventory costing requires the separate T32 scope and rules. No fabricated inventory rate or actual order consumption is shown.
+
