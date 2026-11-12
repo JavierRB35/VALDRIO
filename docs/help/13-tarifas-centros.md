@@ -68,4 +68,4 @@ La pantalla se denomina **Tarifas y costes unitarios**. La pestaña **Tarifas de
 
 La finalidad del nodo se selecciona al diseñar la estructura. Los modelos históricos sin clasificación explícita permanecen en centros generales hasta que el usuario actualice su configuración en una versión editable. Los importes propios, recibidos, variables y de capacidad se siguen calculando conforme a CM08/CM09. La tarifa MOD no implica que sus horas se hayan aplicado a órdenes: eso requiere consumos reales T19. No se transforma una estimación de tiempo en actividad real ni se duplica la prestación auxiliar.
 
-**Estado:** funcionalidad desarrollada en rama candidata; no considerar integrada o validada en Windows hasta disponer de prueba y aceptación de la versión.
+La validación Windows y los límites de la entrega se documentan en la [evidencia de T15 del 12/11/2026](../evidencias/pr88-20261112/README.md).

@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Threading;
+using System.Windows.Input;
 using Valdrio.Application;
 
 namespace Valdrio.Desktop;
@@ -28,17 +29,20 @@ public partial class MainWindow
             main.ApplyPresentationPreset(language,language=="es"?"es-ES":"en-US","UTC",false,false);
             await NavigateWorkflow(10);
             Check(RatesStep.IsEnabled && RatesStep.Focus(),"Menu focus "+language);
-            Check((string?)RatesStep.Tag=="Active" && AllocationPhase.IsExpanded,"Menu active "+language);
+            Check((string?)RatesStep.Tag=="Active" && CapacityPhase.IsExpanded,"Menu active "+language);
             var window=new PrincipalRatesWindow(studies){Owner=this};window.Show(); await window.InitializeAsync();
             await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
             var editor=window.Editor;
             var grid=(DataGrid)window.FindName("CentersTable");
+            var breakdown=(DataGrid)window.FindName("BreakdownTable");
+            var scroll=(ScrollViewer)window.FindName("RatesScroll");
             Check(editor.Rows.Count==2,"Both real centres loaded "+language);
             Check(window.RateCategoryTabs.Items.Count == 2 && editor.SelectedRateTabIndex == 0,
                 "centre and direct-factor tabs are available " + language);
             editor.SelectedRateTabIndex = 1;
             Check(editor.Rows.Count == 0 && editor.Report?.Rows.Count == 2 &&
-                editor.SelectedRow is null && editor.Details.Count == 0,
+                editor.SelectedRow is null && editor.Details.Count == 0 && editor.Breakdown.Count == 0 &&
+                editor.CapacitySummary.Length == 0 && editor.ReviewNotice.Length == 0,
                 "direct-factor tab does not invent rates or change the frozen calculation " + language);
             editor.SelectedRateTabIndex = 0;
             Check(editor.Rows.Count == 2 && editor.SelectedRow is not null,
@@ -55,14 +59,33 @@ public partial class MainWindow
                 "Rate calculation visibly identifies its cost and activity basis "+language);
             Check(editor.Answers[4].Answer==editor["UnknownAssignment"],"Unknown assignment not zero "+language);
             Check(editor.Answers[6].Answer.Contains(editor["Partial"],StringComparison.Ordinal),"Partial reconciliation labelled "+language);
+            Check(editor.Breakdown.Count==2 && breakdown.Columns.Count==4 &&
+                editor.Breakdown[0].Base.Contains(editor["Normal"],StringComparison.Ordinal) &&
+                editor.Breakdown[1].Base.Contains(editor["Real"],StringComparison.Ordinal),"Breakdown preserves separate activity bases "+language);
+            Check(editor.CapacitySummary.Contains("400",StringComparison.Ordinal) && editor.ReviewNotice.Length==0,
+                "Own fixed variance and no spurious warning "+language);
             VisualEvidenceCapture.Capture(window,Path.Combine(directory,"rates-"+language+".png"));
             grid.SelectedIndex=1;
-            Check(editor.SelectedRow!.Value.Result!.CombinedRate==5m && editor.Answers[0].Answer.Contains("5",StringComparison.Ordinal),"Selection updates answers "+language);
+            var reviewRequired=editor.ReviewNotice.Length>0;
+            Check(editor.SelectedRow!.Value.Result!.CombinedRate==(reviewRequired?6.25m:5m) && editor.Breakdown.Count==1,
+                "Selection updates rate and breakdown "+language);
+            if(reviewRequired)
+            {
+                Check(editor.ReviewNotice==editor["ReviewFixedConsumed"] && editor.Answers[5].Answer==editor.ReviewNotice &&
+                    editor.CapacitySummary==editor["NoCapacityAssessment"],"Fixed consumed review is consistent and does not imply zero idle capacity "+language);
+                breakdown.BringIntoView();window.UpdateLayout();await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
+                VisualEvidenceCapture.Capture(window,Path.Combine(directory,"rates-review-"+language+".png"));
+            }
             grid.SelectedIndex=0;
             window.Width=760;window.Height=650;window.UpdateLayout();
             await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
             Check(((DataGrid)window.FindName("AnswersTable")).ActualWidth>400,"Narrow answers retain width "+language);
             VisualEvidenceCapture.Capture(window,Path.Combine(directory,"rates-narrow-"+language+".png"));
+            breakdown.BringIntoView();window.UpdateLayout();await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
+            Check(breakdown.Focus() && breakdown.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)),
+                "Breakdown supports keyboard navigation "+language);
+            VisualEvidenceCapture.Capture(window,Path.Combine(directory,"breakdown-narrow-"+language+".png"));
+            scroll.ScrollToTop();window.UpdateLayout();
             window.Width=1200;window.Height=850;
             var surface=(FrameworkElement)window.Content;
             foreach(var scale in new[]{1.25,1.5,2.0})
@@ -71,6 +94,9 @@ public partial class MainWindow
                 window.UpdateLayout();await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
                 Check(((DataGrid)window.FindName("AnswersTable")).ActualWidth>300,"Scaled answer layout "+scale+" "+language);
                 VisualEvidenceCapture.Capture(window,Path.Combine(directory,"rates-scale-"+(int)(scale*100)+"-"+language+".png"));
+                breakdown.BringIntoView();window.UpdateLayout();await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
+                Check(breakdown.ActualWidth>300 && breakdown.Items.Count==2,"Scaled breakdown remains reachable "+scale+" "+language);
+                VisualEvidenceCapture.Capture(window,Path.Combine(directory,"breakdown-scale-"+(int)(scale*100)+"-"+language+".png"));
                 ((DataGrid)window.FindName("AnswersTable")).BringIntoView();
                 window.UpdateLayout();await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
                 Check(((ScrollViewer)window.FindName("RatesScroll")).VerticalOffset>0,"Answers reachable by scrolling "+scale+" "+language);
@@ -78,8 +104,10 @@ public partial class MainWindow
                 ((ScrollViewer)window.FindName("RatesScroll")).ScrollToTop();
             }
             surface.LayoutTransform=System.Windows.Media.Transform.Identity;
-            editor.AttentionOnly=true;Check(editor.Rows.Count==0 && editor.Answers.Count==0,"Filter clears old answers "+language);
+            editor.AttentionOnly=true;Check(reviewRequired ? editor.Rows.Count==1 && editor.ReviewNotice.Length>0 :
+                editor.Rows.Count==0 && editor.Answers.Count==0 && editor.Breakdown.Count==0,"Attention filter preserves only relevant results "+language);
             editor.AttentionOnly=false;Check(editor.Rows.Count==2 && editor.Answers.Count==7,"Filter restores selection "+language);
+            grid.SelectedIndex=0;
             var exported=CanonicalSnapshotJson.Serialize(editor.Report);
             File.WriteAllText(Path.Combine(directory,"rates-"+language+".json"),exported);
             Check(CanonicalSnapshotJson.Deserialize<PrincipalRateReport>(exported).Rows.Count==2,"Frozen export readable "+language);
@@ -88,8 +116,10 @@ public partial class MainWindow
                 PhysicalObservationState.Draft,null,null,100,60,original.NormalEvidence,original.RealEvidence,null,null,"WPF disposable test","test"));
             editor.Reload();
             Check(editor.Rows[0].Value.Result is null && editor.Rows[0].Value.Cost==1600m,"Draft invalidates rates but preserves known cost "+language);
+            Check(editor.Breakdown.Count==0 && editor.CapacitySummary.Length==0 && editor.ReviewNotice.Length==0,
+                "Missing data clears breakdown and notices "+language);
             Check(!editor.Answers[0].Answer.Contains("20 EUR",StringComparison.Ordinal),"No stale rate answer "+language);
-            editor.AttentionOnly=true;Check(editor.Rows.Count==1,"Attention filter identifies missing confirmation "+language);
+            editor.AttentionOnly=true;Check(editor.Rows.Count==(reviewRequired?2:1),"Attention filter identifies missing confirmation "+language);
             var latest=studies.ActivePhysicalActivity.ReadCurrent(original.CompanyId,original.StudyId).Single(o=>o.PoolId==original.PoolId);
             studies.ActivePhysicalActivity.Save(new(original.CompanyId,original.StudyId,revision,original.NodeId,original.PoolId,latest.Version,
                 PhysicalObservationState.Confirmed,null,null,100,60,original.NormalEvidence,original.RealEvidence,null,null,null,"test"));
@@ -98,11 +128,23 @@ public partial class MainWindow
             Check(studies.Current!.Revision==revision,"Reading rates never changes study "+language);
         }
         // Invoke the actual menu Click and verify that it opens the implemented window.
-        bool opened=false;var timer=new DispatcherTimer{Interval=TimeSpan.FromMilliseconds(200)};
-        timer.Tick+=(_,_)=>{var w=OwnedWindows.OfType<PrincipalRatesWindow>().FirstOrDefault();if(w is null)return;opened=true;timer.Stop();w.Close();};
-        timer.Start();((IInvokeProvider)new ButtonAutomationPeer(RatesStep).GetPattern(PatternInterface.Invoke)).Invoke();
-        await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);timer.Stop();
-        Check(opened,"Real menu opens rates window");
+        ((IInvokeProvider)new ButtonAutomationPeer(RatesStep).GetPattern(PatternInterface.Invoke)).Invoke();
+        for(var attempt=0;attempt<50 && workspacePages.LastOrDefault() is not PrincipalRatesWindow;attempt++)
+            await Task.Delay(100);
+        var integrated=workspacePages.LastOrDefault() as PrincipalRatesWindow;
+        Check(integrated is not null,"Real menu opens integrated rates page");
+        await integrated!.InitializeAsync();
+        Check(integrated.Editor.Report is not null && !main.Company!.IsProcessing,"Integrated rates load asynchronously and clear activity");
+        Width=1200;Height=850;UpdateLayout();await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
+        var integratedScroll=(ScrollViewer)integrated.FindName("RatesScroll");
+        var integratedBreakdown=(DataGrid)integrated.FindName("BreakdownTable");
+        integratedScroll.ScrollToTop();UpdateLayout();
+        integratedBreakdown.RaiseEvent(new MouseWheelEventArgs(Mouse.PrimaryDevice,Environment.TickCount,-120)
+            {RoutedEvent=PreviewMouseWheelEvent,Source=integratedBreakdown});
+        await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
+        Check(integratedScroll.VerticalOffset>0,"Wheel over breakdown scrolls the integrated page");
+        VisualEvidenceCapture.Capture(this,Path.Combine(directory,"rates-integrated.png"));
+        integrated.Close();
         await GoBackWorkflow();Check(workflowStep==9,"Back returns to activity");
         File.WriteAllText(Path.Combine(directory,"checks.json"),JsonSerializer.Serialize(checks,new JsonSerializerOptions{WriteIndented=true}));
     }

@@ -27,6 +27,8 @@ status.StartsWith(
 Text("Resource.RealMissing");
 Text("Resource.RealMissing");
 Text("Resource.OtherMissing");
+study.Guide("Help.Name");
+texts.Get("AllocationUI.SecondaryBehavior" + behavior, culture);
 var brush = FindResource("Brand.Red");
 var brush2 = TryFindResource("Brand.Red");
 var brush3 = ThemeBrush("Brand.Red");
@@ -37,7 +39,10 @@ button.SetResourceReference(StyleProperty, "Button.Primary");
 '@
     Set-Content -LiteralPath (Join-Path $fixtureRoot 'src/Valdrio.Desktop/Fixture.cs') -Value $source
     $keys = @(& (Join-Path $PSScriptRoot 'Get-ProductionMessageKeys.ps1') -RepositoryRoot $fixtureRoot)
-    $expected = @('Resource.OtherMissing', 'Resource.RealMissing')
+    $expected = @('AllocationUI.SecondaryBehaviorAssumedFixed', 'AllocationUI.SecondaryBehaviorFixed',
+        'AllocationUI.SecondaryBehaviorMixed', 'AllocationUI.SecondaryBehaviorMixedPending',
+        'AllocationUI.SecondaryBehaviorUnclassified', 'AllocationUI.SecondaryBehaviorVariable',
+        'Guide.Help.Name', 'Resource.OtherMissing', 'Resource.RealMissing')
     if ($keys.Count -ne $expected.Count -or ($keys -join '|') -ne ($expected -join '|')) {
         throw "Scanner lost a missing diagnostic or treated a visual resource as a message: $($keys -join ', ')"
     }

@@ -1,10 +1,12 @@
 using Valdrio.Application;
 using Valdrio.Domain;
 using Valdrio.Infrastructure.CompanyFiles;
+using Valdrio.Desktop;
+using Valdrio.Localization;
 namespace Valdrio.Tests;
 public sealed partial class T06ImportConfirmationTests
 {
-    private async Task<AllocationWorkspaceSnapshot> T15Fixture(ICompanyFileSession file)
+    private async Task<AllocationWorkspaceSnapshot> T15Fixture(ICompanyFileSession file, bool consumedFixed = false)
     {
         var company=file.Read();
         file.AddUnits(DefaultActivityUnitCatalog.Missing(company.Units),company.Revision,"fixture");
@@ -28,8 +30,8 @@ public sealed partial class T06ImportConfirmationTests
         {
             var index=i==2?1:0;var origin=w.Origins.Single(o=>o.Code==codes[i]);var variable=i==1;
             var classification=new ResourceClassification(variable?ResourceBehavior.Variable:ResourceBehavior.Fixed,null,ResourceCostLayer.Production,
-                variable?ResourceCapacityTreatment.None:ResourceCapacityTreatment.AssessAtPool,
-                variable?null:new(pools[index].Id,nodes[index].Id,unit)){VariablePercentage=variable?100:0};
+                variable || consumedFixed && i == 2 ? ResourceCapacityTreatment.None : ResourceCapacityTreatment.AssessAtPool,
+                variable || consumedFixed && i == 2 ? null : new(pools[index].Id,nodes[index].Id,unit)){VariablePercentage=variable?100:0};
             var part=new ResourcePartDraft(Id(),w.Preparation.Coverage.Single(c=>c.ResourceId==origin.Id).Effective,ResourceRoutingKind.AllocationPool,poolId:pools[index].Id,classification:classification);
             file.Resources.ChangeResources(Mutation(w,ResourceMutationKind.EditResource,origin.Id,[part]));w=file.Resources.ReadResources(company.Id,study.Id);
             var key=file.Allocations.SaveAllocationKey(KeyCommand(w,lines:[new(nodes[index].Id,100m)]) with {Name="Primario "+codes[i]}).After;
@@ -42,6 +44,63 @@ public sealed partial class T06ImportConfirmationTests
             new(PhysicalEvidenceQuality.Declared,"Referencia aprobada","Ejemplo"),new(PhysicalEvidenceQuality.Recorded,"Partes de trabajo","Ejemplo"),null,null,null,"fixture"));
         return file.Allocations.ReadAllocations(company.Id,study.Id);
     }
+    [TestMethod]
+    [DataRow("es", "es-ES")]
+    [DataRow("en", "en-US")]
+    public async Task T15_ConsumedFixedReviewSurvivesAsyncReloadWithoutChangingExport(string language, string culture)
+    {
+        EntityId studyId;
+        string original;
+        using (var file = Baseline())
+        {
+            var w = await T15Fixture(file, consumedFixed: true);
+            var study = w.Resources.Study; studyId = study.Id;
+            var run = file.Runs.PrepareRun(new(study.CompanyId, study.Id, study.Revision, Id(), "test"));
+            file.Runs.PublishRun(run.Id, CalculationRunService.Calculate(run));
+            original = CanonicalSnapshotJson.Serialize(PrincipalRateReportService.Read(study, w.Resources.Model,
+                file.Runs.ReadRuns(study.CompanyId, study.Id), file.PhysicalActivity.ReadCurrent(study.CompanyId, study.Id)));
+            if (language == "es" && Environment.GetEnvironmentVariable("VALDRIO_T15_REVIEW_DEMO") is { Length: > 0 } demo)
+                file.Backup(demo);
+        }
+        var before = Hash(FileOf("current.valdrio"));
+        var texts = new UiTextCatalog();
+        var preferences = new PresentationPreferencesService(new LanguageCatalog(),
+            UserPresentationPreferences.Default with { UiLanguageTag = language, FormatCultureTag = culture });
+        var formatter = new PresentationFormatter(new DisplayTimeZoneResolver());
+        var dialogs = new ResourceDialogs();
+        using var company = new CompanyFileViewModel(Service(), dialogs, Catalog, texts, preferences, formatter);
+        using var studies = new StudyWorkspaceViewModel(company, Catalog, texts, preferences, formatter, dialogs);
+        await company.OpenPath(FileOf("current.valdrio"));
+        studies.StudyChoice = studies.Studies.Single(s => s.Value.Id == studyId);
+        await studies.LoadCommand.ExecuteAsync(null);
+        var editor = new PrincipalRatesEditor(studies, initialize: false);
+        await editor.ReloadAsync();
+        Assert.AreEqual(2, editor.Breakdown.Count);
+        Assert.AreEqual("", editor.ReviewNotice);
+        editor.AttentionOnly = true;
+        Assert.AreEqual(1, editor.Rows.Count);
+        Assert.AreEqual(6.25m, editor.SelectedRow!.Value.Result!.CombinedRate);
+        Assert.AreEqual(editor["ReviewCapacityShort"], editor.SelectedRow.Status);
+        Assert.AreEqual(editor["ReviewFixedConsumed"], editor.ReviewNotice);
+        Assert.AreEqual(editor.ReviewNotice, editor.Answers[5].Answer);
+        Assert.AreEqual(editor["NoCapacityAssessment"], editor.CapacitySummary);
+        Assert.AreEqual(editor["Consumed"], editor.Breakdown.Single().Component);
+        Assert.IsTrue(editor.CanExport);
+        Assert.AreEqual(original, CanonicalSnapshotJson.Serialize(editor.Report));
+        await editor.ReloadAsync();
+        Assert.AreEqual(1, editor.Rows.Count);
+        Assert.AreEqual(editor["ReviewFixedConsumed"], editor.Answers[5].Answer);
+        editor.SelectedRateTabIndex = 1;
+        Assert.AreEqual(0, editor.Breakdown.Count);
+        Assert.AreEqual("", editor.ReviewNotice);
+        Assert.AreEqual("", editor.CapacitySummary);
+        editor.SelectedRateTabIndex = 0;
+        Assert.AreEqual(1, editor.Breakdown.Count);
+        Assert.AreEqual(original, CanonicalSnapshotJson.Serialize(editor.Report));
+        Assert.AreEqual(before, Hash(FileOf("current.valdrio")));
+        Assert.IsFalse(company.IsProcessing);
+    }
+
     [TestMethod]
     public async Task T15_FrozenCostsPhysicalVersionsReopeningAndStaleRuns()
     {

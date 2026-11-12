@@ -203,7 +203,8 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
             this["Partial"] + " " + Money(result.SourceCost) + " = " + Money(result.CapacityVariance) + " (" + this["Capacity"] + ") + " +
             Money(performed) + " (" + this["Performed"] + ")" + (result.PeriodCost == 0 ? "" : " + " + Money(result.PeriodCost) + " (" + this["Period"] + ")") + ". " + this["AssignmentLater"] : reason;
         string[] answers = [result?.CombinedRate is not null ? value.Rate : reason, composition,
-            this["AssignmentLater"], variance, this["UnknownAssignment"], row.Diagnostics.Count == 0 && result?.CombinedRate is not null ? this["NoIssues"] : reason, reconciliation];
+            this["AssignmentLater"], variance, this["UnknownAssignment"], row.Diagnostics.Count == 0 && result?.CombinedRate is not null
+                ? (NeedsCapacityReview(row) ? this["ReviewFixedConsumed"] : this["NoIssues"]) : reason, reconciliation];
         for (int i = 0; i < answers.Length; i++) Answers.Add(new(this["Question" + (i + 1)], answers[i]));
     }
 }

@@ -170,6 +170,20 @@ public sealed partial class WorkspaceAuditClosureTests
         {
             vm.ModelChoice = vm.Models.First(m => m.Value.Status == (operation == "Clone" ? ModelStatus.Published : ModelStatus.Draft));
             await vm.LoadCommand.ExecuteAsync(null);
+            if (operation == "Clone")
+            {
+                // This fixture already has a draft derived from the publication.
+                // Reusing it must not write; publish it to exercise a genuinely new clone below.
+                var parent = vm.Current!.Structure.Id;
+                var existing = before.Models.Single(m => m.Status == ModelStatus.Draft && m.Structure.ParentVersionId == parent);
+                var writesBeforeReuse = session.Writes;
+                await vm.CloneCommand.ExecuteAsync(null);
+                Assert.AreEqual(writesBeforeReuse, session.Writes);
+                Assert.AreEqual(existing.Structure.Id, vm.Current!.Structure.Id);
+                Assert.IsTrue(vm.PublishCommand.CanExecute(null));
+                await vm.PublishCommand.ExecuteAsync(null);
+                Assert.AreEqual(ModelStatus.Published, vm.Current!.Status);
+            }
             if (operation == "SaveDraft") vm.Description += " confirmed";
         }
 
