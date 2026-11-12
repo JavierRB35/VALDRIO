@@ -28,13 +28,17 @@ public partial class MainWindow
         await studies.LoadCommand.ExecuteAsync(null);
         var revision = studies.Current!.Revision;
         var name = studies.Name;
+        await NavigateWorkflow(9);
+        await NavigateWorkflow(2);
         studies.Name = name + " pending";
         dialogs.Choices.Enqueue(PendingEditChoice.Cancel);
-        await NavigateWorkflow(9);
-        Check(workflowStep == 2 && studies.IsDirty && studies.Name == name + " pending", "cancel preserves pending study edit and current page");
+        await GoBackWorkflow();
+        Check(workflowStep == 2 && studies.IsDirty && studies.Name == name + " pending",
+            "cancelled Back preserves the study and its return route");
         dialogs.Choices.Enqueue(PendingEditChoice.Discard);
-        await NavigateWorkflow(9);
-        Check(workflowStep == 9 && !studies.IsDirty && studies.Name == name, "explicit discard permits physical navigation");
+        await GoBackWorkflow();
+        Check(workflowStep == 9 && !studies.IsDirty && studies.Name == name,
+            "Back retries the same destination after an explicit discard");
         foreach (var language in new[] { "es", "en" })
         {
             main.ApplyPresentationPreset(language, language == "es" ? "es-ES" : "en-US", "UTC", false, false);
