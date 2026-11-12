@@ -147,16 +147,25 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     [ObservableProperty] private string feedback = "";
     [ObservableProperty] private bool evidenceExpanded;
 
-    public PhysicalActivityEditor(StudyWorkspaceViewModel host)
+    public PhysicalActivityEditor(StudyWorkspaceViewModel host, bool initialize = true)
         : this(host.Current ?? throw new InvalidOperationException("Select a saved study first."),
             host.PhysicalStudies!, host.ActivePhysicalActivity!, host.PhysicalModels!,
             host.PhysicalRuns, host.PhysicalCompany!, host.PhysicalCompanyWritable,
-            host.PhysicalUiCulture, host.PhysicalFormatCulture)
-    { }
+            host.PhysicalUiCulture, host.PhysicalFormatCulture, initialize)
+    { BeginActivity = host.BeginActivity; }
+
+    public Func<IDisposable>? BeginActivity { get; set; }
+    [ObservableProperty] private bool isBusy;
+    partial void OnIsBusyChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsWritable));
+        OnPropertyChanged(nameof(CanSaveDraft));
+        OnPropertyChanged(nameof(CanConfirm));
+    }
 
     public PhysicalActivityEditor(StudyDefinition study, IStudyWorkspace studyWorkspace,
         IPhysicalActivityWorkspace activity, IModelWorkspace models, IRunStore? runs,
-        CompanyFileSnapshot company, bool writable, CultureInfo uiCulture, CultureInfo formatCulture)
+        CompanyFileSnapshot company, bool writable, CultureInfo uiCulture, CultureInfo formatCulture, bool initialize = true)
     {
         this.study = study;
         this.studyWorkspace = studyWorkspace;
@@ -167,17 +176,24 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         this.company = company;
         this.uiCulture = uiCulture; this.formatCulture = formatCulture;
         texts = new UiTextCatalog();
-        RefreshStudyChoices();
+        if (initialize) RefreshStudyChoices();
         IsReadOnly = !companyWritable || study.State == StudyState.Closed;
         QualityOptions = Enum.GetValues<PhysicalEvidenceQuality>()
             .Select(q => new PhysicalQualityOption(q, Label("Activity.Quality." + q))).ToArray();
-        Reload();
+        if (initialize) Reload();
+    }
+
+    public async Task InitializeAsync()
+    {
+        using var activityScope = BeginActivity?.Invoke();
+        await RefreshStudyChoicesAsync();
+        await ReloadAsync();
     }
 
     public ObservableCollection<PhysicalActivityRow> Rows { get; } = [];
     public IReadOnlyList<PhysicalQualityOption> QualityOptions { get; }
     public bool IsReadOnly { get; private set; }
-    public bool IsWritable => !IsReadOnly;
+    public bool IsWritable => !IsReadOnly && !IsBusy;
     public bool CanSaveDraft => IsWritable && SelectedRow?.HasChanges == true;
     public bool CanConfirm => IsWritable && SelectedRow is not null;
     public string SelectionHelp => Label("Activity.SelectionHelp");
@@ -195,23 +211,29 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     public string PeriodLabel => Label("Activity.Period");
     public string UnsavedTitle => Label("Activity.UnsavedTitle");
     public string UnsavedBody => Label("Activity.UnsavedBody");
-    public void RefreshStudyChoices()
+    public void RefreshStudyChoices() => ApplyStudyChoices(studyWorkspace.ReadStudies());
+    private async Task RefreshStudyChoicesAsync() => ApplyStudyChoices(await Task.Run(() => studyWorkspace.ReadStudies()));
+    private void ApplyStudyChoices(IEnumerable<StudyDefinition> studies)
     {
         StudyChoices.Clear();
-        foreach (var value in studyWorkspace.ReadStudies().Where(s => s.CompanyId == company.Id)
+        foreach (var value in studies.Where(s => s.CompanyId == company.Id)
             .OrderBy(s => s.PeriodStart.Value).ThenBy(s => s.Name))
-        {
             StudyChoices.Add(new(value, value.Name + " · " +
                 value.PeriodStart.Value.ToString("d", formatCulture) + " – " +
                 value.PeriodEnd.Value.ToString("d", formatCulture)));
-        }
     }
     // The caller must explicitly resolve pending edits before switching.
-    public void ChangeStudy(EntityId studyId, bool discardPendingEdits = false)
+    public void ChangeStudy(EntityId studyId, bool discardPendingEdits = false) =>
+        ChangeStudyCore(studyId, discardPendingEdits, false).GetAwaiter().GetResult();
+    public Task ChangeStudyAsync(EntityId studyId, bool discardPendingEdits = false) =>
+        ChangeStudyCore(studyId, discardPendingEdits, true);
+    private async Task ChangeStudyCore(EntityId studyId, bool discardPendingEdits, bool background)
     {
+        using var activityScope = BeginActivity?.Invoke();
         if (HasPendingEdits && !discardPendingEdits)
             throw new InvalidOperationException("Pending T14 edits must be resolved first.");
-        var next = studyWorkspace.ReadStudies().Single(s => s.Id == studyId &&
+        var choices = background ? await Task.Run(() => studyWorkspace.ReadStudies()) : studyWorkspace.ReadStudies();
+        var next = choices.Single(s => s.Id == studyId &&
             s.CompanyId == company.Id);
         if (next.Id == study.Id) return;
 
@@ -221,6 +243,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         var original = study;
         var originalStructure = Structure;
         var originalReferences = References;
+        var originalHistory = history;
         var previousReadOnly = IsReadOnly;
         var originalRows = Rows.ToArray();
         var originalSelection = SelectedRow;
@@ -228,19 +251,20 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         {
             study = next;
             IsReadOnly = !companyWritable || study.State == StudyState.Closed;
-            Reload();
-            RefreshStudyChoices();
+            if (background) { await ReloadAsync(); await RefreshStudyChoicesAsync(); }
+            else { Reload(); RefreshStudyChoices(); }
         }
         catch
         {
             study = original;
             Structure = originalStructure;
             References = originalReferences;
+            history = originalHistory;
             IsReadOnly = previousReadOnly;
             Rows.Clear();
             foreach (var row in originalRows) Rows.Add(row);
             SelectedRow = originalSelection;
-            RefreshStudyChoices();
+            ApplyStudyChoices(choices);
             NotifyStudyContext();
             throw;
         }
@@ -298,14 +322,33 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
             new(string.IsNullOrWhiteSpace(source) ? PhysicalEvidenceQuality.Declared : quality,
                 string.IsNullOrWhiteSpace(source) ? Label("Activity.Guided.Manual") : source.Trim(), description?.Trim() ?? "");
 
-    public void Reload()
+    private Dictionary<EntityId, IReadOnlyList<PhysicalObservation>> history = [];
+    private sealed record ActivityData(ModelVersionSnapshot Model, IReadOnlyList<PhysicalObservation> References,
+        IReadOnlyList<PhysicalObservation> Current, RunHistory? Runs,
+        Dictionary<EntityId, IReadOnlyList<PhysicalObservation>> History);
+    private ActivityData ReadData()
     {
-        var selectedId = SelectedRow?.PoolId;
         var model = models.ReadModels().Single(m =>
             m.Structure.Id == study.SelectedModelVersionId && m.Status == ModelStatus.Published);
-        References = activity.ReadReferences(study.CompanyId, study.Id);
-        var latest = activity.ReadCurrent(study.CompanyId, study.Id).ToDictionary(x => x.PoolId);
-        var publishedRun = runs?.ReadRuns(study.CompanyId, study.Id);
+        var references = activity.ReadReferences(study.CompanyId, study.Id);
+        var current = activity.ReadCurrent(study.CompanyId, study.Id);
+        var runHistory = runs?.ReadRuns(study.CompanyId, study.Id);
+        var histories = current.ToDictionary(o => o.PoolId,
+            o => activity.ReadHistory(study.CompanyId, study.Id, o.PoolId));
+        return new(model, references, current, runHistory, histories);
+    }
+    public void Reload() => ReloadCore(false).GetAwaiter().GetResult();
+    public Task ReloadAsync() => ReloadCore(true);
+    private async Task ReloadCore(bool background)
+    {
+        using var activityScope = BeginActivity?.Invoke();
+        var selectedId = SelectedRow?.PoolId;
+        var data = background ? await Task.Run(ReadData) : ReadData();
+        var model = data.Model;
+        References = data.References;
+        history = data.History;
+        var latest = data.Current.ToDictionary(x => x.PoolId);
+        var publishedRun = data.Runs;
         var currentRunId = publishedRun?.CurrentRunId;
         var result = currentRunId is null ? null : publishedRun!.Runs
             .FirstOrDefault(r => r.Id == currentRunId)?.Output?.Secondary;
@@ -332,7 +375,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
                 Label("Activity.State.Draft"), Label("Activity.State.Confirmed"));
             if (latest.GetValueOrDefault(pool.Id) is { Version: > 1, State: not PhysicalObservationState.Annulled } current &&
                 row.CalendarReferenceDescription.Length == 0)
-                row.CalendarReferenceDescription = activity.ReadHistory(study.CompanyId, study.Id, pool.Id)
+                row.CalendarReferenceDescription = history.GetValueOrDefault(pool.Id, [])
                     .Where(o => o.ModelVersionId == study.SelectedModelVersionId && o.UnitId == pool.DriverUnitId &&
                         o.PeriodStart == study.PeriodStart && o.PeriodEnd == study.PeriodEnd &&
                         o.Version < current.Version && o.State != PhysicalObservationState.Annulled &&
@@ -368,24 +411,30 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
         Feedback = "";
     }
 
-    public void Save(bool confirm)
+    // Synchronous entry retained for non-UI callers. UI handlers use SaveAsync.
+    public void Save(bool confirm) => SaveCore(confirm, background: false).GetAwaiter().GetResult();
+    public Task<bool> SaveAsync(bool confirm) => SaveCore(confirm, background: true);
+    private async Task<bool> SaveCore(bool confirm, bool background)
     {
         var row = SelectedRow;
-        if (row is null || IsReadOnly) return;
+        if (row is null || !IsWritable) return false;
+        using var activityScope = BeginActivity?.Invoke();
+        IsBusy = true;
+        Feedback = Label("Activity.Saving");
         try
         {
             if (!TryQuantity(row.NormalText, out var normal) || !TryQuantity(row.RealText, out var real) ||
                 !TryQuantity(row.TheoreticalText, out var theoretical) || !TryQuantity(row.PracticalText, out var practical))
-            { Feedback = Label("Activity.InputInvalid"); return; }
+            { Feedback = Label("Activity.InputInvalid"); return false; }
             if (new[] { normal, real, theoretical, practical }.Any(v => v < 0))
-            { Feedback = Label("Activity.NegativeQuantity"); return; }
-            if (practical > theoretical) { Feedback = Label("Activity.CapacityOrder"); return; }
+            { Feedback = Label("Activity.NegativeQuantity"); return false; }
+            if (practical > theoretical) { Feedback = Label("Activity.CapacityOrder"); return false; }
             if (row.NormalSource.Length > 500 || row.RealSource.Length > 500 || row.NormalDescription.Length > 4000 || row.RealDescription.Length > 4000)
-            { Feedback = Label("Activity.EvidenceTooLong"); EvidenceExpanded = true; return; }
+            { Feedback = Label("Activity.EvidenceTooLong"); EvidenceExpanded = true; return false; }
             if (row.NormalZeroReason.Length > 4000 || row.ExceptionReason.Length > 4000 || row.CorrectionReason.Length > 4000)
-            { Feedback = Label("Activity.InputInvalid"); return; }
+            { Feedback = Label("Activity.InputInvalid"); return false; }
             if (confirm && (normal is null || real is null))
-            { Feedback = Label("Activity.Incomplete"); return; }
+            { Feedback = Label("Activity.Incomplete"); return false; }
             var command = new SavePhysicalObservation(study.CompanyId, study.Id, study.Revision, row.NodeId, row.PoolId,
                 row.Version, confirm ? PhysicalObservationState.Confirmed : PhysicalObservationState.Draft,
                 theoretical, practical, normal, real,
@@ -394,8 +443,9 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
                 string.IsNullOrWhiteSpace(row.NormalZeroReason) ? null : row.NormalZeroReason.Trim(),
                 string.IsNullOrWhiteSpace(row.ExceptionReason) ? null : row.ExceptionReason.Trim(),
                 string.IsNullOrWhiteSpace(row.CorrectionReason) ? null : row.CorrectionReason.Trim(), "local-user");
-            var saved = activity.Save(command);
+            var saved = background ? await Task.Run(() => activity.Save(command)) : activity.Save(command);
             ReadSavedRow(row, saved);
+            return true;
         }
         catch (DomainRuleException e)
         {
@@ -409,18 +459,26 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
             System.Diagnostics.Trace.TraceError("T14 save: {0}", ex);
             Feedback = Label("Activity.SaveFailed");
         }
+        finally { IsBusy = false; }
+        return false;
     }
 
-    public void Annul()
+    public void Annul() => AnnulCore(background: false).GetAwaiter().GetResult();
+    public Task AnnulAsync() => AnnulCore(background: true);
+    private async Task AnnulCore(bool background)
     {
         var row = SelectedRow;
-        if (row is null || IsReadOnly) return;
+        if (row is null || !IsWritable) return;
+        using var activityScope = BeginActivity?.Invoke();
+        IsBusy = true;
+        Feedback = Label("Activity.Saving");
         try
         {
             if (row.CorrectionReason.Length > 4000)
             { Feedback = Label("Activity.InputInvalid"); return; }
-            var saved = activity.Annul(new(study.CompanyId, study.Id, study.Revision, row.NodeId, row.PoolId,
-                row.Version, row.CorrectionReason, "local-user"));
+            var command = new AnnulPhysicalObservation(study.CompanyId, study.Id, study.Revision, row.NodeId, row.PoolId,
+                row.Version, row.CorrectionReason, "local-user");
+            var saved = background ? await Task.Run(() => activity.Annul(command)) : activity.Annul(command);
             ReadSavedRow(row, saved);
         }
         catch (DomainRuleException e) { Feedback = Label(e.Diagnostic.MessageKey); }
@@ -430,10 +488,12 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
             System.Diagnostics.Trace.TraceError("T14 annul: {0}", ex);
             Feedback = Label("Activity.SaveFailed");
         }
+        finally { IsBusy = false; }
     }
 
     private void ReadSavedRow(PhysicalActivityRow row, PhysicalObservation saved)
     {
+        history[row.PoolId] = history.GetValueOrDefault(row.PoolId, []).Append(saved).ToArray();
         row.ReadFrom(saved, formatCulture, Label("Activity.Pending"), Label("Activity.UtilizationUndefined"),
             Label("Activity.AnnulledRow"), Label("Activity.State.Draft"), Label("Activity.State.Confirmed"));
         OnPropertyChanged(nameof(PendingRowsSummary)); OnPropertyChanged(nameof(CanSaveDraft));
@@ -443,7 +503,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     public string History()
     {
         if (SelectedRow is not { } row) return "";
-        var versions = activity.ReadHistory(study.CompanyId, study.Id, row.PoolId);
+        var versions = history.GetValueOrDefault(row.PoolId, []);
         return string.Join(Environment.NewLine, versions.Select(v =>
             string.Format(formatCulture, "v{0} · {1} · {2}: {3} / {4} · {5}",
                 v.Version, v.RecordedAtUtc, Label("Activity.State." + v.State), v.NormalQuantity?.ToString(formatCulture) ?? "—",
@@ -453,7 +513,7 @@ public sealed partial class PhysicalActivityEditor : ObservableObject
     public IReadOnlyList<PhysicalHistoryDisplay> HistoryRows()
     {
         if (SelectedRow is not { } row) return [];
-        return activity.ReadHistory(study.CompanyId, study.Id, row.PoolId).Select(v => new PhysicalHistoryDisplay(
+        return history.GetValueOrDefault(row.PoolId, []).Select(v => new PhysicalHistoryDisplay(
             v.Version, v.RecordedAtUtc.ToString(), v.NormalQuantity?.ToString(formatCulture) ?? "—",
             v.RealQuantity?.ToString(formatCulture) ?? "—", row.Unit, Label("Activity.State." + v.State),
             string.Join(" · ", new[] { v.CorrectionReason, v.ExceptionReason, v.NormalZeroReason }

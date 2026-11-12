@@ -68,8 +68,8 @@ public sealed partial class CostFlowViewModel : ObservableObject
     {
         var earlierBusy = company.WorkspaceBusy; company.WorkspaceBusy = () => cancellation is not null || earlierBusy?.Invoke() == true;
         this.company = company; this.studies = studies; this.texts = texts; this.preferences = preferences;
-        CalculateCommand = new AsyncRelayCommand(CalculateAsync, () => cancellation is null && company.CanWrite && studies.Current is not null);
-        RefreshCommand = new AsyncRelayCommand(EnterAsync, () => cancellation is null);
+        CalculateCommand = new AsyncRelayCommand(CalculateAsync, () => cancellation is null && !loading && company.CanWrite && studies.Current is not null);
+        RefreshCommand = new AsyncRelayCommand(EnterAsync, () => cancellation is null && !loading);
         CancelCommand = new RelayCommand(() => cancellation?.Cancel(), () => cancellation is not null);
         ClearSelectionCommand = new RelayCommand(() => SelectNode(null));
         preferences.Changed += (_, _) => RebuildChoices();
@@ -139,9 +139,13 @@ public sealed partial class CostFlowViewModel : ObservableObject
         OnPropertyChanged(nameof(ReportContext));
     }
     partial void OnSelectedRowChanged(FlowRow? value) { if (value is not null) Selection = value.Detail; }
+    private bool loading;
     public async Task EnterAsync()
     {
-        if (cancellation is not null) return;
+        if (cancellation is not null || loading) return;
+        loading = true;
+        using var activity = company.BeginActivity();
+        Commands();
         try
         {
             if (company.ActiveRuns is { } store && studies.Current is { } study)
@@ -152,7 +156,7 @@ public sealed partial class CostFlowViewModel : ObservableObject
         }
         catch (Exception ex) when (ex is CompanyFileException or DomainRuleException or InvalidOperationException)
         { Status = this["LoadFailed"]; history = null; liveWorkspace = null; RebuildChoices(); }
-        Commands();
+        finally { loading = false; Commands(); }
     }
     private void RebuildChoices()
     {
@@ -169,7 +173,7 @@ public sealed partial class CostFlowViewModel : ObservableObject
     private void Commands() { company.NotifyWorkspaceStateChanged(); CalculateCommand.NotifyCanExecuteChanged(); RefreshCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged(); }
     private async Task CalculateAsync()
     {
-        if (company.ActiveRuns is not { } store || studies.Current is not { } study || cancellation is not null) return;
+        if (company.ActiveRuns is not { } store || studies.Current is not { } study || cancellation is not null || loading) return;
         cancellation = new(); var token = cancellation.Token; Commands();
         CalculationRun? run = null;
         try

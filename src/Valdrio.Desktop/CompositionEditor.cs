@@ -49,7 +49,7 @@ public sealed partial class CompositionEditor : ObservableObject
 {
     private readonly StudyWorkspaceViewModel host;
     private readonly UiTextCatalog texts = new();
-    private CompositionCatalog catalog = null!;
+    private CompositionCatalog catalog = new(default, 0, [], []);
     private CompositionVersion? current;
     private bool loading;
     private CompositionPool[] pools = [];
@@ -83,7 +83,7 @@ public sealed partial class CompositionEditor : ObservableObject
     public string ActionLabel(string key) => texts.Get("UX." + key, host.PhysicalUiCulture);
     public string State => current is null ? this["ChooseRecipe"] : catalog.Items.Single(i => i.Id == current.ProductId).Name + " · " + this[current.State.ToString()] + " · v" + current.Number + (Dirty ? " · " + this["Unsaved"] : "");
     public string this[string key] => texts.Get("Composition." + key, host.PhysicalUiCulture);
-    public CompositionEditor(StudyWorkspaceViewModel host) { this.host = host; Reload(); }
+    public CompositionEditor(StudyWorkspaceViewModel host, bool initialize = true) { this.host = host; if (initialize) Reload(); }
     partial void OnProductChanged(EntityId value) { OnPropertyChanged(nameof(Versions)); Version = Versions.LastOrDefault()?.Value ?? default; SelectionChanged(); }
     partial void OnVersionChanged(EntityId value) => SelectionChanged();
     private void SelectionChanged() { Invalidate(); OnPropertyChanged(nameof(Editable)); OnPropertyChanged(nameof(LinesReadOnly)); OnPropertyChanged(nameof(HasPendingCompositionOpen)); }
@@ -106,14 +106,30 @@ public sealed partial class CompositionEditor : ObservableObject
         Answers.Add(new(this["QCost"], this["T18"]));
         Answers.Add(new(this["QActual"], this["T19"]));
     }
-    public void Reload()
+    public void Reload() => ReloadCore(false).GetAwaiter().GetResult();
+    public Task ReloadAsync() => ReloadCore(true);
+    public async Task ReloadForDisplayAsync()
     {
+        try { await ReloadAsync(); }
+        catch (DomainRuleException e) { Feedback = texts.Get(e.Diagnostic.MessageKey, host.PhysicalUiCulture); }
+        catch (CompanyFileException e) { Feedback = texts.Get(e.Diagnostic.MessageKey, host.PhysicalUiCulture); }
+    }
+    private async Task ReloadCore(bool background)
+    {
+        using var activity = host.BeginActivity();
         loading = true;
         try
         {
-            catalog = host.ActiveCompositions!.ReadCompositions();
-            // Validation also needs pinned models belonging to other saved versions.
-            pools = host.PhysicalModels!.ReadModels().Where(m => m.Status == ModelStatus.Published).SelectMany(m => m.Structure.Pools.Select(p => new CompositionPool(p.Id, m.Structure.Id, m.Structure.Nodes.Single(n => n.Id == p.NodeId).Code + " · " + p.Description, p.DriverUnitId, m.Structure.Nodes.Single(n => n.Id == p.NodeId).IsActive))).ToArray();
+            var read = () =>
+            {
+                var loadedCatalog = host.ActiveCompositions!.ReadCompositions();
+                // Validation also needs pinned models belonging to other saved versions.
+                var loadedPools = host.PhysicalModels!.ReadModels().Where(m => m.Status == ModelStatus.Published).SelectMany(m => m.Structure.Pools.Select(p => new CompositionPool(p.Id, m.Structure.Id, m.Structure.Nodes.Single(n => n.Id == p.NodeId).Code + " · " + p.Description, p.DriverUnitId, m.Structure.Nodes.Single(n => n.Id == p.NodeId).IsActive))).ToArray();
+                return (loadedCatalog, loadedPools);
+            };
+            var loaded = background ? await Task.Run(read) : read();
+            catalog = loaded.loadedCatalog;
+            pools = loaded.loadedPools;
             Items.Clear();
             foreach (var i in catalog.Items)
             {
@@ -141,12 +157,15 @@ public sealed partial class CompositionEditor : ObservableObject
         if (row.Persisted) { Feedback = this["DeactivateHelp"]; return; }
         Items.Remove(row); Changed();
     }
-    public void ImportProducts(string path)
+    public void ImportProducts(string path) => ImportProductsCore(path, false).GetAwaiter().GetResult();
+    public Task ImportProductsAsync(string path) => ImportProductsCore(path, true);
+    private async Task ImportProductsCore(string path, bool background)
     {
+        using var activity = host.BeginActivity();
         if (!Writable) { Feedback = this["ReadOnlyImport"]; return; }
         try
         {
-            var read = ProductCostImport.ReadResult(path, host.PhysicalFormatCulture);
+            var read = background ? await Task.Run(() => ProductCostImport.ReadResult(path, host.PhysicalFormatCulture)) : ProductCostImport.ReadResult(path, host.PhysicalFormatCulture);
             if (read.Value is not { } imported) { ShowImportError(read.Error!); return; }
             var source = Path.GetFileName(path) + " · " + DateTimeOffset.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             var units = host.PhysicalCompany!.Units;
@@ -279,34 +298,39 @@ public sealed partial class CompositionEditor : ObservableObject
     }
     public async Task<bool> SaveAsync(bool publish)
     {
+        using var activity = host.BeginActivity();
         if (!Writable || Busy || publish && !Editable || !ValidateInput(publish)) return false;
         var committed = false;
         try
         {
             var proposal = Proposal(publish); var id = current?.Id;
             var store = host.ActiveCompositions!;
-            Busy = true; host.SetCompositionBusy(true); Feedback = this["Saving"];
+            Busy = true; Feedback = this["Saving"];
             await Task.Run(() => store.SaveCompositions(proposal, catalog.Revision, "local-user"));
             committed = true;
             Dirty = false;
             // Validate the committed file off the UI thread before repainting.
-            await Task.Run(() => store.ReadCompositions());
-            Reload(); if (id.HasValue) { Version = id.Value; Open(); }
+            await ReloadAsync(); if (id.HasValue) { Version = id.Value; Open(); }
             Feedback = this["Saved"]; return true;
         }
         catch (DomainRuleException e) { Feedback = (committed ? this["Saved"] + " " : "") + texts.Get(e.Diagnostic.MessageKey, host.PhysicalUiCulture); return false; }
         catch (CompanyFileException e) { Feedback = (committed ? this["Saved"] + " " : "") + texts.Get(e.Diagnostic.MessageKey, host.PhysicalUiCulture); return false; }
-        finally { Busy = false; host.SetCompositionBusy(false); OnPropertyChanged(nameof(Dirty)); }
+        finally { Busy = false; OnPropertyChanged(nameof(Dirty)); }
     }
-    public void Preview()
+    public void Preview() => PreviewCore(false).GetAwaiter().GetResult();
+    public Task PreviewAsync() => PreviewCore(true);
+    private async Task PreviewCore(bool background)
     {
+        using var activity = host.BeginActivity();
         Invalidate();
         if (current is null || current.Id != Version || current.ProductId != Product) { Feedback = this["ChooseRecipe"]; return; }
         try
         {
             if (!ValidateInput(false, true)) return;
             var p = Proposal(false);
-            var result = CompositionCalculator.Preview(p, current.Id, Parse(OutputQuantity), host.PhysicalCompany!.Units, pools);
+            var id = current.Id; var quantity = Parse(OutputQuantity); var units = host.PhysicalCompany!.Units;
+            var calculate = () => CompositionCalculator.Preview(p, id, quantity, units, pools);
+            var result = background ? await Task.Run(calculate) : calculate();
             foreach (var r in result.Lines)
                 Results.Add(new(r.Path, r.Name, this[r.Expanded ? "SemiFinished" : r.Activity ? "Activity" : "Material"], Q(r.BaseQuantity), Q(r.AdjustedQuantity), Q(r.RequiredQuantity), host.PhysicalCompany.Units.Single(u => u.Id == r.UnitId).Symbol,
                     host.PhysicalCompany.Units.Single(u => u.Id == r.InputUnitId).Symbol, Q(r.BasisCount), Q(r.ConvertedQuantity)));

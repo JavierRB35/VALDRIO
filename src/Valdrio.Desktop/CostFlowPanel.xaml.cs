@@ -34,23 +34,62 @@ public partial class CostFlowPanel : UserControl
         };
     }
 
-    private void ExportCsv(object sender, RoutedEventArgs e)
+    private async void ExportCsv(object sender, RoutedEventArgs e)
     {
         if (vm is null) return;
         var dialog = new Microsoft.Win32.SaveFileDialog { Filter = "CSV (*.csv)|*.csv", FileName = "VALDRIO-reparto.csv" };
         if (dialog.ShowDialog(Window.GetWindow(this)) != true) return;
+        using var activity = (Window.GetWindow(this)?.DataContext as MainWindowViewModel)?.Company?.BeginActivity();
         var lines = BuildCsv(vm);
-        try { System.IO.File.WriteAllLines(dialog.FileName, lines, new System.Text.UTF8Encoding(true)); }
+        IsEnabled = false;
+        try { await System.IO.File.WriteAllLinesAsync(dialog.FileName, lines, new System.Text.UTF8Encoding(true)); }
         catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) { MessageBox.Show(Window.GetWindow(this), ex.Message, vm.ReportTitle); }
+        finally { IsEnabled = true; }
     }
-    private void PrintPdf(object sender, RoutedEventArgs e)
+    private async void PrintPdf(object sender, RoutedEventArgs e)
     {
         if (vm is null) return;
         var dialog = new PrintDialog();
         if (dialog.ShowDialog() != true) return;
-        try { dialog.PrintDocument(BuildPrintableReport(vm, dialog.PrintableAreaWidth, dialog.PrintableAreaHeight).DocumentPaginator, vm.ReportTitle); }
-        catch (Exception ex) when (ex is System.Printing.PrintSystemException or System.IO.IOException)
+        using var activity = (Window.GetWindow(this)?.DataContext as MainWindowViewModel)?.Company?.BeginActivity();
+        IsEnabled = false;
+        try
+        {
+            await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+            var document = BuildPrintableReport(vm, dialog.PrintableAreaWidth, dialog.PrintableAreaHeight);
+            var writer = System.Printing.PrintQueue.CreateXpsDocumentWriter(dialog.PrintQueue);
+            await WriteReportAsync(writer, document, dialog.PrintTicket);
+        }
+        catch (OperationCanceledException) { }
+        catch (Exception ex) when (ex is System.Printing.PrintSystemException or System.IO.IOException or
+            System.Windows.Xps.XpsException or InvalidOperationException)
         { MessageBox.Show(Window.GetWindow(this), ex.Message, vm.ReportTitle); }
+        finally { IsEnabled = true; }
+    }
+    internal static async Task WriteReportAsync(System.Windows.Xps.XpsDocumentWriter writer,
+        System.Windows.Documents.FixedDocument document, System.Printing.PrintTicket? ticket = null)
+    {
+        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        void Completed(object? sender, System.Windows.Documents.Serialization.WritingCompletedEventArgs e)
+        {
+            if (e.Error is not null) completion.TrySetException(e.Error);
+            else if (e.Cancelled) completion.TrySetCanceled();
+            else completion.TrySetResult();
+        }
+        void Cancelled(object? sender, System.Windows.Documents.Serialization.WritingCancelledEventArgs e) => completion.TrySetCanceled();
+        writer.WritingCompleted += Completed;
+        writer.WritingCancelled += Cancelled;
+        try
+        {
+            if (ticket is null) writer.WriteAsync(document);
+            else writer.WriteAsync(document, ticket);
+            await completion.Task;
+        }
+        finally
+        {
+            writer.WritingCompleted -= Completed;
+            writer.WritingCancelled -= Cancelled;
+        }
     }
     internal static string[] BuildCsv(CostFlowViewModel report)
     {

@@ -30,7 +30,7 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
     private PrincipalRateDisplay[] allRows = [];
     private HashSet<EntityId> directFactorNodes = [];
     private CalculationRun? sourceRun;
-    public PrincipalRatesEditor(StudyWorkspaceViewModel host) { this.host = host; Reload(); }
+    public PrincipalRatesEditor(StudyWorkspaceViewModel host, bool initialize = true) { this.host = host; if (initialize) Reload(); }
     public string this[string key] => texts.Get("Rates." + key, host.PhysicalUiCulture);
     public string Context => host.PhysicalCompany?.Name + " · " + Report?.Study.Name + " · " +
         Report?.Study.PeriodStart.Value.ToString("d", host.PhysicalFormatCulture) + " – " +
@@ -95,19 +95,30 @@ public sealed partial class PrincipalRatesEditor : ObservableObject
             Quantity(normalOnly ? row.Observation?.NormalQuantity : row.Observation?.RealQuantity) + " " + unit +
             " (" + this[normalOnly ? "Normal" : "Real"] + ")");
     }
-    public void Reload()
+    public void Reload() => ReloadCore(false).GetAwaiter().GetResult();
+    public Task ReloadAsync() => ReloadCore(true);
+    private async Task ReloadCore(bool background)
     {
+        using var activity = host.BeginActivity();
         var selected = SelectedRow?.Value.PoolId;
         Rows.Clear(); Answers.Clear(); Details.Clear(); Breakdown.Clear(); CapacitySummary = ""; ReviewNotice = "";
         allRows = []; directFactorNodes.Clear(); SelectedRow = null; Report = null;
         try
         {
             var old = host.Current ?? throw new InvalidOperationException();
-            var study = host.PhysicalStudies!.ReadStudies().Single(s => s.Id == old.Id);
-            var model = host.PhysicalModels!.ReadModels().Single(m => m.Structure.Id == study.SelectedModelVersionId).Publication!;
-            Report = PrincipalRateReportService.Read(study, model, host.PhysicalRuns?.ReadRuns(study.CompanyId, study.Id),
-                host.ActivePhysicalActivity!.ReadCurrent(study.CompanyId, study.Id));
-            sourceRun = host.PhysicalRuns?.ReadRuns(study.CompanyId, study.Id).Runs.SingleOrDefault(r => r.Id == Report.EconomicRunId);
+            var read = () =>
+            {
+                var study = host.PhysicalStudies!.ReadStudies().Single(s => s.Id == old.Id);
+                var model = host.PhysicalModels!.ReadModels().Single(m => m.Structure.Id == study.SelectedModelVersionId).Publication!;
+                var runs = host.PhysicalRuns?.ReadRuns(study.CompanyId, study.Id);
+                var report = PrincipalRateReportService.Read(study, model, runs,
+                    host.ActivePhysicalActivity!.ReadCurrent(study.CompanyId, study.Id));
+                return (model, report, run: runs?.Runs.SingleOrDefault(r => r.Id == report.EconomicRunId));
+            };
+            var data = background ? await Task.Run(read) : read();
+            var model = data.model;
+            Report = data.report;
+            sourceRun = data.run;
             // Study-level adapted nodes are frozen with the economic run; do not
             // classify the rate from a different published structure revision.
             var rateNodes = sourceRun?.Snapshot.Input is AllocationStudySnapshotInput input

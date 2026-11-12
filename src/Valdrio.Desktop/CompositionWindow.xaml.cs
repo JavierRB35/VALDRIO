@@ -11,9 +11,12 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
     internal void RefreshView() => Columns();
     public CompositionWindow(StudyWorkspaceViewModel host)
     {
-        Editor = new(host); InitializeComponent(); DataContext = Editor;
+        Editor = new(host, initialize: false); InitializeComponent(); DataContext = Editor;
+        ContentRendered += async (_, _) => await InitializeAsync();
         Columns(); Closing += (_, e) => { if (!Resolve()) e.Cancel = true; };
     }
+    private Task? initialization;
+    internal override Task InitializeAsync() => initialization ??= RunActivityAsync(async () => { await Editor.ReloadForDisplayAsync(); Columns(); });
     private void Columns()
     {
         CatalogGrid.Columns.Clear(); LinesGrid.Columns.Clear(); AnswersGrid.Columns.Clear(); ResultsGrid.Columns.Clear();
@@ -57,6 +60,21 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
         if(answer==MessageBoxResult.Yes) return Editor.Save(false);
         Editor.Reload(); return true;
     }
+    internal override Task<bool> CanLeaveAsync() => ResolveAsync();
+    private async Task<bool> ResolveAsync()
+    {
+        if (OperationRunning || Editor.Busy || !Commit()) return false;
+        if (!Editor.Dirty) return true;
+        var answer = LeaveDecision?.Invoke() ?? ResolvePending();
+        if (answer == MessageBoxResult.Cancel) return false;
+        var resolved = false;
+        await RunActivityAsync(async () =>
+        {
+            if (answer == MessageBoxResult.Yes) resolved = await Editor.SaveAsync(false);
+            else { await Editor.ReloadAsync(); resolved = true; }
+        });
+        return resolved;
+    }
     private MessageBoxResult ResolvePending()
     {
         var dialog = new PendingChangesWindow(Editor["Title"], Editor["Leave"], Editor.ActionLabel("SaveContinue"),
@@ -68,34 +86,31 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
     private void CatalogBeginningEdit(object? sender,DataGridBeginningEditEventArgs e)
     { if(e.Row.Item is CompositionItemRow { Persisted:true } && CatalogGrid.Columns.IndexOf(e.Column) is not (1 or 4 or 5)) e.Cancel=true; }
     private void AddItem(object sender,RoutedEventArgs e) { Editor.AddItem(); CatalogGrid.ScrollIntoView(Editor.Items.Last()); }
-    private void ImportProducts(object sender,RoutedEventArgs e)
+    private async void ImportProducts(object sender,RoutedEventArgs e)
     {
         var dialog = new Microsoft.Win32.OpenFileDialog { Filter = "CSV/TSV (*.csv;*.tsv;*.txt)|*.csv;*.tsv;*.txt|Todos los archivos (*.*)|*.*", CheckFileExists = true };
-        if (Commit() && dialog.ShowDialog(WorkspaceHost ?? (Window)this) == true) Editor.ImportProducts(dialog.FileName);
+        if (Commit() && dialog.ShowDialog(WorkspaceHost ?? (Window)this) == true) await RunActivityAsync(() => Editor.ImportProductsAsync(dialog.FileName));
     }
-    private void EditComposition(object sender, RoutedEventArgs e)
+    private async void EditComposition(object sender, RoutedEventArgs e)
     {
         if (sender is not Button { DataContext: CompositionItemRow row }) return;
         var id = row.Id;
-        if (!Resolve()) return;
+        if (!await ResolveAsync()) return;
         if (Editor.OpenProduct(id)) { ProductTabs.SelectedIndex=1; Columns(); }
         else Editor.Feedback=Editor["ChooseRecipe"];
     }
     private void RemoveItem(object sender,RoutedEventArgs e) { if (Commit()) Editor.RemoveItem(CatalogGrid.SelectedItem as CompositionItemRow); }
     private async Task SavePage(bool publish)
     {
-        var surface = Surface ?? (FrameworkElement)Content;
-        surface.IsEnabled = false;
-        try { await Editor.SaveAsync(publish); Columns(); }
-        finally { surface.IsEnabled = true; }
+        await RunActivityAsync(async () => { await Editor.SaveAsync(publish); Columns(); });
     }
     private async void Save(object sender,RoutedEventArgs e) { if(Commit()) await SavePage(false); }
     private async void Publish(object sender,RoutedEventArgs e) { if(Commit() && new EconomicConfirmationWindow(Editor["Publish"], Editor.State + "\n\n" + Editor["PublishHelp"], Editor["Publish"], Editor.ActionLabel("KeepEditing")) { Owner = WorkspaceHost ?? (Window)this }.ShowDialog()==true) await SavePage(true); }
-    private void Open(object sender,RoutedEventArgs e) { var product=Editor.Product; var version=Editor.Version; if(Resolve()) { Editor.Product=product; Editor.Version=version; Editor.Open(); Columns(); } }
-    private void NewVersion(object sender,RoutedEventArgs e) { var product=Editor.Product; if(Resolve()) { Editor.Product=product; Editor.NewVersion(); Columns(); } }
+    private async void Open(object sender,RoutedEventArgs e) { var product=Editor.Product; var version=Editor.Version; if(await ResolveAsync()) { Editor.Product=product; Editor.Version=version; Editor.Open(); Columns(); } }
+    private async void NewVersion(object sender,RoutedEventArgs e) { var product=Editor.Product; if(await ResolveAsync()) { Editor.Product=product; Editor.NewVersion(); Columns(); } }
     private void AddLine(object sender,RoutedEventArgs e) => Editor.AddLine();
     private void RemoveLine(object sender,RoutedEventArgs e) { if(Commit()) Editor.RemoveLine(LinesGrid.SelectedItem as CompositionLineRow); }
-    private void Preview(object sender,RoutedEventArgs e) { if(Commit()) Editor.Preview(); }
-    private void Reload(object sender,RoutedEventArgs e) { if(Resolve()) { Editor.Reload(); Columns(); } }
+    private async void Preview(object sender,RoutedEventArgs e) { if(Commit()) await RunActivityAsync(Editor.PreviewAsync); }
+    private async void Reload(object sender,RoutedEventArgs e) { if(await ResolveAsync()) await RunActivityAsync(async () => { await Editor.ReloadForDisplayAsync(); Columns(); }); }
     private void ClosePage(object sender,RoutedEventArgs e) => Close();
 }

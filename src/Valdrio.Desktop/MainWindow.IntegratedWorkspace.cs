@@ -14,9 +14,9 @@ public partial class MainWindow
         UpdateWorkflow();
         page.Surface!.MoveFocus(new(System.Windows.Input.FocusNavigationDirection.First));
     }
-    internal void PopWorkspace(IntegratedWorkspaceWindow page)
+    internal async Task PopWorkspaceAsync(IntegratedWorkspaceWindow page)
     {
-        if (workspacePages.Count == 0 || workspacePages[^1] != page || !page.CanLeave()) return;
+        if (workspacePages.Count == 0 || workspacePages[^1] != page || !await page.CanLeaveAsync()) return;
         workspacePages.RemoveAt(workspacePages.Count - 1);
         WorkspaceContent.Content = workspacePages.LastOrDefault()?.Surface;
         WorkspaceContent.Visibility = workspacePages.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
@@ -26,11 +26,11 @@ public partial class MainWindow
         returned?.Invoke();
         UpdateWorkflow();
     }
-    internal bool LeaveIntegratedWorkspace()
+    internal async Task<bool> LeaveIntegratedWorkspaceAsync()
     {
         // Check every draft before removing any page, so Cancel retains the stack.
         foreach (var page in workspacePages.AsEnumerable().Reverse())
-            if (!page.CanLeave()) return false;
+            if (!await page.CanLeaveAsync()) return false;
         WorkspaceContent.Content = null;
         foreach (var page in workspacePages.AsEnumerable().Reverse()) page.Release();
         workspacePages.Clear();

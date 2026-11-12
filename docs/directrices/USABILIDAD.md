@@ -173,6 +173,23 @@ La integración actual y sus límites están documentados en la
 - Mostrar indicación contextual del paso ejecutado y errores recuperables cuando proceda. El usuario no debe confundir espera con bloqueo ni con éxito confirmado. Para tareas de duración indeterminada mantener animación; para las cancelables preservar cancelación.
 - Verificar nuevos recorridos con operaciones lentas, fallidas y canceladas, incluidos carga de estructuras/análisis, importación, cálculos, guardados, exportaciones y componentes embebidos.
 
+### Aplicación del indicador en páginas integradas — 2026-11-12
+
+- Las operaciones que no pertenecen a un workspace con estado ocupado usan un ámbito
+  `CompanyFileViewModel.BeginActivity()` (o su acceso desde el estudio), liberado con
+  `using`. Los ámbitos se acumulan: terminar uno no apaga otro que sigue activo.
+- Las páginas integradas reutilizan `RunActivityAsync`: deshabilita su contenido,
+  impide salir mientras escribe y restaura la interacción al terminar, incluso con error.
+  Las cargas iniciales se esperan mediante `InitializeAsync`; un render no implica
+  que los datos hayan terminado de cargar.
+- Capturar entradas en el hilo de interfaz, ejecutar almacenamiento/cálculos costosos
+  fuera de él y aplicar el resultado al regresar. No envolver colecciones enlazadas
+  o controles completos en `Task.Run`, ni bloquear el dispatcher esperando una tarea.
+- En la calculadora de actividad, **Confirmar datos** guarda y vuelve a la tabla solo
+  al éxito. **Guardar borrador** permanece en la calculadora. Un error conserva los
+  datos y permite corregir/reintentar; la espera no admite otra confirmación.
+- [Auditoría, alcance y verificaciones](../evidencias/actividad-global-20261112.md).
+
 ## Selectores con confirmación explícita (COR-06 y COR-10, 2026-11-05)
 
 - En las listas de selección que requieren el botón «Cargar selección», «Abrir análisis» o acción equivalente, distinguir el elemento **seleccionado** del **realmente cargado**. La apariencia inicial del botón es secundaria (blanca), y cambia al verde primario en cuanto hay una selección distinta pendiente de cargar; vuelve al estado neutro tras cargar o revertir la selección.

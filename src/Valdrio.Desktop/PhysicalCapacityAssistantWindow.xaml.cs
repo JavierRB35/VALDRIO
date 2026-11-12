@@ -13,6 +13,7 @@ public partial class PhysicalCapacityAssistantWindow : IntegratedWorkspaceWindow
         DataContext = editor;
         Closing += (_, args) =>
         {
+            if (editor.Host.IsBusy) { args.Cancel = true; return; }
             if (WorkspaceHost is not null && (editor.Host.SelectedRow?.HasChanges == true || editor.HasPendingProposal) &&
                 MessageBox.Show(WorkspaceHost, host.UnsavedBody, host.UnsavedTitle,
                     MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
@@ -24,8 +25,14 @@ public partial class PhysicalCapacityAssistantWindow : IntegratedWorkspaceWindow
             if (editor.CalendarVisible) DaysInput.Focus(); else NormalInput.Focus();
         };
     }
-    private void SaveActivityDraft(object sender, RoutedEventArgs e) => editor.Save(false);
-    private void ConfirmActivity(object sender, RoutedEventArgs e) => editor.Save(true);
+    private async void SaveActivityDraft(object sender, RoutedEventArgs e) => await SaveActivityAsync(false);
+    private async void ConfirmActivity(object sender, RoutedEventArgs e) => await SaveActivityAsync(true);
+    internal async Task SaveActivityAsync(bool confirm)
+    {
+        var saved = false;
+        await RunActivityAsync(async () => saved = await editor.SaveAsync(confirm));
+        if (confirm && saved) Close();
+    }
     private void Preview(object sender, RoutedEventArgs e) => editor.Preview();
     private void Adopt(object sender, RoutedEventArgs e)
     {

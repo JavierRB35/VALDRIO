@@ -64,7 +64,7 @@ public partial class MainWindow
             };
             foreach (var page in pages)
             {
-                page.ShowIntegrated();
+                page.ShowIntegrated(); await page.InitializeAsync();
                 await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
                 if (new System.Windows.Interop.WindowInteropHelper(page).Handle != IntPtr.Zero ||
                     !ReferenceEquals(WorkspaceContent.Content, page.Surface))

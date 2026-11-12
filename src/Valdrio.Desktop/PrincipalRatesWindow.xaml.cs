@@ -11,7 +11,8 @@ public partial class PrincipalRatesWindow : IntegratedWorkspaceWindow
     public bool OpenCostsRequested { get; private set; }
     public PrincipalRatesWindow(StudyWorkspaceViewModel host)
     {
-        this.host = host; Editor = new(host); InitializeComponent(); DataContext = Editor;
+        this.host = host; Editor = new(host, initialize: false); InitializeComponent(); DataContext = Editor;
+        ContentRendered += async (_, _) => await InitializeAsync();
         CenterColumn.Header = Editor["Center"]; UnitColumn.Header = Editor["Unit"]; CostColumn.Header = Editor["Cost"];
         NumeratorColumn.Header = Editor["Numerator"]; DenominatorColumn.Header = Editor["Denominator"];
         RateColumn.Header = Editor["Rate"]; StatusColumn.Header = Editor["Status"];
@@ -22,18 +23,20 @@ public partial class PrincipalRatesWindow : IntegratedWorkspaceWindow
         SourceColumn.Header = Editor["Source"];
         AmountColumn.Header = Editor["Cost"]; BaseColumn.Header = Editor["Base"]; ComponentRateColumn.Header = Editor["Rate"];
     }
-    private void Refresh(object sender, RoutedEventArgs e) => Editor.Reload();
+    private Task? initialization;
+    internal override Task InitializeAsync() => initialization ??= RunActivityAsync(Editor.ReloadAsync);
+    private async void Refresh(object sender, RoutedEventArgs e) => await RunActivityAsync(Editor.ReloadAsync);
     private void EditActivity(object sender, RoutedEventArgs e)
-    { new PhysicalActivityWindow(host) { Owner = WorkspaceHost ?? (Window)this }.ShowIntegrated(Editor.Reload); }
+    { new PhysicalActivityWindow(host) { Owner = WorkspaceHost ?? (Window)this }.ShowIntegrated(async () => await RunActivityAsync(Editor.ReloadAsync)); }
     private void ViewCosts(object sender, RoutedEventArgs e) { OpenCostsRequested = true; Close(); }
     private void CloseWindow(object sender, RoutedEventArgs e) => Close();
-    private void Export(object sender, RoutedEventArgs e)
+    private async void Export(object sender, RoutedEventArgs e)
     {
-        Editor.Reload();
+        await RunActivityAsync(Editor.ReloadAsync);
         if (!Editor.CanExport) return;
         var dialog = new SaveFileDialog { Filter = "JSON|*.json", FileName = "VALDRIO-T15-" + Editor.Report!.Version[..12] + ".json" };
         if (dialog.ShowDialog(WorkspaceHost ?? (Window)this) != true) return;
-        try { File.WriteAllText(dialog.FileName, CanonicalSnapshotJson.Serialize(Editor.Report)); Editor.Feedback = Editor["Exported"]; }
+        try { var report = Editor.Report; await RunActivityAsync(() => Task.Run(() => File.WriteAllText(dialog.FileName, CanonicalSnapshotJson.Serialize(report)))); Editor.Feedback = Editor["Exported"]; }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { Editor.Feedback = Editor["ExportFailed"]; }
     }
 }

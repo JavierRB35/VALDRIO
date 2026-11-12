@@ -356,7 +356,7 @@ public sealed partial class AllocationWorkspaceViewModel : ObservableObject, IDi
     public bool CanReuse => CanEdit && !IsDirty;
     public AllocationReuseEditor? CreateReuseEditor() => !CanReuse || workspace is null ? null :
         new(company.ActiveAllocations!, company.ActiveStudies!, workspace.Resources.Study,
-            CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag));
+            CultureInfo.GetCultureInfo(preferences.Current.UiLanguageTag), initialize: false);
     public async Task RefreshAfterReuse(AllocationChangeReceipt receipt)
     {
         await studies.ApplyResourceReceiptAsync(receipt.ConfirmedStudy);

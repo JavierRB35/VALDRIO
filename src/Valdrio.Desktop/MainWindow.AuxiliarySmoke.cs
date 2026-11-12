@@ -23,7 +23,7 @@ public partial class MainWindow
             await NavigateWorkflow(10); UpdateWorkflow(); AuxiliaryStep.BringIntoView();
             await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
             Check(AuxiliaryStep.IsEnabled && AuxiliaryStep.Focus(),"Keyboard menu "+language+" enabled="+AuxiliaryStep.IsEnabled+" visible="+AuxiliaryStep.IsVisible+" step="+workflowStep+" can="+studies.CanOpenPhysical);
-            var window=new AuxiliaryCapacityWindow(studies){Owner=this};window.Show();
+            var window=new AuxiliaryCapacityWindow(studies){Owner=this};window.Show(); await window.InitializeAsync();
             await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
             var editor=window.Editor;
             Check(editor.Rows.Count==2,"Two persisted auxiliaries "+language);
@@ -72,7 +72,7 @@ public partial class MainWindow
         port.ChangeAllocations(new(current.CompanyId,current.Id,w.Resources.Study.Revision,new(Guid.NewGuid()),"ui-test",w.Configuration.WithSecondaryClosed(true,SecondaryAllocationService.ResultFingerprint(calculated,w.Configuration))));
         var closed=new AuxiliaryCapacityEditor(studies);Check(closed.CanReopen && !closed.CanEdit,"Closed secondary protects auxiliary editing");
         closed.Reopen();Check(closed.CanEdit,"Explicit reopen restores editing");closed.Calculate();
-        var physicalWindow=new PhysicalActivityWindow(studies){Owner=this};physicalWindow.Show();
+        var physicalWindow=new PhysicalActivityWindow(studies){Owner=this};physicalWindow.Show(); await physicalWindow.InitializeAsync();
         Check(((PhysicalActivityEditor)physicalWindow.DataContext).Rows.Count==3,"T14 exposes auxiliaries and principal");physicalWindow.Close();
         await studies.LoadCommand.ExecuteAsync(null);await NavigateWorkflow(8);
         Check(main.CostFlows!.NodeBalances.Count>0,"T12 shows retained capacity and final costs");

@@ -38,7 +38,7 @@ public partial class MainWindow
         foreach(var language in new[]{"es","en"})
         {
             main.ApplyPresentationPreset(language,language=="es"?"es-ES":"en-US","UTC",false,false);
-            var clock=Stopwatch.StartNew();var page=new CompositionWindow(studies){Owner=this};page.ShowIntegrated();
+            var clock=Stopwatch.StartNew();var page=new CompositionWindow(studies){Owner=this};page.ShowIntegrated(); await page.InitializeAsync();
             await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
             times.Add(new {language,milliseconds=clock.Elapsed.TotalMilliseconds});
             var editor=page.Editor;
@@ -113,7 +113,7 @@ public partial class MainWindow
         foreach(var language in new[]{"es","en"})
         {
             main.ApplyPresentationPreset(language,language=="es"?"es-ES":"en-US","UTC",false,false);
-            var page=new CompositionWindow(studies){Owner=this};page.ShowIntegrated();var e=page.Editor;
+            var page=new CompositionWindow(studies){Owner=this};page.ShowIntegrated(); await page.InitializeAsync();var e=page.Editor;
             e.Product=e.Products.Single(p=>p.Label.StartsWith("T17-P",StringComparison.Ordinal)).Value;e.Version=e.Versions.First().Value;e.Open();page.RefreshView();
             e.OutputQuantity="120";e.Preview();Check(e.Results.Count==2&&e.Answers.Count==7,"Industrial preview "+language);
             var tabs=((Grid)page.Surface!).Children.OfType<TabControl>().Single();tabs.SelectedIndex=1;

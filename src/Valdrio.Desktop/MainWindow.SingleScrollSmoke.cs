@@ -101,7 +101,7 @@ public partial class MainWindow
                         "import"=>new ImportColumnMappingWindow { DataContext=studies.ImportColumns },
                         "reuse"=>new AllocationReuseWindow(new AllocationReuseEditor(main.Company.ActiveAllocations!,main.Company.ActiveStudies!,studies.Current!,System.Globalization.CultureInfo.GetCultureInfo(language))),
                         "capacity"=>new PhysicalCapacityAssistantWindow(new PhysicalActivityEditor(studies)),_=>new EstimateWindow(studies)};
-                    page.Owner=this;page.ShowIntegrated();if(page is EstimateWindow estimate) await estimate.InitializeAsync();await Idle();
+                    page.Owner=this;page.ShowIntegrated();await page.InitializeAsync();if(page is EstimateWindow estimate) await estimate.InitializeAsync();await Idle();
                     var tabs=ScrollDescendants<TabControl>(page.Surface!).FirstOrDefault();
                     for(int index=0;index<(tabs?.Items.Count??1);index++)
                     {

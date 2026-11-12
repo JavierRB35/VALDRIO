@@ -138,18 +138,22 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
             nameof(CanSave), nameof(CanConfirm), nameof(ReviewWarning), nameof(UtilizationSummary), nameof(NormalKind), nameof(RealKind), nameof(ProvenanceSummary), nameof(RealProvenance) }) OnPropertyChanged(property);
     }
     partial void OnUseProposalChanged(bool value) { if (initialized) NotifyGuided(); }
-    public void Save(bool confirm)
+    public void Save(bool confirm) => SaveCore(confirm, background: false).GetAwaiter().GetResult();
+    public Task<bool> SaveAsync(bool confirm) => SaveCore(confirm, background: true);
+    private async Task<bool> SaveCore(bool confirm, bool background)
     {
-        if (!host.IsWritable) return;
+        if (!host.IsWritable) return false;
         if (UseProposal)
         {
-            if (!CanAdopt && confirm) { ReviewExpanded = true; return; }
-            if (CanAdopt) { Adopted = false; Adopt(); if (!Adopted) return; }
+            if (!CanAdopt && confirm) { ReviewExpanded = true; return false; }
+            if (CanAdopt) { Adopted = false; Adopt(); if (!Adopted) return false; }
         }
         var version = row.Version;
-        host.Save(confirm);
-        if (row.Version > version) { HasPendingProposal = false; UseProposal = false; OnPropertyChanged(nameof(HistoryText)); }
+        if (background) await host.SaveAsync(confirm); else host.Save(confirm);
+        var saved = row.Version > version;
+        if (saved) { HasPendingProposal = false; UseProposal = false; OnPropertyChanged(nameof(HistoryText)); }
         NotifyGuided();
+        return saved;
     }
 
     public PhysicalCapacityAssistantEditor(PhysicalActivityEditor host)
@@ -190,10 +194,17 @@ public sealed partial class PhysicalCapacityAssistantEditor : ObservableObject
         initialized = true;
         Preview();
         row.PropertyChanged += RowChanged;
+        host.PropertyChanged += HostChanged;
     }
 
     private void RowChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs args) => NotifyGuided();
-    public void Detach() => row.PropertyChanged -= RowChanged;
+    private void HostChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs args)
+    { if (args.PropertyName is nameof(PhysicalActivityEditor.IsBusy)) NotifyGuided(); }
+    public void Detach()
+    {
+        row.PropertyChanged -= RowChanged;
+        host.PropertyChanged -= HostChanged;
+    }
 
     private PhysicalActivitySuggestions suggestions = new(null, []);
     private bool historyLoaded;

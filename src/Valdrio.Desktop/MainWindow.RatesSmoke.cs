@@ -29,7 +29,7 @@ public partial class MainWindow
             await NavigateWorkflow(10);
             Check(RatesStep.IsEnabled && RatesStep.Focus(),"Menu focus "+language);
             Check((string?)RatesStep.Tag=="Active" && AllocationPhase.IsExpanded,"Menu active "+language);
-            var window=new PrincipalRatesWindow(studies){Owner=this};window.Show();
+            var window=new PrincipalRatesWindow(studies){Owner=this};window.Show(); await window.InitializeAsync();
             await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
             var editor=window.Editor;
             var grid=(DataGrid)window.FindName("CentersTable");

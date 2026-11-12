@@ -44,7 +44,7 @@ public partial class MainWindow
             await Measure("activity-prepare", i, () =>
             {
                 activity = new PhysicalActivityWindow(studies) { Owner = this };
-                return Task.CompletedTask;
+                return activity.InitializeAsync();
             });
             var editor = (PhysicalActivityEditor)activity!.DataContext;
             if (editor.Rows.Count != 5 || editor.Structure.Nodes.Count(n => n.Role == NodeRole.Principal) != 3 ||
@@ -88,7 +88,7 @@ public partial class MainWindow
                 {
                     page = kind == "rates" ? new PrincipalRatesWindow(studies) : new AuxiliaryCapacityWindow(studies);
                     page.Owner = this;
-                    return Task.CompletedTask;
+                    return page.InitializeAsync();
                 });
                 await Measure(kind + "-render", i, async () => { page!.ShowIntegrated(); await Idle(); });
                 if (new System.Windows.Interop.WindowInteropHelper(page!).Handle != IntPtr.Zero)

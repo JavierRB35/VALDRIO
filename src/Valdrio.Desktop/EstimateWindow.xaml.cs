@@ -15,7 +15,7 @@ public partial class EstimateWindow : IntegratedWorkspaceWindow
         Closing += (_, e) => { if (!Resolve()) e.Cancel = true; };
     }
     private Task? initialization;
-    internal Task InitializeAsync() => initialization ??= Run(Editor.LoadAsync);
+    internal override Task InitializeAsync() => initialization ??= Run(Editor.LoadAsync);
     protected override async void OnContentRendered(EventArgs e)
     {
         base.OnContentRendered(e); await InitializeAsync();

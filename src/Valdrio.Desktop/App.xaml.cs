@@ -220,21 +220,31 @@ public partial class App : System.Windows.Application
         MainWindow = window;
         var previousCompanyChange = company.BeforeChangeAsync;
         company.BeforeChangeAsync = async () =>
-            (previousCompanyChange is null || await previousCompanyChange()) && window.LeaveIntegratedWorkspace();
+            (previousCompanyChange is null || await previousCompanyChange()) && await window.LeaveIntegratedWorkspaceAsync();
         allocations.AfterPrimaryStateChanged = async () => { await resources.EnterAsync(true); window.UpdateWorkflow(); };
         window.Show();
         bool allowClose = false;
+        bool checkingClose = false;
         window.Closing += async (_, args) =>
         {
-            if (!window.LeaveIntegratedWorkspace()) { args.Cancel = true; return; }
-            if (!company.IsIdle || models.IsBusy || studies.IsBusy || resources.IsBusy || allocations.IsBusy || viewModel.CostFlows?.CalculateCommand.IsRunning == true)
+            if (allowClose) return;
+            args.Cancel = true;
+            if (checkingClose) return;
+            if (!company.WorkspaceIdle)
             {
-                args.Cancel = true; company.CancelCommand.Execute(null); models.CancelCommand.Execute(null); studies.CancelCommand.Execute(null); resources.CancelCommand.Execute(null); viewModel.CostFlows?.CancelCommand.Execute(null); return;
+                company.CancelCommand.Execute(null); models.CancelCommand.Execute(null); studies.CancelCommand.Execute(null);
+                resources.CancelCommand.Execute(null); viewModel.CostFlows?.CancelCommand.Execute(null); return;
             }
-            if (!allowClose && (models.IsDirty || studies.IsDirty || resources.IsDirty || allocations.IsDirty))
+            checkingClose = true;
+            try
             {
-                args.Cancel = true; if (await company.BeforeChangeAsync!()) { allowClose = true; window.Close(); }
+                if (!await window.LeaveIntegratedWorkspaceAsync()) return;
+                if ((models.IsDirty || studies.IsDirty || resources.IsDirty || allocations.IsDirty) &&
+                    !await company.BeforeChangeAsync!()) return;
+                allowClose = true;
+                _ = window.Dispatcher.BeginInvoke(new Action(window.Close));
             }
+            finally { checkingClose = false; }
         };
 
         if (captureDirectory is null && requestedPath?.EndsWith(".valdrio", StringComparison.OrdinalIgnoreCase) == true)
@@ -343,6 +353,17 @@ public partial class App : System.Windows.Application
                         {
                             if (requestedPath is null) throw new InvalidOperationException("Rates checks require a disposable company.");
                             await window.RunRatesChecks(captureDirectory, requestedPath);
+                            Shutdown(0); return;
+                        }
+                        if (e.Args.Contains("--report-feedback-only", StringComparer.Ordinal))
+                        {
+                            await window.CheckActivityReportOutput(captureDirectory);
+                            Shutdown(0); return;
+                        }
+                        if (e.Args.Contains("--activity-feedback-only", StringComparer.Ordinal))
+                        {
+                            if (requestedPath is null) throw new InvalidOperationException("Activity checks require a disposable company.");
+                            await window.RunActivityFeedbackChecks(captureDirectory, requestedPath, (QueuedCompanyFileDialogs)companyDialogs);
                             Shutdown(0); return;
                         }
                         if (e.Args.Contains("--capacity-checks-only", StringComparer.Ordinal))

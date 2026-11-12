@@ -101,7 +101,7 @@ public sealed partial class EstimateEditor : ObservableObject
         if (!Runs.Any(r => r.Value == Run)) { Feedback = this["MissingRun"]; return; }
         var request = new EstimateRequest(host.PhysicalCompany!.Id, host.Current!.Id, orderId, Code.Trim(), Recipe, Run, quantity, previousId);
         var catalog = await Task.Run(() => host.ActiveCompositions!.ReadCompositions());
-        var pools = host.PhysicalModels!.ReadModels().Where(m => m.Status == ModelStatus.Published)
+        var pools = (await Task.Run(() => host.PhysicalModels!.ReadModels())).Where(m => m.Status == ModelStatus.Published)
             .SelectMany(m => m.Structure.Pools.Select(p => new CompositionPool(p.Id, m.Structure.Id,
                 m.Structure.Nodes.Single(n => n.Id == p.NodeId).Code + " · " + p.Description, p.DriverUnitId,
                 m.Structure.Nodes.Single(n => n.Id == p.NodeId).IsActive))).ToArray();
@@ -178,11 +178,11 @@ public sealed partial class EstimateEditor : ObservableObject
     }
     private async Task Work(Func<Task> action)
     {
-        if(Busy)return; Busy=true;host.SetCompositionBusy(true);
+        if(Busy)return; using var activity = host.BeginActivity(); Busy=true;
         try { await action(); }
         catch(DomainRuleException ex){Feedback=new DomainDiagnosticFormatter(texts).Format(ex.Diagnostic,host.PhysicalUiCulture,host.PhysicalFormatCulture).Message; foreach(var unit in host.PhysicalCompany!.Units) Feedback=Feedback.Replace(unit.Id.ToString(),unit.Symbol,StringComparison.Ordinal);}
         catch(CompanyFileException ex){Feedback=texts.Get(ex.Diagnostic.MessageKey,host.PhysicalUiCulture);}
         catch(OverflowException){Feedback=this["Overflow"];}
-        finally {Busy=false;host.SetCompositionBusy(false);}
+        finally {Busy=false;}
     }
 }

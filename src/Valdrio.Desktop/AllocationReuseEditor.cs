@@ -44,10 +44,21 @@ public sealed partial class AllocationReuseEditor : ObservableObject
         (ReplaceConflicts || !Items.Any(i => i.Selected && i.Item.Conflict));
     public string TargetLabel => target.Name + " · " + target.PeriodStart + " – " + target.PeriodEnd;
     public string L(string key) => texts.Get(key, culture);
-    public AllocationReuseEditor(IAllocationWorkspace port, IStudyWorkspace studies, StudyDefinition target, CultureInfo culture)
+    public AllocationReuseEditor(IAllocationWorkspace port, IStudyWorkspace studies, StudyDefinition target, CultureInfo culture, bool initialize = true)
     {
         this.port = port; this.studies = studies; this.target = target; this.culture = culture;
-        foreach (var study in studies.ReadStudies().Where(s => s.CompanyId == target.CompanyId && s.Id != target.Id)
+        if (initialize) ApplySources(studies.ReadStudies());
+    }
+    public async Task LoadAsync()
+    {
+        try { ApplySources(await Task.Run(() => studies.ReadStudies())); }
+        catch (DomainRuleException e) { Feedback = L(e.Diagnostic.MessageKey); }
+        catch (CompanyFileException e) { Feedback = L(e.Diagnostic.MessageKey); }
+    }
+    private void ApplySources(IEnumerable<StudyDefinition> available)
+    {
+        Sources.Clear();
+        foreach (var study in available.Where(s => s.CompanyId == target.CompanyId && s.Id != target.Id)
             .OrderByDescending(s => s.PeriodStart.Value))
             Sources.Add(new(study, study.Name + " · " + study.PeriodStart + " – " + study.PeriodEnd));
         if (Sources.Count == 0) Feedback = L("Reuse.NoSources");
@@ -59,14 +70,20 @@ public sealed partial class AllocationReuseEditor : ObservableObject
         OnPropertyChanged(nameof(HasPendingSourcePreview));
     }
     partial void OnReplaceConflictsChanged(bool value) => OnPropertyChanged(nameof(CanAdopt));
-    public void Preview()
+    public void Preview() => PreviewCore(false).GetAwaiter().GetResult();
+    public Task PreviewAsync() => PreviewCore(true);
+    private async Task PreviewCore(bool background)
     {
         Items.Clear(); sourceSnapshot = null; targetSnapshot = null; previewSucceeded = false;
         if (Source is null) { Feedback = L("Reuse.NoSources"); return; }
         try
         {
-            sourceSnapshot = port.ReadAllocations(target.CompanyId, Source.Value.Id);
-            targetSnapshot = port.ReadAllocations(target.CompanyId, target.Id);
+            var sourceId = Source.Value.Id;
+            var read = () => (source: port.ReadAllocations(target.CompanyId, sourceId),
+                target: port.ReadAllocations(target.CompanyId, target.Id));
+            var data = background ? await Task.Run(read) : read();
+            sourceSnapshot = data.source;
+            targetSnapshot = data.target;
             var result = AllocationReuse.Preview(sourceSnapshot, targetSnapshot);
             foreach (var item in result.Items)
             {
@@ -95,7 +112,9 @@ public sealed partial class AllocationReuseEditor : ObservableObject
         catch (CompanyFileException e) { Feedback = L(e.Diagnostic.MessageKey); }
         finally { OnPropertyChanged(nameof(CanAdopt)); OnPropertyChanged(nameof(HasPendingSourcePreview)); }
     }
-    public bool Adopt()
+    public bool Adopt() => AdoptCore(false).GetAwaiter().GetResult();
+    public Task<bool> AdoptAsync() => AdoptCore(true);
+    private async Task<bool> AdoptCore(bool background)
     {
         if (!CanAdopt || sourceSnapshot is null || targetSnapshot is null) return false;
         try
@@ -105,8 +124,9 @@ public sealed partial class AllocationReuseEditor : ObservableObject
                 Items.Where(i => i.Selected && i.Item.Stage == AllocationStage.Primary).Select(i => i.Item.RuleId).ToArray(),
                 Items.Where(i => i.Selected && i.Item.Stage == AllocationStage.Secondary).Select(i => i.Item.RuleId).ToArray(), ReplaceConflicts);
             var config = AllocationReuse.Adopt(sourceSnapshot, targetSnapshot, selection);
-            Receipt = port.ChangeAllocations(new(target.CompanyId, target.Id, targetSnapshot.Resources.Study.Revision,
-                new(Guid.NewGuid()), "local-user", config) { Reuse = selection });
+            var command = new ChangeAllocations(target.CompanyId, target.Id, targetSnapshot.Resources.Study.Revision,
+                new(Guid.NewGuid()), "local-user", config) { Reuse = selection };
+            Receipt = background ? await Task.Run(() => port.ChangeAllocations(command)) : port.ChangeAllocations(command);
             return true;
         }
         catch (DomainRuleException e) { Feedback = L(e.Diagnostic.MessageKey); return false; }
