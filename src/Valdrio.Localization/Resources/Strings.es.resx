@@ -1807,6 +1807,11 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
   <data name="Rates.Answer" xml:space="preserve"><value>Respuesta</value></data>
   <data name="Rates.Answers" xml:space="preserve"><value>Respuestas para el analista</value></data>
   <data name="Rates.Attention" xml:space="preserve"><value>Requieren atención</value></data>
+    <data name="Rates.BreakdownTitle" xml:space="preserve"><value>Composición de la tarifa</value></data>
+  <data name="Rates.BreakdownHelp" xml:space="preserve"><value>Cada componente utiliza su base: el fijo propio se divide por la capacidad normal; los costes variables y consumidos, por la actividad real. Los gastos del período se muestran aparte.</value></data>
+  <data name="Rates.CapacityResult" xml:space="preserve"><value>Variación por capacidad</value></data>
+  <data name="Rates.ReviewCapacityShort" xml:space="preserve"><value>Calculada · Revisar tratamiento del fijo</value></data>
+  <data name="Rates.ReviewFixedConsumed" xml:space="preserve"><value>Atención: hay costes fijos recibidos o consumidos sin evaluación de capacidad identificada en este resultado. Dividirlos por la actividad real puede ser correcto, pero conviene revisar su tratamiento y origen en Preparar cuentas y Repartos antes de utilizar esta tarifa.</value></data>
   <data name="Rates.Detail" xml:space="preserve"><value>Ver detalle y procedencia</value></data>
   <data name="Rates.Component" xml:space="preserve"><value>Componente</value></data>
   <data name="Rates.Behavior" xml:space="preserve"><value>Naturaleza</value></data>
@@ -1818,7 +1823,7 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
   <data name="Rates.Close" xml:space="preserve"><value>Cerrar</value></data>
   <data name="Rates.Exported" xml:space="preserve"><value>Versión exportada con su procedencia y datos físicos.</value></data>
   <data name="Rates.ExportFailed" xml:space="preserve"><value>No se pudo guardar el archivo. Revisa la ubicación y sus permisos.</value></data>
-  <data name="Rates.Policy" xml:space="preserve"><value>Fijo propio sobre actividad normal; variable y costes consumidos sobre actividad real. Tarifas de gestión, no precios de venta.</value></data>
+  <data name="Rates.Policy" xml:space="preserve"><value>Tarifa de gestión: fijo propio sobre actividad normal; variable y costes consumidos sobre actividad real.</value></data>
   <data name="Rates.Version" xml:space="preserve"><value>Versión de tarifas</value></data>
   <data name="Rates.EconomicRun" xml:space="preserve"><value>Ejecución de costes</value></data>
   <data name="Rates.PhysicalVersion" xml:space="preserve"><value>Versión de actividad</value></data>
@@ -1831,7 +1836,7 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
   <data name="Rates.NotApplicable" xml:space="preserve"><value>No aplicable</value></data>
   <data name="Rates.OwnFixed" xml:space="preserve"><value>Fijo propio sujeto a capacidad</value></data>
   <data name="Rates.Variable" xml:space="preserve"><value>Variable observado</value></data>
-  <data name="Rates.Consumed" xml:space="preserve"><value>Recibido / sin evaluación de capacidad</value></data>
+  <data name="Rates.Consumed" xml:space="preserve"><value>Costes recibidos o consumidos</value></data>
   <data name="Rates.Period" xml:space="preserve"><value>Coste de período</value></data>
   <data name="Rates.Normal" xml:space="preserve"><value>Actividad normal</value></data>
   <data name="Rates.Real" xml:space="preserve"><value>Actividad real</value></data>
@@ -2062,7 +2067,7 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
 <data name="Model.StructureScope" xml:space="preserve"><value>Estructura reutilizable: los cambios de este borrador no son adaptaciones del análisis.</value></data>
 <data name="AllocationUI.WeightMeaning" xml:space="preserve"><value>Porcentajes: deben sumar 100 %. Unidades de inductor: son pesos relativos (30 y 30 reparten 50 % a cada destino), con total positivo. Partes iguales: misma proporción por destino incluido. Revisa criterio y unidad.</value></data>
 <data name="AllocationUI.BaseScope" xml:space="preserve"><value>La base repartible contiene solo partes destinadas a unidades de cálculo. Directos, excluidos y pendientes de otras rutas se comprueban en Resultados y trazabilidad.</value></data>
-<data name="Rates.ScopeHelp" xml:space="preserve"><value>Tarifa de gestión por unidad, no precio de venta. La conciliación es parcial: no acredita consumo por producto u orden. Cada componente conserva su base; sin dato no equivale a cero.</value></data>
+<data name="Rates.ScopeHelp" xml:space="preserve"><value>No es una valoración contable de existencias. La tarifa distingue las bases de cada coste; sin consumo real por producto u orden, la conciliación sigue siendo parcial.</value></data>
 <data name="ImportMapping.ReplaceSummary" xml:space="preserve"><value>Sustituir {0} por {1} en {2}. La importación anterior conserva su historial.</value></data>
 <data name="ImportMapping.AddSummary" xml:space="preserve"><value>Incorporar {0} al análisis {1}</value></data>
 <data name="UX.TechnicalHelp" xml:space="preserve"><value>Estos ejemplos no modifican los costes, la moneda ni los tipos de cambio del análisis.</value></data>
