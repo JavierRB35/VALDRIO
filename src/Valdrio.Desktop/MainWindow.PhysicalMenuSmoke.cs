@@ -58,13 +58,12 @@ public partial class MainWindow
                 "no independent native window " + language);
             VisualEvidenceCapture.Capture(this, Path.Combine(directory, "activity-" + language + ".png"));
             await GoBackWorkflow();
-            Check(workspacePages.Count == 0 && workflowStep == 9 && PhysicalHome.IsVisible,
-                "back returns to physical phase " + language);
-            VisualEvidenceCapture.Capture(this, Path.Combine(directory, "physical-home-" + language + ".png"));
-            Check(AllocationPhase.IsExpanded && (string?)PhysicalStep.Tag == "Active", "correct phase and active marker " + language);
+            Check(workspacePages.Count == 0 && workflowStep == 8 && CostFlowsPanel.IsVisible,
+                "one back returns directly to the invoking cost flows " + language);
+            VisualEvidenceCapture.Capture(this, Path.Combine(directory, "cost-flows-return-" + language + ".png"));
+            Check(AllocationPhase.IsExpanded && (string?)CostFlowStep.Tag == "Active",
+                "correct phase and active marker after returning " + language);
             Check(studies.Current!.Revision == revision, "opening physical editor does not change study revision " + language);
-            await GoBackWorkflow();
-            Check(workflowStep == 8 && CostFlowsPanel.IsVisible, "back returns to cost flows " + language);
         }
         File.WriteAllText(Path.Combine(directory, "checks.json"), JsonSerializer.Serialize(checks, new JsonSerializerOptions { WriteIndented = true }));
     }
