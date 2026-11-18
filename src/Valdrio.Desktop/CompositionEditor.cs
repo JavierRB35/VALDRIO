@@ -97,6 +97,7 @@ public sealed partial class CompositionEditor : ObservableObject
     private CompositionVersion? current;
     private bool loading;
     private EntityId? transientDraftId;
+    private bool compositionModified;
     private CompositionPool[] pools = [];
     public ObservableCollection<CompositionItemRow> Items { get; } = [];
     public ObservableCollection<CompositionLineRow> Lines { get; } = [];
@@ -138,8 +139,8 @@ public sealed partial class CompositionEditor : ObservableObject
     partial void OnProductChanged(EntityId value) { OnPropertyChanged(nameof(Versions)); Version = Versions.LastOrDefault()?.Value ?? default; SelectionChanged(); }
     partial void OnVersionChanged(EntityId value) => SelectionChanged();
     private void SelectionChanged() { Invalidate(); OnPropertyChanged(nameof(Editable)); OnPropertyChanged(nameof(LinesReadOnly)); OnPropertyChanged(nameof(HasPendingCompositionOpen)); }
-    partial void OnBatchSizeChanged(string value) => Changed();
-    partial void OnNoteChanged(string value) => Changed();
+    partial void OnBatchSizeChanged(string value) => CompositionChanged();
+    partial void OnNoteChanged(string value) => CompositionChanged();
     partial void OnOutputQuantityChanged(string value) => Invalidate();
     // Decimal round-trip: reopening a draft must not truncate conversion factors.
     private string Q(decimal value) => value.ToString("0.############################", host.PhysicalFormatCulture);
@@ -150,6 +151,7 @@ public sealed partial class CompositionEditor : ObservableObject
         return result;
     }
     private void Changed() { if (loading) return; Dirty = true; OnPropertyChanged(nameof(Dirty)); OnPropertyChanged(nameof(State)); OnPropertyChanged(nameof(CanSaveDefinition)); Invalidate(); }
+    private void CompositionChanged() { if (loading) return; compositionModified = true; Changed(); }
     private CompositionItemRow Row(CompositionItem i, bool persisted = true)
     {
         var row = new CompositionItemRow { Id = i.Id, Persisted = persisted, Code = i.Code, Name = i.Name,
@@ -184,7 +186,15 @@ public sealed partial class CompositionEditor : ObservableObject
             {
                 var loadedCatalog = host.ActiveCompositions!.ReadCompositions();
                 // Validation also needs pinned models belonging to other saved versions.
-                var loadedPools = host.PhysicalModels!.ReadModels().Where(m => m.Status == ModelStatus.Published).SelectMany(m => m.Structure.Pools.Select(p => new CompositionPool(p.Id, m.Structure.Id, m.Structure.Nodes.Single(n => n.Id == p.NodeId).Code + " · " + p.Description, p.DriverUnitId, m.Structure.Nodes.Single(n => n.Id == p.NodeId).IsActive))).ToArray();
+                var loadedPools = host.PhysicalModels!.ReadModels().Where(m => m.Status == ModelStatus.Published).SelectMany(m =>
+                    m.Structure.Pools.Select(p =>
+                    {
+                        var node = m.Structure.Nodes.Single(n => n.Id == p.NodeId);
+                        // Auxiliary nodes are not direct product inputs; their costs
+                        // reach principal nodes through the secondary allocation.
+                        return new CompositionPool(p.Id, m.Structure.Id, node.Code + " · " + p.Description,
+                            p.DriverUnitId, node.IsActive && node.Role == NodeRole.Principal);
+                    })).ToArray();
                 return (loadedCatalog, loadedPools);
             };
             var loaded = background ? await Task.Run(read) : read();
@@ -195,10 +205,11 @@ public sealed partial class CompositionEditor : ObservableObject
             {
                 Items.Add(Row(i));
             }
-            Targets = catalog.Items.Where(i => i.Kind == CompositionItemKind.Material).Select(i => new CompositionTarget(i.Id, 0, i.UnitId, this["Material"] + " · " + i.Code + " · " + i.Name))
-                .Concat(catalog.Versions.Where(v => v.State == CompositionState.Published && v.ModelVersionId == host.Current!.SelectedModelVersionId && catalog.Items.Single(i => i.Id == v.ProductId).Kind == CompositionItemKind.SemiFinished).Select(v => { var i = catalog.Items.Single(i => i.Id == v.ProductId); return new CompositionTarget(v.Id, 1, i.UnitId, this["SemiFinished"] + " · " + i.Code + " · v" + v.Number); }))
-                .Concat(pools.Where(p => p.ModelId == host.Current!.SelectedModelVersionId).Select(p => new CompositionTarget(p.Id, 2, p.UnitId, this["Activity"] + " · " + p.Name))).ToArray();
-            current = null; transientDraftId = null; Lines.Clear(); Dirty = false; Feedback = "";
+            Targets = catalog.Items.Where(i => i.Kind == CompositionItemKind.Material && i.Active)
+                .Select(i => new CompositionTarget(i.Id, 0, i.UnitId, this["Material"] + " · " + i.Code + " · " + i.Name))
+                .Concat(pools.Where(p => p.ModelId == host.Current!.SelectedModelVersionId && p.Active)
+                    .Select(p => new CompositionTarget(p.Id, 2, p.UnitId, this["Activity"] + " · " + p.Name))).ToArray();
+            current = null; transientDraftId = null; compositionModified = false; Lines.Clear(); Dirty = false; Feedback = "";
             OnPropertyChanged(string.Empty); Invalidate();
         }
         finally { loading = false; }
@@ -277,9 +288,23 @@ public sealed partial class CompositionEditor : ObservableObject
         Product = id;
         var versions = catalog.Versions.Where(v => v.ProductId == id && v.ModelVersionId == host.Current!.SelectedModelVersionId);
         var selected = versions.FirstOrDefault(v => v.State == CompositionState.Draft) ?? versions.OrderBy(v => v.Number).LastOrDefault();
-        if (selected is null) NewVersion();
+        if (selected is null || selected.State == CompositionState.Published)
+        {
+            // One editable definition in the UX. Internally the previous
+            // publication remains immutable for accepted orders and audit.
+            NewVersion();
+            if (current is not null)
+            {
+                transientDraftId = current.Id;
+                compositionModified = false;
+                Dirty = false;
+                OnPropertyChanged(nameof(Dirty));
+                OnPropertyChanged(nameof(State));
+                OnPropertyChanged(nameof(CanSaveDefinition));
+            }
+        }
         else { Version = selected.Id; Open(); }
-        return true;
+        return current is not null;
     }
     public void Open()
     {
@@ -290,10 +315,25 @@ public sealed partial class CompositionEditor : ObservableObject
             Lines.Clear();
             BatchSize = Q(current?.BatchSize ?? 1); Note = current?.Note ?? "";
             foreach (var l in current?.Lines ?? [])
-                Attach(new() { Id = l.Id, Target = Targets.Single(t => t.Id == (l.MaterialId ?? l.RecipeVersionId ?? l.PoolId)), Quantity = Q(l.Quantity), Unit = l.InputUnitId, Factor = Q(l.ConversionFactor), Basis = l.Basis, Loss = l.LossKind, Percent = Q(l.LossPercent) });
-            Dirty = false; OnPropertyChanged(string.Empty); Invalidate();
+                Attach(new() { Id = l.Id, Target = ResolveTarget(l), Quantity = Q(l.Quantity), Unit = l.InputUnitId, Factor = Q(l.ConversionFactor), Basis = l.Basis, Loss = l.LossKind, Percent = Q(l.LossPercent) });
+            compositionModified = false; Dirty = false; OnPropertyChanged(string.Empty); Invalidate();
         }
         finally { loading = false; }
+    }
+    private CompositionTarget? ResolveTarget(CompositionLine line)
+    {
+        var id = line.MaterialId ?? line.RecipeVersionId ?? line.PoolId;
+        var allowed = Targets.FirstOrDefault(t => t.Id == id);
+        if (allowed is not null) return allowed;
+        // Historical definitions can still be opened/read; an auxiliary or
+        // deprecated component never becomes a selectable new input.
+        var pool = pools.FirstOrDefault(p => p.Id == id);
+        if (pool is not null) return new(pool.Id, 2, pool.UnitId, this["UnavailableComponent"] + " · " + pool.Name);
+        var version = catalog.Versions.FirstOrDefault(v => v.Id == id);
+        var item = version is not null ? catalog.Items.FirstOrDefault(i => i.Id == version.ProductId)
+            : catalog.Items.FirstOrDefault(i => i.Id == id);
+        return item is null ? null : new(id!.Value, version is null ? 0 : 1, item.UnitId,
+            this["UnavailableComponent"] + " · " + item.Code + " · " + item.Name);
     }
     public void NewVersion()
     {
@@ -306,11 +346,11 @@ public sealed partial class CompositionEditor : ObservableObject
     }
     private void Attach(CompositionLineRow row)
     {
-        row.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(row.Target) && row.Target is { } t) { row.Unit = t.Unit; row.Factor = "1"; } Changed(); };
+        row.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(row.Target) && row.Target is { } t) { row.Unit = t.Unit; row.Factor = "1"; } CompositionChanged(); };
         Lines.Add(row);
     }
-    public void AddLine() { if (Editable) { Attach(new() { Unit = Units.FirstOrDefault()?.Value ?? default }); Changed(); } }
-    public void RemoveLine(CompositionLineRow? row) { if (Editable && row is not null) { Lines.Remove(row); Changed(); } }
+    public void AddLine() { if (Editable) { Attach(new() { Unit = Units.FirstOrDefault()?.Value ?? default }); CompositionChanged(); } }
+    public void RemoveLine(CompositionLineRow? row) { if (Editable && row is not null) { Lines.Remove(row); CompositionChanged(); } }
     private bool ValidateInput(bool publish, bool preview = false)
     {
         bool Number(string text, out decimal value) => decimal.TryParse(text.Trim(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, host.PhysicalFormatCulture, out value);
@@ -328,7 +368,10 @@ public sealed partial class CompositionEditor : ObservableObject
             {
                 if (!Number(line.Quantity, out var quantity) || !Number(line.Factor, out var factor) || !Number(line.Percent, out var percent))
                 { Feedback = this["Number"]; return false; }
-                if (line.Target is null || quantity < 0 || factor <= 0 || percent < 0 || line.Loss == CompositionLossKind.None && percent != 0 || line.Loss == CompositionLossKind.Yield && (percent == 0 || percent > 100) || !Units.Any(u => u.Value == line.Unit))
+                if (line.Target is null || !Targets.Any(t => t.Id == line.Target.Id) ||
+                    quantity < 0 || factor <= 0 || percent < 0 || line.Loss == CompositionLossKind.None && percent != 0 ||
+                    line.Loss == CompositionLossKind.Yield && (percent == 0 || percent > 100) ||
+                    !Units.Any(u => u.Value == line.Unit))
                 { Feedback = this["InvalidLine"]; return false; }
             }
         }
@@ -338,7 +381,10 @@ public sealed partial class CompositionEditor : ObservableObject
     private CompositionCatalog Proposal(bool publish)
     {
         var versions = catalog.Versions;
-        if (current is { State: CompositionState.Draft } c)
+        if (!publish && !compositionModified && transientDraftId.HasValue)
+            versions = versions.Where(v => v.Id != transientDraftId.Value).ToArray();
+        if (current is { State: CompositionState.Draft } c &&
+            (publish || compositionModified || transientDraftId != c.Id))
         {
             var lines = Lines.Select(l => new CompositionLine(l.Id, l.Target?.Kind == 0 ? l.Target.Id : null, l.Target?.Kind == 1 ? l.Target.Id : null, l.Target?.Kind == 2 ? l.Target.Id : null, Parse(l.Quantity), l.Unit, Parse(l.Factor), l.Basis, l.Loss, Parse(l.Percent))).ToArray();
             var edited = c with { BatchSize = Parse(BatchSize), Note = Note, Lines = lines, State = publish ? CompositionState.Published : CompositionState.Draft };
