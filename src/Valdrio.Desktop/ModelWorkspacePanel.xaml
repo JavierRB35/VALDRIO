@@ -274,14 +274,26 @@
         <DataGridTemplateColumn Width="1.25*" MinWidth="210" MaxWidth="340" SortMemberPath="FunctionsLabel">
  <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource CellText}">
  <Setter Property="Text" Value="{Binding FunctionsLabel}"/><Setter Property="ToolTip" Value="{Binding FunctionsLabel}"/>
+ <Style.Triggers><DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
+ <Setter Property="Text" Value="{Binding DataContext.SelectedFunctionsDisplay, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+ <Setter Property="ToolTip" Value="{Binding DataContext.SelectedFunctionsDisplay, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+ </DataTrigger></Style.Triggers>
  </Style></TextBlock.Style></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate>
  <DataGridTemplateColumn.CellEditingTemplate><DataTemplate><TextBox Text="{Binding DataContext.AdditionalFunctionTags, RelativeSource={RelativeSource AncestorType=DataGrid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="True" MinWidth="40"/></DataTemplate></DataGridTemplateColumn.CellEditingTemplate>
 </DataGridTemplateColumn>
         <DataGridTemplateColumn Width="1.1*" MinWidth="190" MaxWidth="260" SortMemberPath="EconomicFunctionDisplay">
          <DataGridTemplateColumn.CellTemplate>
           <DataTemplate>
-           <TextBlock Text="{Binding EconomicFunctionDisplay}" Style="{StaticResource Text.TableText}"
-                      TextTrimming="CharacterEllipsis" ToolTip="{Binding EconomicFunctionDisplay}"/>
+           <TextBlock TextTrimming="CharacterEllipsis">
+            <TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Text.TableText}">
+             <Setter Property="Text" Value="{Binding EconomicFunctionDisplay}"/>
+             <Setter Property="ToolTip" Value="{Binding EconomicFunctionDisplay}"/>
+             <Style.Triggers><DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
+              <Setter Property="Text" Value="{Binding DataContext.SelectedEconomicFunctionDisplay, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+              <Setter Property="ToolTip" Value="{Binding DataContext.SelectedEconomicFunctionDisplay, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+             </DataTrigger></Style.Triggers>
+            </Style></TextBlock.Style>
+           </TextBlock>
           </DataTemplate>
          </DataGridTemplateColumn.CellTemplate>
          <DataGridTemplateColumn.CellEditingTemplate>
