@@ -1,12 +1,18 @@
 using Valdrio.Domain;
 namespace Valdrio.Calculation;
 
-public sealed record CompositionPool(EntityId Id, EntityId ModelId, string Name, UnitId UnitId, bool Active);
+public sealed record CompositionPool(EntityId Id, EntityId ModelId, string Name, UnitId UnitId, bool Active,
+    NodeRole Role = NodeRole.Principal);
 public sealed record CompositionQuantity(string Path, EntityId LineId, EntityId TargetId, bool Activity,
     UnitId UnitId, decimal BasisCount, decimal BaseQuantity, decimal AdjustedQuantity,
     decimal ConvertedQuantity, decimal RequiredQuantity, string Name, bool Expanded = false, UnitId InputUnitId = default);
 public sealed record CompositionPreview(decimal OutputQuantity, decimal StartedBatches,
-    IReadOnlyList<CompositionQuantity> Lines, IReadOnlyList<CompositionTotal> Totals);
+    IReadOnlyList<CompositionQuantity> Lines, IReadOnlyList<CompositionTotal> Totals)
+{
+    // A per-order input cannot be converted into a stable unit cost without
+    // an order quantity. Any level of the expansion counts, not only the root.
+    public bool HasOrderDependentBasis { get; init; }
+}
 public sealed record CompositionTotal(EntityId TargetId, bool Activity, UnitId UnitId, string Name, decimal Quantity);
 
 public static class CompositionCalculator
@@ -58,17 +64,32 @@ public static class CompositionCalculator
                 if (sourceUnit is null || targetUnit is null || sourceUnit.Dimension != targetUnit.Dimension ||
                     sourceUnit.Id == targetUnit.Id && line.ConversionFactor != 1)
                     throw Error("UnitMismatch");
-                if (requireActive && version.Id == selected && !target.Active) throw Error("Inactive");
             }
             Visit(version, new HashSet<EntityId>(), requireActive && version.Id == selected);
         }
+        // Active validation follows the whole expansion of a newly published
+        // version. Historical definitions are still read with active = false.
+        // Auxiliary nodes and inactive references are never introduced as new
+        // direct inputs, including through a semi-finished child.
         void Visit(CompositionVersion version, HashSet<EntityId> products, bool active)
         {
             if (++visited > 100000) throw Error("TooDeep");
             if (!products.Add(version.ProductId)) throw Error("Cycle");
             if (products.Count > 64) throw Error("TooDeep");
-            if (active && (!catalog.Items.Single(i => i.Id == version.ProductId).Active ||
-                version.Lines.Any(l => !Target(catalog, pools, version, l).Active))) throw Error("Inactive");
+            if (active)
+            {
+                if (!catalog.Items.Single(i => i.Id == version.ProductId).Active) throw Error("Inactive");
+                foreach (var line in version.Lines)
+                {
+                    var target = Target(catalog, pools, version, line);
+                    if (!target.Active) throw Error("Inactive");
+                    // Auxiliary services must reach products through secondary
+                    // allocation, not as direct or nested composition inputs.
+                    if (line.PoolId is { } poolId &&
+                        pools.Single(p => p.Id == poolId && p.ModelId == version.ModelVersionId).Role != NodeRole.Principal)
+                        throw Error("InvalidLine");
+                }
+            }
             foreach (var line in version.Lines.Where(l => l.RecipeVersionId.HasValue))
                 Visit(catalog.Versions.SingleOrDefault(v => v.Id == line.RecipeVersionId) ?? throw Error("MissingTarget"), products, active);
             products.Remove(version.ProductId);
@@ -109,13 +130,17 @@ public static class CompositionCalculator
         if (quantity <= 0 || units.Single(u => u.Id == output.UnitId).IsDiscrete && quantity != decimal.Truncate(quantity))
             throw Error("InvalidQuantity");
         var lines = new List<CompositionQuantity>();
+        var orderDependent = false;
         try
         {
             Expand(root, quantity, output.Code, 0);
             var totals = lines.Where(l => !l.Expanded).GroupBy(l => new { l.TargetId, l.Activity, l.UnitId })
                 .Select(g => new CompositionTotal(g.Key.TargetId, g.Key.Activity, g.Key.UnitId, g.First().Name,
                     g.Sum(l => l.RequiredQuantity))).ToArray();
-            return new(quantity, decimal.Ceiling(quantity / root.BatchSize), FrozenList.Copy(lines), FrozenList.Copy(totals));
+            return new(quantity, decimal.Ceiling(quantity / root.BatchSize), FrozenList.Copy(lines), FrozenList.Copy(totals))
+            {
+                HasOrderDependentBasis = orderDependent
+            };
         }
         catch (OverflowException) { throw Error("Overflow"); }
         catch (DivideByZeroException) { throw Error("Overflow"); }
@@ -126,6 +151,7 @@ public static class CompositionCalculator
             {
                 if (lines.Count >= 10000) throw Error("TooDeep");
                 var target = Target(catalog, pools, recipe, line);
+                if (line.Basis == ConsumptionBasis.PerOrder) orderDependent = true;
                 var count = line.Basis switch
                 {
                     ConsumptionBasis.PerUnit => amount,

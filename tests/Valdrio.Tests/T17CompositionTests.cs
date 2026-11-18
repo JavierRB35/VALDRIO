@@ -22,6 +22,21 @@ public sealed class T17CompositionTests
             new(Id(),null,null,pool.Id,1,hour.Id,1,ConsumptionBasis.PerOrder,CompositionLossKind.None,0)]);
         return (new(Id(), 0, [product,material], [recipe]), [piece,kg,hour], [pool]);
     }
+    [TestMethod] public void T17_NewPublishedCompositionCannotAbsorbAuxiliaryPool()
+    {
+        var (catalog, units, pools) = Example();
+        var recipe = catalog.Versions.Single();
+        var auxiliaries = pools.Select(p => p with { Role = NodeRole.Auxiliary }).ToArray();
+        // Previously published records remain readable to avoid changing
+        // historical estimates, but new publications cannot select auxiliaries.
+        CompositionCalculator.Validate(catalog, units, auxiliaries);
+        Assert.AreEqual("COMPOSITION_INVALIDLINE",
+            Assert.ThrowsExactly<DomainRuleException>(() =>
+                CompositionCalculator.Validate(catalog, units, auxiliaries, true, recipe.Id)).Diagnostic.Code);
+        Assert.AreEqual(7m, CompositionCalculator.Preview(catalog, recipe.Id, 120, units, auxiliaries)
+            .Totals.Single(t => t.Activity).Quantity);
+    }
+
     [TestMethod] public void T17_StartedBatchesExtraInputAndOrderAreDistinct()
     {
         var (c,u,p)=Example(); var r=CompositionCalculator.Preview(c,c.Versions[0].Id,120,u,p);

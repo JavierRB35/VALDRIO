@@ -222,3 +222,13 @@ La integración actual y sus límites están documentados en la
 - Las acciones «Crear estructura» y «Crear versión editable» tienen consecuencias distintas. La navegación no debe crear borradores nuevos cuando se ha seleccionado una estructura para cargar. Evitar clones involuntarios; recuperar la versión editable ya existente cuando procede y distinguir inequívocamente nombre/estado/versión.
 - Puede **eliminarse un borrador sin dependencias**, con confirmación y auditoría terminal verificable. Si tiene análisis, claves, versiones descendientes u otras referencias históricas, se rechaza y se explica el motivo. No borrar datos publicados ni ejecutar cascadas sobre históricos.
 - Las versiones **publicadas** solo pueden **archivarse o restaurarse** mediante registro de auditoría independiente: su modelo, contenido canónico, hash, revisión y vínculos con análisis previos permanecen inmutables. Las archivadas dejan de ofrecerse para nuevos análisis, sin impedir consultarlas o restaurarlas desde la gestión de estructuras.
+
+## Tareas transversales de UX registradas — 2026-11-18
+
+**Alta prioridad / pendiente:** normalizar el comportamiento del separador decimal en entrada manual de todas las pantallas con perfil `es-ES`. El módulo Productos y servicios admite coma y punto del teclado numérico sin separadores de miles; antes de extenderlo hay que verificar precisión, validación, unidad, rango, errores y exportación en cada campo.
+
+**Obligatoria / pendiente:** inventariar y completar ayudas contextuales para todos los campos y controles relevantes de VALDRIO, en español e inglés, con significado económico, consecuencias, fórmulas y ejemplos cuando proceda. Ningún campo de negocio debe quedar con solo el texto genérico del pie de pantalla.
+
+**Precisión aplicada ya en Productos y servicios (2026-11-18):** las ayudas ES/EN y la guía del módulo distinguen entre referencia manual, importación y coste calculado por composición. Una composición parcial conserva la referencia manual si existe, retira un coste calculado anterior y comunica qué falta; la actividad de nodos principales puede incluir MOD y otros directos, pero esta pantalla no aplica tarifas T15. Los pendientes transversales siguen abiertos para el resto de VALDRIO.
+
+Criterios de cierre, recorridos de prueba y límites documentados en [PEND-UX-DEC-01 y PEND-UX-HELP-01](../pendientes/PEND-UX-DECIMALES-Y-AYUDA-2026-11-18.md).

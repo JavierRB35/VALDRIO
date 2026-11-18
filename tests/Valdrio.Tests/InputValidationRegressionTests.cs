@@ -131,6 +131,79 @@ public sealed partial class T06ImportConfirmationTests
     }
 
     [TestMethod]
+    public void ProductCatalogReferenceCostAcceptsCommaAndKeypadDotWithoutDouble()
+    {
+        var row = new CompositionItemRow
+        {
+            CostInputCulture = CultureInfo.GetCultureInfo("es-ES"),
+            ManualOriginLabel = "Origen manual",
+            CompositionOriginLabel = "Origen composición"
+        };
+        row.ReferenceUnitCostInput = "12,50";
+        Assert.IsTrue(row.IsCostInputValid);
+        Assert.AreEqual(12.50m, row.ReferenceUnitCost);
+        row.ReferenceUnitCostInput = "12.50";
+        Assert.AreEqual(12.50m, row.ReferenceUnitCost);
+        row.ReferenceUnitCostInput = "1.234,56";
+        Assert.IsFalse(row.IsCostInputValid, "Mixed group/decimal marks are not silently reinterpreted.");
+        Assert.AreEqual(12.50m, row.ReferenceUnitCost, "Invalid entry keeps the last valid value.");
+        row.ReferenceUnitCostInput = "";
+        Assert.IsTrue(row.IsCostInputValid);
+        Assert.IsNull(row.ReferenceUnitCost);
+        row.ReferenceUnitCostInput = "0,075";
+        Assert.AreEqual(.075m, row.ReferenceUnitCost);
+        Assert.AreEqual("Origen manual", row.CostOriginDisplay);
+        row.ReferenceCostSource = "Composition · fixture";
+        Assert.AreEqual("Origen composición", row.CostOriginDisplay);
+    }
+
+    [TestMethod]
+    public async Task ProductCatalogueChangesPersistAndDeactivateWithoutDeletingHistory()
+    {
+        using var ui = await ResourceUiReady();
+        var editor = new CompositionEditor(ui.Studies);
+        editor.AddItem();
+        var item = editor.Items.Last();
+        item.Code = "P-DECIMAL-TEST";
+        item.Name = "Unidad de prueba";
+        item.Unit = editor.Units.First().Value;
+        item.Kind = CompositionItemKind.Product;
+        item.ReferenceUnitCostInput = "13,75";
+        Assert.IsTrue(await editor.SaveAsync(false), editor.Feedback);
+        var reopened = new CompositionEditor(ui.Studies);
+        var saved = reopened.Items.Single(i => i.Code == item.Code);
+        Assert.IsTrue(saved.Persisted);
+        Assert.IsTrue(saved.CanOpenComposition);
+        Assert.AreEqual(13.75m, saved.ReferenceUnitCost);
+        saved.ReferenceUnitCostInput = "14.25";
+        Assert.IsTrue(await reopened.SaveAsync(false), reopened.Feedback);
+        var again = new CompositionEditor(ui.Studies);
+        saved = again.Items.Single(i => i.Code == item.Code);
+        Assert.AreEqual(14.25m, saved.ReferenceUnitCost);
+        again.RemoveItem(saved);
+        Assert.IsFalse(saved.Active);
+        Assert.IsTrue(await again.SaveAsync(false), again.Feedback);
+        var deactivated = new CompositionEditor(ui.Studies);
+        Assert.IsFalse(deactivated.Items.Single(i => i.Code == item.Code).Active);
+    }
+
+    [TestMethod]
+    public void ProductLossFactorDisplaysActualMathematicalMultiplier()
+    {
+        var row = new CompositionLineRow { DisplayCulture = CultureInfo.GetCultureInfo("es-ES") };
+        row.Loss = CompositionLossKind.None;
+        Assert.AreEqual("× 1", row.LossFactorDisplay);
+        row.Loss = CompositionLossKind.ExtraInput;
+        row.Percent = "10";
+        Assert.AreEqual("× 1,1", row.LossFactorDisplay);
+        row.Loss = CompositionLossKind.Yield;
+        row.Percent = "80";
+        Assert.AreEqual("× 1,25", row.LossFactorDisplay);
+        row.Percent = "0";
+        Assert.AreEqual("—", row.LossFactorDisplay);
+    }
+
+    [TestMethod]
     public async Task InputValidation_ProductAndEstimateFormsRejectIncompleteInputWithoutWriting()
     {
         using var ui = await ResourceUiReady();

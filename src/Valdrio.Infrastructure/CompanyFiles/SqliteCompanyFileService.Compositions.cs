@@ -12,7 +12,8 @@ public sealed partial class SqliteCompanyFileService
         .SelectMany(m => m.Structure.Pools.Select(p =>
         {
             var node = m.Structure.Nodes.Single(n => n.Id == p.NodeId);
-            return new CompositionPool(p.Id, m.Structure.Id, node.Code + " · " + p.Description, p.DriverUnitId, node.IsActive);
+            return new CompositionPool(p.Id, m.Structure.Id, node.Code + " · " + p.Description,
+                p.DriverUnitId, node.IsActive, node.Role);
         })).ToArray();
 
     private static CompositionCatalog RestoreCatalog(CompositionCatalogRow? row, EntityId company)

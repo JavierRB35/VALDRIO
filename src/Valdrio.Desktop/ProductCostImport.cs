@@ -1,7 +1,11 @@
 using System.Globalization;
 using System.IO;
 using System.Text;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Valdrio.Application;
 using Valdrio.Domain;
+using Valdrio.Infrastructure;
 
 namespace Valdrio.Desktop;
 
@@ -13,9 +17,25 @@ internal static class ProductCostImport
     { var result = ReadResult(path, culture); return result.Value ?? throw new InvalidDataException(result.Error); }
     public static (IReadOnlyList<ProductCostImportRow>? Value, string? Error) ReadResult(string path, CultureInfo culture)
     {
-        var source = File.ReadAllText(path, Encoding.UTF8).TrimStart('\uFEFF');
-        var delimiter = DetectDelimiter(source);
-        var parsed = Parse(source, delimiter);
+        IReadOnlyList<IReadOnlyList<string>>? parsed;
+        try
+        {
+            if (path.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
+                parsed = ReadWorkbook(path, culture);
+            else
+            {
+                var source = File.ReadAllText(path, Encoding.UTF8).TrimStart('\uFEFF');
+                parsed = Parse(source, DetectDelimiter(source));
+            }
+        }
+        catch (Exception error) when (error is InvalidDataException or IOException or
+            DocumentFormat.OpenXml.Packaging.OpenXmlPackageException or DomainRuleException or
+            System.Xml.XmlException)
+        {
+            // XLSX-specific failures have their own message; a plain text file
+            // read failure must keep the generic import feedback.
+            return (null, path.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase) ? "Xlsx" : "ImportFailed");
+        }
         if (parsed is null) return (null, "Quotes");
         var records = parsed.Where(row => row.Any(cell => !string.IsNullOrWhiteSpace(cell))).ToArray();
         if (records.Length < 2) return (null, "Empty");
@@ -48,6 +68,53 @@ internal static class ProductCostImport
             if (matches.Length != 1) return -1;
             return matches[0].index;
         }
+    }
+
+    private static IReadOnlyList<IReadOnlyList<string>> ReadWorkbook(string path, CultureInfo culture)
+    {
+        // The already hardened import adapter validates the XLSX package,
+        // numeric cached values and read limits. Use its typed cells; never
+        // infer a numeric reference code from Excel's displayed formatting.
+        using var workbook = SpreadsheetDocument.Open(path, false);
+        var sheet = workbook.WorkbookPart?.Workbook?.GetFirstChild<Sheets>()?.Elements<Sheet>().FirstOrDefault();
+        var name = sheet?.Name?.Value;
+        if (string.IsNullOrWhiteSpace(name)) throw new InvalidDataException("Missing worksheet");
+        using var stream = File.OpenRead(path);
+        var settings = new ImportSourceReadSettings(ImportSourceKind.Xlsx, name, 1, 2, null);
+        var source = new XlsxImportAdapter().ReadAsync(stream, Path.GetFileName(path), settings)
+            .GetAwaiter().GetResult();
+        var headers = source.Headers.ToArray();
+        var referenceColumn = Array.FindIndex(headers, h => new[] { "referencia", "reference", "ref", "code", "codigo", "sku" }
+            .Contains(Normalize(h), StringComparer.Ordinal)) + 1;
+        var rows = new List<IReadOnlyList<string>> { headers };
+        foreach (var row in source.Rows)
+        {
+            var cells = Enumerable.Range(1, headers.Length).Select(column =>
+                CellText(row.GetCell(column), column, referenceColumn, culture)).ToArray();
+            rows.Add(cells);
+        }
+        return rows;
+    }
+
+    private static string CellText(SourceCell cell, int column, int referenceColumn, CultureInfo culture)
+    {
+        // Excel cost columns are commonly formulas. The adapter exposes the
+        // cached value in CachedValueKind/TextValue; dropping it would turn a
+        // valid priced row into a false "invalid cost" error.
+        var kind = cell.Kind == SourceValueKind.FormulaWithCachedValue
+            ? cell.CachedValueKind ?? SourceValueKind.Empty
+            : cell.Kind;
+        if (kind is SourceValueKind.Missing or SourceValueKind.Empty) return "";
+        if (kind == SourceValueKind.Number)
+        {
+            if (column == referenceColumn) return ""; // Do not destroy leading-zero identities.
+            var lexical = cell.Kind == SourceValueKind.FormulaWithCachedValue
+                ? cell.TextValue ?? cell.RawLexical
+                : cell.RawLexical;
+            return decimal.TryParse(lexical, NumberStyles.Float, CultureInfo.InvariantCulture, out var numeric)
+                ? numeric.ToString("0.###########################", culture) : "";
+        }
+        return kind == SourceValueKind.Text ? cell.TextValue ?? cell.RawLexical ?? "" : "";
     }
 
     public static IReadOnlyList<CompositionItem> Merge(IReadOnlyList<CompositionItem> current,
