@@ -104,6 +104,16 @@ public sealed partial class StudyWorkspaceViewModel : ObservableObject, IDisposa
     public IRunStore? PhysicalRuns => company.ActiveRuns;
     public IAllocationWorkspace? AuxiliaryAllocations => company.ActiveAllocations;
     public CompanyFileSnapshot? PhysicalCompany => company.Snapshot;
+    // Reuse the existing, audited company-level unit installation workflow.
+    // No implicit unit creation while a catalogue field is being edited.
+    public async Task<bool> InstallProductUnitsAsync()
+    {
+        if (company.Snapshot?.Units.Any(u => u.Code == "unit" && u.Dimension == "count" && u.IsDiscrete) == true)
+            return true;
+        if (!company.AddDefaultUnitsCommand.CanExecute(null)) return false;
+        await company.AddDefaultUnitsCommand.ExecuteAsync(null);
+        return company.Snapshot?.Units.Any(u => u.Code == "unit" && u.Dimension == "count" && u.IsDiscrete) == true;
+    }
     public IStudyWorkspace? PhysicalStudies => company.ActiveStudies;
     public bool PhysicalCompanyWritable => company.CanWrite;
     public CultureInfo PhysicalUiCulture => Ui;
