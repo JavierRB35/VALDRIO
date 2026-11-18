@@ -43,6 +43,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     private UnitOption? unit, unitMaster;
     private ModelOption? choice;
     private NodeOption? node;
+    private bool stagingNodeSelection;
     private RoleOption? role;
     private LayerOption? layer;
     private DomainDiagnostic? diagnostic;
@@ -246,13 +247,16 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         get => node;
         set
         {
+            if (stagingNodeSelection) return;
             // Editing another row stages the previous node locally. It never writes
             // the company file or asks for confirmation per cell/row: saving is
             // resolved when leaving the tab or the workspace.
             if (!loading && node?.Node.Id != value?.Node.Id && nodeFormEdited)
             {
                 var nextId = value?.Node.Id;
-                ApplyNode();
+                stagingNodeSelection = true;
+                try { ApplyNode(); }
+                finally { stagingNodeSelection = false; }
                 if (nodeFormEdited || diagnostic is not null)
                 {
                     OnPropertyChanged(nameof(SelectedNode));
