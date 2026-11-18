@@ -21,7 +21,30 @@ public sealed partial class CompositionItemRow : ObservableObject
     [ObservableProperty] private UnitId unit;
     [ObservableProperty] private bool active = true;
     [ObservableProperty] private decimal? referenceUnitCost;
+    [ObservableProperty] private string referenceUnitCostInput = "";
     [ObservableProperty] private string referenceCostSource = "";
+    private bool syncingCostInput;
+    public CultureInfo CostInputCulture { get; init; } = CultureInfo.InvariantCulture;
+    public bool IsCostInputValid => TryCostInput(ReferenceUnitCostInput, out _);
+    public static bool TryCostInput(string? input, out decimal? cost)
+    {
+        cost = null;
+        if (string.IsNullOrWhiteSpace(input)) return true;
+        var normalized = input.Trim().Replace(',', '.');
+        if (!decimal.TryParse(normalized, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
+                CultureInfo.InvariantCulture, out var parsed) || parsed < 0)
+            return false;
+        cost = parsed;
+        return true;
+    }
+    partial void OnReferenceUnitCostInputChanged(string value)
+    {
+        OnPropertyChanged(nameof(IsCostInputValid));
+        if (syncingCostInput || !TryCostInput(value, out var parsed)) return;
+        syncingCostInput = true;
+        try { ReferenceUnitCost = parsed; }
+        finally { syncingCostInput = false; }
+    }
     public string ManualOriginLabel { get; init; } = "Manual";
     public string CompositionOriginLabel { get; init; } = "Composition";
     public string CostOriginDisplay => !ReferenceUnitCost.HasValue ? "" :
@@ -33,6 +56,12 @@ public sealed partial class CompositionItemRow : ObservableObject
         !string.IsNullOrWhiteSpace(Code) && !string.IsNullOrWhiteSpace(Name) && Unit.Value.IsValid;
     partial void OnReferenceUnitCostChanged(decimal? value)
     {
+        if (!syncingCostInput)
+        {
+            syncingCostInput = true;
+            try { ReferenceUnitCostInput = value?.ToString("0.###########################", CostInputCulture) ?? ""; }
+            finally { syncingCostInput = false; }
+        }
         ReferenceCostSource = value.HasValue ? "Manual · " + DateTimeOffset.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) : "";
         OnPropertyChanged(nameof(CostOriginDisplay));
     }
@@ -125,7 +154,7 @@ public sealed partial class CompositionEditor : ObservableObject
     {
         var row = new CompositionItemRow { Id = i.Id, Persisted = persisted, Code = i.Code, Name = i.Name,
             Kind = i.Kind, Unit = i.UnitId, Active = i.Active, ReferenceUnitCost = i.ReferenceUnitCost,
-            ReferenceCostSource = i.ReferenceCostSource ?? "", ManualOriginLabel = this["OriginManual"],
+            ReferenceCostSource = i.ReferenceCostSource ?? "", CostInputCulture = host.PhysicalFormatCulture, ManualOriginLabel = this["OriginManual"],
             CompositionOriginLabel = this["OriginComposition"] };
         row.PropertyChanged += (_, _) => Changed();
         return row;
@@ -178,7 +207,7 @@ public sealed partial class CompositionEditor : ObservableObject
     {
         if (!Writable) return;
         var row = new CompositionItemRow { Unit = Units.FirstOrDefault()?.Value ?? default,
-            ManualOriginLabel = this["OriginManual"], CompositionOriginLabel = this["OriginComposition"] };
+            CostInputCulture = host.PhysicalFormatCulture, ManualOriginLabel = this["OriginManual"], CompositionOriginLabel = this["OriginComposition"] };
         row.PropertyChanged += (_, _) => Changed(); Items.Add(row); Changed();
     }
     public void RemoveItem(CompositionItemRow? row)
@@ -287,7 +316,8 @@ public sealed partial class CompositionEditor : ObservableObject
         bool Number(string text, out decimal value) => decimal.TryParse(text.Trim(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, host.PhysicalFormatCulture, out value);
         if (Items.Select(i => i.Code.Trim()).Distinct(StringComparer.Ordinal).Count() != Items.Count)
         { Feedback = this["InvalidCatalog"]; return false; }
-        if (Items.Any(i => string.IsNullOrWhiteSpace(i.Code) || string.IsNullOrWhiteSpace(i.Name) || !Units.Any(u => u.Value == i.Unit) ||
+        if (Items.Any(i => string.IsNullOrWhiteSpace(i.Code) || string.IsNullOrWhiteSpace(i.Name) ||
+            !Units.Any(u => u.Value == i.Unit) || !i.IsCostInputValid ||
             i.ReferenceUnitCost < 0 || i.ReferenceUnitCost.HasValue && string.IsNullOrWhiteSpace(i.ReferenceCostSource)))
         { Feedback = this["InvalidItem"]; return false; }
         if (current?.State == CompositionState.Draft)
