@@ -2,24 +2,37 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Automation;
+using System.Windows.Input;
+using System.Windows.Media;
 using Valdrio.Domain;
 namespace Valdrio.Desktop;
 public partial class CompositionWindow : IntegratedWorkspaceWindow
 {
     public CompositionEditor Editor { get; }
     internal Func<MessageBoxResult>? LeaveDecision { get; set; }
+    private readonly Dictionary<DataGridColumn, string> columnHelp = new();
+    private DataGridCell? lastHelpCell;
     internal void RefreshView() => Columns();
     public CompositionWindow(StudyWorkspaceViewModel host)
     {
         Editor = new(host, initialize: false); InitializeComponent(); DataContext = Editor;
         ContentRendered += async (_, _) => await InitializeAsync();
-        Columns(); Closing += (_, e) => { if (!Resolve()) e.Cancel = true; };
+        Columns();
+        CatalogGrid.PreviewMouseMove += GridHelpOnMouseMove;
+        LinesGrid.PreviewMouseMove += GridHelpOnMouseMove;
+        CatalogGrid.AddHandler(Keyboard.GotKeyboardFocusEvent,
+            new KeyboardFocusChangedEventHandler(GridHelpOnFocus), true);
+        LinesGrid.AddHandler(Keyboard.GotKeyboardFocusEvent,
+            new KeyboardFocusChangedEventHandler(GridHelpOnFocus), true);
+        Closing += (_, e) => { if (!Resolve()) e.Cancel = true; };
     }
     private Task? initialization;
     internal override Task InitializeAsync() => initialization ??= RunActivityAsync(async () => { await Editor.ReloadForDisplayAsync(); Columns(); });
     private void Columns()
     {
         CatalogGrid.Columns.Clear(); LinesGrid.Columns.Clear(); AnswersGrid.Columns.Clear(); ResultsGrid.Columns.Clear();
+        columnHelp.Clear(); lastHelpCell = null;
         Text(CatalogGrid,"Code","Code",120); Text(CatalogGrid,"Name","Name",250);
         Choice(CatalogGrid,"Kind","Kind",Editor.Kinds,140); Choice(CatalogGrid,"Unit","Unit",Editor.Units,160);
         CatalogGrid.Columns.Add(new DataGridCheckBoxColumn { Header=Editor["Active"],Binding=new Binding("Active"),Width=85 });
@@ -48,6 +61,31 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
         Text(ResultsGrid,"Count","Count",90); Text(ResultsGrid,"InputUnit","InputUnit",100);
         Text(ResultsGrid,"Converted","Converted",110); Text(ResultsGrid,"Base","Base",100); Text(ResultsGrid,"Adjusted","Adjusted",100); Text(ResultsGrid,"Required","Required",100); Text(ResultsGrid,"Unit","Unit",70);
         CatalogGrid.IsReadOnly=!Editor.Writable;
+        string[] catalogKeys = ["CatalogCode", "CatalogName", "CatalogKind", "CatalogUnit",
+            "CatalogActive", "CatalogCost", "CatalogOrigin", "OpenProduct"];
+        for (var i = 0; i < catalogKeys.Length; i++)
+            columnHelp[CatalogGrid.Columns[i]] = catalogKeys[i];
+        string[] lineKeys = ["Component", "Quantity", "LineUnit", "ConversionFactor",
+            "Basis", "Loss", "Percent", "LossFactor"];
+        for (var i = 0; i < lineKeys.Length; i++)
+            columnHelp[LinesGrid.Columns[i]] = lineKeys[i];
+    }
+    private void GridHelpOnMouseMove(object sender, MouseEventArgs e) =>
+        ShowGridHelp(e.OriginalSource as DependencyObject);
+    private void GridHelpOnFocus(object sender, KeyboardFocusChangedEventArgs e) =>
+        ShowGridHelp(e.OriginalSource as DependencyObject);
+    private void ShowGridHelp(DependencyObject? source)
+    {
+        while (source is not null && source is not DataGridCell)
+            source = VisualTreeHelper.GetParent(source);
+        if (source is not DataGridCell cell || ReferenceEquals(cell, lastHelpCell) ||
+            !columnHelp.TryGetValue(cell.Column, out var key)) return;
+        lastHelpCell = cell;
+        var explanation = Editor["Help." + key];
+        cell.ToolTip = explanation;
+        AutomationProperties.SetHelpText(cell, explanation);
+        (WorkspaceHost ?? Owner as MainWindow ?? Application.Current.MainWindow as MainWindow)
+            ?.ShowFieldHelp(explanation, "Composition." + key);
     }
     private void Text(DataGrid grid,string label,string path,DataGridLength width)
     {
