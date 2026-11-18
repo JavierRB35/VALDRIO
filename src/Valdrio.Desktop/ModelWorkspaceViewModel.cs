@@ -246,19 +246,20 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         get => node;
         set
         {
+            // Editing another row stages the previous node locally. It never writes
+            // the company file or asks for confirmation per cell/row: saving is
+            // resolved when leaving the tab or the workspace.
             if (!loading && node?.Node.Id != value?.Node.Id && nodeFormEdited)
             {
-                var decision = dialogs.ResolvePending(Text("Model.PendingTitle"), Text("Model.PendingBody"));
-                if (decision == PendingEditChoice.Cancel)
+                var nextId = value?.Node.Id;
+                ApplyNode();
+                if (nodeFormEdited || diagnostic is not null)
                 {
                     OnPropertyChanged(nameof(SelectedNode));
                     return;
                 }
-                if (decision == PendingEditChoice.Save)
-                {
-                    _ = SaveNodeThenSelect(value?.Node.Id);
-                    return;
-                }
+                // ApplyNode rebuilds the table; use the new row instance.
+                value = Nodes.FirstOrDefault(x => x.Node.Id == nextId);
             }
 
             if (!SetProperty(ref node, value) || loading) return;
@@ -275,17 +276,6 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             nodeFormEdited = false;
             Refresh();
         }
-    }
-
-    private async Task SaveNodeThenSelect(EntityId? selectedId)
-    {
-        await SaveNode();
-        if (nodeFormEdited || diagnostic is not null)
-        {
-            OnPropertyChanged(nameof(SelectedNode));
-            return;
-        }
-        SelectedNode = Nodes.SingleOrDefault(x => x.Node.Id == selectedId);
     }
 
     private bool NodeFormHasChanges()
@@ -574,7 +564,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string NodeListHelp => Text("Model.NodeListHelp");
     public string NodeFormTitle => Text(SelectedNode is null ? "Model.NodeFormNew" : "Model.NodeFormEdit");
     public string NodePrimaryActionLabel => Text(SelectedNode is null ? "Model.NodeSaveCreate" : "Model.NodeSaveEdit");
-    public string NodePersistenceHelp => Text("Model.NodePersistenceHelp");
+    public string NodePersistenceHelp => Text(SelectedNode is null ? "Model.NodePersistenceHelp" : "Model.NodeEditDeferredHelp");
     public string OptionalNodeDataLabel => Text("Model.OptionalNodeData");
     public string FunctionHelp => Text("Model.FunctionHelp");
     public string RoleHelp => Text("Model.RoleHelp");
