@@ -21,6 +21,7 @@ public static class FieldHelp
         StudyWorkspaceViewModel vm => vm.Guide("Help." + GetKey(element)),
         ResourceWorkspaceViewModel vm => vm.Guide("Help." + GetKey(element)),
         ImportColumnMappingViewModel vm => vm.Guide("Help." + GetKey(element)),
+        CompositionEditor vm => vm["Help." + GetKey(element)],
         _ => (Window.GetWindow(element)?.DataContext as MainWindowViewModel)?.Guide("Help." + GetKey(element)) ?? ""
     };
     private static void Attach(DependencyObject target, DependencyPropertyChangedEventArgs args)
