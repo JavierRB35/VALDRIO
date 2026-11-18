@@ -1985,6 +1985,9 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
   <data name="Composition.Help.Loss" xml:space="preserve"><value>Sin merma: factor 1. Exceso de entrada: base × (1 + porcentaje/100). Rendimiento útil: base ÷ (porcentaje/100).</value></data>
   <data name="Composition.Help.Percent" xml:space="preserve"><value>Porcentaje de pérdida: en Exceso 10 % aumenta 10 a 11; en Rendimiento 80 % exige 12,5 para obtener 10 útiles. Sin merma debe ser cero.</value></data>
   <data name="Composition.Help.LossFactor" xml:space="preserve"><value>Multiplicador calculado automáticamente: sin merma ×1; exceso 10 % ×1,1; rendimiento 80 % ×1,25. Consulta la fórmula al pasar el ratón.</value></data>
+    <data name="Composition.InstallUnits" xml:space="preserve"><value>Instalar unidades estándar (incluye Unidad)</value></data>
+  <data name="Composition.InstallUnitsFailed" xml:space="preserve"><value>No se pudo instalar la unidad estándar. Comprueba que el proyecto está abierto en modo edición y vuelve a intentarlo.</value></data>
+  <data name="Composition.Help.InstallUnits" xml:space="preserve"><value>Instala las unidades de actividad predeterminadas que falten en este proyecto, incluida Unidad (u). Solo se guardan tras pulsar el botón; las unidades actuales se conservan.</value></data>
   <data name="Composition.Title" xml:space="preserve"><value>Productos y servicios</value></data>
   <data name="Composition.Scope" xml:space="preserve"><value>Composición física, cantidades previstas y estimaciones de coste de gestión con costes unitarios de referencia. No representan consumo real ni valoración contable de existencias.</value></data>
   <data name="Composition.Catalog" xml:space="preserve"><value>Catálogo</value></data>
