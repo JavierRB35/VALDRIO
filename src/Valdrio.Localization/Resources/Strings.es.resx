@@ -893,13 +893,14 @@ Diferencia que falta repartir: {7}</value></data>
   <data name="Model.CenterStateChanged" xml:space="preserve"><value>Estado del centro actualizado correctamente.</value></data>
   <data name="Model.NodeSectionHelp" xml:space="preserve"><value>Una unidad de cálculo (nodo) pertenece a un centro. Ejemplo: centro Taller, nodo Corte, actividad horas, grupo de costes Costes de Corte. Un centro puede contener varios nodos.</value></data>
   <data name="Model.NodeListTitle" xml:space="preserve"><value>Nodos de la estructura</value></data>
-  <data name="Model.NodeListHelp" xml:space="preserve"><value>La tabla muestra todos los nodos ya guardados en este borrador. Selecciona una fila para editarla o eliminarla. Mientras tengas cambios en el formulario, guárdalos o pulsa Nuevo nodo antes de seleccionar otra fila.</value></data>
+  <data name="Model.NodeListHelp" xml:space="preserve"><value>Selecciona un nodo y modifica sus datos directamente en la tabla. Puedes revisar varios nodos seguidos; los cambios se guardan al salir de esta pestaña. Si la estructura está finalizada, crea una versión editable.</value></data>
   <data name="Model.NodeFormNew" xml:space="preserve"><value>Añadir nodo</value></data>
   <data name="Model.NodeFormEdit" xml:space="preserve"><value>Editar nodo seleccionado</value></data>
   <data name="Model.NodeSaveCreate" xml:space="preserve"><value>Guardar nodo</value></data>
   <data name="Model.NodeSaveEdit" xml:space="preserve"><value>Guardar cambios</value></data>
   <data name="Model.NodeSaved" xml:space="preserve"><value>Nodo guardado correctamente. El formulario está listo para añadir el siguiente.</value></data>
   <data name="Model.NodeRemoved" xml:space="preserve"><value>Nodo eliminado del borrador y cambios guardados correctamente.</value></data>
+  <data name="Model.NodeEditDeferredHelp" xml:space="preserve"><value>Los cambios de los nodos existentes se preparan sin interrumpir la edición. Al salir de esta pestaña podrás guardarlos, descartarlos o continuar. El guardado se realiza sin bloquear la ventana.</value></data>
   <data name="Model.NodePersistenceHelp" xml:space="preserve"><value>Ámbito: estructura reutilizable. Guardar un nodo conserva inmediatamente ese registro en el borrador. Finalizar fija la estructura para utilizarla. Los nodos adaptados de un análisis pertenecen solo a ese análisis.</value></data>
   <data name="Model.OptionalNodeData" xml:space="preserve"><value>Datos adicionales</value></data>
   <data name="Model.FunctionHelp" xml:space="preserve"><value>Las funciones son opcionales y describen para qué se utiliza el nodo. Si añades varias, sepáralas con comas y no repitas nombres, por ejemplo: producción, mantenimiento.</value></data>
@@ -2081,7 +2082,7 @@ Capacidad normal: {6} h × {7} % = {8} h</value></data>
 <data name="Activity.Import.TemplateFailed" xml:space="preserve"><value>No se pudo guardar la plantilla. Revisa la ubicación y sus permisos.</value></data>
 <data name="Activity.Import.DiscardReview" xml:space="preserve"><value>Hay filas seleccionadas para importar. Descartar cierra esta revisión sin incorporar esos borradores.</value></data>
 <data name="Rates.SelectedSummary" xml:space="preserve"><value>Tarifa: {0} · Coste: {1} · Normal: {2} · Real: {3} · {4}</value></data>
-<data name="Model.TableEditHelp" xml:space="preserve"><value>Haz clic en la celda para editar; guarda los cambios. Una estructura publicada requiere crear una versión editable.</value></data>
+<data name="Model.TableEditHelp" xml:space="preserve"><value>Haz clic en una celda para editarla. Al salir de Nodos de cálculo podrás guardar, descartar o seguir editando.</value></data>
 <data name="UX.FileOperation" xml:space="preserve"><value>Origen: {0}
 Destino: {1}
 
