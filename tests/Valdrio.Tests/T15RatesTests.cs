@@ -19,6 +19,22 @@ public sealed class T15RatesTests
         Assert.AreEqual(1600m, partial.Components.SelectMany(c=>c.Destinations).Sum(d=>d.PostedAmount));
     }
     [TestMethod]
+    public void T15_NormalCapacitySeparatesFixedUnderactivityFromVariableCost()
+    {
+        var r = PrincipalRateCalculator.Calculate(
+            [new("fixed", ResourceBehavior.Fixed, RateComponentKind.OwnFixed, 12000m),
+             new("variable", ResourceBehavior.Variable, RateComponentKind.Variable, 6500m)],
+            20000m, 18500m);
+        Assert.AreEqual(0.6m, r.Components[0].Rate);
+        Assert.AreEqual(6500m / 18500m, r.Components[1].Rate);
+        Assert.AreEqual(900m, r.CapacityVariance);
+        Assert.AreEqual(17600m, r.PerformedCost);
+        Assert.AreEqual(18500m, r.SourceCost);
+        Assert.AreEqual(18500m, r.CapacityVariance + r.PerformedCost);
+        Assert.IsNull(r.AppliedCost); // Real order consumption is not known.
+    }
+
+    [TestMethod]
     public void T15_MissingObjectDataIsNotZeroConsumption()
     {
         var unknown = PrincipalRateCalculator.Calculate(Costs(),100,60);

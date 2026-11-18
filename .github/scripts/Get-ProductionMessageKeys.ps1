@@ -31,6 +31,16 @@ if (Test-Path -LiteralPath $themePath -PathType Leaf) {
             # WPF visual resource lookups are not localized business messages.
             if ($source.Substring(0, $match.Index) -match '(FindResource|TryFindResource)\s*\(\s*$') { continue }
             $key = $match.Groups['key'].Value
+            # Guide() accepts a suffix and adds Guide. before looking it up.
+            if ($source.Substring(0, $match.Index) -match '\.Guide\s*\(\s*$') { $key = 'Guide.' + $key }
+            # This family is formed from ResourceBehavior values at runtime.
+            # Enumerate the actual enum, so missing translations still fail the guard.
+            if ($key -eq 'AllocationUI.SecondaryBehavior' -and
+                $source.Substring($match.Index + $match.Length) -match '^\s*\+') {
+                @('Unclassified', 'Fixed', 'Variable', 'MixedPending', 'Mixed', 'AssumedFixed') |
+                    ForEach-Object { $key + $_ }
+                continue
+            }
             if ($visualKeys.Contains($key)) { continue }
             $key
         }

@@ -1026,7 +1026,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     private async Task DeleteCenter()
     {
         if (Master is not { } selected) return;
-        if (!dialogs.ConfirmEconomicChange(DeleteCenterLabel, selected.Label + "\n" + Text("Model.DeleteCenterConfirm"), DeleteCenterLabel, Text("Model.Cancel"))) return;
+        if (!dialogs.ConfirmEconomicChange(DeleteCenterLabel, selected.Label + "\n" + Text("Model.DeleteCenterConfirm"), DeleteCenterLabel, CancelLabel)) return;
         await Run(async token =>
         {
             await Task.Run(() => company.ActiveModels!.DeleteCenter(new(selected.Value.CompanyId, selected.Value.Id, selected.Value.Revision, "local-user"), token));

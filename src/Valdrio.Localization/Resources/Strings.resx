@@ -1807,6 +1807,11 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Rates.Answer" xml:space="preserve"><value>Answer</value></data>
   <data name="Rates.Answers" xml:space="preserve"><value>Answers for the analyst</value></data>
   <data name="Rates.Attention" xml:space="preserve"><value>Needs attention</value></data>
+    <data name="Rates.BreakdownTitle" xml:space="preserve"><value>Rate breakdown</value></data>
+  <data name="Rates.BreakdownHelp" xml:space="preserve"><value>Each component uses its own base: own fixed cost divided by normal capacity; variable and consumed costs by actual activity. Period costs are shown separately.</value></data>
+  <data name="Rates.CapacityResult" xml:space="preserve"><value>Capacity variance</value></data>
+  <data name="Rates.ReviewCapacityShort" xml:space="preserve"><value>Calculated · Review fixed-cost treatment</value></data>
+  <data name="Rates.ReviewFixedConsumed" xml:space="preserve"><value>Attention: fixed costs received or consumed have no capacity assessment identified in this result. Using actual activity may be appropriate, but check their treatment and origin in Prepare accounts and Allocations before relying on this rate.</value></data>
   <data name="Rates.Detail" xml:space="preserve"><value>View breakdown and provenance</value></data>
   <data name="Rates.Component" xml:space="preserve"><value>Component</value></data>
   <data name="Rates.Behavior" xml:space="preserve"><value>Behaviour</value></data>
@@ -1818,7 +1823,7 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Rates.Close" xml:space="preserve"><value>Close</value></data>
   <data name="Rates.Exported" xml:space="preserve"><value>Version exported with provenance and physical data.</value></data>
   <data name="Rates.ExportFailed" xml:space="preserve"><value>Could not save the file. Check the location and permissions.</value></data>
-  <data name="Rates.Policy" xml:space="preserve"><value>Own fixed cost over normal activity; variable and consumed costs over actual activity. Management rates, not selling prices.</value></data>
+  <data name="Rates.Policy" xml:space="preserve"><value>Management rate: own fixed costs over normal activity; variable and consumed costs over actual activity.</value></data>
   <data name="Rates.Version" xml:space="preserve"><value>Rate version</value></data>
   <data name="Rates.EconomicRun" xml:space="preserve"><value>Cost run</value></data>
   <data name="Rates.PhysicalVersion" xml:space="preserve"><value>Activity version</value></data>
@@ -1831,7 +1836,7 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Rates.NotApplicable" xml:space="preserve"><value>Not applicable</value></data>
   <data name="Rates.OwnFixed" xml:space="preserve"><value>Own fixed capacity cost</value></data>
   <data name="Rates.Variable" xml:space="preserve"><value>Observed variable</value></data>
-  <data name="Rates.Consumed" xml:space="preserve"><value>Received / without capacity assessment</value></data>
+  <data name="Rates.Consumed" xml:space="preserve"><value>Received or consumed costs</value></data>
   <data name="Rates.Period" xml:space="preserve"><value>Period cost</value></data>
   <data name="Rates.Normal" xml:space="preserve"><value>Normal activity</value></data>
   <data name="Rates.Real" xml:space="preserve"><value>Actual activity</value></data>
@@ -2062,7 +2067,7 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
 <data name="Model.StructureScope" xml:space="preserve"><value>Reusable structure: changes to this draft are not analysis adaptations.</value></data>
 <data name="AllocationUI.WeightMeaning" xml:space="preserve"><value>Percentages must total 100%. Driver quantities are relative weights (30 and 30 allocate 50% each), with a positive total. Equal shares gives the same proportion to each included destination. Check mode and unit.</value></data>
 <data name="AllocationUI.BaseScope" xml:space="preserve"><value>The allocation base contains only parts routed to calculation units. Direct, excluded and pending amounts on other routes are checked in Results and traceability.</value></data>
-<data name="Rates.ScopeHelp" xml:space="preserve"><value>Management rate per unit, not a selling price. Reconciliation is partial: it does not establish consumption by product or order. Each component retains its own base; missing does not mean zero.</value></data>
+<data name="Rates.ScopeHelp" xml:space="preserve"><value>This is not an accounting inventory valuation. Each cost uses its own activity base; without actual consumption by product or order, reconciliation remains partial.</value></data>
 <data name="ImportMapping.ReplaceSummary" xml:space="preserve"><value>Replace {0} with {1} in {2}. The previous import retains its history.</value></data>
 <data name="ImportMapping.AddSummary" xml:space="preserve"><value>Add {0} to analysis {1}</value></data>
 <data name="UX.TechnicalHelp" xml:space="preserve"><value>These examples do not change analysis costs, currency or exchange rates.</value></data>

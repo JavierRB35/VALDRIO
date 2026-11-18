@@ -43,6 +43,25 @@
     </Border>
     <Border Style="{StaticResource Card}" Margin="0,12,0,0">
      <StackPanel>
+      <TextBlock Text="{Binding [BreakdownTitle]}" FontSize="17" FontWeight="SemiBold" Foreground="{DynamicResource Brand.DeepGreen}" Margin="0,0,0,6"/>
+      <TextBlock Text="{Binding [BreakdownHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+      <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="BreakdownTable" ItemsSource="{Binding Breakdown}"
+       AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" HeadersVisibility="Column" RowHeaderWidth="0"
+       AutomationProperties.Name="{Binding [BreakdownTitle]}">
+       <DataGrid.Columns>
+        <DataGridTextColumn x:Name="BreakdownComponentColumn" Binding="{Binding Component}" Width="2*" MinWidth="160" ElementStyle="{StaticResource RateCell}"/>
+        <DataGridTextColumn x:Name="BreakdownCostColumn" Binding="{Binding Cost}" Width="*" MinWidth="110" ElementStyle="{StaticResource RateCell}"/>
+        <DataGridTextColumn x:Name="BreakdownBaseColumn" Binding="{Binding Base}" Width="2*" MinWidth="145" ElementStyle="{StaticResource RateCell}"/>
+        <DataGridTextColumn x:Name="BreakdownRateColumn" Binding="{Binding Rate}" Width="*" MinWidth="115" ElementStyle="{StaticResource RateCell}"/>
+       </DataGrid.Columns>
+      </DataGrid>
+      <TextBlock Text="{Binding CapacitySummary}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="4,10,4,0"/>
+      <TextBlock Text="{Binding ReviewNotice}" TextWrapping="Wrap" Foreground="{DynamicResource Brand.DeepGreen}" Margin="4,6,4,0"
+                 AutomationProperties.LiveSetting="Polite"/>
+     </StackPanel>
+    </Border>
+    <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+     <StackPanel>
       <TextBlock Text="{Binding SelectedRow.Name}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource Brand.DeepGreen}" Margin="0,0,0,8"/>
       <TextBlock Text="{Binding SelectedSummary}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,0,0,12"/>
       <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="AnswersTable" ItemsSource="{Binding Answers}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
