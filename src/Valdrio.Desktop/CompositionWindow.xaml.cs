@@ -135,6 +135,11 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
     private void CatalogBeginningEdit(object? sender,DataGridBeginningEditEventArgs e)
     { if(e.Row.Item is CompositionItemRow { Persisted:true } && CatalogGrid.Columns.IndexOf(e.Column) is not (1 or 4 or 5)) e.Cancel=true; }
     private void AddItem(object sender,RoutedEventArgs e) { Editor.AddItem(); CatalogGrid.ScrollIntoView(Editor.Items.Last()); }
+    private async void InstallUnits(object sender, RoutedEventArgs e)
+    {
+        if (!await ResolveAsync()) return;
+        if (await Editor.InstallDefaultUnitsAsync()) Columns();
+    }
     private async void ImportProducts(object sender,RoutedEventArgs e)
     {
         var dialog = new Microsoft.Win32.OpenFileDialog { Filter = "CSV, TSV y Excel (*.csv;*.tsv;*.txt;*.xlsx)|*.csv;*.tsv;*.txt;*.xlsx|Todos los archivos (*.*)|*.*", CheckFileExists = true };
