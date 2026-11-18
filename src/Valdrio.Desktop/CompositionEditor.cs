@@ -22,10 +22,25 @@ public sealed partial class CompositionItemRow : ObservableObject
     [ObservableProperty] private bool active = true;
     [ObservableProperty] private decimal? referenceUnitCost;
     [ObservableProperty] private string referenceCostSource = "";
+    public string ManualOriginLabel { get; init; } = "Manual";
+    public string CompositionOriginLabel { get; init; } = "Composition";
+    public string CostOriginDisplay => !ReferenceUnitCost.HasValue ? "" :
+        ReferenceCostSource.StartsWith("Composition · ", StringComparison.Ordinal)
+            ? CompositionOriginLabel : ManualOriginLabel;
+    // An existing identity is required before editing its composition, so the
+    // catalogue can always be recovered without creating orphan recipes.
+    public bool CanOpenComposition => Persisted && Kind != CompositionItemKind.Material &&
+        !string.IsNullOrWhiteSpace(Code) && !string.IsNullOrWhiteSpace(Name) && Unit.Value.IsValid;
     partial void OnReferenceUnitCostChanged(decimal? value)
     {
-        ReferenceCostSource = value.HasValue ? "Manual · " + DateTimeOffset.Now.ToString("yyyy-MM-dd") : "";
+        ReferenceCostSource = value.HasValue ? "Manual · " + DateTimeOffset.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) : "";
+        OnPropertyChanged(nameof(CostOriginDisplay));
     }
+    partial void OnReferenceCostSourceChanged(string value) => OnPropertyChanged(nameof(CostOriginDisplay));
+    partial void OnCodeChanged(string value) => OnPropertyChanged(nameof(CanOpenComposition));
+    partial void OnNameChanged(string value) => OnPropertyChanged(nameof(CanOpenComposition));
+    partial void OnUnitChanged(UnitId value) => OnPropertyChanged(nameof(CanOpenComposition));
+    partial void OnKindChanged(CompositionItemKind value) => OnPropertyChanged(nameof(CanOpenComposition));
     public string Label => Code + " · " + Name;
     public CompositionItem Value => new(Id, Code.Trim(), Name.Trim(), Unit, Kind, Active)
     {
@@ -52,12 +67,17 @@ public sealed partial class CompositionEditor : ObservableObject
     private CompositionCatalog catalog = new(default, 0, [], []);
     private CompositionVersion? current;
     private bool loading;
+    private EntityId? transientDraftId;
     private CompositionPool[] pools = [];
     public ObservableCollection<CompositionItemRow> Items { get; } = [];
     public ObservableCollection<CompositionLineRow> Lines { get; } = [];
     public ObservableCollection<CompositionResultRow> Results { get; } = [];
     public ObservableCollection<CompositionAnswer> Answers { get; } = [];
-    public IReadOnlyList<CompositionChoice<UnitId>> Units => host.PhysicalCompany!.Units.Select(u => new CompositionChoice<UnitId>(u.Id, u.Code + " · " + u.Symbol)).ToArray();
+    public IReadOnlyList<CompositionChoice<UnitId>> Units => host.PhysicalCompany!.Units.Select(u =>
+        new CompositionChoice<UnitId>(u.Id,
+            (DefaultActivityUnitCatalog.IsPreset(u) ? texts.Get("ActivityUnit." + u.Code, host.PhysicalUiCulture) : u.Code)
+            + " · " + u.Symbol)).ToArray();
+    public bool HasUnitPreset => host.PhysicalCompany!.Units.Any(u => u.Code == "unit" && u.Dimension == "count" && u.IsDiscrete);
     public IReadOnlyList<CompositionChoice<CompositionItemKind>> Kinds => Enum.GetValues<CompositionItemKind>().Select(v => new CompositionChoice<CompositionItemKind>(v, this[v.ToString()])).ToArray();
     public IReadOnlyList<CompositionChoice<CompositionItemKind>> ImportKinds => new[] { CompositionItemKind.Product, CompositionItemKind.Material, CompositionItemKind.Service }.Select(v => new CompositionChoice<CompositionItemKind>(v, this[v.ToString()])).ToArray();
     public IReadOnlyList<CompositionChoice<ConsumptionBasis>> Bases => Enum.GetValues<ConsumptionBasis>().Select(v => new CompositionChoice<ConsumptionBasis>(v, this[v.ToString()])).ToArray();
@@ -81,7 +101,9 @@ public sealed partial class CompositionEditor : ObservableObject
     public string NumericCulture => host.PhysicalFormatCulture.Name;
     public string Context => host.PhysicalCompany!.Name + " · " + host.Current!.Name + " · " + host.ContextSummary;
     public string ActionLabel(string key) => texts.Get("UX." + key, host.PhysicalUiCulture);
-    public string State => current is null ? this["ChooseRecipe"] : catalog.Items.Single(i => i.Id == current.ProductId).Name + " · " + this[current.State.ToString()] + " · v" + current.Number + (Dirty ? " · " + this["Unsaved"] : "");
+    public string State => current is null ? this["ChooseRecipe"] :
+        catalog.Items.Single(i => i.Id == current.ProductId).Name + (Dirty ? " · " + this["Unsaved"] : "");
+    public bool CanSaveDefinition => Editable && Dirty && !Busy;
     public string this[string key] => texts.Get("Composition." + key, host.PhysicalUiCulture);
     public CompositionEditor(StudyWorkspaceViewModel host, bool initialize = true) { this.host = host; if (initialize) Reload(); }
     partial void OnProductChanged(EntityId value) { OnPropertyChanged(nameof(Versions)); Version = Versions.LastOrDefault()?.Value ?? default; SelectionChanged(); }
@@ -98,7 +120,16 @@ public sealed partial class CompositionEditor : ObservableObject
             throw CompositionCalculator.Error("Number");
         return result;
     }
-    private void Changed() { if (loading) return; Dirty = true; OnPropertyChanged(nameof(Dirty)); OnPropertyChanged(nameof(State)); Invalidate(); }
+    private void Changed() { if (loading) return; Dirty = true; OnPropertyChanged(nameof(Dirty)); OnPropertyChanged(nameof(State)); OnPropertyChanged(nameof(CanSaveDefinition)); Invalidate(); }
+    private CompositionItemRow Row(CompositionItem i, bool persisted = true)
+    {
+        var row = new CompositionItemRow { Id = i.Id, Persisted = persisted, Code = i.Code, Name = i.Name,
+            Kind = i.Kind, Unit = i.UnitId, Active = i.Active, ReferenceUnitCost = i.ReferenceUnitCost,
+            ReferenceCostSource = i.ReferenceCostSource ?? "", ManualOriginLabel = this["OriginManual"],
+            CompositionOriginLabel = this["OriginComposition"] };
+        row.PropertyChanged += (_, _) => Changed();
+        return row;
+    }
     private void Invalidate()
     {
         Results.Clear(); Answers.Clear();
@@ -133,14 +164,12 @@ public sealed partial class CompositionEditor : ObservableObject
             Items.Clear();
             foreach (var i in catalog.Items)
             {
-                var row = new CompositionItemRow { Id = i.Id, Persisted = true, Code = i.Code, Name = i.Name, Kind = i.Kind, Unit = i.UnitId, Active = i.Active,
-                    ReferenceUnitCost = i.ReferenceUnitCost, ReferenceCostSource = i.ReferenceCostSource ?? "" };
-                row.PropertyChanged += (_, _) => Changed(); Items.Add(row);
+                Items.Add(Row(i));
             }
             Targets = catalog.Items.Where(i => i.Kind == CompositionItemKind.Material).Select(i => new CompositionTarget(i.Id, 0, i.UnitId, this["Material"] + " · " + i.Code + " · " + i.Name))
                 .Concat(catalog.Versions.Where(v => v.State == CompositionState.Published && v.ModelVersionId == host.Current!.SelectedModelVersionId && catalog.Items.Single(i => i.Id == v.ProductId).Kind == CompositionItemKind.SemiFinished).Select(v => { var i = catalog.Items.Single(i => i.Id == v.ProductId); return new CompositionTarget(v.Id, 1, i.UnitId, this["SemiFinished"] + " · " + i.Code + " · v" + v.Number); }))
                 .Concat(pools.Where(p => p.ModelId == host.Current!.SelectedModelVersionId).Select(p => new CompositionTarget(p.Id, 2, p.UnitId, this["Activity"] + " · " + p.Name))).ToArray();
-            current = null; Lines.Clear(); Dirty = false; Feedback = "";
+            current = null; transientDraftId = null; Lines.Clear(); Dirty = false; Feedback = "";
             OnPropertyChanged(string.Empty); Invalidate();
         }
         finally { loading = false; }
@@ -148,13 +177,19 @@ public sealed partial class CompositionEditor : ObservableObject
     public void AddItem()
     {
         if (!Writable) return;
-        var row = new CompositionItemRow { Unit = Units.FirstOrDefault()?.Value ?? default };
+        var row = new CompositionItemRow { Unit = Units.FirstOrDefault()?.Value ?? default,
+            ManualOriginLabel = this["OriginManual"], CompositionOriginLabel = this["OriginComposition"] };
         row.PropertyChanged += (_, _) => Changed(); Items.Add(row); Changed();
     }
     public void RemoveItem(CompositionItemRow? row)
     {
         if (!Writable || row is null) return;
-        if (row.Persisted) { Feedback = this["DeactivateHelp"]; return; }
+        if (row.Persisted)
+        {
+            // Historical recipes and estimates retain this stable identity.
+            // Removal from the active catalogue is a reversible deactivation.
+            row.Active = false; Feedback = this["Deactivated"]; Changed(); return;
+        }
         Items.Remove(row); Changed();
     }
     public void ImportProducts(string path) => ImportProductsCore(path, false).GetAwaiter().GetResult();
@@ -182,10 +217,8 @@ public sealed partial class CompositionEditor : ObservableObject
                 }
                 else
                 {
-                    var row = new CompositionItemRow { Id = item.Id, Code = item.Code, Name = item.Name, Kind = item.Kind,
-                        Unit = item.UnitId, Active = item.Active, ReferenceUnitCost = item.ReferenceUnitCost,
-                        ReferenceCostSource = item.ReferenceCostSource ?? "" };
-                    row.PropertyChanged += (_, _) => Changed(); Items.Add(row); rowsById.Add(row.Id, row);
+                    var row = Row(item, persisted: false);
+                    Items.Add(row); rowsById.Add(row.Id, row);
                 }
             }
             Changed(); Feedback = string.Format(host.PhysicalUiCulture, this["ImportComplete"], imported.Count, source);
