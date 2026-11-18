@@ -1,7 +1,8 @@
 using Valdrio.Domain;
 namespace Valdrio.Calculation;
 
-public sealed record CompositionPool(EntityId Id, EntityId ModelId, string Name, UnitId UnitId, bool Active);
+public sealed record CompositionPool(EntityId Id, EntityId ModelId, string Name, UnitId UnitId, bool Active,
+    NodeRole Role = NodeRole.Principal);
 public sealed record CompositionQuantity(string Path, EntityId LineId, EntityId TargetId, bool Activity,
     UnitId UnitId, decimal BasisCount, decimal BaseQuantity, decimal AdjustedQuantity,
     decimal ConvertedQuantity, decimal RequiredQuantity, string Name, bool Expanded = false, UnitId InputUnitId = default);
@@ -53,6 +54,12 @@ public static class CompositionCalculator
                     line.LossKind == CompositionLossKind.Yield && (line.LossPercent <= 0 || line.LossPercent > 100))
                     throw Error("InvalidLine");
                 var target = Target(catalog, pools, version, line);
+                // For newly published compositions, auxiliary services must
+                // be allocated via secondary allocation before product costing.
+                // Historical published versions are still validated/read as-is.
+                if (requireActive && version.Id == selected && line.PoolId is { } poolId &&
+                    pools.Single(p => p.Id == poolId && p.ModelId == version.ModelVersionId).Role != NodeRole.Principal)
+                    throw Error("InvalidLine");
                 var sourceUnit = units.SingleOrDefault(u => u.Id == line.InputUnitId);
                 var targetUnit = units.SingleOrDefault(u => u.Id == target.Unit);
                 if (sourceUnit is null || targetUnit is null || sourceUnit.Dimension != targetUnit.Dimension ||
