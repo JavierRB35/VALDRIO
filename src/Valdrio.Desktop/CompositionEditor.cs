@@ -155,8 +155,9 @@ public sealed partial class CompositionEditor : ObservableObject
     private CompositionItemRow Row(CompositionItem i, bool persisted = true)
     {
         var row = new CompositionItemRow { Id = i.Id, Persisted = persisted, Code = i.Code, Name = i.Name,
-            Kind = i.Kind, Unit = i.UnitId, Active = i.Active, ReferenceUnitCost = i.ReferenceUnitCost,
-            ReferenceCostSource = i.ReferenceCostSource ?? "", CostInputCulture = host.PhysicalFormatCulture, ManualOriginLabel = this["OriginManual"],
+            Kind = i.Kind, Unit = i.UnitId, Active = i.Active, CostInputCulture = host.PhysicalFormatCulture,
+            ReferenceUnitCost = i.ReferenceUnitCost, ReferenceCostSource = i.ReferenceCostSource ?? "",
+            ManualOriginLabel = this["OriginManual"],
             CompositionOriginLabel = this["OriginComposition"] };
         row.PropertyChanged += (_, _) => Changed();
         return row;
@@ -392,13 +393,37 @@ public sealed partial class CompositionEditor : ObservableObject
         }
         return catalog with { Items = Items.Select(i => i.Value).ToArray(), Versions = versions };
     }
+    private CompositionCatalog ApplyCompleteCompositionCost(CompositionCatalog proposal, bool publish)
+    {
+        if (!publish || current is not { State: CompositionState.Draft }) return proposal;
+        var recipe = proposal.Versions.Single(v => v.Id == current.Id);
+        // Per-order inputs cannot be made into a stable unit price without an
+        // explicitly defined order quantity. Activity also needs T15 tariffs.
+        if (recipe.Lines.Any(l => l.Basis == ConsumptionBasis.PerOrder)) return proposal;
+        var quantity = recipe.BatchSize;
+        var preview = CompositionCalculator.Preview(proposal, recipe.Id, quantity, host.PhysicalCompany!.Units, pools);
+        var cost = CompositionCostEstimator.Estimate(proposal, preview, recipe.ProductId,
+            host.PhysicalCompany.DefaultCurrency);
+        if (cost.HasActivity || cost.UnpricedComponents.Count > 0 || cost.PricedComponents is not { } subtotal)
+            return proposal;
+        var unitCost = checked(subtotal / quantity);
+        return proposal with
+        {
+            Items = proposal.Items.Select(item => item.Id == recipe.ProductId
+                ? item with { ReferenceUnitCost = unitCost,
+                    ReferenceCostSource = "Composition · " + recipe.Id }
+                : item).ToArray()
+        };
+    }
+
     public bool Save(bool publish)
     {
         if (!Writable || publish && !Editable || !ValidateInput(publish)) return false;
         try
         {
             var id = current?.Id;
-            host.ActiveCompositions!.SaveCompositions(Proposal(publish), catalog.Revision, "local-user");
+            host.ActiveCompositions!.SaveCompositions(ApplyCompleteCompositionCost(Proposal(publish), publish),
+                catalog.Revision, "local-user");
             Reload(); if (id.HasValue) { Version = id.Value; Open(); }
             Feedback = this["Saved"]; return true;
         }
@@ -412,7 +437,7 @@ public sealed partial class CompositionEditor : ObservableObject
         var committed = false;
         try
         {
-            var proposal = Proposal(publish); var id = current?.Id;
+            var proposal = ApplyCompleteCompositionCost(Proposal(publish), publish); var id = current?.Id;
             var store = host.ActiveCompositions!;
             Busy = true; Feedback = this["Saving"];
             await Task.Run(() => store.SaveCompositions(proposal, catalog.Revision, "local-user"));
