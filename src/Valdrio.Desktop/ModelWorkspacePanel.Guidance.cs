@@ -28,12 +28,13 @@ public partial class ModelWorkspacePanel
     private void PlaceUnitCreationPanel()
     {
         if (unitCreationPanel is null) return;
+        var target = ModelSteps.SelectedIndex == 2 ? NodeUnitsCreationHost : UnitsCreationHost;
+        // Reparenting an editor forces WPF to rebuild bindings and layout. The
+        // current tab has not changed for ordinary edits in a node table.
+        if (ReferenceEquals(target.Content, unitCreationPanel)) return;
         UnitsCreationHost.Content = null;
         NodeUnitsCreationHost.Content = null;
-        if (ModelSteps.SelectedIndex == 2)
-            NodeUnitsCreationHost.Content = unitCreationPanel;
-        else
-            UnitsCreationHost.Content = unitCreationPanel;
+        target.Content = unitCreationPanel;
     }
 
     private async void UnitCreatedFromModel(object sender, RoutedEventArgs e)
