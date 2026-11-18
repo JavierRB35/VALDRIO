@@ -11,6 +11,10 @@
     <TextBlock Text="{Binding [CatalogHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
     <TextBlock Text="{Binding [ImportFormatHelp]}" TextWrapping="Wrap" Margin="0,0,0,12"/>
     <WrapPanel Margin="0,0,0,12" VerticalAlignment="Center"><Button Content="{Binding [AddItem]}" Click="AddItem" IsEnabled="{Binding Writable}" local:FieldHelp.Key="AddItem"/><Button Content="{Binding [ImportProducts]}" Click="ImportProducts" IsEnabled="{Binding Writable}" Margin="8,0,0,0" local:FieldHelp.Key="Import"/><TextBlock Text="{Binding [ImportAs]}" VerticalAlignment="Center" Margin="12,0,6,0"/><ComboBox Width="150" ItemsSource="{Binding ImportKinds}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding ImportKind}" local:FieldHelp.Key="ImportKind"/><Button Content="{Binding [RemoveItem]}" Click="RemoveItem" IsEnabled="{Binding Writable}" Margin="8,0,0,0" local:FieldHelp.Key="RemoveItem"/><Button local:FixedPageActions.Pin="True" Content="{Binding [Save]}" Click="Save" IsEnabled="{Binding Writable}" Margin="8,0,0,0" local:FieldHelp.Key="SaveCatalog"/></WrapPanel>
+    <WrapPanel Margin="0,0,0,8">
+     <Button Content="{Binding [InstallUnits]}" Click="InstallUnits" IsEnabled="{Binding CanInstallUnitPreset}"
+             local:FieldHelp.Key="InstallUnits"/>
+    </WrapPanel>
     <TextBlock Text="{Binding [UnitHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
     <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="CatalogGrid" FrozenColumnCount="1" ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" BeginningEdit="CatalogBeginningEdit" MinHeight="200"/>
    </StackPanel></ScrollViewer></TabItem>
