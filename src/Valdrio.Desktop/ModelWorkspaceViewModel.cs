@@ -911,22 +911,20 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         Reformat();
     }
 
-    private async Task NewNode()
+    private Task NewNode()
     {
+        // Starting the next row stays within this tab: stage valid edits locally
+        // without prompting or writing a new version of the company file.
         if (nodeFormEdited)
         {
-            var decision = dialogs.ResolvePending(Text("Model.PendingTitle"), Text("Model.PendingBody"));
-            if (decision == PendingEditChoice.Cancel) return;
-            if (decision == PendingEditChoice.Save)
-            {
-                await SaveNode();
-                if (nodeFormEdited || diagnostic is not null) return;
-            }
+            ApplyNode();
+            if (nodeFormEdited || diagnostic is not null) return Task.CompletedTask;
         }
         ResetNode();
         diagnostic = null;
         statusKey = "Model.Ready";
         Refresh();
+        return Task.CompletedTask;
     }
 
     private void ClearNodeForm()
