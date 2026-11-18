@@ -133,14 +133,15 @@ public partial class ModelWorkspacePanel : UserControl
 
     private void RefreshTableHeaders()
     {
-        if (tableViewModel is null)
+        var current = tableViewModel;
+        if (current is null)
             return;
 
         // Frequent property changes must not invalidate table layout unless the
         // language really changes a header.
         void Header(DataGridColumn column, string key)
         {
-            var label = tableViewModel.Text(key);
+            var label = current.Text(key);
             if (!Equals(column.Header, label)) column.Header = label;
         }
 
