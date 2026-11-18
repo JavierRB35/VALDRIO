@@ -239,7 +239,7 @@ public sealed partial class CompositionEditor : ObservableObject
                         // Auxiliary nodes are not direct product inputs; their costs
                         // reach principal nodes through the secondary allocation.
                         return new CompositionPool(p.Id, m.Structure.Id, node.Code + " · " + p.Description,
-                            p.DriverUnitId, node.IsActive && node.Role == NodeRole.Principal);
+                            p.DriverUnitId, node.IsActive, node.Role);
                     })).ToArray();
                 return (loadedCatalog, loadedPools);
             };
@@ -253,7 +253,8 @@ public sealed partial class CompositionEditor : ObservableObject
             }
             Targets = catalog.Items.Where(i => i.Kind == CompositionItemKind.Material && i.Active)
                 .Select(i => new CompositionTarget(i.Id, 0, i.UnitId, this["Material"] + " · " + i.Code + " · " + i.Name))
-                .Concat(pools.Where(p => p.ModelId == host.Current!.SelectedModelVersionId && p.Active)
+                .Concat(pools.Where(p => p.ModelId == host.Current!.SelectedModelVersionId &&
+                    p.Active && p.Role == NodeRole.Principal)
                     .Select(p => new CompositionTarget(p.Id, 2, p.UnitId, this["Activity"] + " · " + p.Name))).ToArray();
             current = null; transientDraftId = null; compositionModified = false; Lines.Clear(); Dirty = false; Feedback = "";
             OnPropertyChanged(string.Empty); Invalidate();
