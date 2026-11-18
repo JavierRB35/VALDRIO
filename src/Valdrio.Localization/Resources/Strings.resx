@@ -1985,6 +1985,9 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
   <data name="Composition.Help.Loss" xml:space="preserve"><value>No loss: ×1. Extra input: base × (1 + percentage/100). Useful yield: base ÷ (percentage/100).</value></data>
   <data name="Composition.Help.Percent" xml:space="preserve"><value>Extra 10% turns 10 into 11; useful yield 80% requires 12.5 input for 10 useful units. No loss requires zero.</value></data>
   <data name="Composition.Help.LossFactor" xml:space="preserve"><value>Calculated multiplier: no loss ×1, extra 10% ×1.1, useful yield 80% ×1.25. Hover for the formula.</value></data>
+    <data name="Composition.InstallUnits" xml:space="preserve"><value>Install standard units (including Unit)</value></data>
+  <data name="Composition.InstallUnitsFailed" xml:space="preserve"><value>Could not install the standard unit. Check that the project is open for editing and try again.</value></data>
+  <data name="Composition.Help.InstallUnits" xml:space="preserve"><value>Install missing standard activity units in this project, including Unit (u). Existing units are preserved; no units are added until you press this button.</value></data>
   <data name="Composition.Title" xml:space="preserve"><value>Products and services</value></data>
   <data name="Composition.Scope" xml:space="preserve"><value>Physical composition, planned quantities and management cost estimates from reference unit costs. Estimates are not actual consumption or accounting inventory valuation.</value></data>
   <data name="Composition.Catalog" xml:space="preserve"><value>Catalogue</value></data>
