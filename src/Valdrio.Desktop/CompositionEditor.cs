@@ -528,12 +528,6 @@ public sealed partial class CompositionEditor : ObservableObject
             Answers.Add(new(this["QLoss"], string.Join("; ", selected.Lines.Select(l =>
                 Targets.Single(t => t.Id == (l.MaterialId ?? l.RecipeVersionId ?? l.PoolId)).Label + ": " +
                 this[l.LossKind.ToString()] + (l.LossKind == CompositionLossKind.None ? "" : " " + UiCompactNumbers.Percent(l.LossPercent, host.PhysicalFormatCulture))))));
-            var previous = p.Versions.SingleOrDefault(v => v.ProductId == current.ProductId && v.Number == current.Number - 1);
-            // Ignore line identity when comparing a cloned version with its predecessor.
-            var same = previous is not null && previous.BatchSize == selected.BatchSize &&
-                previous.ModelVersionId == selected.ModelVersionId &&
-                previous.Lines.Select(l => l with { Id = default }).SequenceEqual(selected.Lines.Select(l => l with { Id = default }));
-            Answers.Add(new(this["QChanges"], previous is null ? this["FirstVersion"] : same ? this["SameComposition"] : this["ChangedComposition"] + " v" + previous.Number));
             var estimate = CompositionCostEstimator.Estimate(p, result, selected.ProductId, host.PhysicalCompany!.DefaultCurrency);
             var costParts = new List<string>
             {
