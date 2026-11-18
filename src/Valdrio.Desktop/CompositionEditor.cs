@@ -87,6 +87,43 @@ public sealed partial class CompositionLineRow : ObservableObject
     [ObservableProperty] private ConsumptionBasis basis;
     [ObservableProperty] private CompositionLossKind loss;
     [ObservableProperty] private string percent = "0";
+    public CultureInfo DisplayCulture { get; init; } = CultureInfo.InvariantCulture;
+    public string QuantityWord { get; init; } = "Quantity";
+    public string LossFactorDisplay
+    {
+        get
+        {
+            if (!CompositionItemRow.TryCostInput(Percent, out var fraction) || fraction is null)
+                return "—";
+            var percent = fraction.Value;
+            try
+            {
+                decimal factor = Loss switch
+                {
+                    CompositionLossKind.None when percent == 0 => 1m,
+                    CompositionLossKind.ExtraInput when percent >= 0 => 1m + percent / 100m,
+                    CompositionLossKind.Yield when percent is > 0 and <= 100 => 100m / percent,
+                    _ => -1m
+                };
+                return factor < 0 ? "—" : "× " + factor.ToString("0.############", DisplayCulture);
+            }
+            catch (OverflowException) { return "—"; }
+        }
+    }
+    public string LossFormulaText => Loss switch
+    {
+        CompositionLossKind.None => QuantityWord + " × 1",
+        CompositionLossKind.ExtraInput => QuantityWord + " × (1 + " + Percent + "/100)",
+        CompositionLossKind.Yield => QuantityWord + " / (" + Percent + "/100)",
+        _ => "—"
+    };
+    partial void OnLossChanged(CompositionLossKind value) => UpdateLossExplanation();
+    partial void OnPercentChanged(string value) => UpdateLossExplanation();
+    private void UpdateLossExplanation()
+    {
+        OnPropertyChanged(nameof(LossFactorDisplay));
+        OnPropertyChanged(nameof(LossFormulaText));
+    }
 }
 public sealed record CompositionTarget(EntityId Id, int Kind, UnitId Unit, string Label);
 public sealed partial class CompositionEditor : ObservableObject
@@ -316,7 +353,10 @@ public sealed partial class CompositionEditor : ObservableObject
             Lines.Clear();
             BatchSize = Q(current?.BatchSize ?? 1); Note = current?.Note ?? "";
             foreach (var l in current?.Lines ?? [])
-                Attach(new() { Id = l.Id, Target = ResolveTarget(l), Quantity = Q(l.Quantity), Unit = l.InputUnitId, Factor = Q(l.ConversionFactor), Basis = l.Basis, Loss = l.LossKind, Percent = Q(l.LossPercent) });
+                Attach(new() { Id = l.Id, Target = ResolveTarget(l), Quantity = Q(l.Quantity),
+                    Unit = l.InputUnitId, Factor = Q(l.ConversionFactor), Basis = l.Basis,
+                    Loss = l.LossKind, Percent = Q(l.LossPercent),
+                    DisplayCulture = host.PhysicalFormatCulture, QuantityWord = this["Quantity"] });
             compositionModified = false; Dirty = false; OnPropertyChanged(string.Empty); Invalidate();
         }
         finally { loading = false; }
@@ -350,7 +390,8 @@ public sealed partial class CompositionEditor : ObservableObject
         row.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(row.Target) && row.Target is { } t) { row.Unit = t.Unit; row.Factor = "1"; } CompositionChanged(); };
         Lines.Add(row);
     }
-    public void AddLine() { if (Editable) { Attach(new() { Unit = Units.FirstOrDefault()?.Value ?? default }); CompositionChanged(); } }
+    public void AddLine() { if (Editable) { Attach(new() { Unit = Units.FirstOrDefault()?.Value ?? default,
+        DisplayCulture = host.PhysicalFormatCulture, QuantityWord = this["Quantity"] }); CompositionChanged(); } }
     public void RemoveLine(CompositionLineRow? row) { if (Editable && row is not null) { Lines.Remove(row); CompositionChanged(); } }
     private bool ValidateInput(bool publish, bool preview = false)
     {
