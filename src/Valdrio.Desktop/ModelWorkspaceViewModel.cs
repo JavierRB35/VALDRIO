@@ -580,6 +580,9 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string RoleLabel => Text("Model.Role");
     public string FunctionLabel => Text("Model.FunctionTags");
     public string EconomicFunctionLabel => Text("Model.EconomicFunction");
+    public string SelectedEconomicFunctionDisplay => Text("Model.Function." + EconomicFunctionChoice);
+    public string SelectedFunctionsDisplay => Text("Model.Purpose." + TariffPurposeChoice) +
+        (string.IsNullOrWhiteSpace(AdditionalFunctionTags) ? "" : " · " + AdditionalFunctionTags);
     public string TariffPurposeLabel => Text("Model.TariffPurpose");
     public string EconomicClassificationHelp => Text("Model.EconomicClassificationHelp");
     public string UnitLabel => Text("Model.DriverUnit");
