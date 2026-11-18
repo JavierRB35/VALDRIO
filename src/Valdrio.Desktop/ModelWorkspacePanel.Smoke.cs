@@ -171,7 +171,14 @@ public partial class ModelWorkspacePanel
         Check(vm.Role?.Value == NodeRole.Principal &&
             vm.PoolDescription == "Shared service cost pool",
             "principal/auxiliary and pool description can both be edited");
-        await Click(ApplyNodeButton);
+        Check(!ApplyNodeButton.IsVisible && vm.IsDirty,
+            "editing an existing node stages the change without an immediate save button");
+        pending.Choices.Enqueue(PendingEditChoice.Save);
+        ModelSteps.SelectedIndex = 3;
+        for (var attempt = 0; attempt < 1000 && (vm.IsDirty || ModelSteps.SelectedIndex != 3); attempt++)
+            await Task.Delay(20);
+        Check(!vm.IsDirty && ModelSteps.SelectedIndex == 3,
+            "leaving calculation nodes saves the staged changes asynchronously");
         Check(vm.Current!.Structure.Nodes.Single(n => n.Code == "MANT").Role == NodeRole.Principal &&
             vm.Current.Structure.Pools.Single(p =>
                 p.NodeId == vm.Current.Structure.Nodes.Single(n => n.Code == "MANT").Id).Description == "Shared service cost pool",
