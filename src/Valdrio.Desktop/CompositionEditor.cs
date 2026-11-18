@@ -145,6 +145,14 @@ public sealed partial class CompositionEditor : ObservableObject
             (DefaultActivityUnitCatalog.IsPreset(u) ? texts.Get("ActivityUnit." + u.Code, host.PhysicalUiCulture) : u.Code)
             + " · " + u.Symbol)).ToArray();
     public bool HasUnitPreset => host.PhysicalCompany!.Units.Any(u => u.Code == "unit" && u.Dimension == "count" && u.IsDiscrete);
+    public bool CanInstallUnitPreset => Writable && !HasUnitPreset;
+    public async Task<bool> InstallDefaultUnitsAsync()
+    {
+        if (!await host.InstallProductUnitsAsync())
+        { Feedback = this["InstallUnitsFailed"]; return false; }
+        await ReloadForDisplayAsync();
+        return HasUnitPreset;
+    }
     public IReadOnlyList<CompositionChoice<CompositionItemKind>> Kinds => Enum.GetValues<CompositionItemKind>().Select(v => new CompositionChoice<CompositionItemKind>(v, this[v.ToString()])).ToArray();
     public IReadOnlyList<CompositionChoice<CompositionItemKind>> ImportKinds => new[] { CompositionItemKind.Product, CompositionItemKind.Material, CompositionItemKind.Service }.Select(v => new CompositionChoice<CompositionItemKind>(v, this[v.ToString()])).ToArray();
     public IReadOnlyList<CompositionChoice<ConsumptionBasis>> Bases => Enum.GetValues<ConsumptionBasis>().Select(v => new CompositionChoice<ConsumptionBasis>(v, this[v.ToString()])).ToArray();
@@ -317,7 +325,8 @@ public sealed partial class CompositionEditor : ObservableObject
                 "UnitMismatch" => string.Format(host.PhysicalUiCulture, this["ImportUnitMismatch"], details.Last()),
                 "Cost" or "Data" or "Columns" => string.Format(host.PhysicalUiCulture, this["ImportInvalidRow"], details.Last()),
                 "Empty" => this["ImportEmpty"], "Headers" => this["ImportHeaders"], "Quotes" => this["ImportQuotes"],
-                "ReferenceAmbiguous" => this["ImportReferenceAmbiguous"], _ => this["ImportFailed"]
+                "ReferenceAmbiguous" => this["ImportReferenceAmbiguous"],
+                "Xlsx" => this["ImportXlsxInvalid"], _ => this["ImportFailed"]
             };
     }
     public bool OpenProduct(EntityId id)
