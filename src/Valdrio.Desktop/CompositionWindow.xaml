@@ -8,31 +8,35 @@
   </StackPanel>
   <TabControl x:Name="ProductTabs" Grid.Row="1">
    <TabItem Header="{Binding [Catalog]}"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="12">
-    <TextBlock Text="{Binding [CatalogHelp]}" TextWrapping="Wrap" Margin="0,0,0,12"/>
-    <WrapPanel Margin="0,0,0,12" VerticalAlignment="Center"><Button Content="{Binding [AddItem]}" Click="AddItem" IsEnabled="{Binding Writable}"/><Button Content="{Binding [ImportProducts]}" Click="ImportProducts" IsEnabled="{Binding Writable}" Margin="8,0,0,0"/><TextBlock Text="{Binding [ImportAs]}" VerticalAlignment="Center" Margin="12,0,6,0"/><ComboBox Width="150" ItemsSource="{Binding ImportKinds}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding ImportKind}"/><Button Content="{Binding [RemoveItem]}" Click="RemoveItem" IsEnabled="{Binding Writable}" Margin="8,0,0,0"/><Button local:FixedPageActions.Pin="True" Content="{Binding [Save]}" Click="Save" IsEnabled="{Binding Writable}" Margin="8,0,0,0"/></WrapPanel>
+    <TextBlock Text="{Binding [CatalogHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+    <TextBlock Text="{Binding [ImportFormatHelp]}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+    <WrapPanel Margin="0,0,0,12" VerticalAlignment="Center"><Button Content="{Binding [AddItem]}" Click="AddItem" IsEnabled="{Binding Writable}" local:FieldHelp.Key="AddItem"/><Button Content="{Binding [ImportProducts]}" Click="ImportProducts" IsEnabled="{Binding Writable}" Margin="8,0,0,0" local:FieldHelp.Key="Import"/><TextBlock Text="{Binding [ImportAs]}" VerticalAlignment="Center" Margin="12,0,6,0"/><ComboBox Width="150" ItemsSource="{Binding ImportKinds}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding ImportKind}" local:FieldHelp.Key="ImportKind"/><Button Content="{Binding [RemoveItem]}" Click="RemoveItem" IsEnabled="{Binding Writable}" Margin="8,0,0,0" local:FieldHelp.Key="RemoveItem"/><Button local:FixedPageActions.Pin="True" Content="{Binding [Save]}" Click="Save" IsEnabled="{Binding Writable}" Margin="8,0,0,0" local:FieldHelp.Key="SaveCatalog"/></WrapPanel>
+    <TextBlock Text="{Binding [UnitHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
     <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="CatalogGrid" FrozenColumnCount="1" ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" BeginningEdit="CatalogBeginningEdit" MinHeight="200"/>
    </StackPanel></ScrollViewer></TabItem>
    <TabItem Header="{Binding [Recipe]}"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="12">
     <Border Style="{StaticResource Card}"><StackPanel>
-     <WrapPanel><StackPanel Margin="0,0,12,8"><TextBlock Text="{Binding [Product]}"/><ComboBox Width="250" ItemsSource="{Binding Products}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Product}"/></StackPanel>
-      <StackPanel Margin="0,0,12,8"><TextBlock Text="{Binding [Version]}"/><ComboBox Width="180" ItemsSource="{Binding Versions}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Version}"/></StackPanel>
-      <Button Content="{Binding [Open]}" Click="Open" Margin="0,16,8,8" Style="{StaticResource Button.PendingSelection}" Tag="{Binding HasPendingCompositionOpen}"/><Button Content="{Binding [NewVersion]}" Click="NewVersion" IsEnabled="{Binding Writable}" Margin="0,16,0,8"/>
+     <WrapPanel><StackPanel Margin="0,0,12,8"><TextBlock Text="{Binding [Product]}"/><ComboBox Width="250" ItemsSource="{Binding Products}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Product}" local:FieldHelp.Key="Product"/></StackPanel>
+      <Button Content="{Binding [Open]}" Click="Open" Margin="0,16,8,8" Style="{StaticResource Button.PendingSelection}" Tag="{Binding HasPendingCompositionOpen}" local:FieldHelp.Key="OpenProduct"/>
      </WrapPanel>
      <TextBlock Text="{Binding State}" FontWeight="SemiBold" Margin="0,4,0,8"/>
-     <WrapPanel IsEnabled="{Binding Editable}"><StackPanel Margin="0,0,16,8"><TextBlock Text="{Binding [BatchSize]}"/><TextBox Text="{Binding BatchSize, UpdateSourceTrigger=PropertyChanged}" Width="130"/></StackPanel>
-      <StackPanel Margin="0,0,0,8"><TextBlock Text="{Binding [Note]}"/><TextBox Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" Width="450"/></StackPanel></WrapPanel>
-     <TextBlock Text="{Binding [LineHelp]}" TextWrapping="Wrap" Margin="0,4,0,12"/>
-     <WrapPanel IsEnabled="{Binding Editable}" Margin="0,0,0,8"><Button Content="{Binding [AddLine]}" Click="AddLine"/><Button Content="{Binding [RemoveLine]}" Click="RemoveLine" Margin="8,0,0,0"/></WrapPanel>
+     <WrapPanel IsEnabled="{Binding Editable}"><StackPanel Margin="0,0,16,8"><TextBlock Text="{Binding [BatchSize]}"/><TextBox Text="{Binding BatchSize, UpdateSourceTrigger=PropertyChanged}" Width="130" local:FieldHelp.Key="BatchSize"/></StackPanel>
+      </WrapPanel>
+     <TextBlock Text="{Binding [LineHelp]}" TextWrapping="Wrap" Margin="0,4,0,6"/>
+     <TextBlock Text="{Binding [LossExamplesHelp]}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+     <WrapPanel IsEnabled="{Binding Editable}" Margin="0,0,0,8"><Button Content="{Binding [AddLine]}" Click="AddLine" local:FieldHelp.Key="AddLine"/><Button Content="{Binding [RemoveLine]}" Click="RemoveLine" Margin="8,0,0,0" local:FieldHelp.Key="RemoveLine"/></WrapPanel>
      <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="LinesGrid" ItemsSource="{Binding Lines}" IsReadOnly="{Binding LinesReadOnly}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" MinHeight="160"/>
-     <WrapPanel local:FixedPageActions.Pin="True" Margin="0,4,0,0"><Button Content="{Binding [SaveDraft]}" Click="Save" IsEnabled="{Binding Editable}"/><Button Content="{Binding [Publish]}" Click="Publish" IsEnabled="{Binding Editable}" Style="{StaticResource Button.Primary}" Margin="8,0,0,0"/></WrapPanel>
+     <WrapPanel local:FixedPageActions.Pin="True" Margin="0,4,0,0">
+      <Button Content="{Binding [SaveCompositionAndCatalog]}" Click="SaveComposition" IsEnabled="{Binding CanSaveDefinition}" Style="{StaticResource Button.Primary}" local:FieldHelp.Key="SaveComposition"/>
+     </WrapPanel>
     </StackPanel></Border>
     <Border Style="{StaticResource Card}" Margin="0,12,0,0"><StackPanel>
-     <WrapPanel><StackPanel Margin="0,0,12,8"><TextBlock Text="{Binding [OutputQuantity]}"/><TextBox Text="{Binding OutputQuantity, UpdateSourceTrigger=PropertyChanged}" Width="150"/></StackPanel><Button Content="{Binding [Preview]}" Click="Preview" Margin="0,16,0,8"/></WrapPanel>
+     <WrapPanel><StackPanel Margin="0,0,12,8"><TextBlock Text="{Binding [OutputQuantity]}"/><TextBox Text="{Binding OutputQuantity, UpdateSourceTrigger=PropertyChanged}" Width="150" local:FieldHelp.Key="OutputQuantity"/></StackPanel><Button Content="{Binding [Preview]}" Click="Preview" Margin="0,16,0,8" local:FieldHelp.Key="Preview"/></WrapPanel>
      <DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="AnswersGrid" ItemsSource="{Binding Answers}" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column"/>
      <Expander Header="{Binding [Detail]}" Margin="0,12,0,0"><DataGrid ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="ResultsGrid" ItemsSource="{Binding Results}" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False"/></Expander>
     </StackPanel></Border>
    </StackPanel></ScrollViewer></TabItem>
   </TabControl>
-  <DockPanel Grid.Row="2" Margin="0,12,0,0"><Button DockPanel.Dock="Right" Content="{Binding [Close]}" Click="ClosePage"/><Button DockPanel.Dock="Right" Content="{Binding [Reload]}" Click="Reload" Margin="8,0"/><TextBlock Text="{Binding Feedback}" TextWrapping="Wrap" VerticalAlignment="Center" AutomationProperties.LiveSetting="Polite"/></DockPanel>
+  <DockPanel Grid.Row="2" Margin="0,12,0,0"><Button DockPanel.Dock="Right" Content="{Binding [Close]}" Click="ClosePage" local:FieldHelp.Key="Close"/><Button DockPanel.Dock="Right" Content="{Binding [Reload]}" Click="Reload" Margin="8,0" local:FieldHelp.Key="Reload"/><TextBlock Text="{Binding Feedback}" TextWrapping="Wrap" VerticalAlignment="Center" AutomationProperties.LiveSetting="Polite"/></DockPanel>
  </Grid>
 </local:IntegratedWorkspaceWindow>
