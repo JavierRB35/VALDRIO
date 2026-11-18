@@ -512,7 +512,9 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         return d.Code + ": " + localized.Message + (detail.Length == 0 ? "" : " [" + detail + "]");
     }
 
-    public string Status => diagnostic is null ? Text(committedRefreshPending && !busy ? "Model.CommittedRefreshPending" : statusKey) : DiagnosticText(diagnostic);
+    public string Status => diagnostic is not null ? DiagnosticText(diagnostic) :
+        Text(committedRefreshPending && !busy ? "Model.CommittedRefreshPending" :
+            IsDirty && statusKey == "Model.NodeSaved" ? "Model.Ready" : statusKey);
     public string CenterFeedback => diagnostic is not null && (CenterFormEdited || Master is not null) ||
         statusKey.StartsWith("Model.Center", StringComparison.Ordinal) ? Status : "";
     public string NodeFeedback => diagnostic is not null && (nodeFormEdited || SelectedNode is not null || dirty) ||
