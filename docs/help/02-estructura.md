@@ -27,6 +27,12 @@ Definir y versionar centros, nodos de coste, pools y unidades. Esta estructura p
 | Estado y validación | Comprobaciones de modelo | Informa si existen requisitos pendientes para publicar. |
 | Versión publicada | Estructura persistida | Base de referencia para análisis y repartos posteriores. |
 
+### Edición de nodos sin interrumpir el trabajo
+
+En **Nodos de cálculo**, selecciona una fila y edita sus celdas. **Función económica** es un desplegable con las opciones aprobadas; **Funciones** presenta etiquetas legibles, nunca identificadores internos de rutas del mapa. Al cambiar de fila, los cambios válidos se preparan en el borrador local y **no se escribe aún el archivo de empresa**. Si algún dato es incorrecto, la selección se mantiene y se explica qué corregir.
+
+**Al intentar salir de la pestaña**, si existen cambios sin guardar, elige **Guardar y continuar**, **Descartar** o **Seguir editando**. El guardado se realiza en segundo plano y mantiene el indicador global de actividad. Si falla, se conservan los cambios para corregirlos y reintentar. Los nodos nuevos siguen necesitando la acción explícita «Guardar nodo» para incorporarse a la tabla; los existentes no muestran un botón de guardado en cada cambio.
+
 ## 4. Casos de uso, validaciones y errores frecuentes
 - Si no hay centro, nodo principal o unidad válida, completar el borrador antes de publicar.
 - No tratar la modificación de una versión publicada como edición directa: generar una versión o clon cuando corresponda.
