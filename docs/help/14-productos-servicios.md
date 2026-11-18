@@ -9,7 +9,7 @@ Esta pantalla define qué componentes físicos necesita un producto o servicio y
 El importe de referencia es un dato de gestión: **no es consumo real, coste observado ni valoración contable de existencias o producción en curso**. El consumo real y sus desviaciones corresponden a T19; la valoración contable, a T32. Los costes unitarios usan la moneda predeterminada de la empresa.
 
 ## 2. Importar productos y costes unitarios
-En la pestaña **Catálogo**, selecciona **Importar productos y costes unitarios** y elige un archivo CSV o TSV. El archivo debe incluir una fila de cabeceras y estas cuatro columnas:
+En la pestaña **Catálogo**, selecciona **Importar productos y costes unitarios** y elige un archivo CSV/TSV o XLSX. El archivo debe incluir una fila de cabeceras y estas cuatro columnas:
 
 | Columna | Qué introducir | Ejemplo |
 | :--- | :--- | :--- |
@@ -26,15 +26,19 @@ Al importar otra vez, VALDRIO busca la referencia. Si existe, actualiza su nombr
 
 El catálogo muestra el coste unitario y el nombre del fichero de origen con la fecha de importación. El registro de cambios de la empresa conserva la trazabilidad de las modificaciones. Los precios importados se expresan en la moneda predeterminada de la empresa; no se aplica conversión de divisa.
 
-## 3. Crear y publicar una composición
-1. Guarda o importa primero los productos y materiales del catálogo.
-2. En **Composición**, selecciona un producto o servicio y abre una versión o crea un borrador.
-3. Indica el tamaño del lote cuando una preparación compartida lo requiera. Añade cada componente en la tabla con cantidad, unidad de entrada, factor de conversión y aplicación por unidad, lote iniciado u orden.
-4. Usa **Exceso de entrada** para expresar material adicional sobre la cantidad base. Usa **Rendimiento útil** para expresar qué proporción de la entrada produce cantidad útil. Son hipótesis físicas: no determinan por sí solas si una pérdida es normal ni cómo debe tratarse contablemente.
-5. Para un componente semielaborado, selecciona una versión publicada del mismo modelo. La aplicación expande esa versión y suma sus componentes finales una sola vez, evitando contar también el semielaborado como un coste adicional.
-6. Guarda el borrador para continuar editándolo. **Publicar** fija la versión; para cambiarla, crea una nueva versión.
+## 3. Editar la composición activa
 
-Las conversiones son explícitas y solo se permiten entre unidades de la misma dimensión. El factor indica unidades del componente por unidad introducida; si ambas unidades son iguales, el factor debe ser 1. Las cantidades de unidades discretas se redondean hacia arriba después de convertir. Un lote parcial requiere la preparación completa del lote iniciado (por ejemplo, 120 unidades con un lote de 50 requieren 3 preparaciones).
+1. Da de alta un producto, material o servicio con referencia, nombre, tipo y unidad; pulsa **Guardar catálogo**. La opción **Unidad (u)** está en las unidades predeterminadas. En empresas antiguas puedes instalar las unidades estándar desde el botón de la pantalla.
+2. Si introduces un **coste de referencia manual**, acepta números como `12,50` o `12.50` (sin separador de miles). El origen se identifica automáticamente. Al abrir una composición desde una referencia con coste manual no nulo se explica la prioridad de los importes.
+3. En **Composición**, selecciona el producto y pulsa **Abrir**. No necesitas elegir borrador, número de versión ni publicar explícitamente. Edita los materiales y actividades y pulsa **Guardar composición y catálogo**.
+4. Las actividades admitidas proceden de **nodos principales**, incluidos factores de mano de obra directa. Los **auxiliares no aparecen** como componentes: sus costes deben llegar por el reparto secundario. Los materiales son referencias activas del propio catálogo.
+5. Introduce base física, cantidad, unidad, factor y merma/rendimiento. **Exceso de entrada** del 10 %: 10 × 1,10 = 11 unidades. **Rendimiento útil** del 80 %: 10 / 0,80 = 12,5 unidades. La tabla muestra el factor resultante en tiempo real.
+
+Si **todos los materiales tienen precio**, no queda actividad sin valorar y el cálculo no depende de una cantidad de orden no definida, VALDRIO actualiza el coste de referencia unitario a partir del desglose. Cuando falta precio o una tarifa de actividad, **no inventa un coste completo ni sustituye la referencia manual**: el resultado se explica como parcial.
+
+**Compatibilidad histórica:** los controles de versiones desaparecen del recorrido ordinario, pero las definiciones publicadas siguen congeladas internamente porque órdenes presupuestadas e históricos pueden referenciarlas. Cambiar una composición no sobrescribe esos datos.
+
+Las referencias guardadas se **desactivan**, no se eliminan físicamente, para preservar sus relaciones. Puedes reactivarlas marcando **Activo**. Las conversiones solo se permiten entre unidades de la misma dimensión; las unidades discretas se redondean al alza después de convertir.
 
 ## 4. Casos de uso e interpretación del coste estimado
 Escribe la cantidad de salida y selecciona **Calcular necesidades físicas**. La tabla de resultados detalla los componentes, las cantidades base y ajustadas y la cantidad necesaria tras conversiones y redondeos. El resumen expande los semielaborados y muestra solo materiales y actividades finales.
