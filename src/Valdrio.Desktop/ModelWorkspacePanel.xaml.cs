@@ -133,19 +133,28 @@ public partial class ModelWorkspacePanel : UserControl
 
     private void RefreshTableHeaders()
     {
-        if (tableViewModel is null)
+        var current = tableViewModel;
+        if (current is null)
             return;
 
-        CenterGrid.Columns[0].Header = tableViewModel.Text("Model.ColumnCode");
-        CenterGrid.Columns[1].Header = tableViewModel.Text("Model.ColumnName");
-        CenterGrid.Columns[2].Header = tableViewModel.Text("Model.ColumnStatus");
+        // Frequent property changes must not invalidate table layout unless the
+        // language really changes a header.
+        void Header(DataGridColumn column, string key)
+        {
+            var label = current.Text(key);
+            if (!Equals(column.Header, label)) column.Header = label;
+        }
 
-        NodeSummary.Columns[0].Header = tableViewModel.Text("Model.ColumnCenter");
-        NodeSummary.Columns[1].Header = tableViewModel.Text("Model.ColumnCode");
-        NodeSummary.Columns[2].Header = tableViewModel.Text("Model.ColumnRole");
-        NodeSummary.Columns[3].Header = tableViewModel.Text("Model.ColumnUnit");
-        NodeSummary.Columns[4].Header = tableViewModel.Text("Model.NodeDescription");
-        NodeSummary.Columns[5].Header = tableViewModel.Text("Model.ColumnFunctions");
-        NodeSummary.Columns[6].Header = tableViewModel.Text("Model.EconomicFunction");
+        Header(CenterGrid.Columns[0], "Model.ColumnCode");
+        Header(CenterGrid.Columns[1], "Model.ColumnName");
+        Header(CenterGrid.Columns[2], "Model.ColumnStatus");
+
+        Header(NodeSummary.Columns[0], "Model.ColumnCenter");
+        Header(NodeSummary.Columns[1], "Model.ColumnCode");
+        Header(NodeSummary.Columns[2], "Model.ColumnRole");
+        Header(NodeSummary.Columns[3], "Model.ColumnUnit");
+        Header(NodeSummary.Columns[4], "Model.NodeDescription");
+        Header(NodeSummary.Columns[5], "Model.ColumnFunctions");
+        Header(NodeSummary.Columns[6], "Model.EconomicFunction");
     }
 }

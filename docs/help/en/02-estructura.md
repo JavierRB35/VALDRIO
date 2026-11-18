@@ -25,6 +25,12 @@ Define and publish the structure of physical centres, analytical nodes and cost 
 | Validation state | Model rule checks | Indicates missing requirements. |
 | Published version | Persisted structure | Provides the baseline for later analyses and allocations. |
 
+### Editing calculation nodes without interruptions
+
+Under **Calculation nodes**, select a row and edit its cells. **Economic function** is a drop-down of approved categories; **Functions** presents readable labels rather than internal process-route IDs. Changing rows stages valid edits in the local draft **without writing the company file**. Invalid edits keep the row selected and explain what needs fixing.
+
+**When leaving the tab**, if changes are pending, choose **Save and continue**, **Discard** or **Keep editing**. Saving runs off the UI thread and uses the common activity indicator. Failed saves retain the edits for correction and retry. New nodes still use the explicit **Save node** action to add them to the list; existing nodes do not need a save button after each edit.
+
 ## 4. Use cases, validation and common errors
 - Complete centres, principal nodes and units before publishing.
 - Do not edit a published version as if it were a draft; create a new version or copy where required.

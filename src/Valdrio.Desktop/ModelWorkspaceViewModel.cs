@@ -43,6 +43,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     private UnitOption? unit, unitMaster;
     private ModelOption? choice;
     private NodeOption? node;
+    private bool stagingNodeSelection;
     private RoleOption? role;
     private LayerOption? layer;
     private DomainDiagnostic? diagnostic;
@@ -246,19 +247,23 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         get => node;
         set
         {
+            if (stagingNodeSelection) return;
+            // Editing another row stages the previous node locally. It never writes
+            // the company file or asks for confirmation per cell/row: saving is
+            // resolved when leaving the tab or the workspace.
             if (!loading && node?.Node.Id != value?.Node.Id && nodeFormEdited)
             {
-                var decision = dialogs.ResolvePending(Text("Model.PendingTitle"), Text("Model.PendingBody"));
-                if (decision == PendingEditChoice.Cancel)
+                var nextId = value?.Node.Id;
+                stagingNodeSelection = true;
+                try { ApplyNode(); }
+                finally { stagingNodeSelection = false; }
+                if (nodeFormEdited || diagnostic is not null)
                 {
                     OnPropertyChanged(nameof(SelectedNode));
                     return;
                 }
-                if (decision == PendingEditChoice.Save)
-                {
-                    _ = SaveNodeThenSelect(value?.Node.Id);
-                    return;
-                }
+                // ApplyNode rebuilds the table; use the new row instance.
+                value = Nodes.FirstOrDefault(x => x.Node.Id == nextId);
             }
 
             if (!SetProperty(ref node, value) || loading) return;
@@ -275,17 +280,6 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
             nodeFormEdited = false;
             Refresh();
         }
-    }
-
-    private async Task SaveNodeThenSelect(EntityId? selectedId)
-    {
-        await SaveNode();
-        if (nodeFormEdited || diagnostic is not null)
-        {
-            OnPropertyChanged(nameof(SelectedNode));
-            return;
-        }
-        SelectedNode = Nodes.SingleOrDefault(x => x.Node.Id == selectedId);
     }
 
     private bool NodeFormHasChanges()
@@ -518,7 +512,9 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         return d.Code + ": " + localized.Message + (detail.Length == 0 ? "" : " [" + detail + "]");
     }
 
-    public string Status => diagnostic is null ? Text(committedRefreshPending && !busy ? "Model.CommittedRefreshPending" : statusKey) : DiagnosticText(diagnostic);
+    public string Status => diagnostic is not null ? DiagnosticText(diagnostic) :
+        Text(committedRefreshPending && !busy ? "Model.CommittedRefreshPending" :
+            IsDirty && statusKey == "Model.NodeSaved" ? "Model.Ready" : statusKey);
     public string CenterFeedback => diagnostic is not null && (CenterFormEdited || Master is not null) ||
         statusKey.StartsWith("Model.Center", StringComparison.Ordinal) ? Status : "";
     public string NodeFeedback => diagnostic is not null && (nodeFormEdited || SelectedNode is not null || dirty) ||
@@ -574,7 +570,7 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string NodeListHelp => Text("Model.NodeListHelp");
     public string NodeFormTitle => Text(SelectedNode is null ? "Model.NodeFormNew" : "Model.NodeFormEdit");
     public string NodePrimaryActionLabel => Text(SelectedNode is null ? "Model.NodeSaveCreate" : "Model.NodeSaveEdit");
-    public string NodePersistenceHelp => Text("Model.NodePersistenceHelp");
+    public string NodePersistenceHelp => Text(SelectedNode is null ? "Model.NodePersistenceHelp" : "Model.NodeEditDeferredHelp");
     public string OptionalNodeDataLabel => Text("Model.OptionalNodeData");
     public string FunctionHelp => Text("Model.FunctionHelp");
     public string RoleHelp => Text("Model.RoleHelp");
@@ -586,6 +582,9 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
     public string RoleLabel => Text("Model.Role");
     public string FunctionLabel => Text("Model.FunctionTags");
     public string EconomicFunctionLabel => Text("Model.EconomicFunction");
+    public string SelectedEconomicFunctionDisplay => Text("Model.Function." + EconomicFunctionChoice);
+    public string SelectedFunctionsDisplay => Text("Model.Purpose." + TariffPurposeChoice) +
+        (string.IsNullOrWhiteSpace(AdditionalFunctionTags) ? "" : " · " + AdditionalFunctionTags);
     public string TariffPurposeLabel => Text("Model.TariffPurpose");
     public string EconomicClassificationHelp => Text("Model.EconomicClassificationHelp");
     public string UnitLabel => Text("Model.DriverUnit");
@@ -914,22 +913,20 @@ public sealed partial class ModelWorkspaceViewModel : ObservableObject, IDisposa
         Reformat();
     }
 
-    private async Task NewNode()
+    private Task NewNode()
     {
+        // Starting the next row stays within this tab: stage valid edits locally
+        // without prompting or writing a new version of the company file.
         if (nodeFormEdited)
         {
-            var decision = dialogs.ResolvePending(Text("Model.PendingTitle"), Text("Model.PendingBody"));
-            if (decision == PendingEditChoice.Cancel) return;
-            if (decision == PendingEditChoice.Save)
-            {
-                await SaveNode();
-                if (nodeFormEdited || diagnostic is not null) return;
-            }
+            ApplyNode();
+            if (nodeFormEdited || diagnostic is not null) return Task.CompletedTask;
         }
         ResetNode();
         diagnostic = null;
         statusKey = "Model.Ready";
         Refresh();
+        return Task.CompletedTask;
     }
 
     private void ClearNodeForm()

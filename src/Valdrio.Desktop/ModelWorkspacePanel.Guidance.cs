@@ -28,12 +28,13 @@ public partial class ModelWorkspacePanel
     private void PlaceUnitCreationPanel()
     {
         if (unitCreationPanel is null) return;
+        var target = ModelSteps.SelectedIndex == 2 ? NodeUnitsCreationHost : UnitsCreationHost;
+        // Reparenting an editor forces WPF to rebuild bindings and layout. The
+        // current tab has not changed for ordinary edits in a node table.
+        if (ReferenceEquals(target.Content, unitCreationPanel)) return;
         UnitsCreationHost.Content = null;
         NodeUnitsCreationHost.Content = null;
-        if (ModelSteps.SelectedIndex == 2)
-            NodeUnitsCreationHost.Content = unitCreationPanel;
-        else
-            UnitsCreationHost.Content = unitCreationPanel;
+        target.Content = unitCreationPanel;
     }
 
     private async void UnitCreatedFromModel(object sender, RoutedEventArgs e)
@@ -83,9 +84,37 @@ public partial class ModelWorkspacePanel
         PlaceUnitCreationPanel();
         (Window.GetWindow(this) as MainWindow)?.UpdateWorkflow();
     }
-    private void ModelStepChanged(object sender, SelectionChangedEventArgs e)
+    private bool resolvingNodeTabExit;
+    private async void ModelStepChanged(object sender, SelectionChangedEventArgs e)
     {
         if (e.Source != ModelSteps) return;
+        // A change in the node table is only a local draft. Ask to save,
+        // discard or stay once, when the analyst leaves this tab.
+        if (!resolvingNodeTabExit && e.RemovedItems.Contains(ModelTab2) &&
+            ModelSteps.SelectedItem is TabItem destination &&
+            DataContext is ModelWorkspaceViewModel { IsDirty: true } vm)
+        {
+            resolvingNodeTabExit = true;
+            ModelSteps.SelectedItem = ModelTab2;
+            try
+            {
+                // Commit the active cell before checking the pending form.
+                NodeSummary.CommitEdit(DataGridEditingUnit.Cell, true);
+                NodeSummary.CommitEdit(DataGridEditingUnit.Row, true);
+                ModelSteps.IsEnabled = false;
+                if (!await vm.CanLeaveAsync()) return;
+                ModelSteps.SelectedItem = destination;
+            }
+            finally
+            {
+                ModelSteps.IsEnabled = true;
+                resolvingNodeTabExit = false;
+                (Window.GetWindow(this) as MainWindow)?.ClearFieldHelp();
+                PlaceUnitCreationPanel();
+                RefreshGuidance();
+            }
+            return;
+        }
         (Window.GetWindow(this) as MainWindow)?.ClearFieldHelp();
         PlaceUnitCreationPanel();
         RefreshGuidance();
@@ -163,7 +192,7 @@ public partial class ModelWorkspacePanel
                 if (!vm.HasActiveUnit) NodeUnitCreator.IsExpanded = true;
                 break;
             case 2:
-                if (vm.HasPendingNode) await vm.SaveNodeCommand.ExecuteAsync(null);
+                if (vm.IsDirty && !await vm.CanLeaveAsync()) { ShowNextRequiredStep(); return false; }
                 if (vm.HasPendingNode || !vm.HasPrincipal) { ShowNextRequiredStep(); return false; }
                 ModelSteps.SelectedIndex = 3; break;
             case 3:

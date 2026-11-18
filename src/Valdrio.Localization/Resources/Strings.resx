@@ -893,13 +893,14 @@ Difference to distribute: {7}</value></data>
   <data name="Model.CenterStateChanged" xml:space="preserve"><value>Centre status updated successfully.</value></data>
   <data name="Model.NodeSectionHelp" xml:space="preserve"><value>A calculation unit (node) belongs to a centre. Example: Workshop centre, Cutting node, activity hours, cost group Cutting costs. A centre may contain several nodes.</value></data>
   <data name="Model.NodeListTitle" xml:space="preserve"><value>Structure nodes</value></data>
-  <data name="Model.NodeListHelp" xml:space="preserve"><value>The table shows every node already saved in this draft. Select a row to edit or delete it. While the form has pending changes, save them or press New node before selecting another row.</value></data>
+  <data name="Model.NodeListHelp" xml:space="preserve"><value>Select a node and edit its details in the table. You can edit several nodes before saving when leaving this tab. Published structures require an editable version.</value></data>
   <data name="Model.NodeFormNew" xml:space="preserve"><value>Add node</value></data>
   <data name="Model.NodeFormEdit" xml:space="preserve"><value>Edit selected node</value></data>
   <data name="Model.NodeSaveCreate" xml:space="preserve"><value>Save node</value></data>
   <data name="Model.NodeSaveEdit" xml:space="preserve"><value>Save changes</value></data>
   <data name="Model.NodeSaved" xml:space="preserve"><value>Node saved successfully. The form is ready for the next node.</value></data>
   <data name="Model.NodeRemoved" xml:space="preserve"><value>Node removed from the draft and changes saved successfully.</value></data>
+  <data name="Model.NodeEditDeferredHelp" xml:space="preserve"><value>Changes to existing nodes are staged while you edit. On leaving this tab you can save, discard or continue editing. Saving happens without freezing the window.</value></data>
   <data name="Model.NodePersistenceHelp" xml:space="preserve"><value>Scope: reusable structure. Saving a node immediately stores that record in the draft. Finalizing fixes the structure for use. Adapted analysis nodes belong only to that analysis.</value></data>
   <data name="Model.OptionalNodeData" xml:space="preserve"><value>Additional data</value></data>
   <data name="Model.FunctionHelp" xml:space="preserve"><value>Functions are optional and describe what the node is used for. If you add several, separate them with commas and do not repeat names, for example: production, maintenance.</value></data>
@@ -2081,7 +2082,7 @@ Normal capacity: {6} h × {7}% = {8} h</value></data>
 <data name="Activity.Import.TemplateFailed" xml:space="preserve"><value>Could not save the template. Check the location and its permissions.</value></data>
 <data name="Activity.Import.DiscardReview" xml:space="preserve"><value>Rows are selected for import. Discard closes this review without incorporating those drafts.</value></data>
 <data name="Rates.SelectedSummary" xml:space="preserve"><value>Rate: {0} · Cost: {1} · Normal: {2} · Actual: {3} · {4}</value></data>
-<data name="Model.TableEditHelp" xml:space="preserve"><value>Click a cell to edit, then save. A published structure requires an editable version.</value></data>
+<data name="Model.TableEditHelp" xml:space="preserve"><value>Click a cell to edit it. When leaving Calculation nodes, you can save, discard or keep editing.</value></data>
 <data name="UX.FileOperation" xml:space="preserve"><value>Source: {0}
 Destination: {1}
 

@@ -345,6 +345,48 @@ public sealed partial class WorkspaceAuditClosureTests
     }
 
     [TestMethod]
+    public async Task ExistingNodeChangesAreStagedAcrossRowsWithoutEarlyPersistence()
+    {
+        var preferences = new PresentationPreferencesService(new LanguageCatalog(), UserPresentationPreferences.Default);
+        var formatter = new PresentationFormatter(new DisplayTimeZoneResolver());
+        var texts = new UiTextCatalog();
+        var dialogs = new Dialogs();
+        using var company = new CompanyFileViewModel(Service(), dialogs, Catalog, texts, preferences, formatter);
+        using var vm = new ModelWorkspaceViewModel(company, texts, preferences, dialogs, formatter);
+        await company.OpenPath(Baseline());
+        vm.ModelChoice = vm.Models.First(m => m.Value.Status == ModelStatus.Draft);
+        await vm.LoadCommand.ExecuteAsync(null);
+
+        var nodes = vm.Nodes.ToArray();
+        Assert.IsTrue(nodes.Length >= 2, "The fixture must provide two editable nodes.");
+        var original = nodes.First(n => NodeCostClassification.Purpose(n.Node) == NodeTariffPurpose.General);
+        var other = nodes.First(n => n.Node.Id != original.Node.Id);
+        var currentRevision = vm.Current!.Revision;
+        var previousFunction = NodeCostClassification.Function(original.Node);
+        var nextFunction = previousFunction == NodeEconomicFunction.Structure
+            ? NodeEconomicFunction.Production : NodeEconomicFunction.Structure;
+
+        vm.SelectedNode = original;
+        vm.EconomicFunctionChoice = nextFunction;
+        Assert.IsTrue(vm.IsDirty);
+        vm.SelectedNode = other; // No per-row confirmation or I/O.
+        Assert.AreEqual(other.Node.Id, vm.SelectedNode?.Node.Id);
+        Assert.IsTrue(vm.IsDirty);
+        Assert.AreEqual(nextFunction, NodeCostClassification.Function(
+            vm.Nodes.Single(n => n.Node.Id == original.Node.Id).Node));
+        Assert.AreEqual(currentRevision, vm.Current!.Revision);
+        Assert.AreEqual(previousFunction, NodeCostClassification.Function(
+            company.ActiveModels!.ReadModels().Single(m => m.Structure.Id == vm.Current.Structure.Id)
+                .Structure.Nodes.Single(n => n.Id == original.Node.Id)));
+
+        await vm.SaveCommand.ExecuteAsync(null);
+        Assert.IsFalse(vm.IsDirty);
+        Assert.AreEqual(nextFunction, NodeCostClassification.Function(
+            company.ActiveModels!.ReadModels().Single(m => m.Structure.Id == vm.Current!.Structure.Id)
+                .Structure.Nodes.Single(n => n.Id == original.Node.Id)));
+    }
+
+    [TestMethod]
     public async Task ModelEditorFailedNodeWritesKeepFormAndSavedTableState()
     {
         var preferences = new PresentationPreferencesService(new LanguageCatalog(), UserPresentationPreferences.Default);
