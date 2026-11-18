@@ -229,4 +229,6 @@ La integración actual y sus límites están documentados en la
 
 **Obligatoria / pendiente:** inventariar y completar ayudas contextuales para todos los campos y controles relevantes de VALDRIO, en español e inglés, con significado económico, consecuencias, fórmulas y ejemplos cuando proceda. Ningún campo de negocio debe quedar con solo el texto genérico del pie de pantalla.
 
+**Precisión aplicada ya en Productos y servicios (2026-11-18):** las ayudas ES/EN y la guía del módulo distinguen entre referencia manual, importación y coste calculado por composición. Una composición parcial conserva la referencia manual si existe, retira un coste calculado anterior y comunica qué falta; la actividad de nodos principales puede incluir MOD y otros directos, pero esta pantalla no aplica tarifas T15. Los pendientes transversales siguen abiertos para el resto de VALDRIO.
+
 Criterios de cierre, recorridos de prueba y límites documentados en [PEND-UX-DEC-01 y PEND-UX-HELP-01](../pendientes/PEND-UX-DECIMALES-Y-AYUDA-2026-11-18.md).

@@ -10,7 +10,7 @@
    <TabItem Header="{Binding [Catalog]}"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="12">
     <TextBlock Text="{Binding [CatalogHelp]}" TextWrapping="Wrap" Margin="0,0,0,8"/>
     <TextBlock Text="{Binding [ImportFormatHelp]}" TextWrapping="Wrap" Margin="0,0,0,12"/>
-    <WrapPanel Margin="0,0,0,12" VerticalAlignment="Center"><Button Content="{Binding [AddItem]}" Click="AddItem" IsEnabled="{Binding Writable}" local:FieldHelp.Key="AddItem"/><Button Content="{Binding [ImportProducts]}" Click="ImportProducts" IsEnabled="{Binding Writable}" Margin="8,0,0,0" local:FieldHelp.Key="Import"/><TextBlock Text="{Binding [ImportAs]}" VerticalAlignment="Center" Margin="12,0,6,0"/><ComboBox Width="150" ItemsSource="{Binding ImportKinds}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding ImportKind}" local:FieldHelp.Key="ImportKind"/><Button Content="{Binding [RemoveItem]}" Click="RemoveItem" IsEnabled="{Binding Writable}" Margin="8,0,0,0" local:FieldHelp.Key="RemoveItem"/><Button local:FixedPageActions.Pin="True" Content="{Binding [Save]}" Click="Save" IsEnabled="{Binding Writable}" Margin="8,0,0,0" local:FieldHelp.Key="SaveCatalog"/></WrapPanel>
+    <WrapPanel Margin="0,0,0,12" VerticalAlignment="Center"><Button Content="{Binding [AddItem]}" Click="AddItem" IsEnabled="{Binding Writable}" local:FieldHelp.Key="AddItem"/><Button Content="{Binding [ImportProducts]}" Click="ImportProducts" IsEnabled="{Binding Writable}" Margin="8,0,0,0" local:FieldHelp.Key="Import"/><TextBlock Text="{Binding [ImportAs]}" VerticalAlignment="Center" Margin="12,0,6,0"/><ComboBox Width="150" ItemsSource="{Binding ImportKinds}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding ImportKind}" local:FieldHelp.Key="ImportKind"/><Button Content="{Binding [RemoveItem]}" Click="RemoveItem" IsEnabled="{Binding Writable}" Margin="8,0,0,0" local:FieldHelp.Key="RemoveItem"/><Button local:FixedPageActions.Pin="True" Content="{Binding [Save]}" Click="Save" IsEnabled="{Binding CanSaveChanges}" Margin="8,0,0,0" local:FieldHelp.Key="SaveCatalog"/></WrapPanel>
     <WrapPanel Margin="0,0,0,8">
      <Button Content="{Binding [InstallUnits]}" Click="InstallUnits" IsEnabled="{Binding CanInstallUnitPreset}"
              local:FieldHelp.Key="InstallUnits"/>
@@ -20,7 +20,7 @@
    </StackPanel></ScrollViewer></TabItem>
    <TabItem Header="{Binding [Recipe]}"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="12">
     <Border Style="{StaticResource Card}"><StackPanel>
-     <WrapPanel><StackPanel Margin="0,0,12,8"><TextBlock Text="{Binding [Product]}"/><ComboBox Width="250" ItemsSource="{Binding Products}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Product}" local:FieldHelp.Key="Product"/></StackPanel>
+     <WrapPanel><StackPanel Margin="0,0,12,8"><TextBlock Text="{Binding [Product]}"/><ComboBox x:Name="ProductPicker" Width="250" ItemsSource="{Binding Products}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Product}" local:FieldHelp.Key="Product"/></StackPanel>
       <Button Content="{Binding [Open]}" Click="Open" Margin="0,16,8,8" Style="{StaticResource Button.PendingSelection}" Tag="{Binding HasPendingCompositionOpen}" local:FieldHelp.Key="OpenProduct"/>
      </WrapPanel>
      <TextBlock Text="{Binding State}" FontWeight="SemiBold" Margin="0,4,0,8"/>

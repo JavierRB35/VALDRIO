@@ -31,7 +31,11 @@ internal static class ProductCostImport
         catch (Exception error) when (error is InvalidDataException or IOException or
             DocumentFormat.OpenXml.Packaging.OpenXmlPackageException or DomainRuleException or
             System.Xml.XmlException)
-        { return (null, "Xlsx"); }
+        {
+            // XLSX-specific failures have their own message; a plain text file
+            // read failure must keep the generic import feedback.
+            return (null, path.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase) ? "Xlsx" : "ImportFailed");
+        }
         if (parsed is null) return (null, "Quotes");
         var records = parsed.Where(row => row.Any(cell => !string.IsNullOrWhiteSpace(cell))).ToArray();
         if (records.Length < 2) return (null, "Empty");
@@ -86,22 +90,31 @@ internal static class ProductCostImport
         foreach (var row in source.Rows)
         {
             var cells = Enumerable.Range(1, headers.Length).Select(column =>
-            {
-                var cell = row.GetCell(column);
-                if (cell.Kind is SourceValueKind.Missing or SourceValueKind.Empty)
-                    return "";
-                if (cell.Kind == SourceValueKind.Number)
-                {
-                    if (column == referenceColumn) return ""; // Do not destroy leading-zero identities.
-                    return decimal.TryParse(cell.RawLexical, NumberStyles.Float,
-                        CultureInfo.InvariantCulture, out var numeric)
-                        ? numeric.ToString("0.###########################", culture) : "";
-                }
-                return cell.Kind == SourceValueKind.Text ? cell.TextValue ?? "" : "";
-            }).ToArray();
+                CellText(row.GetCell(column), column, referenceColumn, culture)).ToArray();
             rows.Add(cells);
         }
         return rows;
+    }
+
+    private static string CellText(SourceCell cell, int column, int referenceColumn, CultureInfo culture)
+    {
+        // Excel cost columns are commonly formulas. The adapter exposes the
+        // cached value in CachedValueKind/TextValue; dropping it would turn a
+        // valid priced row into a false "invalid cost" error.
+        var kind = cell.Kind == SourceValueKind.FormulaWithCachedValue
+            ? cell.CachedValueKind ?? SourceValueKind.Empty
+            : cell.Kind;
+        if (kind is SourceValueKind.Missing or SourceValueKind.Empty) return "";
+        if (kind == SourceValueKind.Number)
+        {
+            if (column == referenceColumn) return ""; // Do not destroy leading-zero identities.
+            var lexical = cell.Kind == SourceValueKind.FormulaWithCachedValue
+                ? cell.TextValue ?? cell.RawLexical
+                : cell.RawLexical;
+            return decimal.TryParse(lexical, NumberStyles.Float, CultureInfo.InvariantCulture, out var numeric)
+                ? numeric.ToString("0.###########################", culture) : "";
+        }
+        return kind == SourceValueKind.Text ? cell.TextValue ?? cell.RawLexical ?? "" : "";
     }
 
     public static IReadOnlyList<CompositionItem> Merge(IReadOnlyList<CompositionItem> current,

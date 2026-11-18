@@ -22,7 +22,7 @@ Inventariar campos, botones con efectos, selectores y columnas editables de **to
 
 ## Notas de compatibilidad de esta entrega
 
-- Los registros de catálogo publicados conservan su identidad; quitar una referencia usada significa desactivarla para no romper históricos.
+- Los registros de catálogo publicados conservan su identidad; quitar una referencia usada significa desactivarla para no romper históricos. Una referencia inactiva con composición guardada mantiene consulta en solo lectura, sin editar, guardar ni publicar y sin crear versiones nuevas.
 - Los controles de versiones de Composición pueden simplificarse, pero los snapshots publicados empleados por presupuestos y órdenes **no se eliminan**. Una definición editable se guarda como nueva revisión interna cuando corresponde.
-- El coste calculado de la composición solo sustituye un coste manual cuando se pueden valorar **todos** sus componentes directos con los datos disponibles. Si existe actividad sin tarifa, precio incompleto o una base dependiente de la orden, se mantiene el valor manual y el perímetro parcial se comunica explícitamente.
+- El coste calculado de la composición solo sustituye un coste manual cuando se pueden valorar **todos** sus materiales finales y la definición no contiene actividad —incluida MOD u otros directos— ni bases dependientes de la orden en cualquier nivel expandido. Si el desglose queda parcial, se conserva la referencia manual cuando existe, se retira el coste calculado por una composición anterior para que no siga apareciendo como vigente y el perímetro parcial se comunica explícitamente. No se inventa un precio para un dato ausente.
 - No se garantiza a partir de una revisión estática una validación WPF real ni la integridad de un archivo de empresa concreto; requieren pruebas Windows/locales.

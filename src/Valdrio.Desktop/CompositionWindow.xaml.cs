@@ -13,12 +13,18 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
     internal Func<MessageBoxResult>? LeaveDecision { get; set; }
     private readonly Dictionary<DataGridColumn, string> columnHelp = new();
     private DataGridCell? lastHelpCell;
+    private int activeTab;
+    private bool changingTab;
+    private EntityId selectedProduct;
+    private bool selectingProduct;
     internal void RefreshView() => Columns();
     public CompositionWindow(StudyWorkspaceViewModel host)
     {
         Editor = new(host, initialize: false); InitializeComponent(); DataContext = Editor;
         ContentRendered += async (_, _) => await InitializeAsync();
         Columns();
+        ProductTabs.SelectionChanged += ProductTabChanged;
+        ProductPicker.SelectionChanged += ProductPickerChanged;
         CatalogGrid.PreviewMouseMove += GridHelpOnMouseMove;
         LinesGrid.PreviewMouseMove += GridHelpOnMouseMove;
         CatalogGrid.AddHandler(Keyboard.GotKeyboardFocusEvent,
@@ -28,7 +34,13 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
         Closing += (_, e) => { if (!Resolve()) e.Cancel = true; };
     }
     private Task? initialization;
-    internal override Task InitializeAsync() => initialization ??= RunActivityAsync(async () => { await Editor.ReloadForDisplayAsync(); Columns(); });
+    internal override Task InitializeAsync() => initialization ??= RunActivityAsync(async () =>
+    {
+        selectingProduct = true;
+        try { await Editor.ReloadForDisplayAsync(); selectedProduct = Editor.Product; }
+        finally { selectingProduct = false; }
+        Columns();
+    });
     private void Columns()
     {
         CatalogGrid.Columns.Clear(); LinesGrid.Columns.Clear(); AnswersGrid.Columns.Clear(); ResultsGrid.Columns.Clear();
@@ -56,6 +68,7 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
         var factorStyle = new Style(typeof(TextBlock));
         factorStyle.Setters.Add(new Setter(FrameworkElement.ToolTipProperty, new Binding("LossFormulaText")));
         factorColumn.ElementStyle = factorStyle; LinesGrid.Columns.Add(factorColumn);
+        LinesGrid.Columns.Add(new DataGridTextColumn { Header = Editor["AdjustedInput"], Binding = new Binding("AdjustedQuantityDisplay"), IsReadOnly = true, Width = 140 });
         Text(AnswersGrid,"Question","Question",250); Text(AnswersGrid,"Answer","Answer",new DataGridLength(1,DataGridLengthUnitType.Star));
         Text(ResultsGrid,"Path","Path",180); Text(ResultsGrid,"Component","Name",230); Text(ResultsGrid,"Kind","Kind",100);
         Text(ResultsGrid,"Count","Count",90); Text(ResultsGrid,"InputUnit","InputUnit",100);
@@ -66,7 +79,7 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
         for (var i = 0; i < catalogKeys.Length; i++)
             columnHelp[CatalogGrid.Columns[i]] = catalogKeys[i];
         string[] lineKeys = ["Component", "Quantity", "LineUnit", "ConversionFactor",
-            "Basis", "Loss", "Percent", "LossFactor"];
+            "Basis", "Loss", "Percent", "LossFactor", "AdjustedInput"];
         for (var i = 0; i < lineKeys.Length; i++)
             columnHelp[LinesGrid.Columns[i]] = lineKeys[i];
     }
@@ -84,7 +97,7 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
         var explanation = Editor["Help." + key];
         cell.ToolTip = explanation;
         AutomationProperties.SetHelpText(cell, explanation);
-        (WorkspaceHost ?? Owner as MainWindow ?? Application.Current.MainWindow as MainWindow)
+        (WorkspaceHost ?? Owner as MainWindow ?? System.Windows.Application.Current.MainWindow as MainWindow)
             ?.ShowFieldHelp(explanation, "Composition." + key);
     }
     private void Text(DataGrid grid,string label,string path,DataGridLength width)
@@ -97,21 +110,26 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
     {
         var valid = CatalogGrid.CommitEdit(DataGridEditingUnit.Cell,true) && CatalogGrid.CommitEdit(DataGridEditingUnit.Row,true) && LinesGrid.CommitEdit(DataGridEditingUnit.Cell,true) && LinesGrid.CommitEdit(DataGridEditingUnit.Row,true);
         if (!valid) Editor.Feedback = Editor["InvalidCell"];
+        if (valid) foreach (var item in Editor.Items) item.NormalizeCostInput();
         return valid;
     }
     private bool Resolve()
     {
-        if (Editor.Busy) return false;
+        if (changingTab || selectingProduct || Editor.Busy) return false;
         if (!Commit()) return false;
         if (!Editor.Dirty) return true;
         var answer = LeaveDecision?.Invoke() ?? ResolvePending();
         if(answer==MessageBoxResult.Cancel) return false;
-        if(answer==MessageBoxResult.Yes) return Editor.Save(false);
-        Editor.Reload(); return true;
+        if(answer==MessageBoxResult.Yes) return Editor.SaveChanges();
+        Editor.Discard(); return true;
     }
     internal override Task<bool> CanLeaveAsync() => ResolveAsync();
-    private async Task<bool> ResolveAsync()
+    private async Task<bool> ResolveAsync(bool ownedByTabChange = false, bool ownedByProductChange = false)
     {
+        // A pending tab/product change already owns the "unsaved changes"
+        // dialog; a concurrent close must not open a second one or save twice.
+        if (!ownedByTabChange && changingTab) return false;
+        if (!ownedByProductChange && selectingProduct) return false;
         if (OperationRunning || Editor.Busy || !Commit()) return false;
         if (!Editor.Dirty) return true;
         var answer = LeaveDecision?.Invoke() ?? ResolvePending();
@@ -119,10 +137,55 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
         var resolved = false;
         await RunActivityAsync(async () =>
         {
-            if (answer == MessageBoxResult.Yes) resolved = await Editor.SaveAsync(false);
-            else { await Editor.ReloadAsync(); resolved = true; }
+            if (answer == MessageBoxResult.Yes) resolved = await Editor.SaveChangesAsync();
+            else { await Editor.DiscardAsync(); resolved = true; }
         });
         return resolved;
+    }
+    private async void ProductPickerChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (selectingProduct || changingTab || e.OriginalSource != ProductPicker) return;
+        var requested = Editor.Product;
+        if (requested == selectedProduct) return;
+        selectingProduct = true;
+        try
+        {
+            // Keep the loaded document selected until its changes are resolved:
+            // SaveChanges must see Editable=true for the document being saved.
+            ProductPicker.SelectedValue = selectedProduct;
+            if (!await ResolveAsync(ownedByProductChange: true)) return;
+            selectedProduct = requested;
+            ProductPicker.SelectedValue = requested;
+        }
+        finally { selectingProduct = false; }
+    }
+    private bool OpenProduct(EntityId id)
+    {
+        selectingProduct = true;
+        try
+        {
+            var opened = Editor.OpenProduct(id);
+            selectedProduct = Editor.Product;
+            return opened;
+        }
+        finally { selectingProduct = false; }
+    }
+    private async void ProductTabChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (changingTab || e.OriginalSource != ProductTabs) return;
+        var requested = ProductTabs.SelectedIndex;
+        if (requested == activeTab) return;
+        if (selectingProduct) { ProductTabs.SelectedIndex = activeTab; return; }
+        changingTab = true;
+        try
+        {
+            ProductTabs.SelectedIndex = activeTab;
+            if (!await ResolveAsync(ownedByTabChange: true)) return;
+            activeTab = requested;
+            ProductTabs.SelectedIndex = requested;
+            Columns();
+        }
+        finally { changingTab = false; }
     }
     private MessageBoxResult ResolvePending()
     {
@@ -142,7 +205,7 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
     }
     private async void ImportProducts(object sender,RoutedEventArgs e)
     {
-        var dialog = new Microsoft.Win32.OpenFileDialog { Filter = "CSV, TSV y Excel (*.csv;*.tsv;*.txt;*.xlsx)|*.csv;*.tsv;*.txt;*.xlsx|Todos los archivos (*.*)|*.*", CheckFileExists = true };
+        var dialog = new Microsoft.Win32.OpenFileDialog { Filter = Editor["ImportFileFilter"], CheckFileExists = true };
         if (Commit() && dialog.ShowDialog(WorkspaceHost ?? (Window)this) == true) await RunActivityAsync(() => Editor.ImportProductsAsync(dialog.FileName));
     }
     private async void EditComposition(object sender, RoutedEventArgs e)
@@ -151,8 +214,9 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
         var id = row.Id;
         if (!await ResolveAsync()) return;
         var saved = Editor.Items.FirstOrDefault(i => i.Id == id);
-        if (saved is null || !saved.CanOpenComposition) return;
-        if (saved.ReferenceUnitCost is > 0 &&
+        if (saved is null || !saved.CanOpenComposition)
+        { Editor.Feedback = Editor[saved is { IsCostInputValid: false } ? "InvalidItem" : "ChooseRecipe"]; return; }
+        if (saved.Active && saved.ReferenceUnitCost is > 0 &&
             !saved.ReferenceCostSource.StartsWith("Composition · ", StringComparison.Ordinal))
         {
             var warning = new EconomicConfirmationWindow(Editor["CostOverrideTitle"],
@@ -160,21 +224,40 @@ public partial class CompositionWindow : IntegratedWorkspaceWindow
                 { Owner = WorkspaceHost ?? (Window)this };
             if (warning.ShowDialog() != true) return;
         }
-        if (Editor.OpenProduct(id)) { ProductTabs.SelectedIndex=1; Columns(); }
+        if (OpenProduct(id)) { ProductTabs.SelectedIndex=1; Columns(); }
         else Editor.Feedback=Editor["ChooseRecipe"];
     }
     private void RemoveItem(object sender,RoutedEventArgs e) { if (Commit()) Editor.RemoveItem(CatalogGrid.SelectedItem as CompositionItemRow); }
     private async Task SavePage(bool publish)
     {
-        await RunActivityAsync(async () => { await Editor.SaveAsync(publish); Columns(); });
+        await RunActivityAsync(async () =>
+        {
+            var product = Editor.Product;
+            if (await Editor.SaveAsync(publish) && publish) OpenProduct(product);
+            Columns();
+        });
     }
-    private async void Save(object sender,RoutedEventArgs e) { if(Commit()) await SavePage(false); }
+    private async void Save(object sender,RoutedEventArgs e) { if(Commit()) await SavePage(Editor.HasCompositionChanges); }
     private async void SaveComposition(object sender,RoutedEventArgs e) { if(Commit()) await SavePage(true); }
     private async void Publish(object sender,RoutedEventArgs e) { if(Commit() && new EconomicConfirmationWindow(Editor["Publish"], Editor.State + "\n\n" + Editor["PublishHelp"], Editor["Publish"], Editor.ActionLabel("KeepEditing")) { Owner = WorkspaceHost ?? (Window)this }.ShowDialog()==true) await SavePage(true); }
     private async void Open(object sender,RoutedEventArgs e)
     {
         var product=Editor.Product;
-        if(await ResolveAsync() && Editor.OpenProduct(product)) Columns();
+        if(await ResolveAsync() && ConfirmCompositionCost(product) && OpenProduct(product)) Columns();
+    }
+    private bool ConfirmCompositionCost(EntityId product)
+    {
+        var saved = Editor.Items.FirstOrDefault(i => i.Id == product);
+        if (saved is null || !saved.CanOpenComposition)
+        {
+            Editor.Feedback = Editor[saved is { IsCostInputValid: false } ? "InvalidItem" : "ChooseRecipe"];
+            return false;
+        }
+        if (saved.ReferenceUnitCost is not > 0 || !saved.Active ||
+            saved.ReferenceCostSource.StartsWith("Composition · ", StringComparison.Ordinal)) return true;
+        return new EconomicConfirmationWindow(Editor["CostOverrideTitle"], Editor["CostOverrideHelp"],
+            Editor["CostOverrideContinue"], Editor.ActionLabel("KeepEditing"))
+            { Owner = WorkspaceHost ?? (Window)this }.ShowDialog() == true;
     }
     private async void NewVersion(object sender,RoutedEventArgs e) { var product=Editor.Product; if(await ResolveAsync()) { Editor.Product=product; Editor.NewVersion(); Columns(); } }
     private void AddLine(object sender,RoutedEventArgs e) => Editor.AddLine();
