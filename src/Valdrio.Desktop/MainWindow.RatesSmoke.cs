@@ -127,7 +127,8 @@ public partial class MainWindow
             window.Close();
             Check(studies.Current!.Revision==revision,"Reading rates never changes study "+language);
         }
-        // Invoke the actual menu Click and verify that it opens the implemented window.
+        // Open from a different phase to verify Back restores the actual origin.
+        await NavigateWorkflow(8);
         ((IInvokeProvider)new ButtonAutomationPeer(RatesStep).GetPattern(PatternInterface.Invoke)).Invoke();
         for(var attempt=0;attempt<50 && workspacePages.LastOrDefault() is not PrincipalRatesWindow;attempt++)
             await Task.Delay(100);
@@ -144,8 +145,12 @@ public partial class MainWindow
         await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
         Check(integratedScroll.VerticalOffset>0,"Wheel over breakdown scrolls the integrated page");
         VisualEvidenceCapture.Capture(this,Path.Combine(directory,"rates-integrated.png"));
-        integrated.Close();
-        await GoBackWorkflow();Check(workflowStep==9,"Back returns to activity");
+        await GoBackWorkflow();
+        for (var attempt = 0; attempt < 200 && workflowStep != 8; attempt++)
+            await Task.Delay(25);
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+        Check(workspacePages.Count == 0 && workflowStep == 8 && CostFlowsPanel.IsVisible,
+            "One Back from rates returns directly to the invoking cost report");
         File.WriteAllText(Path.Combine(directory,"checks.json"),JsonSerializer.Serialize(checks,new JsonSerializerOptions{WriteIndented=true}));
     }
 }
