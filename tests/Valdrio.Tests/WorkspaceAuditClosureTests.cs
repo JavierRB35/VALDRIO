@@ -350,7 +350,7 @@ public sealed partial class WorkspaceAuditClosureTests
         var preferences = new PresentationPreferencesService(new LanguageCatalog(), UserPresentationPreferences.Default);
         var formatter = new PresentationFormatter(new DisplayTimeZoneResolver());
         var texts = new UiTextCatalog();
-        var dialogs = new NoPromptDialogs();
+        var dialogs = new Dialogs();
         using var company = new CompanyFileViewModel(Service(), dialogs, Catalog, texts, preferences, formatter);
         using var vm = new ModelWorkspaceViewModel(company, texts, preferences, dialogs, formatter);
         await company.OpenPath(Baseline());
