@@ -91,7 +91,7 @@ public partial class ModelWorkspacePanel
         // discard or stay once, when the analyst leaves this tab.
         if (!resolvingNodeTabExit && e.RemovedItems.Contains(ModelTab2) &&
             ModelSteps.SelectedItem is TabItem destination &&
-            DataContext is ModelWorkspaceViewModel vm)
+            DataContext is ModelWorkspaceViewModel { IsDirty: true } vm)
         {
             resolvingNodeTabExit = true;
             ModelSteps.SelectedItem = ModelTab2;
@@ -100,11 +100,8 @@ public partial class ModelWorkspacePanel
                 // Commit the active cell before checking the pending form.
                 NodeSummary.CommitEdit(DataGridEditingUnit.Cell, true);
                 NodeSummary.CommitEdit(DataGridEditingUnit.Row, true);
-                if (vm.IsDirty)
-                {
-                    ModelSteps.IsEnabled = false;
-                    if (!await vm.CanLeaveAsync()) return;
-                }
+                ModelSteps.IsEnabled = false;
+                if (!await vm.CanLeaveAsync()) return;
                 ModelSteps.SelectedItem = destination;
             }
             finally
