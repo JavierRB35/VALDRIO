@@ -7,7 +7,7 @@ This screen defines the physical components needed for a product or service and 
 A reference amount is management data. **It is not actual consumption, an observed cost, or accounting valuation of inventory or work in progress.** Actual consumption and variances belong to T19; accounting valuation is reserved for T32. Imported unit costs use the company's default currency.
 
 ## 2. Import products and unit costs
-On the **Catalogue** tab, select **Import products and unit costs** and choose a CSV or TSV file. Include a header row and these four columns:
+On the **Catalogue** tab, select **Import products and unit costs** and choose a CSV/TSV or XLSX file. Include a header row and these four columns:
 
 | Column | What to enter | Example |
 | :--- | :--- | :--- |
@@ -24,15 +24,19 @@ When importing again, VALDRIO matches by reference. An existing item keeps its i
 
 The catalogue shows reference unit cost and the source filename with the import date. The company change log records the edits. Imported prices use the company's default currency; no currency conversion is applied.
 
-## 3. Build and publish a composition
-1. Save or import catalogue items before composing.
-2. In **Composition**, select a product or service and open a version or create a draft.
-3. Enter batch size when preparation is shared across a batch. Add each component in the table with quantity, input unit, conversion factor, and whether it applies per unit, started batch, or order.
-4. Use **Extra input** for additional physical input over the base quantity. Use **Useful yield** for the share of input that produces useful output. These are physical assumptions; they do not determine whether a loss is normal or its accounting treatment.
-5. A semi-finished component must point to a published version of the same model. VALDRIO expands it and totals only final components, avoiding a second charge for the semi-finished intermediate itself.
-6. Save a draft to continue editing. **Publish** fixes that version; create a new version to change it.
+## 3. Edit the active composition
 
-Conversions are explicit and allowed only between units of the same dimension. The factor means component units per entered input unit; when units match, the factor must be 1. Discrete units are rounded up after conversion. A partial batch still requires full preparation for each started batch (for example, 120 units with a batch size of 50 require 3 preparations).
+1. Create a product, material or service with reference, name, kind and unit, then **Save catalogue**. The standard **Unit (u)** is available in newly created projects; older companies can explicitly install missing default units.
+2. A **manual reference unit cost** accepts `12,50` and `12.50` (without thousands grouping); its origin is determined automatically. A warning explains priority before opening a composition for a product with a non-zero manual cost.
+3. Under **Composition**, choose the product and press **Open**. No draft/version selector or separate publishing step is required in the normal workflow. Edit materials and activities, then press **Save composition and catalogue**.
+4. Select active **principal-node activities** (including direct labour) and active catalogue materials. **Auxiliary centres are not selectable**: their costs belong in the secondary allocation.
+5. Enter quantity, physical unit, conversion and loss/yield. **Extra input** of 10% turns 10 into 11; **useful yield** of 80% requires 10 / 0.80 = 12.5. The grid displays the multiplier as you edit.
+
+Only a **fully priced, material-only** composition with an unambiguous unit basis may replace the manual reference unit cost. If a component price or activity rate is missing, the current cost stays in place and the calculation is marked partial.
+
+**Historical compatibility:** version controls are removed from the everyday screen, but previously published definitions remain immutable internally because accepted estimates and orders reference them. Changing a composition never silently replaces historical inputs.
+
+Saved catalogue identities are **deactivated**, not physically deleted, to preserve historical links. They can be reactivated. Unit conversions stay within the same dimension and discrete quantities are rounded up after conversion.
 
 ## 4. Use cases and cost estimate interpretation
 Enter an output quantity and select **Calculate physical requirements**. The results table shows components, base and adjusted amounts, and required amounts after conversion and rounding. The summary expands semi-finished items and shows only final materials and activities.
