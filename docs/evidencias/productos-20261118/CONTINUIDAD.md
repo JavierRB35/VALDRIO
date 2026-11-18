@@ -53,3 +53,9 @@ Los agentes técnico y contable entregaron sus cambios; el de pruebas quedó int
 6. Revisar el diff final y actualizar la evidencia de la PR. Solo entonces considerar merge, sujeto a la autorización vigente.
 
 Los dos pendientes transversales permanecen documentados en docs/pendientes/PEND-UX-DECIMALES-Y-AYUDA-2026-11-18.md. No se presentan como terminados fuera de este módulo.
+
+## Corrección de compilación tras prueba del propietario
+
+El propietario comunicó dos errores CS8602 en `MainWindow.CompositionSmoke.cs` (líneas 230 y 234 del commit 8577d94). Autorizó excepcionalmente a Codex a corregirlos porque DeepSeek gratuito seguía bloqueado por cuota. Se captura la superficie WPF en una variable local con comprobación explícita de ausencia antes de las comprobaciones de escala; no se suprimen advertencias ni se cambia lógica económica.
+
+Verificación ejecutada tras la corrección: `dotnet build Valdrio.slnx -c Release --no-restore`, Windows/.NET 10, resultado **0 errores y 0 advertencias**. Las pruebas automatizadas y el recorrido visual final siguen pendientes de los resultados del propietario. Este build sustituye únicamente la limitación de compilación descrita anteriormente; no acredita los flujos WPF ni los cálculos.

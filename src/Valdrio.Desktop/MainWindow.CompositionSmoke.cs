@@ -225,13 +225,14 @@ public partial class MainWindow
             VisualEvidenceCapture.Capture(this,Path.Combine(directory,"composition-"+language+".png"));
             answersGrid.BringIntoView();await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
             VisualEvidenceCapture.Capture(this,Path.Combine(directory,"answers-"+language+".png"));
+            var surface = page.Surface ?? throw new InvalidOperationException("Composition page surface is unavailable during scale checks.");
             foreach(var scale in new[]{1.25,1.5,2.0})
             {
-                page.Surface.LayoutTransform=new System.Windows.Media.ScaleTransform(scale,scale);UpdateLayout();
+                surface.LayoutTransform=new System.Windows.Media.ScaleTransform(scale,scale);UpdateLayout();
                 answersGrid.BringIntoView();await Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
                 Check(answersGrid.ActualWidth>250,"Answers reachable at scale "+scale+" "+language);
             }
-            page.Surface.LayoutTransform=null;editor.OutputQuantity=language=="es"?"1,2,3":"1.2.3";editor.Preview();
+            surface.LayoutTransform=null;editor.OutputQuantity=language=="es"?"1,2,3":"1.2.3";editor.Preview();
             Check(editor.Results.Count==0 && editor.Feedback==editor["Number"],"Reject structurally invalid decimal "+language);
             page.Close();Check(workspacePages.Count==0,"Integrated back "+language);
         }
